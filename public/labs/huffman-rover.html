@@ -1,0 +1,1348 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mars Rover Huffman Lab</title>
+<style>
+:root{
+  --bg:#efe5da;
+  --panel:#fffaf4;
+  --ink:#2b2623;
+  --muted:#756a62;
+  --line:#d8c8ba;
+  --rust:#b94f32;
+  --rust-dark:#843824;
+  --sand:#d98455;
+  --sand-light:#efa56f;
+  --sky:#2f2730;
+  --good:#24744a;
+  --bad:#ae3d34;
+  --amber:#f3b742;
+
+  --f:#58b9e6;
+  --l:#e0b23f;
+  --r:#64bd78;
+  --b:#c884d9;
+
+  --tile:70px;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  background:
+    radial-gradient(circle at 15% 5%, rgba(255,255,255,.65), transparent 24rem),
+    var(--bg);
+  color:var(--ink);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+
+button,input{font:inherit}
+
+button{
+  cursor:pointer;
+  border:1px solid var(--line);
+  background:#fff;
+  color:var(--ink);
+  border-radius:9px;
+  padding:8px 11px;
+}
+
+button:hover:not(:disabled){border-color:#9e8876}
+button:disabled{opacity:.45;cursor:not-allowed}
+
+main{
+  width:min(1180px,calc(100% - 28px));
+  margin:20px auto 42px;
+}
+
+h1{
+  margin:0;
+  font-size:29px;
+  letter-spacing:-.02em;
+}
+
+h2{
+  font-size:17px;
+  margin:0 0 11px;
+}
+
+.sub{
+  margin-top:5px;
+  color:var(--muted);
+  line-height:1.45;
+}
+
+.mission{
+  margin-top:15px;
+  padding:10px 12px;
+  border-left:4px solid var(--rust);
+  background:#fff8f0;
+  border-radius:8px;
+  font-weight:650;
+  font-size:16px;
+  line-height:1.4;
+}
+
+.mission span{
+  color:var(--bad);
+  font-weight:800;
+}
+
+.panel{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:14px;
+  box-shadow:0 4px 14px rgba(73,44,28,.06);
+}
+
+.tape-panel{
+  margin-top:15px;
+  padding:12px 14px 14px;
+}
+
+.tape-top{
+  display:flex;
+  justify-content:space-between;
+  gap:14px;
+  align-items:center;
+  margin-bottom:10px;
+}
+
+.tape-title{
+  font-size:13px;
+  font-weight:750;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+}
+
+#bitCount{
+  font-weight:800;
+  font-size:18px;
+}
+
+.tape-shell{
+  display:grid;
+  grid-template-columns:74px 1fr;
+  min-height:62px;
+  border-radius:10px;
+  overflow:hidden;
+  background:#14171d;
+  border:1px solid #2a3038;
+}
+
+.decoder-gate{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:8px;
+  color:#f8e5bf;
+  background:#29242b;
+  border-right:3px solid var(--amber);
+  font-size:11px;
+  font-weight:800;
+  text-align:center;
+  line-height:1.2;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+}
+
+.tape-window{
+  overflow:hidden;
+  position:relative;
+  display:flex;
+  align-items:center;
+}
+
+#bitTape{
+  display:flex;
+  align-items:center;
+  flex-wrap:nowrap;
+  min-width:max-content;
+  padding:0 12px;
+  transition:transform .25s ease;
+}
+
+.bit{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:18px;
+  height:34px;
+  color:#f2f4f7;
+  font:800 20px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  transition:
+    color .18s ease,
+    background .18s ease,
+    opacity .28s ease,
+    transform .28s ease,
+    width .28s ease,
+    margin .28s ease;
+  border-radius:5px;
+}
+
+.bit.checking{
+  background:rgba(243,183,66,.22);
+  color:#ffd66f;
+}
+
+.bit.match-f{color:var(--f);background:rgba(88,185,230,.16)}
+.bit.match-l{color:var(--l);background:rgba(224,178,63,.16)}
+.bit.match-r{color:var(--r);background:rgba(100,189,120,.16)}
+.bit.match-b{color:var(--b);background:rgba(200,132,217,.16)}
+
+.bit.consumed{
+  opacity:0;
+  transform:translateX(-22px) scale(.6);
+  width:0;
+  margin:0;
+}
+
+#decoderStatus{
+  min-height:22px;
+  margin-top:8px;
+  color:var(--muted);
+  font-size:13px;
+}
+
+.workspace{
+  display:grid;
+  grid-template-columns:minmax(560px,1.25fr) minmax(370px,.85fr);
+  gap:14px;
+  margin-top:14px;
+  align-items:start;
+}
+
+.map-panel{
+  padding:13px;
+}
+
+.map-head{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:flex-end;
+  margin-bottom:11px;
+}
+
+.map-head .small{
+  color:var(--muted);
+  font-size:12px;
+}
+
+.map-scroll{
+  overflow:auto;
+  border-radius:12px;
+}
+
+#map{
+  position:relative;
+  width:100%;
+  aspect-ratio:4 / 3;
+  display:grid;
+  grid-template-columns:repeat(8,1fr);
+  grid-template-rows:repeat(6,1fr);
+  background:#9f452e;
+  border:5px solid #7e3828;
+  border-radius:13px;
+  overflow:hidden;
+  box-shadow:inset 0 0 0 2px rgba(255,255,255,.1);
+}
+
+.tile{
+  position:relative;
+  width:100%;
+  height:100%;
+  border:1px solid rgba(104,47,31,.25);
+  overflow:hidden;
+}
+
+.tile.open{
+  background:
+    radial-gradient(circle at 18% 22%,rgba(110,54,37,.16) 0 2px,transparent 3px),
+    radial-gradient(circle at 76% 67%,rgba(255,219,178,.13) 0 2px,transparent 3px),
+    linear-gradient(145deg,#dc8255,#c96a47);
+}
+
+.tile.blocked{
+  background:
+    radial-gradient(circle at 72% 25%,rgba(66,30,27,.25),transparent 20px),
+    linear-gradient(145deg,#9e4936,#82382d);
+}
+
+.tile.blocked::after{
+  content:"";
+  position:absolute;
+  inset:7px 8px 10px;
+  background:#694038;
+  border:3px solid #52332e;
+  border-radius:52% 46% 48% 55%;
+  transform:rotate(-7deg);
+  box-shadow:
+    inset 8px 7px 0 rgba(255,255,255,.08),
+    0 6px 0 rgba(68,30,25,.24);
+}
+
+.tile.blocked:nth-child(3n)::after{
+  inset:14px 6px 7px 13px;
+  border-radius:60% 45% 50% 40%;
+  transform:rotate(11deg);
+}
+
+.tile.blocked:nth-child(4n)::after{
+  inset:9px 15px 13px 5px;
+  border-radius:40% 56% 44% 62%;
+  transform:rotate(-16deg);
+}
+
+.tile.start::before{
+  content:"START";
+  position:absolute;
+  left:5px;
+  bottom:4px;
+  z-index:3;
+  padding:2px 4px;
+  border-radius:4px;
+  background:rgba(52,38,33,.72);
+  color:#fff2e0;
+  font-size:9px;
+  font-weight:800;
+}
+
+.tile.goal::before{
+  content:"BEACON";
+  position:absolute;
+  right:4px;
+  bottom:4px;
+  z-index:3;
+  padding:2px 4px;
+  border-radius:4px;
+  background:rgba(32,72,52,.82);
+  color:#eaffef;
+  font-size:9px;
+  font-weight:800;
+}
+
+.goal-beacon{
+  position:absolute;
+  z-index:4;
+  width:calc(var(--tile) * .69);
+  height:calc(var(--tile) * .83);
+  pointer-events:none;
+  filter:drop-shadow(0 5px 2px rgba(56,27,21,.25));
+}
+
+.rover{
+  position:absolute;
+  z-index:8;
+  width:calc(var(--tile) * .83);
+  height:calc(var(--tile) * .83);
+  pointer-events:none;
+  transform-origin:50% 50%;
+  transition:left .38s cubic-bezier(.2,.8,.2,1),top .38s cubic-bezier(.2,.8,.2,1),transform .3s ease;
+  filter:drop-shadow(0 5px 2px rgba(58,29,21,.28));
+}
+
+.rover.crash{
+  animation:shake .28s linear 2;
+  filter:drop-shadow(0 0 7px #ff695d);
+}
+
+@keyframes shake{
+  0%,100%{margin-left:0}
+  25%{margin-left:-5px}
+  75%{margin-left:5px}
+}
+
+.side{
+  display:grid;
+  gap:14px;
+}
+
+.program-panel,.code-panel,.score-panel{
+  padding:13px;
+}
+
+.program-panel{
+  border:2px solid #d98455;
+  background:
+    linear-gradient(180deg,rgba(217,132,85,.12),transparent 110px),
+    var(--panel);
+  box-shadow:0 5px 16px rgba(137,73,42,.12);
+}
+
+.program-panel h2::after{
+  content:"EDITABLE";
+  display:inline-block;
+  margin-left:8px;
+  padding:3px 6px;
+  border:1px solid #b96c42;
+  border-radius:5px;
+  color:#874428;
+  background:#fff0e5;
+  font-size:9px;
+  letter-spacing:.08em;
+  vertical-align:middle;
+}
+
+.program-panel .instructions{
+  padding:9px 10px;
+  border-left:4px solid #d98455;
+  border-radius:6px;
+  background:#fff0e5;
+  color:#704c3a;
+}
+
+.code-panel{
+  border:2px solid #c884d9;
+  background:
+    linear-gradient(180deg,rgba(200,132,217,.12),transparent 110px),
+    var(--panel);
+  box-shadow:0 5px 16px rgba(107,67,117,.12);
+}
+
+.code-panel h2::after{
+  content:"EDITABLE";
+  display:inline-block;
+  margin-left:8px;
+  padding:3px 6px;
+  border:1px solid #a568b5;
+  border-radius:5px;
+  color:#754681;
+  background:#f4e5f7;
+  font-size:9px;
+  letter-spacing:.08em;
+  vertical-align:middle;
+}
+
+.code-panel .instructions{
+  padding:9px 10px;
+  border-left:4px solid #a568b5;
+  border-radius:6px;
+  background:#f8edf9;
+  color:#604a65;
+}
+
+.instructions{
+  color:var(--muted);
+  font-size:12.5px;
+  line-height:1.4;
+  margin-bottom:11px;
+}
+
+.command-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+
+.cmd{
+  min-height:53px;
+  display:grid;
+  grid-template-columns:34px 1fr;
+  align-items:center;
+  text-align:left;
+  gap:6px;
+  font-weight:700;
+}
+
+.cmd .icon{
+  width:30px;
+  height:30px;
+  border-radius:8px;
+  display:grid;
+  place-items:center;
+  color:#222;
+  font-weight:900;
+}
+
+.cmd-f .icon{background:color-mix(in srgb,var(--f) 55%,white)}
+.cmd-l .icon{background:color-mix(in srgb,var(--l) 55%,white)}
+.cmd-r .icon{background:color-mix(in srgb,var(--r) 55%,white)}
+.cmd-b .icon{background:color-mix(in srgb,var(--b) 55%,white)}
+
+.cmd small{
+  display:block;
+  color:var(--muted);
+  font-weight:500;
+  font-size:10px;
+  margin-top:1px;
+}
+
+.program-tools{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+  margin-top:9px;
+}
+
+#program{
+  display:flex;
+  flex-wrap:wrap;
+  gap:5px;
+  min-height:46px;
+  margin-top:11px;
+  padding:8px;
+  background:#f4ece4;
+  border-radius:9px;
+  border:1px solid #e1d2c5;
+}
+
+.program-chip{
+  width:28px;
+  height:28px;
+  border-radius:7px;
+  display:grid;
+  place-items:center;
+  font:800 12px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  color:#201f20;
+}
+
+.chip-F{background:var(--f)}
+.chip-L{background:var(--l)}
+.chip-R{background:var(--r)}
+.chip-B{background:var(--b)}
+
+.code-table{
+  display:grid;
+  gap:7px;
+}
+
+.code-row{
+  display:grid;
+  grid-template-columns:34px 1fr 82px;
+  align-items:center;
+  gap:8px;
+  padding:6px 7px;
+  border:1px solid #d8b6df;
+  border-left:5px solid #c884d9;
+  border-radius:9px;
+  background:#fffaff;
+}
+
+.code-row[data-command="F"]{border-left-color:var(--f)}
+.code-row[data-command="L"]{border-left-color:var(--l)}
+.code-row[data-command="R"]{border-left-color:var(--r)}
+.code-row[data-command="B"]{border-left-color:var(--b)}
+
+.code-symbol{
+  width:29px;
+  height:29px;
+  border-radius:7px;
+  display:grid;
+  place-items:center;
+  font-weight:850;
+}
+
+.code-row[data-command="F"] .code-symbol{background:var(--f)}
+.code-row[data-command="L"] .code-symbol{background:var(--l)}
+.code-row[data-command="R"] .code-symbol{background:var(--r)}
+.code-row[data-command="B"] .code-symbol{background:var(--b)}
+
+.code-name strong{
+  font-size:13px;
+}
+
+.code-name span{
+  display:block;
+  color:var(--muted);
+  font-size:10px;
+  margin-top:1px;
+}
+
+.code-input{
+  width:82px;
+  border:2px solid #a568b5;
+  border-radius:7px;
+  padding:7px 8px;
+  text-align:center;
+  font:800 15px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  color:#56335f;
+  background:#f8edf9;
+  box-shadow:inset 0 1px 2px rgba(107,67,117,.08);
+}
+
+.code-input:hover{
+  background:#f3e2f6;
+}
+
+.code-input:focus{
+  outline:3px solid rgba(165,104,181,.25);
+  outline-offset:1px;
+  background:#fff;
+}
+
+.code-input.invalid{
+  border-color:var(--bad);
+  background:#fff0ed;
+}
+
+.code-status{
+  margin-top:8px;
+  min-height:19px;
+  font-size:12px;
+  font-weight:700;
+}
+
+.code-status.ok{color:var(--good)}
+.code-status.bad{color:var(--bad)}
+
+.score-box{
+  display:grid;
+  grid-template-columns:1fr auto;
+  align-items:end;
+  gap:8px;
+}
+
+.score-title{
+  color:var(--muted);
+  font-size:12px;
+  font-weight:700;
+}
+
+#scoreBits{
+  margin-top:2px;
+  font-size:29px;
+  font-weight:850;
+  letter-spacing:-.03em;
+}
+
+#optimality{
+  font-size:18px;
+  font-weight:800;
+}
+
+.meter{
+  margin-top:10px;
+  height:10px;
+  background:#eaded3;
+  border-radius:99px;
+  overflow:hidden;
+}
+
+#meterFill{
+  height:100%;
+  width:0;
+  background:linear-gradient(90deg,#bf623f,#e3a34e,#4e9c68);
+  transition:width .25s ease;
+}
+
+#scoreText{
+  margin-top:8px;
+  min-height:36px;
+  color:var(--muted);
+  font-size:12.5px;
+  line-height:1.4;
+}
+
+.execute{
+  width:100%;
+  margin-top:11px;
+  background:var(--rust);
+  color:white;
+  border-color:var(--rust-dark);
+  font-weight:800;
+}
+
+.execute:hover:not(:disabled){border-color:#5e241a}
+
+.footer-note{
+  margin-top:11px;
+  color:var(--muted);
+  font-size:11px;
+}
+
+.footer-note a{color:inherit}
+
+@media(max-width:980px){
+  .workspace{grid-template-columns:1fr}
+  .side{grid-template-columns:1fr 1fr}
+  .score-panel{grid-column:1/-1}
+}
+
+@media(max-width:680px){
+  :root{--tile:58px}
+  main{width:min(100% - 16px,1180px);margin-top:10px}
+  .side{grid-template-columns:1fr}
+  .score-panel{grid-column:auto}
+  .tape-shell{grid-template-columns:60px 1fr}
+  .decoder-gate{font-size:9px}
+}
+</style>
+</head>
+<body>
+<main>
+  <h1>Mars Rover Huffman Lab</h1>
+  <div class="sub">The rover receives one uninterrupted binary transmission and decodes one movement command at a time.</div>
+
+  <div class="mission">
+    Mission: reach the beacon using the <span>fewest transmitted bits</span>. Movement count is not scored.
+  </div>
+
+  <section class="panel tape-panel">
+    <div class="tape-top">
+      <div class="tape-title">Incoming bitstream</div>
+      <div id="bitCount">26 bits</div>
+    </div>
+    <div class="tape-shell">
+      <div class="decoder-gate">decoder<br>reads here</div>
+      <div class="tape-window">
+        <div id="bitTape" aria-label="Encoded bitstream"></div>
+      </div>
+    </div>
+    <div id="decoderStatus">Ready. Run the transmission to watch the rover decode it from left to right.</div>
+  </section>
+
+  <div class="workspace">
+    <section class="panel map-panel">
+      <div class="map-head">
+        <div>
+          <h2>Mars survey sector</h2>
+          <div class="small">The rover begins facing east. Rocks are impassable.</div>
+        </div>
+        <button id="resetRoverBtn">Reset rover</button>
+      </div>
+      <div class="map-scroll">
+        <div id="map"></div>
+      </div>
+
+    </section>
+
+    <div class="side">
+      <section class="panel score-panel">
+        <h2>Bitstream score</h2>
+        <div class="score-box">
+          <div>
+            <div class="score-title">Current complete mission</div>
+            <div id="scoreBits">26 bits</div>
+          </div>
+          <div id="optimality">73%</div>
+        </div>
+        <div class="meter"><div id="meterFill"></div></div>
+        <div id="scoreText">7 bits above the mission optimum of 19 bits.</div>
+        <button id="executeBtn" class="execute">Run decoded transmission</button>
+      </section>
+
+      <section class="panel program-panel">
+        <h2>Program the rover</h2>
+        <div class="instructions">
+          Every command moves exactly one grid square. Left, Right and Back change the rover's heading before it moves.
+        </div>
+
+        <div class="command-grid">
+          <button class="cmd cmd-f" data-command="F">
+            <span class="icon">F</span>
+            <span>Forward<small>keep heading + move</small></span>
+          </button>
+          <button class="cmd cmd-l" data-command="L">
+            <span class="icon">L</span>
+            <span>Left<small>turn 90° left + move</small></span>
+          </button>
+          <button class="cmd cmd-r" data-command="R">
+            <span class="icon">R</span>
+            <span>Right<small>turn 90° right + move</small></span>
+          </button>
+          <button class="cmd cmd-b" data-command="B">
+            <span class="icon">B</span>
+            <span>Back<small>turn 180° + move</small></span>
+          </button>
+        </div>
+
+        <div class="program-tools">
+          <button id="undoBtn">Undo</button>
+          <button id="clearBtn">Clear</button>
+          <button id="starterBtn">Starter route</button>
+        </div>
+
+        <div id="program" aria-label="Programmed rover commands"></div>
+      </section>
+
+      <section class="panel code-panel">
+        <h2>Huffman codebook</h2>
+        <div class="instructions">
+          Assign a binary code to every command. The four codes must be prefix-free so the rover knows exactly when one instruction ends.
+        </div>
+
+        <div class="code-table">
+          <div class="code-row" data-command="F">
+            <div class="code-symbol">F</div>
+            <div class="code-name"><strong>Forward</strong><span id="countF">used 0 times</span></div>
+            <input class="code-input" id="codeF" maxlength="6" value="00" inputmode="numeric" aria-label="Forward Huffman code">
+          </div>
+          <div class="code-row" data-command="L">
+            <div class="code-symbol">L</div>
+            <div class="code-name"><strong>Left</strong><span id="countL">used 0 times</span></div>
+            <input class="code-input" id="codeL" maxlength="6" value="01" inputmode="numeric" aria-label="Left Huffman code">
+          </div>
+          <div class="code-row" data-command="R">
+            <div class="code-symbol">R</div>
+            <div class="code-name"><strong>Right</strong><span id="countR">used 0 times</span></div>
+            <input class="code-input" id="codeR" maxlength="6" value="10" inputmode="numeric" aria-label="Right Huffman code">
+          </div>
+          <div class="code-row" data-command="B">
+            <div class="code-symbol">B</div>
+            <div class="code-name"><strong>Back</strong><span id="countB">used 0 times</span></div>
+            <input class="code-input" id="codeB" maxlength="6" value="11" inputmode="numeric" aria-label="Back Huffman code">
+          </div>
+        </div>
+
+        <div id="codeStatus" class="code-status ok">Valid prefix-free codebook.</div>
+        <button id="resetCodesBtn">Reset to 2-bit codes</button>
+      </section>
+
+    </div>
+  </div>
+
+  <div class="footer-note">
+    Teaching model inspired by the prefix-code rover example in
+    <a href="https://www.youtube.com/watch?v=l6DKRf-fAAM&t=471s" target="_blank" rel="noopener">3Blue1Brown, “Reinventing Entropy”</a>.
+  </div>
+</main>
+
+<script>
+(() => {
+  const W = 8;
+  const H = 6;
+  const TILE = () => $("map").clientWidth / W;
+
+  const START = {x:0,y:1};
+  const GOAL = {x:7,y:1};
+  const START_HEADING = 1; // 0 north, 1 east, 2 south, 3 west
+  const MISSION_OPTIMUM = 19;
+
+  const OPEN = new Set([
+    "0,1","0,0","1,0","2,0","2,1","3,1","3,2","4,2",
+    "5,2","5,1","5,0","6,0","7,0","7,1",
+    "0,2","0,3","0,4","0,5","1,5","2,5","3,5","4,5",
+    "5,5","6,5","7,5","7,4","7,3","7,2",
+    "4,1","4,3","6,2","6,3","6,4"
+  ]);
+
+  const STARTER = ["L","R","F","R","L","R","L","F","L","F","R","F","R"];
+
+  const commandMeta = {
+    F:{name:"Forward", colour:"var(--f)", turn:0},
+    L:{name:"Left", colour:"var(--l)", turn:-1},
+    R:{name:"Right", colour:"var(--r)", turn:1},
+    B:{name:"Back", colour:"var(--b)", turn:2}
+  };
+
+  const vectors = [
+    {x:0,y:-1},
+    {x:1,y:0},
+    {x:0,y:1},
+    {x:-1,y:0}
+  ];
+
+  let program = [...STARTER];
+  let rover = {x:START.x,y:START.y,heading:START_HEADING};
+  let running = false;
+  let runId = 0;
+
+  const $ = id => document.getElementById(id);
+  const sleep = ms => new Promise(resolve => setTimeout(resolve,ms));
+
+  function key(x,y){ return `${x},${y}`; }
+
+  function svgRover(){
+    return `
+      <svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true">
+        <g>
+          <circle cx="24" cy="77" r="13" fill="#2d3036" stroke="#17191d" stroke-width="4"/>
+          <circle cx="76" cy="77" r="13" fill="#2d3036" stroke="#17191d" stroke-width="4"/>
+          <circle cx="24" cy="77" r="5" fill="#a7aab0"/>
+          <circle cx="76" cy="77" r="5" fill="#a7aab0"/>
+          <rect x="19" y="43" width="62" height="32" rx="9" fill="#e5ddd0" stroke="#615b55" stroke-width="4"/>
+          <rect x="28" y="50" width="44" height="17" rx="3" fill="#4e7d91"/>
+          <path d="M50 43V22" stroke="#615b55" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="50" cy="17" r="7" fill="#f4cf5a" stroke="#615b55" stroke-width="4"/>
+          <path d="M82 49L94 41L84 60Z" fill="#e15b3f" stroke="#615b55" stroke-width="3"/>
+          <path d="M35 40L50 28L65 40" fill="none" stroke="#615b55" stroke-width="4" stroke-linecap="round"/>
+        </g>
+      </svg>`;
+  }
+
+  function svgBeacon(){
+    return `
+      <svg viewBox="0 0 80 100" width="100%" height="100%" aria-hidden="true">
+        <path d="M38 85V32" stroke="#3d4944" stroke-width="7" stroke-linecap="round"/>
+        <path d="M40 35L66 46L40 58Z" fill="#65d488" stroke="#2e6740" stroke-width="4"/>
+        <ellipse cx="39" cy="88" rx="24" ry="7" fill="rgba(76,43,31,.35)"/>
+        <circle cx="39" cy="24" r="10" fill="#b9ffca" stroke="#39704b" stroke-width="4"/>
+        <circle cx="39" cy="24" r="18" fill="none" stroke="rgba(185,255,202,.35)" stroke-width="5"/>
+      </svg>`;
+  }
+
+  function buildMap(){
+    const map = $("map");
+    map.innerHTML = "";
+
+    for(let y=0;y<H;y++){
+      for(let x=0;x<W;x++){
+        const tile = document.createElement("div");
+        tile.className = "tile " + (OPEN.has(key(x,y)) ? "open" : "blocked");
+        tile.dataset.x = x;
+        tile.dataset.y = y;
+        if(x===START.x && y===START.y) tile.classList.add("start");
+        if(x===GOAL.x && y===GOAL.y) tile.classList.add("goal");
+        map.appendChild(tile);
+      }
+    }
+
+    const beacon = document.createElement("div");
+    beacon.className = "goal-beacon";
+    beacon.innerHTML = svgBeacon();
+    map.appendChild(beacon);
+
+    const roverEl = document.createElement("div");
+    roverEl.id = "rover";
+    roverEl.className = "rover";
+    roverEl.innerHTML = svgRover();
+    map.appendChild(roverEl);
+
+    positionBeacon();
+    renderRover(false);
+  }
+
+  function positionBeacon(){
+    const t = TILE();
+    document.documentElement.style.setProperty("--tile", `${t}px`);
+    const beacon = document.querySelector(".goal-beacon");
+    if(!beacon) return;
+    const width = t * .69;
+    const height = t * .83;
+    beacon.style.left = `${GOAL.x*t + (t-width)/2}px`;
+    beacon.style.top = `${GOAL.y*t + (t-height)/2}px`;
+  }
+
+  function renderRover(animate=true){
+    const el = $("rover");
+    const t = TILE();
+    const size = t * .83;
+    el.style.transitionDuration = animate ? "" : "0s";
+    el.style.left = `${rover.x*t + (t-size)/2}px`;
+    el.style.top = `${rover.y*t + (t-size)/2}px`;
+    // SVG points visually upward; rotate to heading.
+    el.style.transform = `rotate(${rover.heading*90}deg)`;
+    if(!animate){
+      requestAnimationFrame(()=> el.style.transitionDuration = "");
+    }
+  }
+
+  function resetRover(){
+    rover = {x:START.x,y:START.y,heading:START_HEADING};
+    const el = $("rover");
+    if(el) el.classList.remove("crash");
+    renderRover(false);
+  }
+
+  function applyCommand(state,command){
+    const turn = commandMeta[command].turn;
+    const heading = (state.heading + turn + 4) % 4;
+    const v = vectors[heading];
+    return {
+      x:state.x + v.x,
+      y:state.y + v.y,
+      heading
+    };
+  }
+
+  function simulate(commands){
+    let s = {x:START.x,y:START.y,heading:START_HEADING};
+    for(let i=0;i<commands.length;i++){
+      const next = applyCommand(s,commands[i]);
+      if(!OPEN.has(key(next.x,next.y))){
+        return {valid:false,reaches:false,crashIndex:i,state:s};
+      }
+      s = next;
+    }
+    return {
+      valid:true,
+      reaches:s.x===GOAL.x && s.y===GOAL.y,
+      crashIndex:-1,
+      state:s
+    };
+  }
+
+  function counts(){
+    const c = {F:0,L:0,R:0,B:0};
+    program.forEach(cmd=>c[cmd]++);
+    return c;
+  }
+
+  function getCodes(){
+    return {
+      F:$("codeF").value.trim(),
+      L:$("codeL").value.trim(),
+      R:$("codeR").value.trim(),
+      B:$("codeB").value.trim()
+    };
+  }
+
+  function validateCodes(){
+    const codes = getCodes();
+    const entries = Object.entries(codes);
+    let message = "";
+
+    for(const [cmd,code] of entries){
+      if(!/^[01]+$/.test(code)){
+        message = "Every command needs a non-empty binary code containing only 0 and 1.";
+        return {valid:false,message,codes};
+      }
+    }
+
+    for(let i=0;i<entries.length;i++){
+      for(let j=0;j<entries.length;j++){
+        if(i===j) continue;
+        const [a,ca] = entries[i];
+        const [b,cb] = entries[j];
+        if(cb.startsWith(ca)){
+          message = `${a} = ${ca} is a prefix of ${b} = ${cb}. The decoder would not know where to stop.`;
+          return {valid:false,message,codes};
+        }
+      }
+    }
+
+    return {valid:true,message:"Valid prefix-free codebook.",codes};
+  }
+
+  function encodedBits(codes){
+    return program.map(cmd=>codes[cmd]).join("");
+  }
+
+  function renderProgram(){
+    const box = $("program");
+    box.innerHTML = "";
+
+    if(program.length===0){
+      const empty = document.createElement("span");
+      empty.style.color = "var(--muted)";
+      empty.style.fontSize = "12px";
+      empty.textContent = "No commands yet.";
+      box.appendChild(empty);
+    }else{
+      program.forEach(cmd=>{
+        const chip = document.createElement("div");
+        chip.className = `program-chip chip-${cmd}`;
+        chip.textContent = cmd;
+        chip.title = commandMeta[cmd].name;
+        box.appendChild(chip);
+      });
+    }
+
+    const c = counts();
+    ["F","L","R","B"].forEach(cmd=>{
+      $(`count${cmd}`).textContent = `used ${c[cmd]} ${c[cmd]===1 ? "time" : "times"}`;
+    });
+  }
+
+  function renderCodeValidation(result){
+    const status = $("codeStatus");
+    status.textContent = result.message;
+    status.className = "code-status " + (result.valid ? "ok" : "bad");
+
+    document.querySelectorAll(".code-input").forEach(el=>el.classList.remove("invalid"));
+    if(!result.valid){
+      document.querySelectorAll(".code-input").forEach(el=>el.classList.add("invalid"));
+    }
+  }
+
+  function renderTapeString(bits){
+    const tape = $("bitTape");
+    tape.innerHTML = "";
+    for(const bit of bits){
+      const span = document.createElement("span");
+      span.className = "bit";
+      span.textContent = bit;
+      tape.appendChild(span);
+    }
+  }
+
+  function renderScore(codeResult){
+    const sim = simulate(program);
+    const scoreBits = $("scoreBits");
+    const optimality = $("optimality");
+    const meter = $("meterFill");
+    const text = $("scoreText");
+
+    scoreBits.className = "";
+
+    if(!codeResult.valid){
+      scoreBits.textContent = "No score";
+      optimality.textContent = "—";
+      meter.style.width = "0%";
+      text.textContent = "The codebook must be prefix-free before the bitstream can be scored.";
+      $("executeBtn").disabled = true;
+      return;
+    }
+
+    const bits = encodedBits(codeResult.codes);
+    $("bitCount").textContent = `${bits.length} ${bits.length===1 ? "bit" : "bits"}`;
+
+    if(!sim.valid){
+      scoreBits.textContent = "No score";
+      optimality.textContent = "—";
+      meter.style.width = "0%";
+      text.textContent = "This program hits an obstacle, so it is not a complete mission.";
+      $("executeBtn").disabled = false;
+      return;
+    }
+
+    if(!sim.reaches){
+      scoreBits.textContent = "No score";
+      optimality.textContent = "—";
+      meter.style.width = "0%";
+      text.textContent = "Reach the beacon to score the transmitted bitstream.";
+      $("executeBtn").disabled = false;
+      return;
+    }
+
+    const pct = Math.min(100, MISSION_OPTIMUM / bits.length * 100);
+    scoreBits.textContent = `${bits.length} bits`;
+    optimality.textContent = `${pct.toFixed(0)}%`;
+    meter.style.width = `${pct}%`;
+
+    const gap = bits.length - MISSION_OPTIMUM;
+    if(gap===0){
+      scoreBits.className = "good";
+      text.textContent = "Mission optimum reached: no valid transmission can use fewer than 19 bits.";
+    }else{
+      scoreBits.className = "";
+      text.textContent = `${gap} ${gap===1 ? "bit" : "bits"} above the mission optimum of 19 bits.`;
+    }
+    $("executeBtn").disabled = false;
+  }
+
+  function update(){
+    if(running) return;
+    renderProgram();
+
+    const result = validateCodes();
+    renderCodeValidation(result);
+
+    if(result.valid){
+      const bits = encodedBits(result.codes);
+      renderTapeString(bits);
+      $("bitCount").textContent = `${bits.length} ${bits.length===1 ? "bit" : "bits"}`;
+      $("decoderStatus").textContent = "Ready. Run the transmission to watch the rover decode it from left to right.";
+    }else{
+      $("bitTape").innerHTML = "";
+      $("bitCount").textContent = "invalid";
+      $("decoderStatus").textContent = "The rover cannot decode an ambiguous codebook.";
+    }
+
+    renderScore(result);
+  }
+
+  function addCommand(cmd){
+    if(running) return;
+    program.push(cmd);
+    resetRover();
+    update();
+  }
+
+  document.querySelectorAll(".cmd").forEach(btn=>{
+    btn.addEventListener("click",()=>addCommand(btn.dataset.command));
+  });
+
+  $("undoBtn").addEventListener("click",()=>{
+    if(running) return;
+    program.pop();
+    resetRover();
+    update();
+  });
+
+  $("clearBtn").addEventListener("click",()=>{
+    if(running) return;
+    program = [];
+    resetRover();
+    update();
+  });
+
+  $("starterBtn").addEventListener("click",()=>{
+    if(running) return;
+    program = [...STARTER];
+    resetRover();
+    update();
+  });
+
+  $("resetRoverBtn").addEventListener("click",()=>{
+    runId++;
+    running = false;
+    resetRover();
+    setEditingEnabled(true);
+    update();
+  });
+
+  $("resetCodesBtn").addEventListener("click",()=>{
+    if(running) return;
+    $("codeF").value = "00";
+    $("codeL").value = "01";
+    $("codeR").value = "10";
+    $("codeB").value = "11";
+    update();
+  });
+
+  document.querySelectorAll(".code-input").forEach(input=>{
+    input.addEventListener("input",()=>{
+      if(running) return;
+      input.value = input.value.replace(/[^01]/g,"");
+      resetRover();
+      update();
+    });
+  });
+
+  function setEditingEnabled(enabled){
+    document.querySelectorAll(".cmd,.program-tools button,.code-input,#resetCodesBtn")
+      .forEach(el=>el.disabled=!enabled);
+    $("executeBtn").disabled=!enabled;
+  }
+
+  async function execute(){
+    if(running) return;
+
+    const validation = validateCodes();
+    if(!validation.valid) return;
+
+    const thisRun = ++runId;
+    running = true;
+    setEditingEnabled(false);
+    resetRover();
+
+    const fullBits = encodedBits(validation.codes);
+    renderTapeString(fullBits);
+
+    let buffer = "";
+    let checked = [];
+    let stepNumber = 0;
+
+    $("decoderStatus").textContent = "Reading the first bit…";
+
+    while($("bitTape").children.length > 0){
+      if(thisRun !== runId) return;
+
+      const bitsNow = [...$("bitTape").children];
+      const nextBitEl = bitsNow[checked.length];
+
+      if(!nextBitEl){
+        break;
+      }
+
+      nextBitEl.classList.add("checking");
+      checked.push(nextBitEl);
+      buffer += nextBitEl.textContent;
+
+      const exact = Object.entries(validation.codes).find(([,code])=>code===buffer);
+
+      if(exact){
+        const [cmd] = exact;
+
+        checked.forEach(el=>{
+          el.classList.remove("checking");
+          el.classList.add(`match-${cmd.toLowerCase()}`);
+        });
+
+        $("decoderStatus").textContent =
+          `${buffer} → ${commandMeta[cmd].name}. Code found; execute the command.`;
+
+        await sleep(260);
+        if(thisRun !== runId) return;
+
+        const next = applyCommand(rover,cmd);
+        stepNumber++;
+
+        if(!OPEN.has(key(next.x,next.y))){
+          $("rover").classList.add("crash");
+          $("decoderStatus").textContent =
+            `${buffer} decoded correctly, but the rover hit an obstacle. Mission failed.`;
+          running = false;
+          setEditingEnabled(true);
+          renderScore(validation);
+          return;
+        }
+
+        rover = next;
+        renderRover(true);
+        await sleep(300);
+        if(thisRun !== runId) return;
+
+        checked.forEach(el=>el.classList.add("consumed"));
+        await sleep(170);
+        if(thisRun !== runId) return;
+
+        checked.forEach(el=>el.remove());
+        buffer = "";
+        checked = [];
+
+        if($("bitTape").children.length){
+          $("decoderStatus").textContent = "Instruction removed. Start decoding the remaining bits from the left.";
+          await sleep(100);
+        }
+      }else{
+        const stillPossible = Object.values(validation.codes).some(code=>code.startsWith(buffer));
+
+        if(!stillPossible){
+          $("decoderStatus").textContent = `${buffer} does not match the beginning of any command.`;
+          running = false;
+          setEditingEnabled(true);
+          return;
+        }
+
+        $("decoderStatus").textContent = `${buffer} is not a complete command yet. Read the next bit.`;
+        await sleep(190);
+      }
+    }
+
+    if(thisRun !== runId) return;
+
+    running = false;
+    setEditingEnabled(true);
+
+    if(rover.x===GOAL.x && rover.y===GOAL.y){
+      const bits = fullBits.length;
+      if(bits===MISSION_OPTIMUM){
+        $("decoderStatus").textContent =
+          `Beacon reached. Transmission decoded completely in ${bits} bits — mission optimum.`;
+      }else{
+        $("decoderStatus").textContent =
+          `Beacon reached. Transmission decoded completely in ${bits} bits.`;
+      }
+    }else{
+      $("decoderStatus").textContent =
+        "Transmission decoded completely, but the rover did not finish at the beacon.";
+    }
+
+    renderScore(validation);
+  }
+
+  $("executeBtn").addEventListener("click",execute);
+
+  window.addEventListener("resize",()=>{
+    positionBeacon();
+    renderRover(false);
+  });
+
+  // Keyboard shortcuts when focus is not inside a code input.
+  window.addEventListener("keydown",e=>{
+    if(running || e.target.matches("input")) return;
+    const key = e.key.toUpperCase();
+    if(["F","L","R","B"].includes(key)){
+      e.preventDefault();
+      addCommand(key);
+    }
+    if(e.key==="Backspace"){
+      e.preventDefault();
+      program.pop();
+      resetRover();
+      update();
+    }
+  });
+
+  buildMap();
+  update();
+})();
+</script>
+</body>
+</html>

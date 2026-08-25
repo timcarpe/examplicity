@@ -23,6 +23,7 @@
   --network-grid:#1b2732;
   --link:#536776;
   --packet:#4aa3ff;
+  --mesh:#8d72d6;
 }
 *{box-sizing:border-box}
 html,body{min-height:100%}
@@ -50,6 +51,8 @@ button{
 button:hover:not(:disabled){border-color:#9ba8b2}
 button.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:750}
 button.active-tool{background:var(--accent-soft);border-color:#8eafea;color:#1d58bb;font-weight:800}
+button.mesh-layer-active{background:#f3effd;border-color:#b7a4e8;color:#6748ad;font-weight:800}
+button.mesh-layer-complete{background:var(--good-soft);border-color:#a9d4b9;color:var(--good);font-weight:800}
 button.danger{color:var(--bad)}
 
 .mission{
@@ -117,6 +120,7 @@ button.danger{color:var(--bad)}
 .packet-layer{z-index:7;pointer-events:none}
 .link{fill:none;stroke:var(--link);stroke-width:4;stroke-linecap:round;stroke-linejoin:round;transition:.14s}
 .link.bus-branch{stroke:#627887;stroke-width:3.5}
+.link.mesh-layer{stroke:var(--mesh);stroke-width:4.5;filter:drop-shadow(0 0 3px rgba(141,114,214,.35))}
 .link.active{stroke:var(--packet);stroke-width:6;filter:drop-shadow(0 0 5px var(--packet));stroke-dasharray:10 8;animation:linkFlow .65s linear infinite}
 .link-hit{fill:none;stroke:transparent;stroke-width:18;pointer-events:stroke;cursor:pointer}
 .canvas.delete-mode .link-hit:hover{stroke:rgba(255,92,76,.24)}
@@ -138,6 +142,13 @@ button.danger{color:var(--bad)}
 .canvas:not(.cable-mode):not(.delete-mode) .network-node{cursor:grab}
 .canvas:not(.cable-mode):not(.delete-mode) .network-node:active{cursor:grabbing}
 .network-node.connect-source{filter:drop-shadow(0 0 9px #ffd76b)}
+.network-node.mesh-target .node-shell{box-shadow:0 0 0 3px rgba(141,114,214,.22),0 7px 16px rgba(0,0,0,.26)}
+.network-node.mesh-target::after{
+  content:"mesh";position:absolute;left:50%;top:-17px;transform:translateX(-50%);padding:2px 5px;
+  border:1px solid #b7a4e8;border-radius:999px;background:#f3effd;color:#6748ad;
+  font-size:7px;font-weight:900;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap
+}
+.network-node.mesh-target.mesh-complete::after{content:"meshed";border-color:#a9d4b9;background:var(--good-soft);color:var(--good)}
 .node-shell{position:relative;border:2px solid #718593;background:linear-gradient(145deg,#f5f8fa,#cbd6dd);box-shadow:0 7px 16px rgba(0,0,0,.26);transition:.15s}
 .node-title{font-size:9px;font-weight:900;white-space:nowrap}
 .node-status{margin-top:3px;color:#60707b;font-size:7px;font-weight:850;letter-spacing:.03em;text-transform:uppercase;text-align:center}
@@ -263,7 +274,7 @@ button.danger{color:var(--bad)}
 <body>
 <main>
   <h1>Network Topology Builder</h1>
-  <div class="sub">Build guided bus, star and mesh networks, then use Hybrid as an open network playground. Send packets through whatever you create.</div>
+  <div class="sub">Build bus, star and mesh networks, then combine them in Hybrid. Send packets through whatever you create.</div>
 
   <section class="panel mission">
     <div>
@@ -281,7 +292,7 @@ button.danger{color:var(--bad)}
         <span>Drag a part onto the workspace, or tap it to add.</span>
       </div>
       <div id="partList" class="part-list"></div>
-      <div class="palette-note">Choose Cable, then drag between two parts. You can also select one part and then another.</div>
+      <div id="paletteNote" class="palette-note">Choose Cable, then drag between two parts. You can also select one part and then another.</div>
     </aside>
 
     <section class="panel workspace">
@@ -290,6 +301,7 @@ button.danger{color:var(--bad)}
           <button id="moveTool" class="active-tool">Move</button>
           <button id="cableTool">Cable</button>
           <button id="deleteTool" class="danger">Delete</button>
+          <button id="meshLayerTool" hidden title="Use the stations already here and add every direct link between them.">Mesh layer</button>
         </div>
         <div class="action-group">
           <button id="undoButton" disabled>Undo</button>
@@ -321,7 +333,7 @@ button.danger{color:var(--bad)}
         <div id="journeyText"><strong>Topology ready.</strong> Choose two stations and send a packet.</div>
       </div>
 
-      <div class="teaching-note">Stations send and receive. Switches, bridges and shared buses can carry packets onward. One packet is shown at a time so its journey stays clear.</div>
+      <div class="teaching-note">Stations send and receive. Switches, bridges and shared buses can carry packets onward. In Hybrid, add direct mesh links over an existing bus or star and compare which route the packet chooses.</div>
     </section>
   </div>
 </main>
@@ -355,7 +367,7 @@ button.danger{color:var(--bad)}
     },
     {
       id:"hybrid", name:"Hybrid", title:"Experiment with a hybrid network",
-      hint:"Build freely with stations, switches, bridges and shared buses. The packet route comes from your network.",
+      hint:"Keep a bus, star or mesh and build another pattern over it. Direct links can form a mesh while switches, bridges and buses carry other routes.",
       open:true,
       parts:{station:{min:0,max:24},switch:{min:0,max:8},bus:{min:0,max:5},bridge:{min:0,max:8}}
     }
@@ -432,6 +444,7 @@ button.danger{color:var(--bad)}
   let running = false;
   let linkElements = new Map();
   let animationToken = 0;
+  let meshLayerTargets = null;
 
   function currentTask(){ return TASKS[taskIndex]; }
   function edgeKey(a,b){ return [a,b].sort().join("|"); }
@@ -461,6 +474,7 @@ button.danger{color:var(--bad)}
     edges = new Set(snapshotValue.edges);
     topologyValid = false;
     connectClickSource = null;
+    pruneMeshLayerTargets();
     renderAll();
     hideTestPanel();
     setFeedback("", "Topology changed.", "Check it again when you are ready.");
@@ -480,6 +494,7 @@ button.danger{color:var(--bad)}
     edges = new Set();
     topologyValid = false;
     connectClickSource = null;
+    meshLayerTargets = null;
     hideTestPanel();
     renderAll();
     setStartingFeedback();
@@ -487,17 +502,44 @@ button.danger{color:var(--bad)}
 
   function taskSwitch(index){
     if(running || index===taskIndex) return;
+    const previousTask=currentTask();
+    const nextTask=TASKS[index];
+    const keepExisting=nextTask.id==="hybrid" && (nodes.size>0 || edges.size>0);
+
     taskIndex = index;
     history = [];
     $("undoButton").disabled = true;
-    nodes = new Map();
-    edges = new Set();
+    meshLayerTargets = null;
+    if(!keepExisting){
+      nodes = new Map();
+      edges = new Set();
+    }else{
+      nodes.forEach(node=>{
+        if(node.type==="bus" && !node.span) node.span=previousTask.id==="bus"?"wide":"compact";
+      });
+      if(previousTask.id==="mesh"){
+        const carriedStations=[...nodes.values()].filter(node=>node.type==="station");
+        if(carriedStations.length>=3) meshLayerTargets=new Set(carriedStations.map(node=>node.id));
+      }
+    }
     topologyValid = false;
     connectClickSource = null;
     setTool("move");
     renderAll();
     hideTestPanel();
-    setStartingFeedback();
+
+    if(keepExisting){
+      const stations=stationNodes();
+      setFeedback(
+        "",
+        `${previousTask.name} kept as the starting layer.`,
+        stations.length>=3
+          ? "Select Mesh layer to connect these same stations directly on top of the existing network, or continue building freely."
+          : "Add more parts or direct cables on top. Switches and bridges can also form a meshed backbone."
+      );
+    }else{
+      setStartingFeedback();
+    }
   }
 
   function renderTaskHeader(){
@@ -506,6 +548,7 @@ button.danger{color:var(--bad)}
     $("missionTitle").textContent=task.title;
     $("missionHint").textContent=task.hint;
     $("checkButton").textContent=task.open?"Test network":"Check topology";
+    updateMeshLayerButton();
     const root=$("taskTabs");
     root.innerHTML="";
     TASKS.forEach((item,index)=>{
@@ -513,6 +556,12 @@ button.danger{color:var(--bad)}
       button.className="task-tab"+(index===taskIndex?" active":"")+(!item.open&&completed.has(item.id)?" complete":"");
       button.textContent=item.name;
       button.disabled=running;
+      if(item.open && !task.open && nodes.size){
+        button.title="Keep this network and continue building on it in Hybrid.";
+      }
+      button.title=item.id==="hybrid"
+        ? "Open the current topology in Hybrid and continue building on top of it."
+        : item.title;
       button.addEventListener("click",()=>taskSwitch(index));
       root.appendChild(button);
     });
@@ -521,6 +570,12 @@ button.danger{color:var(--bad)}
   function renderPalette(){
     const root=$("partList");
     root.innerHTML="";
+    const note=$("paletteNote");
+    if(note){
+      note.textContent=currentTask().open
+        ? "Use Cable between any two parts. Mesh layer highlights the existing stations and tracks the direct links still needed."
+        : "Choose Cable, then drag between two parts. You can also select one part and then another.";
+    }
     Object.keys(currentTask().parts).forEach(type=>{
       const meta=PARTS[type];
       const remaining=availableCount(type);
@@ -548,7 +603,7 @@ button.danger{color:var(--bad)}
     const canvas=$("canvas");
     const half=nodeHalfSize(type);
     for(const existing of nodes.values()){
-      const otherHalf=nodeHalfSize(existing.type);
+      const otherHalf=nodeHalfSize(existing);
       const dx=Math.abs(x-existing.x)/100*canvas.clientWidth;
       const dy=Math.abs(y-existing.y)/100*canvas.clientHeight;
       if(dx<half.x+otherHalf.x+12 && dy<half.y+otherHalf.y+12) return false;
@@ -605,10 +660,15 @@ button.danger{color:var(--bad)}
     if(running || availableCount(type)<=0) return;
     pushHistory();
     const id=nextNodeId(type);
-    const xMargin=type==="bus"?(currentTask().id==="bus"?43:25):type==="switch"?9:6;
-    nodes.set(id,{id,type,label:labelForType(type),x:clamp(x,xMargin,100-xMargin),y:clamp(y,8,92)});
+    const wideBus=type==="bus"&&currentTask().id==="bus";
+    const xMargin=type==="bus"?(wideBus?43:25):type==="switch"?9:6;
+    const node={id,type,label:labelForType(type),x:clamp(x,xMargin,100-xMargin),y:clamp(y,8,92)};
+    if(type==="bus") node.span=wideBus?"wide":"compact";
+    nodes.set(id,node);
+    if(meshLayerTargets&&type==="station") meshLayerTargets.add(id);
     invalidateTopology("Part added.","Connect it when the layout is ready.");
     renderAll();
+    if(meshLayerTargets) showMeshLayerFeedback();
   }
 
   function deleteNode(id){
@@ -616,8 +676,10 @@ button.danger{color:var(--bad)}
     pushHistory();
     nodes.delete(id);
     edges=new Set([...edges].filter(key=>!edgeNodes(key).includes(id)));
+    pruneMeshLayerTargets();
     invalidateTopology("Part removed.","Check the topology again after rebuilding.");
     renderAll();
+    if(meshLayerTargets) showMeshLayerFeedback();
   }
 
   function addEdge(a,b){
@@ -630,8 +692,16 @@ button.danger{color:var(--bad)}
     pushHistory();
     edges.add(key);
     connectClickSource=null;
-    invalidateTopology("Cable connected.","Continue building, then check the topology.");
+    const directMesh=currentTask().open&&
+      nodeById(a)?.type==="station"&&nodeById(b)?.type==="station";
+    invalidateTopology(
+      directMesh?"Direct mesh link added.":"Cable connected.",
+      directMesh
+        ? "The existing topology remains available, while these two stations now also have their own direct route."
+        : "Continue building, then check the topology."
+    );
     renderAll();
+    if(meshLayerTargets) showMeshLayerFeedback();
   }
 
   function deleteEdge(key){
@@ -640,6 +710,7 @@ button.danger{color:var(--bad)}
     edges.delete(key);
     invalidateTopology("Cable removed.","Check the topology again after rebuilding.");
     renderAll();
+    if(meshLayerTargets) showMeshLayerFeedback();
   }
 
   function invalidateTopology(title,detail){
@@ -692,8 +763,11 @@ button.danger{color:var(--bad)}
     root.innerHTML="";
     nodes.forEach(node=>{
       const element=document.createElement("div");
+      const meshProgress=meshLayerProgress();
       element.className=`network-node ${node.type}-node`+
-        (node.type==="bus"&&currentTask().id==="bus"?" wide-bus":"")+
+        (node.type==="bus"&&node.span==="wide"?" wide-bus":"")+
+        (meshLayerTargets?.has(node.id)?" mesh-target":"")+
+        (meshLayerTargets?.has(node.id)&&meshProgress.complete?" mesh-complete":"")+
         (connectClickSource===node.id?" connect-source":"");
       element.dataset.id=node.id;
       element.style.left=node.x+"%";
@@ -722,16 +796,26 @@ button.danger{color:var(--bad)}
     svg.innerHTML="";
     linkElements=new Map();
 
-    edges.forEach(key=>{
+    const orderedEdges=[...edges].sort((first,second)=>{
+      const firstPair=edgeNodes(first).map(nodeById);
+      const secondPair=edgeNodes(second).map(nodeById);
+      const firstMesh=currentTask().open&&firstPair.every(node=>node?.type==="station");
+      const secondMesh=currentTask().open&&secondPair.every(node=>node?.type==="station");
+      return Number(firstMesh)-Number(secondMesh);
+    });
+
+    orderedEdges.forEach(key=>{
       const [a,b]=edgeNodes(key);
       if(!nodes.has(a)||!nodes.has(b)) return;
       const points=edgePoints(a,b);
       const route=pathData(points);
       const busBranch=nodeById(a)?.type==="bus"||nodeById(b)?.type==="bus";
+      const meshLayerEdge=currentTask().open&&
+        nodeById(a)?.type==="station"&&nodeById(b)?.type==="station";
       const group=document.createElementNS(svgNS,"g");
       group.dataset.key=key;
       const visible=document.createElementNS(svgNS,"path");
-      visible.setAttribute("class","link"+(busBranch?" bus-branch":""));
+      visible.setAttribute("class","link"+(busBranch?" bus-branch":"")+(meshLayerEdge?" mesh-layer":""));
       visible.setAttribute("d",route);
       visible.dataset.key=key;
       const hit=document.createElementNS(svgNS,"path");
@@ -778,18 +862,22 @@ button.danger{color:var(--bad)}
     return {x:canvas.clientWidth*node.x/100,y:canvas.clientHeight*node.y/100};
   }
 
-  function nodeHalfSize(type){
+  function nodeHalfSize(value){
+    const type=typeof value==="string"?value:value.type;
+    const wideBus=type==="bus"&&(
+      typeof value==="object"?value.span==="wide":currentTask().id==="bus"
+    );
     return {
       station:{x:52,y:37},
       switch:{x:76,y:35},
       bridge:{x:56,y:33},
-      bus:{x:currentTask().id==="bus"?410:230,y:49}
+      bus:{x:wideBus?410:230,y:49}
     }[type];
   }
 
   function normalAnchor(node,toward){
     const center=nodeCenter(node);
-    const half=nodeHalfSize(node.type);
+    const half=nodeHalfSize(node);
     const dx=toward.x-center.x;
     const dy=toward.y-center.y;
     if(Math.abs(dx)<.01&&Math.abs(dy)<.01) return center;
@@ -801,7 +889,7 @@ button.danger{color:var(--bad)}
 
   function busGeometry(bus){
     const center=nodeCenter(bus);
-    const half=currentTask().id==="bus"?377:197;
+    const half=bus.span==="wide"?377:197;
     return {center,left:center.x-half,right:center.x+half,y:center.y+4};
   }
 
@@ -828,8 +916,130 @@ button.danger{color:var(--bad)}
     return {x:geometry.left+margin+usable*(index/(attached.length-1)),y:geometry.y};
   }
 
+  function stationGeometryOrder(){
+    return stationNodes().sort((first,second)=>{
+      const vertical=first.y-second.y;
+      return Math.abs(vertical)>4?vertical:first.x-second.x || first.id.localeCompare(second.id);
+    });
+  }
+
+  function directStationLinkOffset(key){
+    const order=stationGeometryOrder();
+    const index=new Map(order.map((node,position)=>[node.id,position]));
+    const [first,second]=edgeNodes(key);
+    const span=Math.max(1,Math.abs((index.get(first)??0)-(index.get(second)??0)));
+    const sameSpan=[...edges]
+      .filter(candidate=>{
+        const [a,b]=edgeNodes(candidate);
+        if(nodeById(a)?.type!=="station"||nodeById(b)?.type!=="station") return false;
+        return Math.max(1,Math.abs((index.get(a)??0)-(index.get(b)??0)))===span;
+      })
+      .sort();
+    const rank=Math.max(0,sameSpan.indexOf(key));
+    return Math.min(165,36+span*22+rank*11);
+  }
+
+  function directStationPeers(nodeId){
+    return neighbours(nodeId)
+      .map(id=>nodeById(id))
+      .filter(node=>node?.type==="station")
+      .sort((first,second)=>first.x-second.x || first.y-second.y || first.id.localeCompare(second.id));
+  }
+
+  function meshPortOffset(nodeId,peerId,axis){
+    const peers=directStationPeers(nodeId).sort((first,second)=>
+      axis==="x"
+        ? first.x-second.x || first.id.localeCompare(second.id)
+        : first.y-second.y || first.id.localeCompare(second.id)
+    );
+    const index=peers.findIndex(node=>node.id===peerId);
+    if(index<0||peers.length<2) return 0;
+    return clamp((index-(peers.length-1)/2)*14,-28,28);
+  }
+
+  function directStationMeshPoints(aId,bId){
+    const key=edgeKey(aId,bId);
+    const [firstId,secondId]=edgeNodes(key);
+    const first=nodeById(firstId),second=nodeById(secondId);
+    const firstCenter=nodeCenter(first),secondCenter=nodeCenter(second);
+    const offset=directStationLinkOffset(key);
+    const canvas=$("canvas");
+    const width=canvas.clientWidth;
+    const height=canvas.clientHeight;
+    const margin=24;
+    const sameRow=Math.abs(firstCenter.y-secondCenter.y)<28;
+    const sameColumn=Math.abs(firstCenter.x-secondCenter.x)<34;
+
+    if(sameRow){
+      const spaceDown=height-Math.max(firstCenter.y,secondCenter.y)-margin;
+      const spaceUp=Math.min(firstCenter.y,secondCenter.y)-margin;
+      const sign=spaceDown>=spaceUp?1:-1;
+      const laneY=clamp((firstCenter.y+secondCenter.y)/2+sign*offset,margin,height-margin);
+      const half=nodeHalfSize(first);
+      const start={
+        x:firstCenter.x+meshPortOffset(firstId,secondId,"x"),
+        y:firstCenter.y+sign*half.y
+      };
+      const end={
+        x:secondCenter.x+meshPortOffset(secondId,firstId,"x"),
+        y:secondCenter.y+sign*nodeHalfSize(second).y
+      };
+      const points=[start,{x:start.x,y:laneY},{x:end.x,y:laneY},end];
+      return aId===firstId?points:[...points].reverse();
+    }
+
+    if(sameColumn){
+      const spaceRight=width-Math.max(firstCenter.x,secondCenter.x)-margin;
+      const spaceLeft=Math.min(firstCenter.x,secondCenter.x)-margin;
+      const sign=spaceRight>=spaceLeft?1:-1;
+      const laneX=clamp((firstCenter.x+secondCenter.x)/2+sign*offset,margin,width-margin);
+      const start={
+        x:firstCenter.x+sign*nodeHalfSize(first).x,
+        y:firstCenter.y+meshPortOffset(firstId,secondId,"y")
+      };
+      const end={
+        x:secondCenter.x+sign*nodeHalfSize(second).x,
+        y:secondCenter.y+meshPortOffset(secondId,firstId,"y")
+      };
+      const points=[start,{x:laneX,y:start.y},{x:laneX,y:end.y},end];
+      return aId===firstId?points:[...points].reverse();
+    }
+
+    const dx=secondCenter.x-firstCenter.x;
+    const dy=secondCenter.y-firstCenter.y;
+    const length=Math.max(1,Math.hypot(dx,dy));
+    const normal={x:-dy/length,y:dx/length};
+    const center={x:width/2,y:height/2};
+    const candidate=sign=>{
+      const midpoint={
+        x:(firstCenter.x+secondCenter.x)/2+normal.x*offset*sign,
+        y:(firstCenter.y+secondCenter.y)/2+normal.y*offset*sign
+      };
+      const boundary=Math.min(
+        midpoint.x-margin,width-margin-midpoint.x,
+        midpoint.y-margin,height-margin-midpoint.y
+      );
+      const centreDistance=Math.hypot(midpoint.x-center.x,midpoint.y-center.y);
+      return {sign,score:(boundary<0?-10000+boundary:centreDistance+Math.min(boundary,90)*2)};
+    };
+    const sign=[candidate(1),candidate(-1)].sort((a,b)=>b.score-a.score)[0].sign;
+    const rawBend=ratio=>({
+      x:clamp(firstCenter.x+dx*ratio+normal.x*offset*sign,margin,width-margin),
+      y:clamp(firstCenter.y+dy*ratio+normal.y*offset*sign,margin,height-margin)
+    });
+    const firstBend=rawBend(.23);
+    const secondBend=rawBend(.77);
+    const start=normalAnchor(first,firstBend);
+    const end=normalAnchor(second,secondBend);
+    const points=[start,firstBend,secondBend,end];
+    return aId===firstId?points:[...points].reverse();
+  }
+
   function edgePoints(aId,bId){
     const a=nodeById(aId),b=nodeById(bId);
+    if(currentTask().open&&a.type==="station"&&b.type==="station"){
+      return directStationMeshPoints(aId,bId);
+    }
     if(a.type==="bus"){
       const tap=busTap(a,b);
       const end=normalAnchor(b,tap);
@@ -932,7 +1142,7 @@ button.danger{color:var(--bad)}
       if(!nodeDrag.historyPushed){pushHistory();nodeDrag.historyPushed=true;}
     }
     if(!nodeDrag.moved) return;
-    const margin=node.type==="bus"?(currentTask().id==="bus"?43:25):6;
+    const margin=node.type==="bus"?(node.span==="wide"?43:25):6;
     node.x=clamp(nodeDrag.startX+dx,margin,100-margin);
     node.y=clamp(nodeDrag.startY+dy,node.type==="bus"?10:7,node.type==="bus"?90:93);
     const element=$("nodeLayer").querySelector(`[data-id="${node.id}"]`);
@@ -1009,6 +1219,80 @@ button.danger{color:var(--bad)}
     $("deleteTool").classList.toggle("active-tool",tool==="delete");
     $("canvas").classList.toggle("cable-mode",tool==="cable");
     $("canvas").classList.toggle("delete-mode",tool==="delete");
+  }
+
+  function pruneMeshLayerTargets(){
+    if(!meshLayerTargets) return;
+    [...meshLayerTargets].forEach(id=>{
+      if(nodeById(id)?.type!=="station") meshLayerTargets.delete(id);
+    });
+    if(meshLayerTargets.size<3) meshLayerTargets=null;
+  }
+
+  function meshLayerProgress(){
+    if(!meshLayerTargets) return {active:false,count:0,required:0,complete:false};
+    pruneMeshLayerTargets();
+    if(!meshLayerTargets) return {active:false,count:0,required:0,complete:false};
+    const ids=[...meshLayerTargets];
+    const required=ids.length*(ids.length-1)/2;
+    let count=0;
+    edges.forEach(key=>{
+      const [a,b]=edgeNodes(key);
+      if(meshLayerTargets.has(a)&&meshLayerTargets.has(b)) count++;
+    });
+    return {active:true,count,required,complete:required>0&&count===required};
+  }
+
+  function updateMeshLayerButton(){
+    const button=$("meshLayerTool");
+    if(!button) return;
+    button.hidden=!currentTask().open;
+    const progress=meshLayerProgress();
+    button.classList.toggle("mesh-layer-active",progress.active&&!progress.complete);
+    button.classList.toggle("mesh-layer-complete",progress.complete);
+    button.textContent=progress.active
+      ? progress.complete?"Mesh layer complete":`Mesh layer ${progress.count}/${progress.required}`
+      : "Mesh layer";
+    button.disabled=running;
+  }
+
+  function showMeshLayerFeedback(){
+    const progress=meshLayerProgress();
+    if(!progress.active) return;
+    if(progress.complete){
+      setFeedback(
+        "good",
+        "Mesh layer complete.",
+        `All ${meshLayerTargets.size} highlighted stations now have a direct cable to every other highlighted station. The original topology remains underneath.`
+      );
+    }else{
+      const remaining=progress.required-progress.count;
+      setFeedback(
+        "",
+        "Build the mesh over this network.",
+        `${progress.count}/${progress.required} direct station links complete. Add ${remaining} more cable${remaining===1?"":"s"} between the highlighted stations.`
+      );
+    }
+    updateMeshLayerButton();
+  }
+
+  function toggleMeshLayer(){
+    if(running || !currentTask().open) return;
+    if(meshLayerTargets){
+      meshLayerTargets=null;
+      renderAll();
+      setFeedback("","Mesh guide closed.","The links remain part of the Hybrid network. Continue building freely or reopen Mesh layer with the current stations.");
+      return;
+    }
+    const stations=stationNodes();
+    if(stations.length<3){
+      setFeedback("warn","Add at least three stations.","A mesh layer needs several stations so each can connect directly to the others.");
+      return;
+    }
+    meshLayerTargets=new Set(stations.map(node=>node.id));
+    setTool("cable");
+    renderAll();
+    showMeshLayerFeedback();
   }
 
   function typeCounts(){
@@ -1155,7 +1439,7 @@ button.danger{color:var(--bad)}
 
   function setStartingFeedback(){
     if(currentTask().open){
-      setFeedback("","Build anything.","Use any number and combination of stations, switches, bridges and shared buses. Test the network once at least two stations have a route.");
+      setFeedback("","Build anything.","Add stations and network devices in any combination. Use Mesh layer to connect the stations already present directly on top of a bus, star or other section.");
     }else{
       setFeedback("","Start with the parts.","Add at least four stations. Extra stations are allowed, but every one must follow the selected topology.");
     }
@@ -1382,8 +1666,17 @@ button.danger{color:var(--bad)}
     const packetLabel=`${shortName(sourceNode)}→${shortName(destinationNode)}`;
     setNodeState(source,"sending","sending frame");
 
-    if(currentTask().id==="mesh" && path.length===2){
-      setJourney("A direct link exists.",`${sourceNode.label} sends straight to ${destinationNode.label} in one hop.`);
+    const directMeshLink=path.length===2 &&
+      sourceNode.type==="station" && destinationNode.type==="station" &&
+      (currentTask().id==="mesh" || currentTask().id==="hybrid");
+
+    if(directMeshLink){
+      setJourney(
+        "A direct mesh link is available.",
+        currentTask().id==="hybrid"
+          ? `${sourceNode.label} sends straight to ${destinationNode.label}, bypassing the other network sections.`
+          : `${sourceNode.label} sends straight to ${destinationNode.label} in one hop.`
+      );
     }else{
       setJourney(`${sourceNode.label} starts the journey.`,`The frame carries ${destinationNode.label}'s destination address.`);
     }
@@ -1453,7 +1746,10 @@ button.danger{color:var(--bad)}
       else{
         const route=path.map(id=>nodeById(id).label).join(" → ");
         const busNote=pathTypes.includes("bus")?" A shared bus also exposed the frame to its other taps.":"";
-        detail=`Route: ${route}.${busNote}`;
+        const overlayNote=directMeshLink
+          ? " The direct mesh link was the shortest route, so the packet did not need the bus, switch or bridge layer."
+          : "";
+        detail=`Route: ${route}.${busNote}${overlayNote}`;
       }
       setJourney("Packet delivered.",detail);
       setFeedback("good","Packet delivered.",detail);
@@ -1465,6 +1761,7 @@ button.danger{color:var(--bad)}
   $("moveTool").addEventListener("click",()=>setTool("move"));
   $("cableTool").addEventListener("click",()=>setTool("cable"));
   $("deleteTool").addEventListener("click",()=>setTool("delete"));
+  $("meshLayerTool").addEventListener("click",toggleMeshLayer);
   $("undoButton").addEventListener("click",undo);
   $("resetButton").addEventListener("click",()=>resetBuilder(true));
   $("checkButton").addEventListener("click",checkTopology);

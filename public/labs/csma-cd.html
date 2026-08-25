@@ -1,0 +1,779 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ethernet CSMA/CD Lab</title>
+<style>
+:root{
+  --bg:#f3f5f7;
+  --panel:#ffffff;
+  --ink:#1d2730;
+  --muted:#687681;
+  --line:#d7dfe5;
+  --accent:#2865d8;
+  --accent-soft:#edf3ff;
+  --good:#26734a;
+  --good-soft:#edf8f1;
+  --warn:#9a601b;
+  --warn-soft:#fff6e8;
+  --bad:#b2453a;
+  --bad-soft:#fff0ee;
+  --network:#101821;
+  --network-grid:#1b2732;
+}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+button{font:inherit;cursor:pointer}
+button:disabled{opacity:.45;cursor:not-allowed}
+main{width:min(1120px,calc(100% - 20px));margin:16px auto 38px}
+h1{margin:0;font-size:27px;letter-spacing:-.025em}
+.sub{margin:5px 0 13px;color:var(--muted);font-size:13px;line-height:1.45}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px}
+button{
+  min-height:34px;
+  padding:0 10px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:#fff;
+  color:var(--ink);
+}
+button:hover:not(:disabled){border-color:#9ba8b2}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:750}
+button.active{background:var(--accent-soft);border-color:#8eafea;color:#1d58bb;font-weight:800}
+
+.challenge{
+  padding:11px 12px;
+  display:grid;
+  grid-template-columns:minmax(260px,1fr) auto;
+  gap:14px;
+  align-items:center;
+}
+.eyebrow{
+  display:block;
+  margin-bottom:3px;
+  color:var(--accent);
+  font-size:9px;
+  font-weight:900;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+#scenarioTitle{display:block;font-size:15px}
+#scenarioHint{display:block;margin-top:3px;color:var(--muted);font-size:10px;line-height:1.35}
+.scenario-buttons{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.scenario-buttons button{font-size:9px}
+
+.stage{margin-top:10px;padding:9px}
+.stage-head{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:center;
+  margin-bottom:7px;
+}
+.stage-head strong{font-size:14px}
+.stage-head span{display:block;margin-top:2px;color:var(--muted);font-size:9px}
+.run-buttons{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.run-buttons button{font-size:9px}
+.shell{overflow:auto;border-radius:11px;background:var(--network)}
+.canvas{
+  position:relative;
+  min-width:930px;
+  min-height:510px;
+  overflow:hidden;
+  border:1px solid #263645;
+  border-radius:11px;
+  background:
+    radial-gradient(circle at 50% 60%,rgba(54,86,112,.18),transparent 25rem),
+    repeating-linear-gradient(0deg,transparent 0 31px,rgba(119,145,164,.075) 32px),
+    repeating-linear-gradient(90deg,transparent 0 31px,rgba(119,145,164,.075) 32px),
+    var(--network);
+}
+.station-layer,.signal-layer{position:absolute;inset:0}
+.station-layer{z-index:5;pointer-events:none}
+.signal-layer{z-index:4;pointer-events:none}
+
+.station{
+  position:absolute;
+  top:28px;
+  width:230px;
+  min-height:152px;
+  transform:translateX(-50%);
+  border:1px solid #51616c;
+  border-radius:12px;
+  background:linear-gradient(145deg,#303b43,#11181d 72%,#27343c);
+  color:#eef4f7;
+  box-shadow:0 10px 20px rgba(0,0,0,.32),inset 0 0 0 1px rgba(255,255,255,.06);
+  overflow:hidden;
+  transition:border-color .2s,box-shadow .2s,transform .2s;
+}
+.station.focus{
+  border-color:var(--station);
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--station) 24%,transparent),0 0 19px color-mix(in srgb,var(--station) 43%,transparent),0 10px 20px rgba(0,0,0,.32);
+}
+.station.collision{
+  border-color:#e9685c;
+  box-shadow:0 0 0 3px rgba(233,104,92,.24),0 0 21px rgba(233,104,92,.52),0 10px 20px rgba(0,0,0,.32);
+}
+.station.success{
+  border-color:#4fba78;
+  box-shadow:0 0 0 3px rgba(79,186,120,.22),0 0 17px rgba(79,186,120,.38),0 10px 20px rgba(0,0,0,.32);
+}
+.station-head{
+  height:32px;
+  display:flex;
+  align-items:center;
+  gap:7px;
+  padding:0 9px;
+  border-bottom:1px solid rgba(255,255,255,.12);
+  background:linear-gradient(180deg,#3e4a53,#263139);
+}
+.station-dot{width:8px;height:8px;border-radius:50%;background:#738089;flex:0 0 auto}
+.station.focus .station-dot{background:var(--station);box-shadow:0 0 7px var(--station)}
+.station.collision .station-dot{background:#ee6a5e;box-shadow:0 0 8px #ee6a5e}
+.station.success .station-dot{background:#55bd7b;box-shadow:0 0 8px #55bd7b}
+.station-name{flex:1;font-size:10px;font-weight:900}
+.station-state{
+  padding:3px 6px;
+  border-radius:999px;
+  background:#35434c;
+  color:#cbd7dc;
+  font-size:7px;
+  font-weight:850;
+  white-space:nowrap;
+}
+.station-body{padding:9px}
+.station-thought{min-height:42px;color:#dfe8ec;font-size:10px;line-height:1.35}
+.station-frame{
+  margin-top:7px;
+  padding:6px 7px;
+  border:1px solid #4d5e69;
+  border-radius:7px;
+  background:#172128;
+  color:#b9c8d0;
+  font:800 8px/1.35 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.station-frame.empty{color:#70818b}
+
+.tap{
+  position:absolute;
+  top:180px;
+  height:118px;
+  border-left:3px solid #687d8c;
+  transform:translateX(-50%);
+  z-index:2;
+}
+.tap::after{
+  content:"";
+  position:absolute;
+  left:-8px;
+  bottom:-8px;
+  width:13px;
+  height:13px;
+  border:2px solid #dce5ea;
+  border-radius:50%;
+  background:#20303b;
+  box-shadow:0 0 0 4px rgba(255,255,255,.04);
+}
+.tap.busy::after{background:#d7a23f;box-shadow:0 0 0 4px rgba(215,162,63,.16),0 0 11px rgba(215,162,63,.8)}
+.tap.send::after{background:var(--station);box-shadow:0 0 0 4px color-mix(in srgb,var(--station) 22%,transparent),0 0 12px var(--station)}
+.tap.collision::after{background:#ec6257;box-shadow:0 0 0 5px rgba(236,98,87,.2),0 0 15px #ec6257}
+
+.cable{
+  position:absolute;
+  left:5%;
+  right:5%;
+  top:293px;
+  height:14px;
+  border:1px solid #9aabb6;
+  border-radius:999px;
+  background:linear-gradient(#8297a5,#4e6473 46%,#273743 52%,#657b8a);
+  box-shadow:0 0 0 3px rgba(255,255,255,.035),0 5px 11px rgba(0,0,0,.34);
+  z-index:1;
+}
+.cable::after{content:"";position:absolute;left:0;right:0;top:3px;height:2px;border-radius:99px;background:rgba(255,255,255,.28)}
+.cable-label{
+  position:absolute;
+  left:50%;
+  top:315px;
+  transform:translateX(-50%);
+  color:#718594;
+  font:800 7px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  letter-spacing:.05em;
+  text-transform:uppercase;
+}
+
+.signal{
+  position:absolute;
+  top:289px;
+  height:22px;
+  min-width:2px;
+  border:2px solid rgba(255,255,255,.76);
+  border-radius:999px;
+  background:var(--signal);
+  box-shadow:0 0 13px color-mix(in srgb,var(--signal) 74%,transparent);
+  opacity:1;
+  transition:left .62s cubic-bezier(.2,.78,.2,1),width .62s cubic-bezier(.2,.78,.2,1),opacity .22s;
+}
+.signal::before,.signal::after{
+  content:"";
+  position:absolute;
+  top:50%;
+  width:8px;
+  height:8px;
+  border:2px solid #fff;
+  border-radius:50%;
+  background:var(--signal);
+  transform:translateY(-50%);
+}
+.signal::before{left:-5px}.signal::after{right:-5px}
+.signal-label{
+  position:absolute;
+  left:50%;
+  bottom:27px;
+  transform:translateX(-50%);
+  max-width:190px;
+  padding:3px 6px;
+  border-radius:5px;
+  background:rgba(8,14,19,.92);
+  color:#f6fbfd;
+  font:800 8px/1.25 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.signal.collision-band{
+  top:286px;
+  height:28px;
+  border-radius:5px;
+  border-color:#ffd6d2;
+  background:repeating-linear-gradient(135deg,#ee6256 0 6px,#7b2923 6px 12px);
+  box-shadow:0 0 17px rgba(238,98,86,.82);
+  z-index:8;
+}
+.signal.collision-band::before,.signal.collision-band::after{display:none}
+.signal.jam-band{
+  top:286px;
+  height:28px;
+  border-radius:5px;
+  border-color:#ffe0b6;
+  background:repeating-linear-gradient(135deg,#f29a3d 0 6px,#8c4216 6px 12px);
+  box-shadow:0 0 15px rgba(242,154,61,.78);
+  z-index:9;
+}
+.signal.jam-band::before,.signal.jam-band::after{display:none}
+
+.narration{
+  position:absolute;
+  left:7%;
+  right:7%;
+  top:352px;
+  z-index:12;
+  min-height:118px;
+  display:grid;
+  grid-template-columns:135px 1fr;
+  gap:14px;
+  align-items:start;
+  padding:13px 14px;
+  border:1px solid #40515e;
+  border-left:5px solid var(--tone,#6f8798);
+  border-radius:11px;
+  background:rgba(14,23,30,.95);
+  color:#edf4f7;
+  box-shadow:0 12px 24px rgba(0,0,0,.28);
+}
+.narration-phase{
+  padding:7px 8px;
+  border:1px solid #40515e;
+  border-radius:8px;
+  background:#18242c;
+  color:#9eb0bc;
+  font-size:8px;
+  font-weight:900;
+  letter-spacing:.07em;
+  text-transform:uppercase;
+}
+.narration-phase strong{display:block;margin-top:4px;color:#fff;font-size:15px;letter-spacing:0;text-transform:none}
+.narration-copy strong{display:block;font-size:14px;line-height:1.25}
+.narration-copy p{margin:5px 0 0;color:#b6c5ce;font-size:10px;line-height:1.45}
+.visual-key{margin-top:8px;color:#8094a2;font-size:8px}
+.visual-key b{color:#c9d5dc}
+
+.rule{
+  margin-top:8px;
+  padding:9px 11px;
+  border-left:3px solid var(--accent);
+  border-radius:7px;
+  background:var(--accent-soft);
+  color:#30445a;
+  font-size:11px;
+  line-height:1.4;
+}
+.rule strong{color:#183f88}
+
+@media(max-width:760px){
+  main{width:min(100% - 12px,1120px);margin-top:8px}
+  .challenge{grid-template-columns:1fr}
+  .scenario-buttons{justify-content:flex-start}
+  .stage-head{align-items:flex-start;flex-direction:column}
+  .run-buttons{justify-content:flex-start}
+}
+@media(prefers-reduced-motion:reduce){
+  .signal{transition-duration:.08s}
+}
+</style>
+</head>
+<body>
+<main>
+  <h1>Ethernet: who gets to talk?</h1>
+  <div class="sub">Three stations share one cable. They listen before sending, but sometimes two still begin at once.</div>
+
+  <section class="panel challenge">
+    <div>
+      <span class="eyebrow">Choose a situation</span>
+      <strong id="scenarioTitle">Two stations both hear silence</strong>
+      <span id="scenarioHint">A and C are far apart. Their signals need time to travel, so both may start before hearing the other.</span>
+    </div>
+    <div class="scenario-buttons" role="group" aria-label="Choose a transmission situation">
+      <button data-scenario="singleA">A sends to C</button>
+      <button data-scenario="singleB">B sends to C</button>
+      <button class="active" data-scenario="collision">A + C collide</button>
+    </div>
+  </section>
+
+  <section class="panel stage">
+    <div class="stage-head">
+      <div>
+        <strong>Shared Ethernet cable</strong>
+        <span>Watch the signal on the cable and the decision made at each station.</span>
+      </div>
+      <div class="run-buttons">
+        <button id="nextButton">Next</button>
+        <button id="playButton" class="primary">Play</button>
+        <button id="resetButton">Reset</button>
+      </div>
+    </div>
+
+    <div class="shell">
+      <div id="canvas" class="canvas">
+        <div class="cable"></div>
+        <div class="cable-label">one shared cable</div>
+        <div id="signalLayer" class="signal-layer"></div>
+        <div id="stationLayer" class="station-layer"></div>
+
+        <div id="narration" class="narration" aria-live="polite">
+          <div class="narration-phase">
+            <span id="stepCount">Step 1 of 9</span>
+            <strong id="phaseLabel">Ready</strong>
+          </div>
+          <div class="narration-copy">
+            <strong id="narrationTitle">A and C both have a frame to send.</strong>
+            <p id="narrationText">Press Play or Next. Each station will make its own decision from the signal it can hear at its connection.</p>
+            <div class="visual-key"><b>Colour</b> = a frame signal · <b>red</b> = collision · <b>orange</b> = jam signal</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="rule">
+      <strong>CSMA/CD:</strong> listen first → send while still listening → if a collision is heard, stop, wait a random time, then retry.
+    </div>
+  </section>
+</main>
+
+<script>
+(() => {
+  "use strict";
+
+  const $=id=>document.getElementById(id);
+  const reduceMotion=window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  const STEP_DELAY=reduceMotion?120:1050;
+
+  const STATIONS={
+    A:{name:"Station A",position:10,colour:"#4ba7e3"},
+    B:{name:"Station B",position:50,colour:"#59b979"},
+    C:{name:"Station C",position:90,colour:"#d5a340"}
+  };
+
+  const SCENARIO_COPY={
+    singleA:{
+      title:"A sends one frame to C",
+      hint:"A listens first. Once its signal reaches the other stations, they know the cable is busy."
+    },
+    singleB:{
+      title:"B sends one frame to C",
+      hint:"Any station may use the shared cable. The same rules apply to all of them."
+    },
+    collision:{
+      title:"Two stations both hear silence",
+      hint:"A and C are far apart. Their signals need time to travel, so both may start before hearing the other."
+    }
+  };
+
+  const idleStation=(thought="Waiting for something to send.")=>({state:"Waiting",thought,tone:"idle",frame:""});
+  const signal=(id,start,end,colour,label,type="data")=>({id,start,end,colour,label,type});
+
+  function singleScenario(sender,destination,payload){
+    const other=["A","B","C"].find(id=>id!==sender&&id!==destination);
+    const source=STATIONS[sender];
+    const frame=`${sender} → ${destination} · “${payload}”`;
+    const start=source.position;
+    const nearLeft=Math.max(0,start-18);
+    const nearRight=Math.min(100,start+18);
+    const midLeft=Math.max(0,start-48);
+    const midRight=Math.min(100,start+48);
+
+    return [
+      {
+        phase:"Ready",tone:"#6f8798",
+        title:`${source.name} has a frame for Station ${destination}.`,
+        text:"The cable is quiet. Press Play or Next to follow the decision.",
+        stations:{
+          A:sender==="A"?{state:"Ready",thought:`I want to send “${payload}” to ${destination}.`,tone:"focus",frame}:idleStation(),
+          B:sender==="B"?{state:"Ready",thought:`I want to send “${payload}” to ${destination}.`,tone:"focus",frame}:idleStation(),
+          C:sender==="C"?{state:"Ready",thought:`I want to send “${payload}” to ${destination}.`,tone:"focus",frame}:idleStation()
+        },signals:[]
+      },
+      {
+        phase:"Listen",tone:"#69a7d8",
+        title:`${source.name} checks the cable before speaking.`,
+        text:"It hears no signal at its own connection, so the medium appears idle.",
+        stations:{
+          A:sender==="A"?{state:"Listening",thought:"Is the cable quiet? Yes.",tone:"focus",frame}:idleStation(),
+          B:sender==="B"?{state:"Listening",thought:"Is the cable quiet? Yes.",tone:"focus",frame}:idleStation(),
+          C:sender==="C"?{state:"Listening",thought:"Is the cable quiet? Yes.",tone:"focus",frame}:idleStation()
+        },signals:[]
+      },
+      {
+        phase:"Send",tone:source.colour,
+        title:`${source.name} starts sending the frame.`,
+        text:"The electrical signal spreads away from the station in both directions. The sender keeps listening while it transmits.",
+        stations:{
+          A:sender==="A"?{state:"Sending",thought:"I am sending and listening at the same time.",tone:"focus",tap:"send",frame}:idleStation("I have not heard the signal yet."),
+          B:sender==="B"?{state:"Sending",thought:"I am sending and listening at the same time.",tone:"focus",tap:"send",frame}:idleStation("I have not heard the signal yet."),
+          C:sender==="C"?{state:"Sending",thought:"I am sending and listening at the same time.",tone:"focus",tap:"send",frame}:idleStation("I have not heard the signal yet.")
+        },signals:[signal("frame",nearLeft,nearRight,source.colour,frame)]
+      },
+      {
+        phase:"Busy",tone:"#d7a23f",
+        title:"The signal reaches the other stations.",
+        text:"They now hear a busy cable, so they do not begin another transmission.",
+        stations:{
+          A:sender==="A"?{state:"Sending",thought:"Still sending. No collision heard.",tone:"focus",tap:"send",frame}:{state:"Busy",thought:"I hear a signal, so I wait.",tone:"idle",tap:"busy",frame:""},
+          B:sender==="B"?{state:"Sending",thought:"Still sending. No collision heard.",tone:"focus",tap:"send",frame}:{state:"Busy",thought:"I hear a signal, so I wait.",tone:"idle",tap:"busy",frame:""},
+          C:sender==="C"?{state:"Sending",thought:"Still sending. No collision heard.",tone:"focus",tap:"send",frame}:{state:"Busy",thought:"I hear a signal, so I wait.",tone:"idle",tap:"busy",frame:""}
+        },signals:[signal("frame",midLeft,midRight,source.colour,frame)]
+      },
+      {
+        phase:"Receive",tone:"#55bd7b",
+        title:`Station ${destination} receives the complete frame.`,
+        text:`The destination accepts “${payload}”. ${other} heard the frame but it was not addressed there.`,
+        stations:{
+          A:destination==="A"?{state:"Received",thought:`The frame is for me: “${payload}”.`,tone:"success",tap:"busy",frame}:sender==="A"?{state:"Sending",thought:"The final part of my frame is leaving.",tone:"focus",tap:"send",frame}:{state:"Not for me",thought:"I hear the frame, but it has another destination.",tone:"idle",tap:"busy",frame:""},
+          B:destination==="B"?{state:"Received",thought:`The frame is for me: “${payload}”.`,tone:"success",tap:"busy",frame}:sender==="B"?{state:"Sending",thought:"The final part of my frame is leaving.",tone:"focus",tap:"send",frame}:{state:"Not for me",thought:"I hear the frame, but it has another destination.",tone:"idle",tap:"busy",frame:""},
+          C:destination==="C"?{state:"Received",thought:`The frame is for me: “${payload}”.`,tone:"success",tap:"busy",frame}:sender==="C"?{state:"Sending",thought:"The final part of my frame is leaving.",tone:"focus",tap:"send",frame}:{state:"Not for me",thought:"I hear the frame, but it has another destination.",tone:"idle",tap:"busy",frame:""}
+        },signals:[signal("frame",0,100,source.colour,frame)]
+      },
+      {
+        phase:"Done",tone:"#55bd7b",
+        title:"The cable becomes quiet again.",
+        text:"Carrier sensing helped the stations share the medium without a collision.",
+        stations:{
+          A:sender==="A"?{state:"Sent",thought:`My frame reached ${destination}.`,tone:"success",frame}:destination==="A"?{state:"Delivered",thought:`I received “${payload}”.`,tone:"success",frame}:idleStation("The cable is idle again."),
+          B:sender==="B"?{state:"Sent",thought:`My frame reached ${destination}.`,tone:"success",frame}:destination==="B"?{state:"Delivered",thought:`I received “${payload}”.`,tone:"success",frame}:idleStation("The cable is idle again."),
+          C:sender==="C"?{state:"Sent",thought:`My frame reached ${destination}.`,tone:"success",frame}:destination==="C"?{state:"Delivered",thought:`I received “${payload}”.`,tone:"success",frame}:idleStation("The cable is idle again.")
+        },signals:[]
+      }
+    ];
+  }
+
+  function collisionScenario(){
+    const aWait=Math.random()<.5?0:1;
+    const cWait=1-aWait;
+    const winner=aWait<cWait?"A":"C";
+    const loser=winner==="A"?"C":"A";
+    const winnerFrame=winner==="A"?"A → C · “HELLO”":"C → A · “READY?”";
+    const loserFrame=loser==="A"?"A → C · “HELLO”":"C → A · “READY?”";
+    const winnerColour=STATIONS[winner].colour;
+    const loserColour=STATIONS[loser].colour;
+    const winnerDestination=winner==="A"?"C":"A";
+    const loserDestination=loser==="A"?"C":"A";
+
+    return [
+      {
+        phase:"Ready",tone:"#6f8798",
+        title:"A and C both have a frame to send.",
+        text:"There is no central referee. Each station must decide from what it can hear locally.",
+        stations:{
+          A:{state:"Ready",thought:"I want to send “HELLO” to C.",tone:"focus",frame:"A → C · “HELLO”"},
+          B:idleStation(),
+          C:{state:"Ready",thought:"I want to send “READY?” to A.",tone:"focus",frame:"C → A · “READY?”"}
+        },signals:[]
+      },
+      {
+        phase:"Listen",tone:"#69a7d8",
+        title:"A and C both check the cable.",
+        text:"Both hear silence. The other station's signal has not started yet, so both decide they may send.",
+        stations:{
+          A:{state:"Listening",thought:"My connection is quiet. I can send.",tone:"focus",frame:"A → C · “HELLO”"},
+          B:idleStation("I have nothing to send."),
+          C:{state:"Listening",thought:"My connection is quiet. I can send.",tone:"focus",frame:"C → A · “READY?”"}
+        },signals:[]
+      },
+      {
+        phase:"Send",tone:"#8e9fb1",
+        title:"A and C start at almost the same time.",
+        text:"Their signals spread along the cable. Neither sender has heard the other one yet.",
+        stations:{
+          A:{state:"Sending",thought:"I am sending and still listening.",tone:"focus",tap:"send",frame:"A → C · “HELLO”"},
+          B:idleStation("The two signals are moving towards me."),
+          C:{state:"Sending",thought:"I am sending and still listening.",tone:"focus",tap:"send",frame:"C → A · “READY?”"}
+        },signals:[
+          signal("A-frame",0,46,STATIONS.A.colour,"A → C · HELLO"),
+          signal("C-frame",54,100,STATIONS.C.colour,"C → A · READY?")
+        ]
+      },
+      {
+        phase:"Collision",tone:"#ee6256",
+        title:"The signals meet and the frame bits are damaged.",
+        text:"The clash begins near B, then the corrupted signal travels back towards both senders.",
+        stations:{
+          A:{state:"Still sending",thought:"The collision has not reached my connection yet.",tone:"focus",tap:"send",frame:"A → C · “HELLO”"},
+          B:{state:"Collision",thought:"I hear two signals at once. The data is unreadable.",tone:"collision",tap:"collision",frame:""},
+          C:{state:"Still sending",thought:"The collision has not reached my connection yet.",tone:"focus",tap:"send",frame:"C → A · “READY?”"}
+        },signals:[
+          signal("A-frame",0,60,STATIONS.A.colour,"A → C · HELLO"),
+          signal("C-frame",40,100,STATIONS.C.colour,"C → A · READY?"),
+          signal("collision",40,60,"#ee6256","signals overlap","collision")
+        ]
+      },
+      {
+        phase:"Detect",tone:"#f29a3d",
+        title:"A and C detect the collision and stop their frames.",
+        text:"Each sends a short jam signal so every station knows this attempt failed.",
+        stations:{
+          A:{state:"Jam",thought:"Collision heard. Stop the frame and mark the failure.",tone:"collision",tap:"collision",frame:"A → C · failed"},
+          B:{state:"Jam heard",thought:"The attempt failed. I keep waiting.",tone:"collision",tap:"collision",frame:""},
+          C:{state:"Jam",thought:"Collision heard. Stop the frame and mark the failure.",tone:"collision",tap:"collision",frame:"C → A · failed"}
+        },signals:[
+          signal("A-jam",0,38,"#f29a3d","jam from A","jam"),
+          signal("C-jam",62,100,"#f29a3d","jam from C","jam")
+        ]
+      },
+      {
+        phase:"Backoff",tone:"#d7a23f",
+        title:"The cable clears. A and C choose different random waits.",
+        text:`This time A chooses ${aWait} slot${aWait===1?"":"s"}; C chooses ${cWait} slot${cWait===1?"":"s"}. ${winner} will retry first.`,
+        stations:{
+          A:{state:`Wait ${aWait}`,thought:aWait===0?"My random wait is over. I will listen again.":"I wait one slot before trying again.",tone:aWait===0?"focus":"idle",frame:"A → C · “HELLO”"},
+          B:idleStation("I wait for the cable to become quiet."),
+          C:{state:`Wait ${cWait}`,thought:cWait===0?"My random wait is over. I will listen again.":"I wait one slot before trying again.",tone:cWait===0?"focus":"idle",frame:"C → A · “READY?”"}
+        },signals:[]
+      },
+      {
+        phase:"Retry",tone:winnerColour,
+        title:`${winner} retries first while ${loser} waits.`,
+        text:`${winner} listens again, finds the cable idle, and retransmits ${winnerFrame}.`,
+        stations:{
+          A:winner==="A"?{state:"Retrying",thought:"The cable is quiet. I try again.",tone:"focus",tap:"send",frame:winnerFrame}:{state:"Backoff",thought:"I keep waiting, so I do not collide again.",tone:"idle",tap:"busy",frame:loserFrame},
+          B:{state:"Busy",thought:`I hear ${winner}'s retry, so I stay quiet.`,tone:"idle",tap:"busy",frame:""},
+          C:winner==="C"?{state:"Retrying",thought:"The cable is quiet. I try again.",tone:"focus",tap:"send",frame:winnerFrame}:{state:"Backoff",thought:"I keep waiting, so I do not collide again.",tone:"idle",tap:"busy",frame:loserFrame}
+        },signals:[signal("winner-frame",0,100,winnerColour,winnerFrame)]
+      },
+      {
+        phase:"Second turn",tone:loserColour,
+        title:`${winnerDestination} receives the retry. Then ${loser} gets a turn.`,
+        text:`After the cable becomes quiet, ${loser} listens again and retransmits ${loserFrame}.`,
+        stations:{
+          A:loser==="A"?{state:"Retrying",thought:"I received the first retry. Now I send my own frame.",tone:"focus",tap:"send",frame:loserFrame}:{state:"Sent",thought:`My retry arrived. I hear ${loser}'s frame, so I stay quiet.`,tone:"success",tap:"busy",frame:winnerFrame},
+          B:{state:"Busy",thought:`I hear ${loser}'s retry, so I stay quiet.`,tone:"idle",tap:"busy",frame:""},
+          C:loser==="C"?{state:"Retrying",thought:"I received the first retry. Now I send my own frame.",tone:"focus",tap:"send",frame:loserFrame}:{state:"Sent",thought:`My retry arrived. I hear ${loser}'s frame, so I stay quiet.`,tone:"success",tap:"busy",frame:winnerFrame}
+        },signals:[signal("loser-frame",0,100,loserColour,loserFrame)]
+      },
+      {
+        phase:"Solved",tone:"#55bd7b",
+        title:"Both frames arrive without another collision.",
+        text:"Ethernet did not prevent the first collision. It detected the clash, stopped quickly, and separated the retries with random waits.",
+        stations:{
+          A:{state:"Done",thought:loserDestination==="A"?`I received ${loserFrame}.`:"My frame was delivered.",tone:"success",frame:"A → C · delivered"},
+          B:idleStation("The cable is quiet again."),
+          C:{state:"Done",thought:loserDestination==="C"?`I received ${loserFrame}.`:"My frame was delivered.",tone:"success",frame:"C → A · delivered"}
+        },signals:[]
+      }
+    ];
+  }
+
+  let scenarioKey="collision";
+  let steps=[];
+  let stepIndex=0;
+  let playing=false;
+  let playToken=0;
+
+  function canvasPercent(cablePosition){return 5+cablePosition*.9;}
+
+  function loadScenario(key,autoPlay=false){
+    stopPlaying();
+    scenarioKey=key;
+    steps=key==="singleA"
+      ?singleScenario("A","C","HELLO")
+      :key==="singleB"
+        ?singleScenario("B","C","PING")
+        :collisionScenario();
+    stepIndex=0;
+    document.querySelectorAll("[data-scenario]").forEach(button=>{
+      button.classList.toggle("active",button.dataset.scenario===key);
+    });
+    $("scenarioTitle").textContent=SCENARIO_COPY[key].title;
+    $("scenarioHint").textContent=SCENARIO_COPY[key].hint;
+    render();
+    if(autoPlay) play();
+  }
+
+  function stationToneClass(tone){
+    if(tone==="focus") return "focus";
+    if(tone==="collision") return "collision";
+    if(tone==="success") return "success";
+    return "";
+  }
+
+  function renderStations(step){
+    const layer=$("stationLayer");
+    layer.innerHTML="";
+
+    Object.entries(STATIONS).forEach(([id,meta])=>{
+      const state=step.stations[id]||idleStation();
+      const station=document.createElement("div");
+      station.className=`station ${stationToneClass(state.tone)}`;
+      station.style.left=canvasPercent(meta.position)+"%";
+      station.style.setProperty("--station",meta.colour);
+      station.innerHTML=`
+        <div class="station-head">
+          <span class="station-dot"></span>
+          <span class="station-name">${meta.name}</span>
+          <span class="station-state">${state.state}</span>
+        </div>
+        <div class="station-body">
+          <div class="station-thought">${state.thought}</div>
+          <div class="station-frame ${state.frame?"":"empty"}">${state.frame||"No frame active"}</div>
+        </div>`;
+      layer.appendChild(station);
+
+      const tap=document.createElement("div");
+      tap.className=`tap ${state.tap||""}`;
+      tap.style.left=canvasPercent(meta.position)+"%";
+      tap.style.setProperty("--station",meta.colour);
+      layer.appendChild(tap);
+    });
+  }
+
+  function applySignalPosition(element,item){
+    const left=canvasPercent(item.start);
+    const right=canvasPercent(item.end);
+    element.style.left=left+"%";
+    element.style.width=Math.max(.2,right-left)+"%";
+    element.style.opacity="1";
+  }
+
+  function renderSignals(step){
+    const layer=$("signalLayer");
+    const wanted=new Set(step.signals.map(item=>item.id));
+
+    [...layer.children].forEach(element=>{
+      if(!wanted.has(element.dataset.id)){
+        element.style.opacity="0";
+        setTimeout(()=>{if(element.parentNode&&element.style.opacity==="0") element.remove();},240);
+      }
+    });
+
+    step.signals.forEach(item=>{
+      let element=layer.querySelector(`[data-id="${item.id}"]`);
+      if(!element){
+        element=document.createElement("div");
+        element.dataset.id=item.id;
+        element.className="signal";
+        element.style.setProperty("--signal",item.colour);
+        const origin=(item.start+item.end)/2;
+        element.style.left=canvasPercent(origin)+"%";
+        element.style.width="0.2%";
+        element.style.opacity="0";
+        element.innerHTML=`<span class="signal-label"></span>`;
+        layer.appendChild(element);
+        requestAnimationFrame(()=>requestAnimationFrame(()=>applySignalPosition(element,item)));
+      }else{
+        applySignalPosition(element,item);
+      }
+      element.className=`signal ${item.type==="collision"?"collision-band":item.type==="jam"?"jam-band":""}`;
+      element.style.setProperty("--signal",item.colour);
+      element.querySelector(".signal-label").textContent=item.label;
+    });
+  }
+
+  function render(){
+    const step=steps[stepIndex];
+    if(!step) return;
+    renderStations(step);
+    renderSignals(step);
+    $("stepCount").textContent=`Step ${stepIndex+1} of ${steps.length}`;
+    $("phaseLabel").textContent=step.phase;
+    $("narrationTitle").textContent=step.title;
+    $("narrationText").textContent=step.text;
+    $("narration").style.setProperty("--tone",step.tone);
+    $("nextButton").disabled=stepIndex>=steps.length-1||playing;
+    $("playButton").textContent=playing?"Pause":stepIndex>=steps.length-1?"Replay":"Play";
+  }
+
+  function stopPlaying(){
+    playing=false;
+    playToken++;
+    if(steps.length) render();
+  }
+
+  function wait(ms,token){
+    return new Promise(resolve=>setTimeout(()=>resolve(token===playToken),ms));
+  }
+
+  async function play(){
+    if(playing){
+      stopPlaying();
+      return;
+    }
+    if(stepIndex>=steps.length-1){
+      stepIndex=0;
+      render();
+    }
+    playing=true;
+    const token=++playToken;
+    render();
+    while(playing&&stepIndex<steps.length-1){
+      const current=await wait(STEP_DELAY,token);
+      if(!current||!playing) return;
+      stepIndex++;
+      render();
+    }
+    playing=false;
+    render();
+  }
+
+  document.querySelectorAll("[data-scenario]").forEach(button=>{
+    button.addEventListener("click",()=>loadScenario(button.dataset.scenario,true));
+  });
+  $("nextButton").addEventListener("click",()=>{
+    if(stepIndex<steps.length-1){stepIndex++;render();}
+  });
+  $("playButton").addEventListener("click",play);
+  $("resetButton").addEventListener("click",()=>loadScenario(scenarioKey,false));
+
+  loadScenario("collision",false);
+})();
+</script>
+</body>
+</html>

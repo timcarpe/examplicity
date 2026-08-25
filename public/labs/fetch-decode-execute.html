@@ -1,0 +1,1444 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fetch–Decode–Execute Lab</title>
+<style>
+:root{
+  --bg:#f3f5f7;
+  --panel:#ffffff;
+  --ink:#1d2730;
+  --muted:#687681;
+  --line:#d7dfe5;
+  --accent:#2865d8;
+  --accent-soft:#edf3ff;
+  --changed:#fff0c9;
+
+  --fetch:#2f73c5;
+  --decode:#a66b27;
+  --execute:#2d7a50;
+
+  --address:#7664bb;
+  --data:#2f8064;
+  --control:#b46c35;
+  --clock:#2865d8;
+
+  --cpu-fill:#f8fafb;
+  --ram-board:#eaf3ec;
+  --ram-chip:#334b3d;
+  --contact:#c59a43;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+main{width:min(1200px,calc(100% - 24px));margin:18px auto 40px}
+h1{margin:0;font-size:27px;letter-spacing:-.02em}
+.sub{margin:5px 0 14px;color:var(--muted);font-size:13px;line-height:1.45}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px}
+
+button,select{font:inherit}
+button{
+  height:34px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:#fff;
+  color:var(--ink);
+  padding:0 10px;
+  cursor:pointer;
+  white-space:nowrap;
+}
+button:hover:not(:disabled){border-color:#9eaab4}
+button:disabled{opacity:.45;cursor:not-allowed}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700}
+.play-button{display:inline-flex;align-items:center;gap:6px}
+.play-button svg{width:14px;height:14px;fill:currentColor}
+
+.lab-panel{padding:13px}
+.architecture{
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:18px;
+  background:
+    linear-gradient(rgba(255,255,255,.95),rgba(255,255,255,.95)),
+    repeating-linear-gradient(0deg,transparent 0 23px,#edf1f4 24px),
+    repeating-linear-gradient(90deg,transparent 0 23px,#edf1f4 24px);
+}
+.arch-grid{
+  display:grid;
+  grid-template-columns:minmax(480px,1.2fr) minmax(175px,.43fr) minmax(250px,.68fr);
+  grid-template-areas:
+    "clock clock clock"
+    "cpu buses ram";
+  column-gap:20px;
+  row-gap:14px;
+  align-items:start;
+}
+
+/* Clock */
+.clock-module{
+  grid-area:clock;
+  position:relative;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:#fbfcfd;
+  padding:10px 11px 11px;
+}
+.clock-module::after{
+  content:"";
+  position:absolute;
+  left:36px;
+  bottom:-16px;
+  width:2px;
+  height:16px;
+  background:#9ca8b1;
+}
+.clock-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:10px;
+}
+.clock-title strong{font-size:15px}
+.clock-title span{
+  display:block;
+  margin-top:2px;
+  color:var(--muted);
+  font-size:9px;
+}
+.clock-readout{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.clock-pill{
+  padding:3px 7px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:#fff;
+  color:var(--muted);
+  font:800 10px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+#tickCount{color:var(--accent)}
+#clockLevel.high{color:#176d43;background:#edf8f1;border-color:#bfddca}
+#clockLevel.low{color:#785b24;background:#fff6e6;border-color:#ead5ab}
+
+.clock-trace{
+  position:relative;
+  margin:7px 0 8px;
+  border:1px solid #e1e7eb;
+  border-radius:8px;
+  overflow:hidden;
+  background:
+    linear-gradient(to bottom,transparent calc(50% - .5px),#e8edf1 calc(50% - .5px),#e8edf1 calc(50% + .5px),transparent calc(50% + .5px)),
+    repeating-linear-gradient(to right,transparent 0 39px,#f0f3f5 40px);
+}
+.clock-trace svg{display:block;width:100%;height:58px}
+.clock-wave-path{
+  fill:none;
+  stroke:var(--clock);
+  stroke-width:3.5;
+  stroke-linejoin:round;
+  stroke-linecap:round;
+  filter:drop-shadow(0 0 2px rgba(40,101,216,.25));
+}
+.clock-current{
+  stroke:var(--clock);
+  stroke-width:2;
+  opacity:.18;
+}
+.clock-flow{
+  fill:#87939b;
+  font:700 9px Inter,system-ui,sans-serif;
+  text-anchor:end;
+}
+.clock-level-label{
+  fill:#87939b;
+  font:700 8px Inter,system-ui,sans-serif;
+}
+.clock-controls{
+  display:grid;
+  grid-template-columns:minmax(125px,1fr) minmax(125px,1fr) 105px auto;
+  gap:7px;
+  align-items:end;
+}
+.clock-controls label>span{
+  display:block;
+  margin-bottom:3px;
+  color:var(--muted);
+  font-size:9px;
+}
+.clock-controls select{width:100%;height:32px;border:1px solid var(--line);border-radius:7px;background:#fff;color:var(--ink);padding:0 7px;font-size:11px}
+.clock-buttons{display:flex;gap:5px}
+.clock-buttons button{height:32px;font-size:11px;padding:0 8px}
+.clock-status{
+  margin-top:8px;
+  padding-top:7px;
+  border-top:1px solid var(--line);
+  display:flex;
+  align-items:center;
+  gap:8px 12px;
+  flex-wrap:wrap;
+}
+.phase-strip{display:flex;gap:5px}
+.phase{
+  min-height:25px;
+  padding:3px 8px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  color:var(--muted);
+  font-size:10px;
+  font-weight:800;
+}
+.phase.active.fetch{color:var(--fetch);background:#edf5ff;border-color:#bfd7f1}
+.phase.active.decode{color:var(--decode);background:#fff4e7;border-color:#e7ceaa}
+.phase.active.execute{color:var(--execute);background:#edf8f1;border-color:#bdddc9}
+.micro{flex:1;min-width:190px;color:var(--muted);font-size:10px;line-height:1.35}
+.micro strong{color:var(--ink)}
+
+/* CPU */
+.cpu-shell{
+  grid-area:cpu;
+  position:relative;
+  min-width:0;
+  padding:8px;
+}
+.cpu-shell::before,.cpu-shell::after{
+  content:"";
+  position:absolute;
+  top:32px;
+  bottom:32px;
+  width:12px;
+  background:repeating-linear-gradient(to bottom,#89959f 0 7px,transparent 7px 16px);
+  z-index:0;
+}
+.cpu-shell::before{left:-4px}
+.cpu-shell::after{right:-4px}
+.cpu-top-pins,.cpu-bottom-pins{
+  position:absolute;
+  left:34px;
+  right:34px;
+  height:12px;
+  background:repeating-linear-gradient(to right,#89959f 0 7px,transparent 7px 16px);
+  z-index:0;
+}
+.cpu-top-pins{top:-4px}
+.cpu-bottom-pins{bottom:-4px}
+.cpu-svg{
+  display:block;
+  width:100%;
+  height:auto;
+  border:2px solid #46545f;
+  border-radius:13px;
+  background:var(--cpu-fill);
+  position:relative;
+  z-index:1;
+}
+.cpu-svg .cpu-title{font:800 25px Inter,system-ui,sans-serif;fill:#27333c}
+.cpu-svg .box{fill:#fff;stroke:#cbd5dc;stroke-width:2}
+.cpu-svg .box.active{fill:var(--accent-soft);stroke:var(--accent);stroke-width:3}
+.cpu-svg .box.changed{fill:var(--changed);stroke:#d6ae55;stroke-width:3}
+.cpu-svg .logic{fill:#fff;stroke:#9daab4;stroke-width:2.5}
+.cpu-svg .logic.active{fill:var(--accent-soft);stroke:var(--accent);stroke-width:3}
+.cpu-svg .logic.changed{fill:var(--changed);stroke:#d6ae55;stroke-width:3}
+.cpu-svg .reg-name{font:800 14px Inter,system-ui,sans-serif;fill:#53616c}
+.cpu-svg .reg-full{font:500 10px Inter,system-ui,sans-serif;fill:#7a8790}
+.cpu-svg .reg-value{
+  font:800 19px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  fill:#1f2932;
+  text-anchor:middle;
+}
+.cpu-svg .unit-name{font:850 24px Inter,system-ui,sans-serif;fill:#293640;text-anchor:middle}
+.cpu-svg .unit-value{
+  font:750 13px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  fill:#53616c;
+  text-anchor:middle;
+}
+.cpu-svg .decoder{fill:#fff8f8;stroke:#d49494;stroke-width:1.5}
+.cpu-svg .decoder-text{font:800 10px Inter,system-ui,sans-serif;fill:#9d5a5a;text-anchor:middle}
+
+.cpu-svg .data-path{
+  fill:none;
+  stroke:#b7c1c8;
+  stroke-width:2;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  transition:.14s;
+}
+.cpu-svg .data-path.active{
+  stroke:var(--accent);
+  stroke-width:4;
+  filter:url(#wireGlow);
+  stroke-dasharray:8 7;
+  animation:pathFlow .9s linear infinite;
+}
+.cpu-svg .address-path.active{stroke:var(--address)}
+.cpu-svg .system-data-path.active{stroke:var(--data)}
+.cpu-svg .system-control-path.active{stroke:var(--control)}
+
+.cpu-svg .control-path{
+  fill:none;
+  stroke:rgba(180,108,53,.18);
+  stroke-width:1.65;
+  stroke-dasharray:4 5;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  transition:.14s;
+}
+.cpu-svg .control-path.active{
+  stroke:var(--control);
+  stroke-width:3.1;
+  filter:url(#wireGlow);
+  stroke-dasharray:7 5;
+  animation:pathFlow .9s linear infinite;
+}
+.cpu-svg .clock-path{
+  fill:none;
+  stroke:#9ea9b1;
+  stroke-width:2;
+  stroke-dasharray:3 4;
+}
+.cpu-svg .clock-path.active{
+  stroke:var(--clock);
+  stroke-width:3.2;
+  filter:url(#wireGlow);
+}
+@keyframes pathFlow{to{stroke-dashoffset:-30}}
+
+/* System buses: line itself carries the animation; no floating markers */
+.bus-bridge{
+  grid-area:buses;
+  display:grid;
+  gap:17px;
+  align-self:start;
+  margin-top:152px;
+  min-width:0;
+}
+.bus-lane{min-height:62px;color:var(--muted)}
+.bus-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:7px;
+  margin-bottom:5px;
+  font-size:10px;
+  font-weight:800;
+}
+.bus-head .direction{
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-weight:700;
+  color:#8f9aa2;
+}
+.bus-track{
+  position:relative;
+  height:22px;
+}
+.bus-line{
+  position:absolute;
+  left:-20px;
+  right:-20px;
+  top:50%;
+  height:7px;
+  transform:translateY(-50%);
+  border-radius:999px;
+  background:#d3dae0;
+  transition:.14s;
+}
+.bus-line::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  opacity:0;
+  background:repeating-linear-gradient(90deg,transparent 0 8px,rgba(255,255,255,.82) 8px 13px,transparent 13px 23px);
+}
+.bus-track .arrow-right{
+  position:absolute;
+  right:-23px;
+  top:50%;
+  transform:translateY(-50%);
+  width:0;height:0;
+  border-top:7px solid transparent;
+  border-bottom:7px solid transparent;
+  border-left:10px solid #bdc6cd;
+}
+.bus-track .arrow-left{
+  position:absolute;
+  left:-23px;
+  top:50%;
+  transform:translateY(-50%);
+  width:0;height:0;
+  border-top:7px solid transparent;
+  border-bottom:7px solid transparent;
+  border-right:10px solid #bdc6cd;
+}
+.bus-value{
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  z-index:2;
+  max-width:90%;
+  padding:2px 6px;
+  border-radius:5px;
+  background:#fff;
+  border:1px solid var(--line);
+  font:800 10px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  color:var(--muted);
+  opacity:0;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.bus-lane.active .bus-value{opacity:1}
+.bus-lane.address.active{color:var(--address)}
+.bus-lane.address.active .bus-line{background:var(--address);box-shadow:0 0 10px rgba(118,100,187,.34)}
+.bus-lane.address.active .arrow-right{border-left-color:var(--address)}
+.bus-lane.data.active{color:var(--data)}
+.bus-lane.data.active .bus-line{background:var(--data);box-shadow:0 0 10px rgba(47,128,100,.32)}
+.bus-lane.data.active .arrow-right{border-left-color:var(--data)}
+.bus-lane.data.active .arrow-left{border-right-color:var(--data)}
+.bus-lane.control.active{color:var(--control)}
+.bus-lane.control.active .bus-line{background:var(--control);box-shadow:0 0 10px rgba(180,108,53,.32)}
+.bus-lane.control.active .arrow-right{border-left-color:var(--control)}
+.bus-lane.control.active .arrow-left{border-right-color:var(--control)}
+.bus-lane.active .bus-line::after{opacity:1}
+.bus-lane.to-ram .bus-line::after{animation:busRight .65s linear infinite}
+.bus-lane.to-cpu .bus-line::after{animation:busLeft .65s linear infinite}
+@keyframes busRight{from{background-position:0 0}to{background-position:46px 0}}
+@keyframes busLeft{from{background-position:46px 0}to{background-position:0 0}}
+
+/* RAM */
+.ram-module{
+  grid-area:ram;
+  position:relative;
+  min-width:0;
+  border:2px solid #52685b;
+  border-radius:10px;
+  background:var(--ram-board);
+  padding:14px 12px 28px;
+  overflow:hidden;
+}
+.ram-module::after{
+  content:"";
+  position:absolute;
+  left:14px;right:14px;bottom:0;
+  height:15px;
+  background:repeating-linear-gradient(to right,var(--contact) 0 8px,transparent 8px 13px);
+}
+.ram-notch{
+  position:absolute;
+  left:50%;bottom:-1px;
+  width:24px;height:12px;
+  transform:translateX(-50%);
+  background:#fff;
+  border-radius:8px 8px 0 0;
+  z-index:2;
+}
+.ram-heading{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:8px;
+  margin-bottom:9px;
+}
+.ram-heading strong{font-size:17px}
+.ram-heading span{color:#65756c;font-size:10px;line-height:1.25;text-align:right}
+.memory-chips{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:7px;
+  margin-bottom:10px;
+}
+.memory-chip{
+  height:26px;
+  border:1px solid #263a2e;
+  border-radius:4px;
+  background:var(--ram-chip);
+  position:relative;
+}
+.memory-chip::before,.memory-chip::after{
+  content:"";
+  position:absolute;
+  left:7px;right:7px;
+  height:3px;
+  background:repeating-linear-gradient(to right,#9ca9a0 0 4px,transparent 4px 8px);
+}
+.memory-chip::before{top:-4px}
+.memory-chip::after{bottom:-4px}
+.ram-table{
+  border:1px solid #cbd7cf;
+  border-radius:8px;
+  overflow:hidden;
+  background:#fff;
+}
+.ram-row{
+  display:grid;
+  grid-template-columns:54px 1fr;
+  min-height:39px;
+  border-bottom:1px solid #dce5df;
+  align-items:center;
+  transition:.14s;
+}
+.ram-row:last-child{border-bottom:0}
+.ram-row.active{background:var(--accent-soft);box-shadow:inset 4px 0 0 var(--accent)}
+.ram-row.changed{background:var(--changed);box-shadow:inset 4px 0 0 #d5a94a}
+.ram-address{
+  height:100%;
+  display:grid;
+  place-items:center;
+  border-right:1px solid #dce5df;
+  color:#65756c;
+  font:800 11px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+.ram-value{
+  padding:7px 8px;
+  font:800 11px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.ram-value.instruction{color:#315f94}
+.ram-value.data{color:#735e42}
+
+.step-card{
+  margin-top:14px;
+  padding-top:12px;
+  border-top:1px solid var(--line);
+  display:grid;
+  grid-template-columns:210px 1fr;
+  gap:12px;
+  align-items:center;
+}
+.micro-operation-label{color:var(--muted);font-size:10px;font-weight:850}
+.operation{margin-top:4px;font:850 15px/1.25 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.operation-note{color:var(--muted);font-size:11px;line-height:1.4}
+.arch-key{margin-top:9px;color:var(--muted);font-size:10px;line-height:1.35}
+
+.challenge-panel{
+  margin-top:12px;
+  padding:11px 12px;
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:12px;
+  align-items:center;
+}
+.challenge-title{font-size:13px;font-weight:850}
+.challenge-text{margin-top:3px;color:var(--muted);font-size:12px;line-height:1.4}
+.challenge-answer{min-width:150px;text-align:right;font:850 16px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.challenge-answer.hidden{color:transparent;text-shadow:0 0 7px rgba(29,39,48,.45);user-select:none}
+
+@media(max-width:1000px){
+  .arch-grid{
+    grid-template-columns:minmax(430px,1fr) minmax(155px,.4fr) minmax(225px,.6fr);
+    column-gap:15px;
+  }
+  .clock-controls{grid-template-columns:1fr 1fr}
+  .clock-buttons{grid-column:1/-1}
+}
+@media(max-width:820px){
+  main{width:min(100% - 12px,1200px);margin-top:8px}
+  .arch-grid{
+    grid-template-columns:1fr;
+    grid-template-areas:"clock" "cpu" "buses" "ram";
+    gap:15px;
+  }
+  .bus-bridge{grid-template-columns:repeat(3,1fr);gap:10px;margin-top:0}
+  .bus-line{left:2px;right:2px}
+  .bus-track .arrow-right{right:0}
+  .bus-track .arrow-left{left:0}
+  .step-card{grid-template-columns:1fr}
+  .challenge-panel{grid-template-columns:1fr}
+  .challenge-answer{text-align:left}
+}
+@media(max-width:560px){
+  .architecture{padding:13px 9px}
+  .clock-controls{grid-template-columns:1fr}
+  .clock-buttons{grid-column:auto;flex-wrap:wrap}
+  .clock-readout{justify-content:flex-start}
+  .cpu-shell{overflow-x:auto;padding-bottom:8px}
+  .cpu-svg{width:540px;max-width:none}
+  .bus-bridge{grid-template-columns:1fr}
+  .ram-row{grid-template-columns:48px 1fr}
+}
+</style>
+</head>
+<body>
+<main>
+<h1>Fetch–Decode–Execute Lab</h1>
+<div class="sub">
+  Step through one instruction at a time and watch the clock, CPU pathways and system buses work together.
+</div>
+
+<section class="panel lab-panel">
+  <div class="architecture">
+    <div class="arch-grid">
+
+      <section class="clock-module" aria-label="Clock and program controls">
+        <div class="clock-head">
+          <div class="clock-title">
+            <strong>Clock</strong>
+            <span>one teaching tick per micro-operation; an instruction uses several ticks</span>
+          </div>
+          <div class="clock-readout">
+            <span id="tickCount" class="clock-pill">Tick 0</span>
+            <span id="clockLevel" class="clock-pill low">LOW</span>
+            <span id="clockPhase" class="clock-pill">ready</span>
+          </div>
+        </div>
+
+        <div class="clock-trace">
+          <svg viewBox="0 0 480 58" role="img" aria-label="Recent alternating clock levels; new ticks enter on the right and history shifts left">
+            <text x="8" y="14" class="clock-level-label">HIGH</text>
+            <text x="8" y="49" class="clock-level-label">LOW</text>
+            <text x="468" y="11" class="clock-flow">flow ←</text>
+            <line x1="450" y1="7" x2="450" y2="51" class="clock-current"/>
+            <path id="clockTracePath" class="clock-wave-path" d="M30 43H450"/>
+          </svg>
+        </div>
+
+        <div class="clock-controls">
+          <label>
+            <span>Program</span>
+            <select id="programSelect">
+              <option value="addstore" selected>Add and store</option>
+              <option value="subtract">Subtract and store</option>
+              <option value="multiply">Multiply by repeated addition</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Instruction model</span>
+            <select id="displayMode">
+              <option value="simple" selected>GCSE immediate</option>
+              <option value="assembly">Assembly direct</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Clock speed</span>
+            <select id="speed">
+              <option value="1150">Slow</option>
+              <option value="720" selected>Normal</option>
+              <option value="430">Fast</option>
+            </select>
+          </label>
+
+          <div class="clock-buttons">
+            <button id="resetBtn">Reset</button>
+            <button id="stepBtn" class="primary">Next tick</button>
+            <button id="runBtn" class="play-button">
+              <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6 4.7v10.6L15 10 6 4.7Z"/></svg>
+              <span>Auto run</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="clock-status">
+          <div class="phase-strip">
+            <span id="phaseFetch" class="phase fetch active">Fetch</span>
+            <span id="phaseDecode" class="phase decode">Decode</span>
+            <span id="phaseExecute" class="phase execute">Execute</span>
+          </div>
+          <div id="microText" class="micro" aria-live="polite">
+            <strong>Ready.</strong> PC contains the next instruction location.
+          </div>
+        </div>
+      </section>
+
+      <div class="cpu-shell">
+        <div class="cpu-top-pins"></div>
+        <div class="cpu-bottom-pins"></div>
+
+        <svg class="cpu-svg" viewBox="0 0 760 500" role="img"
+             aria-label="CPU with ALU, Control Unit, PC, MAR, MDR, CIR, accumulator and internal pathways">
+          <defs>
+            <filter id="wireGlow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="2.1" result="blur"/>
+              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+            <marker id="arrow" viewBox="0 0 10 10" refX="8.5" refY="5"
+                    markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+              <path d="M0 0L10 5L0 10Z" fill="#9aa6ae"/>
+            </marker>
+          </defs>
+
+          <!-- No wording is placed over the internal pathways. -->
+          <path id="wireClockCu" class="clock-path" d="M28 0V360H50"/>
+
+          <text x="28" y="38" class="cpu-title">CPU</text>
+
+          <!-- Data and address pathways -->
+          <path id="wirePcMar" class="data-path" d="M428 391H546" marker-end="url(#arrow)"/>
+          <path id="wireMdrCir" class="data-path" d="M611 150V184H478V214" marker-end="url(#arrow)"/>
+          <path id="wireCirCu" class="data-path" d="M398 250H206" marker-end="url(#arrow)"/>
+          <path id="wireCirMar" class="data-path" d="M478 286V318H616V352" marker-end="url(#arrow)"/>
+          <path id="wireCirAcc" class="data-path" d="M398 235H350V150" marker-end="url(#arrow)"/>
+          <path id="wireCirAlu" class="data-path" d="M398 267H248V145H206" marker-end="url(#arrow)"/>
+
+          <path id="wireAccAlu" class="data-path" d="M288 100H206" marker-end="url(#arrow)"/>
+          <path id="wireMdrAlu" class="data-path" d="M536 125H206" marker-end="url(#arrow)"/>
+          <path id="wireAluAcc" class="data-path" d="M206 158H260V142H288" marker-end="url(#arrow)"/>
+          <path id="wireAccMdr" class="data-path" d="M428 87H536" marker-end="url(#arrow)"/>
+          <path id="wireMdrAcc" class="data-path" d="M536 143H428" marker-end="url(#arrow)"/>
+
+          <!-- CU control network routed around the data paths -->
+          <path id="wireCtrlAlu" class="control-path" d="M206 330H244V50H126V72"/>
+          <path id="wireCtrlAcc" class="control-path" d="M206 338H256V50H358V72"/>
+          <path id="wireCtrlMdr" class="control-path" d="M206 346H268V50H611V72"/>
+          <path id="wireCtrlCir" class="control-path" d="M206 354H350V286"/>
+          <path id="wireCtrlPc" class="control-path" d="M206 370H250V458H358V430"/>
+          <path id="wireCtrlMar" class="control-path" d="M206 382H262V458H616V430"/>
+
+          <!-- Connections to the external system buses -->
+          <path id="wireMarAddress" class="data-path address-path" d="M686 391H728V190H760"/>
+          <path id="wireMdrData" class="data-path system-data-path" d="M686 111H728V255H760"/>
+          <path id="wireCuControl" class="data-path system-control-path" d="M206 360H238V468H728V320H760"/>
+
+          <!-- ALU -->
+          <g id="unitALU">
+            <rect class="logic" x="46" y="72" width="160" height="112" rx="12"/>
+            <text x="126" y="109" class="unit-name">ALU</text>
+            <text id="aluValue" x="126" y="137" class="unit-value">idle</text>
+            <text x="126" y="163" text-anchor="middle" class="reg-full">arithmetic + logic</text>
+          </g>
+
+          <!-- CU -->
+          <g id="unitCU">
+            <rect class="logic" x="46" y="304" width="160" height="112" rx="12"/>
+            <text x="126" y="339" class="unit-name">CU</text>
+            <text id="cuValue" x="126" y="367" class="unit-value">waiting</text>
+            <rect class="decoder" x="83" y="383" width="86" height="22" rx="5"/>
+            <text x="126" y="398" class="decoder-text">DECODER</text>
+          </g>
+
+          <!-- Registers -->
+          <g id="regACC">
+            <rect class="box" x="288" y="72" width="140" height="78" rx="10"/>
+            <text x="301" y="93" class="reg-name">ACC</text>
+            <text x="301" y="108" class="reg-full">Accumulator</text>
+            <text id="accValue" x="358" y="136" class="reg-value">0</text>
+          </g>
+
+          <g id="regMDR">
+            <rect class="box" x="536" y="72" width="150" height="78" rx="10"/>
+            <text x="549" y="93" class="reg-name">MDR</text>
+            <text x="549" y="108" class="reg-full">Memory Data Register</text>
+            <text id="mdrValue" x="611" y="136" class="reg-value">—</text>
+          </g>
+
+          <g id="regCIR">
+            <rect class="box" x="398" y="214" width="160" height="72" rx="10"/>
+            <text x="411" y="235" class="reg-name">CIR</text>
+            <text x="411" y="250" class="reg-full">Current Instruction Register</text>
+            <text id="cirValue" x="478" y="276" class="reg-value">—</text>
+          </g>
+
+          <g id="regPC">
+            <rect class="box" x="288" y="352" width="140" height="78" rx="10"/>
+            <text x="301" y="373" class="reg-name">PC</text>
+            <text x="301" y="388" class="reg-full">Program Counter</text>
+            <text id="pcValue" x="358" y="416" class="reg-value">I1</text>
+          </g>
+
+          <g id="regMAR">
+            <rect class="box" x="546" y="352" width="140" height="78" rx="10"/>
+            <text x="559" y="373" class="reg-name">MAR</text>
+            <text x="559" y="388" class="reg-full">Memory Address Register</text>
+            <text id="marValue" x="616" y="416" class="reg-value">—</text>
+          </g>
+        </svg>
+      </div>
+
+      <section class="bus-bridge" aria-label="System buses">
+        <div id="addressBus" class="bus-lane address">
+          <div class="bus-head">
+            <span>Address bus</span>
+            <span class="direction">CPU → RAM</span>
+          </div>
+          <div class="bus-track">
+            <span class="bus-line"></span>
+            <span class="arrow-right"></span>
+            <span class="bus-value"></span>
+          </div>
+        </div>
+
+        <div id="dataBus" class="bus-lane data">
+          <div class="bus-head">
+            <span>Data bus</span>
+            <span class="direction">CPU ↔ RAM</span>
+          </div>
+          <div class="bus-track">
+            <span class="bus-line"></span>
+            <span class="arrow-left"></span>
+            <span class="arrow-right"></span>
+            <span class="bus-value"></span>
+          </div>
+        </div>
+
+        <div id="controlBus" class="bus-lane control">
+          <div class="bus-head">
+            <span>Control bus</span>
+            <span class="direction">CU ↔ system</span>
+          </div>
+          <div class="bus-track">
+            <span class="bus-line"></span>
+            <span class="arrow-left"></span>
+            <span class="arrow-right"></span>
+            <span class="bus-value"></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="ram-module" aria-label="Random Access Memory">
+        <div class="ram-notch"></div>
+        <div class="ram-heading">
+          <strong>RAM</strong>
+          <span>instructions and data<br>share memory</span>
+        </div>
+
+        <div class="memory-chips" aria-hidden="true">
+          <div class="memory-chip"></div>
+          <div class="memory-chip"></div>
+          <div class="memory-chip"></div>
+          <div class="memory-chip"></div>
+        </div>
+
+        <div id="ramTable" class="ram-table"></div>
+      </section>
+    </div>
+
+    <div class="step-card">
+      <div>
+        <div class="micro-operation-label">CURRENT MICRO-OPERATION</div>
+        <div id="operation" class="operation">PC contains I1</div>
+      </div>
+      <div id="operationNote" class="operation-note">
+        Press Next tick to begin the fetch stage.
+      </div>
+    </div>
+
+    <div class="arch-key">
+      GCSE mode uses immediate operands: values come directly from CIR during execute and locations are shown as I1, I2… and RESULT. Assembly mode uses numeric direct addresses and performs the additional operand-memory access.
+    </div>
+  </div>
+</section>
+
+<section class="panel challenge-panel">
+  <div>
+    <div class="challenge-title">Trace challenge</div>
+    <div id="challengeText" class="challenge-text">
+      What value will be stored in RESULT when the program reaches STOP?
+    </div>
+  </div>
+  <div>
+    <button id="revealBtn">Reveal prediction</button>
+    <div id="challengeAnswer" class="challenge-answer hidden">13</div>
+  </div>
+</section>
+
+<script>
+(() => {
+  const $=id=>document.getElementById(id);
+
+  const programs={
+    addstore:{
+      simpleStart:0,
+      simpleMemory:{0:"LOADI 8",1:"ADDI 5",2:"STORE 10",3:"STOP",10:0},
+      simpleLabels:{0:"I1",1:"I2",2:"I3",3:"I4",10:"RESULT"},
+      assemblyStart:100,
+      assemblyMemory:{100:"LDA 105",101:"ADD 106",102:"STA 107",103:"HLT",104:"—",105:8,106:5,107:0},
+      challenge:"What value will be stored in RESULT when the program reaches STOP?",
+      assemblyChallenge:"What value will be stored at address 107 when the program reaches HLT?",
+      answer:"13"
+    },
+    subtract:{
+      simpleStart:0,
+      simpleMemory:{0:"LOADI 19",1:"SUBI 7",2:"STORE 10",3:"STOP",10:0},
+      simpleLabels:{0:"I1",1:"I2",2:"I3",3:"I4",10:"RESULT"},
+      assemblyStart:100,
+      assemblyMemory:{100:"LDA 105",101:"SUB 106",102:"STA 107",103:"HLT",104:"—",105:19,106:7,107:0},
+      challenge:"What value will be stored in RESULT when the program reaches STOP?",
+      assemblyChallenge:"What value will be stored at address 107 when the program reaches HLT?",
+      answer:"12"
+    },
+    multiply:{
+      simpleStart:0,
+      simpleMemory:{0:"LOADI 4",1:"ADDI 4",2:"ADDI 4",3:"STORE 10",4:"STOP",10:0},
+      simpleLabels:{0:"I1",1:"I2",2:"I3",3:"I4",4:"I5",10:"RESULT"},
+      assemblyStart:100,
+      assemblyMemory:{100:"LDA 105",101:"ADD 105",102:"ADD 105",103:"STA 107",104:"HLT",105:4,106:"—",107:0},
+      challenge:"This program uses repeated addition. What multiplication does it perform, and what is stored in RESULT?",
+      assemblyChallenge:"This program uses repeated addition. What multiplication does it perform, and what value is stored at address 107?",
+      answer:"4 × 3 = 12"
+    }
+  };
+
+  let state,memory,halted=false,currentInstruction=null,microQueue=[],autoTimer=null;
+  let tickCount=0,clockLevel=0,clockHistory=Array(12).fill(0);
+
+  function currentProgram(){return programs[$("programSelect").value]}
+  function isSimpleMode(){return $("displayMode").value==="simple"}
+  function cloneMemory(source){return Object.fromEntries(Object.entries(source).map(([k,v])=>[Number(k),v]))}
+
+  function displayAddress(address){
+    if(address===null||address===undefined)return "—";
+    if(!isSimpleMode())return String(address);
+    return currentProgram().simpleLabels[address] || `L${address}`;
+  }
+
+  function isInstruction(value){
+    return typeof value==="string" && /^(LDA|ADD|SUB|STA|HLT|LOADI|ADDI|SUBI|STORE|STOP)/.test(value);
+  }
+
+  function displayInstruction(text){
+    if(!isInstruction(text))return String(text);
+    if(!isSimpleMode())return text;
+    if(text==="STOP")return "STOP";
+    const [op,arg]=String(text).split(/\s+/);
+    if(op==="LOADI")return `LOAD ${arg}`;
+    if(op==="ADDI")return `ADD ${arg}`;
+    if(op==="SUBI")return `SUBTRACT ${arg}`;
+    if(op==="STORE")return "STORE result";
+    return text;
+  }
+
+  function visibleOp(op){
+    if(!isSimpleMode())return op;
+    return {LOADI:"LOAD",ADDI:"ADD",SUBI:"SUBTRACT",STORE:"STORE",STOP:"STOP"}[op]||op;
+  }
+
+  function visibleDecodedInstruction(instruction){
+    if(!instruction)return "";
+    if(!isSimpleMode())return `${instruction.op}${instruction.arg!==null?" "+instruction.arg:""}`;
+    if(instruction.op==="STOP")return "STOP";
+    if(instruction.op==="STORE")return "STORE result";
+    return `${visibleOp(instruction.op)} ${instruction.arg}`;
+  }
+
+  function parseInstruction(text){
+    if(text==="HLT"||text==="STOP")return {op:text,arg:null};
+    const [op,argText]=String(text).split(/\s+/);
+    return {op,arg:Number(argText)};
+  }
+
+  function setPhase(phase){
+    ["fetch","decode","execute"].forEach(p=>{
+      $("phase"+p[0].toUpperCase()+p.slice(1)).classList.toggle("active",p===phase);
+    });
+    $("clockPhase").textContent=phase;
+  }
+
+  function renderClock(){
+    const path=$("clockTracePath");
+    const x0=30,x1=450,highY=16,lowY=43;
+    const dx=(x1-x0)/(clockHistory.length-1);
+    const y=level=>level?highY:lowY;
+
+    let d=`M${x0} ${y(clockHistory[0])}`;
+    for(let i=1;i<clockHistory.length;i++){
+      const x=x0+i*dx;
+      d+=`H${x}V${y(clockHistory[i])}`;
+    }
+    path.setAttribute("d",d);
+
+    $("tickCount").textContent=`Tick ${tickCount}`;
+    $("clockLevel").textContent=clockLevel?"HIGH":"LOW";
+    $("clockLevel").classList.toggle("high",clockLevel===1);
+    $("clockLevel").classList.toggle("low",clockLevel===0);
+  }
+
+  function pulseClock(){
+    tickCount+=1;
+    clockLevel=clockLevel?0:1;
+    clockHistory.push(clockLevel);
+    clockHistory.shift();
+    renderClock();
+    activatePath("wireClockCu");
+  }
+
+  function clearHighlights(){
+    document.querySelectorAll(".cpu-svg .box,.cpu-svg .logic,.data-path,.control-path,.clock-path,.ram-row,.bus-lane")
+      .forEach(el=>el.classList.remove("active","changed","to-ram","to-cpu"));
+    document.querySelectorAll(".bus-value").forEach(el=>{el.textContent="";});
+  }
+
+  function highlightComponent(id,changed=false){
+    const group=$(id);
+    if(!group)return;
+    const shape=group.querySelector(".box,.logic")||group;
+    shape.classList.add(changed?"changed":"active");
+  }
+
+  function activatePath(id){
+    const el=$(id);
+    if(el)el.classList.add("active");
+  }
+
+  function activateControl(target){
+    const id={ALU:"wireCtrlAlu",ACC:"wireCtrlAcc",MDR:"wireCtrlMdr",CIR:"wireCtrlCir",PC:"wireCtrlPc",MAR:"wireCtrlMar"}[target];
+    if(id)activatePath(id);
+  }
+
+  function activateBus(id,value,direction){
+    const el=$(id);
+    el.classList.add("active",direction);
+    el.querySelector(".bus-value").textContent=String(value);
+  }
+
+  function displayRegister(value,name){
+    if(value===null||value===undefined)return "—";
+    if((name==="MDR"||name==="CIR")&&isInstruction(value))return displayInstruction(value);
+    return String(value);
+  }
+
+  function fitSvgText(el){
+    if(!el)return;
+    const max=el.id==="mdrValue"?132:el.id==="cirValue"?142:110;
+    let size=19;
+    el.style.fontSize=size+"px";
+    try{
+      while(el.getComputedTextLength()>max&&size>10){
+        size-=1;
+        el.style.fontSize=size+"px";
+      }
+    }catch{}
+  }
+
+  function renderRegisters(){
+    $("pcValue").textContent=displayAddress(state.PC);
+    $("marValue").textContent=displayAddress(state.MAR);
+    $("mdrValue").textContent=displayRegister(state.MDR,"MDR");
+    $("cirValue").textContent=displayRegister(state.CIR,"CIR");
+    $("accValue").textContent=displayRegister(state.ACC);
+    $("cuValue").textContent=state.CU;
+    $("aluValue").textContent=state.ALU;
+    ["pcValue","marValue","mdrValue","cirValue","accValue"].forEach(id=>fitSvgText($(id)));
+  }
+
+  function renderRAM(){
+    const root=$("ramTable");
+    root.innerHTML="";
+    Object.keys(memory).map(Number).sort((a,b)=>a-b).forEach(address=>{
+      const row=document.createElement("div");
+      row.className="ram-row";
+      row.id=`ram${address}`;
+
+      const addressCell=document.createElement("div");
+      addressCell.className="ram-address";
+      addressCell.textContent=displayAddress(address);
+
+      const value=document.createElement("div");
+      value.className="ram-value "+(isInstruction(memory[address])?"instruction":"data");
+      value.textContent=isInstruction(memory[address])?displayInstruction(memory[address]):memory[address];
+
+      row.append(addressCell,value);
+      root.appendChild(row);
+    });
+  }
+
+  function highlightRam(address,changed=false){
+    const row=$(`ram${address}`);
+    if(row)row.classList.add(changed?"changed":"active");
+  }
+
+  function setOperation(title,note){
+    $("operation").textContent=title;
+    $("operationNote").textContent=note;
+    $("microText").innerHTML=`<strong>${title}</strong> ${note}`;
+  }
+
+  function enqueueFetch(){
+    microQueue=[
+      {
+        phase:"fetch",
+        title:"MAR ← PC",
+        note:"Copy the next instruction location from PC into MAR.",
+        apply(){
+          state.MAR=state.PC;
+          highlightComponent("regPC");
+          highlightComponent("regMAR",true);
+          activateControl("PC");
+          activateControl("MAR");
+          activatePath("wirePcMar");
+        }
+      },
+      {
+        phase:"fetch",
+        title:isSimpleMode()?"PC → next instruction":"PC ← PC + 1",
+        note:isSimpleMode()
+          ?"Advance PC to the next symbolic instruction location."
+          :"Increment PC so it points to the next instruction.",
+        apply(){
+          state.PC+=1;
+          highlightComponent("regPC",true);
+          activateControl("PC");
+        }
+      },
+      {
+        phase:"fetch",
+        title:"Address + READ → RAM",
+        note:"MAR drives the address bus while the CU sends READ on the control bus.",
+        apply(){
+          highlightComponent("regMAR");
+          highlightComponent("unitCU");
+          activateControl("MAR");
+          activatePath("wireMarAddress");
+          activatePath("wireCuControl");
+          activateBus("addressBus",displayAddress(state.MAR),"to-ram");
+          activateBus("controlBus","READ","to-ram");
+          highlightRam(state.MAR);
+        }
+      },
+      {
+        phase:"fetch",
+        title:"MDR ← RAM[MAR]",
+        note:"RAM returns the instruction on the data bus and MDR receives it.",
+        apply(){
+          state.MDR=memory[state.MAR];
+          highlightRam(state.MAR);
+          highlightComponent("regMDR",true);
+          activateControl("MDR");
+          activatePath("wireMdrData");
+          activateBus("dataBus",displayInstruction(state.MDR),"to-cpu");
+        }
+      },
+      {
+        phase:"fetch",
+        title:"CIR ← MDR",
+        note:"Copy the fetched instruction from MDR into CIR.",
+        apply(){
+          state.CIR=state.MDR;
+          highlightComponent("regMDR");
+          highlightComponent("regCIR",true);
+          activateControl("MDR");
+          activateControl("CIR");
+          activatePath("wireMdrCir");
+        }
+      },
+      {
+        phase:"decode",
+        title:"CU decodes CIR",
+        note:"CIR supplies the instruction to the decoder in the Control Unit.",
+        apply(){
+          currentInstruction=parseInstruction(state.CIR);
+          state.CU=visibleDecodedInstruction(currentInstruction);
+          highlightComponent("regCIR");
+          highlightComponent("unitCU",true);
+          activatePath("wireCirCu");
+        }
+      }
+    ];
+  }
+
+  function enqueueExecute(){
+    const {op,arg}=currentInstruction;
+
+    if(op==="HLT"||op==="STOP"){
+      microQueue.push({
+        phase:"execute",
+        title:visibleOp(op),
+        note:"The Control Unit stops instruction execution.",
+        apply(){
+          state.CU="halted";
+          state.ALU="idle";
+          halted=true;
+          $("clockPhase").textContent="halted";
+          highlightComponent("unitCU",true);
+        }
+      });
+      return;
+    }
+
+    if(op==="LOADI"){
+      microQueue.push({
+        phase:"execute",
+        title:"ACC ← CIR value",
+        note:`${displayInstruction(state.CIR)} is immediate: ${arg} comes directly from CIR, so RAM is not read again.`,
+        apply(){
+          state.ACC=arg;
+          highlightComponent("regCIR");
+          highlightComponent("regACC",true);
+          activateControl("CIR");
+          activateControl("ACC");
+          activatePath("wireCirAcc");
+        }
+      });
+      return;
+    }
+
+    if(op==="ADDI"||op==="SUBI"){
+      microQueue.push({
+        phase:"execute",
+        title:op==="ADDI"?"ACC ← ACC + CIR value":"ACC ← ACC − CIR value",
+        note:`${arg} comes directly from CIR. ACC and the immediate value enter the ALU.`,
+        apply(){
+          const before=state.ACC;
+          state.ALU=op==="ADDI"?`${before} + ${arg}`:`${before} − ${arg}`;
+          state.ACC=op==="ADDI"?before+arg:before-arg;
+          highlightComponent("regCIR");
+          highlightComponent("regACC",true);
+          highlightComponent("unitALU",true);
+          activateControl("CIR");
+          activateControl("ALU");
+          activateControl("ACC");
+          activatePath("wireAccAlu");
+          activatePath("wireCirAlu");
+          activatePath("wireAluAcc");
+        }
+      });
+      return;
+    }
+
+    if(op==="STORE"||op==="STA"){
+      microQueue.push({
+        phase:"execute",
+        title:isSimpleMode()?"MAR ← RESULT":"MAR ← CIR operand",
+        note:isSimpleMode()
+          ?"STORE selects the symbolic RESULT location."
+          :`Copy destination address ${arg} from CIR into MAR.`,
+        apply(){
+          state.MAR=arg;
+          highlightComponent("regCIR");
+          highlightComponent("regMAR",true);
+          activateControl("CIR");
+          activateControl("MAR");
+          activatePath("wireCirMar");
+        }
+      });
+
+      microQueue.push({
+        phase:"execute",
+        title:"MDR ← ACC",
+        note:"Copy the result from ACC into MDR before writing it to RAM.",
+        apply(){
+          state.MDR=state.ACC;
+          highlightComponent("regACC");
+          highlightComponent("regMDR",true);
+          activateControl("ACC");
+          activateControl("MDR");
+          activatePath("wireAccMdr");
+        }
+      });
+
+      microQueue.push({
+        phase:"execute",
+        title:"Address + WRITE → RAM",
+        note:"MAR drives the address bus while the CU sends WRITE on the control bus.",
+        apply(){
+          highlightComponent("regMAR");
+          highlightComponent("unitCU");
+          activatePath("wireMarAddress");
+          activatePath("wireCuControl");
+          activateBus("addressBus",displayAddress(state.MAR),"to-ram");
+          activateBus("controlBus","WRITE","to-ram");
+          highlightRam(state.MAR);
+        }
+      });
+
+      microQueue.push({
+        phase:"execute",
+        title:"RAM[MAR] ← MDR",
+        note:"MDR sends the value to the selected RAM location on the data bus.",
+        apply(){
+          memory[state.MAR]=state.MDR;
+          highlightComponent("regMDR");
+          activateControl("MDR");
+          activatePath("wireMdrData");
+          activateBus("dataBus",state.MDR,"to-ram");
+          renderRAM();
+          highlightRam(state.MAR,true);
+        }
+      });
+      return;
+    }
+
+    microQueue.push({
+      phase:"execute",
+      title:"MAR ← CIR operand",
+      note:`Copy direct address ${arg} from CIR into MAR.`,
+      apply(){
+        state.MAR=arg;
+        highlightComponent("regCIR");
+        highlightComponent("regMAR",true);
+        activateControl("CIR");
+        activateControl("MAR");
+        activatePath("wireCirMar");
+      }
+    });
+
+    microQueue.push({
+      phase:"execute",
+      title:"Address + READ → RAM",
+      note:"MAR drives the address bus while the CU sends READ on the control bus.",
+      apply(){
+        highlightComponent("regMAR");
+        highlightComponent("unitCU");
+        activatePath("wireMarAddress");
+        activatePath("wireCuControl");
+        activateBus("addressBus",displayAddress(state.MAR),"to-ram");
+        activateBus("controlBus","READ","to-ram");
+        highlightRam(state.MAR);
+      }
+    });
+
+    microQueue.push({
+      phase:"execute",
+      title:"MDR ← RAM[MAR]",
+      note:"The operand returns from RAM along the data bus into MDR.",
+      apply(){
+        state.MDR=memory[state.MAR];
+        highlightRam(state.MAR);
+        highlightComponent("regMDR",true);
+        activateControl("MDR");
+        activatePath("wireMdrData");
+        activateBus("dataBus",state.MDR,"to-cpu");
+      }
+    });
+
+    if(op==="LDA"){
+      microQueue.push({
+        phase:"execute",
+        title:"ACC ← MDR",
+        note:"Copy the loaded value from MDR into ACC.",
+        apply(){
+          state.ACC=Number(state.MDR);
+          highlightComponent("regMDR");
+          highlightComponent("regACC",true);
+          activateControl("MDR");
+          activateControl("ACC");
+          activatePath("wireMdrAcc");
+        }
+      });
+      return;
+    }
+
+    if(op==="ADD"||op==="SUB"){
+      microQueue.push({
+        phase:"execute",
+        title:op==="ADD"?"ACC ← ACC + MDR":"ACC ← ACC − MDR",
+        note:"ACC and MDR enter the ALU; the result returns to ACC.",
+        apply(){
+          const before=state.ACC;
+          const rhs=Number(state.MDR);
+          state.ALU=op==="ADD"?`${before} + ${rhs}`:`${before} − ${rhs}`;
+          state.ACC=op==="ADD"?before+rhs:before-rhs;
+          highlightComponent("regACC",true);
+          highlightComponent("regMDR");
+          highlightComponent("unitALU",true);
+          activateControl("MDR");
+          activateControl("ALU");
+          activateControl("ACC");
+          activatePath("wireAccAlu");
+          activatePath("wireMdrAlu");
+          activatePath("wireAluAcc");
+        }
+      });
+    }
+  }
+
+  function step(){
+    if(halted){
+      setOperation("Program halted","Reset the lab to run the program again.");
+      return;
+    }
+
+    clearHighlights();
+    if(microQueue.length===0)enqueueFetch();
+
+    const micro=microQueue.shift();
+    pulseClock();
+    setPhase(micro.phase);
+    micro.apply();
+    setOperation(micro.title,micro.note);
+    renderRegisters();
+
+    if(micro.phase==="decode")enqueueExecute();
+
+    if(halted){
+      stopAuto();
+      $("stepBtn").disabled=true;
+      $("runBtn").disabled=true;
+    }
+  }
+
+  function stopAuto(){
+    if(autoTimer){
+      clearInterval(autoTimer);
+      autoTimer=null;
+    }
+    $("runBtn").classList.remove("primary");
+    $("runBtn").querySelector("span").textContent="Auto run";
+  }
+
+  function toggleAuto(){
+    if(autoTimer){stopAuto();return}
+    if(halted)return;
+
+    $("runBtn").classList.add("primary");
+    $("runBtn").querySelector("span").textContent="Pause";
+    step();
+
+    autoTimer=setInterval(()=>{
+      if(halted){stopAuto();return}
+      step();
+    },Number($("speed").value));
+  }
+
+  function reset(){
+    stopAuto();
+
+    const p=currentProgram();
+    const simple=isSimpleMode();
+    memory=cloneMemory(simple?p.simpleMemory:p.assemblyMemory);
+    state={
+      PC:simple?p.simpleStart:p.assemblyStart,
+      MAR:null,MDR:null,CIR:null,ACC:0,CU:"waiting",ALU:"idle"
+    };
+
+    halted=false;
+    currentInstruction=null;
+    microQueue=[];
+    tickCount=0;
+    clockLevel=0;
+    clockHistory=Array(12).fill(0);
+
+    clearHighlights();
+    renderClock();
+    renderRAM();
+    renderRegisters();
+    setPhase("fetch");
+    $("clockPhase").textContent="ready";
+
+    setOperation(
+      `PC contains ${displayAddress(state.PC)}`,
+      "The Program Counter holds the next instruction location. Press Next tick to begin."
+    );
+
+    $("stepBtn").disabled=false;
+    $("runBtn").disabled=false;
+    $("challengeText").textContent=simple?p.challenge:p.assemblyChallenge;
+    $("challengeAnswer").textContent=p.answer;
+    $("challengeAnswer").classList.add("hidden");
+    $("revealBtn").textContent="Reveal prediction";
+  }
+
+  $("stepBtn").addEventListener("click",step);
+  $("runBtn").addEventListener("click",toggleAuto);
+  $("resetBtn").addEventListener("click",reset);
+  $("programSelect").addEventListener("change",reset);
+  $("displayMode").addEventListener("change",reset);
+  $("speed").addEventListener("change",()=>{
+    if(autoTimer){stopAuto();toggleAuto()}
+  });
+  $("revealBtn").addEventListener("click",()=>{
+    const answer=$("challengeAnswer");
+    const hidden=answer.classList.toggle("hidden");
+    $("revealBtn").textContent=hidden?"Reveal prediction":"Hide prediction";
+  });
+
+  reset();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,3033 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OS Memory Management Lab</title>
+<style>
+:root{
+  --bg:#f3f5f7;
+  --panel:#ffffff;
+  --ink:#1d2730;
+  --muted:#687681;
+  --line:#d7dfe5;
+  --accent:#2865d8;
+  --accent-soft:#edf3ff;
+  --good:#247349;
+  --good-soft:#edf8f1;
+  --warn:#9a5a16;
+  --warn-soft:#fff6e7;
+  --bad:#b44338;
+  --bad-soft:#fff0ee;
+  --bus:#377ab6;
+  --page:#8d65a8;
+  --free:#edf1f4;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+button,select{font:inherit}
+button{cursor:pointer}
+main{width:min(1480px,calc(100% - 24px));margin:18px auto 42px}
+h1{margin:0;font-size:27px;letter-spacing:-.02em}
+.sub{margin:5px 0 14px;color:var(--muted);font-size:13px;line-height:1.45}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px}
+button{
+  min-height:35px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:#fff;
+  color:var(--ink);
+  padding:0 10px;
+}
+button:hover:not(:disabled){border-color:#9ca8b1}
+button:disabled{opacity:.45;cursor:not-allowed}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:750}
+button.danger{color:var(--bad)}
+select{
+  width:100%;
+  height:35px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:#fff;
+  color:var(--ink);
+  padding:0 8px;
+}
+
+/* Setup and metrics */
+.control-panel{padding:11px 12px}
+.control-grid{
+  display:grid;
+  grid-template-columns:145px 160px 135px 120px minmax(170px,1fr) auto;
+  gap:10px;
+  align-items:end;
+}
+.field{min-width:0}
+.field label{display:block;margin-bottom:4px;color:var(--muted);font-size:10px}
+.control-buttons{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}
+.control-buttons button{height:35px}
+.metrics{
+  margin-top:10px;
+  padding-top:10px;
+  border-top:1px solid var(--line);
+  display:grid;
+  grid-template-columns:repeat(7,minmax(92px,1fr));
+  gap:7px;
+}
+.metric{
+  min-width:0;
+  padding:7px 8px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:#fafbfc;
+}
+.metric span{display:block;color:var(--muted);font-size:9px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
+.metric strong{
+  display:block;
+  margin-top:3px;
+  font:850 15px/1.2 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.metric.path strong{font-size:12px}
+.metric.warn{border-color:#e4cd9d;background:var(--warn-soft)}
+.metric.bad{border-color:#e4b6b1;background:var(--bad-soft)}
+
+/* Main workspace */
+.workspace{
+  margin-top:12px;
+  display:grid;
+  grid-template-columns:minmax(520px,.92fr) minmax(800px,1.08fr);
+  gap:12px;
+  align-items:start;
+}
+.desktop-panel,.architecture-panel{padding:13px;min-width:0}
+.panel-head{
+  min-height:39px;
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:10px;
+  margin-bottom:8px;
+}
+.panel-head strong{font-size:16px}
+.panel-head span{color:var(--muted);font-size:10px;line-height:1.3;text-align:right}
+
+.flow-head{align-items:stretch}
+.flow-title{min-width:0}
+.flow-title span{display:block;margin-top:2px;text-align:left}
+.time-comparison{flex:0 1 360px;min-width:285px;padding:7px 9px;border:1px solid #d7e1e8;border-radius:9px;background:#f8fafb}
+.comparison-state{display:block!important;color:#5f6d77!important;font:800 8px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace!important;text-align:left!important;text-transform:uppercase;letter-spacing:.04em}
+.comparison-values{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
+.comparison-values>span{display:block!important;text-align:left!important}
+.comparison-values small{display:block;color:#7a8790;font-size:7px;text-transform:uppercase;letter-spacing:.04em}
+.comparison-values strong{display:block;margin-top:1px;font:850 11px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.slowdown-copy{display:block!important;margin-top:4px;color:#687681!important;font-size:8px!important;text-align:left!important}
+
+/* Desktop */
+.monitor{
+  width:100%;
+  max-width:680px;
+  margin:auto;
+}
+.monitor-bezel{
+  padding:12px 12px 17px;
+  border-radius:14px;
+  background:linear-gradient(145deg,#343b42,#1c2227);
+  box-shadow:0 14px 25px rgba(29,42,51,.18);
+}
+.desktop{
+  position:relative;
+  width:100%;
+  height:clamp(340px,27vw,400px);
+  overflow:hidden;
+  border-radius:7px;
+  background:
+    radial-gradient(circle at 76% 18%,rgba(255,255,255,.28),transparent 14rem),
+    linear-gradient(145deg,#4c83b8,#87b3d5 56%,#d7e5ee);
+  color:#fff;
+}
+.desktop::after{
+  content:"";
+  position:absolute;inset:0;
+  pointer-events:none;
+  background:linear-gradient(120deg,rgba(255,255,255,.055),transparent 27%);
+}
+.desktop-off{position:absolute;inset:0;z-index:20;display:grid;place-items:center;padding:24px;background:#070a0e;color:#dbe5eb}
+.desktop-off-inner{width:min(330px,86%);text-align:center}
+.desktop-power-symbol{width:58px;height:58px;margin:0 auto 13px;border:3px solid #70808b;border-radius:50%;position:relative;opacity:.8}
+.desktop-power-symbol::before{content:"";position:absolute;left:50%;top:-8px;width:4px;height:28px;transform:translateX(-50%);border-radius:4px;background:#9aa8b2;box-shadow:0 0 0 6px #070a0e}
+.desktop-off strong{display:block;font-size:17px}.desktop-off p{margin:6px 0 0;color:#84939d;font-size:9px;line-height:1.5}
+.desktop-loading{position:absolute;inset:0;z-index:20;display:grid;place-items:center;padding:24px;background:linear-gradient(145deg,#173e66,#286da4 58%,#4b8ebc);color:#fff}
+.desktop-loading-inner{width:min(330px,86%);text-align:center}
+.desktop-loading-logo{width:62px;height:62px;margin:0 auto 13px;border:5px solid rgba(255,255,255,.94);border-radius:18px;transform:rotate(8deg)}
+.desktop-loading strong{display:block;font-size:19px}.desktop-loading p{margin:5px 0 10px;color:rgba(255,255,255,.78);font-size:9px;line-height:1.4}
+.desktop-loading-status{min-height:16px;margin-bottom:8px;color:rgba(255,255,255,.92);font:800 9px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.desktop-loading-bar{height:7px;overflow:hidden;border-radius:999px;background:rgba(255,255,255,.2)}
+.desktop-loading-bar span{display:block;width:var(--boot-progress,0%);height:100%;border-radius:inherit;background:linear-gradient(90deg,#d7eeff,#fff);transition:width .28s ease;box-shadow:0 0 8px rgba(255,255,255,.38)}
+.desktop-loading-dots{display:flex;justify-content:center;gap:5px;margin-top:11px}
+.desktop-loading-dots i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.42);animation:desktopDot .75s ease-in-out infinite alternate}
+.desktop-loading-dots i:nth-child(2){animation-delay:.14s}.desktop-loading-dots i:nth-child(3){animation-delay:.28s}
+@keyframes desktopDot{to{background:#fff;transform:translateY(-3px)}}
+.desktop-icons{
+  position:absolute;
+  left:10px;top:12px;
+  display:grid;
+  grid-template-columns:repeat(2,66px);
+  gap:10px 7px;
+  z-index:2;
+}
+.desktop-icon{
+  border:0;
+  background:transparent;
+  min-height:62px;
+  padding:3px;
+  color:#fff;
+  text-align:center;
+  font-size:8px;
+  text-shadow:0 1px 2px rgba(0,0,0,.6);
+}
+.desktop-icon:hover{background:rgba(255,255,255,.14);border-radius:7px}
+.app-glyph{
+  width:34px;height:34px;
+  margin:0 auto 4px;
+  display:grid;place-items:center;
+  border-radius:9px;
+  background:#fff;
+  color:#52626d;
+  box-shadow:0 2px 5px rgba(24,43,58,.28);
+}
+.app-glyph svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+.taskbar{
+  position:absolute;
+  left:0;right:0;bottom:0;
+  height:32px;
+  z-index:7;
+  display:flex;
+  align-items:center;
+  gap:5px;
+  padding:0 7px;
+  background:rgba(25,37,48,.84);
+  backdrop-filter:blur(8px);
+}
+.start-button{
+  width:23px;height:23px;
+  min-height:23px;
+  padding:0;
+  display:grid;place-items:center;
+  border:1px solid rgba(255,255,255,.28);
+  border-radius:6px;
+  background:rgba(255,255,255,.1);
+  color:#fff;
+}
+.start-button svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
+.task-button{
+  width:23px;height:23px;min-height:23px;padding:0;
+  display:grid;place-items:center;
+  border-color:transparent;
+  background:rgba(255,255,255,.10);
+  color:#e7eff4;
+}
+.task-button.active{background:rgba(255,255,255,.28)}
+.task-button svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.8}
+.desktop-clock{margin-left:auto;color:#e8f0f5;font-size:8px}
+
+.start-menu{
+  position:absolute;
+  left:7px;bottom:37px;
+  width:205px;
+  z-index:8;
+  border:1px solid #9daeb9;
+  border-radius:9px;
+  overflow:hidden;
+  background:rgba(247,249,251,.98);
+  color:#26323a;
+  box-shadow:0 15px 30px rgba(22,37,49,.28);
+}
+.start-menu-head{padding:9px 10px;background:#e8edf1;font-size:10px;font-weight:850}
+.start-list{padding:7px}
+.start-item{
+  width:100%;
+  min-height:32px;
+  border:0;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:5px 7px;
+  background:transparent;
+  text-align:left;
+  font-size:10px;
+}
+.start-item:hover{background:#edf3ff}
+.start-item .mini-icon{
+  width:19px;height:19px;
+  flex:0 0 auto;
+  display:grid;place-items:center;
+  border:1px solid #d0d8de;border-radius:5px;background:#fff;color:#5e6d77;
+}
+.start-item svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:1.8}
+
+.desktop-window{
+  position:absolute;
+  z-index:5;
+  left:27%;
+  right:2%;
+  top:5%;
+  bottom:10%;
+  min-width:0;
+  overflow:hidden;
+  border:1px solid #8d9aa4;
+  border-radius:8px;
+  background:#f8fafb;
+  color:#26333c;
+  box-shadow:0 16px 34px rgba(18,35,48,.34);
+}
+.window-titlebar{
+  height:29px;
+  display:flex;
+  align-items:center;
+  gap:7px;
+  padding:0 8px;
+  background:#e8edf1;
+  font-size:10px;
+  font-weight:850;
+}
+.window-titlebar .window-icon{width:16px;height:16px;color:#5c6c76}
+.window-titlebar svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8}
+.window-close{
+  margin-left:auto;
+  width:24px;height:21px;min-height:21px;padding:0;
+  border-color:#b7c1c8;
+  color:#596670;
+}
+.window-body{
+  height:calc(100% - 29px);
+  min-height:0;
+  overflow:hidden;
+  background:#fff;
+}
+.app-pane{
+  height:100%;
+  min-height:0;
+  padding:11px 11px 18px;
+  overflow:auto;
+  overscroll-behavior:contain;
+  scrollbar-gutter:stable;
+  scrollbar-width:thin;
+  -webkit-overflow-scrolling:touch;
+  touch-action:pan-y;
+  font-size:10px;
+}
+.app-hero{
+  padding:10px;
+  border:1px solid #d7dfe5;
+  border-radius:8px;
+  background:#f7f9fa;
+}
+.app-hero strong{font-size:12px}
+.app-hero p{margin:5px 0 0;color:#687681;line-height:1.4}
+.app-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.app-actions button{min-height:30px;font-size:9px}
+.app-stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:9px}
+.app-stat{
+  padding:6px;
+  border:1px solid #dce3e8;
+  border-radius:7px;
+  background:#fbfcfd;
+}
+.app-stat span{display:block;color:#7b8790;font-size:8px}
+.app-stat strong{display:block;margin-top:2px;font:800 11px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+
+.task-manager{height:100%;min-height:0;display:flex;flex-direction:column}
+.tm-scroll{
+  min-height:0;
+  flex:1;
+  overflow:auto;
+  overscroll-behavior:contain;
+  scrollbar-gutter:stable;
+  scrollbar-width:thin;
+  -webkit-overflow-scrolling:touch;
+  touch-action:pan-y;
+}
+.tm-summary{
+  padding:7px 8px;
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  border-bottom:1px solid #dbe2e7;
+  background:#f7f9fa;
+  color:#687681;
+  font-size:8px;
+}
+.tm-summary strong{color:#26333c}
+.tm-table{width:100%;border-collapse:collapse;font-size:8px}
+.tm-table th{
+  position:sticky;
+  top:0;
+  z-index:1;
+  padding:6px 5px;
+  background:#edf1f4;
+  color:#687681;
+  text-align:left;
+  font-size:7px;
+  letter-spacing:.03em;
+  text-transform:uppercase;
+}
+.tm-table td{padding:6px 5px;border-bottom:1px solid #e5eaed;white-space:nowrap}
+.tm-row{cursor:pointer}
+.tm-row:hover,.tm-row.pinned{background:#edf3ff}
+.process-name{display:flex;align-items:center;gap:5px;font-weight:750}
+.process-swatch{width:9px;height:9px;border-radius:3px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.12)}
+.allocation-badge{padding:2px 4px;border-radius:999px;background:#eef2f4;color:#64717a;font-size:7px}
+.allocation-badge.fragmented{background:#fff1df;color:#88591d}
+.tm-hint{padding:6px 8px;color:#77838c;font-size:8px;background:#fbfcfd}
+
+.desktop-shortcuts{
+  margin-top:9px;
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+  justify-content:center;
+}
+.desktop-shortcuts button{font-size:10px}
+
+/* Architecture */
+.latency-strip{
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+  gap:5px;
+  margin-bottom:10px;
+}
+.latency-step{
+  padding:6px 5px;
+  border:1px solid var(--line);
+  border-radius:7px;
+  background:#fafbfc;
+  text-align:center;
+}
+.latency-step span{display:block;color:var(--muted);font-size:8px;font-weight:800}
+.latency-step strong{display:block;margin-top:2px;font:850 11px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.latency-step{transition:border-color .18s ease,background-color .18s ease,box-shadow .18s ease,transform .18s ease}
+.latency-step.active{border-color:var(--accent);background:var(--accent-soft);box-shadow:inset 0 0 0 1px var(--accent);transform:translateY(-1px)}
+.system-map{
+  display:grid;
+  grid-template-columns:minmax(165px,.76fr) 72px minmax(230px,1fr) 72px minmax(210px,.88fr);
+  grid-template-areas:
+    "storage bus-sr ram bus-rc cpu"
+    "pagefile bus-pr ram bus-rc cpu";
+  gap:10px;
+  align-items:center;
+}
+.device-card,.pagefile-card,.ram-stick,.cpu-chip{
+  min-width:0;
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:#fbfcfd;
+}
+.device-card{grid-area:storage;padding:9px}
+.pagefile-card{grid-area:pagefile;padding:9px}
+.ram-stick{grid-area:ram;position:relative;padding:10px 10px 24px;background:#eaf3ec;border-color:#7d9384}
+.cpu-chip{grid-area:cpu;position:relative;padding:10px;background:#f7f9fa;border:2px solid #51606b}
+.bus-storage{grid-area:bus-sr}
+.bus-page{grid-area:bus-pr}
+.bus-ramcpu{grid-area:bus-rc;align-self:stretch;display:grid;align-items:center}
+
+.module-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:8px;
+  margin-bottom:7px;
+}
+.module-head strong{font-size:12px}
+.module-head span{color:var(--muted);font-size:8px;text-align:right;line-height:1.25}
+.drive-visual{
+  height:44px;
+  margin-bottom:7px;
+  border:1px solid #c9d1d7;
+  border-radius:8px;
+  background:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:9px;
+}
+.drive-icon{width:31px;height:31px;position:relative}
+.drive-icon.hdd{
+  border:2px solid #67747e;border-radius:50%;
+}
+.drive-icon.hdd::before{
+  content:"";position:absolute;inset:6px;border:2px solid #9ba6ae;border-radius:50%;
+}
+.drive-icon.hdd::after{
+  content:"";position:absolute;width:13px;height:2px;left:14px;top:14px;background:#67747e;transform:rotate(-35deg);transform-origin:left center;
+}
+.drive-icon.ssd{
+  border:2px solid #67747e;border-radius:5px;
+  background:repeating-linear-gradient(90deg,#d7dfe5 0 4px,transparent 4px 7px),#f8fafb;
+}
+.drive-copy strong{display:block;font-size:11px}
+.drive-copy span{display:block;color:var(--muted);font-size:8px}
+
+.storage-grid,.memory-grid,.cache-grid,.pagefile-grid{
+  display:grid;
+  gap:3px;
+}
+.storage-grid{grid-template-columns:repeat(6,1fr)}
+.memory-grid{grid-template-columns:repeat(8,1fr)}
+.pagefile-grid{grid-template-columns:repeat(8,1fr)}
+.cache-grid{grid-template-columns:repeat(6,1fr)}
+.mem-cell{
+  position:relative;
+  min-width:0;
+  aspect-ratio:1;
+  display:grid;
+  place-items:center;
+  border:1px solid #d5dde3;
+  border-radius:4px;
+  background:var(--free);
+  color:#33414b;
+  font:800 7px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  transition:opacity .2s ease,transform .2s ease,box-shadow .2s ease,background-color .2s ease;
+  overflow:hidden;
+}
+.mem-cell.used{
+  background:var(--owner-color);
+  border-color:color-mix(in srgb,var(--owner-color) 75%,#26323a);
+  color:#fff;
+  text-shadow:0 1px 1px rgba(0,0,0,.35);
+}
+.mem-cell.code::after{
+  content:"";
+  position:absolute;inset:0;
+  background:repeating-linear-gradient(135deg,transparent 0 5px,rgba(255,255,255,.16) 5px 7px);
+}
+.mem-cell.page-cell::after{
+  content:"";
+  position:absolute;inset:0;
+  background:repeating-linear-gradient(45deg,transparent 0 4px,rgba(255,255,255,.20) 4px 7px);
+}
+.mem-cell.active-cell{
+  box-shadow:0 0 0 2px #fff,0 0 0 4px var(--accent),0 0 11px rgba(40,101,216,.45);
+  transform:scale(1.06);
+  z-index:2;
+}
+.architecture-panel.highlighting .mem-cell.used:not(.owner-highlight){
+  opacity:.16;
+  filter:saturate(.3);
+}
+.mem-cell.owner-highlight{
+  opacity:1!important;
+  box-shadow:0 0 0 2px #fff,0 0 0 4px rgba(29,39,48,.62);
+  transform:scale(1.05);
+  z-index:3;
+}
+.storage-grid .mem-cell{font-size:6px}
+.grid-note{margin-top:5px;color:var(--muted);font-size:7px;line-height:1.25}
+
+.ram-stick::after{
+  content:"";
+  position:absolute;
+  left:12px;right:12px;bottom:0;
+  height:14px;
+  background:repeating-linear-gradient(to right,#c59a43 0 7px,transparent 7px 12px);
+}
+.ram-notch{
+  position:absolute;
+  bottom:-1px;left:50%;
+  width:23px;height:11px;
+  transform:translateX(-50%);
+  border-radius:7px 7px 0 0;
+  background:#fff;
+  z-index:2;
+}
+.ram-chips{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:5px;
+  margin-bottom:7px;
+}
+.ram-chip-block{height:17px;border-radius:3px;background:#334b3d;border:1px solid #22352a}
+
+.cpu-chip::before,.cpu-chip::after{
+  content:"";
+  position:absolute;
+  top:18px;bottom:18px;width:8px;
+  background:repeating-linear-gradient(to bottom,#89959f 0 5px,transparent 5px 11px);
+}
+.cpu-chip::before{left:-10px}.cpu-chip::after{right:-10px}
+.cpu-core{
+  margin-top:7px;
+  padding:8px;
+  border:2px solid #66747e;
+  border-radius:8px;
+  background:#fff;
+  text-align:center;
+}
+.cpu-core span{display:block;color:var(--muted);font-size:7px;font-weight:800}
+.cpu-core strong{display:block;margin-top:3px;font-size:11px}
+.cpu-core small{display:block;margin-top:2px;color:#7d8992;font-size:7px}
+.cache-level{
+  margin-top:7px;
+  padding:6px;
+  border:1px solid #d2dae0;
+  border-radius:7px;
+  background:#fff;
+}
+.cache-head{
+  display:flex;
+  justify-content:space-between;
+  gap:7px;
+  margin-bottom:5px;
+  color:#687681;
+  font-size:8px;
+}
+.cache-head strong{color:#26333c}
+.cache-link{
+  height:12px;
+  position:relative;
+}
+.cache-link::before{
+  content:"";position:absolute;left:50%;top:0;bottom:0;width:3px;transform:translateX(-50%);border-radius:4px;background:#d2dae0;
+}
+.cache-link.active::before{
+  background:var(--accent);
+  box-shadow:0 0 8px rgba(40,101,216,.45);
+  animation:linkPulse .6s linear infinite alternate;
+}
+@keyframes linkPulse{to{opacity:.35}}
+
+.bus{
+  min-height:66px;
+  display:grid;
+  align-content:center;
+  gap:5px;
+}
+.bus-label{
+  display:flex;
+  justify-content:space-between;
+  gap:6px;
+  color:#687681;
+  font-size:7px;
+  font-weight:800;
+}
+.bus-track{
+  position:relative;
+  height:23px;
+  margin-inline:-10px;
+}
+.bus-line{
+  position:absolute;left:2px;right:2px;top:50%;
+  height:7px;transform:translateY(-50%);
+  border-radius:999px;background:#d4dbe0;overflow:hidden;
+}
+.bus-line::after{
+  content:"";position:absolute;inset:0;opacity:0;
+  background:repeating-linear-gradient(90deg,transparent 0 8px,rgba(255,255,255,.88) 8px 13px,transparent 13px 23px);
+}
+.bus-arrow-right{
+  position:absolute;right:0;top:50%;transform:translateY(-50%);
+  width:0;height:0;border-top:7px solid transparent;border-bottom:7px solid transparent;border-left:10px solid #bdc6cd;
+}
+.bus-arrow-left{
+  position:absolute;left:0;top:50%;transform:translateY(-50%);
+  width:0;height:0;border-top:7px solid transparent;border-bottom:7px solid transparent;border-right:10px solid #bdc6cd;
+}
+.bus-value{
+  position:relative;
+  z-index:2;
+  max-width:100%;
+  margin:auto;
+  padding:2px 5px;
+  border:1px solid var(--line);
+  border-radius:5px;
+  background:#fff;
+  color:#687681;
+  text-align:center;
+  font:800 7px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  opacity:0;
+}
+.bus.active .bus-line{background:var(--bus);box-shadow:0 0 9px rgba(55,122,182,.34)}
+.bus.active.page-bus .bus-line{background:var(--page)}
+.bus.active .bus-line::after{opacity:1}
+.bus.active.to-right .bus-line::after{animation:busRight .55s linear infinite}
+.bus.active.to-left .bus-line::after{animation:busLeft .55s linear infinite}
+.bus.active .bus-value{opacity:1;color:#2d5f88;border-color:#a9c5dd}
+.bus.active.page-bus .bus-value{color:#704b8b;border-color:#cbb7da}
+.bus.active.to-right .bus-arrow-right{border-left-color:var(--bus)}
+.bus.active.to-left .bus-arrow-left{border-right-color:var(--bus)}
+.bus.active.page-bus.to-right .bus-arrow-right{border-left-color:var(--page)}
+.bus.active.page-bus.to-left .bus-arrow-left{border-right-color:var(--page)}
+@keyframes busRight{from{background-position:0 0}to{background-position:46px 0}}
+@keyframes busLeft{from{background-position:46px 0}to{background-position:0 0}}
+
+.arch-note{
+  margin-top:9px;
+  color:#687681;
+  font-size:9px;
+  line-height:1.4;
+}
+.work-monitor{margin-bottom:10px;padding:9px;border:1px solid #dbe3e8;border-radius:10px;background:linear-gradient(180deg,rgba(237,243,255,.75),rgba(255,255,255,.96)),#fff}
+.work-monitor-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:7px}
+.work-monitor-head strong{display:block;font-size:12px}.work-monitor-head span{display:block;margin-top:2px;color:var(--muted);font-size:8px;line-height:1.3}
+.gate-status{flex:0 0 auto;margin:0!important;padding:3px 7px;border:1px solid var(--line);border-radius:999px;background:#fff;color:#687681!important;font:800 8px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;transition:background-color .18s ease,border-color .18s ease,color .18s ease,opacity .18s ease}
+.gate-status.running{color:var(--accent)!important;border-color:#b7cafa;background:#f4f7ff}
+.work-cards{min-height:91px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.work-card{--clock-visual-duration:200ms;min-width:0;display:grid;grid-template-columns:52px minmax(0,1fr);gap:8px;align-items:center;padding:8px;border:1px solid #cbd7df;border-left:4px solid var(--accent);border-radius:9px;background:#fff;box-shadow:0 3px 9px rgba(39,56,68,.07);animation:workCardIn .16s ease-out}
+.work-card.current{background:#fff}.work-card.queued{border-left-color:#9aa8b2;background:#f8fafb;box-shadow:none;color:#5f6d77}
+.work-card.warn{border-left-color:var(--warn);background:#fffaf2}.work-card.bad{border-left-color:var(--bad);background:#fff6f5}.work-card.good{border-left-color:var(--good);background:#f5fbf7}
+.work-card.idle{grid-template-columns:1fr;min-height:74px;place-items:center;text-align:center;color:var(--muted);border-left-width:1px;background:#fbfcfd;box-shadow:none}
+@keyframes workCardIn{from{opacity:.45;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}
+.work-slot-label{display:inline-block;margin-bottom:3px;padding:2px 5px;border-radius:999px;background:#eaf1ff;color:#315f9e;font:850 7px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;text-transform:uppercase;letter-spacing:.04em}
+.work-card.queued .work-slot-label{background:#e9eef1;color:#66747d}
+.cycle-clock{position:relative;width:48px;height:48px;border:2px solid #a9b6c0;border-radius:50%;background:radial-gradient(circle,#fff 0 52%,transparent 53%),repeating-conic-gradient(from -3deg,#8997a1 0 2deg,transparent 2deg 30deg),#eef2f5;box-shadow:inset 0 0 0 4px #fff,0 2px 5px rgba(37,52,63,.12)}
+.cycle-clock::before{content:"10";position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#8a969f;font:800 7px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.clock-arm{position:absolute;left:50%;bottom:50%;width:2px;height:17px;border-radius:3px;background:var(--accent);transform-origin:50% 100%;transform:translateX(-50%) rotate(0deg)}
+.work-card.current .clock-arm{animation:readableClockSpin var(--clock-visual-duration) linear infinite}.work-card.queued .clock-arm{transform:translateX(-50%) rotate(28deg);opacity:.45}
+.work-card.warn .clock-arm{background:var(--warn)}.work-card.bad .clock-arm{background:var(--bad)}.work-card.good .clock-arm{background:var(--good)}
+@keyframes readableClockSpin{to{transform:translateX(-50%) rotate(360deg)}}
+.clock-hub{position:absolute;left:50%;top:50%;width:7px;height:7px;transform:translate(-50%,-50%);border-radius:50%;background:#fff;border:2px solid currentColor;color:var(--accent)}
+.work-copy{min-width:0}.work-actor{display:block;color:var(--muted);font-size:7px;font-weight:850;letter-spacing:.05em;text-transform:uppercase}
+.work-copy strong{display:block;margin-top:1px;font-size:10px;line-height:1.25}.work-copy p{margin:2px 0 0;color:#687681;font-size:8px;line-height:1.3}
+.work-route{display:block;margin-top:3px;color:#5f6d77;font:800 7px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.work-progress{height:4px;margin-top:6px;overflow:hidden;border-radius:999px;background:#e8edf1}.work-progress span{display:block;height:100%;border-radius:inherit;background:var(--accent);transition:width .2s ease-out}
+.work-card.warn .work-progress span{background:var(--warn)}.work-card.bad .work-progress span{background:var(--bad)}.work-card.good .work-progress span{background:var(--good)}
+.work-cycle-copy{display:block;margin-top:3px;color:#7b8790;font:800 7px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+
+.log-panel{margin-top:12px;padding:11px 12px 12px}.log-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}.log-head strong{display:block;font-size:14px}.log-head span{display:block;margin-top:2px;color:var(--muted);font-size:9px;line-height:1.35}.log-head button{min-height:30px;font-size:9px}
+.activity-log{max-height:300px;margin-top:8px;overflow:auto;border:1px solid var(--line);border-radius:9px;background:#fbfcfd}.log-empty{min-height:84px;display:grid;place-items:center;padding:14px;color:var(--muted);font-size:9px;text-align:center}
+.log-entry{display:grid;grid-template-columns:54px minmax(190px,.9fr) 128px minmax(210px,1.25fr);gap:10px;align-items:center;padding:9px 10px;border-bottom:1px solid #e5eaed;border-left:3px solid var(--accent);background:#fff}.log-entry:last-child{border-bottom:0}.log-entry.warn{border-left-color:var(--warn)}.log-entry.bad{border-left-color:var(--bad)}.log-entry.good{border-left-color:var(--good)}
+.log-block-graphic{display:grid;justify-items:center;gap:3px;min-width:0}.log-block-cells{position:relative;width:38px;height:30px;display:grid;grid-template-columns:1fr 1fr;gap:2px;padding:3px;border:1px solid #c5cfd6;border-radius:7px;background:#f4f7f9}.log-block-cells i{display:block;border-radius:2px;background:var(--block-color,#687783);opacity:.92}.log-block-cells b{position:absolute;inset:0;display:grid;place-items:center;color:#fff;font:850 7px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;text-shadow:0 1px 2px rgba(0,0,0,.5)}.log-block-graphic small{max-width:52px;color:#6d7982;font-size:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.log-route{min-width:0}.log-route-label{display:block;margin-bottom:4px;color:#7a8790;font-size:7px;font-weight:800;text-transform:uppercase;letter-spacing:.04em}.log-route-track{display:grid;grid-template-columns:minmax(58px,1fr) 42px minmax(58px,1fr);gap:5px;align-items:center}.route-node{padding:4px 5px;border:1px solid #ced7dd;border-radius:6px;background:#f7f9fa;color:#4f5e68;font:800 8px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.route-arrow{position:relative;height:4px;border-radius:99px;background:#b8c6d0}.route-arrow::after{content:"";position:absolute;right:-1px;top:50%;transform:translateY(-50%);width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:7px solid #8fa1ad}
+.log-timing{padding:5px 7px;border:1px solid #dbe2e7;border-radius:7px;background:#f8fafb}.log-timing strong{display:block;font:850 10px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.log-timing span{display:block;margin-top:2px;color:#6f7c85;font:750 7px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.log-copy{min-width:0}.log-copy strong{display:block;font-size:9px}.log-copy span{display:block;margin-top:2px;color:#6d7982;font-size:8px;line-height:1.35}.log-cycle-range{display:block!important;margin-top:4px!important;color:#87939b!important;font:750 7px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace!important}
+
+@media(max-width:1340px){
+  .control-grid{grid-template-columns:repeat(4,1fr)}
+  .control-buttons{grid-column:1/-1;justify-content:flex-start}
+  .metrics{grid-template-columns:repeat(4,1fr)}
+  .workspace{grid-template-columns:1fr}
+  .system-map{grid-template-columns:minmax(180px,.8fr) 86px minmax(250px,1fr) 86px minmax(230px,.9fr)}
+}
+
+@media(max-width:900px){
+  .flow-head{display:block}
+  .time-comparison{min-width:0;margin-top:8px}
+  .work-cards{grid-template-columns:1fr}
+  .system-map{
+    grid-template-columns:1fr;
+    grid-template-areas:"storage" "bus-sr" "ram" "bus-rc" "cpu" "bus-pr" "pagefile";
+  }
+  .bus-track{margin-inline:0}
+  .bus{min-height:45px}
+  .bus-line{left:10%;right:10%}
+  .bus-arrow-left{left:10%}
+  .bus-arrow-right{right:10%}
+}
+
+@media(max-width:760px){
+  main{width:min(100% - 12px,1320px);margin-top:8px}
+  .control-grid{grid-template-columns:1fr 1fr}
+  .metrics{grid-template-columns:repeat(2,1fr)}
+  .desktop-icons{grid-template-columns:repeat(3,62px)}
+  .desktop-window{left:4%;right:4%;top:5%;bottom:9%}
+}
+@media(max-width:700px){
+  .log-entry{grid-template-columns:50px minmax(0,1fr)}
+  .log-route{grid-column:2}
+  .log-timing{grid-column:1}
+  .log-copy{grid-column:2}
+}
+@media(max-width:470px){
+  .control-grid{grid-template-columns:1fr}
+  .metrics{grid-template-columns:1fr 1fr}
+  .latency-strip{grid-template-columns:repeat(3,1fr)}
+  .desktop-icons{grid-template-columns:repeat(2,58px)}
+  .app-stat-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<main>
+  <h1>OS Memory Management Lab</h1>
+  <div class="sub">
+    Open applications, create realistic workloads, and watch the operating system move pages between storage, RAM, the page file and CPU cache.
+  </div>
+
+  <section class="panel control-panel">
+    <div class="control-grid">
+      <div class="field">
+        <label for="ramConfig">RAM configuration</label>
+        <select id="ramConfig">
+          <option value="16">4 GB · 16 blocks</option>
+          <option value="32" selected>8 GB · 32 blocks</option>
+          <option value="48">12 GB · 48 blocks</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="cacheConfig">CPU cache configuration</label>
+        <select id="cacheConfig">
+          <option value="small">Small · 2 / 4 / 8</option>
+          <option value="standard" selected>Standard · 4 / 8 / 16</option>
+          <option value="large">Large · 6 / 12 / 24</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="driveConfig">Storage device</label>
+        <select id="driveConfig">
+          <option value="ssd" selected>SSD</option>
+          <option value="hdd">Hard disk drive</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="cycleSpeed">Clock animation</label>
+        <select id="cycleSpeed">
+          <option value="10">10 cycles · 0.01 s</option>
+          <option value="50">10 cycles · 0.05 s</option>
+          <option value="100">10 cycles · 0.10 s</option>
+          <option value="200" selected>10 cycles · 0.20 s</option>
+          <option value="400">10 cycles · 0.40 s</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Learning model</label>
+        <button id="explainButton" style="width:100%">Show latency assumptions</button>
+      </div>
+
+      <div class="control-buttons">
+        <button id="resetButton">Reset</button>
+        <button id="stepButton">Advance 10 cycles</button>
+        <button id="runButton" class="primary">Run clock</button>
+      </div>
+    </div>
+
+    <div class="metrics">
+      <div class="metric"><span>10-cycle gates</span><strong id="tickMetric">0</strong></div>
+      <div class="metric"><span>Total cycles</span><strong id="cyclesMetric">0</strong></div>
+      <div class="metric"><span>Action progress</span><strong id="latencyMetric">0</strong></div>
+      <div class="metric path"><span>Last access path</span><strong id="pathMetric">Ready</strong></div>
+      <div class="metric"><span>Cache hit rate</span><strong id="hitMetric">—</strong></div>
+      <div class="metric"><span>Page faults</span><strong id="faultMetric">0</strong></div>
+      <div id="pressureMetricBox" class="metric"><span>Memory pressure</span><strong id="pressureMetric">Low</strong></div>
+    </div>
+  </section>
+
+  <div class="workspace">
+    <section class="panel desktop-panel">
+      <div class="panel-head">
+        <strong>Interactive desktop</strong>
+        <span>Open programs and create workloads here.<br>Task Manager is the colour key.</span>
+      </div>
+
+      <div class="monitor">
+        <div class="monitor-bezel">
+          <div id="desktop" class="desktop" aria-label="Interactive operating system desktop"></div>
+        </div>
+      </div>
+
+
+      <div class="desktop-shortcuts">
+        <button id="workdayButton">Open workday</button>
+        <button id="stressButton">Stress memory</button>
+        <button id="recoverButton">Close background apps</button>
+      </div>
+    </section>
+
+    <section id="architecturePanel" class="panel architecture-panel">
+      <div class="panel-head flow-head">
+        <div class="flow-title">
+          <strong>Live data flow</strong>
+          <span>Hover or select a Task Manager process to trace all of its allocated blocks.</span>
+        </div>
+        <div class="time-comparison" aria-live="polite">
+          <span id="comparisonState" class="comparison-state">No current action</span>
+          <div class="comparison-values">
+            <span><small>Simulation</small><strong id="simulationTimeCompare">—</strong></span>
+            <span><small>Approx. hardware</small><strong id="realTimeCompare">—</strong></span>
+          </div>
+          <span id="slowdownCompare" class="slowdown-copy">Start the clock to compare times.</span>
+        </div>
+      </div>
+
+      <section class="work-monitor" aria-label="Current cycle-gated work">
+        <div class="work-monitor-head">
+          <div>
+            <strong>Current work queue</strong>
+            <span>The first slot is executing now; the second previews the next queued memory action.</span>
+          </div>
+          <span id="gateStatus" class="gate-status">clock paused</span>
+        </div>
+        <div id="workCards" class="work-cards"></div>
+      </section>
+
+      <div class="latency-strip" aria-label="Relative teaching latency">
+        <div class="latency-step" data-path="L1"><span>L1 cache</span><strong>1 cycle</strong></div>
+        <div class="latency-step" data-path="L2"><span>L2 cache</span><strong>5 cycles</strong></div>
+        <div class="latency-step" data-path="L3"><span>L3 cache</span><strong>14 cycles</strong></div>
+        <div class="latency-step" data-path="RAM"><span>RAM</span><strong>45 cycles</strong></div>
+        <div class="latency-step" data-path="SSD"><span>SSD / page file</span><strong>220–310</strong></div>
+        <div class="latency-step" data-path="HDD"><span>HDD / page file</span><strong>1050–1380</strong></div>
+      </div>
+
+      <div class="system-map">
+        <section class="device-card">
+          <div class="module-head">
+            <strong id="driveTitle">SSD storage</strong>
+            <span id="driveLatency">220-cycle load</span>
+          </div>
+          <div class="drive-visual">
+            <div id="driveIcon" class="drive-icon ssd"></div>
+            <div class="drive-copy">
+              <strong id="driveCopyTitle">Solid-state drive</strong>
+              <span>program files and saved data</span>
+            </div>
+          </div>
+          <div id="storageGrid" class="storage-grid"></div>
+          <div class="grid-note">Installed files remain on storage. Active transfer blocks pulse.</div>
+        </section>
+
+        <div id="storageBus" class="bus bus-storage">
+          <div class="bus-label"><span>Storage bus</span><span>program/data pages</span></div>
+          <div class="bus-track">
+            <span class="bus-line"></span>
+            <span class="bus-arrow-left"></span>
+            <span class="bus-arrow-right"></span>
+            <span class="bus-value"></span>
+          </div>
+        </div>
+
+        <section class="ram-stick">
+          <div class="ram-notch"></div>
+          <div class="module-head">
+            <strong>RAM</strong>
+            <span id="ramUsageText">0 / 32 blocks</span>
+          </div>
+          <div class="ram-chips" aria-hidden="true">
+            <div class="ram-chip-block"></div><div class="ram-chip-block"></div>
+            <div class="ram-chip-block"></div><div class="ram-chip-block"></div>
+          </div>
+          <div id="ramGrid" class="memory-grid"></div>
+          <div class="grid-note">One teaching block represents 256 MB. Pages may be contiguous or scattered.</div>
+        </section>
+
+        <div id="ramCpuBus" class="bus bus-ramcpu">
+          <div class="bus-label"><span>Memory bus</span><span>RAM ↔ cache</span></div>
+          <div class="bus-track">
+            <span class="bus-line"></span>
+            <span class="bus-arrow-left"></span>
+            <span class="bus-arrow-right"></span>
+            <span class="bus-value"></span>
+          </div>
+        </div>
+
+        <section class="cpu-chip">
+          <div class="module-head">
+            <strong>CPU</strong>
+            <span>smaller + faster<br>toward the core</span>
+          </div>
+
+          <div class="cache-level">
+            <div class="cache-head"><strong>L3 cache</strong><span id="l3Usage"></span></div>
+            <div id="l3Grid" class="cache-grid"></div>
+          </div>
+          <div id="linkL3L2" class="cache-link"></div>
+
+          <div class="cache-level">
+            <div class="cache-head"><strong>L2 cache</strong><span id="l2Usage"></span></div>
+            <div id="l2Grid" class="cache-grid"></div>
+          </div>
+          <div id="linkL2L1" class="cache-link"></div>
+
+          <div class="cache-level">
+            <div class="cache-head"><strong>L1 cache</strong><span id="l1Usage"></span></div>
+            <div id="l1Grid" class="cache-grid"></div>
+          </div>
+          <div id="linkL1Core" class="cache-link"></div>
+
+          <div class="cpu-core">
+            <span>CPU CORE</span>
+            <strong id="cpuProcess">Operating system</strong>
+            <small id="cpuRequest">waiting for a memory request</small>
+          </div>
+        </section>
+
+        <section class="pagefile-card">
+          <div class="module-head">
+            <strong>Page file</strong>
+            <span id="pageUsageText">0 / 24 blocks</span>
+          </div>
+          <div id="pagefileGrid" class="pagefile-grid"></div>
+          <div class="grid-note">Stored on the selected drive. A page fault is much slower than a RAM access.</div>
+        </section>
+
+        <div id="pageBus" class="bus bus-page page-bus">
+          <div class="bus-label"><span>Paging path</span><span>RAM ↔ page file</span></div>
+          <div class="bus-track">
+            <span class="bus-line"></span>
+            <span class="bus-arrow-left"></span>
+            <span class="bus-arrow-right"></span>
+            <span class="bus-value"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="arch-note">
+        This is a relative teaching model: cache is shown as recently used pages, the page file lives on secondary storage, and actions now remain active for their stated cycle cost rather than all taking equal time.
+      </div>
+    </section>
+  </div>
+
+  <section class="panel log-panel" aria-label="OS decision log">
+    <div class="log-head">
+      <div>
+        <strong>OS decision log</strong>
+        <span>Completed actions show the memory block, start and finish of the pathway, cycle cost and total teaching time.</span>
+      </div>
+      <button id="clearLogButton">Clear log</button>
+    </div>
+    <div id="activityLog" class="activity-log" aria-live="polite"></div>
+  </section>
+
+</main>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const BLOCK_MB = 256;
+
+  const RAM_CONFIGS = {
+    16:{label:"4 GB",capacity:16},
+    32:{label:"8 GB",capacity:32},
+    48:{label:"12 GB",capacity:48}
+  };
+
+  const CACHE_CONFIGS = {
+    small:{label:"Small",L1:2,L2:4,L3:8},
+    standard:{label:"Standard",L1:4,L2:8,L3:16},
+    large:{label:"Large",L1:6,L2:12,L3:24}
+  };
+
+  const DRIVE_CONFIGS = {
+    ssd:{label:"SSD",load:220,pageIn:280,pageOut:310},
+    hdd:{label:"HDD",load:1050,pageIn:1280,pageOut:1380}
+  };
+
+  const LATENCY = {L1:1,L2:5,L3:14,RAM:45,FAULT:8};
+  const GATE_CYCLES = 10;
+
+  const APP_DEFS = {
+    system:{name:"Orbit OS",short:"OS",color:"#687783",basePages:6},
+    browser:{name:"Web Browser",short:"WB",color:"#3478c7",basePages:4},
+    image:{name:"Image Editor",short:"IE",color:"#bd5e49",basePages:5},
+    sheet:{name:"Spreadsheet",short:"SS",color:"#3f9564",basePages:4},
+    media:{name:"Media Player",short:"MP",color:"#8a5bb0",basePages:4},
+    scan:{name:"Security Scan",short:"AV",color:"#d09832",basePages:3}
+  };
+
+  const DESKTOP_APPS = ["browser","image","sheet","media","scan","taskmgr"];
+
+  let ramCapacity = 32;
+  let cacheConfig = CACHE_CONFIGS.standard;
+  let drive = DRIVE_CONFIGS.ssd;
+
+  let ramSlots = [];
+  let pagefileSlots = [];
+  let pages = new Map();
+  let processes = new Map();
+  let caches = {L1:[],L2:[],L3:[]};
+  let eventQueue = [];
+
+  let running = false;
+  let runLoopToken = 0;
+  let gateAnimating = false;
+  let currentAction = null;
+  let gateCount = 0;
+  let actionCounter = 0;
+  let activityLog = [];
+  let collectingActionNotices = false;
+  let pendingActionNotices = [];
+  let pendingCommit = null;
+
+  let tick = 0;
+  let totalCycles = 0;
+  let lastLatency = 0;
+  let lastPath = "Ready";
+  let lastEventTitle = "Ready";
+  let lastEventDetail = "Start the clock to boot Orbit OS into RAM, then open applications and create workloads.";
+  let pageFaults = 0;
+  let cacheHits = 0;
+  let memoryAccesses = 0;
+  let pageCounter = 0;
+
+  let activeOwner = "system";
+  let cpuActor = "Operating system";
+  let currentPageId = null;
+  let activeStorageOwner = null;
+  let activeRamSlot = null;
+  let activePageSlot = null;
+  let activeCache = null;
+  let activeCacheLinks = [];
+  let busState = {
+    storage:null,
+    ramcpu:null,
+    page:null
+  };
+
+  let machineState = "off"; // off → booting → ready
+  let systemBootPages = [];
+  let desktopState = {
+    startOpen:false,
+    window:null,
+    booting:false
+  };
+  let desktopBootToken = 0;
+  let simulationRenderTimer = null;
+  let lastSimulationRender = 0;
+  let desktopRenderTimer = null;
+  let lastDesktopRender = 0;
+
+  let hoverOwner = null;
+  let pinnedOwner = null;
+
+  function appIcon(id){
+    const icons = {
+      browser:`<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M4.5 10h15M12 4a14 14 0 0 1 0 16M12 4a14 14 0 0 0 0 16"/></svg>`,
+      image:`<svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="2"/><circle cx="9" cy="10" r="1.5"/><path d="M6 17l4-4 3 3 3-5 2 6"/></svg>`,
+      sheet:`<svg viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="16" rx="2"/><path d="M5 10h14M10 10v10M14.5 10v10"/></svg>`,
+      media:`<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M10 9l5 3-5 3z"/></svg>`,
+      scan:`<svg viewBox="0 0 24 24"><path d="M12 4l7 3v5c0 4-2.5 6.8-7 8-4.5-1.2-7-4-7-8V7z"/><path d="M9 12l2 2 4-4"/></svg>`,
+      taskmgr:`<svg viewBox="0 0 24 24"><path d="M5 18V9M9 18V5M13 18v-7M17 18V7M4 18h16"/></svg>`,
+      start:`<svg viewBox="0 0 24 24"><path d="M5 5h6v6H5zM13 5h6v6h-6zM5 13h6v6H5zM13 13h6v6h-6z"/></svg>`
+    };
+    return icons[id] || icons.taskmgr;
+  }
+
+  function ownerDef(owner){
+    return APP_DEFS[owner] || APP_DEFS.system;
+  }
+
+  function escapeHtml(value){
+    return String(value ?? "").replace(/[&<>"']/g,character=>({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+    }[character]));
+  }
+
+  function formatSimulationTime(milliseconds){
+    if(!Number.isFinite(milliseconds)) return "—";
+    if(milliseconds<1) return `${milliseconds.toFixed(2)} ms`;
+    if(milliseconds<1000) return `${milliseconds.toFixed(milliseconds<10?1:0)} ms`;
+    return `${(milliseconds/1000).toFixed(milliseconds<10000?2:1)} s`;
+  }
+
+  function formatRealTime(seconds){
+    if(!Number.isFinite(seconds) || seconds<=0) return "—";
+    if(seconds<1e-6) return `${Math.max(1,Math.round(seconds*1e9))} ns`;
+    if(seconds<1e-3) return `${(seconds*1e6).toFixed(seconds<10e-6?1:0)} µs`;
+    if(seconds<1) return `${(seconds*1e3).toFixed(seconds<10e-3?1:0)} ms`;
+    return `${seconds.toFixed(2)} s`;
+  }
+
+  function formatSlowdown(value){
+    if(!Number.isFinite(value) || value<=0) return "—";
+    if(value>=1e9) return `${(value/1e9).toFixed(1)} billion× slower for teaching`;
+    if(value>=1e6) return `${(value/1e6).toFixed(1)} million× slower for teaching`;
+    if(value>=1e3) return `${(value/1e3).toFixed(1)} thousand× slower for teaching`;
+    return `${Math.round(value)}× slower for teaching`;
+  }
+
+  function simulationTimeMs(cycles,gateMs=Number($("cycleSpeed").value)){
+    return Math.max(0,Number(cycles)||0)/GATE_CYCLES*gateMs;
+  }
+
+  function estimateRealSeconds(action){
+    const path=String(action.path||"").toUpperCase();
+    const title=String(action.title||"").toLowerCase();
+    if(path==="L1") return 1e-9;
+    if(path==="L2") return 4e-9;
+    if(path==="L3") return 12e-9;
+    if(path==="RAM") return 80e-9;
+    if(path.includes("SSD")) return title.includes("page") ? 150e-6 : 100e-6;
+    if(path.includes("HDD")) return title.includes("page") ? 12e-3 : 8e-3;
+    if(path.includes("PAGE FAULT")) return 200e-9;
+    if(path.includes("SCHEDULER")) return 20e-9;
+    if(path.includes("BLOCKED")) return NaN;
+    return Math.max(1,Number(action.cycles)||1)*1e-9;
+  }
+
+  function actionRoute(action){
+    const title=String(action.title||"").toLowerCase();
+    const path=String(action.path||"");
+    if(title.includes("program page loaded") || title.includes("boot page loaded")) return {start:drive.label,finish:"RAM"};
+    if(title.includes("firmware begins")) return {start:"Firmware / bootloader",finish:`Orbit OS files (${drive.label})`};
+    if(title.includes("desktop services ready")) return {start:"RAM",finish:"Interactive desktop"};
+    if(title.includes("page fault resolved")) return {start:`Page file (${drive.label})`,finish:"RAM"};
+    if(title.includes("paged out")) return {start:"RAM",finish:`Page file (${drive.label})`};
+    if(title.includes("discarded")) return {start:"RAM",finish:"Free RAM block"};
+    if(title.includes("cache hit")) return {start:path,finish:"CPU core"};
+    if(title.includes("cache miss")) return {start:"RAM",finish:"CPU cache"};
+    if(title.includes("raised a page fault")) return {start:"CPU",finish:"OS memory manager"};
+    if(title.includes("prefetch")) return {start:`Page file (${drive.label})`,finish:"RAM queue"};
+    if(title.includes("out of memory") || title.includes("blocked")) return {start:"RAM + page file",finish:"Blocked request"};
+    if(path==="L1"||path==="L2"||path==="L3") return {start:path,finish:"CPU core"};
+    if(path==="RAM") return {start:"RAM",finish:"CPU cache"};
+    if(path.includes("page file")) return {start:path,finish:"RAM"};
+    if(path==="SSD"||path==="HDD") return {start:path,finish:"RAM"};
+    return {start:"OS scheduler",finish:ownerDef(action.owner||"system").name};
+  }
+
+  function noticeRoute(title){
+    const lower=String(title||"").toLowerCase();
+    if(lower.includes("launch")||lower.includes("queued")) return {start:"Desktop",finish:"OS work queue"};
+    if(lower.includes("contiguous")||lower.includes("memory")) return {start:"OS memory manager",finish:"RAM map"};
+    if(lower.includes("released")||lower.includes("reduced")) return {start:"Application",finish:"Free memory"};
+    if(lower.includes("priority")||lower.includes("foreground")) return {start:"Desktop",finish:"CPU scheduler"};
+    if(lower.includes("configuration")||lower.includes("reset")) return {start:"Controls",finish:"OS reset"};
+    return {start:"Operating system",finish:"Decision log"};
+  }
+
+  function actionBlock(action){
+    const page=action.pageId ? pages.get(action.pageId) : null;
+    const owner=page?.owner || action.owner || "system";
+    const suffix=page ? String(page.id).split("p").pop() : "";
+    return {
+      owner,
+      label:page?.label || action.blockLabel || ownerDef(owner).name,
+      short:page ? `${ownerDef(owner).short}${suffix}` : ownerDef(owner).short,
+      color:ownerDef(owner).color
+    };
+  }
+
+  function enrichAction(action){
+    const page=pages.get(currentPageId);
+    action.pageId=page?.id || null;
+    action.owner=page?.owner || action.owner || activeOwner || "system";
+    action.block=actionBlock(action);
+    action.route=actionRoute(action);
+    action.gateMs=Number($("cycleSpeed").value);
+    action.simTimeMs=simulationTimeMs(action.cycles,action.gateMs);
+    action.realSeconds=estimateRealSeconds(action);
+    return action;
+  }
+
+  function appendLog(title,detail,tone="",options={}){
+    const start=Number.isFinite(options.startCycle)?options.startCycle:totalCycles;
+    const end=Number.isFinite(options.endCycle)?options.endCycle:start;
+    const owner=options.owner || options.block?.owner || "system";
+    const block=options.block || {owner,label:options.blockLabel || ownerDef(owner).name,short:options.blockShort || ownerDef(owner).short,color:options.blockColor || ownerDef(owner).color};
+    const cycles=Math.max(0,Number(options.cycles)||0);
+    const gateMs=Number.isFinite(options.gateMs)?options.gateMs:Number($("cycleSpeed").value);
+    const simTimeMs=Number.isFinite(options.simTimeMs)?options.simTimeMs:simulationTimeMs(cycles,gateMs);
+    const realSeconds=Number.isFinite(options.realSeconds)
+      ? options.realSeconds
+      : cycles===0 ? NaN : estimateRealSeconds({title,path:options.path,cycles});
+    const route=options.route || noticeRoute(title);
+    activityLog.unshift({id:`log-${Date.now()}-${Math.random()}`,title,detail,tone,path:options.path || `${route.start} → ${route.finish}`,route,block,cycles,gateMs,simTimeMs,realSeconds,startCycle:start,endCycle:end});
+    activityLog=activityLog.slice(0,80);
+    renderLog();
+  }
+
+  function renderLog(){
+    const root=$("activityLog");
+    if(!root) return;
+    if(!activityLog.length){
+      root.innerHTML='<div class="log-empty">Completed memory actions and operating-system decisions will be recorded here.</div>';
+      return;
+    }
+    root.innerHTML=activityLog.map(entry=>{
+      const cycleText=entry.startCycle===entry.endCycle ? `Cycle ${entry.endCycle}` : `Cycles ${entry.startCycle}–${entry.endCycle}`;
+      const realLabel=formatRealTime(entry.realSeconds);
+      return `<article class="log-entry ${escapeHtml(entry.tone)}">
+        <div class="log-block-graphic" title="${escapeHtml(entry.block.label)}">
+          <span class="log-block-cells" style="--block-color:${escapeHtml(entry.block.color)}"><i></i><i></i><i></i><i></i><b>${escapeHtml(entry.block.short)}</b></span>
+          <small>${escapeHtml(entry.block.short)}</small>
+        </div>
+        <div class="log-route">
+          <span class="log-route-label">Data pathway</span>
+          <div class="log-route-track"><span class="route-node" title="${escapeHtml(entry.route.start)}">${escapeHtml(entry.route.start)}</span><span class="route-arrow"></span><span class="route-node" title="${escapeHtml(entry.route.finish)}">${escapeHtml(entry.route.finish)}</span></div>
+        </div>
+        <div class="log-timing"><strong>${entry.cycles.toLocaleString()} cycles</strong><span>${formatSimulationTime(entry.simTimeMs)} teaching time</span><span>${realLabel==="—"?"real time unavailable":`≈ ${realLabel} hardware`}</span></div>
+        <div class="log-copy"><strong>${escapeHtml(entry.title)}</strong><span>${escapeHtml(entry.detail)}</span><span class="log-cycle-range">${cycleText} · ${escapeHtml(entry.path)}</span></div>
+      </article>`;
+    }).join("");
+  }
+
+  function showToast(title,detail,tone=""){
+    if(collectingActionNotices){pendingActionNotices.push({title,detail,tone});return;}
+    appendLog(title,detail,tone,{route:noticeRoute(title),path:"OS decision",cycles:0});
+  }
+
+  function setEvent(title,detail,path,cycles){
+    lastEventTitle=title;
+    lastEventDetail=detail;
+    lastPath=path;
+    lastLatency=Math.max(1,Math.round(cycles));
+  }
+
+  function actionTone(title,path){
+    const text=`${title} ${path}`.toLowerCase();
+    if(text.includes("blocked") || text.includes("out of memory")) return "bad";
+    if(text.includes("page") || text.includes("fault") || text.includes("discard") || text.includes("scheduler")) return "warn";
+    if(/^l[123]$/.test(String(path)) || text.includes("cache hit")) return "good";
+    return "";
+  }
+
+  function primaryWorkItem(action){
+    const page=action.pageId ? pages.get(action.pageId) : (currentPageId ? pages.get(currentPageId) : null);
+    const pageLabel=page?.label || action.block?.label || "requested data";
+    const owner=page?.owner || action.owner || activeOwner;
+    const ownerName=ownerDef(owner).name;
+    const lower=String(action.title||"").toLowerCase();
+    if(lower.includes("cache hit")) return {actor:ownerName,title:`Reading ${pageLabel} from ${action.path} cache`,detail:"The CPU is using a nearby cached copy."};
+    if(lower.includes("cache miss")) return {actor:"CPU + cache controller",title:`Retrieving ${pageLabel} from RAM`,detail:"The page is moving through cache toward the CPU core."};
+    if(lower.includes("page fault resolved")) return {actor:"Operating system",title:`Restoring ${pageLabel} from the ${drive.label} page file`,detail:"The OS is bringing a non-resident page back into RAM."};
+    if(lower.includes("boot page loaded")) return {actor:"Operating system",title:`Loading ${pageLabel} into RAM`,detail:"This required Orbit OS page is moving from secondary storage into memory before the desktop can start."};
+    if(lower.includes("program page loaded")) return {actor:"Operating system",title:`Retrieving ${pageLabel} from ${drive.label}`,detail:"The program page is travelling from secondary storage into RAM."};
+    if(lower.includes("firmware begins")) return {actor:"Firmware / bootloader",title:"Locating and starting Orbit OS",detail:"The machine is beginning its boot sequence."};
+    if(lower.includes("desktop services ready")) return {actor:"Operating system",title:"Starting the interactive desktop",detail:"All required OS pages are resident in RAM."};
+    if(lower.includes("paged out")) return {actor:"Operating system",title:`Writing ${pageLabel} to the ${drive.label} page file`,detail:"A colder page is leaving RAM to make room for higher-priority data."};
+    if(lower.includes("discarded")) return {actor:"Operating system",title:`Releasing ${pageLabel} from RAM`,detail:"The clean code page can be loaded from storage again later."};
+    if(lower.includes("raised a page fault")) return {actor:"CPU",title:`Requesting OS help for ${pageLabel}`,detail:"Execution waits until the missing page becomes resident."};
+    if(lower.includes("prefetch")) return {actor:"Operating system",title:`Scheduling ${pageLabel} for RAM`,detail:"The foreground process is being prioritised."};
+    if(lower.includes("out of memory") || lower.includes("blocked")) return {actor:"Operating system",title:"Searching for reclaimable memory",detail:"RAM and page-file capacity are being checked."};
+    return {actor:cpuActor || "Operating system",title:action.title,detail:action.detail};
+  }
+
+  function peekAccessPage(owner,specificId=null){
+    if(specificId) return pages.get(specificId);
+    const process=processes.get(owner) || processes.get("system");
+    if(!process) return null;
+    if(owner==="scan"){
+      const candidates=[...pages.values()].filter(page=>page.state!=="storage" || page.owner!=="scan");
+      return candidates.length ? candidates[process.accessCursor%candidates.length] : null;
+    }
+    const candidates=process.pages.map(id=>pages.get(id)).filter(Boolean);
+    if(!candidates.length) return null;
+    const working=candidates.slice(0,Math.min(candidates.length,7));
+    return working[process.accessCursor%working.length];
+  }
+
+  function enrichPreview(action){
+    const page=action.pageId ? pages.get(action.pageId) : null;
+    action.progress=0;
+    action.tone=actionTone(action.title,action.path);
+    action.owner=page?.owner || action.owner || activeOwner;
+    action.block={owner:action.owner,label:page?.label || ownerDef(action.owner).name,short:page?`${ownerDef(action.owner).short}${String(page.id).split("p").pop()}`:ownerDef(action.owner).short,color:ownerDef(action.owner).color};
+    action.route=action.route || actionRoute(action);
+    action.gateMs=Number($("cycleSpeed").value);
+    action.simTimeMs=simulationTimeMs(action.cycles,action.gateMs);
+    action.realSeconds=estimateRealSeconds(action);
+    action.workItem=primaryWorkItem(action);
+    return action;
+  }
+
+  function previewAccess(owner,pageId=null){
+    const page=peekAccessPage(owner,pageId);
+    if(!page) return null;
+    const cacheHit=findCache(page.id);
+    let title,path,cycles,route;
+    if(cacheHit){title=`${cacheHit} cache hit for ${page.label}`;path=cacheHit;cycles=LATENCY[cacheHit];route={start:cacheHit,finish:"CPU core"};}
+    else if(page.state==="ram"){title=`Fetch ${page.label} from RAM`;path="RAM";cycles=LATENCY.RAM;route={start:"RAM",finish:"CPU cache"};}
+    else{title=`Page fault for ${page.label}`;path="Page fault";cycles=LATENCY.FAULT;route={start:"CPU",finish:"OS memory manager"};}
+    return enrichPreview({title,detail:`${ownerDef(owner).name} is expected to request this page next.`,path,cycles,owner,pageId:page.id,route});
+  }
+
+  function previewEvent(event){
+    if(!event) return null;
+    if(event.type==="access") return previewAccess(event.owner,event.pageId);
+    if(event.type==="boot"){
+      if(event.stage==="start"){
+        return enrichPreview({title:"Firmware begins Orbit OS boot",detail:"The bootloader will locate the operating-system files on secondary storage.",path:"Boot",cycles:event.cycles||24,owner:"system",route:{start:"Firmware / bootloader",finish:`Orbit OS files (${drive.label})`}});
+      }
+      return enrichPreview({title:"Desktop services ready",detail:"The operating system will expose the desktop after every required page is resident in RAM.",path:"RAM",cycles:event.cycles||36,owner:"system",route:{start:"RAM",finish:"Interactive desktop"}});
+    }
+    if(event.type!=="load") return null;
+    const page=pages.get(event.pageId);
+    if(!page) return null;
+    const fromPageFile=page.state==="pagefile";
+    const cycles=event.cycleOverride || (fromPageFile?drive.pageIn:drive.load);
+    return enrichPreview({title:event.isBoot?`Load ${page.label} for boot`:fromPageFile?`Restore ${page.label}`:`Load ${page.label}`,detail:event.isBoot?"This required OS page must enter RAM before the desktop becomes available.":fromPageFile?`The queued page will return from the ${drive.label} page file to RAM.`:`The queued program page will move from ${drive.label} storage to RAM.`,path:fromPageFile?`${drive.label} page file`:drive.label,cycles,owner:page.owner,pageId:page.id,route:{start:fromPageFile?`Page file (${drive.label})`:drive.label,finish:"RAM"}});
+  }
+
+  function previewUpcomingAction(){
+    if(machineState==="off"){
+      return enrichPreview({
+        title:"Firmware begins Orbit OS boot",
+        detail:"Starting the clock will run the bootloader and begin moving required OS pages from secondary storage into RAM.",
+        path:"Boot",
+        cycles:Math.max(20,Math.round(bootPageCycles()*0.7)),
+        owner:"system",
+        route:{start:"Firmware / bootloader",finish:`Orbit OS files (${drive.label})`}
+      });
+    }
+    if(currentAction && String(currentAction.title).toLowerCase().includes("raised a page fault") && currentAction.pageId){
+      const page=pages.get(currentAction.pageId);
+      if(page) return enrichPreview({title:page.state==="pagefile"?`Restore ${page.label}`:`Load ${page.label}`,detail:"This retrieval will be queued as soon as the page-fault interrupt completes.",path:page.state==="pagefile"?`${drive.label} page file`:drive.label,cycles:page.state==="pagefile"?drive.pageIn:drive.load,owner:page.owner,pageId:page.id,route:{start:page.state==="pagefile"?`Page file (${drive.label})`:drive.label,finish:"RAM"}});
+    }
+    if(eventQueue.length) return previewEvent(eventQueue[0]);
+    return previewAccess(bestAccessOwner());
+  }
+
+  function workCardMarkup(action,slot){
+    const queued=slot==="queued";
+    const item=action.workItem || primaryWorkItem(action);
+    const progress=queued?0:action.progress;
+    const percentage=Math.min(100,action.cycles?progress/action.cycles*100:100);
+    const visualDuration=Math.max(120,Number($("cycleSpeed").value));
+    const route=action.route || actionRoute(action);
+    const cycleCopy=queued?`${action.cycles.toLocaleString()} cycles waiting`:`${progress.toLocaleString()} / ${action.cycles.toLocaleString()} cycles`;
+    return `<article class="work-card ${slot} ${action.tone||""}" style="--clock-visual-duration:${visualDuration}ms">
+      <div class="cycle-clock" aria-hidden="true"><span class="clock-arm"></span><span class="clock-hub"></span></div>
+      <div class="work-copy"><span class="work-slot-label">${queued?"Next":"Current"}</span><span class="work-actor">${escapeHtml(item.actor)}</span><strong>${escapeHtml(item.title)}</strong><p>${escapeHtml(item.detail)}</p><span class="work-route">${escapeHtml(route.start)} → ${escapeHtml(route.finish)}</span><div class="work-progress"><span style="width:${percentage}%"></span></div><span class="work-cycle-copy">${cycleCopy}</span></div>
+    </article>`;
+  }
+
+  function updateTimeComparison(){
+    const action=currentAction || previewUpcomingAction();
+    if(!action){
+      $("comparisonState").textContent="No current action";
+      $("simulationTimeCompare").textContent="—";
+      $("realTimeCompare").textContent="—";
+      $("slowdownCompare").textContent="Start the clock to compare times.";
+      return;
+    }
+    const simMs=simulationTimeMs(action.cycles,Number($("cycleSpeed").value));
+    const realSeconds=Number.isFinite(action.realSeconds)?action.realSeconds:estimateRealSeconds(action);
+    const ratio=Number.isFinite(realSeconds)&&realSeconds>0?(simMs/1000)/realSeconds:NaN;
+    $("comparisonState").textContent=currentAction?"Current action":"Next queued action";
+    $("simulationTimeCompare").textContent=formatSimulationTime(simMs);
+    $("realTimeCompare").textContent=formatRealTime(realSeconds);
+    $("slowdownCompare").textContent=formatSlowdown(ratio);
+  }
+
+  function renderWorkMonitor(){
+    const root=$("workCards");
+    if(!root) return;
+    const upcoming=previewUpcomingAction();
+    const currentMarkup=currentAction?workCardMarkup(currentAction,"current"):'<div class="work-card idle"><div><span class="work-slot-label">Current</span><br>Clock paused; no action is executing.</div></div>';
+    const nextMarkup=upcoming?workCardMarkup(upcoming,"queued"):'<div class="work-card idle"><div><span class="work-slot-label">Next</span><br>The work queue is empty.</div></div>';
+    root.innerHTML=currentMarkup+nextMarkup;
+    const gateStatus=$("gateStatus");
+    gateStatus.textContent=running||gateAnimating?"clock active":currentAction?`${currentAction.progress}/${currentAction.cycles} cycles`:"clock paused";
+    gateStatus.classList.toggle("running",running||gateAnimating);
+    updateTimeComparison();
+  }
+
+  function clearFlow(){
+    busState={storage:null,ramcpu:null,page:null};
+    activeStorageOwner=null;
+    activeRamSlot=null;
+    activePageSlot=null;
+    activeCache=null;
+    activeCacheLinks=[];
+    currentPageId=null;
+  }
+
+  function addPage(owner,label,kind="data",tag="base",pinned=false){
+    const id=`${owner}-p${++pageCounter}`;
+    const page={
+      id,owner,label,kind,tag,pinned,
+      state:"storage",
+      ramSlot:null,
+      pageSlot:null,
+      lastUsed:tick,
+      dirty:kind!=="code"
+    };
+    pages.set(id,page);
+    processes.get(owner)?.pages.push(id);
+    return id;
+  }
+
+  function createSystem(){
+    const process={
+      id:"system",name:APP_DEFS.system.name,status:"not loaded",pages:[],
+      priority:"critical",accessCursor:0,details:"kernel + services"
+    };
+    processes.set("system",process);
+
+    systemBootPages=[];
+    const labels=["Kernel","Scheduler","Drivers","Desktop","File services","Memory manager"];
+    labels.forEach((label,index)=>{
+      const id=addPage("system",label,index<3?"code":"data","system",true);
+      systemBootPages.push(id);
+    });
+  }
+
+  function bootPageCycles(){
+    // The boot sequence groups many real storage operations into one visible
+    // teaching page so it remains readable while preserving the SSD/HDD contrast.
+    return Math.max(30,Math.round(drive.load*0.15));
+  }
+
+  function ensureBootSequence(){
+    if(machineState!=="off") return;
+
+    machineState="booting";
+    desktopState={startOpen:false,window:null,booting:true};
+    const process=processes.get("system");
+    if(process) process.status="starting";
+
+    eventQueue.push({type:"boot",stage:"start",isBoot:true,cycles:Math.max(20,Math.round(bootPageCycles()*0.7))});
+    systemBootPages.forEach((pageId,index)=>{
+      eventQueue.push({
+        type:"load",
+        pageId,
+        plannedSlot:index,
+        reason:"Boot Orbit OS",
+        isFault:false,
+        isBoot:true,
+        cycleOverride:bootPageCycles()
+      });
+    });
+    eventQueue.push({type:"boot",stage:"complete",isBoot:true,cycles:36});
+
+    appendLog("Power signal received","The clock started the firmware and bootloader. Orbit OS is still on secondary storage.","",{
+      route:{start:"Run clock",finish:"Firmware / bootloader"},path:"Boot control",cycles:0,owner:"system"
+    });
+    requestDesktopRender(true);
+  }
+
+  function handleBootEvent(event){
+    cpuActor=event.stage==="start"?"Firmware / bootloader":"Operating system";
+    currentPageId=systemBootPages[0] || null;
+
+    if(event.stage==="start"){
+      activeStorageOwner="system";
+      busState.storage={direction:"to-right",label:"locate Orbit OS"};
+      pendingCommit=()=>{
+        const process=processes.get("system");
+        if(process) process.status="starting";
+      };
+      setEvent(
+        "Firmware begins Orbit OS boot",
+        `The bootloader located Orbit OS on the ${drive.label} and began loading its required pages into RAM.`,
+        "Boot",
+        event.cycles||24
+      );
+      return;
+    }
+
+    pendingCommit=()=>{
+      machineState="ready";
+      desktopState={startOpen:false,window:"taskmgr",booting:false};
+      const process=processes.get("system");
+      if(process) process.status="running";
+      requestDesktopRender(true);
+    };
+    setEvent(
+      "Desktop services ready",
+      "Every required Orbit OS page is resident in RAM. The interactive desktop and Task Manager can now open.",
+      "RAM",
+      event.cycles||36
+    );
+  }
+
+  function processExists(owner){
+    return processes.has(owner);
+  }
+
+  function processPages(owner){
+    const process=processes.get(owner);
+    return process ? process.pages.map(id=>pages.get(id)).filter(Boolean) : [];
+  }
+
+  function freeRamIndices(){
+    const result=[];
+    ramSlots.forEach((value,index)=>{if(value===null) result.push(index);});
+    return result;
+  }
+
+  function largestFreeRun(){
+    let best=0,current=0;
+    ramSlots.forEach(value=>{
+      if(value===null){current++;best=Math.max(best,current);}
+      else current=0;
+    });
+    return best;
+  }
+
+  function findFreeRun(length){
+    let start=-1,count=0;
+    for(let i=0;i<ramSlots.length;i++){
+      if(ramSlots[i]===null){
+        if(start===-1) start=i;
+        count++;
+        if(count>=length) return Array.from({length},(_,j)=>start+j);
+      }else{
+        start=-1;
+        count=0;
+      }
+    }
+    return null;
+  }
+
+  function queueLoadBatch(owner,pageIds,reason){
+    // Existing queued loads reserve their preferred positions so that several
+    // applications queued before the simulation starts do not all claim the same run.
+    const virtual=ramSlots.map(value=>value!==null);
+    eventQueue.forEach(event=>{
+      if(event.type==="load" && Number.isInteger(event.plannedSlot)){
+        virtual[event.plannedSlot]=true;
+      }
+    });
+
+    const virtualFree=[];
+    virtual.forEach((used,index)=>{if(!used) virtualFree.push(index);});
+
+    let run=null;
+    let runStart=-1;
+    let runCount=0;
+    for(let i=0;i<virtual.length;i++){
+      if(!virtual[i]){
+        if(runStart===-1) runStart=i;
+        runCount++;
+        if(runCount>=pageIds.length){
+          run=Array.from({length:pageIds.length},(_,offset)=>runStart+offset);
+          break;
+        }
+      }else{
+        runStart=-1;
+        runCount=0;
+      }
+    }
+
+    let planned=[];
+    if(run){
+      planned=run;
+      showToast(
+        "OS found contiguous RAM",
+        `${ownerDef(owner).name} has ${pageIds.length} pages reserved in one continuous run.`,
+        "good"
+      );
+    }else if(virtualFree.length>=pageIds.length){
+      planned=virtualFree.slice(0,pageIds.length);
+      showToast(
+        "OS is using non-contiguous RAM",
+        `There is enough free memory, but not one large run. ${ownerDef(owner).name} will be scattered.`,
+        "warn"
+      );
+    }else{
+      planned=virtualFree;
+      showToast(
+        "RAM pressure detected",
+        `${ownerDef(owner).name} needs ${pageIds.length} pages. The OS will reclaim colder background pages.`,
+        "warn"
+      );
+    }
+
+    pageIds.forEach((pageId,index)=>{
+      eventQueue.push({
+        type:"load",
+        pageId,
+        plannedSlot:planned[index] ?? null,
+        reason,
+        isFault:false
+      });
+    });
+  }
+
+  function openProcess(owner){
+    if(machineState!=="ready") return;
+    if(owner==="taskmgr"){
+      desktopState.window="taskmgr";
+      desktopState.startOpen=false;
+      renderAll();
+      return;
+    }
+
+    if(processExists(owner)){
+      setActive(owner);
+      desktopState.window=owner;
+      desktopState.startOpen=false;
+      renderAll();
+      return;
+    }
+
+    const def=APP_DEFS[owner];
+    const process={
+      id:owner,name:def.name,status:"loading",pages:[],
+      priority:"high",accessCursor:0,details:"base program"
+    };
+    processes.set(owner,process);
+
+    const ids=[];
+    for(let i=0;i<def.basePages;i++){
+      ids.push(addPage(owner,`${def.name} ${i<2?"code":"data"} ${i+1}`,i<2?"code":"data","base"));
+    }
+
+    queueLoadBatch(owner,ids,`Open ${def.name}`);
+    setActive(owner);
+    desktopState.window=owner;
+    desktopState.startOpen=false;
+    showToast("Application launch queued",`${def.name} must be copied from ${drive.label} into RAM.`);
+    renderAll();
+  }
+
+  function setActive(owner){
+    if(owner!=="system" && !processExists(owner)) return;
+    activeOwner=owner;
+    processes.forEach(process=>{
+      process.priority=process.id==="system"?"critical":process.id===owner?"high":"background";
+    });
+  }
+
+  function removePageEverywhere(pageId){
+    const page=pages.get(pageId);
+    if(!page) return;
+    if(page.ramSlot!==null) ramSlots[page.ramSlot]=null;
+    if(page.pageSlot!==null) pagefileSlots[page.pageSlot]=null;
+    ["L1","L2","L3"].forEach(level=>{
+      caches[level]=caches[level].filter(entry=>entry.pageId!==pageId);
+    });
+    pages.delete(pageId);
+  }
+
+  function closeProcess(owner){
+    if(owner==="system" || !processExists(owner)) return;
+    const process=processes.get(owner);
+    const ramBefore=processPages(owner).filter(page=>page.state==="ram").length;
+    const pageBefore=processPages(owner).filter(page=>page.state==="pagefile").length;
+    process.pages.forEach(removePageEverywhere);
+    processes.delete(owner);
+    eventQueue=eventQueue.filter(event=>pages.has(event.pageId));
+    if(activeOwner===owner) activeOwner="system";
+    if(desktopState.window===owner) desktopState.window="taskmgr";
+    showToast(
+      "OS released memory",
+      `${ownerDef(owner).name} closed: ${ramBefore} RAM block${ramBefore===1?"":"s"} and ${pageBefore} page-file block${pageBefore===1?"":"s"} freed.`,
+      "good"
+    );
+    renderAll();
+  }
+
+  function addWorkload(owner,count,tag,label,kind="data"){
+    if(!processExists(owner)) openProcess(owner);
+    const existing=processPages(owner).filter(page=>page.tag===tag);
+    if(existing.length){
+      setActive(owner);
+      desktopState.window=owner;
+      renderAll();
+      return;
+    }
+
+    const ids=[];
+    for(let i=0;i<count;i++){
+      ids.push(addPage(owner,`${label} ${i+1}`,kind,tag));
+    }
+    processes.get(owner).details=label;
+    queueLoadBatch(owner,ids,label);
+    setActive(owner);
+    desktopState.window=owner;
+    renderAll();
+  }
+
+  function removeWorkload(owner,tag){
+    if(!processExists(owner)) return;
+    const process=processes.get(owner);
+    const ids=process.pages.filter(id=>pages.get(id)?.tag===tag);
+    ids.forEach(removePageEverywhere);
+    process.pages=process.pages.filter(id=>!ids.includes(id));
+    process.details="base program";
+    showToast("Working set reduced",`${ids.length} ${ownerDef(owner).name} page${ids.length===1?"":"s"} released.`,"good");
+    renderAll();
+  }
+
+  function addBrowserTab(){
+    if(!processExists("browser")) openProcess("browser");
+    const process=processes.get("browser");
+    const tabNumber=1+new Set(processPages("browser").filter(p=>p.tag.startsWith("tab")).map(p=>p.tag)).size;
+    const tag=`tab${tabNumber}`;
+    const ids=[
+      addPage("browser",`Tab ${tabNumber} document`,"data",tag),
+      addPage("browser",`Tab ${tabNumber} script`,"code",tag)
+    ];
+    process.details=`${tabNumber} extra tab${tabNumber===1?"":"s"}`;
+    queueLoadBatch("browser",ids,`Open browser tab ${tabNumber}`);
+    setActive("browser");
+    renderAll();
+  }
+
+  function closeBrowserTab(){
+    if(!processExists("browser")) return;
+    const tags=[...new Set(processPages("browser").filter(p=>p.tag.startsWith("tab")).map(p=>p.tag))];
+    if(!tags.length){
+      showToast("No extra tabs","Only the browser's base pages remain.");
+      return;
+    }
+    removeWorkload("browser",tags[tags.length-1]);
+  }
+
+  function chooseVictim(requestOwner){
+    let candidates=[...pages.values()].filter(page=>
+      page.state==="ram" &&
+      !page.pinned &&
+      page.owner!=="system"
+    );
+
+    if(!candidates.length) return null;
+
+    candidates.sort((a,b)=>{
+      const activePenaltyA=a.owner===activeOwner?100000:0;
+      const activePenaltyB=b.owner===activeOwner?100000:0;
+      const requestPenaltyA=a.owner===requestOwner?50000:0;
+      const requestPenaltyB=b.owner===requestOwner?50000:0;
+      return (activePenaltyA+requestPenaltyA+a.lastUsed) -
+             (activePenaltyB+requestPenaltyB+b.lastUsed);
+    });
+
+    if(pagefileSlots.every(Boolean)){
+      const clean=candidates.find(page=>page.kind==="code" && !page.dirty);
+      if(clean) return clean;
+    }
+
+    return candidates[0];
+  }
+
+  function firstFreePageSlot(){
+    return pagefileSlots.findIndex(value=>value===null);
+  }
+
+  function firstFreeRamSlot(){
+    return ramSlots.findIndex(value=>value===null);
+  }
+
+  function evictPage(pageId,requestOwner){
+    const page=pages.get(pageId);
+    if(!page || page.state!=="ram") return false;
+
+    cpuActor="Operating system";
+    const sourceRamSlot=page.ramSlot;
+    activeRamSlot=sourceRamSlot;
+    currentPageId=page.id;
+
+    if(page.kind==="code" && !page.dirty){
+      activeStorageOwner=page.owner;
+      busState.storage={direction:"to-left",label:`discard ${ownerDef(page.owner).short}`};
+      pendingCommit=()=>{
+        const live=pages.get(pageId);
+        if(!live || live.state!=="ram") return;
+        removeFromCaches(pageId);
+        if(ramSlots[sourceRamSlot]===pageId) ramSlots[sourceRamSlot]=null;
+        live.ramSlot=null;
+        live.state="storage";
+      };
+      setEvent(
+        "OS discarded a clean code page",
+        `${page.label} can be reloaded from storage later, so no page-file write is needed.`,
+        drive.label,
+        12
+      );
+      showToast("Clean page discarded",`${page.label} was removed from RAM to make room for ${ownerDef(requestOwner).name}.`,"warn");
+      return true;
+    }
+
+    const pageSlot=firstFreePageSlot();
+    if(pageSlot===-1){
+      const process=processes.get(requestOwner);
+      if(process) process.status="blocked";
+      pendingCommit=null;
+      setEvent(
+        "Out of memory",
+        "RAM and the page file are full. The simulation paused so you can close an application or increase RAM.",
+        "Blocked",
+        1
+      );
+      showToast("Out of memory","RAM and page-file space are exhausted. The simulation has paused.","bad");
+      pauseSimulation();
+      return false;
+    }
+
+    activePageSlot=pageSlot;
+    busState.page={direction:"to-left",label:`${ownerDef(page.owner).short} page out`};
+    pendingCommit=()=>{
+      const live=pages.get(pageId);
+      if(!live || live.state!=="ram") return;
+      removeFromCaches(pageId);
+      if(ramSlots[sourceRamSlot]===pageId) ramSlots[sourceRamSlot]=null;
+      if(pagefileSlots[pageSlot]===null){
+        pagefileSlots[pageSlot]=pageId;
+        live.pageSlot=pageSlot;
+        live.ramSlot=null;
+        live.state="pagefile";
+      }
+    };
+
+    setEvent(
+      "OS paged out inactive data",
+      `${page.label} moved from RAM to the page file because ${ownerDef(requestOwner).name} needs memory.`,
+      `${drive.label} page file`,
+      drive.pageOut
+    );
+    showToast(
+      "Page moved to secondary storage",
+      `${page.label} was deprioritised. A later access will cause a costly page fault.`,
+      "warn"
+    );
+    return true;
+  }
+
+  function handleLoad(event){
+    const page=pages.get(event.pageId);
+    cpuActor="Operating system";
+    if(!page || page.state==="ram") return;
+
+    let slot=(event.plannedSlot!==null && ramSlots[event.plannedSlot]===null)
+      ? event.plannedSlot
+      : firstFreeRamSlot();
+
+    if(slot===-1){
+      const victim=chooseVictim(page.owner);
+      if(!victim){
+        pendingCommit=null;
+        setEvent("Memory allocation blocked","No RAM page can be reclaimed.","Blocked",1);
+        return;
+      }
+      const freed=evictPage(victim.id,page.owner);
+      // The original load stays at the front while the eviction action consumes cycles.
+      event.blocked=!freed;
+      eventQueue.unshift(event);
+      return;
+    }
+
+    const source=page.state;
+    const sourcePageSlot=page.pageSlot;
+    activeRamSlot=slot;
+    currentPageId=page.id;
+
+    if(source==="pagefile"){
+      activePageSlot=sourcePageSlot;
+      busState.page={direction:"to-right",label:`${ownerDef(page.owner).short} page in`};
+      setEvent(
+        "Page fault resolved",
+        `${page.label} returned from the ${drive.label} page file into RAM.`,
+        `${drive.label} page file`,
+        drive.pageIn
+      );
+      showToast("OS restored a paged-out block",`${page.label} is resident in RAM again.`,"warn");
+    }else{
+      activeStorageOwner=page.owner;
+      busState.storage={direction:"to-right",label:`load ${ownerDef(page.owner).short}`};
+      setEvent(
+        event.isBoot?"Boot page loaded":"Program page loaded",
+        event.isBoot
+          ? `${page.label} copied from ${drive.label} storage into RAM block ${slot+1} as part of Orbit OS startup.`
+          : `${page.label} copied from ${drive.label} storage into RAM block ${slot+1}.`,
+        drive.label,
+        event.cycleOverride || drive.load
+      );
+    }
+
+    pendingCommit=()=>{
+      const live=pages.get(event.pageId);
+      if(!live || live.state==="ram") return;
+
+      if(source==="pagefile" && sourcePageSlot!==null && pagefileSlots[sourcePageSlot]===event.pageId){
+        pagefileSlots[sourcePageSlot]=null;
+        live.pageSlot=null;
+        pageFaults++;
+      }
+
+      if(ramSlots[slot]!==null){
+        const alternative=firstFreeRamSlot();
+        if(alternative===-1) return;
+        slot=alternative;
+      }
+
+      live.state="ram";
+      live.ramSlot=slot;
+      live.lastUsed=tick;
+      ramSlots[slot]=live.id;
+
+      const process=processes.get(live.owner);
+      if(process){
+        process.status=(live.owner==="system" && machineState==="booting")?"starting":"running";
+      }
+
+      if(event.activateAfter){
+        eventQueue.unshift({type:"access",owner:live.owner,pageId:live.id});
+      }
+    };
+  }
+
+  function removeFromCaches(pageId){
+    ["L1","L2","L3"].forEach(level=>{
+      caches[level]=caches[level].filter(entry=>entry.pageId!==pageId);
+    });
+  }
+
+  function cacheCapacity(level){
+    return cacheConfig[level];
+  }
+
+  function putCache(level,pageId){
+    const list=caches[level].filter(entry=>entry.pageId!==pageId);
+    list.push({pageId,lastUsed:tick});
+    while(list.length>cacheCapacity(level)) list.shift();
+    caches[level]=list;
+  }
+
+  function touchCache(level,pageId){
+    const entry=caches[level].find(item=>item.pageId===pageId);
+    if(entry) entry.lastUsed=tick;
+    putCache(level,pageId);
+  }
+
+  function promoteToCache(pageId,from){
+    if(from==="RAM" || from==="L3"){
+      putCache("L3",pageId);
+      putCache("L2",pageId);
+      putCache("L1",pageId);
+    }else if(from==="L2"){
+      putCache("L2",pageId);
+      putCache("L1",pageId);
+    }else{
+      putCache("L1",pageId);
+    }
+  }
+
+  function findCache(pageId){
+    if(caches.L1.some(entry=>entry.pageId===pageId)) return "L1";
+    if(caches.L2.some(entry=>entry.pageId===pageId)) return "L2";
+    if(caches.L3.some(entry=>entry.pageId===pageId)) return "L3";
+    return null;
+  }
+
+  function chooseAccessPage(owner,specificId=null){
+    if(specificId) return pages.get(specificId);
+
+    if(owner==="scan"){
+      const candidates=[...pages.values()].filter(page=>page.state!=="storage" || page.owner!=="scan");
+      if(candidates.length){
+        const process=processes.get("scan");
+        const page=candidates[process.accessCursor%candidates.length];
+        process.accessCursor++;
+        return page;
+      }
+    }
+
+    const process=processes.get(owner) || processes.get("system");
+    const candidates=process.pages.map(id=>pages.get(id)).filter(Boolean);
+    if(!candidates.length) return null;
+
+    const working=candidates.slice(0,Math.min(candidates.length,7));
+    const page=working[process.accessCursor%working.length];
+    process.accessCursor++;
+    return page;
+  }
+
+  function handleAccess(owner,pageId=null){
+    const page=chooseAccessPage(owner,pageId);
+    cpuActor=ownerDef(owner).name;
+    if(!page) return;
+
+    activeOwner=owner;
+    currentPageId=page.id;
+
+    const cacheHit=findCache(page.id);
+
+    if(cacheHit){
+      activeCache={level:cacheHit,pageId:page.id};
+      activeCacheLinks=cacheHit==="L1"
+        ? ["linkL1Core"]
+        : cacheHit==="L2"
+          ? ["linkL2L1","linkL1Core"]
+          : ["linkL3L2","linkL2L1","linkL1Core"];
+
+      pendingCommit=()=>{
+        const live=pages.get(page.id);
+        if(!live) return;
+        memoryAccesses++;
+        cacheHits++;
+        live.lastUsed=tick;
+        touchCache(cacheHit,page.id);
+        promoteToCache(page.id,cacheHit);
+      };
+
+      setEvent(
+        `${cacheHit} cache hit`,
+        `${ownerDef(owner).name} reused ${page.label} without waiting for RAM.`,
+        cacheHit,
+        LATENCY[cacheHit]
+      );
+      return;
+    }
+
+    if(page.state==="ram"){
+      activeRamSlot=page.ramSlot;
+      busState.ramcpu={direction:"to-right",label:`${ownerDef(page.owner).short} → cache`};
+      activeCache={level:"L1",pageId:page.id};
+      activeCacheLinks=["linkL3L2","linkL2L1","linkL1Core"];
+
+      pendingCommit=()=>{
+        const live=pages.get(page.id);
+        if(!live || live.state!=="ram") return;
+        memoryAccesses++;
+        live.lastUsed=tick;
+        promoteToCache(page.id,"RAM");
+      };
+
+      setEvent(
+        "Cache miss: fetched from RAM",
+        `${page.label} was not cached. RAM supplied it to the CPU cache hierarchy.`,
+        "RAM",
+        LATENCY.RAM
+      );
+      return;
+    }
+
+    pendingCommit=()=>{
+      const live=pages.get(page.id);
+      if(!live || live.state==="ram") return;
+      memoryAccesses++;
+      pageFaults++;
+      live.lastUsed=tick;
+      eventQueue.unshift({
+        type:"load",
+        pageId:live.id,
+        plannedSlot:null,
+        reason:"CPU page fault",
+        isFault:true,
+        activateAfter:true
+      });
+    };
+
+    setEvent(
+      "CPU raised a page fault",
+      `${page.label} is not resident in RAM. The OS must retrieve it from ${page.state==="pagefile"?"the page file":"storage"}.`,
+      "Page fault",
+      LATENCY.FAULT
+    );
+    showToast(
+      "Page fault",
+      `${ownerDef(owner).name} requested ${page.label}; CPU execution must wait for the OS.`,
+      "warn"
+    );
+  }
+
+  function memoryPressure(){
+    const used=ramSlots.filter(Boolean).length;
+    return used/ramSlots.length;
+  }
+
+  function maintenanceDecision(){
+    const activePages=processPages(activeOwner).filter(page=>page.state==="pagefile");
+    if(activePages.length){
+      const page=activePages.sort((a,b)=>b.lastUsed-a.lastUsed)[0];
+      cpuActor="Operating system";
+      currentPageId=page.id;
+      pendingCommit=()=>{
+        const live=pages.get(page.id);
+        if(!live || live.state!=="pagefile") return;
+        eventQueue.push({
+          type:"load",
+          pageId:live.id,
+          plannedSlot:null,
+          reason:"Prefetch active process",
+          isFault:false
+        });
+      };
+      setEvent(
+        "OS prefetch queued",
+        `${page.label} belongs to the foreground application, so the OS is bringing it back toward RAM.`,
+        "Scheduler",
+        3
+      );
+      return true;
+    }
+
+    if(memoryPressure()>.86){
+      const victim=chooseVictim(activeOwner);
+      if(victim){
+        evictPage(victim.id,activeOwner);
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  function ownerHasResidentPage(owner){
+    return processPages(owner).some(page=>page.state==="ram");
+  }
+
+  function bestAccessOwner(){
+    if(ownerHasResidentPage(activeOwner)) return activeOwner;
+    const running=[...processes.keys()].find(owner=>owner!=="system" && ownerHasResidentPage(owner));
+    return running || "system";
+  }
+
+  function prepareNextAction(){
+    if(currentAction || gateAnimating) return currentAction;
+
+    clearFlow();
+    tick++;
+    lastEventTitle="Scheduler check";
+    lastEventDetail="The CPU and operating system selected the next memory operation.";
+    lastPath="Scheduler";
+    lastLatency=1;
+
+    pendingActionNotices=[];
+    pendingCommit=null;
+    collectingActionNotices=true;
+    try{
+      const nextEvent=eventQueue[0];
+      const urgent=nextEvent && (nextEvent.isFault || nextEvent.isBoot || nextEvent.type==="access" || machineState==="booting");
+
+      if(eventQueue.length && (urgent || tick%2===1)){
+        const event=eventQueue.shift();
+        if(event.type==="load") handleLoad(event);
+        else if(event.type==="access") handleAccess(event.owner,event.pageId);
+        else if(event.type==="boot") handleBootEvent(event);
+      }else if(tick%4===0 && maintenanceDecision()){
+        // maintenanceDecision records the selected action.
+      }else{
+        handleAccess(bestAccessOwner());
+      }
+    }finally{
+      collectingActionNotices=false;
+    }
+
+    const action=enrichAction({
+      id:++actionCounter,
+      title:lastEventTitle,
+      detail:lastEventDetail,
+      path:lastPath,
+      cycles:Math.max(1,lastLatency),
+      progress:0,
+      elapsedMs:0,
+      startCycle:totalCycles,
+      tone:actionTone(lastEventTitle,lastPath),
+      notices:[...pendingActionNotices],
+      commit:pendingCommit,
+      owner:pages.get(currentPageId)?.owner || activeOwner
+    });
+    pendingCommit=null;
+    action.workItem=primaryWorkItem(action);
+    currentAction=action;
+    requestSimulationRender(!running);
+    return action;
+  }
+
+  function completeCurrentAction(){
+    const action=currentAction;
+    if(!action) return;
+    if(typeof action.commit==="function") action.commit();
+
+    action.notices.forEach(notice=>appendLog(notice.title,notice.detail,notice.tone,{
+      route:noticeRoute(notice.title),path:"OS decision",cycles:0,
+      startCycle:action.startCycle,endCycle:totalCycles,owner:action.owner,block:action.block
+    }));
+
+    appendLog(action.title,action.detail,action.tone,{
+      path:action.path,route:action.route,block:action.block,owner:action.owner,
+      cycles:action.cycles,gateMs:action.gateMs,
+      simTimeMs:Number.isFinite(action.elapsedMs)?action.elapsedMs:simulationTimeMs(action.cycles,action.gateMs),realSeconds:action.realSeconds,
+      startCycle:action.startCycle,endCycle:totalCycles
+    });
+    currentAction=null;
+    requestDesktopRender(false);
+  }
+
+  async function animateWorkClocks(action,delta,duration){
+    await new Promise(resolve=>setTimeout(resolve,duration));
+  }
+
+  function requestSimulationRender(force=false){
+    const minimumFrame=90;
+    const now=performance.now();
+    if(force || !running || now-lastSimulationRender>=minimumFrame){
+      if(simulationRenderTimer){clearTimeout(simulationRenderTimer);simulationRenderTimer=null;}
+      lastSimulationRender=now;
+      renderSimulationFrame();
+      return;
+    }
+    if(simulationRenderTimer) return;
+    simulationRenderTimer=setTimeout(()=>{
+      simulationRenderTimer=null;
+      lastSimulationRender=performance.now();
+      renderSimulationFrame();
+    },Math.max(1,minimumFrame-(now-lastSimulationRender)));
+  }
+
+  function scheduleNextGate(token){
+    setTimeout(()=>{
+      if(running && token===runLoopToken) advanceCycleGate(token);
+    },12);
+  }
+
+  async function advanceCycleGate(loopToken=runLoopToken){
+    if(gateAnimating) return;
+    if(machineState==="off") ensureBootSequence();
+    if(!currentAction) prepareNextAction();
+    if(!currentAction) return;
+
+    const action=currentAction;
+    const remaining=action.cycles-action.progress;
+    const delta=Math.min(GATE_CYCLES,remaining);
+    const baseDuration=Number($("cycleSpeed").value);
+    const duration=Math.max(running?1:100,Math.round(baseDuration*(delta/GATE_CYCLES)));
+
+    gateAnimating=true;
+    requestSimulationRender(!running);
+    $("stepButton").disabled=true;
+
+    await animateWorkClocks(action,delta,duration);
+
+    if(currentAction!==action){
+      gateAnimating=false;
+      requestSimulationRender(true);
+      return;
+    }
+
+    action.progress+=delta;
+    action.elapsedMs=(action.elapsedMs||0)+duration;
+    totalCycles+=delta;
+    gateCount++;
+
+    if(action.progress>=action.cycles){
+      completeCurrentAction();
+    }
+
+    gateAnimating=false;
+    requestSimulationRender(!running);
+
+    if(running && loopToken===runLoopToken){
+      scheduleNextGate(loopToken);
+    }
+  }
+
+  function startSimulation(){
+    if(running) return;
+    if(machineState==="off") ensureBootSequence();
+    running=true;
+    const token=++runLoopToken;
+    renderAll();
+    advanceCycleGate(token);
+  }
+
+  function pauseSimulation(){
+    running=false;
+    runLoopToken++;
+    renderAll();
+  }
+
+  function toggleSimulation(){
+    if(running) pauseSimulation();
+    else startSimulation();
+  }
+
+  function processAllocation(owner){
+    const resident=processPages(owner).filter(page=>page.state==="ram").map(page=>page.ramSlot).sort((a,b)=>a-b);
+    const paged=processPages(owner).some(page=>page.state==="pagefile");
+    if(resident.length<=1) return paged?"paged":"contiguous";
+    const contiguous=resident.every((slot,index)=>index===0 || slot===resident[index-1]+1);
+    if(paged) return "paged";
+    return contiguous?"contiguous":"fragmented";
+  }
+
+  function ownerCounts(owner){
+    const ownerPages=processPages(owner);
+    return {
+      ram:ownerPages.filter(page=>page.state==="ram").length,
+      page:ownerPages.filter(page=>page.state==="pagefile").length,
+      cache:["L1","L2","L3"].reduce((sum,level)=>sum+caches[level].filter(entry=>pages.get(entry.pageId)?.owner===owner).length,0)
+    };
+  }
+
+  function displayMb(blocks){
+    return `${(blocks*BLOCK_MB).toLocaleString()} MB`;
+  }
+
+  function processRows(){
+    return [...processes.values()].map(process=>{
+      const counts=ownerCounts(process.id);
+      return {
+        id:process.id,
+        name:process.name,
+        status:process.status,
+        priority:process.priority,
+        counts,
+        allocation:processAllocation(process.id)
+      };
+    });
+  }
+
+  function desktopWindowMarkup(){
+    const id=desktopState.window;
+    if(!id) return "";
+
+    const title=id==="taskmgr"?"Task Manager":ownerDef(id).name;
+    const close=id==="taskmgr"
+      ? `<button class="window-close" data-action="close-window" aria-label="Close window">×</button>`
+      : `<button class="window-close" data-action="close-app" data-owner="${id}" aria-label="Close application">×</button>`;
+
+    let body="";
+    if(id==="taskmgr"){
+      const rows=processRows();
+      const used=ramSlots.filter(Boolean).length;
+      const paged=pagefileSlots.filter(Boolean).length;
+      body=`
+        <div class="task-manager">
+          <div class="tm-summary">
+            <span>RAM <strong>${displayMb(used)} / ${displayMb(ramSlots.length)}</strong></span>
+            <span>Page file <strong>${displayMb(paged)}</strong></span>
+            <span>Hover or click a process to trace its colour.</span>
+          </div>
+          <div class="tm-scroll">
+            <table class="tm-table">
+              <thead><tr><th>Process</th><th>Status</th><th>RAM</th><th>Page</th><th>Cache</th><th>Priority</th><th>Allocation</th></tr></thead>
+              <tbody>
+                ${rows.map(row=>`
+                  <tr class="tm-row ${pinnedOwner===row.id?"pinned":""}" data-owner="${row.id}">
+                    <td><span class="process-name"><i class="process-swatch" style="background:${ownerDef(row.id).color}"></i>${row.name}</span></td>
+                    <td>${row.status}</td>
+                    <td>${displayMb(row.counts.ram)}</td>
+                    <td>${displayMb(row.counts.page)}</td>
+                    <td>${row.counts.cache}</td>
+                    <td>${row.priority}</td>
+                    <td><span class="allocation-badge ${row.allocation==="fragmented"||row.allocation==="paged"?"fragmented":""}">${row.allocation}</span></td>
+                  </tr>
+                `).join("")}
+              </tbody>
+            </table>
+          </div>
+          <div class="tm-hint">A process may occupy several non-adjacent RAM blocks and copies of its hot pages may also appear in cache.</div>
+        </div>
+      `;
+    }else{
+      const process=processes.get(id);
+      const counts=process?ownerCounts(id):{ram:0,page:0,cache:0};
+      const details=process?.details || "not running";
+
+      if(id==="browser"){
+        const tabs=new Set(processPages("browser").filter(page=>page.tag.startsWith("tab")).map(page=>page.tag)).size;
+        body=`
+          <div class="app-pane">
+            <div class="app-hero"><strong>${title}</strong><p>Open tabs create separate document and script pages. Revisit them to create cache hits.</p></div>
+            <div class="app-stat-grid">
+              <div class="app-stat"><span>Extra tabs</span><strong>${tabs}</strong></div>
+              <div class="app-stat"><span>RAM</span><strong>${displayMb(counts.ram)}</strong></div>
+              <div class="app-stat"><span>Page file</span><strong>${displayMb(counts.page)}</strong></div>
+            </div>
+            <div class="app-actions">
+              <button data-action="browser-add">New tab</button>
+              <button data-action="browser-close">Close tab</button>
+              <button data-action="focus-owner" data-owner="browser">Use browser</button>
+            </div>
+          </div>`;
+      }else if(id==="image"){
+        const large=processPages("image").some(page=>page.tag==="large-image");
+        body=`
+          <div class="app-pane">
+            <div class="app-hero"><strong>${title}</strong><p>A large uncompressed image creates a large working set and can force background pages out of RAM.</p></div>
+            <div class="app-stat-grid">
+              <div class="app-stat"><span>Document</span><strong>${large?"4K image":"small image"}</strong></div>
+              <div class="app-stat"><span>RAM</span><strong>${displayMb(counts.ram)}</strong></div>
+              <div class="app-stat"><span>Page file</span><strong>${displayMb(counts.page)}</strong></div>
+            </div>
+            <div class="app-actions">
+              <button data-action="image-load">${large?"Image loaded":"Load 4K image"}</button>
+              <button data-action="image-unload">Close image</button>
+              <button data-action="focus-owner" data-owner="image">Edit image</button>
+            </div>
+          </div>`;
+      }else if(id==="sheet"){
+        const large=processPages("sheet").some(page=>page.tag==="workbook");
+        body=`
+          <div class="app-pane">
+            <div class="app-hero"><strong>${title}</strong><p>Large tables add data pages. Recalculating repeatedly makes those pages hot enough to stay cached.</p></div>
+            <div class="app-stat-grid">
+              <div class="app-stat"><span>Workbook</span><strong>${large?"large":"small"}</strong></div>
+              <div class="app-stat"><span>RAM</span><strong>${displayMb(counts.ram)}</strong></div>
+              <div class="app-stat"><span>Cache lines</span><strong>${counts.cache}</strong></div>
+            </div>
+            <div class="app-actions">
+              <button data-action="sheet-load">${large?"Workbook loaded":"Load large workbook"}</button>
+              <button data-action="sheet-unload">Close workbook</button>
+              <button data-action="focus-owner" data-owner="sheet">Recalculate</button>
+            </div>
+          </div>`;
+      }else if(id==="media"){
+        const playing=processPages("media").some(page=>page.tag==="video-buffer");
+        body=`
+          <div class="app-pane">
+            <div class="app-hero"><strong>${title}</strong><p>Playback needs a sustained buffer. Its active pages receive high priority while media is playing.</p></div>
+            <div class="app-stat-grid">
+              <div class="app-stat"><span>Playback</span><strong>${playing?"HD playing":"stopped"}</strong></div>
+              <div class="app-stat"><span>RAM</span><strong>${displayMb(counts.ram)}</strong></div>
+              <div class="app-stat"><span>Page file</span><strong>${displayMb(counts.page)}</strong></div>
+            </div>
+            <div class="app-actions">
+              <button data-action="media-play">${playing?"Keep playing":"Play HD video"}</button>
+              <button data-action="media-stop">Stop playback</button>
+              <button data-action="focus-owner" data-owner="media">Watch video</button>
+            </div>
+          </div>`;
+      }else{
+        const scanning=processPages("scan").some(page=>page.tag==="full-scan");
+        body=`
+          <div class="app-pane">
+            <div class="app-hero"><strong>${title}</strong><p>A full scan touches pages belonging to many processes, creating a different CPU/cache access pattern.</p></div>
+            <div class="app-stat-grid">
+              <div class="app-stat"><span>Scan</span><strong>${scanning?"running":"idle"}</strong></div>
+              <div class="app-stat"><span>RAM</span><strong>${displayMb(counts.ram)}</strong></div>
+              <div class="app-stat"><span>CPU target</span><strong>all pages</strong></div>
+            </div>
+            <div class="app-actions">
+              <button data-action="scan-start">Run full scan</button>
+              <button data-action="scan-stop">Stop scan</button>
+              <button data-action="focus-owner" data-owner="scan">Prioritise scan</button>
+            </div>
+          </div>`;
+      }
+    }
+
+    return `
+      <section class="desktop-window">
+        <div class="window-titlebar">
+          <span class="window-icon">${appIcon(id)}</span>
+          ${title}
+          ${close}
+        </div>
+        <div class="window-body">${body}</div>
+      </section>
+    `;
+  }
+
+  function renderDesktop(){
+    const root=$("desktop");
+    const previousWindow=desktopState.window;
+    const previousBodyScroll=root.querySelector(".window-body")?.scrollTop || 0;
+    const previousTableScroll=root.querySelector(".tm-scroll")?.scrollTop || 0;
+
+    if(machineState==="off"){
+      root.innerHTML=`
+        <div class="desktop-off">
+          <div class="desktop-off-inner">
+            <div class="desktop-power-symbol"></div>
+            <strong>Computer ready to boot</strong>
+            <p>Press Run clock or Advance 10 cycles. The firmware will then load Orbit OS pages from ${drive.label} into RAM.</p>
+          </div>
+        </div>`;
+      return;
+    }
+
+    if(machineState==="booting"){
+      const loaded=systemBootPages.filter(id=>pages.get(id)?.state==="ram").length;
+      const total=Math.max(1,systemBootPages.length);
+      const percentage=Math.round(loaded/total*100);
+      const currentPage=currentAction?.pageId?pages.get(currentAction.pageId):null;
+      root.innerHTML=`
+        <div class="desktop-loading">
+          <div class="desktop-loading-inner" style="--boot-progress:${percentage}%">
+            <div class="desktop-loading-logo"></div>
+            <strong>Orbit OS</strong>
+            <p>Loading operating-system code, services and the desktop into RAM…</p>
+            <div class="desktop-loading-status">${loaded} / ${total} OS pages resident${currentPage?` · ${escapeHtml(currentPage.label)}`:""}</div>
+            <div class="desktop-loading-bar"><span></span></div>
+            <div class="desktop-loading-dots"><i></i><i></i><i></i></div>
+          </div>
+        </div>`;
+      return;
+    }
+
+    const openProcesses=[...processes.keys()].filter(id=>id!=="system");
+    const startMenu=desktopState.startOpen ? `
+      <div class="start-menu">
+        <div class="start-menu-head">Start</div>
+        <div class="start-list">
+          ${DESKTOP_APPS.map(id=>`
+            <button class="start-item" data-action="open-window" data-owner="${id}">
+              <span class="mini-icon">${appIcon(id)}</span>
+              ${id==="taskmgr"?"Task Manager":ownerDef(id).name}
+            </button>
+          `).join("")}
+        </div>
+      </div>` : "";
+
+    $("desktop").innerHTML=`
+      <div class="desktop-icons">
+        ${DESKTOP_APPS.map(id=>`
+          <button class="desktop-icon" data-action="open-window" data-owner="${id}">
+            <span class="app-glyph">${appIcon(id)}</span>
+            ${id==="taskmgr"?"Task Manager":ownerDef(id).name}
+          </button>
+        `).join("")}
+      </div>
+
+      ${startMenu}
+      ${desktopWindowMarkup()}
+
+      <div class="taskbar">
+        <button class="start-button" data-action="toggle-start" aria-label="Open Start menu">${appIcon("start")}</button>
+        <button class="task-button ${desktopState.window==="taskmgr"?"active":""}" data-action="open-window" data-owner="taskmgr" title="Task Manager">${appIcon("taskmgr")}</button>
+        ${openProcesses.map(id=>`
+          <button class="task-button ${desktopState.window===id?"active":""}" data-action="open-window" data-owner="${id}" title="${ownerDef(id).name}">
+            ${appIcon(id)}
+          </button>
+        `).join("")}
+        <span class="desktop-clock">09:41</span>
+      </div>
+    `;
+
+    if(previousWindow===desktopState.window){
+      requestAnimationFrame(()=>{
+        const body=root.querySelector(".window-body");
+        const table=root.querySelector(".tm-scroll");
+        if(body) body.scrollTop=previousBodyScroll;
+        if(table) table.scrollTop=previousTableScroll;
+      });
+    }
+  }
+
+  function storageCells(){
+    const layout=[
+      ["system",5],["browser",5],["image",6],["sheet",5],["media",5],["scan",4],["system",6]
+    ];
+    const cells=[];
+    layout.forEach(([owner,count])=>{
+      for(let i=0;i<count;i++) cells.push({owner,label:`${ownerDef(owner).short}${i+1}`});
+    });
+    return cells.slice(0,36);
+  }
+
+  function cellMarkup({page,index,kind,owner,label,active=false}){
+    if(!page && !owner){
+      return `<div class="mem-cell ${active?"active-cell":""}" title="${active?"Destination reserved for the current transfer":"Free block"}">${index+1}</div>`;
+    }
+
+    const actualOwner=owner || page.owner;
+    const actualLabel=label || `${ownerDef(actualOwner).short}${String(page.id).split("p").pop()}`;
+    const classes=[
+      "mem-cell","used",
+      page?.kind==="code"?"code":"",
+      kind==="page"?"page-cell":"",
+      active?"active-cell":"",
+      (hoverOwner||pinnedOwner)===actualOwner?"owner-highlight":""
+    ].filter(Boolean).join(" ");
+
+    const title=page
+      ? `${ownerDef(actualOwner).name} · ${page.label} · ${page.state}`
+      : `${ownerDef(actualOwner).name} · stored program/data`;
+
+    return `<div class="${classes}" data-owner="${actualOwner}" style="--owner-color:${ownerDef(actualOwner).color}" title="${title}">${actualLabel}</div>`;
+  }
+
+  function renderStorage(){
+    $("storageGrid").innerHTML=storageCells().map((cell,index)=>
+      cellMarkup({
+        index,
+        owner:cell.owner,
+        label:cell.label,
+        active:activeStorageOwner===cell.owner && index===storageCells().findIndex(item=>item.owner===cell.owner)
+      })
+    ).join("");
+  }
+
+  function renderRam(){
+    $("ramGrid").innerHTML=ramSlots.map((pageId,index)=>{
+      const page=pageId?pages.get(pageId):null;
+      return cellMarkup({page,index,kind:"ram",active:activeRamSlot===index});
+    }).join("");
+
+    const used=ramSlots.filter(Boolean).length;
+    $("ramUsageText").textContent=`${used} / ${ramSlots.length} blocks · ${displayMb(used)}`;
+  }
+
+  function renderPagefile(){
+    $("pagefileGrid").innerHTML=pagefileSlots.map((pageId,index)=>{
+      const page=pageId?pages.get(pageId):null;
+      return cellMarkup({page,index,kind:"page",active:activePageSlot===index});
+    }).join("");
+
+    const used=pagefileSlots.filter(Boolean).length;
+    $("pageUsageText").textContent=`${used} / ${pagefileSlots.length} blocks · ${displayMb(used)}`;
+  }
+
+  function renderCacheLevel(level,elementId,usageId){
+    const capacity=cacheCapacity(level);
+    const cells=Array.from({length:capacity},(_,index)=>caches[level][index] || null);
+    $(elementId).innerHTML=cells.map((entry,index)=>{
+      const page=entry?pages.get(entry.pageId):null;
+      return cellMarkup({
+        page,index,kind:"cache",
+        active:activeCache?.level===level && activeCache.pageId===entry?.pageId
+      });
+    }).join("");
+    $(usageId).textContent=`${caches[level].length} / ${capacity}`;
+  }
+
+  function renderCpu(){
+    renderCacheLevel("L3","l3Grid","l3Usage");
+    renderCacheLevel("L2","l2Grid","l2Usage");
+    renderCacheLevel("L1","l1Grid","l1Usage");
+
+    ["linkL3L2","linkL2L1","linkL1Core"].forEach(id=>{
+      $(id).classList.toggle("active",activeCacheLinks.includes(id));
+    });
+
+    $("cpuProcess").textContent=cpuActor;
+    const page=currentPageId?pages.get(currentPageId):null;
+    $("cpuRequest").textContent=page ? page.label : "waiting for a memory request";
+  }
+
+  function renderBus(id,state,pageBus=false){
+    const el=$(id);
+    el.className=`bus ${id==="storageBus"?"bus-storage":id==="ramCpuBus"?"bus-ramcpu":"bus-page"} ${pageBus?"page-bus":""}`;
+    const value=el.querySelector(".bus-value");
+    if(state){
+      el.classList.add("active",state.direction);
+      value.textContent=state.label;
+    }else{
+      value.textContent="";
+    }
+  }
+
+  function renderBuses(){
+    renderBus("storageBus",busState.storage,false);
+    renderBus("ramCpuBus",busState.ramcpu,false);
+    renderBus("pageBus",busState.page,true);
+  }
+
+  function renderDrive(){
+    const isSSD=$("driveConfig").value==="ssd";
+    $("driveTitle").textContent=`${drive.label} storage`;
+    $("driveLatency").textContent=`${drive.load}-cycle load`;
+    $("driveCopyTitle").textContent=isSSD?"Solid-state drive":"Hard disk drive";
+    $("driveIcon").className=`drive-icon ${isSSD?"ssd":"hdd"}`;
+  }
+
+  function renderLatency(){
+    document.querySelectorAll(".latency-step").forEach(step=>{
+      step.classList.toggle("active",step.dataset.path===lastPath);
+    });
+  }
+
+  function renderMetrics(){
+    const used=ramSlots.filter(Boolean).length;
+    const pressure=used/ramSlots.length;
+    const pressureText=pressure>.9?"Critical":pressure>.75?"High":pressure>.5?"Moderate":"Low";
+    const pressureBox=$("pressureMetricBox");
+    pressureBox.className="metric";
+    if(pressure>.9) pressureBox.classList.add("bad");
+    else if(pressure>.75) pressureBox.classList.add("warn");
+
+    $("tickMetric").textContent=gateCount.toLocaleString();
+    $("cyclesMetric").textContent=totalCycles.toLocaleString();
+    $("latencyMetric").textContent=currentAction
+      ? `${currentAction.progress}/${currentAction.cycles} cyc`
+      : `${lastLatency.toLocaleString()} cyc`;
+    $("pathMetric").textContent=currentAction?.path || lastPath;
+    $("hitMetric").textContent=memoryAccesses?`${Math.round(cacheHits/memoryAccesses*100)}%`:"—";
+    $("faultMetric").textContent=pageFaults.toLocaleString();
+    $("pressureMetric").textContent=pressureText;
+  }
+
+  function applyHighlight(){
+    const owner=pinnedOwner || hoverOwner;
+    $("architecturePanel").classList.toggle("highlighting",Boolean(owner));
+    document.querySelectorAll(".mem-cell[data-owner]").forEach(cell=>{
+      cell.classList.toggle("owner-highlight",cell.dataset.owner===owner);
+    });
+  }
+
+  function renderSimulationFrame(){
+    renderDrive();
+    renderStorage();
+    renderRam();
+    renderPagefile();
+    renderCpu();
+    renderBuses();
+    renderLatency();
+    renderMetrics();
+    renderWorkMonitor();
+    renderLog();
+    applyHighlight();
+    $("runButton").textContent=running?"Pause clock":"Run clock";
+    $("stepButton").disabled=running || gateAnimating;
+    ["workdayButton","stressButton","recoverButton"].forEach(id=>{$(id).disabled=machineState!=="ready";});
+  }
+
+  function requestDesktopRender(force=false){
+    if(force){
+      if(desktopRenderTimer){clearTimeout(desktopRenderTimer);desktopRenderTimer=null;}
+      lastDesktopRender=performance.now();
+      renderDesktop();
+      return;
+    }
+
+    // Boot progress needs regular updates. Once ready, only Task Manager needs
+    // automatic refreshes; application windows remain stable and responsive.
+    if(machineState==="ready" && desktopState.window!=="taskmgr") return;
+    const minimum=machineState==="booting"?120:650;
+    const now=performance.now();
+    if(now-lastDesktopRender>=minimum){
+      lastDesktopRender=now;
+      renderDesktop();
+      return;
+    }
+    if(desktopRenderTimer) return;
+    desktopRenderTimer=setTimeout(()=>{
+      desktopRenderTimer=null;
+      lastDesktopRender=performance.now();
+      renderDesktop();
+    },Math.max(1,minimum-(now-lastDesktopRender)));
+  }
+
+  function renderAll(){
+    renderSimulationFrame();
+    requestDesktopRender(true);
+  }
+
+  function startDesktopLoading(){
+    // Kept as a compatibility hook: the real boot sequence is now driven by
+    // clock-gated actions rather than an independent wall-clock timer.
+    ensureBootSequence();
+    requestDesktopRender(true);
+  }
+
+  function resetSimulation(message=""){
+    pauseSimulation();
+
+    ramCapacity=Number($("ramConfig").value);
+    cacheConfig=CACHE_CONFIGS[$("cacheConfig").value];
+    drive=DRIVE_CONFIGS[$("driveConfig").value];
+
+    ramSlots=Array(ramCapacity).fill(null);
+    pagefileSlots=Array(24).fill(null);
+    pages=new Map();
+    processes=new Map();
+    caches={L1:[],L2:[],L3:[]};
+    eventQueue=[];
+
+    currentAction=null;
+    gateAnimating=false;
+    gateCount=0;
+    actionCounter=0;
+    activityLog=[];
+    collectingActionNotices=false;
+    pendingActionNotices=[];
+    pendingCommit=null;
+    if(simulationRenderTimer){clearTimeout(simulationRenderTimer);simulationRenderTimer=null;}
+    lastSimulationRender=0;
+    desktopBootToken++;
+    if(desktopRenderTimer){clearTimeout(desktopRenderTimer);desktopRenderTimer=null;}
+    lastDesktopRender=0;
+
+    tick=0;
+    totalCycles=0;
+    lastLatency=0;
+    lastPath="Ready";
+    lastEventTitle="Ready";
+    lastEventDetail="Start the clock to boot Orbit OS into RAM, then open applications and create workloads.";
+    pageFaults=0;
+    cacheHits=0;
+    memoryAccesses=0;
+    pageCounter=0;
+
+    activeOwner="system";
+    cpuActor="Operating system";
+    currentPageId=null;
+    activeStorageOwner=null;
+    activeRamSlot=null;
+    activePageSlot=null;
+    activeCache=null;
+    activeCacheLinks=[];
+    busState={storage:null,ramcpu:null,page:null};
+
+    hoverOwner=null;
+    pinnedOwner=null;
+    machineState="off";
+    desktopState={startOpen:false,window:null,booting:false};
+
+    createSystem();
+    renderAll();
+
+    if(message) showToast("Configuration reset",`${message} Press Run clock to boot the machine.`);
+    else appendLog("System awaiting boot","No operating-system pages are in RAM yet. Starting the clock will run the firmware and load Orbit OS.","",{
+      route:{start:"Powered-off computer",finish:"Firmware / bootloader"},path:"Boot control",cycles:0,owner:"system"
+    });
+  }
+
+  function openWorkday(){
+    if(machineState!=="ready") return;
+    openProcess("browser");
+    openProcess("sheet");
+    addBrowserTab();
+    addBrowserTab();
+    addWorkload("sheet",6,"workbook","Large workbook");
+    setActive("sheet");
+    desktopState.window="sheet";
+    showToast("Workday queued","Browser tabs and a large spreadsheet will compete for memory.");
+    renderAll();
+  }
+
+  function stressMemory(){
+    if(machineState!=="ready") return;
+    openProcess("browser");
+    for(let i=0;i<5;i++) addBrowserTab();
+    openProcess("image");
+    addWorkload("image",8,"large-image","4K image");
+    openProcess("media");
+    addWorkload("media",6,"video-buffer","HD video buffer","buffer");
+    openProcess("sheet");
+    addWorkload("sheet",6,"workbook","Large workbook");
+    setActive("image");
+    desktopState.window="image";
+    showToast("Heavy workload queued","Several large working sets will force the OS to page out inactive data.","warn");
+    renderAll();
+  }
+
+  function recoverSystem(){
+    if(machineState!=="ready") return;
+    const keep=activeOwner==="system" ? null : activeOwner;
+    [...processes.keys()].filter(id=>id!=="system" && id!==keep).forEach(closeProcess);
+    if(keep==="browser"){
+      const tags=[...new Set(processPages("browser").filter(p=>p.tag.startsWith("tab")).map(p=>p.tag))];
+      tags.slice(1).forEach(tag=>removeWorkload("browser",tag));
+    }
+    if(keep==="image") removeWorkload("image","large-image");
+    if(keep==="sheet") removeWorkload("sheet","workbook");
+    if(keep==="media") removeWorkload("media","video-buffer");
+    showToast("System pressure reduced","Background applications and large temporary working sets were closed.","good");
+    renderAll();
+  }
+
+  $("desktop").addEventListener("click",event=>{
+    if(machineState!=="ready") return;
+    const target=event.target.closest("[data-action]");
+    if(!target) return;
+    const action=target.dataset.action;
+    const owner=target.dataset.owner;
+
+    if(action==="toggle-start"){
+      desktopState.startOpen=!desktopState.startOpen;
+      renderDesktop();
+    }else if(action==="open-window"){
+      desktopState.startOpen=false;
+      if(owner==="taskmgr"){
+        desktopState.window="taskmgr";
+      }else{
+        openProcess(owner);
+        desktopState.window=owner;
+        setActive(owner);
+      }
+      renderAll();
+    }else if(action==="close-window"){
+      desktopState.window=null;
+      renderDesktop();
+    }else if(action==="close-app"){
+      closeProcess(owner);
+    }else if(action==="focus-owner"){
+      setActive(owner);
+      showToast("Foreground priority changed",`${ownerDef(owner).name} is now the CPU's active process.`);
+      renderAll();
+    }else if(action==="browser-add"){
+      addBrowserTab();
+    }else if(action==="browser-close"){
+      closeBrowserTab();
+    }else if(action==="image-load"){
+      addWorkload("image",8,"large-image","4K image");
+    }else if(action==="image-unload"){
+      removeWorkload("image","large-image");
+    }else if(action==="sheet-load"){
+      addWorkload("sheet",6,"workbook","Large workbook");
+    }else if(action==="sheet-unload"){
+      removeWorkload("sheet","workbook");
+    }else if(action==="media-play"){
+      addWorkload("media",6,"video-buffer","HD video buffer","buffer");
+    }else if(action==="media-stop"){
+      removeWorkload("media","video-buffer");
+    }else if(action==="scan-start"){
+      addWorkload("scan",3,"full-scan","Full memory scan");
+      setActive("scan");
+    }else if(action==="scan-stop"){
+      removeWorkload("scan","full-scan");
+    }
+  });
+
+  $("desktop").addEventListener("pointerover",event=>{
+    const row=event.target.closest(".tm-row");
+    if(!row) return;
+    hoverOwner=row.dataset.owner;
+    applyHighlight();
+  });
+
+  $("desktop").addEventListener("pointerout",event=>{
+    const row=event.target.closest(".tm-row");
+    if(!row || row.contains(event.relatedTarget)) return;
+    hoverOwner=null;
+    applyHighlight();
+  });
+
+  $("desktop").addEventListener("dblclick",event=>{
+    const row=event.target.closest(".tm-row");
+    if(!row) return;
+    pinnedOwner=pinnedOwner===row.dataset.owner?null:row.dataset.owner;
+    renderAll();
+  });
+
+  $("desktop").addEventListener("click",event=>{
+    const row=event.target.closest(".tm-row");
+    if(!row) return;
+    pinnedOwner=pinnedOwner===row.dataset.owner?null:row.dataset.owner;
+    applyHighlight();
+  });
+
+  $("runButton").addEventListener("click",toggleSimulation);
+  $("stepButton").addEventListener("click",()=>advanceCycleGate());
+  $("resetButton").addEventListener("click",()=>resetSimulation());
+  $("clearLogButton").addEventListener("click",()=>{activityLog=[];renderLog();});
+
+  ["ramConfig","cacheConfig","driveConfig"].forEach(id=>{
+    $(id).addEventListener("change",()=>{
+      resetSimulation(`${RAM_CONFIGS[$("ramConfig").value].label} RAM, ${CACHE_CONFIGS[$("cacheConfig").value].label.toLowerCase()} cache and ${DRIVE_CONFIGS[$("driveConfig").value].label} storage selected.`);
+    });
+  });
+
+  $("cycleSpeed").addEventListener("change",()=>{
+    const seconds=(Number($("cycleSpeed").value)/1000).toFixed(2);
+    appendLog("Clock animation adjusted",`Each full 10-cycle turn now takes ${seconds} seconds.`,"",{
+      route:{start:"Clock control",finish:"Teaching timeline"},path:"Simulation control",cycles:0,owner:"system"
+    });
+    renderAll();
+  });
+
+  $("workdayButton").addEventListener("click",openWorkday);
+  $("stressButton").addEventListener("click",stressMemory);
+  $("recoverButton").addEventListener("click",recoverSystem);
+
+  $("explainButton").addEventListener("click",()=>{
+    appendLog(
+      "Relative latency model",
+      "One full clock turn represents 10 cycles. L1=1, L2=5, L3=14, RAM=45. SSD loads take about 220 cycles; HDD loads about 1050. Page-file transfers are slower still.",
+      "good",
+      {route:{start:"Latency assumptions",finish:"Teaching timeline"},path:"Explanation",cycles:0,owner:"system"}
+    );
+  });
+
+  window.__memoryLabDebug={
+    state:()=>({
+      machineState,
+      systemBootPages:[...systemBootPages],
+      ramSlots:[...ramSlots],
+      pagefileSlots:[...pagefileSlots],
+      pages:[...pages.values()].map(page=>({...page})),
+      eventQueue:eventQueue.map(event=>({...event})),
+      currentAction:currentAction?{...currentAction,commit:typeof currentAction.commit}:null,
+      totalCycles,gateCount,tick
+    })
+  };
+
+  resetSimulation();
+})();
+</script>
+</body>
+</html>

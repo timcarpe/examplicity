@@ -1,0 +1,1280 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cambridge 9618 Assembly Lab</title>
+<style>
+:root{
+  --bg:#f5f5f7;--panel:#fff;--soft:#fafafa;--ink:#1d1d1f;--muted:#6e6e73;
+  --line:#d9d9de;--accent:#0071e3;--accent-soft:#edf6ff;--good:#15803d;
+  --good-soft:#edf8f0;--bad:#d92d20;--bad-soft:#fff0ee;--warn:#9a5a16;
+  --changed:#fff0bd;--fetch:#2f73c5;--decode:#a06724;--execute:#27764c;
+  --address:#7564bd;--data:#247e62;--control:#b16a31;--mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace;
+  --editor-line:22px;
+}
+*{box-sizing:border-box}
+html{color-scheme:light}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Inter,system-ui,sans-serif}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}button:disabled{opacity:.42;cursor:not-allowed}
+main{width:min(1480px,calc(100% - 24px));margin:18px auto 40px}
+h1{margin:0;font-size:29px;line-height:1.06;letter-spacing:-.035em}
+.sub{margin:6px 0 0;color:var(--muted);font-size:13px;line-height:1.45}
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:13px}
+.syllabus-chip{padding:6px 9px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.8);color:#55555a;font-size:10px;font-weight:800;white-space:nowrap}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:0 12px 32px rgba(0,0,0,.045)}
+.toolbar{padding:9px 10px;display:grid;grid-template-columns:minmax(180px,1fr) auto;gap:10px;align-items:center}
+.toolbar-left,.toolbar-right{display:flex;align-items:end;gap:7px;flex-wrap:wrap}.toolbar-right{justify-content:flex-end}
+.field{display:grid;gap:4px;color:var(--muted);font-size:10px}
+select,input[type="text"]{height:36px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--ink);padding:0 9px}
+select:focus,input:focus,textarea:focus,button:focus-visible,summary:focus-visible{outline:3px solid rgba(0,113,227,.18);outline-offset:1px}
+.ui-button{height:36px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--ink);padding:0 11px;font-size:12px;font-weight:700}
+.ui-button:hover:not(:disabled){border-color:#aaaab1;background:#fcfcfd}.ui-button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.ui-button.run{min-width:86px;display:inline-flex;align-items:center;justify-content:center;gap:6px}.ui-button svg{width:13px;height:13px;fill:currentColor}
+.validation-wrap{position:relative;display:grid;align-items:end}
+.validation-button{width:36px;height:36px;padding:0;display:grid;place-items:center;border:1px solid var(--line);border-radius:50%;background:#fff;font-size:16px;font-weight:900}
+.validation-button.good{color:var(--good);border-color:#acd5b8;background:var(--good-soft)}.validation-button.bad{color:var(--bad);border-color:#e5aaa4;background:var(--bad-soft)}
+.validation-tooltip{position:absolute;z-index:50;right:0;top:calc(100% + 9px);width:min(315px,calc(100vw - 28px));padding:10px 11px;border:1px solid #303034;border-radius:10px;background:rgba(29,29,31,.98);color:#fff;box-shadow:0 14px 34px rgba(0,0,0,.22);font-size:11px;line-height:1.4;opacity:0;visibility:hidden;transform:translateY(-3px);transition:.14s;pointer-events:none}
+.validation-wrap:hover .validation-tooltip,.validation-wrap:focus-within .validation-tooltip{opacity:1;visibility:visible;transform:translateY(0)}
+.validation-tooltip strong{display:block;margin-bottom:4px;font-size:12px}.validation-tooltip ul{margin:5px 0 0;padding-left:17px}.validation-tooltip li+li{margin-top:3px}
+.workspace{margin-top:11px;display:grid;grid-template-columns:minmax(390px,.73fr) minmax(760px,1.55fr);gap:11px;align-items:start}
+.editor-panel,.architecture-panel{min-width:0;padding:12px}.architecture-panel{overflow:hidden}
+.panel-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:9px}.panel-head strong{font-size:15px}.panel-head span{display:block;margin-top:2px;color:var(--muted);font-size:9px;line-height:1.35;text-align:right}
+.editor-shell{position:relative;height:318px;overflow:hidden;border:1px solid var(--line);border-radius:11px;background:#fbfbfc}
+.editor-highlight{position:absolute;z-index:0;left:0;right:0;height:var(--editor-line);background:rgba(0,113,227,.09);border-left:3px solid var(--accent);opacity:0;pointer-events:none}
+.line-numbers{position:absolute;z-index:2;left:0;top:0;bottom:0;width:42px;padding:11px 7px 11px 0;overflow:hidden;border-right:1px solid #e4e4e8;background:#f4f4f6;color:#9a9aa0;font:700 11px/var(--editor-line) var(--mono);text-align:right;user-select:none;pointer-events:none}
+.line-number{height:var(--editor-line);position:relative}.line-number.active{color:var(--accent)}.line-number.error{color:var(--bad)}.line-number.error::before{content:"";position:absolute;left:6px;top:8px;width:6px;height:6px;border-radius:50%;background:var(--bad)}
+#sourceEditor{position:absolute;z-index:1;inset:0;width:100%;height:100%;margin:0;padding:11px 12px 11px 53px;border:0;resize:none;background:transparent;color:#202026;caret-color:var(--accent);font:600 12px/var(--editor-line) var(--mono);tab-size:4;white-space:pre;overflow:auto}
+#sourceEditor:focus{outline:none}.editor-meta{min-height:32px;padding:7px 2px 0;display:flex;justify-content:space-between;gap:10px;color:var(--muted);font-size:10px}.editor-meta strong{color:var(--ink)}
+.translation{margin-top:10px;border:1px solid var(--line);border-radius:11px;overflow:hidden}.translation-head{padding:9px 10px;display:flex;justify-content:space-between;gap:10px;align-items:center;border-bottom:1px solid var(--line);background:#fafafa}.translation-head strong{font-size:12px}
+.pass-chips{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}.pass-chip{padding:3px 6px;border:1px solid var(--line);border-radius:999px;background:#fff;color:#66666b;font-size:8px;font-weight:800}
+.symbols{min-height:34px;padding:7px 8px;display:flex;align-items:center;gap:5px;flex-wrap:wrap;border-bottom:1px solid var(--line);background:#fff}.symbol-chip{padding:3px 6px;border-radius:6px;background:var(--accent-soft);color:#1c5ca0;font:750 9px var(--mono)}.symbol-empty{color:var(--muted);font-size:9px}
+.translation-scroll{max-height:250px;overflow:auto}.translation-table{width:100%;border-collapse:collapse;table-layout:fixed}.translation-table th{position:sticky;top:0;z-index:2;padding:6px 7px;border-bottom:1px solid var(--line);background:#f7f7f8;color:#7a7a80;text-align:left;font-size:8px;text-transform:uppercase;letter-spacing:.05em}.translation-table td{padding:6px 7px;border-bottom:1px solid #ededf0;vertical-align:top;font-size:9px}.translation-table tr:last-child td{border-bottom:0}.translation-table tr.active{background:var(--accent-soft);box-shadow:inset 3px 0 0 var(--accent)}
+.translation-table .addr{width:62px;font:850 10px var(--mono);color:#4f4f55}.translation-table .source{width:48%;font:650 9px/1.35 var(--mono);overflow-wrap:anywhere}.translation-table .resolved{font:800 9px/1.35 var(--mono);color:#225f56;overflow-wrap:anywhere}
+.mode-tag{display:inline-block;margin-top:3px;padding:2px 4px;border-radius:4px;background:#f0f0f2;color:#77777d;font:700 7px var(--mono)}.translation-empty{padding:20px 12px;color:var(--muted);text-align:center;font-size:10px}.encoding-note{padding:7px 9px;border-top:1px solid var(--line);background:#fafafa;color:var(--muted);font-size:8.5px;line-height:1.35}
+.io-panel{margin-top:10px;display:grid;grid-template-columns:minmax(120px,.8fr) minmax(170px,1.2fr);gap:8px}.io-box{min-width:0;padding:8px;border:1px solid var(--line);border-radius:10px;background:#fafafa}.io-box label,.io-title{display:block;margin-bottom:5px;color:var(--muted);font-size:8px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}.io-box input{width:100%;height:32px;font:700 11px var(--mono)}
+.output-console{min-height:32px;max-height:70px;overflow:auto;padding:7px 8px;border:1px solid #dedee2;border-radius:7px;background:#fff;color:#242428;font:750 11px/1.4 var(--mono);white-space:pre-wrap;overflow-wrap:anywhere}.io-note{margin-top:4px;color:var(--muted);font-size:8px}
+.reference{margin-top:10px;border-top:1px solid var(--line);padding-top:8px}.reference summary{width:max-content;cursor:pointer;color:#4f4f54;font-size:10px;font-weight:750}.reference-grid{margin-top:8px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.reference-group{padding:7px;border:1px solid var(--line);border-radius:8px;background:#fafafa}.reference-group strong{display:block;margin-bottom:4px;font-size:9px}.reference-group code{display:block;color:#54545a;font:700 8px/1.45 var(--mono)}
+.architecture-status{display:flex;align-items:center;gap:7px;flex-wrap:wrap;justify-content:flex-end}.status-pill{padding:4px 7px;border:1px solid var(--line);border-radius:999px;background:#fafafa;color:#68686e;font:800 9px var(--mono)}.status-pill.complete{color:var(--good);border-color:#b3d7bf;background:var(--good-soft)}.status-pill.error{color:var(--bad);border-color:#e6b1ab;background:var(--bad-soft)}
+.phase-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:9px}.phase{min-height:29px;display:grid;place-items:center;border:1px solid var(--line);border-radius:9px;background:#fafafa;color:#8a8a90;font-size:9px;font-weight:850;letter-spacing:.05em}.phase.active.fetch{color:var(--fetch);border-color:#bed5ee;background:#eff6ff}.phase.active.decode{color:var(--decode);border-color:#e7cfad;background:#fff6e9}.phase.active.execute{color:var(--execute);border-color:#bedbc8;background:#eff8f2}
+.translation-table .resolved{font:750 9px/1.35 var(--mono);color:#315f55;overflow-wrap:anywhere}
+.resolved-main{display:block;color:#2e5f55}.resolved-detail{display:block;margin-top:3px;color:#85858b;font:650 7.5px/1.35 var(--mono)}
+
+.computer-grid{position:relative;isolation:isolate;display:grid;grid-template-columns:minmax(560px,1fr) 150px minmax(230px,.48fr);gap:12px;align-items:stretch}.computer-grid>.cpu-board,.computer-grid>.ram-card{position:relative;z-index:1}.computer-grid>.bus-bridge{z-index:3}.cpu-board,.ram-card{min-width:0;border:1px solid var(--line);border-radius:13px;background:#fafafa}.cpu-board{position:relative;padding:10px;overflow:hidden}
+.system-flow-overlay{position:absolute;z-index:2;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}.system-flow-halo{fill:none;stroke-width:10;stroke-linecap:round;stroke-linejoin:round;opacity:.13}.system-flow-path{fill:none;stroke-width:4.6;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:10 8;filter:url(#systemFlowGlow);animation:systemFlowMove .72s linear infinite}.system-flow-path.internal,.system-flow-halo.internal{stroke:var(--accent)}.system-flow-path.result,.system-flow-halo.result{stroke:var(--execute)}.system-flow-path.clock,.system-flow-halo.clock{stroke:var(--accent)}.system-flow-path.address,.system-flow-halo.address{stroke:var(--address)}.system-flow-path.data,.system-flow-halo.data{stroke:var(--data)}.system-flow-path.control,.system-flow-halo.control{stroke:var(--control)}.system-flow-path.control,.system-flow-path.clock{stroke-width:3.5;stroke-dasharray:7 6}.system-flow-end{stroke:#fff;stroke-width:2;filter:url(#systemFlowGlow)}.system-flow-end.internal{fill:var(--accent)}.system-flow-end.result{fill:var(--execute)}.system-flow-end.clock{fill:var(--accent)}.system-flow-end.address{fill:var(--address)}.system-flow-end.data{fill:var(--data)}.system-flow-end.control{fill:var(--control)}.system-flow-pulse{stroke:#fff;stroke-width:1.6;filter:url(#systemFlowGlow)}.system-flow-pulse.internal{fill:var(--accent)}.system-flow-pulse.result{fill:var(--execute)}.system-flow-pulse.clock{fill:var(--accent)}.system-flow-pulse.address{fill:var(--address)}.system-flow-pulse.data{fill:var(--data)}.system-flow-pulse.control{fill:var(--control)}@keyframes systemFlowMove{to{stroke-dashoffset:-36}}
+.board-title{position:relative;z-index:3;display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:8px}.board-title strong{font-size:13px}.diagram-key{display:flex;gap:9px;align-items:center;color:var(--muted);font-size:7.5px;font-weight:750}.diagram-key span{display:inline-flex;align-items:center;gap:4px}.diagram-key i{display:inline-block;width:18px;height:2px;border-radius:3px;background:#b9c1c8}.diagram-key .control i{height:0;border-top:2px dashed var(--control);background:transparent}.diagram-key .clock i{height:0;border-top:2px dotted var(--accent);background:transparent}
+.internal-value{position:absolute;z-index:5;left:64%;top:49%;max-width:150px;transform:translate(-50%,-50%);padding:3px 6px;border:1px solid var(--line);border-radius:6px;background:#fff;color:var(--accent);font:850 8px var(--mono);opacity:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;box-shadow:0 4px 12px rgba(0,0,0,.08)}.cpu-board.internal-active .internal-value{opacity:1}
+.cpu-diagram{display:block;width:100%;height:auto;border:1px solid #e3e5e8;border-radius:12px;background:linear-gradient(rgba(255,255,255,.95),rgba(255,255,255,.95)),repeating-linear-gradient(0deg,transparent 0 23px,#f2f3f5 24px),repeating-linear-gradient(90deg,transparent 0 23px,#f2f3f5 24px)}
+.cpu-diagram .diagram-box{fill:#fff;stroke:#cfd4d9;stroke-width:2;transition:.14s}.cpu-diagram .diagram-unit{fill:#fbfcfd;stroke:#adb7bf;stroke-width:2.4;transition:.14s}.cpu-diagram .diagram-component.active .diagram-box,.cpu-diagram .diagram-component.active .diagram-unit{fill:var(--accent-soft);stroke:var(--accent);stroke-width:3.2;filter:url(#wireGlow)}.cpu-diagram .diagram-component.changed .diagram-box,.cpu-diagram .diagram-component.changed .diagram-unit{fill:var(--changed);stroke:#d0a331;stroke-width:3.2}
+.cpu-diagram .diagram-name{fill:#4f5c66;font:850 14px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.cpu-diagram .diagram-full{fill:#8a949c;font:500 9px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.cpu-diagram .diagram-value{fill:#202a32;font:850 17px var(--mono);text-anchor:middle}.cpu-diagram .diagram-note{fill:#7f8991;font:650 8px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;text-anchor:middle}.cpu-diagram .unit-name{fill:#27343d;font:900 22px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;text-anchor:middle}.cpu-diagram .unit-full{fill:#7e8991;font:500 9px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;text-anchor:middle}.cpu-diagram .unit-value{fill:#4e5b65;font:800 12px var(--mono);text-anchor:middle}.cpu-diagram .path-label{fill:#8b969e;font:800 8px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:.05em}
+.cpu-diagram .data-path{fill:none;stroke:#c2c9cf;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round;transition:.14s}.cpu-diagram .data-path.active{stroke:var(--accent);stroke-width:4;stroke-dasharray:9 7;filter:url(#wireGlow);animation:cpuPathFlow .78s linear infinite}.cpu-diagram .control-path{fill:none;stroke:rgba(177,106,49,.24);stroke-width:1.7;stroke-dasharray:5 5;stroke-linecap:round;stroke-linejoin:round;transition:.14s}.cpu-diagram .control-path.active{stroke:var(--control);stroke-width:3;filter:url(#wireGlow);animation:cpuPathFlow .9s linear infinite}.cpu-diagram .control-overlay{stroke:transparent}.cpu-diagram .clock-path{fill:none;stroke:#aeb8c0;stroke-width:1.8;stroke-dasharray:3 4;stroke-linecap:round;stroke-linejoin:round;transition:.14s}.cpu-diagram .clock-path.active{stroke:var(--accent);stroke-width:3.1;filter:url(#wireGlow);animation:cpuPathFlow .7s linear infinite}.cpu-diagram .external-address.active{stroke:var(--address)}.cpu-diagram .external-data.active{stroke:var(--data)}.cpu-diagram .external-control.active{stroke:var(--control)}
+@keyframes cpuPathFlow{to{stroke-dashoffset:-32}}
+/* Fixed lines are the exam-diagram wiring. The moving overlay is the only
+   animation, so a transfer reads as one continuous source-to-destination path. */
+.cpu-diagram .data-path.active{stroke:#8da6b9;stroke-width:2.6;stroke-dasharray:none;filter:none;animation:none}.cpu-diagram .control-path.active{stroke:rgba(177,106,49,.65);stroke-width:2.2;filter:none;animation:none}.cpu-diagram .clock-path.active{stroke:rgba(0,113,227,.62);stroke-width:2.2;filter:none;animation:none}
+.io-endpoint{position:absolute;left:50%;bottom:4.5%;transform:translateX(-50%);min-width:94px;padding:7px 8px;border:1px solid var(--line);border-radius:9px;background:#fff;text-align:center;box-shadow:0 5px 14px rgba(0,0,0,.05)}.io-endpoint strong{display:block;font-size:9px}.io-endpoint span{display:block;margin-top:2px;color:var(--muted);font-size:6.5px;line-height:1.2}
+.bus-bridge{position:relative;min-width:0;min-height:500px}.bus-lane{position:absolute;left:0;right:0;min-width:0;color:var(--muted)}.bus-lane.address{top:26%}.bus-lane.data{top:47%}.bus-lane.control{top:72%}.bus-head{display:flex;justify-content:space-between;gap:6px;margin-bottom:6px;font-size:8px;font-weight:850}.bus-head span:last-child{font:700 7px var(--mono);color:#99999f}.bus-track{position:relative;height:38px}.bus-line{position:absolute;left:-12px;right:-12px;top:42%;height:6px;transform:translateY(-50%);border-radius:999px;background:#d7d7dc;overflow:hidden}.bus-line::after{content:"";position:absolute;inset:0;opacity:0;background:repeating-linear-gradient(90deg,transparent 0 8px,rgba(255,255,255,.9) 8px 13px,transparent 13px 24px)}
+.bus-value{position:absolute;z-index:4;left:50%;top:calc(42% + 8px);width:max-content;max-width:142px;transform:translate(-50%,0);padding:3px 5px;border:1px solid var(--line);border-radius:5px;background:rgba(255,255,255,.96);color:#66666c;font:850 7.5px var(--mono);opacity:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;box-shadow:0 2px 7px rgba(0,0,0,.05)}.bus-arrow-right,.bus-arrow-left{position:absolute;top:42%;width:0;height:0;transform:translateY(-50%);border-top:6px solid transparent;border-bottom:6px solid transparent}.bus-arrow-right{right:-15px;border-left:9px solid #c0c0c6}.bus-arrow-left{left:-15px;border-right:9px solid #c0c0c6}.bus-lane.active .bus-value{opacity:1}.bus-lane.active .bus-line::after{opacity:0}
+.bus-lane.address.active{color:var(--address)}.bus-lane.address.active .bus-line{background:var(--address);box-shadow:0 0 9px rgba(118,101,197,.3)}.bus-lane.address.active .bus-arrow-right{border-left-color:var(--address)}.bus-lane.data.active{color:var(--data)}.bus-lane.data.active .bus-line{background:var(--data);box-shadow:0 0 9px rgba(25,130,101,.3)}.bus-lane.data.active .bus-arrow-right{border-left-color:var(--data)}.bus-lane.data.active .bus-arrow-left{border-right-color:var(--data)}.bus-lane.control.active{color:var(--control)}.bus-lane.control.active .bus-line{background:var(--control);box-shadow:0 0 9px rgba(178,103,45,.3)}.bus-lane.control.active .bus-arrow-right{border-left-color:var(--control)}.bus-lane.control.active .bus-arrow-left{border-right-color:var(--control)}
+@keyframes busRight{to{background-position:48px 0}}@keyframes busLeft{from{background-position:48px 0}to{background-position:0 0}}
+@media(prefers-reduced-motion:reduce){.system-flow-path{animation:none}.system-flow-pulse{display:none}}
+.ram-card{display:grid;grid-template-rows:auto 1fr;overflow:hidden}.ram-head{padding:9px 10px;display:flex;justify-content:space-between;gap:8px;align-items:flex-start;border-bottom:1px solid var(--line);background:#f7faf8}.ram-head strong{font-size:13px}.ram-head span{color:var(--muted);font-size:7.5px;line-height:1.3;text-align:right}.ram-scroll{min-height:470px;max-height:520px;overflow:auto;background:#fff}.ram-row{display:grid;grid-template-columns:66px 1fr;min-height:43px;border-bottom:1px solid #ededf0;transition:.14s}.ram-row.active{background:var(--accent-soft);box-shadow:inset 3px 0 0 var(--accent)}.ram-row.changed{background:var(--changed);box-shadow:inset 3px 0 0 #c9911a}.ram-address{padding:7px 5px;display:grid;align-content:center;justify-items:center;border-right:1px solid #ededf0;color:#4f565d;font:900 10px var(--mono);text-align:center}.ram-address small{display:block;margin-top:3px;color:#9099a0;font:700 6.5px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;max-width:58px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ram-content{min-width:0;padding:7px 8px}.ram-word{display:block;color:#295f55;font:850 10px/1.3 var(--mono);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ram-meta{display:flex;gap:5px;align-items:center;margin-top:4px;color:#94949a;font-size:6.5px}.ram-type{padding:1px 4px;border-radius:4px;background:#eff0f2;color:#737379;font-weight:850}.ram-type.code{background:#eef5ff;color:#3269a3}.ram-type.data{background:#eef8f3;color:#34755e}.ram-type.modified{background:#fff1cf;color:#8a5c07}
+.micro-card{margin-top:10px;min-height:86px;padding:10px 11px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;border:1px solid var(--line);border-radius:12px;background:#fafafa}.micro-phase{min-width:69px;padding:7px 8px;border:1px solid var(--line);border-radius:9px;background:#fff;color:#77777d;text-align:center;font-size:9px;font-weight:900;letter-spacing:.06em}.micro-phase.fetch{color:var(--fetch);border-color:#bed5ee;background:#eff6ff}.micro-phase.decode{color:var(--decode);border-color:#e7cfad;background:#fff6e9}.micro-phase.execute{color:var(--execute);border-color:#bedbc8;background:#eff8f2}.operation{min-width:0}.operation code{display:block;color:#242429;font:850 14px/1.25 var(--mono);overflow-wrap:anywhere}.operation p{margin:4px 0 0;color:var(--muted);font-size:10px;line-height:1.4}.tick-box{text-align:right;color:var(--muted);font:750 8px/1.5 var(--mono);white-space:nowrap}.tick-box strong{display:block;color:var(--ink);font-size:10px}
+.footer-note{margin-top:9px;color:#85858b;font-size:8.5px;line-height:1.4}
+@media(max-width:1250px){.workspace{grid-template-columns:1fr}.editor-panel{display:grid;grid-template-columns:minmax(330px,.8fr) minmax(430px,1.2fr);gap:10px;align-items:start}.editor-panel>.panel-head{grid-column:1/-1}.editor-main{min-width:0}.translation{margin-top:0}.io-panel,.reference{grid-column:1}.architecture-panel{grid-column:1/-1}}
+@media(max-width:900px){main{width:min(100% - 12px,1480px);margin-top:9px}.page-head{display:block}.syllabus-chip{display:inline-block;margin-top:9px}.toolbar{grid-template-columns:1fr}.toolbar-right{justify-content:flex-start}.editor-panel{display:block}.translation{margin-top:10px}.computer-grid{grid-template-columns:1fr;gap:10px}.cpu-board{overflow:auto}.cpu-diagram{min-width:650px}.bus-bridge{position:static;min-height:0;margin-top:0;display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:0 14px}.bus-lane{position:relative;top:auto!important;left:auto;right:auto}.bus-line{left:0;right:0}.bus-arrow-right{right:-2px}.bus-arrow-left{left:-2px}.io-endpoint{position:relative;left:auto;bottom:auto;transform:none;grid-column:1/-1;justify-self:center}.ram-scroll{min-height:260px;max-height:360px}}
+@media(max-width:560px){h1{font-size:25px}.toolbar-left,.toolbar-right{align-items:stretch}.field{flex:1 1 145px}.field select{width:100%}.ui-button{flex:1 1 auto}.validation-wrap{flex:0 0 auto}.editor-shell{height:292px}.io-panel{grid-template-columns:1fr}.reference-grid{grid-template-columns:1fr}.bus-bridge{grid-template-columns:1fr;padding:0 12px}.micro-card{grid-template-columns:1fr}.micro-phase{width:max-content}.tick-box{text-align:left}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}}
+</style>
+</head>
+<body>
+<main>
+  <header class="page-head">
+    <div>
+      <h1>Cambridge 9618 Assembly Lab</h1>
+      <p class="sub">Trace a Cambridge-style assembly program and follow each register transfer through a connected stored-program computer.</p>
+    </div>
+    <span class="syllabus-chip">AS Level · CPU + assembly trace</span>
+  </header>
+
+  <section class="panel toolbar" aria-label="Program and execution controls">
+    <div class="toolbar-left">
+      <label class="field">Example program
+        <select id="exampleSelect">
+          <option value="add" selected>Add and store</option>
+          <option value="count">Count to five</option>
+          <option value="indirect">Indirect addressing</option>
+          <option value="indexed">Indexed addressing</option>
+          <option value="output">ASCII output</option>
+          <option value="bits">Bit mask and shift</option>
+        </select>
+      </label>
+    </div>
+    <div class="toolbar-right">
+      <label class="field">Auto speed
+        <select id="speedSelect">
+          <option value="420" selected>Slow</option>
+          <option value="260">Normal</option>
+          <option value="140">Fast</option>
+        </select>
+      </label>
+      <button id="resetButton" class="ui-button" type="button">Reset CPU</button>
+      <button id="stepButton" class="ui-button" type="button">Step</button>
+      <button id="runButton" class="ui-button primary run" type="button">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6 4.5v11l9-5.5-9-5.5Z"/></svg><span>Run</span>
+      </button>
+      <div class="validation-wrap">
+        <button id="validationButton" class="validation-button good" type="button" aria-label="Code is valid" aria-describedby="validationTooltip">✓</button>
+        <div id="validationTooltip" class="validation-tooltip" role="status"></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="workspace">
+    <section class="panel editor-panel">
+      <div class="panel-head">
+        <div><strong>Assembly source</strong><span style="text-align:left">Edit a simple Cambridge-style program, then trace it.</span></div>
+        <span id="sourceStatus">Ready</span>
+      </div>
+
+      <div class="editor-main">
+        <div class="editor-shell">
+          <div id="editorHighlight" class="editor-highlight"></div>
+          <div id="lineNumbers" class="line-numbers" aria-hidden="true"></div>
+          <textarea id="sourceEditor" aria-label="Assembly source code" autocomplete="off" autocapitalize="off" spellcheck="false"></textarea>
+        </div>
+        <div class="editor-meta">
+          <span id="assemblySummary"><strong>0</strong> memory locations</span>
+          <span id="entrySummary">Entry —</span>
+        </div>
+      </div>
+
+      <section class="translation" aria-label="Two-pass assembler label resolution">
+        <div class="translation-head">
+          <strong>Label and address view</strong>
+          <div class="pass-chips">
+            <span id="passOneChip" class="pass-chip">Pass 1 · 0 labels</span>
+            <span id="passTwoChip" class="pass-chip">Pass 2 · waiting</span>
+          </div>
+        </div>
+        <div id="symbols" class="symbols"></div>
+        <div id="translationBody" class="translation-scroll"></div>
+        <div class="encoding-note">Exam model: Pass 1 records each label. Pass 2 substitutes its numbered location. Machine-code encoding is intentionally hidden.</div>
+      </section>
+
+      <section class="io-panel" aria-label="Program input and output">
+        <div class="io-box">
+          <label for="inputBuffer">ASCII input for IN</label>
+          <input id="inputBuffer" type="text" maxlength="64" value="A" autocomplete="off" spellcheck="false">
+          <div id="inputNote" class="io-note">0 of 1 characters consumed</div>
+        </div>
+        <div class="io-box">
+          <span class="io-title">Output from OUT</span>
+          <div id="outputConsole" class="output-console" aria-live="polite">—</div>
+          <div class="io-note">Printable ASCII is shown directly.</div>
+        </div>
+      </section>
+
+      <details class="reference">
+        <summary>Instruction reference</summary>
+        <div class="reference-grid">
+          <div class="reference-group"><strong>Data movement</strong><code>LDM #n · LDD address · LDI address</code><code>LDX address · LDR #n · MOV IX · STO address</code></div>
+          <div class="reference-group"><strong>Arithmetic and compare</strong><code>ADD value/address · SUB value/address</code><code>INC ACC/IX · DEC ACC/IX · CMP · CMI</code></div>
+          <div class="reference-group"><strong>Control and I/O</strong><code>JMP · JPE · JPN · IN · OUT · END</code><code>JPE follows an equal compare; JPN follows a non-equal compare.</code></div>
+          <div class="reference-group"><strong>Bit manipulation</strong><code>AND · OR · XOR · LSL #n · LSR #n</code><code>#15 denary · B00001111 binary · &amp;0F hexadecimal</code></div>
+          <div class="reference-group" style="grid-column:1/-1"><strong>Addressing modes</strong><code>Immediate: value in the instruction · Direct: address in the instruction</code><code>Indirect: address stored at an address · Indexed: address + IX</code><code>Relative: target formed from PC + offset; the syllabus example table gives no separate relative opcode.</code></div>
+        </div>
+      </details>
+    </section>
+
+    <section class="panel architecture-panel">
+      <div class="panel-head">
+        <div><strong>Von Neumann architecture trace</strong><span style="text-align:left">The glowing route follows each exam-style register transfer and system-bus movement.</span></div>
+        <div class="architecture-status">
+          <span id="runStatus" class="status-pill">Ready</span>
+          <span id="tickStatus" class="status-pill">Tick 0</span>
+          <span id="instructionStatus" class="status-pill">Instruction 0</span>
+        </div>
+      </div>
+
+      <div class="phase-strip" aria-label="Fetch decode execute phase">
+        <div id="phaseFetch" class="phase fetch active">FETCH</div>
+        <div id="phaseDecode" class="phase decode">DECODE</div>
+        <div id="phaseExecute" class="phase execute">EXECUTE</div>
+      </div>
+
+      <div id="computerGrid" class="computer-grid">
+        <svg id="systemFlowOverlay" class="system-flow-overlay" aria-hidden="true" preserveAspectRatio="none">
+          <defs>
+            <filter id="systemFlowGlow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="2.2" result="blur"/>
+              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+            <marker id="systemArrowAddress" viewBox="0 0 10 10" refX="8.4" refY="5" markerWidth="4.8" markerHeight="4.8" orient="auto">
+              <path d="M0 0L10 5L0 10Z" fill="var(--address)"/>
+            </marker>
+            <marker id="systemArrowData" viewBox="0 0 10 10" refX="8.4" refY="5" markerWidth="4.8" markerHeight="4.8" orient="auto">
+              <path d="M0 0L10 5L0 10Z" fill="var(--data)"/>
+            </marker>
+            <marker id="systemArrowControl" viewBox="0 0 10 10" refX="8.4" refY="5" markerWidth="4.8" markerHeight="4.8" orient="auto">
+              <path d="M0 0L10 5L0 10Z" fill="var(--control)"/>
+            </marker>
+            <marker id="systemArrowUnified" viewBox="0 0 10 10" refX="8.4" refY="5" markerWidth="4.8" markerHeight="4.8" orient="auto">
+              <path d="M0 0L10 5L0 10Z" fill="context-stroke"/>
+            </marker>
+          </defs>
+          <g id="systemFlowPaths"></g>
+        </svg>
+        <section id="cpuBoard" class="cpu-board" aria-label="Central processing unit with connected registers and data pathways">
+          <div class="board-title">
+            <strong>CPU</strong>
+            <div class="diagram-key" aria-label="Diagram key">
+              <span><i></i>data pathway</span>
+              <span class="control"><i></i>CU control</span>
+              <span class="clock"><i></i>clock</span>
+            </div>
+          </div>
+          <div id="internalValue" class="internal-value"></div>
+
+          <svg class="cpu-diagram" viewBox="0 0 760 500" role="img"
+               aria-label="Cambridge-style CPU diagram showing connected registers, ALU, Control Unit and system bus connections">
+            <defs>
+              <filter id="wireGlow" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="2" result="blur"/>
+                <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+              <marker id="arrowSmall" viewBox="0 0 10 10" refX="8.2" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                <path d="M0 0L10 5L0 10Z" fill="context-stroke"/>
+              </marker>
+            </defs>
+
+            <text x="485" y="17" class="path-label" text-anchor="middle">INTERNAL DATA PATH</text>
+
+            <!-- Control signals from the CU reach the controlled registers and ALU. -->
+            <path id="wireControlNetwork" class="control-path"
+                  d="M270 385H245V24H718
+                     M245 85H205 M245 180H205 M245 280H205 M245 130H270
+                     M245 70H520 M245 160H520 M245 260H520 M245 370H520"/>
+            <!-- Transparent overlays let only the relevant CU control route glow. -->
+            <path id="ctrlACC" class="control-path control-overlay" d="M270 385H245V85H205" marker-end="url(#arrowSmall)"/>
+            <path id="ctrlIX" class="control-path control-overlay" d="M270 385H245V180H205" marker-end="url(#arrowSmall)"/>
+            <path id="ctrlSTATUS" class="control-path control-overlay" d="M270 385H245V280H205" marker-end="url(#arrowSmall)"/>
+            <path id="ctrlALU" class="control-path control-overlay" d="M270 385H245V130H270" marker-end="url(#arrowSmall)"/>
+            <path id="ctrlPC" class="control-path control-overlay" d="M270 385H245V70H520" marker-end="url(#arrowSmall)"/>
+            <path id="ctrlMAR" class="control-path control-overlay" d="M270 385H245V160H520" marker-end="url(#arrowSmall)"/>
+            <path id="ctrlMDR" class="control-path control-overlay" d="M270 385H245V260H520" marker-end="url(#arrowSmall)"/>
+            <path id="ctrlCIR" class="control-path control-overlay" d="M270 385H245V370H520" marker-end="url(#arrowSmall)"/>
+
+            <!-- Shared internal data path and register connections. -->
+            <path id="wireInternalBus" class="data-path" d="M485 31V456" marker-start="url(#arrowSmall)" marker-end="url(#arrowSmall)"/>
+            <path id="wireACC" class="data-path" d="M205 85H485" marker-start="url(#arrowSmall)" marker-end="url(#arrowSmall)"/>
+            <path id="wireIX" class="data-path" d="M205 180H485" marker-start="url(#arrowSmall)" marker-end="url(#arrowSmall)"/>
+            <path id="wireALU" class="data-path" d="M440 130H485" marker-start="url(#arrowSmall)" marker-end="url(#arrowSmall)"/>
+            <path id="wirePC" class="data-path" d="M520 70H485" marker-start="url(#arrowSmall)" marker-end="url(#arrowSmall)"/>
+            <path id="wireMAR" class="data-path" d="M520 160H485" marker-start="url(#arrowSmall)" marker-end="url(#arrowSmall)"/>
+            <path id="wireMDR" class="data-path" d="M520 260H485" marker-start="url(#arrowSmall)" marker-end="url(#arrowSmall)"/>
+            <path id="wireCIR" class="data-path" d="M520 370H485" marker-start="url(#arrowSmall)" marker-end="url(#arrowSmall)"/>
+            <path id="wirePcMarDirect" class="data-path" d="M605 105V125" marker-end="url(#arrowSmall)"/>
+            <path id="wireMdrCirDirect" class="data-path" d="M605 295V330" marker-end="url(#arrowSmall)"/>
+
+            <!-- Status and instruction pathways used directly by the CU. -->
+            <path id="wireAluStatus" class="data-path" d="M270 170H232V280H205" marker-end="url(#arrowSmall)"/>
+            <path id="wireStatusCu" class="data-path" d="M205 280H232V385H270" marker-end="url(#arrowSmall)"/>
+            <path id="wireCirCu" class="data-path" d="M520 370H465V385H440" marker-end="url(#arrowSmall)"/>
+            <path id="wireClockCu" class="clock-path" d="M205 390H270" marker-end="url(#arrowSmall)"/>
+
+            <!-- Only MAR, MDR and CU connect to the three external system buses. -->
+            <path id="wireMarAddress" class="data-path external-address" d="M690 160H760" marker-end="url(#arrowSmall)"/>
+            <path id="wireMdrData" class="data-path external-data" d="M690 260H760" marker-start="url(#arrowSmall)" marker-end="url(#arrowSmall)"/>
+            <path id="wireCuControl" class="control-path external-control" d="M440 385H460V465H730V385H760" marker-start="url(#arrowSmall)" marker-end="url(#arrowSmall)"/>
+
+            <g id="regACC" class="diagram-component">
+              <rect class="diagram-box" x="35" y="50" width="170" height="70" rx="10"/>
+              <text x="48" y="72" class="diagram-name">ACC</text>
+              <text x="48" y="87" class="diagram-full">Accumulator</text>
+              <text id="accMain" x="120" y="108" class="diagram-value">0</text>
+              <text id="accNote" x="120" y="117" class="diagram-note">working value</text>
+            </g>
+
+            <g id="regIX" class="diagram-component">
+              <rect class="diagram-box" x="35" y="145" width="170" height="70" rx="10"/>
+              <text x="48" y="167" class="diagram-name">IX</text>
+              <text x="48" y="182" class="diagram-full">Index Register</text>
+              <text id="ixMain" x="120" y="203" class="diagram-value">0</text>
+              <text id="ixNote" x="120" y="212" class="diagram-note">index offset</text>
+            </g>
+
+            <g id="regSTATUS" class="diagram-component">
+              <rect class="diagram-box" x="35" y="245" width="170" height="70" rx="10"/>
+              <text x="48" y="267" class="diagram-name">STATUS</text>
+              <text x="48" y="282" class="diagram-full">Status Register</text>
+              <text id="statusMain" x="120" y="303" class="diagram-value">—</text>
+              <text id="statusNote" x="120" y="312" class="diagram-note">set by compare</text>
+            </g>
+
+            <g id="unitCLOCK" class="diagram-component">
+              <rect class="diagram-box" x="35" y="350" width="170" height="80" rx="10"/>
+              <text x="48" y="373" class="diagram-name">CLOCK</text>
+              <text x="48" y="388" class="diagram-full">System Clock</text>
+              <text id="clockMain" x="120" y="413" class="diagram-value">Tick 0</text>
+              <text id="clockNote" x="120" y="425" class="diagram-note">coordinates each register transfer</text>
+            </g>
+
+            <g id="unitALU" class="diagram-component">
+              <rect class="diagram-unit" x="270" y="55" width="170" height="150" rx="14"/>
+              <text x="355" y="100" class="unit-name">ALU</text>
+              <text x="355" y="119" class="unit-full">Arithmetic and Logic Unit</text>
+              <text id="aluMain" x="355" y="151" class="unit-value">idle</text>
+              <text id="aluNote" x="355" y="174" class="diagram-note">calculates and compares</text>
+            </g>
+
+            <g id="unitCU" class="diagram-component">
+              <rect class="diagram-unit" x="270" y="325" width="170" height="120" rx="14"/>
+              <text x="355" y="365" class="unit-name">CU</text>
+              <text x="355" y="384" class="unit-full">Control Unit</text>
+              <text id="cuMain" x="355" y="413" class="unit-value">ready</text>
+              <text id="cuNote" x="355" y="434" class="diagram-note">decodes and sends control signals</text>
+            </g>
+
+            <g id="regPC" class="diagram-component">
+              <rect class="diagram-box" x="520" y="35" width="170" height="70" rx="10"/>
+              <text x="533" y="57" class="diagram-name">PC</text>
+              <text x="533" y="72" class="diagram-full">Program Counter</text>
+              <text id="pcMain" x="605" y="93" class="diagram-value">0</text>
+              <text id="pcNote" x="605" y="102" class="diagram-note">next instruction</text>
+            </g>
+
+            <g id="regMAR" class="diagram-component">
+              <rect class="diagram-box" x="520" y="125" width="170" height="70" rx="10"/>
+              <text x="533" y="147" class="diagram-name">MAR</text>
+              <text x="533" y="162" class="diagram-full">Memory Address Register</text>
+              <text id="marMain" x="605" y="183" class="diagram-value">—</text>
+              <text id="marNote" x="605" y="192" class="diagram-note">memory location</text>
+            </g>
+
+            <g id="regMDR" class="diagram-component">
+              <rect class="diagram-box" x="520" y="225" width="170" height="70" rx="10"/>
+              <text x="533" y="247" class="diagram-name">MDR</text>
+              <text x="533" y="262" class="diagram-full">Memory Data Register</text>
+              <text id="mdrMain" x="605" y="283" class="diagram-value">—</text>
+              <text id="mdrNote" x="605" y="292" class="diagram-note">data or instruction</text>
+            </g>
+
+            <g id="regCIR" class="diagram-component">
+              <rect class="diagram-box" x="520" y="330" width="170" height="80" rx="10"/>
+              <text x="533" y="352" class="diagram-name">CIR</text>
+              <text x="533" y="367" class="diagram-full">Current Instruction Register</text>
+              <text id="cirMain" x="605" y="390" class="diagram-value">—</text>
+              <text id="cirNote" x="605" y="402" class="diagram-note">instruction being decoded</text>
+            </g>
+          </svg>
+        </section>
+
+        <section id="busBridge" class="bus-bridge" aria-label="System buses">
+          <div id="addressBus" class="bus-lane address"><div class="bus-head"><span>Address bus</span><span>MAR → RAM</span></div><div class="bus-track"><i class="bus-line"></i><i class="bus-arrow-right"></i><code class="bus-value"></code></div></div>
+          <div id="dataBus" class="bus-lane data"><div class="bus-head"><span>Data bus</span><span>MDR ↔ system</span></div><div class="bus-track"><i class="bus-line"></i><i class="bus-arrow-left"></i><i class="bus-arrow-right"></i><code class="bus-value"></code></div></div>
+          <div id="controlBus" class="bus-lane control"><div class="bus-head"><span>Control bus</span><span>CU ↔ system</span></div><div class="bus-track"><i class="bus-line"></i><i class="bus-arrow-left"></i><i class="bus-arrow-right"></i><code class="bus-value"></code></div></div>
+          <div id="ioEndpoint" class="io-endpoint"><strong>I/O device</strong><span>IN and OUT use the buses</span></div>
+        </section>
+
+        <section id="ramCard" class="ram-card" aria-label="Random access memory">
+          <div class="ram-head"><strong>RAM</strong><span>instructions + data<br>share memory</span></div>
+          <div id="ramScroll" class="ram-scroll"></div>
+        </section>
+      </div>
+
+      <section class="micro-card" aria-live="polite">
+        <div id="microPhase" class="micro-phase fetch">FETCH</div>
+        <div class="operation"><code id="operationNotation">PC contains the entry location</code><p id="operationNote">Press Step for one micro-operation, or Run for automatic execution.</p></div>
+        <div class="tick-box"><strong id="operationTick">Tick 0</strong><span id="operationInstruction">before instruction 1</span></div>
+      </section>
+    </section>
+  </div>
+
+  <div class="footer-note">This is an exam-focused teaching model: it preserves Cambridge-style mnemonics, addressing modes and register transfers while hiding unnecessary machine-code detail.</div>
+</main>
+<script>
+(() => {
+  "use strict";
+  const $ = id => document.getElementById(id);
+  const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  const MEMORY_SIZE = 256;
+  const MAX_INSTRUCTIONS = 1000;
+  const MAX_MICRO_STEPS = 8000;
+
+  const EXAMPLES = {
+    add:`; Add two immediate values and store the result
+        LDM #7
+        ADD #6
+        STO RESULT
+        END
+
+RESULT: 0`,
+    count:`; Repeat until COUNT equals five
+        LDM #0
+        STO COUNT
+LOOP:   LDD COUNT
+        INC ACC
+        STO COUNT
+        CMP #5
+        JPN LOOP
+        END
+
+COUNT:  0`,
+    indirect:`; POINTER stores the address of VALUE
+        LDI POINTER
+        STO COPY
+        END
+
+POINTER: VALUE
+VALUE:   42
+COPY:    0`,
+    indexed:`; IX selects one item after the base address
+        LDR #2
+        LDX VALUES
+        STO COPY
+        END
+
+VALUES:  10
+         20
+         30
+COPY:     0`,
+    output:`; OUT displays the ASCII character held in ACC
+        LDM #72
+        OUT
+        LDM #73
+        OUT
+        END`,
+    bits:`; Keep the low nibble, then shift it left
+        LDM B10101100
+        AND B00001111
+        LSL #1
+        STO RESULT
+        END
+
+RESULT: B00000000`
+  };
+
+  // Stable teaching encoding. Cambridge defines the mnemonic forms, not a
+  // mandatory binary opcode map.
+  const OPCODES = {
+    END:0x00,LDM:0x01,LDD:0x02,LDI:0x03,LDX:0x04,LDR:0x05,STO:0x06,MOV:0x07,
+    ADD_IMM:0x08,ADD_DIR:0x09,SUB_IMM:0x0A,SUB_DIR:0x0B,INC:0x0C,DEC:0x0D,
+    IN:0x0E,OUT:0x0F,JMP:0x10,JPE:0x11,JPN:0x12,
+    CMP_IMM:0x17,CMP_DIR:0x18,CMI:0x19,
+    AND_IMM:0x1A,AND_DIR:0x1B,OR_IMM:0x1C,OR_DIR:0x1D,
+    XOR_IMM:0x1E,XOR_DIR:0x1F,LSL:0x21,LSR:0x22
+  };
+
+  const DECODE_TABLE = new Map([
+    [0x00,{mnemonic:"END",mode:"none"}],[0x01,{mnemonic:"LDM",mode:"immediate"}],
+    [0x02,{mnemonic:"LDD",mode:"direct"}],[0x03,{mnemonic:"LDI",mode:"indirect"}],
+    [0x04,{mnemonic:"LDX",mode:"indexed"}],[0x05,{mnemonic:"LDR",mode:"immediate"}],
+    [0x06,{mnemonic:"STO",mode:"direct"}],[0x07,{mnemonic:"MOV",mode:"register"}],
+    [0x08,{mnemonic:"ADD",mode:"immediate"}],[0x09,{mnemonic:"ADD",mode:"direct"}],
+    [0x0A,{mnemonic:"SUB",mode:"immediate"}],[0x0B,{mnemonic:"SUB",mode:"direct"}],
+    [0x0C,{mnemonic:"INC",mode:"register"}],[0x0D,{mnemonic:"DEC",mode:"register"}],
+    [0x0E,{mnemonic:"IN",mode:"none"}],[0x0F,{mnemonic:"OUT",mode:"none"}],
+    [0x10,{mnemonic:"JMP",mode:"direct"}],[0x11,{mnemonic:"JPE",mode:"direct"}],
+    [0x12,{mnemonic:"JPN",mode:"direct"}],[0x17,{mnemonic:"CMP",mode:"immediate"}],
+    [0x18,{mnemonic:"CMP",mode:"direct"}],[0x19,{mnemonic:"CMI",mode:"indirect"}],
+    [0x1A,{mnemonic:"AND",mode:"immediate"}],[0x1B,{mnemonic:"AND",mode:"direct"}],
+    [0x1C,{mnemonic:"OR",mode:"immediate"}],[0x1D,{mnemonic:"OR",mode:"direct"}],
+    [0x1E,{mnemonic:"XOR",mode:"immediate"}],[0x1F,{mnemonic:"XOR",mode:"direct"}],
+    [0x21,{mnemonic:"LSL",mode:"immediate"}],[0x22,{mnemonic:"LSR",mode:"immediate"}]
+  ]);
+
+  const OPCODE_NAMES = new Set(["LDM","LDD","LDI","LDX","LDR","MOV","STO","ADD","SUB","INC","DEC","JMP","CMP","CMI","JPE","JPN","IN","OUT","END","AND","OR","XOR","LSL","LSR"]);
+  const RESERVED = new Set([...OPCODE_NAMES,"ACC","IX"]);
+  const DIRECT_ONLY = new Set(["LDD","LDI","LDX","STO","JMP","CMI","JPE","JPN"]);
+  const IMMEDIATE_ONLY = new Set(["LDM","LDR","LSL","LSR"]);
+  const DUAL_MODE = new Set(["ADD","SUB","CMP","AND","OR","XOR"]);
+  const REGISTER_OPS = new Set(["MOV","INC","DEC"]);
+  const NO_OPERAND = new Set(["IN","OUT","END"]);
+
+  let compilation=null,memory=[],cpu=null,microQueue=[],currentDecoded=null,currentInstructionAddress=null;
+  let running=false,runToken=0,runtimeError=null,waitingForInput=false,inputCursor=0,outputText="";
+  let tickCount=0,instructionCount=0,compileTimer=null,visual=emptyVisual();
+
+  function emptyVisual(){return {active:[],changed:[],paths:[],flows:[],internalValue:"",memoryAddress:null,memoryChanged:false,buses:{address:null,data:null,control:null}}}
+  function bits(value,width=8){return (Number(value)>>>0).toString(2).padStart(width,"0").slice(-width)}
+  function hex(value,width=2){return (Number(value)>>>0).toString(16).toUpperCase().padStart(width,"0").slice(-width)}
+  function wrap8(value){return ((Number(value)%256)+256)%256}
+  function wordBits(word){return `${bits((word>>>8)&255)} ${bits(word&255)}`}
+  function wordHex(word){return `0x${hex(word,4)}`}
+  function symbolAtAddress(value){
+    if(value===null||value===undefined||!compilation?.symbols)return null;
+    const symbol=[...compilation.symbols.values()].find(item=>item.address===Number(value));
+    return symbol?.name||null;
+  }
+  function addressText(value){
+    if(value===null||value===undefined)return "—";
+    return symbolAtAddress(value)||String(Number(value));
+  }
+  function addressDetail(value){
+    if(value===null||value===undefined)return "no location selected";
+    const symbol=symbolAtAddress(value);
+    return symbol?`${symbol} · location ${Number(value)}`:`location ${Number(value)}`;
+  }
+  function byteSummary(value){return String(wrap8(value))}
+  function encode(opcode,operand=0){return ((opcode&255)<<8)|(operand&255)}
+  function sleep(ms){return new Promise(resolve=>setTimeout(resolve,reduceMotion?Math.min(ms,20):ms))}
+  function escapeHtml(value){return String(value??"").replace(/[&<>"']/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[char]))}
+  function stripComment(line){const i=line.indexOf(";");return (i===-1?line:line.slice(0,i)).trimEnd()}
+  function isLabelToken(token){return /^[A-Za-z_][A-Za-z0-9_]*$/.test(String(token||""))}
+  function issue(line,message){return {line,message}}
+
+  function parseNumberToken(token,{allowPlain=false}={}){
+    const raw=String(token||"").trim();let value=null,form=null;
+    if(/^#[0-9]+$/i.test(raw)){value=Number(raw.slice(1));form="denary"}
+    else if(/^B[01]+$/i.test(raw)){value=parseInt(raw.slice(1),2);form="binary"}
+    else if(/^&[0-9A-F]+$/i.test(raw)){value=parseInt(raw.slice(1),16);form="hexadecimal"}
+    else if(allowPlain&&/^[0-9]+$/.test(raw)){value=Number(raw);form="denary"}
+    if(value===null||!Number.isInteger(value)) return null;
+    return {value,form,raw};
+  }
+
+  function opcodeFor(mnemonic,mode){
+    const dual={ADD:[OPCODES.ADD_IMM,OPCODES.ADD_DIR],SUB:[OPCODES.SUB_IMM,OPCODES.SUB_DIR],CMP:[OPCODES.CMP_IMM,OPCODES.CMP_DIR],AND:[OPCODES.AND_IMM,OPCODES.AND_DIR],OR:[OPCODES.OR_IMM,OPCODES.OR_DIR],XOR:[OPCODES.XOR_IMM,OPCODES.XOR_DIR]};
+    return dual[mnemonic]?dual[mnemonic][mode==="immediate"?0:1]:OPCODES[mnemonic];
+  }
+
+  function assemble(source){
+    const lines=String(source).replace(/\r\n?/g,"\n").split("\n");
+    const errors=[],symbols=new Map(),records=[];let address=0;
+
+    // Pass 1: labels and memory addresses.
+    lines.forEach((original,index)=>{
+      const line=index+1,clean=stripComment(original);let rest=clean.trim(),label=null;
+      if(rest){
+        const match=rest.match(/^([A-Za-z_][A-Za-z0-9_]*):/);
+        if(match){
+          label=match[1];rest=rest.slice(match[0].length).trim();const key=label.toUpperCase();
+          if(RESERVED.has(key)) errors.push(issue(line,`"${label}" is reserved and cannot be a label.`));
+          else if(symbols.has(key)) errors.push(issue(line,`Duplicate label "${label}".`));
+          else symbols.set(key,{name:label,address,line});
+        }else if(/^[^\s:]+:/.test(rest)) errors.push(issue(line,"Labels must start with a letter or underscore and contain only letters, digits or underscores."));
+      }
+      if(!rest){records.push({line,original,label,address:null,kind:"blank",rest:""});return}
+      if(address>=MEMORY_SIZE){errors.push(issue(line,"Program exceeds the 256 available memory locations."));records.push({line,original,label,address:null,kind:"overflow",rest});return}
+      const first=(rest.split(/\s+/)[0]||"").toUpperCase();
+      records.push({line,original,label,address,kind:OPCODE_NAMES.has(first)?"instruction":"data",rest});address++;
+    });
+
+    const words=[],byAddress=new Map(),branchTargets=[];let entry=null,endCount=0;
+    function resolveAddress(token,line){
+      const n=parseNumberToken(token,{allowPlain:true});
+      if(n){if(n.value>255){errors.push(issue(line,"Address must be between 0 and 255."));return null}return {value:n.value,label:null}}
+      if(!isLabelToken(token)){errors.push(issue(line,`"${token}" is not a valid address or label.`));return null}
+      const symbol=symbols.get(token.toUpperCase());
+      if(!symbol){errors.push(issue(line,`Undefined label "${token}".`));return null}
+      return {value:symbol.address,label:symbol.name};
+    }
+    function resolveImmediate(token,line){
+      const n=parseNumberToken(token);
+      if(!n){errors.push(issue(line,"Immediate values must use #denary, Bbinary or &hexadecimal notation."));return null}
+      if(n.value>255){errors.push(issue(line,"Immediate value must fit in 8 bits (0 to 255)."));return null}
+      return n;
+    }
+
+    // Pass 2: opcode selection and operand resolution.
+    records.forEach(record=>{
+      if(record.address===null) return;
+      const all=record.rest.split(/\s+/).filter(Boolean),head=(all.shift()||"").toUpperCase(),operands=all;
+      let word=null,mode="data",decoded=null;
+      if(record.kind==="instruction"){
+        if(entry===null) entry=record.address;
+        const mnemonic=head,operand=operands[0]||null;
+        if(operands.length>1) errors.push(issue(record.line,`Too many operands for ${mnemonic}.`));
+        if(NO_OPERAND.has(mnemonic)){
+          if(operand) errors.push(issue(record.line,`${mnemonic} does not take an operand.`));
+          if(mnemonic==="END") endCount++;
+          word=encode(opcodeFor(mnemonic,"none"));mode="none";decoded={mnemonic,mode,operand:0};
+        }else if(REGISTER_OPS.has(mnemonic)){
+          if(!operand) errors.push(issue(record.line,`${mnemonic} needs a register operand.`));
+          else{
+            const register=operand.toUpperCase(),allowed=mnemonic==="MOV"?["IX"]:["ACC","IX"];
+            if(!allowed.includes(register)) errors.push(issue(record.line,`${mnemonic} accepts ${allowed.join(" or ")}.`));
+            else{const code=register==="IX"?1:0;word=encode(opcodeFor(mnemonic,"register"),code);mode="register";decoded={mnemonic,mode,operand:code,register}}
+          }
+        }else if(IMMEDIATE_ONLY.has(mnemonic)){
+          if(!operand) errors.push(issue(record.line,`${mnemonic} needs an immediate operand.`));
+          const n=operand?resolveImmediate(operand,record.line):null;
+          if(n){word=encode(opcodeFor(mnemonic,"immediate"),n.value);mode="immediate";decoded={mnemonic,mode,operand:n.value}}
+        }else if(DIRECT_ONLY.has(mnemonic)){
+          if(!operand) errors.push(issue(record.line,`${mnemonic} needs an address operand.`));
+          const r=operand?resolveAddress(operand,record.line):null;
+          if(r){mode=(mnemonic==="LDI"||mnemonic==="CMI")?"indirect":mnemonic==="LDX"?"indexed":"direct";word=encode(opcodeFor(mnemonic,mode),r.value);decoded={mnemonic,mode,operand:r.value,label:r.label};if(["JMP","JPE","JPN"].includes(mnemonic)) branchTargets.push({line:record.line,address:r.value,label:r.label||operand})}
+        }else if(DUAL_MODE.has(mnemonic)){
+          if(!operand) errors.push(issue(record.line,`${mnemonic} needs an operand.`));
+          if(operand){
+            const n=parseNumberToken(operand);
+            if(n){if(n.value>255) errors.push(issue(record.line,"Immediate value must fit in 8 bits (0 to 255)."));else{mode="immediate";word=encode(opcodeFor(mnemonic,mode),n.value);decoded={mnemonic,mode,operand:n.value}}}
+            else{const r=resolveAddress(operand,record.line);if(r){mode="direct";word=encode(opcodeFor(mnemonic,mode),r.value);decoded={mnemonic,mode,operand:r.value,label:r.label}}}
+          }
+        }
+      }else{
+        if(operands.length>0){
+          if(!record.label&&!parseNumberToken(head,{allowPlain:true})){
+            errors.push(issue(record.line,`Unknown opcode "${head}".`));
+            return;
+          }
+          errors.push(issue(record.line,"A data location contains one value or one symbolic address."));
+        }
+        let value=null;const n=parseNumberToken(head,{allowPlain:true});
+        if(n) value=n.value;
+        else if(isLabelToken(head)){const symbol=symbols.get(head.toUpperCase());if(symbol)value=symbol.address;else errors.push(issue(record.line,`Undefined data label "${head}".`))}
+        else errors.push(issue(record.line,`Unknown opcode or invalid data value "${head}".`));
+        if(value!==null){if(value>255) errors.push(issue(record.line,"Data value must fit in 8 bits (0 to 255)."));else word=value}
+        decoded={mnemonic:null,mode:"data",operand:value};
+      }
+      if(word!==null){const item={address:record.address,word,kind:record.kind,line:record.line,label:record.label,source:record.rest,mode,decoded};words.push(item);byAddress.set(item.address,item)}
+    });
+
+    if(entry===null) errors.push(issue(1,"Add at least one instruction."));
+    if(endCount===0) errors.push(issue(Math.max(1,lines.length),"Program needs an END instruction so execution can return to the operating system."));
+    branchTargets.forEach(target=>{const item=byAddress.get(target.address);if(item&&item.kind!=="instruction") errors.push(issue(target.line,`Jump target "${target.label}" points to data, not an instruction.`))});
+    const seen=new Set(),uniqueErrors=errors.filter(error=>{const key=`${error.line}|${error.message}`;if(seen.has(key))return false;seen.add(key);return true});
+    return {valid:uniqueErrors.length===0,errors:uniqueErrors,lines,records,symbols,words,byAddress,entry:entry??0,highestAddress:words.length?Math.max(...words.map(w=>w.address)):0};
+  }
+
+  function decodeWord(word){const opcode=(word>>>8)&255,operand=word&255,def=DECODE_TABLE.get(opcode);if(!def)return null;const result={...def,opcode,operand};if(def.mode==="register")result.register=operand===1?"IX":operand===0?"ACC":"?";return result}
+  function decodedText(decoded){if(!decoded)return "unknown";if(decoded.mode==="none")return decoded.mnemonic;if(decoded.mode==="register")return `${decoded.mnemonic} ${decoded.register}`;if(decoded.mode==="immediate")return `${decoded.mnemonic} #${decoded.operand}`;return `${decoded.mnemonic} ${decoded.operand}`}
+  function instructionTextAt(address,decoded=null){
+    const cell=Number.isInteger(address)?memory[address]:null;
+    if(cell?.kind==="instruction"&&cell.source)return cell.source;
+    return decodedText(decoded||decodeWord(cell?.word));
+  }
+  function resolvedItemText(item){
+    if(!item)return "empty";
+    if(item.kind==="instruction")return decodedText(item.decoded||decodeWord(item.word));
+    return String(item.word&255);
+  }
+  function resolutionDetail(item){
+    const decoded=item?.decoded;
+    if(decoded?.label)return `${decoded.label} → location ${decoded.operand}`;
+    if(item?.kind==="data"&&isLabelToken(item.source)){
+      const symbol=compilation?.symbols?.get(item.source.toUpperCase());
+      if(symbol)return `${symbol.name} → location ${symbol.address}`;
+    }
+    if(item?.kind==="instruction")return `${item.mode} addressing`;
+    return "stored data";
+  }
+  function memoryWordText(word,address=cpu?.MAR){
+    const cell=Number.isInteger(address)?memory[address]:null;
+    if(cell?.kind==="instruction")return cell.source||decodedText(decodeWord(word));
+    return String(word&255);
+  }
+  function memoryWordKind(address=cpu?.MAR){
+    const cell=Number.isInteger(address)?memory[address]:null;
+    if(cell?.kind==="instruction")return "instruction from memory";
+    if(cell?.kind==="data")return "data from memory";
+    return "data or instruction";
+  }
+
+  function cloneMemory(){
+    const result=Array.from({length:MEMORY_SIZE},(_,address)=>({address,word:0,kind:"empty",source:"0",label:null,line:null,modified:false}));
+    compilation.words.forEach(item=>result[item.address]={address:item.address,word:item.word,kind:item.kind,source:item.source,label:item.label,line:item.line,modified:false});return result;
+  }
+  function stopRunning(){running=false;runToken++}
+  function setOperation(phase,notation,note){const p=["fetch","decode","execute"].includes(phase)?phase:"fetch";$("microPhase").className=`micro-phase ${p}`;$("microPhase").textContent=p.toUpperCase();$("operationNotation").textContent=notation;$("operationNote").textContent=note}
+  function setVisual(next={}){visual={...emptyVisual(),...next,flows:[...(next.flows||[])],buses:{...emptyVisual().buses,...(next.buses||{})}}}
+  function flow(from,to,value,kind="internal",options={}){return {from,to,value:String(value??""),kind,...options}}
+
+  function resetRuntime(){
+    stopRunning();runtimeError=null;waitingForInput=false;microQueue=[];currentDecoded=null;currentInstructionAddress=null;inputCursor=0;outputText="";tickCount=0;instructionCount=0;visual=emptyVisual();
+    if(!compilation?.valid){memory=[];cpu={PC:0,MAR:null,MDR:null,CIR:null,ACC:0,IX:0,STATUS:{eq:null,relation:null},ALU:"idle",CU:"blocked",halted:false};renderAll();return}
+    memory=cloneMemory();cpu={PC:compilation.entry,MAR:null,MDR:null,CIR:null,ACC:0,IX:0,STATUS:{eq:null,relation:null},ALU:"idle",CU:"ready",halted:false};
+    setOperation("fetch","PC contains the entry location","Press Step for one micro-operation, or Run for automatic execution.");renderAll();
+  }
+
+  function runtimeStop(message){runtimeError=message;stopRunning();cpu.CU="error";setOperation("execute","Execution stopped",message);visual=emptyVisual();renderAll()}
+  function ensureAddress(address,context){if(!Number.isInteger(address)||address<0||address>=MEMORY_SIZE){runtimeStop(`${context} produced address ${address}; valid locations are 0 to 255.`);return false}return true}
+  function readWord(address){return memory[address]?.word??0}
+  function writeData(address,value){const old=memory[address]||{address};memory[address]={...old,address,word:wrap8(value),kind:"data",source:`${wrap8(value)} (written by STO)`,modified:true}}
+  function compareWith(value){const right=wrap8(value);cpu.STATUS.eq=cpu.ACC===right;cpu.STATUS.relation=cpu.ACC===right?"equal":cpu.ACC<right?"less":"greater"}
+  function pushMicro(...ops){microQueue.push(...ops.filter(Boolean))}
+
+  function enqueueRead(address,{after,title="operand"}={}){
+    pushMicro(
+      {phase:"execute",notation:`MAR ← ${addressText(address)}`,note:`Place the ${title} address in MAR.`,apply(){if(!ensureAddress(address,"Address calculation"))return;cpu.MAR=address;setVisual({active:["regCIR"],changed:["regMAR"],internalValue:addressText(address),flows:[flow("regCIR","regMAR",addressText(address),"internal",{via:"shared"})]})}},
+      {phase:"execute",notation:"Address bus ← MAR; Control bus ← READ",note:"MAR selects the RAM location and the Control Unit requests a read.",apply(){setVisual({active:["regMAR","unitCU"],memoryAddress:cpu.MAR,buses:{address:{value:`location ${addressText(cpu.MAR)}`,direction:"to-ram"},control:{value:"READ",direction:"to-ram"}},flows:[flow("regMAR","ram",`location ${addressText(cpu.MAR)}`,"address",{bus:"address",address:cpu.MAR}),flow("unitCU","ram","READ","control",{bus:"control",address:cpu.MAR})]})}},
+      {phase:"execute",notation:"MDR ← M[MAR]",note:"Memory returns the selected instruction or data along the data bus into MDR.",apply(){cpu.MDR=readWord(cpu.MAR);setVisual({changed:["regMDR"],memoryAddress:cpu.MAR,buses:{data:{value:memoryWordText(cpu.MDR,cpu.MAR),direction:"to-cpu"}},flows:[flow("ram","regMDR",memoryWordText(cpu.MDR,cpu.MAR),"data",{bus:"data",address:cpu.MAR})]})}},
+      after
+    );
+  }
+
+  function enqueueIndirectRead(pointerAddress,{after,purpose="value"}={}){
+    enqueueRead(pointerAddress,{title:"pointer",after:{phase:"execute",notation:"MAR ← low byte of MDR",note:`The first memory location contains the address of the ${purpose}.`,apply(){const address=cpu.MDR&255;if(!ensureAddress(address,"Indirect addressing"))return;cpu.MAR=address;setVisual({active:["regMDR"],changed:["regMAR"],internalValue:addressText(address),flows:[flow("regMDR","regMAR",addressText(address),"internal",{via:"shared"})]})}}});
+    pushMicro(
+      {phase:"execute",notation:"Address bus ← MAR; Control bus ← READ",note:`The indirect address now selects the ${purpose}.`,apply(){setVisual({active:["regMAR","unitCU"],memoryAddress:cpu.MAR,buses:{address:{value:`location ${addressText(cpu.MAR)}`,direction:"to-ram"},control:{value:"READ",direction:"to-ram"}},flows:[flow("regMAR","ram",`location ${addressText(cpu.MAR)}`,"address",{bus:"address",address:cpu.MAR}),flow("unitCU","ram","READ","control",{bus:"control",address:cpu.MAR})]})}},
+      {phase:"execute",notation:"MDR ← M[MAR]",note:`RAM returns the indirectly addressed ${purpose}.`,apply(){cpu.MDR=readWord(cpu.MAR);setVisual({changed:["regMDR"],memoryAddress:cpu.MAR,buses:{data:{value:memoryWordText(cpu.MDR,cpu.MAR),direction:"to-cpu"}},flows:[flow("ram","regMDR",memoryWordText(cpu.MDR,cpu.MAR),"data",{bus:"data",address:cpu.MAR})]})}},
+      after
+    );
+  }
+
+  function enqueueFetch(){
+    const address=cpu.PC;currentInstructionAddress=address;
+    pushMicro(
+      {phase:"fetch",notation:"MAR ← PC",note:"Copy the address of the next instruction from PC into MAR.",apply(){cpu.MAR=cpu.PC;cpu.CU="fetch";setVisual({active:["regPC"],changed:["regMAR"],paths:["wirePcMarDirect"],internalValue:addressText(cpu.PC),flows:[flow("regPC","regMAR",addressText(cpu.PC),"internal",{via:"direct"})]})}},
+      {phase:"fetch",notation:"Address bus ← MAR; Control bus ← READ",note:"The address bus selects the instruction while the control bus carries READ.",apply(){setVisual({active:["regMAR","unitCU"],memoryAddress:cpu.MAR,buses:{address:{value:`location ${addressText(cpu.MAR)}`,direction:"to-ram"},control:{value:"READ",direction:"to-ram"}},flows:[flow("regMAR","ram",`location ${addressText(cpu.MAR)}`,"address",{bus:"address",address:cpu.MAR}),flow("unitCU","ram","READ","control",{bus:"control",address:cpu.MAR})]})}},
+      {phase:"fetch",notation:"MDR ← M[MAR]",note:"The selected instruction travels from memory to MDR on the data bus.",apply(){cpu.MDR=readWord(cpu.MAR);setVisual({changed:["regMDR"],memoryAddress:cpu.MAR,buses:{data:{value:memoryWordText(cpu.MDR,cpu.MAR),direction:"to-cpu"}},flows:[flow("ram","regMDR",memoryWordText(cpu.MDR,cpu.MAR),"data",{bus:"data",address:cpu.MAR})]})}},
+      {phase:"fetch",notation:"CIR ← MDR",note:"Copy the fetched instruction from MDR into CIR.",apply(){cpu.CIR=cpu.MDR;setVisual({active:["regMDR"],changed:["regCIR"],paths:["wireMdrCirDirect"],internalValue:memoryWordText(cpu.MDR,cpu.MAR),flows:[flow("regMDR","regCIR",memoryWordText(cpu.MDR,cpu.MAR),"internal",{via:"direct"})]})}},
+      {phase:"fetch",notation:"PC ← PC + 1",note:"Advance PC so it already points to the next sequential instruction.",apply(){const before=cpu.PC;cpu.PC=wrap8(cpu.PC+1);cpu.ALU=`${before} + 1 = ${cpu.PC}`;setVisual({changed:["regPC"],active:["unitALU"],internalValue:addressText(cpu.PC),flows:[flow("regPC","unitALU",addressText(before),"internal",{via:"shared"}),flow("unitALU","regPC",addressText(cpu.PC),"result",{via:"shared"})]})}},
+      {phase:"decode",notation:"CU decodes CIR",note:"The Control Unit separates the opcode from its operand and prepares the execute steps.",apply(){currentDecoded=decodeWord(cpu.CIR);if(!currentDecoded){runtimeStop(`The instruction at location ${currentInstructionAddress} could not be decoded.`);return}cpu.CU=instructionTextAt(currentInstructionAddress,currentDecoded);setVisual({active:["regCIR"],changed:["unitCU"],internalValue:instructionTextAt(currentInstructionAddress,currentDecoded),flows:[flow("regCIR","unitCU",instructionTextAt(currentInstructionAddress,currentDecoded),"internal",{via:"direct"})]});enqueueExecute(currentDecoded)}}
+    );
+  }
+
+  function enqueueExecute(decoded){
+    const operand=decoded.operand,register=decoded.register,finish=()=>{instructionCount++};
+    switch(decoded.mnemonic){
+      case "END":
+        pushMicro({phase:"execute",notation:"END",note:"Return control to the operating system and stop execution.",apply(){cpu.CU="halted";cpu.ALU="idle";cpu.halted=true;finish();setVisual({changed:["unitCU"],internalValue:"halt",flows:[flow("unitCU","unitCLOCK","HALT","control",{via:"direct"})]})}});break;
+      case "LDM":
+        pushMicro({phase:"execute",notation:"ACC ← CIR operand",note:`Immediate value ${operand} is already inside CIR; no second RAM read is needed.`,apply(){cpu.ACC=operand;finish();setVisual({active:["regCIR"],changed:["regACC"],internalValue:String(operand),flows:[flow("regCIR","regACC",operand,"internal",{via:"shared"})]})}});break;
+      case "LDR":
+        pushMicro({phase:"execute",notation:"IX ← CIR operand",note:`Load immediate value ${operand} into the Index Register.`,apply(){cpu.IX=operand;finish();setVisual({active:["regCIR"],changed:["regIX"],internalValue:String(operand),flows:[flow("regCIR","regIX",operand,"internal",{via:"shared"})]})}});break;
+      case "MOV":
+        pushMicro({phase:"execute",notation:`${register} ← ACC`,note:"Move the accumulator value into IX.",apply(){if(register!=="IX"){runtimeStop(`MOV encoded an invalid register value ${operand}.`);return}cpu.IX=cpu.ACC;finish();setVisual({active:["regACC"],changed:["regIX"],internalValue:String(cpu.ACC),flows:[flow("regACC","regIX",cpu.ACC,"internal",{via:"shared"})]})}});break;
+      case "LDD":
+        enqueueRead(operand,{after:{phase:"execute",notation:"ACC ← low byte of MDR",note:"Load the directly addressed data value into ACC.",apply(){cpu.ACC=cpu.MDR&255;finish();setVisual({active:["regMDR"],changed:["regACC"],internalValue:String(cpu.ACC),flows:[flow("regMDR","regACC",cpu.ACC,"internal",{via:"shared"})]})}}});break;
+      case "LDI":
+        enqueueIndirectRead(operand,{purpose:"data value",after:{phase:"execute",notation:"ACC ← low byte of MDR",note:"Load the indirectly addressed data value into ACC.",apply(){cpu.ACC=cpu.MDR&255;finish();setVisual({active:["regMDR"],changed:["regACC"],internalValue:String(cpu.ACC),flows:[flow("regMDR","regACC",cpu.ACC,"internal",{via:"shared"})]})}}});break;
+      case "LDX":
+        pushMicro(
+          {phase:"execute",notation:"effective address ← operand + IX",note:`The ALU adds base address ${operand} to IX.`,apply(){const index=cpu.IX,effective=operand+index;if(!ensureAddress(effective,"Indexed addressing"))return;cpu.ALU=`${operand} + ${index} = ${effective}`;cpu.MAR=effective;setVisual({active:["regCIR","regIX","unitALU"],changed:["regMAR"],internalValue:addressText(effective),flows:[flow("regCIR","unitALU",operand,"internal",{via:"shared"}),flow("regIX","unitALU",index,"internal",{via:"shared"}),flow("unitALU","regMAR",addressText(effective),"result",{via:"shared"})]})}},
+          {phase:"execute",notation:"Address bus ← MAR; Control bus ← READ",note:"Read the indexed memory location.",apply(){setVisual({active:["regMAR","unitCU"],memoryAddress:cpu.MAR,buses:{address:{value:`location ${addressText(cpu.MAR)}`,direction:"to-ram"},control:{value:"READ",direction:"to-ram"}},flows:[flow("regMAR","ram",`location ${addressText(cpu.MAR)}`,"address",{bus:"address",address:cpu.MAR}),flow("unitCU","ram","READ","control",{bus:"control",address:cpu.MAR})]})}},
+          {phase:"execute",notation:"MDR ← M[MAR]",note:"Memory returns the indexed data value on the data bus.",apply(){cpu.MDR=readWord(cpu.MAR);setVisual({changed:["regMDR"],memoryAddress:cpu.MAR,buses:{data:{value:memoryWordText(cpu.MDR,cpu.MAR),direction:"to-cpu"}},flows:[flow("ram","regMDR",memoryWordText(cpu.MDR,cpu.MAR),"data",{bus:"data",address:cpu.MAR})]})}},
+          {phase:"execute",notation:"ACC ← low byte of MDR",note:"Copy the indexed data value into ACC.",apply(){cpu.ACC=cpu.MDR&255;finish();setVisual({active:["regMDR"],changed:["regACC"],internalValue:String(cpu.ACC),flows:[flow("regMDR","regACC",cpu.ACC,"internal",{via:"shared"})]})}}
+        );break;
+      case "STO":
+        pushMicro(
+          {phase:"execute",notation:`MAR ← ${addressText(operand)}`,note:"Place the destination address in MAR.",apply(){cpu.MAR=operand;setVisual({active:["regCIR"],changed:["regMAR"],internalValue:addressText(operand),flows:[flow("regCIR","regMAR",addressText(operand),"internal",{via:"shared"})]})}},
+          {phase:"execute",notation:"MDR ← ACC",note:"Copy the accumulator value into the Memory Data Register.",apply(){cpu.MDR=cpu.ACC;setVisual({active:["regACC"],changed:["regMDR"],internalValue:String(cpu.ACC),flows:[flow("regACC","regMDR",cpu.ACC,"internal",{via:"shared"})]})}},
+          {phase:"execute",notation:"M[MAR] ← MDR",note:"Address, data and WRITE travel together; memory stores the value at the selected location.",apply(){writeData(cpu.MAR,cpu.MDR&255);finish();setVisual({active:["regMAR","regMDR","unitCU"],memoryAddress:cpu.MAR,memoryChanged:true,buses:{address:{value:`location ${addressText(cpu.MAR)}`,direction:"to-ram"},data:{value:memoryWordText(cpu.MDR,cpu.MAR),direction:"to-ram"},control:{value:"WRITE",direction:"to-ram"}},flows:[flow("regMAR","ram",`location ${addressText(cpu.MAR)}`,"address",{bus:"address",address:cpu.MAR}),flow("regMDR","ram",memoryWordText(cpu.MDR,cpu.MAR),"data",{bus:"data",address:cpu.MAR}),flow("unitCU","ram","WRITE","control",{bus:"control",address:cpu.MAR})]})}}
+        );break;
+      case "ADD":case "SUB":case "AND":case "OR":case "XOR": {
+        const op=decoded.mnemonic,symbol={ADD:"+",SUB:"−",AND:"AND",OR:"OR",XOR:"XOR"}[op];
+        const applyOperation=value=>{const before=cpu.ACC,right=wrap8(value),source=decoded.mode==="direct"?"regMDR":"regCIR";let result=before;if(op==="ADD")result=before+right;if(op==="SUB")result=before-right;if(op==="AND")result=before&right;if(op==="OR")result=before|right;if(op==="XOR")result=before^right;cpu.ACC=wrap8(result);cpu.ALU=`${before} ${op} ${right} = ${cpu.ACC}`;finish();setVisual({active:["regACC","unitALU",source],changed:["regACC"],internalValue:String(cpu.ACC),flows:[flow("regACC","unitALU",before,"internal",{via:"shared"}),flow(source,"unitALU",right,"internal",{via:"shared"}),flow("unitALU","regACC",cpu.ACC,"result",{via:"shared"})]})};
+        if(decoded.mode==="immediate") pushMicro({phase:"execute",notation:`ACC ← ACC ${symbol} CIR operand`,note:`The ALU uses immediate value ${operand} already held in CIR.`,apply(){applyOperation(operand)}});
+        else enqueueRead(operand,{after:{phase:"execute",notation:`ACC ← ACC ${symbol} low byte of MDR`,note:"The ALU combines ACC with the directly addressed data value.",apply(){applyOperation(cpu.MDR&255)}}});
+        break;
+      }
+      case "INC":case "DEC":
+        pushMicro({phase:"execute",notation:`${register} ← ${register} ${decoded.mnemonic==="INC"?"+":"−"} 1`,note:`The ALU ${decoded.mnemonic==="INC"?"increments":"decrements"} ${register}.`,apply(){if(!["ACC","IX"].includes(register)){runtimeStop(`${decoded.mnemonic} encoded an invalid register value ${operand}.`);return}const component=register==="ACC"?"regACC":"regIX",before=cpu[register];cpu[register]=wrap8(before+(decoded.mnemonic==="INC"?1:-1));cpu.ALU=`${before} ${decoded.mnemonic==="INC"?"+":"−"} 1 = ${cpu[register]}`;finish();setVisual({active:[component,"unitALU"],changed:[component],internalValue:String(cpu[register]),flows:[flow(component,"unitALU",before,"internal",{via:"shared"}),flow("unitALU",component,cpu[register],"result",{via:"shared"})]})}});break;
+      case "CMP": {
+        const compare=value=>{const right=wrap8(value),source=decoded.mode==="direct"?"regMDR":"regCIR";compareWith(right);cpu.ALU=`${cpu.ACC} compare ${right}`;finish();setVisual({active:["regACC",source,"unitALU"],changed:["regSTATUS"],internalValue:cpu.STATUS.eq?"equal":"not equal",flows:[flow("regACC","unitALU",cpu.ACC,"internal",{via:"shared"}),flow(source,"unitALU",right,"internal",{via:"shared"}),flow("unitALU","regSTATUS",cpu.STATUS.eq?"EQ=1":"EQ=0","result",{via:"direct"})]})};
+        if(decoded.mode==="immediate")pushMicro({phase:"execute",notation:"STATUS ← compare(ACC, CIR operand)",note:`Compare ACC with immediate value ${operand}.`,apply(){compare(operand)}});
+        else enqueueRead(operand,{after:{phase:"execute",notation:"STATUS ← compare(ACC, low byte of MDR)",note:"Compare ACC with the directly addressed value.",apply(){compare(cpu.MDR&255)}}});
+        break;
+      }
+      case "CMI":
+        enqueueIndirectRead(operand,{purpose:"comparison value",after:{phase:"execute",notation:"STATUS ← compare(ACC, low byte of MDR)",note:"Compare ACC with the indirectly addressed value.",apply(){compareWith(cpu.MDR&255);cpu.ALU=`${cpu.ACC} compare ${cpu.MDR&255}`;finish();setVisual({active:["regACC","regMDR","unitALU"],changed:["regSTATUS"],internalValue:cpu.STATUS.eq?"equal":"not equal",flows:[flow("regACC","unitALU",cpu.ACC,"internal",{via:"shared"}),flow("regMDR","unitALU",cpu.MDR&255,"internal",{via:"shared"}),flow("unitALU","regSTATUS",cpu.STATUS.eq?"EQ=1":"EQ=0","result",{via:"direct"})]})}}});break;
+      case "JMP":
+        pushMicro({phase:"execute",notation:`PC ← ${addressText(operand)}`,note:"Unconditional jump: replace the next sequential address in PC.",apply(){cpu.PC=operand;finish();setVisual({active:["regCIR"],changed:["regPC"],internalValue:addressText(operand),flows:[flow("regCIR","regPC",addressText(operand),"internal",{via:"shared"})]})}});break;
+      case "JPE":case "JPN":
+        pushMicro({phase:"execute",notation:`${decoded.mnemonic}: test STATUS.EQ`,note:"The Control Unit tests the result produced by the previous compare instruction.",apply(){if(cpu.STATUS.eq===null){runtimeStop(`${decoded.mnemonic} executed before CMP or CMI set the compare flag.`);return}const take=decoded.mnemonic==="JPE"?cpu.STATUS.eq:!cpu.STATUS.eq;cpu.CU=take?`${decoded.mnemonic} taken`:`${decoded.mnemonic} not taken`;if(take)cpu.PC=operand;finish();setVisual({active:take?["regSTATUS","unitCU","regCIR"]:["regSTATUS","unitCU"],changed:take?["regPC"]:[],internalValue:take?addressText(operand):"continue",flows:[flow("regSTATUS","unitCU",cpu.STATUS.eq?"EQ=1":"EQ=0","control",{via:"direct"}),...(take?[flow("regCIR","regPC",addressText(operand),"internal",{via:"shared"})]:[])]})}});break;
+      case "LSL":case "LSR":
+        pushMicro({phase:"execute",notation:`ACC ← ACC ${decoded.mnemonic} ${operand}`,note:`Logical ${decoded.mnemonic==="LSL"?"left":"right"} shift; zeros enter from the opposite side.`,apply(){const before=cpu.ACC;cpu.ACC=operand>=8?0:decoded.mnemonic==="LSL"?wrap8(before<<operand):(before>>>operand);cpu.ALU=`${before} ${decoded.mnemonic} ${operand} = ${cpu.ACC}`;finish();setVisual({active:["regACC","regCIR","unitALU"],changed:["regACC"],internalValue:String(cpu.ACC),flows:[flow("regACC","unitALU",before,"internal",{via:"shared"}),flow("regCIR","unitALU",operand,"internal",{via:"shared"}),flow("unitALU","regACC",cpu.ACC,"result",{via:"shared"})]})}});break;
+      case "IN":
+        pushMicro(
+          {phase:"execute",notation:"MDR ← input device",note:"The input character travels on the data bus into MDR while the CU sends INPUT.",needsInput:true,apply(){const char=Array.from($("inputBuffer").value)[inputCursor];if(char===undefined)return;const code=char.codePointAt(0);if(code>255){runtimeStop(`Input character "${char}" does not fit in the 8-bit teaching model.`);return}inputCursor++;cpu.MDR=code;setVisual({active:["unitCU"],changed:["regMDR"],internalValue:`${char} → ${code}`,buses:{data:{value:String(code),direction:"to-cpu"},control:{value:"INPUT",direction:"to-cpu"}},flows:[flow("io","regMDR",code,"data",{bus:"data"}),flow("unitCU","io","INPUT","control",{bus:"control"})]})}},
+          {phase:"execute",notation:"ACC ← MDR",note:"Copy the received ASCII value from MDR into ACC.",apply(){cpu.ACC=cpu.MDR&255;finish();setVisual({active:["regMDR"],changed:["regACC"],internalValue:String(cpu.ACC),flows:[flow("regMDR","regACC",cpu.ACC,"internal",{via:"shared"})]})}}
+        );break;
+      case "OUT":
+        pushMicro(
+          {phase:"execute",notation:"MDR ← ACC",note:"Copy the output value into MDR before it leaves the CPU.",apply(){cpu.MDR=cpu.ACC;setVisual({active:["regACC"],changed:["regMDR"],internalValue:String(cpu.MDR),flows:[flow("regACC","regMDR",cpu.MDR,"internal",{via:"shared"})]})}},
+          {phase:"execute",notation:"output device ← MDR",note:"MDR sends the value on the data bus while the CU sends OUTPUT.",apply(){const value=cpu.MDR&255;if(value===10)outputText+="\n";else if(value===9)outputText+="\t";else if(value>=32&&value<=126)outputText+=String.fromCharCode(value);else outputText+=`[${hex(value,2)}]`;finish();setVisual({active:["regMDR","unitCU"],internalValue:`${value} → output`,buses:{data:{value:String(value),direction:"to-ram"},control:{value:"OUTPUT",direction:"to-ram"}},flows:[flow("regMDR","io",value,"data",{bus:"data"}),flow("unitCU","io","OUTPUT","control",{bus:"control"})]})}}
+        );break;
+      default:runtimeStop(`Instruction ${decoded.mnemonic} is not implemented.`);
+    }
+  }
+
+  function stepMicro(){
+    if(!compilation?.valid||runtimeError||cpu.halted)return false;
+    if(tickCount>=MAX_MICRO_STEPS||instructionCount>=MAX_INSTRUCTIONS){runtimeStop("Safety stop reached. Check for an infinite loop or a jump that never reaches END.");return false}
+    if(microQueue.length===0)enqueueFetch();const micro=microQueue.shift();if(!micro)return false;
+    if(micro.needsInput&&Array.from($("inputBuffer").value)[inputCursor]===undefined){microQueue.unshift(micro);waitingForInput=true;stopRunning();cpu.CU="waiting for input";setOperation("execute","IN is waiting","Type at least one unconsumed ASCII character into the input box, then Step or Run again.");setVisual({active:["unitCU"]});renderAll();return false}
+    waitingForInput=false;tickCount++;visual=emptyVisual();setOperation(micro.phase,micro.notation,micro.note);micro.apply();if(runtimeError)return false;renderAll();
+    if(cpu.halted){stopRunning();setOperation("execute","END","Program complete. Control has returned to the operating system.");renderAll()}
+    return true;
+  }
+
+  async function runLoop(token){while(running&&token===runToken&&!runtimeError&&!cpu.halted){const progressed=stepMicro();if(!progressed)break;await sleep(Number($("speedSelect").value))}if(token===runToken){running=false;renderControls()}}
+  function toggleRun(){if(!compilation?.valid||runtimeError||cpu.halted)return;if(running){stopRunning();renderAll();return}running=true;const token=++runToken;renderControls();runLoop(token)}
+
+  function compileSource({preserveScroll=true}={}){
+    const top=$("sourceEditor").scrollTop;stopRunning();runtimeError=null;compilation=assemble($("sourceEditor").value);resetRuntime();renderEditorLines();if(preserveScroll)$("sourceEditor").scrollTop=top;syncEditorScroll();
+  }
+  function renderEditorLines(){
+    const count=Math.max(1,$("sourceEditor").value.split("\n").length),errorMap=new Map();
+    (compilation?.errors||[]).forEach(error=>{if(!errorMap.has(error.line))errorMap.set(error.line,[]);errorMap.get(error.line).push(error.message)});
+    $("lineNumbers").innerHTML=Array.from({length:count},(_,i)=>{const line=i+1,errors=errorMap.get(line);return `<div class="line-number ${errors?"error":""}" data-line="${line}" title="${errors?escapeHtml(errors.join("\n")):""}">${line}</div>`}).join("");updateActiveSourceLine();
+  }
+  function syncEditorScroll(){$("lineNumbers").scrollTop=$("sourceEditor").scrollTop;updateActiveSourceLine()}
+  function updateActiveSourceLine(){
+    document.querySelectorAll(".line-number.active").forEach(e=>e.classList.remove("active"));
+    const line=currentInstructionAddress!==null?memory[currentInstructionAddress]?.line:null,highlight=$("editorHighlight");
+    if(!line){highlight.style.opacity="0";return}const number=$("lineNumbers").querySelector(`[data-line="${line}"]`);if(number)number.classList.add("active");
+    const top=11+(line-1)*22-$("sourceEditor").scrollTop;if(top<-22||top>$("sourceEditor").clientHeight){highlight.style.opacity="0";return}highlight.style.top=`${top}px`;highlight.style.opacity="1";
+  }
+
+  function renderTranslation(){
+    const symbols=[...(compilation?.symbols?.values?.()||[])].sort((a,b)=>a.address-b.address);
+    $("passOneChip").textContent=`Pass 1 · ${symbols.length} label${symbols.length===1?"":"s"}`;
+    $("passTwoChip").textContent=compilation?.valid?`Pass 2 · ${compilation.words.length} location${compilation.words.length===1?"":"s"}`:"Pass 2 · blocked";
+    $("symbols").innerHTML=symbols.length
+      ?symbols.map(symbol=>`<span class="symbol-chip">${escapeHtml(symbol.name)} → ${symbol.address}</span>`).join("")
+      :`<span class="symbol-empty">Pass 1 found no labels.</span>`;
+    if(!compilation?.valid){
+      $("translationBody").innerHTML=`<div class="translation-empty">Fix the marked source lines to complete Pass 2.</div>`;
+      return;
+    }
+    const rows=compilation.words.map(item=>{
+      const active=item.address===currentInstructionAddress?"active":"";
+      const source=item.label?`${item.label}: ${item.source}`:item.source;
+      const detail=resolutionDetail(item);
+      return `<tr class="${active}" data-address="${item.address}"><td class="addr">${item.address}${item.label?`<br><span class="resolved-detail">${escapeHtml(item.label)}</span>`:""}</td><td class="source">${escapeHtml(source)}<br><span class="mode-tag">${escapeHtml(item.mode)}</span></td><td class="resolved"><span class="resolved-main">${escapeHtml(resolvedItemText(item))}</span><span class="resolved-detail">${escapeHtml(detail)}</span></td></tr>`;
+    }).join("");
+    $("translationBody").innerHTML=`<table class="translation-table"><thead><tr><th>Location</th><th>Source</th><th>Resolved form</th></tr></thead><tbody>${rows}</tbody></table>`;
+  }
+
+  function fitDiagramText(id,maxWidth,minSize=8,startSize=17){
+    const element=$(id);
+    if(!element)return;
+    let size=startSize;
+    element.style.fontSize=size+"px";
+    try{
+      while(element.getComputedTextLength()>maxWidth&&size>minSize){
+        size-=1;
+        element.style.fontSize=size+"px";
+      }
+    }catch{}
+  }
+  function renderRegisters(){
+    $("accMain").textContent=String(cpu.ACC);
+    $("accNote").textContent="working value used by ALU";
+    $("ixMain").textContent=String(cpu.IX);
+    $("ixNote").textContent="offset for indexed addressing";
+    $("pcMain").textContent=addressText(cpu.PC);
+    $("pcNote").textContent=symbolAtAddress(cpu.PC)?`next instruction · location ${cpu.PC}`:"next instruction location";
+    $("marMain").textContent=cpu.MAR===null?"—":addressText(cpu.MAR);
+    $("marNote").textContent=cpu.MAR===null?"selected memory location":symbolAtAddress(cpu.MAR)?`location ${cpu.MAR}`:"selected memory location";
+    $("mdrMain").textContent=cpu.MDR===null?"—":memoryWordText(cpu.MDR,cpu.MAR);
+    $("mdrNote").textContent=cpu.MDR===null?"instruction or data transfer":memoryWordKind(cpu.MAR);
+    const decoded=cpu.CIR===null?null:decodeWord(cpu.CIR);
+    $("cirMain").textContent=decoded?instructionTextAt(currentInstructionAddress,decoded):"—";
+    $("cirNote").textContent=decoded?"current instruction":"holds the current instruction";
+    const eq=cpu.STATUS.eq;
+    $("statusMain").textContent=eq===null?"—":eq?"EQUAL":"NOT EQUAL";
+    $("statusNote").textContent=eq===null?"set by CMP or CMI":cpu.STATUS.relation;
+    $("aluMain").textContent=cpu.ALU;
+    $("aluNote").textContent="calculates, shifts and compares";
+    $("cuMain").textContent=cpu.CU;
+    $("cuNote").textContent="decodes CIR and sends control signals";
+    $("clockMain").textContent=`Tick ${tickCount}`;
+    $("clockNote").textContent=cpu.halted?"clock stopped":"one tick per register transfer";
+    [
+      ["accMain",125,9,17],["ixMain",125,9,17],["statusMain",150,8,15],
+      ["pcMain",125,9,17],["marMain",135,9,17],["mdrMain",145,8,16],
+      ["cirMain",200,8,15],["aluMain",160,8,12],["cuMain",220,8,12],
+      ["clockMain",135,9,16]
+    ].forEach(args=>fitDiagramText(...args));
+  }
+
+  const SVG_NS="http://www.w3.org/2000/svg";
+  let flowRenderFrame=0;
+
+  function relativeBox(element,parentBox){
+    const box=element.getBoundingClientRect();
+    return {
+      left:box.left-parentBox.left,
+      right:box.right-parentBox.left,
+      top:box.top-parentBox.top,
+      bottom:box.bottom-parentBox.top,
+      width:box.width,
+      height:box.height,
+      cx:(box.left+box.right)/2-parentBox.left,
+      cy:(box.top+box.bottom)/2-parentBox.top
+    };
+  }
+
+  function edgePoint(box,toward){
+    const dx=toward.x-box.cx,dy=toward.y-box.cy;
+    if(Math.abs(dx)>=Math.abs(dy))return {x:dx>=0?box.right:box.left,y:box.cy};
+    return {x:box.cx,y:dy>=0?box.bottom:box.top};
+  }
+
+  function moveToward(from,to,distance){
+    const dx=to.x-from.x,dy=to.y-from.y,length=Math.hypot(dx,dy)||1;
+    return {x:from.x+dx/length*distance,y:from.y+dy/length*distance};
+  }
+
+  function roundedSystemPath(points){
+    const clean=[];
+    points.forEach(point=>{
+      if(!point||!Number.isFinite(point.x)||!Number.isFinite(point.y))return;
+      const previous=clean[clean.length-1];
+      if(!previous||Math.hypot(previous.x-point.x,previous.y-point.y)>.5)clean.push(point);
+    });
+    if(clean.length<2)return "";
+    let path=`M ${clean[0].x.toFixed(1)} ${clean[0].y.toFixed(1)}`;
+    for(let index=1;index<clean.length;index++){
+      const current=clean[index];
+      if(index===clean.length-1){path+=` L ${current.x.toFixed(1)} ${current.y.toFixed(1)}`;break}
+      const previous=clean[index-1],next=clean[index+1];
+      const radius=Math.min(8,Math.hypot(current.x-previous.x,current.y-previous.y)/2,Math.hypot(next.x-current.x,next.y-current.y)/2);
+      const before=moveToward(current,previous,radius),after=moveToward(current,next,radius);
+      path+=` L ${before.x.toFixed(1)} ${before.y.toFixed(1)} Q ${current.x.toFixed(1)} ${current.y.toFixed(1)} ${after.x.toFixed(1)} ${after.y.toFixed(1)}`;
+    }
+    return path;
+  }
+
+  function endpointBox(endpoint,flowItem,parentBox){
+    if(endpoint==="ram"){
+      const address=flowItem.address??visual.memoryAddress;
+      const row=Number.isInteger(address)?$("ramScroll")?.querySelector(`[data-address="${address}"]`):null;
+      return relativeBox(row||$("ramCard"),parentBox);
+    }
+    if(endpoint==="io")return relativeBox($("ioEndpoint"),parentBox);
+    const element=$(endpoint);
+    return element?relativeBox(element,parentBox):null;
+  }
+
+  const FLOW_COMPONENT_IDS=["regACC","regIX","regSTATUS","unitCLOCK","unitALU","unitCU","regPC","regMAR","regMDR","regCIR"];
+
+  function pointInsideBox(point,box){return point.x>box.left&&point.x<box.right&&point.y>box.top&&point.y<box.bottom}
+  function segmentClear(first,second,obstacles){
+    if(Math.abs(first.x-second.x)<.5){
+      const x=first.x,top=Math.min(first.y,second.y),bottom=Math.max(first.y,second.y);
+      return obstacles.every(box=>x<=box.left||x>=box.right||bottom<=box.top||top>=box.bottom);
+    }
+    const y=first.y,left=Math.min(first.x,second.x),right=Math.max(first.x,second.x);
+    return obstacles.every(box=>y<=box.top||y>=box.bottom||right<=box.left||left>=box.right);
+  }
+  function uniqueNumbers(values){
+    const sorted=[...values].filter(Number.isFinite).sort((a,b)=>a-b),result=[];
+    sorted.forEach(value=>{if(!result.length||Math.abs(result[result.length-1]-value)>1)result.push(value)});
+    return result;
+  }
+  function compressRoute(points){
+    const result=[];
+    points.forEach(point=>{
+      result.push(point);
+      while(result.length>=3){
+        const a=result[result.length-3],b=result[result.length-2],c=result[result.length-1];
+        const sameX=Math.abs(a.x-b.x)<.5&&Math.abs(b.x-c.x)<.5;
+        const sameY=Math.abs(a.y-b.y)<.5&&Math.abs(b.y-c.y)<.5;
+        if(!sameX&&!sameY)break;
+        result.splice(result.length-2,1);
+      }
+    });
+    return result;
+  }
+  function findInternalRoute(start,end,parentBox,excluded,busX){
+    const diagramBox=relativeBox(document.querySelector(".cpu-diagram"),parentBox),margin=7;
+    const obstacles=FLOW_COMPONENT_IDS
+      .filter(id=>!excluded.has(id))
+      .map(id=>relativeBox($(id),parentBox))
+      .map(box=>({left:box.left-margin,right:box.right+margin,top:box.top-margin,bottom:box.bottom+margin}));
+    const xValues=new Set([start.x,end.x,busX,diagramBox.left+12,diagramBox.right-12]);
+    const yValues=new Set([start.y,end.y,diagramBox.top+18,diagramBox.bottom-18]);
+    obstacles.forEach(box=>{xValues.add(box.left);xValues.add(box.right);yValues.add(box.top);yValues.add(box.bottom)});
+    const xs=uniqueNumbers(xValues),ys=uniqueNumbers(yValues),nodes=[],indexByKey=new Map();
+    ys.forEach((y,row)=>xs.forEach((x,column)=>{
+      const point={x,y,row,column};
+      if(x<diagramBox.left+2||x>diagramBox.right-2||y<diagramBox.top+2||y>diagramBox.bottom-2)return;
+      if(obstacles.some(box=>pointInsideBox(point,box)))return;
+      const index=nodes.length;nodes.push(point);indexByKey.set(`${column}:${row}`,index);
+    }));
+    function nearestNode(point){
+      let best=-1,bestDistance=Infinity;
+      nodes.forEach((node,index)=>{const distance=Math.abs(node.x-point.x)+Math.abs(node.y-point.y);if(distance<bestDistance){bestDistance=distance;best=index}});
+      return best;
+    }
+    const startIndex=nearestNode(start),endIndex=nearestNode(end);
+    if(startIndex<0||endIndex<0)return null;
+    const directions=[[-1,0,"h"],[1,0,"h"],[0,-1,"v"],[0,1,"v"]];
+    const queue=[{node:startIndex,dir:"",cost:0,score:Math.abs(nodes[startIndex].x-end.x)+Math.abs(nodes[startIndex].y-end.y),key:`${startIndex}:`}];
+    const distance=new Map([[`${startIndex}:`,0]]),previous=new Map();
+    let finalKey=null;
+    while(queue.length){
+      queue.sort((a,b)=>a.score-b.score);const current=queue.shift(),currentPoint=nodes[current.node];
+      if(current.node===endIndex){finalKey=current.key;break}
+      for(const [dx,dy,dir] of directions){
+        const nextIndex=indexByKey.get(`${currentPoint.column+dx}:${currentPoint.row+dy}`);
+        if(nextIndex===undefined)continue;
+        const nextPoint=nodes[nextIndex];
+        if(!segmentClear(currentPoint,nextPoint,obstacles))continue;
+        const length=Math.abs(nextPoint.x-currentPoint.x)+Math.abs(nextPoint.y-currentPoint.y);
+        const turn=current.dir&&current.dir!==dir?10:0;
+        const busBias=Math.min(8,Math.abs((currentPoint.x+nextPoint.x)/2-busX)*.012);
+        const nextCost=current.cost+length+turn+busBias;
+        const nextKey=`${nextIndex}:${dir}`;
+        if(nextCost>=(distance.get(nextKey)??Infinity))continue;
+        distance.set(nextKey,nextCost);previous.set(nextKey,current.key);
+        const heuristic=Math.abs(nextPoint.x-end.x)+Math.abs(nextPoint.y-end.y);
+        queue.push({node:nextIndex,dir,cost:nextCost,score:nextCost+heuristic,key:nextKey});
+      }
+    }
+    if(!finalKey)return null;
+    const route=[];let key=finalKey;
+    while(key){const nodeIndex=Number(key.split(":")[0]);route.push(nodes[nodeIndex]);key=previous.get(key)}
+    route.reverse();
+    route[0]=start;route[route.length-1]=end;
+    return compressRoute(route);
+  }
+
+  function internalFlowPoints(flowItem,parentBox,index,total){
+    const sourceBox=endpointBox(flowItem.from,flowItem,parentBox),targetBox=endpointBox(flowItem.to,flowItem,parentBox);
+    if(!sourceBox||!targetBox)return [];
+    const sourceCentre={x:sourceBox.cx,y:sourceBox.cy},targetCentre={x:targetBox.cx,y:targetBox.cy};
+    const start=edgePoint(sourceBox,targetCentre),end=edgePoint(targetBox,sourceCentre);
+    const aligned=Math.abs(start.x-end.x)<20||Math.abs(start.y-end.y)<20;
+    const direct=flowItem.via==="direct"||(flowItem.via!=="shared"&&aligned);
+    if(direct){
+      if(aligned)return [start,end];
+      return Math.abs(start.x-end.x)>=Math.abs(start.y-end.y)
+        ?[start,{x:end.x,y:start.y},end]
+        :[start,{x:start.x,y:end.y},end];
+    }
+    const busBox=relativeBox($("wireInternalBus"),parentBox),offset=(index-(total-1)/2)*5,busX=busBox.cx+offset;
+    const excluded=new Set([flowItem.from,flowItem.to]);
+    const sourceBus={x:busX,y:start.y},targetBus={x:busX,y:end.y};
+    const first=findInternalRoute(start,sourceBus,parentBox,excluded,busX)||[start,sourceBus];
+    const second=findInternalRoute(targetBus,end,parentBox,excluded,busX)||[targetBus,end];
+    return compressRoute([...first,sourceBus,targetBus,...second.slice(1)]);
+  }
+
+  function externalFlowPoints(flowItem,parentBox){
+    const externalName=flowItem.from==="ram"||flowItem.to==="ram"?"ram":"io";
+    const componentName=flowItem.from===externalName?flowItem.to:flowItem.from;
+    const componentBox=endpointBox(componentName,flowItem,parentBox),externalBox=endpointBox(externalName,flowItem,parentBox);
+    const cpuBox=relativeBox($("cpuBoard"),parentBox),ramCardBox=relativeBox($("ramCard"),parentBox);
+    const busName=flowItem.bus||flowItem.kind;
+    const lane=$(busName+"Bus")?.querySelector(".bus-line");
+    if(!componentBox||!externalBox||!lane)return [];
+    const laneBox=relativeBox(lane,parentBox),laneY=laneBox.cy;
+    const horizontal=ramCardBox.left>cpuBox.right+20;
+    const externalRight=externalBox.cx>cpuBox.cx;
+    const component=edgePoint(componentBox,horizontal?{x:externalRight?cpuBox.right:cpuBox.left,y:laneY}:{x:laneBox.cx,y:laneY});
+    const external=edgePoint(externalBox,{x:laneBox.cx,y:laneY});
+    let cpuToExternal;
+    if(horizontal){
+      const cpuGateX=externalRight?cpuBox.right+2:cpuBox.left-2;
+      const externalGateX=externalRight?externalBox.left-2:externalBox.right+2;
+      cpuToExternal=[component,{x:cpuGateX,y:component.y},{x:cpuGateX,y:laneY},{x:externalGateX,y:laneY},{x:externalGateX,y:external.y},external];
+    }else{
+      const externalBelow=externalBox.cy>cpuBox.cy;
+      const cpuGateY=externalBelow?cpuBox.bottom+2:cpuBox.top-2;
+      const externalGateY=externalBelow?externalBox.top-2:externalBox.bottom+2;
+      const entryX=laneBox.left+Math.min(14,laneBox.width*.15),exitX=laneBox.right-Math.min(14,laneBox.width*.15);
+      cpuToExternal=[component,{x:component.x,y:cpuGateY},{x:entryX,y:cpuGateY},{x:entryX,y:laneY},{x:exitX,y:laneY},{x:exitX,y:externalGateY},{x:external.x,y:externalGateY},external];
+    }
+    return flowItem.from===externalName?[...cpuToExternal].reverse():cpuToExternal;
+  }
+
+  function appendUnifiedFlow(flowItem,parentBox,index,total){
+    const external=[flowItem.from,flowItem.to].some(endpoint=>endpoint==="ram"||endpoint==="io");
+    const points=external?externalFlowPoints(flowItem,parentBox):internalFlowPoints(flowItem,parentBox,index,total);
+    const pathData=roundedSystemPath(points);
+    if(!pathData)return;
+    const group=$("systemFlowPaths"),kind=flowItem.kind||"internal",pathId=`systemFlow-${index}`;
+
+    const halo=document.createElementNS(SVG_NS,"path");
+    halo.setAttribute("class",`system-flow-halo ${kind}`);
+    halo.setAttribute("d",pathData);
+    group.appendChild(halo);
+
+    const path=document.createElementNS(SVG_NS,"path");
+    path.id=pathId;
+    path.setAttribute("class",`system-flow-path ${kind}`);
+    path.setAttribute("d",pathData);
+    path.setAttribute("marker-end","url(#systemArrowUnified)");
+    group.appendChild(path);
+
+    const start=points[0],end=points[points.length-1];
+    [start,end].forEach((point,pointIndex)=>{
+      const dot=document.createElementNS(SVG_NS,"circle");
+      dot.setAttribute("class",`system-flow-end ${kind}`);
+      dot.setAttribute("cx",point.x);dot.setAttribute("cy",point.y);
+      dot.setAttribute("r",pointIndex?"4.2":"3.7");
+      group.appendChild(dot);
+    });
+
+    if(!reduceMotion){
+      const pulse=document.createElementNS(SVG_NS,"circle");
+      pulse.setAttribute("class",`system-flow-pulse ${kind}`);
+      pulse.setAttribute("r",kind==="data"?"4.8":"4.2");
+      const motion=document.createElementNS(SVG_NS,"animateMotion");
+      motion.setAttribute("dur",kind==="control"||kind==="clock"?"1.18s":".98s");
+      motion.setAttribute("repeatCount","indefinite");
+      const mpath=document.createElementNS(SVG_NS,"mpath");
+      mpath.setAttribute("href",`#${pathId}`);
+      motion.appendChild(mpath);pulse.appendChild(motion);group.appendChild(pulse);
+    }
+  }
+
+  function fallbackBusFlows(){
+    const flows=[];
+    if(visual.buses.address)flows.push(flow("regMAR","ram",visual.buses.address.value,"address",{bus:"address",address:visual.memoryAddress}));
+    if(visual.buses.data){
+      const state=visual.buses.data;
+      flows.push(state.direction==="to-cpu"
+        ?flow("ram","regMDR",state.value,"data",{bus:"data",address:visual.memoryAddress})
+        :flow("regMDR","ram",state.value,"data",{bus:"data",address:visual.memoryAddress}));
+    }
+    if(visual.buses.control)flows.push(flow("unitCU","ram",visual.buses.control.value,"control",{bus:"control",address:visual.memoryAddress}));
+    return flows;
+  }
+
+  function renderSystemFlow(){
+    flowRenderFrame=0;
+    const overlay=$("systemFlowOverlay"),group=$("systemFlowPaths"),grid=$("computerGrid");
+    if(!overlay||!group||!grid)return;
+    group.replaceChildren();
+    const parentBox=grid.getBoundingClientRect();
+    if(parentBox.width<=0||parentBox.height<=0)return;
+    overlay.setAttribute("viewBox",`0 0 ${parentBox.width} ${parentBox.height}`);
+    const flows=visual.flows?.length?visual.flows:fallbackBusFlows();
+    flows.forEach((flowItem,index)=>appendUnifiedFlow(flowItem,parentBox,index,flows.length));
+  }
+
+  function scheduleSystemFlow(){
+    if(flowRenderFrame)cancelAnimationFrame(flowRenderFrame);
+    flowRenderFrame=requestAnimationFrame(renderSystemFlow);
+  }
+
+  function renderVisual(){
+    document.querySelectorAll(".diagram-component")
+      .forEach(component=>component.classList.remove("active","changed"));
+    visual.active.forEach(id=>$(id)?.classList.add("active"));
+    visual.changed.forEach(id=>$(id)?.classList.add("changed"));
+
+    document.querySelectorAll(".cpu-diagram .data-path,.cpu-diagram .control-path,.cpu-diagram .clock-path")
+      .forEach(path=>path.classList.remove("active"));
+
+    const ids=new Set([...visual.active,...visual.changed]);
+    const connectorMap={
+      regACC:"wireACC",regIX:"wireIX",unitALU:"wireALU",regPC:"wirePC",
+      regMAR:"wireMAR",regMDR:"wireMDR",regCIR:"wireCIR"
+    };
+    const explicitPaths=new Set(visual.paths||[]);
+    let connected=[...ids].map(id=>connectorMap[id]).filter(Boolean);
+    if(explicitPaths.has("wirePcMarDirect"))connected=connected.filter(id=>!["wirePC","wireMAR"].includes(id));
+    if(explicitPaths.has("wireMdrCirDirect"))connected=connected.filter(id=>!["wireMDR","wireCIR"].includes(id));
+    // External bus transfers now use one continuous register-to-RAM overlay.
+    // Do not also light the internal register stubs, which would imply that
+    // MAR and MDR are placing the same value on the CPU's internal path.
+    if(visual.buses.address)connected=connected.filter(id=>id!=="wireMAR");
+    if(visual.buses.data)connected=connected.filter(id=>id!=="wireMDR");
+    const paths=new Set([...explicitPaths,...connected]);
+
+    // The vertical line is the shared internal data path. It glows when a value
+    // moves between two connected components rather than implying a direct wire.
+    if(connected.length>=2)paths.add("wireInternalBus");
+
+    // These Cambridge-style routes are distinct from the shared data path.
+    if(ids.has("unitALU")&&ids.has("regSTATUS"))paths.add("wireAluStatus");
+    if(ids.has("unitCU")&&ids.has("regSTATUS"))paths.add("wireStatusCu");
+    if(ids.has("unitCU")&&ids.has("regCIR"))paths.add("wireCirCu");
+
+    // The complete control network stays faint. Only the CU route involved in
+    // this micro-operation glows, so students can distinguish control from data.
+    const controlMap={
+      regACC:"ctrlACC",regIX:"ctrlIX",regSTATUS:"ctrlSTATUS",unitALU:"ctrlALU",
+      regPC:"ctrlPC",regMAR:"ctrlMAR",regMDR:"ctrlMDR",regCIR:"ctrlCIR"
+    };
+    const controlled=[...ids].map(id=>controlMap[id]).filter(Boolean);
+    controlled.forEach(id=>paths.add(id));
+    if(controlled.length)$("unitCU")?.classList.add("active");
+
+    // The old short external SVG stubs remain as the static Cambridge diagram.
+    // The animated state is drawn by renderSystemFlow as one unbroken route.
+
+    if(tickCount>0||ids.size||visual.buses.address||visual.buses.data||visual.buses.control){
+      paths.add("wireClockCu");
+      $("unitCLOCK")?.classList.add(cpu.halted?"changed":"active");
+    }
+
+    paths.forEach(id=>$(id)?.classList.add("active"));
+
+    $("cpuBoard").classList.toggle("internal-active",Boolean(visual.internalValue)&&!(visual.flows?.length));
+    $("internalValue").textContent=visual.internalValue||"";
+
+    ["address","data","control"].forEach(name=>{
+      const element=$(name+"Bus");
+      element.classList.remove("active","to-ram","to-cpu");
+      const state=visual.buses[name];
+      element.querySelector(".bus-value").textContent=state?.value||"";
+      if(state)element.classList.add("active",state.direction);
+    });
+    scheduleSystemFlow();
+  }
+
+  function renderRAM(){
+    if(!memory.length){
+      $("ramScroll").innerHTML=`<div class="translation-empty">Valid code will appear here.</div>`;
+      return;
+    }
+    const active=visual.memoryAddress;
+    const dynamicHigh=Math.max(compilation.highestAddress,active??0,currentInstructionAddress??0);
+    const highest=Math.min(255,Math.max(7,dynamicHigh+3));
+    let html="";
+    for(let address=0;address<=highest;address++){
+      const cell=memory[address];
+      const isActive=address===active;
+      const changed=isActive&&visual.memoryChanged;
+      const type=cell.modified?"modified":cell.kind==="instruction"?"code":cell.kind==="data"?"data":"";
+      const locationName=cell.label||String(address);
+      const locationNote=cell.label?`location ${address}`:"location";
+      const content=cell.kind==="empty"?"—":cell.kind==="instruction"?(cell.source||decodedText(decodeWord(cell.word))):String(cell.word&255);
+      const typeText=cell.modified?"UPDATED":cell.kind==="instruction"?"INSTRUCTION":cell.kind==="data"?"DATA":"EMPTY";
+      const meta=cell.modified?"value written by STO":cell.kind==="instruction"?"stored instruction":cell.kind==="data"?"stored value":"unused";
+      html+=`<div class="ram-row ${isActive?"active":""} ${changed?"changed":""}" data-address="${address}"><div class="ram-address">${escapeHtml(locationName)}<small>${escapeHtml(locationNote)}</small></div><div class="ram-content"><code class="ram-word">${escapeHtml(content)}</code><div class="ram-meta"><span class="ram-type ${type}">${typeText}</span><span>${escapeHtml(meta)}</span></div></div></div>`;
+    }
+    const scroll=$("ramScroll");scroll.innerHTML=html;
+    if(Number.isInteger(active)){const row=scroll.querySelector(`[data-address="${active}"]`);if(row){const top=row.offsetTop,bottom=top+row.offsetHeight;if(top<scroll.scrollTop)scroll.scrollTop=top;else if(bottom>scroll.scrollTop+scroll.clientHeight)scroll.scrollTop=Math.max(0,bottom-scroll.clientHeight)}}
+  }
+
+  function renderIO(){$("outputConsole").textContent=outputText||"—";const total=Array.from($("inputBuffer").value).length;$("inputNote").textContent=`${inputCursor} of ${total} character${total===1?"":"s"} consumed${waitingForInput?" · IN is waiting":""}`}
+  function renderPhases(){const phase=$("microPhase").textContent.toLowerCase();["fetch","decode","execute"].forEach(name=>$("phase"+name[0].toUpperCase()+name.slice(1)).classList.toggle("active",phase===name))}
+  function renderControls(){const valid=Boolean(compilation?.valid);$("stepButton").disabled=!valid||Boolean(runtimeError)||Boolean(cpu?.halted)||running;$("runButton").disabled=!valid||Boolean(runtimeError)||Boolean(cpu?.halted);$("resetButton").disabled=!valid;$("runButton").querySelector("span").textContent=running?"Pause":"Run"}
+  function renderStatus(){
+    const status=$("runStatus");status.className="status-pill";let text="Ready";
+    if(!compilation?.valid)text="Code error";else if(runtimeError){text="Runtime error";status.classList.add("error")}else if(waitingForInput)text="Waiting for input";else if(cpu.halted){text="Complete";status.classList.add("complete")}else if(running)text="Running";else if(tickCount>0)text="Paused";status.textContent=text;
+    $("tickStatus").textContent=`Tick ${tickCount}`;$("instructionStatus").textContent=`Instruction ${instructionCount}`;$("operationTick").textContent=`Tick ${tickCount}`;$("operationInstruction").textContent=cpu.halted?`${instructionCount} completed`:`executing instruction ${instructionCount+1}`;
+    $("sourceStatus").textContent=compilation?.valid?`${compilation.words.length} location${compilation.words.length===1?"":"s"} · ${compilation.symbols.size} label${compilation.symbols.size===1?"":"s"}`:`${compilation?.errors.length||0} issue${compilation?.errors.length===1?"":"s"}`;
+    $("assemblySummary").innerHTML=`<strong>${compilation?.words.length||0}</strong> memory location${compilation?.words.length===1?"":"s"}`;$("entrySummary").textContent=compilation?.valid?`Entry location ${addressText(compilation.entry)}`:"Entry —";
+  }
+  function renderValidation(){
+    const button=$("validationButton"),tooltip=$("validationTooltip");button.className="validation-button";
+    if(runtimeError){button.classList.add("bad");button.textContent="!";button.setAttribute("aria-label","Runtime error");tooltip.innerHTML=`<strong>Runtime error</strong><span>${escapeHtml(runtimeError)}</span><br><span>Reset the CPU after fixing the cause.</span>`;return}
+    if(!compilation?.valid){button.classList.add("bad");button.textContent="!";const count=compilation?.errors.length||0;button.setAttribute("aria-label",`${count} code error${count===1?"":"s"}`);tooltip.innerHTML=`<strong>${count} code issue${count===1?"":"s"}</strong><ul>${(compilation?.errors||[]).slice(0,4).map(error=>`<li>Line ${error.line}: ${escapeHtml(error.message)}</li>`).join("")}</ul>${count>4?`<span>And ${count-4} more.</span>`:""}`;return}
+    button.classList.add("good");button.textContent="✓";button.setAttribute("aria-label","Code is valid");const state=cpu.halted?"Program complete":waitingForInput?"Code valid; execution is waiting for input":"Ready to run";tooltip.innerHTML=`<strong>${state}</strong><span>Pass 1 recorded ${compilation.symbols.size} label${compilation.symbols.size===1?"":"s"}; Pass 2 assigned ${compilation.words.length} numbered location${compilation.words.length===1?"":"s"}.</span>`;
+  }
+  function renderAll(){renderRegisters();renderRAM();renderVisual();renderTranslation();renderIO();renderPhases();renderStatus();renderValidation();renderControls();updateActiveSourceLine()}
+
+  function focusFirstError(){const error=compilation?.errors?.[0];if(!error)return;const lines=$("sourceEditor").value.split("\n");let start=0;for(let i=0;i<error.line-1;i++)start+=lines[i].length+1;const end=start+(lines[error.line-1]?.length||0);$("sourceEditor").focus();$("sourceEditor").setSelectionRange(start,end);$("sourceEditor").scrollTop=Math.max(0,(error.line-4)*22);syncEditorScroll()}
+
+  $("exampleSelect").addEventListener("change",event=>{$("sourceEditor").value=EXAMPLES[event.target.value];compileSource({preserveScroll:false})});
+  $("sourceEditor").addEventListener("input",()=>{clearTimeout(compileTimer);compileTimer=setTimeout(()=>compileSource({preserveScroll:true}),110);renderEditorLines()});
+  $("sourceEditor").addEventListener("scroll",syncEditorScroll);
+  $("sourceEditor").addEventListener("keydown",event=>{if(event.key==="Tab"){event.preventDefault();const editor=$("sourceEditor"),start=editor.selectionStart,end=editor.selectionEnd;editor.setRangeText("    ",start,end,"end");editor.dispatchEvent(new Event("input",{bubbles:true}))}if((event.ctrlKey||event.metaKey)&&event.key==="Enter"){event.preventDefault();toggleRun()}});
+  $("stepButton").addEventListener("click",stepMicro);$("runButton").addEventListener("click",toggleRun);$("resetButton").addEventListener("click",resetRuntime);$("validationButton").addEventListener("click",focusFirstError);
+  window.addEventListener("resize",scheduleSystemFlow);
+  $("ramScroll").addEventListener("scroll",scheduleSystemFlow);
+  $("cpuBoard").addEventListener("scroll",scheduleSystemFlow);
+  $("inputBuffer").addEventListener("input",event=>{const clean=event.target.value.replace(/[^\x09\x0A\x20-\x7E]/g,"");if(clean!==event.target.value)event.target.value=clean;if(waitingForInput&&Array.from(clean)[inputCursor]!==undefined){waitingForInput=false;cpu.CU="input ready";setOperation("execute","IN input ready","Step or Run to consume the next character.")}renderAll()});
+
+  window.__assemblyLab={
+    getState:()=>({valid:compilation?.valid,errors:compilation?.errors.map(e=>({...e})),cpu:{...cpu,STATUS:{...cpu.STATUS}},tickCount,instructionCount,halted:cpu?.halted,runtimeError,outputText,inputCursor,flows:(visual.flows||[]).map(item=>({...item})),memory:memory.map(cell=>cell?{...cell}:cell)}),
+    setSource:source=>{$("sourceEditor").value=source;compileSource({preserveScroll:false})},step:stepMicro,reset:resetRuntime,assemble
+  };
+
+  $("sourceEditor").value=EXAMPLES.add;compilation=assemble($("sourceEditor").value);resetRuntime();renderEditorLines();syncEditorScroll();
+})();
+</script>
+</body>
+</html>

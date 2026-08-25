@@ -1,0 +1,1026 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Parity &amp; ARQ Transmission Lab</title>
+<style>
+:root{
+  --bg:#f3f5f7;--panel:#fff;--ink:#1d2730;--muted:#697680;--line:#d8e0e6;
+  --accent:#2865d8;--accent-soft:#edf3ff;--parity:#b7772d;--parity-soft:#fff4e6;
+  --column-parity:#287970;--column-parity-soft:#e9f7f4;
+  --parity-muted:#eef1f3;--parity-muted-ink:#89949c;
+  --good:#237449;--good-soft:#edf8f1;--bad:#b44338;--bad-soft:#fff0ee;
+  --warn:#9a5a16;--warn-soft:#fff6e7;--cell:31px
+}
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif
+}
+main{width:min(1180px,calc(100% - 24px));margin:18px auto 40px}
+h1{margin:0;font-size:27px;letter-spacing:-.02em}
+.sub{margin:5px 0 14px;color:var(--muted);font-size:13px;line-height:1.45}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px}
+
+.controls{
+  display:grid;grid-template-columns:minmax(190px,1.35fr) 145px 140px minmax(180px,.9fr) auto;
+  gap:10px;align-items:end;padding:11px 12px
+}
+.field{min-width:0}
+.field label{display:block;margin-bottom:4px;color:var(--muted);font-size:11px}
+input[type=text],select{
+  width:100%;height:36px;border:1px solid var(--line);border-radius:8px;background:#fff;
+  color:var(--ink);padding:0 9px;font:inherit
+}
+.switch-line{min-height:36px;display:flex;align-items:center;gap:7px;font-size:12px}
+button{
+  height:36px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);
+  padding:0 11px;font:inherit;cursor:pointer;white-space:nowrap
+}
+button:hover:not(:disabled){border-color:#9daab4}
+button:disabled{opacity:.45;cursor:not-allowed}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700}
+
+.meta{
+  border-top:1px solid var(--line);padding:8px 12px;min-height:44px;
+  display:flex;align-items:center;gap:10px 16px;flex-wrap:wrap;font-size:12px
+}
+#messageMeta{color:var(--muted)}
+.protocol{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.protocol-label{color:var(--muted)}
+.parity-legend{margin-left:auto;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.parity-key{display:inline-flex;align-items:center;gap:5px;color:var(--muted);font-size:9px;font-weight:700}
+.parity-key::before{content:"";width:10px;height:10px;border:1px solid;border-radius:3px}
+.parity-key.row::before{background:var(--parity-soft);border-color:#d9ab72}
+.parity-key.column::before{background:var(--column-parity-soft);border-color:#70b5ad}
+.status-chip{
+  display:inline-flex;align-items:center;min-height:26px;padding:3px 8px;border-radius:999px;
+  font-weight:750;border:1px solid var(--line);background:#f7f9fa
+}
+.status-chip.data{color:var(--accent);background:var(--accent-soft);border-color:#cad9fa}
+.status-chip.ack{color:var(--good);background:var(--good-soft);border-color:#cce9d7}
+.status-chip.nak{color:var(--bad);background:var(--bad-soft);border-color:#f0ccc7}
+.status-chip.timeout{color:var(--warn);background:var(--warn-soft);border-color:#ecd8ae}
+.arrow{color:#89949c;font-weight:800}
+
+.stage-panel{margin-top:12px;padding:13px}
+.transmission-panel{margin-top:12px;padding:0;overflow:hidden}
+.transmission-layout{display:grid;grid-template-columns:minmax(0,4fr) minmax(190px,1fr);min-height:178px}
+.transmission-main{min-width:0;padding:12px 14px 13px}
+.transmission-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.transmission-title{font-size:13px;font-weight:800}
+#phaseLabel{margin-top:2px;color:var(--muted);font-size:11px}
+.stream-preview{
+  max-width:58%;padding:5px 8px;border-radius:7px;background:#f3f6f8;color:#53636f;
+  font:700 10px/1.35 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+}
+.transmission-track{position:relative;height:62px;margin-top:7px}
+.track-line{position:absolute;left:7%;right:7%;top:29px;height:3px;border-radius:3px;background:#d9e1e7}
+.track-node{
+  position:absolute;top:19px;z-index:2;width:21px;height:21px;border:4px solid #fff;border-radius:50%;
+  background:#a9b5be;box-shadow:0 0 0 2px #cbd4da
+}
+.track-node.sender{left:5%}.track-node.channel{left:50%;transform:translateX(-50%);background:var(--accent);box-shadow:0 0 0 2px #9db9ef}.track-node.receiver{right:5%}
+.track-label{position:absolute;top:45px;transform:translateX(-50%);color:var(--muted);font-size:9px;font-weight:750}
+.track-label.sender{left:6%}.track-label.channel{left:50%}.track-label.receiver{left:94%}
+.packet{
+  position:absolute;left:6%;top:15px;z-index:3;display:inline-flex;align-items:center;gap:5px;
+  min-height:29px;padding:4px 9px;border:1px solid #9db9ef;border-radius:999px;
+  background:var(--accent);color:#fff;box-shadow:0 3px 9px rgba(31,65,110,.22);
+  font-size:10px;font-weight:850;opacity:0;transform:translateX(-50%);
+  transition:left .58s cubic-bezier(.3,.7,.2,1),opacity .2s,transform .2s
+}
+.packet.visible{opacity:1}.packet.at-channel{left:50%}.packet.at-receiver{left:94%}
+.packet.reply{left:94%;background:var(--good);border-color:var(--good)}
+.packet.reply.nak{background:var(--bad);border-color:var(--bad)}
+.packet.reply.timeout{background:var(--warn);border-color:var(--warn)}
+.packet.reply.at-channel{left:50%}.packet.reply.at-sender{left:6%}
+.packet.lost{opacity:0;transform:translate(-50%,8px) scale(.75)}
+.packet-code{font:800 9px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;opacity:.84}
+.transmission-rail{
+  min-width:0;padding:11px;border-left:1px solid var(--line);background:#f8fafb;
+  display:flex;flex-direction:column;gap:9px
+}
+.transmission-rail button{width:100%}
+.rail-result{padding:8px;border:1px solid var(--line);border-radius:9px;background:#fff}
+.rail-result.good{border-color:#b9ddc6;background:var(--good-soft)}
+.rail-result.bad{border-color:#ecc1bc;background:var(--bad-soft)}
+.rail-result.warn{border-color:#ead3a8;background:var(--warn-soft)}
+.rail-result .result-title{font-size:13px}
+.rail-result .result-detail{font-size:10px;line-height:1.35}
+.transmission-rail .decoded{margin-top:0;grid-template-columns:1fr;gap:2px;padding:8px}
+.transmission-rail .decoded-label{margin-top:3px}
+.transmission-rail .decoded-note{grid-column:1;font-size:9px}
+.transmission-rail .decoded-value{font-size:13px}
+.transmission-rail .decoded-original{font-size:10px}
+
+.stage-grid{
+  display:grid;grid-template-columns:minmax(0,1fr) 22px minmax(0,1fr) 22px minmax(0,1fr);
+  gap:6px;align-items:start
+}
+.flow-arrow{color:#98a3ac;text-align:center;font-size:22px;padding-top:145px}
+.stage{min-width:0;padding:9px;border:1px solid var(--line);border-radius:11px;background:#f8fafb}
+.stage.locked-stage{border-color:#d4dce2;background:#f5f7f8}
+.stage.locked-stage.checking{border-color:#d3a562;background:var(--parity-soft);box-shadow:0 0 0 3px rgba(183,119,45,.10)}
+.stage.editable-stage{
+  border:2px solid #6f9eec;background:linear-gradient(180deg,#f4f8ff,#edf4ff);
+  box-shadow:0 4px 14px rgba(40,101,216,.10)
+}
+.stage-head{
+  height:42px;margin-bottom:7px;display:flex;align-items:center;justify-content:space-between;gap:8px
+}
+.stage-title{font-size:15px;font-weight:750}
+.stage-title-line{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.access-chip{
+  display:inline-flex;align-items:center;min-height:20px;padding:2px 6px;border:1px solid #ccd5dc;
+  border-radius:999px;background:#eef2f4;color:#63717b;font-size:8px;font-weight:850;letter-spacing:.06em
+}
+.access-chip.editable{border-color:#91b2ed;background:#dce9ff;color:#1e58bb}
+.stage-note{color:var(--muted);font-size:10px;text-align:right;line-height:1.25}
+
+.blocks{display:grid;gap:8px;align-content:start}
+.block-card{
+  border:1px solid var(--line);border-radius:10px;background:#fbfcfd;padding:7px 5px;min-width:0
+}
+.block-title{
+  min-height:25px;padding:0 4px 4px;display:flex;justify-content:space-between;align-items:center;
+  gap:8px;color:var(--muted);font-size:10px
+}
+.block-title strong{color:var(--ink);font-size:11px}
+.block-shell{display:flex;justify-content:center;overflow:hidden;min-width:0}
+
+.bit-block{
+  display:grid;grid-template-columns:40px repeat(8,var(--cell)) 19px;
+  gap:2px;width:max-content;align-items:center;justify-items:center
+}
+.bit-block.block-mode{grid-template-rows:18px repeat(var(--rows),var(--cell)) var(--cell) 19px}
+.bit-block.row-mode{grid-template-rows:18px repeat(var(--rows),var(--cell))}
+.col-label,.row-label{color:var(--muted);font-size:9px;user-select:none}
+.col-label.parity-column-label{color:var(--parity);font-weight:850}
+.row-label{
+  width:38px;text-align:right;padding-right:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap
+}
+.row-label.parity-label{color:var(--column-parity);font-weight:800}
+
+.bit{
+  width:var(--cell);height:var(--cell);display:grid;place-items:center;border:1px solid #bfc9d1;
+  border-radius:6px;background:#fff;color:#33414d;
+  font:800 13px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  user-select:none;transition:.12s
+}
+.bit.parity-bit{background:var(--parity-soft);color:var(--parity);border-color:#e4c59e}
+.bit.parity-byte{
+  background:var(--column-parity-soft);color:var(--column-parity);border-color:#9bcfc9
+}
+.bit.editable{cursor:pointer}
+.bit.locked-bit{background:#f1f4f6;border-color:#d1d9df;color:#596670;cursor:not-allowed}
+.bit.locked-bit.parity-bit{background:var(--parity-soft);border-color:#e4c59e;color:var(--parity)}
+.bit.locked-bit.parity-byte{background:var(--column-parity-soft);border-color:#9bcfc9;color:var(--column-parity)}
+.bit.editable{
+  background:#fff;border:2px solid #729de7;color:#174fAD;
+  box-shadow:0 1px 3px rgba(40,101,216,.13);cursor:pointer
+}
+.bit.editable.parity-bit{background:#fffaf3;color:var(--parity);box-shadow:inset 0 0 0 1px #f0d1a9,0 1px 3px rgba(40,101,216,.13)}
+.bit.editable.parity-byte{background:#f2fbf9;color:var(--column-parity);box-shadow:inset 0 0 0 1px #a9d8d2,0 1px 3px rgba(40,101,216,.13)}
+.bit.editable:hover,.bit.editable:focus-visible{transform:translateY(-2px);border-color:#174fae;box-shadow:0 4px 8px rgba(40,101,216,.2);outline:none}
+body.busy .bit.editable{pointer-events:none;opacity:.68}
+.bit.flipped{
+  background:var(--bad-soft)!important;border-color:var(--bad)!important;color:var(--bad)!important;
+  box-shadow:inset 0 0 0 1px var(--bad)
+}
+.bit.blank{background:#e8edf1;border-color:#e8edf1;color:transparent}
+.check{
+  width:17px;height:17px;display:grid;place-items:center;border-radius:50%;
+  border:1px solid #cad3da;color:#8a969f;font-size:9px;font-weight:850
+}
+.check.pass{color:var(--good);border-color:#a9d5b9;background:var(--good-soft)}
+.check.fail{color:var(--bad);border-color:#e1aaa4;background:var(--bad-soft)}
+
+.placeholder{
+  min-height:120px;display:grid;place-items:center;color:var(--muted);font-size:12px;
+  border:1px dashed var(--line);border-radius:10px
+}
+.channel-tools{
+  min-height:40px;margin-top:8px;display:flex;justify-content:center;gap:6px;flex-wrap:wrap
+}
+.channel-tools button{height:31px;font-size:11px;padding:0 8px}
+.stage-tools{min-height:32px;margin:0 0 8px;justify-content:flex-start}
+
+.decoded{
+  min-height:60px;margin-top:8px;padding:8px 10px;border:1px solid var(--line);
+  border-radius:9px;background:#fbfcfd;display:grid;grid-template-columns:auto 1fr;gap:4px 9px;align-items:center
+}
+.decoded-label{color:var(--muted);font-size:10px}
+.decoded-value{
+  font:800 15px/1.2 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  letter-spacing:.05em;overflow-wrap:anywhere
+}
+.decoded-value.changed{color:var(--warn)}
+.decoded-original{
+  font:700 11px/1.2 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  color:var(--muted);overflow-wrap:anywhere
+}
+.decoded-note{grid-column:1/-1;color:var(--muted);font-size:10px;line-height:1.35}
+
+.result-title{font-weight:800;font-size:16px}
+.result-detail{margin-top:3px;color:var(--muted);font-size:12px;line-height:1.4}
+#arqButton{min-width:150px}
+.arq-explainer{
+  margin-top:10px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;
+  display:grid;grid-template-columns:auto 1fr;gap:9px;align-items:start;font-size:11px;line-height:1.4
+}
+.arq-explainer strong{color:var(--accent)}
+.challenge{
+  margin-top:10px;padding:10px 12px;border-left:3px solid var(--accent);
+  background:var(--accent-soft);border-radius:7px;font-size:12px;line-height:1.4
+}
+.challenge strong{display:block;margin-bottom:2px}
+.footer{margin-top:8px;color:var(--muted);font-size:10px;line-height:1.35}
+
+@media(max-width:1120px){
+  .controls{grid-template-columns:1fr 1fr 1fr}
+  .controls .switch-line{grid-column:1/3}
+  .controls>button{grid-column:3}
+  .stage-grid{grid-template-columns:1fr}
+  .flow-arrow{transform:rotate(90deg);padding:0;height:24px}
+  .stage{width:min(100%,520px);margin:auto}
+  .stage-head{max-width:470px;margin-left:auto;margin-right:auto}
+  .blocks{max-width:470px;margin:auto}
+}
+@media(max-width:900px){
+  .transmission-layout{grid-template-columns:1fr}
+  .transmission-rail{border-left:0;border-top:1px solid var(--line);display:grid;grid-template-columns:1fr 1fr;align-items:start}
+  .transmission-rail .decoded{grid-column:2;grid-row:1/4}
+}
+@media(max-width:650px){
+  main{width:min(100% - 12px,1180px);margin-top:8px}
+  .controls{grid-template-columns:1fr 1fr}
+  .controls .switch-line,.controls>button{grid-column:1/-1}
+  #arqButton{width:100%}
+  .transmission-head{display:block}.stream-preview{max-width:none;margin-top:7px}
+  .transmission-rail{display:flex}
+}
+@media(max-width:390px){
+  :root{--cell:27px}
+  .bit-block{grid-template-columns:34px repeat(8,var(--cell)) 16px;gap:1px}
+  .row-label{width:32px;font-size:8px}
+  .col-label{font-size:8px}
+  .block-card{padding-left:3px;padding-right:3px}
+}
+</style>
+</head>
+<body>
+<main>
+<h1>Parity &amp; ARQ Transmission Lab</h1>
+<div class="sub">
+  Change bits while a frame is crossing the channel. Watch parity detect errors and ARQ decide whether to resend.
+</div>
+
+<section class="panel">
+  <div class="controls">
+    <div class="field">
+      <label for="message">Message · 1–16 characters</label>
+      <input id="message" type="text" value="NETWORK TEST" maxlength="16" autocomplete="off" spellcheck="false">
+    </div>
+    <div class="field">
+      <label for="scheme">Parity scheme</label>
+      <select id="scheme">
+        <option value="row">Parity rows</option>
+        <option value="block" selected>Parity blocks</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="parityMode">Parity rule</label>
+      <select id="parityMode">
+        <option value="even" selected>Even parity</option>
+        <option value="odd">Odd parity</option>
+      </select>
+    </div>
+    <label class="switch-line"><input id="dropReply" type="checkbox"> Lose the next ACK or NAK</label>
+    <button id="resetAll">Reset transmission</button>
+  </div>
+  <div class="meta">
+    <span id="messageMeta"></span>
+    <div id="protocol" class="protocol"></div>
+    <div class="parity-legend" aria-label="Parity bit colors">
+      <span class="parity-key row">Row parity · P column</span>
+      <span id="columnParityKey" class="parity-key column">Column parity · parity byte</span>
+    </div>
+  </div>
+</section>
+
+<section class="panel transmission-panel" aria-live="polite">
+  <div class="transmission-layout">
+    <div class="transmission-main">
+      <div class="transmission-head">
+        <div>
+          <div class="transmission-title">Live transmission line</div>
+          <div id="phaseLabel">Frame encoded. Edit the blue channel copy or transmit it unchanged.</div>
+        </div>
+        <div id="streamPreview" class="stream-preview" title="Current transmitted bitstream"></div>
+      </div>
+      <div class="transmission-track" aria-hidden="true">
+        <div class="track-line"></div>
+        <div class="track-node sender"></div><div class="track-label sender">SENDER</div>
+        <div class="track-node channel"></div><div class="track-label channel">CHANNEL</div>
+        <div class="track-node receiver"></div><div class="track-label receiver">RECEIVER</div>
+        <div id="framePacket" class="packet"><span>DATA</span><span id="frameCode" class="packet-code"></span></div>
+        <div id="replyPacket" class="packet reply"><span id="replyCode">ACK</span></div>
+      </div>
+    </div>
+    <aside class="transmission-rail" aria-label="Transmit and inspect received data">
+      <button id="deliver" class="primary">Transmit DATA frame</button>
+      <div id="resultPanel" class="rail-result">
+        <div id="resultTitle" class="result-title">Ready to transmit</div>
+        <div id="resultDetail" class="result-detail">Change a blue in-transit bit, or send the unaltered frame.</div>
+      </div>
+      <button id="arqButton" hidden>ARQ resend</button>
+      <div class="decoded">
+        <span class="decoded-label">Decoded text</span>
+        <span id="decodedText" class="decoded-value">—</span>
+        <span class="decoded-label">Original</span>
+        <span id="originalText" class="decoded-original">NETWORK TEST</span>
+        <span id="decodedNote" class="decoded-note">Transmit the frame to decode the received 7-bit characters.</span>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<section class="panel stage-panel">
+  <div class="stage-grid">
+    <div class="stage locked-stage">
+      <div class="stage-head">
+        <div class="stage-title-line"><div class="stage-title">Sender</div><span class="access-chip">LOCKED SOURCE</span></div>
+        <div class="stage-note">parity generated<br>before transmission</div>
+      </div>
+      <div id="senderBlocks" class="blocks"></div>
+    </div>
+
+    <div class="flow-arrow">→</div>
+
+    <div class="stage editable-stage">
+      <div class="stage-head">
+        <div class="stage-title-line"><div class="stage-title">In transit</div><span class="access-chip editable">EDITABLE</span></div>
+        <div class="stage-note">only this blue copy<br>can be changed</div>
+      </div>
+      <div class="channel-tools stage-tools">
+        <button id="randomOne">Flip 1 random bit</button>
+        <button id="undoNoise">Undo</button>
+        <button id="clearNoise">Clear errors</button>
+      </div>
+      <div id="channelBlocks" class="blocks"></div>
+    </div>
+
+    <div class="flow-arrow">→</div>
+
+    <div id="receiverStage" class="stage locked-stage">
+      <div class="stage-head">
+        <div class="stage-title-line"><div class="stage-title">Receiver</div><span id="receiverAccess" class="access-chip">LOCKED · WAITING</span></div>
+        <div class="stage-note" id="receiverNote">row + column<br>parity checks</div>
+      </div>
+      <div id="receiverBlocks" class="blocks"></div>
+    </div>
+  </div>
+</section>
+
+<div class="arq-explainer">
+  <strong>ARQ in one sentence</strong>
+  <span>ACK means “accepted”; NAK means “an error was detected”; silence causes a timeout. A NAK or timeout prompts a resend, but parity cannot request a resend for corruption it fails to detect.</span>
+</div>
+
+<div class="challenge">
+  <strong>Challenge</strong>
+  <span id="challengeText"></span>
+</div>
+<div class="footer" id="footerText"></div>
+</main>
+
+<script>
+/* Development source for the inline runtime in parity_arq_transmission_lab_v2.html. */
+(() => {
+  const BLOCK_SIZE=8;
+  const DATA_COLS=7;
+  const COLS=8;
+  const $=id=>document.getElementById(id);
+  const reduceMotion=window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+
+  let senderGroups=[];
+  let channelGroups=[];
+  let receiverGroups=null;
+  let history=[];
+  let busy=false;
+  let animationRun=0;
+
+  const target=()=>$("parityMode").value==="even"?0:1;
+  const isBlock=()=>$("scheme").value==="block";
+  const delay=milliseconds=>reduceMotion?Math.min(milliseconds,40):milliseconds;
+
+  function wait(milliseconds,token){
+    return new Promise(resolve=>setTimeout(()=>resolve(token===animationRun),delay(milliseconds)));
+  }
+
+  function cleanMessage(value){
+    return value.replace(/[^\x20-\x7E]/g,"").slice(0,16);
+  }
+
+  function parityBit(bits){
+    return bits.reduce((sum,bit)=>sum+bit,0)%2===target()?0:1;
+  }
+
+  function dataRow(character){
+    const data=(character.charCodeAt(0)&127).toString(2).padStart(7,"0").split("").map(Number);
+    return [...data,parityBit(data)];
+  }
+
+  function makeGroup(characters,startIndex,label){
+    const rows=[...characters].map(dataRow);
+    const parityRow=isBlock()&&rows.length
+      ? Array.from({length:COLS},(_,column)=>parityBit(rows.map(row=>row[column])))
+      : null;
+    return {chars:characters,startIndex,label,rows,parityRow};
+  }
+
+  function makeGroups(text){
+    const groups=[];
+    for(let index=0;index<text.length;index+=BLOCK_SIZE){
+      groups.push(makeGroup(
+        text.slice(index,index+BLOCK_SIZE),
+        index,
+        isBlock()
+          ? `Block ${groups.length+1}`
+          : `Rows ${index+1}-${Math.min(text.length,index+BLOCK_SIZE)}`
+      ));
+    }
+    return groups;
+  }
+
+  function cloneGroups(groups){
+    return groups.map(group=>({
+      chars:group.chars,
+      startIndex:group.startIndex,
+      label:group.label,
+      rows:group.rows.map(row=>[...row]),
+      parityRow:group.parityRow?[...group.parityRow]:null
+    }));
+  }
+
+  function rowPass(row){
+    return row.reduce((sum,bit)=>sum+bit,0)%2===target();
+  }
+
+  function colPass(group,column){
+    if(!group.parityRow) return true;
+    let ones=group.parityRow[column];
+    group.rows.forEach(row=>{ones+=row[column];});
+    return ones%2===target();
+  }
+
+  function groupChecks(group){
+    const rows=group.rows.map(rowPass);
+    const cols=isBlock()?Array.from({length:COLS},(_,column)=>colPass(group,column)):[];
+    return {rows,cols,pass:rows.every(Boolean)&&(!isBlock()||cols.every(Boolean))};
+  }
+
+  function allChecks(groups){
+    const each=groups.map(groupChecks);
+    return {each,pass:each.every(result=>result.pass)};
+  }
+
+  function dataChanged(first,second){
+    for(let group=0;group<first.length;group++){
+      for(let row=0;row<first[group].rows.length;row++){
+        for(let column=0;column<DATA_COLS;column++){
+          if(first[group].rows[row][column]!==second[group].rows[row][column]) return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  function changedBitCount(){
+    let count=0;
+    senderGroups.forEach((group,groupIndex)=>{
+      group.rows.forEach((row,rowIndex)=>{
+        row.forEach((bit,column)=>{
+          if(bit!==channelGroups[groupIndex].rows[rowIndex][column]) count++;
+        });
+      });
+      if(group.parityRow){
+        group.parityRow.forEach((bit,column)=>{
+          if(bit!==channelGroups[groupIndex].parityRow[column]) count++;
+        });
+      }
+    });
+    return count;
+  }
+
+  function decode(groups){
+    let output="";
+    groups.forEach(group=>{
+      group.rows.forEach(row=>{
+        const value=parseInt(row.slice(0,DATA_COLS).join(""),2);
+        output+=(value>=32&&value<=126)?String.fromCharCode(value):"·";
+      });
+    });
+    return output;
+  }
+
+  function bitstream(groups){
+    return groups.flatMap(group=>[
+      ...group.rows.map(row=>row.join("")),
+      ...(group.parityRow?[group.parityRow.join("")]:[])
+    ]).join(" ");
+  }
+
+  function protocol(parts){
+    const box=$("protocol");
+    box.innerHTML='<span class="protocol-label">ARQ:</span>';
+    parts.forEach((part,index)=>{
+      if(index){
+        const arrow=document.createElement("span");
+        arrow.className="arrow";
+        arrow.textContent="→";
+        box.appendChild(arrow);
+      }
+      const element=document.createElement("span");
+      element.className=part.type?`status-chip ${part.type}`:"protocol-label";
+      element.textContent=part.text;
+      box.appendChild(element);
+    });
+  }
+
+  function initialProtocol(){
+    protocol([{type:"data",text:"DATA ready"},{text:"waiting to transmit"}]);
+  }
+
+  function displayChar(character){
+    return character===" "?"␠":character;
+  }
+
+  function bitTitle(group,row,column,isParityRow=false){
+    if(isParityRow){
+      return column===7
+        ? "parity byte: parity for the row-parity-bit column"
+        : `parity byte: vertical parity for data bit ${6-column}`;
+    }
+    return column===7
+      ? `row parity bit for '${displayChar(group.chars[row])}'`
+      : `data bit ${6-column} of '${displayChar(group.chars[row])}'`;
+  }
+
+  function setResult(kind,title,detail){
+    $("resultPanel").className=`rail-result ${kind||""}`;
+    $("resultTitle").textContent=title;
+    $("resultDetail").textContent=detail;
+  }
+
+  function setPhase(text){
+    $("phaseLabel").textContent=text;
+  }
+
+  function resetPackets(){
+    $("framePacket").className="packet";
+    $("replyPacket").className="packet reply";
+    $("replyCode").textContent="ACK";
+  }
+
+  function setBusy(value){
+    busy=value;
+    document.body.classList.toggle("busy",value);
+    ["message","scheme","parityMode","dropReply","randomOne","undoNoise","clearNoise","deliver","arqButton"]
+      .forEach(id=>{$(id).disabled=value;});
+    if(!value){
+      $("undoNoise").disabled=!history.length;
+      $("clearNoise").disabled=changedBitCount()===0;
+      $("deliver").disabled=!senderGroups.length;
+    }
+  }
+
+  function updateStreamPreview(){
+    const stream=bitstream(channelGroups);
+    $("streamPreview").textContent=stream||"No frame encoded";
+    $("frameCode").textContent=stream?stream.replace(/ /g,"").slice(0,12)+(stream.replace(/ /g,"").length>12?"…":""):"";
+  }
+
+  function markPrepared(){
+    receiverGroups=null;
+    $("arqButton").hidden=true;
+    $("receiverAccess").textContent="LOCKED · WAITING";
+    $("receiverStage").classList.remove("checking");
+    resetPackets();
+    initialProtocol();
+    const changes=changedBitCount();
+    if(changes){
+      setPhase(`${changes} channel bit${changes===1?" has":"s have"} been changed. Transmit to test the frame.`,2,1);
+      setResult("","Interference added",`${changes} blue in-transit bit${changes===1?" differs":"s differ"} from the locked sender copy.`);
+    }else{
+      setPhase("Frame encoded. Edit the blue channel copy or transmit it unchanged.",2,1);
+      setResult("","Ready to transmit","Change a blue in-transit bit, or send the unaltered frame.");
+    }
+  }
+
+  function flipBit(groupIndex,row,column,isParityRow){
+    if(busy) return;
+    history.push({groupIndex,row,column,isParityRow});
+    if(isParityRow) channelGroups[groupIndex].parityRow[column]^=1;
+    else channelGroups[groupIndex].rows[row][column]^=1;
+    markPrepared();
+    render();
+  }
+
+  function activateEditableBit(element,handler){
+    element.classList.add("editable");
+    element.tabIndex=0;
+    element.setAttribute("role","button");
+    element.setAttribute("aria-label",element.title+"; click or press Enter to flip");
+    element.addEventListener("click",handler);
+    element.addEventListener("keydown",event=>{
+      if(event.key==="Enter"||event.key===" "){
+        event.preventDefault();
+        handler();
+      }
+    });
+  }
+
+  function buildMatrix(group,index,mode,checks){
+    const matrix=document.createElement("div");
+    matrix.className="bit-block "+(isBlock()?"block-mode":"row-mode");
+    matrix.style.setProperty("--rows",group.rows.length);
+    const labels=["6","5","4","3","2","1","0","P"];
+
+    matrix.appendChild(document.createElement("div"));
+    labels.forEach(label=>{
+      const element=document.createElement("div");
+      element.className="col-label";
+      if(label==="P") element.classList.add("parity-column-label");
+      element.textContent=label;
+      matrix.appendChild(element);
+    });
+    matrix.appendChild(document.createElement("div"));
+
+    group.rows.forEach((row,rowIndex)=>{
+      const label=document.createElement("div");
+      label.className="row-label";
+      label.textContent=`${group.startIndex+rowIndex+1} '${displayChar(group.chars[rowIndex])}'`;
+      matrix.appendChild(label);
+
+      for(let column=0;column<COLS;column++){
+        const element=document.createElement("div");
+        element.className="bit"+(column===7?" parity-bit":"");
+        element.title=bitTitle(group,rowIndex,column,false);
+
+        if(mode==="receiver"&&!receiverGroups){
+          element.classList.add("blank","locked-bit");
+          element.textContent="0";
+        }else{
+          element.textContent=row[column];
+          if(mode==="channel"){
+            if(senderGroups[index].rows[rowIndex][column]!==channelGroups[index].rows[rowIndex][column]) element.classList.add("flipped");
+            activateEditableBit(element,()=>flipBit(index,rowIndex,column,false));
+          }else{
+            element.classList.add("locked-bit");
+          }
+        }
+        matrix.appendChild(element);
+      }
+
+      const check=document.createElement("div");
+      check.className="check";
+      if(mode==="receiver"&&receiverGroups){
+        check.classList.add(checks.rows[rowIndex]?"pass":"fail");
+        check.textContent=checks.rows[rowIndex]?"✓":"×";
+        check.title=checks.rows[rowIndex]?"row parity passes":"row parity fails";
+      }
+      matrix.appendChild(check);
+    });
+
+    if(isBlock()){
+      const label=document.createElement("div");
+      label.className="row-label parity-label";
+      label.textContent="Parity byte";
+      matrix.appendChild(label);
+
+      for(let column=0;column<COLS;column++){
+        const element=document.createElement("div");
+        element.className="bit parity-byte";
+        element.title=bitTitle(group,0,column,true);
+        if(mode==="receiver"&&!receiverGroups){
+          element.classList.add("blank","locked-bit");
+          element.textContent="0";
+        }else{
+          element.textContent=group.parityRow[column];
+          if(mode==="channel"){
+            if(senderGroups[index].parityRow[column]!==channelGroups[index].parityRow[column]) element.classList.add("flipped");
+            activateEditableBit(element,()=>flipBit(index,-1,column,true));
+          }else{
+            element.classList.add("locked-bit");
+          }
+        }
+        matrix.appendChild(element);
+      }
+      matrix.appendChild(document.createElement("div"));
+
+      matrix.appendChild(document.createElement("div"));
+      for(let column=0;column<COLS;column++){
+        const check=document.createElement("div");
+        check.className="check";
+        if(mode==="receiver"&&receiverGroups){
+          check.classList.add(checks.cols[column]?"pass":"fail");
+          check.textContent=checks.cols[column]?"✓":"×";
+          check.title=checks.cols[column]?"column parity passes":"column parity fails";
+        }
+        matrix.appendChild(check);
+      }
+      matrix.appendChild(document.createElement("div"));
+    }
+    return matrix;
+  }
+
+  function renderStage(containerId,mode){
+    const root=$(containerId);
+    root.innerHTML="";
+    const groups=mode==="receiver"?(receiverGroups||senderGroups):mode==="sender"?senderGroups:channelGroups;
+    if(!groups.length){
+      const placeholder=document.createElement("div");
+      placeholder.className="placeholder";
+      placeholder.textContent="Type a message to create parity data.";
+      root.appendChild(placeholder);
+      return;
+    }
+
+    groups.forEach((group,index)=>{
+      const card=document.createElement("div");
+      card.className="block-card";
+      const header=document.createElement("div");
+      header.className="block-title";
+      const left=document.createElement("strong");
+      const right=document.createElement("span");
+      left.textContent=group.label;
+      right.textContent=isBlock()
+        ? `${group.rows.length} character${group.rows.length===1?"":"s"} + parity byte`
+        : `${group.rows.length} character${group.rows.length===1?"":"s"}`;
+      header.append(left,right);
+      card.appendChild(header);
+      const shell=document.createElement("div");
+      shell.className="block-shell";
+      const checks=mode==="receiver"&&receiverGroups?groupChecks(group):{rows:[],cols:[]};
+      shell.appendChild(buildMatrix(group,index,mode,checks));
+      card.appendChild(shell);
+      root.appendChild(card);
+    });
+  }
+
+  function renderDecoded(){
+    const original=decode(senderGroups);
+    $("originalText").textContent=original||"—";
+    if(!receiverGroups){
+      $("decodedText").textContent="—";
+      $("decodedText").classList.remove("changed");
+      $("decodedNote").textContent="Transmit the frame to decode the received 7-bit characters.";
+      return;
+    }
+    const received=decode(receiverGroups);
+    const differs=dataChanged(senderGroups,receiverGroups);
+    $("decodedText").textContent=received||"—";
+    $("decodedText").classList.toggle("changed",differs);
+    $("decodedNote").textContent=differs
+      ? `Received data decodes to "${received}", not "${original}". Acceptance depends on the active parity checks.`
+      : "The received character data matches the original message.";
+  }
+
+  function updateMeta(){
+    const characters=senderGroups.reduce((sum,group)=>sum+group.rows.length,0);
+    if(!characters){
+      $("messageMeta").textContent="0 characters";
+    }else if(isBlock()){
+      const sizes=senderGroups.map(group=>group.rows.length).join(" + ");
+      $("messageMeta").textContent=`${characters} characters → ${senderGroups.length} parity block${senderGroups.length===1?"":"s"} (${sizes})`;
+    }else{
+      $("messageMeta").textContent=`${characters} characters → ${characters} parity row${characters===1?"":"s"}`;
+    }
+    $("receiverNote").innerHTML=isBlock()?"row + column<br>parity checks":"row parity<br>checks only";
+    $("columnParityKey").hidden=!isBlock();
+    $("challengeText").textContent=isBlock()
+      ? "Can you change the decoded message while making every row and column parity check pass?"
+      : "Can you change the decoded message while making every row parity check pass?";
+    $("footerText").textContent=isBlock()
+      ? "Teaching convention: up to 8 characters per parity block. The parity-byte row is calculated from the message data; once transmitted, every blue channel bit can be affected by interference."
+      : "Each character is represented by 7 data bits plus one calculated row parity bit. Messages longer than 8 characters split visually to keep the layout readable.";
+  }
+
+  function render(){
+    renderStage("senderBlocks","sender");
+    renderStage("channelBlocks","channel");
+    renderStage("receiverBlocks","receiver");
+    renderDecoded();
+    updateMeta();
+    updateStreamPreview();
+    if(!busy){
+      $("undoNoise").disabled=!history.length;
+      $("clearNoise").disabled=changedBitCount()===0;
+      $("deliver").disabled=!senderGroups.length;
+    }
+  }
+
+  function reset(){
+    animationRun++;
+    setBusy(false);
+    const text=cleanMessage($("message").value);
+    $("message").value=text;
+    senderGroups=makeGroups(text);
+    channelGroups=cloneGroups(senderGroups);
+    receiverGroups=null;
+    history=[];
+    $("arqButton").hidden=true;
+    $("receiverAccess").textContent="LOCKED · WAITING";
+    $("receiverStage").classList.remove("checking");
+    resetPackets();
+    if(text){
+      initialProtocol();
+      setPhase("Frame encoded. Edit the blue channel copy or transmit it unchanged.",2,1);
+      setResult("","Ready to transmit","Change a blue in-transit bit, or send the unaltered frame.");
+    }else{
+      protocol([{text:"Enter a message to begin"}]);
+      setPhase("Enter between 1 and 16 printable characters.",1,0);
+      setResult("","Type a message","The sender will calculate parity automatically.");
+    }
+    render();
+  }
+
+  function randomFlip(){
+    if(busy||!channelGroups.length) return;
+    const candidates=[];
+    channelGroups.forEach((group,groupIndex)=>{
+      group.rows.forEach((row,rowIndex)=>{
+        for(let column=0;column<COLS;column++) candidates.push({groupIndex,row:rowIndex,column,isParityRow:false});
+      });
+      if(group.parityRow){
+        for(let column=0;column<COLS;column++) candidates.push({groupIndex,row:-1,column,isParityRow:true});
+      }
+    });
+    const candidate=candidates[Math.floor(Math.random()*candidates.length)];
+    flipBit(candidate.groupIndex,candidate.row,candidate.column,candidate.isParityRow);
+  }
+
+  function undo(){
+    if(busy) return;
+    const change=history.pop();
+    if(!change) return;
+    if(change.isParityRow) channelGroups[change.groupIndex].parityRow[change.column]^=1;
+    else channelGroups[change.groupIndex].rows[change.row][change.column]^=1;
+    markPrepared();
+    render();
+  }
+
+  function clearNoise(){
+    if(busy) return;
+    channelGroups=cloneGroups(senderGroups);
+    history=[];
+    markPrepared();
+    setResult("","Channel restored","The blue channel copy now matches the locked sender frame.");
+    render();
+  }
+
+  async function animateData(token,label="DATA"){
+    resetPackets();
+    $("framePacket").querySelector("span").textContent=label;
+    $("framePacket").classList.add("visible");
+    setPhase(`${label} leaves the sender.`,3,2);
+    if(!await wait(480,token)) return false;
+    $("framePacket").classList.add("at-channel");
+    setPhase(`${label} is crossing the editable channel.`,3,2);
+    if(!await wait(620,token)) return false;
+    $("framePacket").classList.add("at-receiver");
+    setPhase(`${label} has reached the receiver.`,4,3);
+    return wait(620,token);
+  }
+
+  async function animateReply(token,reply,drop){
+    const packet=$("replyPacket");
+    packet.className="packet reply"+(reply==="NAK"?" nak":"");
+    $("replyCode").textContent=reply;
+    void packet.offsetWidth;
+    packet.classList.add("visible");
+    setPhase(`Receiver sends ${reply} back toward the sender.`,5,4);
+    if(!await wait(160,token)) return false;
+    packet.classList.add("at-channel");
+    if(!await wait(600,token)) return false;
+    if(drop){
+      packet.classList.add("lost");
+      setPhase(`${reply} disappears in the channel. The sender is still waiting.`,5,4);
+      if(!await wait(650,token)) return false;
+      packet.className="packet reply timeout visible at-sender";
+      $("replyCode").textContent="TIMEOUT";
+      setPhase("No reply arrived. The sender times out and may resend.",5,4);
+      return wait(520,token);
+    }
+    packet.classList.add("at-sender");
+    setPhase(`${reply} reaches the sender.`,5,4);
+    return wait(620,token);
+  }
+
+  async function deliver(){
+    if(busy||!channelGroups.length) return;
+    const token=++animationRun;
+    setBusy(true);
+    receiverGroups=null;
+    $("receiverAccess").textContent="LOCKED · WAITING";
+    render();
+    if(!await animateData(token,"DATA")) return;
+
+    receiverGroups=cloneGroups(channelGroups);
+    $("receiverAccess").textContent="LOCKED · CHECKING";
+    $("receiverStage").classList.add("checking");
+    render();
+    setPhase("Receiver recalculates parity and compares every active check.",4,3);
+    if(!await wait(720,token)) return;
+
+    const checks=allChecks(receiverGroups);
+    const differs=dataChanged(senderGroups,receiverGroups);
+    const original=decode(senderGroups);
+    const received=decode(receiverGroups);
+    const drop=$("dropReply").checked;
+    const reply=checks.pass?"ACK":"NAK";
+    $("receiverStage").classList.remove("checking");
+    $("receiverAccess").textContent=checks.pass?"LOCKED · ACCEPTED":"LOCKED · REJECTED";
+
+    if(!checks.pass){
+      lastOutcome="Error detected; frame rejected";
+      setResult("bad","Error detected",`${isBlock()?"A row or column":"At least one row"} parity check fails. The receiver decodes "${received}", rejects the frame, and generates NAK.`);
+    }else if(differs){
+      lastOutcome="Changed message passed the active checks";
+      setResult("warn","Corrupted text accepted",`All active parity checks pass, so the receiver accepts "${received}" even though the sender transmitted "${original}". This undetected corruption generates ACK.`);
+    }else{
+      lastOutcome="Original message accepted correctly";
+      setResult("good","Frame accepted",`All active parity checks pass. The receiver reconstructs "${received}" correctly and generates ACK.`);
+    }
+
+    if(drop){
+      protocol([{type:"data",text:"DATA"},{type:reply.toLowerCase(),text:`${reply} generated`},{text:"reply lost"},{type:"timeout",text:"TIMEOUT"}]);
+    }else{
+      protocol([{type:"data",text:"DATA"},{type:reply.toLowerCase(),text:`${reply} received`}]);
+    }
+    if(!await animateReply(token,reply,drop)) return;
+    if(drop) $("dropReply").checked=false;
+
+    const retry=reply==="NAK"||drop;
+    $("arqButton").hidden=!retry;
+    if(retry) $("arqButton").textContent=drop?"Timeout → resend":"NAK → resend";
+    setBusy(false);
+    setPhase(
+      retry?"ARQ is waiting for a resend.":reply==="ACK"?"ACK completes this transmission.":"Transmission complete.",
+      5,
+      retry?4:5
+    );
+  }
+
+  async function resend(){
+    if(busy||!senderGroups.length) return;
+    const token=++animationRun;
+    setBusy(true);
+    channelGroups=cloneGroups(senderGroups);
+    history=[];
+    receiverGroups=null;
+    $("dropReply").checked=false;
+    $("arqButton").hidden=true;
+    render();
+    if(!await animateData(token,"RESEND")) return;
+    receiverGroups=cloneGroups(senderGroups);
+    $("receiverAccess").textContent="LOCKED · CHECKING";
+    $("receiverStage").classList.add("checking");
+    render();
+    setPhase("Receiver checks the retransmitted frame.",4,3);
+    if(!await wait(650,token)) return;
+    $("receiverStage").classList.remove("checking");
+    $("receiverAccess").textContent="LOCKED · ACCEPTED";
+    setResult("good","ARQ recovery complete","The sender retransmitted the original frame. The receiver's parity checks pass and ACK returns successfully.");
+    protocol([{type:"data",text:"RESEND"},{type:"ack",text:"ACK received"}]);
+    if(!await animateReply(token,"ACK",false)) return;
+    setBusy(false);
+    setPhase("ACK completes the ARQ recovery.",5,5);
+  }
+
+  $("message").addEventListener("input",()=>{
+    const clean=cleanMessage($("message").value);
+    if(clean!==$("message").value) $("message").value=clean;
+    reset();
+  });
+  $("scheme").addEventListener("change",reset);
+  $("parityMode").addEventListener("change",reset);
+  $("dropReply").addEventListener("change",()=>{
+    setPhase($("dropReply").checked?"The next receiver reply will disappear in the channel.":"The next receiver reply will travel back to the sender.",2,1);
+  });
+  $("resetAll").addEventListener("click",reset);
+  $("randomOne").addEventListener("click",randomFlip);
+  $("undoNoise").addEventListener("click",undo);
+  $("clearNoise").addEventListener("click",clearNoise);
+  $("deliver").addEventListener("click",deliver);
+  $("arqButton").addEventListener("click",resend);
+
+  reset();
+})();
+</script>
+</body>
+</html>

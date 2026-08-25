@@ -1,12 +1,25 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, type PointerEvent as ReactPointerEvent } from 'react';
 import Image from 'next/image';
-import { exams, labs, type ExamCode, type Lab } from './labs';
+import { exams, labs, translator, type Activity, type ExamCode } from './labs';
+
+const movePreview = (event: ReactPointerEvent<HTMLDivElement>) => {
+  const bounds = event.currentTarget.getBoundingClientRect();
+  const x = (event.clientX - bounds.left) / bounds.width;
+  const y = (event.clientY - bounds.top) / bounds.height;
+  event.currentTarget.style.setProperty('--image-x', `${(0.5 - x) * 18}px`);
+  event.currentTarget.style.setProperty('--image-y', `${(0.5 - y) * 14}px`);
+};
+
+const resetPreview = (event: ReactPointerEvent<HTMLDivElement>) => {
+  event.currentTarget.style.setProperty('--image-x', '0px');
+  event.currentTarget.style.setProperty('--image-y', '0px');
+};
 
 export default function Home() {
   const [exam, setExam] = useState<ExamCode>('0478');
-  const [activeLab, setActiveLab] = useState<Lab | null>(null);
+  const [activeLab, setActiveLab] = useState<Activity | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const groupedLabs = useMemo(() => {
     const visibleLabs = labs.filter((lab) => lab.exams.includes(exam));
@@ -21,7 +34,9 @@ export default function Home() {
   useEffect(() => {
     const syncLabFromUrl = () => {
       const slug = new URLSearchParams(window.location.search).get('lab');
-      const lab = labs.find((item) => item.slug === slug) ?? null;
+      const lab = slug === translator.slug
+        ? translator
+        : labs.find((item) => item.slug === slug) ?? null;
       setActiveLab(lab);
       setIsLoading(Boolean(lab));
     };
@@ -36,7 +51,7 @@ export default function Home() {
     return () => { document.body.style.overflow = ''; };
   }, [activeLab]);
 
-  const openLab = (lab: Lab) => {
+  const openLab = (lab: Activity) => {
     setActiveLab(lab);
     setIsLoading(true);
     window.history.pushState({ lab: lab.slug }, '', `?lab=${lab.slug}`);
@@ -49,7 +64,7 @@ export default function Home() {
           <section className="loading-screen" role="status" aria-live="polite">
             <span className="spinner" aria-hidden="true" />
             <div>
-              <p>Loading lab</p>
+              <p>{activeLab.kind === 'tool' ? 'Opening tool' : 'Loading lab'}</p>
               <h1>{activeLab.title}</h1>
             </div>
           </section>
@@ -68,11 +83,17 @@ export default function Home() {
   return (
     <main>
       <header className="site-header">
-        <a className="brand" href="#top" aria-label="Cambridge Labs home">
-          <span className="brand-mark" aria-hidden="true">C</span>
-          <span>Cambridge Labs</span>
+        <a className="brand" href="#top" aria-label="Exam Labs home">
+          <span className="brand-mark" aria-hidden="true">E</span>
+          <span>Exam Labs</span>
         </a>
-        <span className="header-note">Interactive Computer Science</span>
+        <div className="header-actions">
+          <span className="header-note">Interactive Computer Science</span>
+          <button className="translator-button" type="button" onClick={() => openLab(translator)}>
+            <span>Pseudocode ↔ Python</span>
+            <i aria-hidden="true">↗</i>
+          </button>
+        </div>
       </header>
 
       <section className="hero" id="top">
@@ -107,7 +128,6 @@ export default function Home() {
         {[...groupedLabs].map(([topic, topicLabs]) => (
           <section className="topic-section" key={topic}>
             <div className="topic-heading">
-              <p>{exam}</p>
               <h2>{topic}</h2>
               <span>{topicLabs.length} {topicLabs.length === 1 ? 'lab' : 'labs'}</span>
             </div>
@@ -116,18 +136,17 @@ export default function Home() {
               {topicLabs.map((lab) => (
                 <article className="lab-card" key={lab.slug}>
                   <button type="button" aria-label={`Open ${lab.title}`} onClick={() => openLab(lab)}>
-                    <div className="preview">
+                    <div className="preview" onPointerMove={movePreview} onPointerLeave={resetPreview}>
                       <Image
                         src={lab.image}
                         alt={`Preview of ${lab.title}`}
                         fill
                         sizes="(max-width: 620px) 100vw, (max-width: 900px) 50vw, 33vw"
                       />
-                      <span>{lab.shortLabel}</span>
                     </div>
                     <div className="card-copy">
                       <div>
-                        <p className="card-kicker">Interactive lab</p>
+                        <p className="card-kicker">{lab.format}</p>
                         <h3>{lab.title}</h3>
                       </div>
                       <span className="arrow" aria-hidden="true">↗</span>
@@ -142,7 +161,7 @@ export default function Home() {
       </div>
 
       <footer>
-        <span>Cambridge Labs</span>
+        <span>Exam Labs</span>
         <span>Understand through interaction.</span>
       </footer>
     </main>
