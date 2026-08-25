@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import Image from 'next/image';
 import { exams, labs, type ExamCode, type Lab } from './labs';
 
 export default function Home() {
@@ -116,7 +117,12 @@ export default function Home() {
                 <article className="lab-card" key={lab.slug}>
                   <button type="button" aria-label={`Open ${lab.title}`} onClick={() => openLab(lab)}>
                     <div className="preview">
-                      <img src={lab.image} alt={`Preview of ${lab.title}`} />
+                      <Image
+                        src={lab.image}
+                        alt={`Preview of ${lab.title}`}
+                        fill
+                        sizes="(max-width: 620px) 100vw, (max-width: 900px) 50vw, 33vw"
+                      />
                       <span>{lab.shortLabel}</span>
                     </div>
                     <div className="card-copy">
