@@ -1,0 +1,2711 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Packet Switching Lab</title>
+<style>
+:root{
+  --bg:#f3f5f7;
+  --panel:#fff;
+  --ink:#1d2730;
+  --muted:#687681;
+  --line:#d7dfe5;
+  --accent:#2865d8;
+  --accent-soft:#edf3ff;
+  --good:#26734a;
+  --good-soft:#edf8f1;
+  --warn:#9a601b;
+  --warn-soft:#fff6e8;
+  --bad:#b2453a;
+  --bad-soft:#fff0ee;
+  --network:#101821;
+  --network-grid:#1b2732;
+  --link:#536776;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+button:disabled,input:disabled,textarea:disabled,select:disabled{opacity:.48;cursor:not-allowed}
+main{width:min(1450px,calc(100% - 20px));margin:14px auto 36px}
+h1{margin:0;font-size:27px;letter-spacing:-.02em}
+.sub{margin:5px 0 12px;color:var(--muted);font-size:13px;line-height:1.45}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px}
+button{
+  min-height:34px;
+  padding:0 10px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:#fff;
+  color:var(--ink);
+}
+button:hover:not(:disabled){border-color:#9ba8b2}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:750}
+button.active-tool{background:var(--accent-soft);border-color:#8eafea;color:#1d58bb;font-weight:750}
+button.danger{color:var(--bad)}
+select,input[type="text"],textarea{
+  width:100%;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:#fff;
+  color:var(--ink);
+}
+select,input[type="text"]{height:35px;padding:0 9px}
+textarea{padding:8px 9px;resize:vertical;line-height:1.4}
+label.field{display:grid;gap:4px;color:var(--muted);font-size:10px}
+input[type="checkbox"]{margin:0}
+
+/* Overview */
+.overview{
+  padding:10px 12px;
+  display:grid;
+  grid-template-columns:minmax(220px,1fr) auto;
+  gap:12px;
+  align-items:center;
+}
+.overview-copy strong{display:block;font-size:14px}
+.overview-copy span{display:block;margin-top:2px;color:var(--muted);font-size:10px;line-height:1.35}
+.overview-metrics{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}
+.metric{
+  min-width:93px;
+  padding:6px 8px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:#fafbfc;
+}
+.metric span{display:block;color:var(--muted);font-size:8px;text-transform:uppercase;letter-spacing:.04em;font-weight:800}
+.metric strong{display:block;margin-top:2px;font:850 13px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.metric.good{background:var(--good-soft);border-color:#bdddc9}
+.metric.warn{background:var(--warn-soft);border-color:#e5d1a9}
+.metric.bad{background:var(--bad-soft);border-color:#e6bbb7}
+
+/* Three-column lab */
+.lab-grid{
+  margin-top:10px;
+  display:grid;
+  grid-template-columns:minmax(235px,.68fr) minmax(640px,1.9fr) minmax(235px,.68fr);
+  gap:10px;
+  align-items:start;
+}
+.device-panel,.network-panel{min-width:0}
+.device-panel{padding:11px}
+.network-panel{padding:10px}
+.panel-head{
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+  align-items:flex-start;
+  margin-bottom:8px;
+}
+.panel-head strong{font-size:15px}
+.panel-head span{color:var(--muted);font-size:9px;line-height:1.3;text-align:right}
+
+/* Devices and NICs */
+.device-visual{
+  position:relative;
+  height:91px;
+  margin-bottom:9px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:linear-gradient(145deg,#eef2f5,#dbe2e7);
+  overflow:hidden;
+}
+.device-screen{
+  position:absolute;
+  left:50%;
+  top:10px;
+  width:96px;
+  height:54px;
+  transform:translateX(-50%);
+  border:5px solid #29323a;
+  border-radius:6px;
+  background:linear-gradient(145deg,#5087b5,#9bc5df);
+}
+.device-screen::after{
+  content:"";
+  position:absolute;
+  left:50%;bottom:-15px;
+  width:30px;height:12px;
+  transform:translateX(-50%);
+  background:#8e9aa3;
+}
+.device-base{
+  position:absolute;
+  left:50%;bottom:8px;
+  width:110px;height:8px;
+  transform:translateX(-50%);
+  border-radius:50%;
+  background:#97a2aa;
+}
+.device-label{
+  position:absolute;
+  left:8px;top:7px;
+  color:#5d6972;
+  font-size:9px;
+  font-weight:850;
+  letter-spacing:.05em;
+}
+.nic-card{
+  position:relative;
+  margin-bottom:9px;
+  padding:8px;
+  border:1px solid #c9d5dd;
+  border-radius:9px;
+  background:#f8fafb;
+}
+.nic-card::before{
+  content:"";
+  position:absolute;
+  left:-12px;
+  top:50%;
+  width:12px;height:3px;
+  transform:translateY(-50%);
+  background:#7c8d99;
+}
+.device-a .nic-card::before{left:auto;right:-12px}
+.nic-head{
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+  align-items:center;
+}
+.nic-head strong{font-size:11px}
+.nic-status{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  color:var(--muted);
+  font-size:8px;
+  font-weight:750;
+}
+.nic-status::before{
+  content:"";
+  width:7px;height:7px;
+  border-radius:50%;
+  background:#9aa6ae;
+}
+.nic-status.active::before{background:var(--good);box-shadow:0 0 7px rgba(38,115,74,.6)}
+.nic-status.warn::before{background:#d49a33;box-shadow:0 0 7px rgba(212,154,51,.6)}
+.nic-status.bad::before{background:var(--bad);box-shadow:0 0 7px rgba(178,69,58,.6)}
+
+.message-wrap{display:grid;gap:7px}
+.message-meta{display:flex;justify-content:space-between;gap:8px;color:var(--muted);font-size:8px}
+.message-actions{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.message-actions button{font-size:10px}
+.compact-field{display:grid;grid-template-columns:1fr 82px;gap:6px;align-items:end}
+.options{
+  margin-top:8px;
+  border:1px solid var(--line);
+  border-radius:9px;
+  background:#fbfcfd;
+}
+.options summary{
+  padding:8px 9px;
+  cursor:pointer;
+  color:#55646f;
+  font-size:10px;
+  font-weight:800;
+}
+.option-list{
+  padding:0 9px 9px;
+  display:grid;
+  gap:7px;
+}
+.option-list label{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  color:#5f6d77;
+  font-size:9px;
+}
+.queue-section{margin-top:10px}
+.section-label{
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+  margin-bottom:5px;
+  color:#65727c;
+  font-size:9px;
+  font-weight:850;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+}
+.packet-list{
+  min-height:58px;
+  display:grid;
+  gap:6px;
+}
+.packet-empty{
+  min-height:57px;
+  display:grid;
+  place-items:center;
+  padding:8px;
+  border:1px dashed var(--line);
+  border-radius:8px;
+  color:#89949c;
+  font-size:9px;
+  text-align:center;
+}
+.packet-card{
+  position:relative;
+  overflow:hidden;
+  border:1px solid #cfd8df;
+  border-left:5px solid var(--packet);
+  border-radius:8px;
+  background:#fff;
+  padding:7px 7px 7px 8px;
+  transition:.16s;
+}
+.packet-card::after{
+  content:"";
+  position:absolute;
+  right:-17px;top:-17px;
+  width:44px;height:44px;
+  border-radius:50%;
+  background:color-mix(in srgb,var(--packet) 18%,transparent);
+}
+.packet-card.active{box-shadow:0 0 0 2px color-mix(in srgb,var(--packet) 55%,transparent);transform:translateY(-1px)}
+.packet-top{
+  display:flex;
+  justify-content:space-between;
+  gap:7px;
+  align-items:center;
+}
+.packet-id{font-size:10px;font-weight:850}
+.packet-state{color:#687681;font-size:8px;font-weight:750;text-align:right}
+.packet-payload{
+  margin-top:4px;
+  padding:4px 5px;
+  border-radius:5px;
+  background:#f5f7f9;
+  font:800 10px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  overflow-wrap:anywhere;
+}
+.packet-fields{
+  margin-top:4px;
+  display:flex;
+  gap:4px;
+  flex-wrap:wrap;
+}
+.packet-field{
+  padding:2px 4px;
+  border-radius:4px;
+  background:#eef2f5;
+  color:#64717a;
+  font:750 7px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+.packet-route{
+  margin-top:4px;
+  color:#75818a;
+  font-size:7px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.receive-grid,.reorder-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:5px;
+}
+.reorder-slot{
+  min-height:43px;
+  padding:5px;
+  border:1px dashed #cbd4da;
+  border-radius:7px;
+  background:#fafbfc;
+  color:#8a969e;
+  font-size:8px;
+}
+.reorder-slot.filled{
+  border-style:solid;
+  border-left:4px solid var(--packet);
+  background:#fff;
+  color:#31404a;
+}
+.reorder-slot strong{display:block;font-size:9px}
+.reorder-slot span{display:block;margin-top:2px;font:750 8px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;overflow-wrap:anywhere}
+.nic-checks{
+  min-height:70px;
+  margin-top:8px;
+  padding:7px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:#fafbfc;
+}
+.nic-checks strong{display:block;font-size:9px}
+.check-row{
+  margin-top:4px;
+  display:flex;
+  justify-content:space-between;
+  gap:6px;
+  color:#697680;
+  font-size:8px;
+}
+.check-row b{font-weight:850}
+.check-row.pass b{color:var(--good)}
+.check-row.fail b{color:var(--bad)}
+.check-row.skip b{color:#8b969f}
+.reconstruction{
+  margin-top:6px;
+  padding:6px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:#fbfcfd;
+}
+.reconstruction strong{display:block;font-size:9px}
+.reconstruction-output{
+  min-height:31px;
+  margin-top:3px;
+  padding:5px;
+  border-radius:6px;
+  background:#fff;
+  font:800 10px/1.4 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  overflow-wrap:anywhere;
+}
+.reconstruction-note{margin-top:3px;color:var(--muted);font-size:8px;line-height:1.35}
+
+/* Network editor */
+.network-toolbar{
+  display:grid;
+  grid-template-columns:auto auto auto minmax(110px,1fr) 120px auto;
+  gap:6px;
+  align-items:end;
+  margin-bottom:7px;
+}
+.network-toolbar button{font-size:9px;padding:0 8px}
+.tool-copy{
+  min-width:0;
+  padding:5px 7px;
+  border:1px solid var(--line);
+  border-radius:7px;
+  background:#fafbfc;
+  color:#687681;
+  font-size:8px;
+  line-height:1.3;
+}
+.router-palette{
+  height:34px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+  border:1px dashed #91a2ae;
+  border-radius:8px;
+  background:#f8fafb;
+  color:#56656f;
+  font-size:9px;
+  font-weight:800;
+  cursor:grab;
+  user-select:none;
+}
+.router-palette svg{width:20px;height:20px}
+.network-canvas{
+  position:relative;
+  min-height:610px;
+  overflow:hidden;
+  border:1px solid #263645;
+  border-radius:11px;
+  background:
+    radial-gradient(circle at 50% 45%,rgba(54,86,112,.18),transparent 23rem),
+    linear-gradient(rgba(255,255,255,.018),rgba(255,255,255,.018)),
+    repeating-linear-gradient(0deg,transparent 0 27px,rgba(119,145,164,.075) 28px),
+    repeating-linear-gradient(90deg,transparent 0 27px,rgba(119,145,164,.075) 28px),
+    var(--network);
+  touch-action:none;
+}
+.network-canvas.connecting{cursor:crosshair}
+.network-canvas.removing{cursor:not-allowed}
+.network-svg,.node-layer,.packet-layer{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+}
+.network-svg{z-index:1;overflow:visible}
+.node-layer{z-index:3;pointer-events:none}
+.packet-layer{z-index:5;pointer-events:none}
+.link{
+  stroke:var(--link);
+  stroke-width:3;
+  stroke-linecap:round;
+  transition:.14s;
+}
+.link.active{
+  stroke:var(--packet-color);
+  stroke-width:5;
+  filter:drop-shadow(0 0 4px var(--packet-color));
+  stroke-dasharray:10 8;
+  animation:linkFlow .65s linear infinite;
+}
+.link-hit{
+  stroke:transparent;
+  stroke-width:16;
+  cursor:pointer;
+  pointer-events:stroke;
+}
+.network-canvas.removing .link-hit:hover{stroke:rgba(255,90,75,.22)}
+@keyframes linkFlow{to{stroke-dashoffset:-36}}
+.network-node{
+  position:absolute;
+  transform:translate(-50%,-50%);
+  pointer-events:auto;
+  user-select:none;
+}
+.endpoint-node{
+  width:46px;height:46px;
+  display:grid;
+  place-items:center;
+  border:2px solid #91a5b5;
+  border-radius:50%;
+  background:#edf3f7;
+  color:#263640;
+  box-shadow:0 0 0 5px rgba(255,255,255,.06),0 5px 13px rgba(0,0,0,.25);
+  font-size:10px;
+  font-weight:900;
+}
+.endpoint-node.selected{box-shadow:0 0 0 4px #ffe193,0 5px 13px rgba(0,0,0,.25)}
+.endpoint-node small{
+  position:absolute;
+  top:48px;
+  width:70px;
+  color:#c4d0d8;
+  text-align:center;
+  font-size:7px;
+  font-weight:750;
+}
+.router-node{
+  width:86px;
+  min-height:62px;
+  padding:7px 7px 6px;
+  border:2px solid #6f8291;
+  border-radius:10px;
+  background:linear-gradient(145deg,#f4f7f9,#cbd5dc);
+  color:#26343d;
+  box-shadow:0 7px 16px rgba(0,0,0,.25);
+  cursor:grab;
+  transition:box-shadow .13s,border-color .13s,transform .13s;
+}
+.router-node:active{cursor:grabbing}
+.router-node.selected{border-color:#ffd56a;box-shadow:0 0 0 4px rgba(255,213,106,.3),0 7px 16px rgba(0,0,0,.25)}
+.router-node.processing{
+  border-color:var(--packet-color);
+  box-shadow:0 0 0 4px color-mix(in srgb,var(--packet-color) 32%,transparent),0 0 18px var(--packet-color);
+  animation:routerFlash .44s ease-in-out infinite alternate;
+}
+.router-node.forwarding{
+  border-color:var(--packet-color);
+  box-shadow:0 0 0 4px color-mix(in srgb,var(--packet-color) 26%,transparent),0 0 13px var(--packet-color);
+}
+.router-node.waiting{border-color:#d9a23e}
+@keyframes routerFlash{to{filter:brightness(1.13)}}
+.router-top{
+  display:flex;
+  justify-content:space-between;
+  gap:5px;
+  align-items:center;
+}
+.router-name{font-size:10px;font-weight:900}
+.router-queue{
+  min-width:17px;
+  padding:2px 4px;
+  border-radius:999px;
+  background:#26343d;
+  color:#fff;
+  text-align:center;
+  font-size:7px;
+  font-weight:850;
+}
+.router-body{
+  position:relative;
+  height:22px;
+  margin-top:4px;
+  border:1px solid #84939e;
+  border-radius:5px;
+  background:#536673;
+}
+.router-ports{
+  position:absolute;
+  left:5px;right:5px;top:5px;
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:3px;
+}
+.router-port{
+  height:8px;
+  border-radius:2px;
+  background:#1f2b33;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.12);
+}
+.router-leds{
+  position:absolute;
+  left:5px;bottom:3px;
+  display:flex;gap:4px;
+}
+.router-led{
+  width:4px;height:4px;
+  border-radius:50%;
+  background:#9da8af;
+}
+.router-led.power{background:#56bb79;box-shadow:0 0 4px #56bb79}
+.router-led.activity.on{background:var(--packet-color);box-shadow:0 0 5px var(--packet-color)}
+.router-led.queue.on{background:#efb84d;box-shadow:0 0 5px #efb84d}
+.router-status{
+  margin-top:3px;
+  color:#5e6c75;
+  text-align:center;
+  font-size:7px;
+  font-weight:850;
+  letter-spacing:.04em;
+}
+.packet-dot{
+  position:absolute;
+  left:0;top:0;
+  width:13px;height:13px;
+  margin:-6.5px 0 0 -6.5px;
+  border:2px solid #fff;
+  border-radius:50%;
+  background:var(--packet);
+  box-shadow:0 0 0 4px color-mix(in srgb,var(--packet) 25%,transparent),0 0 14px var(--packet);
+  z-index:8;
+}
+.packet-dot::after{
+  content:"";
+  position:absolute;
+  inset:-7px;
+  border:2px solid var(--packet);
+  border-radius:50%;
+  opacity:.55;
+  animation:packetPulse .72s ease-out infinite;
+}
+@keyframes packetPulse{from{transform:scale(.45);opacity:.75}to{transform:scale(1.15);opacity:0}}
+.packet-dot span{
+  position:absolute;
+  left:50%;top:-17px;
+  transform:translateX(-50%);
+  padding:1px 3px;
+  border-radius:4px;
+  background:rgba(8,13,18,.88);
+  color:#fff;
+  font:800 7px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  white-space:nowrap;
+}
+.network-status{
+  margin-top:7px;
+  min-height:41px;
+  padding:7px 8px;
+  border:1px solid var(--line);
+  border-left:3px solid var(--accent);
+  border-radius:8px;
+  background:#fafbfc;
+  color:#687681;
+  font-size:9px;
+  line-height:1.35;
+}
+.network-status strong{display:block;color:#26343d;font-size:10px}
+.network-footer{
+  margin-top:6px;
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+  color:#74818a;
+  font-size:8px;
+}
+
+
+/* Visible optional-processing switches */
+.packet-options{
+  margin-top:9px;
+  padding:8px;
+  border:1px solid var(--line);
+  border-radius:9px;
+  background:#fbfcfd;
+}
+.options-head{
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+  align-items:center;
+  margin-bottom:7px;
+}
+.options-head strong{font-size:10px}
+.options-head span{color:var(--muted);font-size:8px}
+.toggle-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:6px;
+}
+.processing-toggle{
+  position:relative;
+  min-width:0;
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:5px;
+  align-items:center;
+  padding:7px;
+  border:1px solid #d4dce2;
+  border-radius:8px;
+  background:#fff;
+  transition:.14s;
+}
+.processing-toggle:has(input:checked){
+  border-color:#9bb8ee;
+  background:var(--accent-soft);
+  box-shadow:inset 0 0 0 1px rgba(40,101,216,.16);
+}
+.processing-toggle:has(input:disabled){
+  opacity:.48;
+  background:#f3f5f6;
+}
+.toggle-control{
+  min-width:0;
+  display:grid;
+  grid-template-columns:29px 1fr;
+  gap:7px;
+  align-items:center;
+  cursor:pointer;
+}
+.toggle-input{
+  position:absolute;
+  width:1px;height:1px;
+  opacity:0;
+  pointer-events:none;
+}
+.toggle-switch{
+  position:relative;
+  width:29px;height:17px;
+  border-radius:999px;
+  background:#c4cdd4;
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.08);
+  transition:.15s;
+}
+.toggle-switch::after{
+  content:"";
+  position:absolute;
+  left:2px;top:2px;
+  width:13px;height:13px;
+  border-radius:50%;
+  background:#fff;
+  box-shadow:0 1px 3px rgba(26,39,48,.28);
+  transition:.15s;
+}
+.toggle-input:checked + .toggle-switch{background:var(--accent)}
+.toggle-input:checked + .toggle-switch::after{transform:translateX(12px)}
+.toggle-input:focus-visible + .toggle-switch{outline:3px solid rgba(40,101,216,.22);outline-offset:2px}
+.toggle-copy{min-width:0}
+.toggle-copy strong{display:block;font-size:9px}
+.toggle-copy small{
+  display:block;
+  margin-top:1px;
+  color:#74818a;
+  font-size:7px;
+  line-height:1.25;
+}
+.toggle-help{
+  position:relative;
+  z-index:3;
+  width:18px;height:18px;
+  display:grid;
+  place-items:center;
+  border:1px solid #c6d0d7;
+  border-radius:50%;
+  background:#f7f9fa;
+  color:#64717a;
+  font-size:9px;
+  font-weight:900;
+  cursor:help;
+}
+.toggle-help::after{
+  content:attr(data-tip);
+  position:absolute;
+  right:-2px;
+  bottom:calc(100% + 8px);
+  width:min(205px,calc(100vw - 28px));
+  padding:7px 8px;
+  transform:translateY(3px);
+  border:1px solid #3f4d57;
+  border-radius:7px;
+  background:rgba(21,29,35,.97);
+  color:#fff;
+  font:500 9px/1.35 Inter,system-ui,sans-serif;
+  text-align:left;
+  box-shadow:0 8px 18px rgba(21,29,35,.23);
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  transition:.14s;
+}
+.toggle-help:hover::after,
+.toggle-help:focus-visible::after{
+  opacity:1;
+  visibility:visible;
+  transform:translateY(0);
+}
+
+/* The receiving NIC now owns one animated inspection and ordering buffer. */
+.nic-pipeline-section{margin-top:7px}
+.nic-buffer{
+  padding:4px;
+  border:1px solid var(--line);
+  border-radius:9px;
+  background:#f8fafb;
+}
+.nic-buffer-guide{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:2px;
+  margin-bottom:4px;
+  color:#78858e;
+  text-align:center;
+  font-size:6px;
+  font-weight:850;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+}
+.nic-receive-grid{
+  grid-template-columns:1fr;
+  min-height:57px;
+  gap:4px;
+}
+.nic-packet-card{
+  overflow:hidden;
+  padding:5px 6px 5px 7px;
+  transition:
+    transform .38s cubic-bezier(.2,.75,.2,1),
+    box-shadow .18s,
+    border-color .18s,
+    background .18s;
+}
+.nic-packet-card.arriving,
+.nic-packet-card.inspecting,
+.nic-packet-card.checking,
+.nic-packet-card.ordering{
+  box-shadow:0 0 0 2px color-mix(in srgb,var(--packet) 44%,transparent),0 6px 14px rgba(27,43,55,.11);
+}
+.nic-packet-card.accepted{
+  border-color:#9fcdb0;
+  background:linear-gradient(90deg,var(--good-soft),#fff 55%);
+}
+.nic-packet-card.rejected,
+.nic-packet-card.nak,
+.nic-packet-card.retry-wait{
+  border-color:#e1a39d;
+  background:linear-gradient(90deg,var(--bad-soft),#fff 58%);
+}
+.nic-packet-card.retrying{
+  border-color:#e0c07e;
+  background:linear-gradient(90deg,var(--warn-soft),#fff 58%);
+}
+.nic-attempt-line{
+  margin-top:2px;
+  display:flex;
+  justify-content:space-between;
+  gap:6px;
+  color:#75818a;
+  font-size:7px;
+}
+.nic-result{
+  font-weight:850;
+}
+.nic-result.pass{color:var(--good)}
+.nic-result.fail{color:var(--bad)}
+.nic-result.work{color:var(--warn)}
+.nic-detail{
+  min-height:14px;
+  margin-top:3px;
+  padding:3px 4px;
+  border-radius:5px;
+  background:#f3f6f8;
+  color:#63717b;
+  font-size:6.5px;
+  line-height:1.18;
+}
+.nic-stage-track{
+  position:relative;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:2px;
+  margin-top:4px;
+}
+.nic-stage-track::before{
+  content:"";
+  position:absolute;
+  left:10%;right:10%;top:7px;
+  height:2px;
+  background:#d5dde2;
+}
+.nic-stage{
+  position:relative;
+  z-index:1;
+  display:grid;
+  justify-items:center;
+  gap:1px;
+  color:#88949c;
+  font-size:5.5px;
+  font-weight:850;
+  letter-spacing:.03em;
+  text-transform:uppercase;
+}
+.nic-stage i{
+  width:14px;height:14px;
+  display:grid;
+  place-items:center;
+  border:2px solid #c9d2d8;
+  border-radius:50%;
+  background:#fff;
+  color:#82909a;
+  font-style:normal;
+  font-size:8px;
+}
+.nic-stage.active{color:#7c5b1d}
+.nic-stage.active i{
+  border-color:#d7a340;
+  border-top-color:transparent;
+  background:#fff9ed;
+  animation:nicSpin .58s linear infinite;
+}
+.nic-stage.pass{color:var(--good)}
+.nic-stage.pass i{border-color:#65a77d;background:var(--good-soft);color:var(--good)}
+.nic-stage.pass i::before{content:"✓"}
+.nic-stage.fail{color:var(--bad)}
+.nic-stage.fail i{border-color:#d46f65;background:var(--bad-soft);color:var(--bad)}
+.nic-stage.fail i::before{content:"×"}
+.nic-stage.skip{color:#7f8b94}
+.nic-stage.skip i{border-color:#bdc7ce;background:#f0f3f5;color:#7f8b94}
+.nic-stage.skip i::before{content:"–"}
+.nic-stage.blocked{color:#a7b0b7}
+.nic-stage.blocked i{border-color:#d5dde2;background:#f5f7f8;color:#a7b0b7}
+.nic-stage.waiting i::before{content:""}
+@keyframes nicSpin{to{transform:rotate(360deg)}}
+.nic-packet-card .packet-top{gap:5px}
+.nic-packet-card .packet-id{font-size:9px}
+.nic-packet-card .packet-payload{margin-top:2px;padding:3px 4px;font-size:9px}
+.nic-packet-card .packet-fields{margin-top:2px;gap:3px}
+.nic-packet-card .packet-field{padding:1px 3px;font-size:6.5px}
+.nic-packet-card::after{right:-17px;top:-17px}
+.nak-badge{
+  margin-top:3px;
+  display:flex;
+  align-items:center;
+  gap:5px;
+  padding:3px 5px;
+  border:1px solid #e0aaa5;
+  border-radius:6px;
+  background:#fff3f1;
+  color:#9e3d35;
+  font-size:7px;
+  font-weight:850;
+}
+.nak-badge::before{
+  content:"NAK";
+  padding:2px 4px;
+  border-radius:4px;
+  background:var(--bad);
+  color:#fff;
+  font:900 7px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+.packet-dot.nak-dot{
+  width:11px;height:11px;
+  margin:-5.5px 0 0 -5.5px;
+  border-color:#ffe3df;
+  background:#d84b40;
+  box-shadow:0 0 0 4px rgba(216,75,64,.23),0 0 14px #d84b40;
+}
+.packet-dot.nak-dot::after{border-color:#d84b40}
+.packet-dot.nak-dot span{background:#7f201b}
+
+@media(max-width:1180px){
+  .lab-grid{grid-template-columns:230px minmax(570px,1fr) 230px}
+  .network-canvas{min-height:570px}
+}
+@media(max-width:1000px){
+  main{width:min(100% - 12px,1450px);margin-top:8px}
+  .lab-grid{grid-template-columns:1fr}
+  .device-panel,.network-panel{width:100%}
+  .network-panel{grid-row:2}
+  .device-b{grid-row:3}
+  .network-canvas{min-height:600px}
+  .packet-list{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .nic-receive-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:650px){
+  .overview{grid-template-columns:1fr}
+  .overview-metrics{justify-content:flex-start}
+  .network-toolbar{grid-template-columns:repeat(3,1fr)}
+  .router-palette,.tool-copy{grid-column:1/-1}
+  .network-canvas{min-height:520px}
+  .packet-list{grid-template-columns:1fr}
+  .toggle-grid{grid-template-columns:1fr}
+  .nic-receive-grid{grid-template-columns:1fr}
+}
+@media(max-width:430px){
+  .compact-field{grid-template-columns:1fr}
+  .network-canvas{min-height:470px}
+  .nic-receive-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<main>
+  <h1>Packet Switching Lab</h1>
+  <div class="sub">
+    Type a message, split it into packets, and watch coloured packet dots take independent routes before the receiving NIC verifies, reorders and reconstructs the data.
+  </div>
+
+  <section class="panel overview">
+    <div class="overview-copy">
+      <strong id="overviewTitle">Build or use the network, then create packets at Device A.</strong>
+      <span id="overviewDetail">Routers may queue packets and forward them along different available routes.</span>
+    </div>
+    <div class="overview-metrics">
+      <div class="metric"><span>Packets</span><strong id="packetMetric">0</strong></div>
+      <div class="metric"><span>Routes available</span><strong id="routeMetric">0</strong></div>
+      <div class="metric"><span>Accepted</span><strong id="arrivalMetric">0</strong></div>
+      <div id="messageMetricBox" class="metric"><span>Message</span><strong id="messageMetric">Waiting</strong></div>
+    </div>
+  </section>
+
+  <div class="lab-grid">
+    <section class="panel device-panel device-a">
+      <div class="panel-head">
+        <strong>Device A</strong>
+        <span>sender</span>
+      </div>
+
+      <div class="device-visual">
+        <span class="device-label">DEVICE A</span>
+        <div class="device-screen"></div>
+        <div class="device-base"></div>
+      </div>
+
+      <div class="nic-card">
+        <div class="nic-head">
+          <strong>Network interface card</strong>
+          <span id="sendNicStatus" class="nic-status">idle</span>
+        </div>
+      </div>
+
+      <div class="message-wrap">
+        <label class="field">
+          Message · maximum 72 characters
+          <textarea id="messageInput" rows="4" maxlength="72" spellcheck="false">PACKETS CAN TAKE DIFFERENT ROUTES</textarea>
+        </label>
+        <div class="message-meta">
+          <span id="characterCount">34 / 72 characters</span>
+          <span id="packetEstimate">6 packets</span>
+        </div>
+
+        <div class="compact-field">
+          <label class="field">
+            Payload size
+            <select id="payloadSize">
+              <option value="4">4 characters</option>
+              <option value="6" selected>6 characters</option>
+              <option value="8">8 characters</option>
+            </select>
+          </label>
+          <label class="field">
+            Speed
+            <select id="speedSelect">
+              <option value="slow" selected>Slow</option>
+              <option value="normal">Normal</option>
+              <option value="fast">Fast</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="message-actions">
+          <button id="packetiseButton">Create packets</button>
+          <button id="sendButton" class="primary" disabled>Send packets</button>
+        </div>
+      </div>
+
+      <section class="packet-options" aria-labelledby="processingOptionsTitle">
+        <div class="options-head">
+          <strong id="processingOptionsTitle">Optional packet processing</strong>
+          <span>off by default</span>
+        </div>
+        <div class="toggle-grid">
+          <div class="processing-toggle">
+            <label class="toggle-control" for="showHeaders">
+              <input id="showHeaders" class="toggle-input" type="checkbox">
+              <span class="toggle-switch" aria-hidden="true"></span>
+              <span class="toggle-copy"><strong>Headers</strong><small>process source and destination</small></span>
+            </label>
+            <span class="toggle-help" tabindex="0" data-tip="Adds short source and destination fields. The receiving NIC inspects them before accepting the packet.">?</span>
+          </div>
+
+          <div class="processing-toggle">
+            <label class="toggle-control" for="useChecksum">
+              <input id="useChecksum" class="toggle-input" type="checkbox">
+              <span class="toggle-switch" aria-hidden="true"></span>
+              <span class="toggle-copy"><strong>Checksum</strong><small>calculate and validate a number</small></span>
+            </label>
+            <span class="toggle-help" tabindex="0" data-tip="Uses a deliberately short teaching checksum: character codes added modulo 97. A mismatch causes rejection and a NAK.">?</span>
+          </div>
+
+          <div class="processing-toggle">
+            <label class="toggle-control" for="detailedChecks">
+              <input id="detailedChecks" class="toggle-input" type="checkbox">
+              <span class="toggle-switch" aria-hidden="true"></span>
+              <span class="toggle-copy"><strong>Expanded inspection</strong><small>slower field-by-field NIC sequence</small></span>
+            </label>
+            <span class="toggle-help" tabindex="0" data-tip="Keeps each inspection phase visible for longer and names the enabled checks inside the packet card.">?</span>
+          </div>
+
+          <div class="processing-toggle">
+            <label class="toggle-control" for="corruptPacket">
+              <input id="corruptPacket" class="toggle-input" type="checkbox" disabled>
+              <span class="toggle-switch" aria-hidden="true"></span>
+              <span class="toggle-copy"><strong>Damage random packet</strong><small>new choice each transmission</small></span>
+            </label>
+            <span class="toggle-help" tabindex="0" data-tip="Available with Checksum. A randomly chosen payload is altered on its first trip; Device B rejects it, sends NAK, and Device A retransmits it.">?</span>
+          </div>
+        </div>
+      </section>
+
+      <div class="queue-section">
+        <div class="section-label"><span>NIC send queue</span><span id="sendQueueCount">empty</span></div>
+        <div id="sendQueue" class="packet-list"></div>
+      </div>
+    </section>
+
+    <section class="panel network-panel">
+      <div class="panel-head">
+        <strong>Router network</strong>
+        <span>Drag routers in, move them, and snap links between nodes.</span>
+      </div>
+
+      <div class="network-toolbar">
+        <button id="moveTool" class="active-tool">Move</button>
+        <button id="connectTool">Connect</button>
+        <button id="removeTool" class="danger">Remove</button>
+        <div id="toolCopy" class="tool-copy">Move routers or drag a new router into the network.</div>
+        <div id="routerPalette" class="router-palette" draggable="true" title="Drag into the network">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="3" fill="#dfe7ec" stroke="#5f7280" stroke-width="1.7"/><path d="M6 11h3M11 11h3M16 11h2" stroke="#354650" stroke-width="1.7"/><circle cx="7" cy="15" r="1" fill="#49a968"/><circle cx="11" cy="15" r="1" fill="#d7a03d"/></svg>
+          Drag router
+        </div>
+        <button id="resetTopology">Reset topology</button>
+      </div>
+
+      <div id="networkCanvas" class="network-canvas">
+        <svg id="networkSvg" class="network-svg" aria-label="Editable router topology"></svg>
+        <div id="nodeLayer" class="node-layer"></div>
+        <div id="packetLayer" class="packet-layer"></div>
+      </div>
+
+      <div id="networkStatus" class="network-status">
+        <strong>Topology ready</strong>
+        Use Move, Connect or Remove. Device A and Device B ports are fixed.
+      </div>
+
+      <div class="network-footer">
+        <span>Dots are packets; cards remain inside the device NICs.</span>
+        <span id="topologySummary">5 routers · 11 links</span>
+      </div>
+    </section>
+
+    <section class="panel device-panel device-b">
+      <div class="panel-head">
+        <strong>Device B</strong>
+        <span>receiver</span>
+      </div>
+
+      <div class="device-visual">
+        <span class="device-label">DEVICE B</span>
+        <div class="device-screen"></div>
+        <div class="device-base"></div>
+      </div>
+
+      <div class="nic-card">
+        <div class="nic-head">
+          <strong>Network interface card</strong>
+          <span id="receiveNicStatus" class="nic-status">waiting</span>
+        </div>
+      </div>
+
+      <div class="queue-section nic-pipeline-section">
+        <div class="section-label">
+          <span>NIC processing &amp; ordered buffer</span>
+          <span id="arrivalOrderText">arrival: none</span>
+        </div>
+        <div class="nic-buffer">
+          <div class="nic-buffer-guide" aria-hidden="true">
+            <span>Arrive</span><span>Inspect</span><span>Check</span><span>Order</span>
+          </div>
+          <div id="receiveQueue" class="receive-grid nic-receive-grid"></div>
+        </div>
+      </div>
+
+      <div class="reconstruction">
+        <strong>Reconstructed message</strong>
+        <div id="reconstructedMessage" class="reconstruction-output">Waiting for packets…</div>
+        <div id="reconstructionNote" class="reconstruction-note">The NIC uses packet numbers to place payloads back into their original order.</div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<script>
+(() => {
+  const $=id=>document.getElementById(id);
+  const MAX_ROUTERS=9;
+
+  const SPEEDS={
+    slow:{link:1180,process:700,forward:260,launch:300,check:290},
+    normal:{link:820,process:500,forward:210,launch:220,check:220},
+    fast:{link:560,process:360,forward:170,launch:155,check:160}
+  };
+
+  let nodes=new Map();
+  let edges=new Set();
+  let routerCounter=5;
+  let tool="move";
+  let connectSource=null;
+  let draggingNode=null;
+  let dragPointerId=null;
+
+  let packets=[];
+  let arrivals=[];
+  let arrivalHistory=[];
+  let orderedBuffer=[];
+  let nakCount=0;
+  let nicRuntime={tail:Promise.resolve(),queue:0,current:null};
+  let activePacketIndex=null;
+  let running=false;
+  let paused=false;
+  let runToken=0;
+  let routerRuntime=new Map();
+  let edgeTraffic=new Map();
+  let routeUseCount=new Map();
+  let corruptTargetIndex=null;
+
+  const defaultNodes=[
+    {id:"A",type:"endpoint",label:"NIC A",x:3,y:48,fixed:true},
+    {id:"B",type:"endpoint",label:"NIC B",x:97,y:52,fixed:true},
+    {id:"R1",type:"router",label:"Router 1",x:20,y:43},
+    {id:"R2",type:"router",label:"Router 2",x:43,y:17},
+    {id:"R3",type:"router",label:"Router 3",x:50,y:49},
+    {id:"R4",type:"router",label:"Router 4",x:31,y:78},
+    {id:"R5",type:"router",label:"Router 5",x:77,y:72}
+  ];
+
+  const defaultEdges=[
+    ["A","R1"],["R1","R2"],["R1","R3"],["R1","R4"],
+    ["R2","R3"],["R2","R5"],["R2","B"],
+    ["R3","R4"],["R3","R5"],["R4","R5"],["R5","B"]
+  ];
+
+  function speed(){return SPEEDS[$("speedSelect").value]}
+
+  function edgeKey(a,b){return [a,b].sort().join("|")}
+  function edgeNodes(key){return key.split("|")}
+  function hasEdge(a,b){return edges.has(edgeKey(a,b))}
+
+  function resetTopology(){
+    if(running) return;
+    nodes=new Map(defaultNodes.map(node=>[node.id,{...node}]));
+    edges=new Set(defaultEdges.map(([a,b])=>edgeKey(a,b)));
+    routerCounter=5;
+    tool="move";
+    connectSource=null;
+    routerRuntime=new Map();
+    renderNetwork();
+    setNetworkStatus("Topology reset","Five routers and several redundant routes are available.");
+    renderOverview();
+  }
+
+  function graph(){
+    const adjacency=new Map([...nodes.keys()].map(id=>[id,[]]));
+    edges.forEach(key=>{
+      const [a,b]=edgeNodes(key);
+      if(nodes.has(a)&&nodes.has(b)){
+        adjacency.get(a).push(b);
+        adjacency.get(b).push(a);
+      }
+    });
+    return adjacency;
+  }
+
+  function findPaths(limit=100){
+    const adjacency=graph();
+    const results=[];
+    const maximumDepth=Math.min(nodes.size+1,11);
+
+    function visit(current,path){
+      if(results.length>=limit) return;
+      if(path.length>maximumDepth) return;
+      if(current==="B"){
+        results.push([...path]);
+        return;
+      }
+      const neighbours=[...(adjacency.get(current)||[])].sort();
+      for(const next of neighbours){
+        if(path.includes(next)) continue;
+        visit(next,[...path,next]);
+      }
+    }
+
+    visit("A",["A"]);
+    results.sort((a,b)=>a.length-b.length || a.join("").localeCompare(b.join("")));
+    return results;
+  }
+
+  function routeCandidates(){
+    const all=findPaths(240);
+    if(!all.length) return [];
+    const shortest=all[0].length;
+    // Keep routes reasonably efficient, but retain enough alternatives for
+    // packets to avoid links and routers that are already busy.
+    return all.filter(path=>path.length<=shortest+3).slice(0,24);
+  }
+
+  function randomUnit(){
+    try{
+      if(window.crypto?.getRandomValues){
+        const value=new Uint32Array(1);
+        window.crypto.getRandomValues(value);
+        return value[0]/4294967296;
+      }
+    }catch{}
+    return Math.random();
+  }
+
+  function shuffle(values){
+    const copy=[...values];
+    for(let index=copy.length-1;index>0;index--){
+      const swap=Math.floor(randomUnit()*(index+1));
+      [copy[index],copy[swap]]=[copy[swap],copy[index]];
+    }
+    return copy;
+  }
+
+  function samePath(first,second){
+    return Boolean(first&&second&&first.length===second.length&&
+      first.every((node,index)=>node===second[index]));
+  }
+
+  function pathLoadScore(path,previousPath=null){
+    const adjacency=graph();
+    let edgeLoad=0;
+    let routerLoad=0;
+
+    for(let index=0;index<path.length-1;index++){
+      edgeLoad+=(edgeTraffic.get(edgeKey(path[index],path[index+1]))?.count||0);
+    }
+
+    path.slice(1,-1).forEach(routerId=>{
+      const runtime=routerRuntimeFor(routerId);
+      routerLoad+=(runtime.current?1:0)+runtime.queue;
+    });
+
+    const signature=path.join(">");
+    const priorUse=routeUseCount.get(signature)||0;
+    const hops=path.length-1;
+    const alternateLinks=path.slice(1,-1).reduce(
+      (total,nodeId)=>total+Math.max(0,(adjacency.get(nodeId)?.length||0)-2),
+      0
+    );
+
+    return (
+      hops*2.1 +
+      edgeLoad*7.2 +
+      routerLoad*4.1 +
+      priorUse*2.4 +
+      (samePath(path,previousPath)?4.5:0) -
+      alternateLinks*.12
+    );
+  }
+
+  function chooseAdaptivePath(candidates,previousPath=null){
+    if(!candidates.length) return null;
+    if(candidates.length===1) return candidates[0];
+
+    const scored=candidates
+      .map(path=>({
+        path,
+        score:pathLoadScore(path,previousPath),
+        // Tiny random jitter prevents equal paths from always sorting in the
+        // same lexical order without overwhelming the congestion signal.
+        jitter:randomUnit()*1.35
+      }))
+      .map(entry=>({...entry,total:entry.score+entry.jitter}))
+      .sort((a,b)=>a.total-b.total);
+
+    const best=scored[0].total;
+    const pool=scored.filter(entry=>entry.total<=best+6.2).slice(0,5);
+    const weights=pool.map(entry=>Math.exp(-(entry.total-best)/2.7));
+    const weightTotal=weights.reduce((sum,value)=>sum+value,0);
+    let choice=randomUnit()*weightTotal;
+    let selected=pool[pool.length-1];
+
+    for(let index=0;index<pool.length;index++){
+      choice-=weights[index];
+      if(choice<=0){
+        selected=pool[index];
+        break;
+      }
+    }
+
+    const signature=selected.path.join(">");
+    routeUseCount.set(signature,(routeUseCount.get(signature)||0)+1);
+    return selected.path;
+  }
+
+  function packetColour(index,total){
+    const hue=(index*57 + total*13)%360;
+    return `hsl(${hue} 68% 50%)`;
+  }
+
+  function checksum(payload){
+    let total=0;
+    for(const char of Array.from(payload)) total=(total+char.codePointAt(0))%97;
+    return String(total).padStart(2,"0");
+  }
+
+  function chunkText(text,size){
+    const characters=Array.from(text);
+    const chunks=[];
+    for(let i=0;i<characters.length;i+=size){
+      chunks.push(characters.slice(i,i+size).join(""));
+    }
+    return chunks;
+  }
+
+  function estimatedPackets(){
+    const text=$("messageInput").value;
+    const size=Number($("payloadSize").value);
+    return text.length?Math.ceil(Array.from(text).length/size):0;
+  }
+
+  function updateMessageMeta(){
+    const count=Array.from($("messageInput").value).length;
+    $("characterCount").textContent=`${count} / 72 characters`;
+    const estimate=estimatedPackets();
+    $("packetEstimate").textContent=`${estimate} packet${estimate===1?"":"s"}`;
+  }
+
+  function invalidatePackets(){
+    if(running) return;
+    packets=[];
+    arrivals=[];
+    arrivalHistory=[];
+    orderedBuffer=[];
+    nakCount=0;
+    routeUseCount=new Map();
+    corruptTargetIndex=null;
+    nicRuntime={tail:Promise.resolve(),queue:0,current:null};
+    activePacketIndex=null;
+    $("sendButton").disabled=true;
+    setOverview("Message changed","Create a new set of packets before sending.");
+    renderDeviceQueues();
+    renderOverview();
+  }
+
+  function createPackets(){
+    if(running) return;
+    const text=$("messageInput").value;
+    if(!text.length){
+      setOverview("Nothing to packetise","Type a message at Device A first.","bad");
+      return;
+    }
+
+    const size=Number($("payloadSize").value);
+    const chunks=chunkText(text,size);
+    packets=chunks.map((payload,index)=>({
+      id:`P${index+1}`,
+      index:index+1,
+      total:chunks.length,
+      payload,
+      receivedPayload:null,
+      checksum:checksum(payload),
+      colour:packetColour(index+1,chunks.length),
+      status:"queued",
+      route:null,
+      arrivalOrder:null,
+      valid:null,
+      accepted:false,
+      damaged:false,
+      everRejected:false,
+      attempts:0,
+      retryCount:0,
+      nakState:null,
+      nicState:"waiting",
+      nicDetail:"Waiting to arrive",
+      nicStages:{arrive:"waiting",inspect:"waiting",check:"waiting",order:"waiting"},
+      firstArrivalOrder:null,
+      lastArrivalOrder:null,
+      dot:null
+    }));
+
+    arrivals=[];
+    arrivalHistory=[];
+    orderedBuffer=Array(packets.length).fill(null);
+    nakCount=0;
+    routeUseCount=new Map();
+    corruptTargetIndex=null;
+    nicRuntime={tail:Promise.resolve(),queue:0,current:null};
+    activePacketIndex=null;
+    $("sendButton").disabled=false;
+    setOverview(
+      `${packets.length} packet${packets.length===1?"":"s"} created`,
+      `The sending NIC split the message into payloads of up to ${size} characters.`,
+      "good"
+    );
+    renderDeviceQueues();
+    renderOverview();
+  }
+
+  function optionEnabled(id){return $(id).checked}
+
+  function packetCardMarkup(packet,side="send"){
+    const fields=[];
+    if(optionEnabled("showHeaders")){
+      fields.push(`<span class="packet-field">SRC:A</span>`);
+      fields.push(`<span class="packet-field">DST:B</span>`);
+    }
+    fields.push(`<span class="packet-field">SEQ:${packet.index}/${packet.total}</span>`);
+    if(optionEnabled("useChecksum")){
+      fields.push(`<span class="packet-field">CHK:${packet.checksum}</span>`);
+    }
+
+    const payload=side==="receive" && packet.receivedPayload!==null
+      ? packet.receivedPayload
+      : packet.payload;
+
+    return `
+      <div class="packet-card ${activePacketIndex===packet.index?"active":""}" style="--packet:${packet.colour}">
+        <div class="packet-top">
+          <span class="packet-id">Packet ${packet.index}</span>
+          <span class="packet-state">${packet.status}</span>
+        </div>
+        <div class="packet-payload">${escapeHtml(payload).replace(/ /g,"␠") || "∅"}</div>
+        <div class="packet-fields">${fields.join("")}</div>
+        ${packet.route?`<div class="packet-route">${packet.route.join(" → ")}</div>`:""}
+      </div>`;
+  }
+
+  function escapeHtml(value){
+    return String(value).replace(/[&<>"']/g,char=>({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+    }[char]));
+  }
+
+  function nicStageMarkup(packet,stage,label){
+    const state=packet.nicStages?.[stage]||"waiting";
+    return `<span class="nic-stage ${state}"><i></i><span>${label}</span></span>`;
+  }
+
+  function nicResult(packet){
+    if(packet.accepted){
+      return {label:packet.retryCount?"retry passed":"passed",className:"pass"};
+    }
+    if(packet.nicState==="rejected"||packet.nicState==="nak"||packet.nicState==="retry-wait"){
+      return {label:"rejected",className:"fail"};
+    }
+    if(packet.nicState==="retrying"){
+      return {label:"retrying",className:"work"};
+    }
+    return {label:packet.nicState==="waiting-inspection"?"queued":"working",className:"work"};
+  }
+
+  function receivePacketCardMarkup(packet){
+    const result=nicResult(packet);
+    const fields=[];
+    if(optionEnabled("showHeaders")){
+      fields.push(`<span class="packet-field">A → B</span>`);
+    }
+    fields.push(`<span class="packet-field">SEQ:${packet.index}/${packet.total}</span>`);
+    if(optionEnabled("useChecksum")){
+      fields.push(`<span class="packet-field">CHK:${packet.checksum}</span>`);
+    }
+
+    const attemptText=packet.attempts>1
+      ? `attempt ${packet.attempts} · retry`
+      : `attempt ${Math.max(1,packet.attempts)}`;
+    const arrivalText=packet.lastArrivalOrder
+      ? `arrival #${packet.lastArrivalOrder}`
+      : "not arrived";
+
+    let nak="";
+    if(packet.nakState){
+      const labels={
+        generated:`Device B generated NAK for Packet ${packet.index}`,
+        travelling:`NAK ${packet.index} travelling back to Device A`,
+        received:`Device A received NAK ${packet.index}`,
+        retrying:`Packet ${packet.index} retransmission requested`,
+        recovered:`NAK recovery completed`
+      };
+      nak=`<div class="nak-badge">${labels[packet.nakState]||"Retransmission requested"}</div>`;
+    }
+
+    return `
+      <div class="packet-card nic-packet-card ${packet.nicState||"waiting"} ${activePacketIndex===packet.index?"active":""}"
+           data-packet-index="${packet.index}" style="--packet:${packet.colour}">
+        <div class="packet-top">
+          <span class="packet-id">Packet ${packet.index}</span>
+          <span class="nic-result ${result.className}">${result.label}</span>
+        </div>
+        <div class="packet-payload">${escapeHtml(packet.receivedPayload ?? packet.payload).replace(/ /g,"␠") || "∅"}</div>
+        <div class="packet-fields">${fields.join("")}</div>
+        <div class="nic-attempt-line"><span>${arrivalText}</span><span>${attemptText}</span></div>
+        <div class="nic-detail">${escapeHtml(packet.nicDetail||"Waiting for NIC processing")}</div>
+        <div class="nic-stage-track">
+          ${nicStageMarkup(packet,"arrive","Arrive")}
+          ${nicStageMarkup(packet,"inspect","Inspect")}
+          ${nicStageMarkup(packet,"check","Check")}
+          ${nicStageMarkup(packet,"order","Order")}
+        </div>
+        ${nak}
+      </div>`;
+  }
+
+  function renderSendQueue(){
+    const root=$("sendQueue");
+    $("sendQueueCount").textContent=packets.length
+      ? `${packets.length} packet${packets.length===1?"":"s"}`
+      : "empty";
+    root.innerHTML=packets.length
+      ? packets.map(packet=>packetCardMarkup(packet,"send")).join("")
+      : `<div class="packet-empty">Create packets to fill the sending NIC queue.</div>`;
+  }
+
+  function receiveSort(a,b){
+    const rank=packet=>{
+      if(packet.accepted) return 0;
+      if(["rejected","nak","retry-wait","retrying"].includes(packet.nicState)) return 1;
+      return 2;
+    };
+    const rankA=rank(a);
+    const rankB=rank(b);
+    if(rankA!==rankB) return rankA-rankB;
+    if(rankA===0) return a.index-b.index;
+    return (a.lastArrivalOrder||999)-(b.lastArrivalOrder||999);
+  }
+
+  function renderReceiveQueue(){
+    const root=$("receiveQueue");
+    const before=new Map(
+      [...root.querySelectorAll("[data-packet-index]")].map(element=>[
+        element.dataset.packetIndex,
+        element.getBoundingClientRect()
+      ])
+    );
+
+    const visible=packets
+      .filter(packet=>packet.attempts>0||packet.nicState!=="waiting")
+      .sort(receiveSort);
+
+    root.innerHTML=visible.length
+      ? visible.map(receivePacketCardMarkup).join("")
+      : `<div class="packet-empty">No packets have reached the receiving NIC.</div>`;
+
+    const attemptOrder=arrivalHistory.map(entry=>{
+      const retry=entry.attempt>1?"↻":"";
+      const rejected=entry.valid===false?"×":"";
+      return `${entry.packetIndex}${retry}${rejected}`;
+    });
+    $("arrivalOrderText").textContent=attemptOrder.length
+      ? `arrival: ${attemptOrder.join(" → ")}`
+      : "arrival: none";
+
+    requestAnimationFrame(()=>{
+      root.querySelectorAll("[data-packet-index]").forEach(element=>{
+        const previous=before.get(element.dataset.packetIndex);
+        if(!previous) return;
+        const current=element.getBoundingClientRect();
+        const dx=previous.left-current.left;
+        const dy=previous.top-current.top;
+        if(Math.abs(dx)<1&&Math.abs(dy)<1) return;
+        element.style.transition="none";
+        element.style.transform=`translate(${dx}px,${dy}px)`;
+        requestAnimationFrame(()=>{
+          element.style.transition="";
+          element.style.transform="";
+        });
+      });
+    });
+  }
+
+  function updateReconstruction(final=false){
+    if(!packets.length){
+      $("reconstructedMessage").textContent="Waiting for packets…";
+      $("reconstructionNote").textContent="Accepted cards move into sequence order inside the NIC buffer.";
+      return;
+    }
+
+    let contiguous="";
+    let expected=1;
+    while(expected<=packets.length){
+      const packet=orderedBuffer[expected-1];
+      if(!packet||!packet.accepted) break;
+      contiguous+=packet.receivedPayload ?? packet.payload;
+      expected++;
+    }
+
+    $("reconstructedMessage").textContent=contiguous||"Waiting for Packet 1…";
+
+    if(final){
+      const missing=orderedBuffer.filter(packet=>!packet||!packet.accepted).length;
+      const history=arrivalHistory.map(entry=>`${entry.packetIndex}${entry.attempt>1?" retry":""}${entry.valid===false?" rejected":""}`).join(", ");
+      if(missing){
+        $("reconstructionNote").textContent=
+          `Reassembly is waiting for ${missing} accepted packet position${missing===1?"":"s"}.`;
+      }else{
+        $("reconstructionNote").textContent=
+          `${nakCount?`${nakCount} NAK ${nakCount===1?"request":"requests"} completed. `:""}Arrival attempts: ${history}. Cards were placed into sequence order 1–${packets.length}.`;
+      }
+    }else{
+      $("reconstructionNote").textContent=
+        expected===packets.length+1
+          ? "All accepted packet cards are in sequence order."
+          : `The first ${expected-1} sequence position${expected-1===1?" is":"s are"} ready for reconstruction.`;
+    }
+  }
+
+  function renderDeviceQueues(){
+    renderSendQueue();
+    renderReceiveQueue();
+    updateReconstruction(false);
+  }
+
+  function setOverview(title,detail,tone=""){
+    $("overviewTitle").textContent=title;
+    $("overviewDetail").textContent=detail;
+    const box=$("messageMetricBox");
+    box.className="metric";
+    if(tone) box.classList.add(tone);
+  }
+
+  function renderOverview(){
+    const routes=routeCandidates().length;
+    const accepted=orderedBuffer.filter(packet=>packet&&packet.accepted).length;
+    $("packetMetric").textContent=packets.length;
+    $("routeMetric").textContent=routes;
+    $("arrivalMetric").textContent=accepted;
+    if(!packets.length){
+      $("messageMetric").textContent="Waiting";
+    }else if(running){
+      $("messageMetric").textContent=nakCount?"Recovering":"Sending";
+    }else if(accepted===packets.length){
+      $("messageMetric").textContent="Rebuilt";
+      $("messageMetricBox").className="metric good";
+    }else{
+      $("messageMetric").textContent="Packetised";
+    }
+    $("topologySummary").textContent=
+      `${[...nodes.values()].filter(node=>node.type==="router").length} routers · ${edges.size} links`;
+  }
+
+  function setNetworkStatus(title,detail){
+    $("networkStatus").innerHTML=`<strong>${title}</strong>${detail}`;
+  }
+
+  function setTool(nextTool){
+    if(running) return;
+    tool=nextTool;
+    connectSource=null;
+    ["move","connect","remove"].forEach(name=>{
+      $(`${name}Tool`).classList.toggle("active-tool",tool===name);
+    });
+    $("networkCanvas").classList.toggle("connecting",tool==="connect");
+    $("networkCanvas").classList.toggle("removing",tool==="remove");
+    $("toolCopy").textContent={
+      move:"Move routers or drag a new router into the network.",
+      connect:"Select two nodes. A new link will snap between them.",
+      remove:"Select a router or a link to remove it."
+    }[tool];
+    renderNodes();
+  }
+
+  function addEdge(a,b){
+    if(a===b) return;
+    if((a==="A"&&b==="B")||(a==="B"&&b==="A")){
+      setNetworkStatus("Direct link blocked","Use at least one router between the two devices.");
+      return;
+    }
+    const key=edgeKey(a,b);
+    if(edges.has(key)){
+      setNetworkStatus("Link already exists",`${a} and ${b} are already connected.`);
+      return;
+    }
+    edges.add(key);
+    renderEdges();
+    renderOverview();
+    setNetworkStatus("Link created",`${a} ↔ ${b} snapped into place.`);
+  }
+
+  function removeEdge(key){
+    if(running) return;
+    edges.delete(key);
+    renderEdges();
+    renderOverview();
+    const [a,b]=edgeNodes(key);
+    setNetworkStatus("Link removed",`${a} ↔ ${b} was removed.`);
+  }
+
+  function addRouter(x,y){
+    if(running) return;
+    const count=[...nodes.values()].filter(node=>node.type==="router").length;
+    if(count>=MAX_ROUTERS){
+      setNetworkStatus("Router limit reached",`This teaching topology supports up to ${MAX_ROUTERS} routers.`);
+      return;
+    }
+
+    routerCounter++;
+    const id=`R${routerCounter}`;
+    nodes.set(id,{
+      id,type:"router",label:`Router ${routerCounter}`,
+      x:Math.max(8,Math.min(92,x)),
+      y:Math.max(10,Math.min(90,y))
+    });
+    routerRuntime.set(id,{current:null,queue:0,phase:"idle",colour:"#7a8790",tail:Promise.resolve()});
+    renderNetwork();
+    setNetworkStatus("Router added",`${id} is unconnected. Use Connect to add links.`);
+  }
+
+  function removeNode(id){
+    if(running) return;
+    const node=nodes.get(id);
+    if(!node||node.fixed){
+      setNetworkStatus("Fixed endpoint","Device NIC ports cannot be removed.");
+      return;
+    }
+    nodes.delete(id);
+    [...edges].filter(key=>edgeNodes(key).includes(id)).forEach(key=>edges.delete(key));
+    routerRuntime.delete(id);
+    renderNetwork();
+    renderOverview();
+    setNetworkStatus("Router removed",`${id} and its links were removed.`);
+  }
+
+  function nodePosition(id){
+    const node=nodes.get(id);
+    const canvas=$("networkCanvas");
+    return {
+      x:node.x/100*canvas.clientWidth,
+      y:node.y/100*canvas.clientHeight
+    };
+  }
+
+  function renderEdges(){
+    const svg=$("networkSvg");
+    svg.innerHTML="";
+    const width=$("networkCanvas").clientWidth;
+    const height=$("networkCanvas").clientHeight;
+    svg.setAttribute("viewBox",`0 0 ${width} ${height}`);
+
+    [...edges].sort().forEach(key=>{
+      const [a,b]=edgeNodes(key);
+      const p1=nodePosition(a);
+      const p2=nodePosition(b);
+      const group=document.createElementNS("http://www.w3.org/2000/svg","g");
+
+      const hit=document.createElementNS("http://www.w3.org/2000/svg","line");
+      hit.setAttribute("x1",p1.x);hit.setAttribute("y1",p1.y);
+      hit.setAttribute("x2",p2.x);hit.setAttribute("y2",p2.y);
+      hit.setAttribute("class","link-hit");
+      hit.dataset.key=key;
+      hit.addEventListener("click",event=>{
+        event.stopPropagation();
+        if(tool==="remove") removeEdge(key);
+      });
+
+      const line=document.createElementNS("http://www.w3.org/2000/svg","line");
+      line.setAttribute("x1",p1.x);line.setAttribute("y1",p1.y);
+      line.setAttribute("x2",p2.x);line.setAttribute("y2",p2.y);
+      line.setAttribute("class","link");
+      line.dataset.key=key;
+
+      group.append(hit,line);
+      svg.appendChild(group);
+    });
+
+    edgeTraffic.forEach((traffic,key)=>{
+      if(traffic.count>0) setEdgeVisual(key,true,traffic.colour);
+    });
+  }
+
+  function routerRuntimeFor(id){
+    if(!routerRuntime.has(id)){
+      routerRuntime.set(id,{current:null,queue:0,phase:"idle",colour:"#7a8790",tail:Promise.resolve()});
+    }
+    return routerRuntime.get(id);
+  }
+
+  function renderNodes(){
+    const layer=$("nodeLayer");
+    layer.innerHTML="";
+
+    nodes.forEach(node=>{
+      const element=document.createElement("div");
+      element.className=`network-node ${node.type==="router"?"router-node":"endpoint-node"}`;
+      element.dataset.id=node.id;
+      element.style.left=`${node.x}%`;
+      element.style.top=`${node.y}%`;
+
+      if(node.id===connectSource) element.classList.add("selected");
+
+      if(node.type==="endpoint"){
+        element.innerHTML=`${node.id}<small>${node.label}</small>`;
+      }else{
+        const runtime=routerRuntimeFor(node.id);
+        element.style.setProperty("--packet-color",runtime.colour);
+        element.classList.toggle("processing",runtime.phase==="processing");
+        element.classList.toggle("forwarding",runtime.phase==="forwarding");
+        element.classList.toggle("waiting",!runtime.current&&runtime.queue>0);
+
+        const status=runtime.phase==="processing"
+          ? `PROCESS ${runtime.current?.id||""}`
+          : runtime.phase==="forwarding"
+            ? `FORWARD ${runtime.current?.id||""}`
+            : runtime.queue>0
+              ? "WAITING"
+              : "IDLE";
+
+        element.innerHTML=`
+          <div class="router-top">
+            <span class="router-name">${node.id}</span>
+            <span class="router-queue">${runtime.queue}</span>
+          </div>
+          <div class="router-body">
+            <div class="router-ports">
+              <i class="router-port"></i><i class="router-port"></i><i class="router-port"></i><i class="router-port"></i><i class="router-port"></i>
+            </div>
+            <div class="router-leds">
+              <i class="router-led power"></i>
+              <i class="router-led activity ${runtime.current?"on":""}"></i>
+              <i class="router-led queue ${runtime.queue>0?"on":""}"></i>
+            </div>
+          </div>
+          <div class="router-status">${status}</div>`;
+      }
+
+      element.addEventListener("click",event=>{
+        event.stopPropagation();
+        if(running) return;
+
+        if(tool==="connect"){
+          if(!connectSource){
+            connectSource=node.id;
+            setNetworkStatus("First node selected",`Select another node to connect to ${node.id}.`);
+            renderNodes();
+          }else{
+            const first=connectSource;
+            connectSource=null;
+            addEdge(first,node.id);
+            renderNodes();
+          }
+        }else if(tool==="remove"){
+          removeNode(node.id);
+        }
+      });
+
+      if(node.type==="router"){
+        element.addEventListener("pointerdown",event=>{
+          if(running||tool!=="move") return;
+          draggingNode=node.id;
+          dragPointerId=event.pointerId;
+          element.setPointerCapture(event.pointerId);
+          event.preventDefault();
+        });
+        element.addEventListener("pointermove",event=>{
+          if(draggingNode!==node.id||event.pointerId!==dragPointerId) return;
+          const rect=$("networkCanvas").getBoundingClientRect();
+          node.x=Math.max(6,Math.min(94,(event.clientX-rect.left)/rect.width*100));
+          node.y=Math.max(8,Math.min(92,(event.clientY-rect.top)/rect.height*100));
+          element.style.left=`${node.x}%`;
+          element.style.top=`${node.y}%`;
+          renderEdges();
+        });
+        element.addEventListener("pointerup",event=>{
+          if(event.pointerId!==dragPointerId) return;
+          draggingNode=null;
+          dragPointerId=null;
+          setNetworkStatus("Router moved",`${node.id} moved; its links remained connected.`);
+        });
+      }
+
+      layer.appendChild(element);
+    });
+  }
+
+  function renderNetwork(){
+    renderEdges();
+    renderNodes();
+    renderOverview();
+  }
+
+  function updateRouterVisual(id){
+    const node=$("nodeLayer").querySelector(`[data-id="${id}"]`);
+    if(!node) return;
+    const runtime=routerRuntimeFor(id);
+    node.style.setProperty("--packet-color",runtime.colour);
+    node.classList.toggle("processing",runtime.phase==="processing");
+    node.classList.toggle("forwarding",runtime.phase==="forwarding");
+    node.classList.toggle("waiting",!runtime.current&&runtime.queue>0);
+    const queue=node.querySelector(".router-queue");
+    if(queue) queue.textContent=runtime.queue;
+    const status=node.querySelector(".router-status");
+    if(status){
+      status.textContent=runtime.phase==="processing"
+        ? `PROCESS ${runtime.current?.id||""}`
+        : runtime.phase==="forwarding"
+          ? `FORWARD ${runtime.current?.id||""}`
+          : runtime.queue>0
+            ? "WAITING"
+            : "IDLE";
+    }
+    const activity=node.querySelector(".router-led.activity");
+    const waiting=node.querySelector(".router-led.queue");
+    activity?.classList.toggle("on",Boolean(runtime.current));
+    waiting?.classList.toggle("on",runtime.queue>0);
+  }
+
+  function setRouterPhase(id,phase,packet=null){
+    const runtime=routerRuntimeFor(id);
+    runtime.phase=phase;
+    runtime.current=packet;
+    if(packet) runtime.colour=packet.colour;
+    updateRouterVisual(id);
+  }
+
+  function setEdgeVisual(key,active,colour){
+    const line=$("networkSvg").querySelector(`.link[data-key="${key}"]`);
+    if(!line) return;
+    line.classList.toggle("active",active);
+    if(colour) line.style.setProperty("--packet-color",colour);
+  }
+
+  function activateEdge(key,packet){
+    const traffic=edgeTraffic.get(key)||{count:0,colour:packet.colour};
+    traffic.count++;
+    traffic.colour=packet.colour;
+    edgeTraffic.set(key,traffic);
+    setEdgeVisual(key,true,traffic.colour);
+  }
+
+  function deactivateEdge(key){
+    const traffic=edgeTraffic.get(key);
+    if(!traffic) return;
+    traffic.count=Math.max(0,traffic.count-1);
+    if(traffic.count===0){
+      edgeTraffic.delete(key);
+      setEdgeVisual(key,false);
+    }else{
+      edgeTraffic.set(key,traffic);
+    }
+  }
+
+  function setEditing(enabled){
+    [
+      "messageInput","payloadSize","showHeaders","useChecksum","detailedChecks",
+      "corruptPacket","packetiseButton","moveTool","connectTool","removeTool",
+      "resetTopology","routerPalette"
+    ].forEach(id=>{
+      const element=$(id);
+      if("disabled" in element) element.disabled=!enabled;
+      element.setAttribute("aria-disabled",String(!enabled));
+    });
+    $("routerPalette").draggable=enabled;
+    if(enabled){
+      $("corruptPacket").disabled=!$("useChecksum").checked;
+    }
+    $("sendButton").disabled=!enabled||!packets.length;
+  }
+
+  async function wait(ms,token){
+    let remaining=ms;
+    let previous=performance.now();
+
+    while(remaining>0){
+      if(token!==runToken) return false;
+      await new Promise(resolve=>setTimeout(resolve,Math.min(45,remaining)));
+      const now=performance.now();
+      if(!paused) remaining-=now-previous;
+      previous=now;
+    }
+    return token===runToken;
+  }
+
+  async function animateDot(packet,fromId,toId,duration,token){
+    const from=nodePosition(fromId);
+    const to=nodePosition(toId);
+    const key=edgeKey(fromId,toId);
+    activateEdge(key,packet);
+
+    if(!packet.dot){
+      const dot=document.createElement("div");
+      dot.className=`packet-dot${packet.signalType==="nak"?" nak-dot":""}`;
+      dot.style.setProperty("--packet",packet.colour);
+      dot.innerHTML=`<span>${packet.id}</span>`;
+      $("packetLayer").appendChild(dot);
+      packet.dot=dot;
+    }
+
+    let elapsed=0;
+    let previous=performance.now();
+    packet.dot.style.transform=`translate(${from.x}px,${from.y}px)`;
+
+    while(elapsed<duration){
+      if(token!==runToken){
+        deactivateEdge(key);
+        return false;
+      }
+      await new Promise(resolve=>requestAnimationFrame(resolve));
+      const now=performance.now();
+      if(!paused) elapsed+=now-previous;
+      previous=now;
+      const t=Math.min(1,elapsed/duration);
+      const eased=t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+      const x=from.x+(to.x-from.x)*eased;
+      const y=from.y+(to.y-from.y)*eased;
+      packet.dot.style.transform=`translate(${x}px,${y}px)`;
+    }
+
+    deactivateEdge(key);
+    return true;
+  }
+
+  async function processRouter(routerId,packet,token){
+    const runtime=routerRuntimeFor(routerId);
+    const previous=runtime.tail;
+    let release;
+    runtime.tail=new Promise(resolve=>{release=resolve});
+    const alreadyBusy=Boolean(runtime.current)||runtime.queue>0;
+    runtime.queue++;
+    updateRouterVisual(routerId);
+
+    if(alreadyBusy){
+      packet.status=`waiting at ${routerId}`;
+      activePacketIndex=packet.index;
+      renderSendQueue();
+    }
+
+    await previous;
+    if(token!==runToken){
+      runtime.queue=Math.max(0,runtime.queue-1);
+      release();
+      updateRouterVisual(routerId);
+      return false;
+    }
+
+    runtime.queue=Math.max(0,runtime.queue-1);
+    packet.status=`processing at ${routerId}`;
+    activePacketIndex=packet.index;
+    setRouterPhase(routerId,"processing",packet);
+    renderSendQueue();
+
+    const numeric=Number(routerId.replace(/\D/g,""))||1;
+    const processing=speed().process+((packet.index*37+numeric*29)%3)*110;
+    if(!await wait(processing,token)){
+      release();
+      return false;
+    }
+
+    packet.status=`forwarding from ${routerId}`;
+    setRouterPhase(routerId,"forwarding",packet);
+    renderSendQueue();
+
+    if(!await wait(speed().forward,token)){
+      release();
+      return false;
+    }
+
+    runtime.current=null;
+    runtime.phase=runtime.queue>0?"waiting":"idle";
+    release();
+    updateRouterVisual(routerId);
+    return true;
+  }
+
+  async function processControlRouter(routerId,signal,token){
+    const runtime=routerRuntimeFor(routerId);
+    const previous=runtime.tail;
+    let release;
+    runtime.tail=new Promise(resolve=>{release=resolve});
+    runtime.queue++;
+    updateRouterVisual(routerId);
+
+    await previous;
+    if(token!==runToken){
+      runtime.queue=Math.max(0,runtime.queue-1);
+      release();
+      updateRouterVisual(routerId);
+      return false;
+    }
+
+    runtime.queue=Math.max(0,runtime.queue-1);
+    setRouterPhase(routerId,"processing",signal);
+    if(!await wait(Math.max(180,speed().process*.48),token)){
+      release();
+      return false;
+    }
+
+    setRouterPhase(routerId,"forwarding",signal);
+    if(!await wait(Math.max(110,speed().forward*.7),token)){
+      release();
+      return false;
+    }
+
+    runtime.current=null;
+    runtime.phase=runtime.queue>0?"waiting":"idle";
+    release();
+    updateRouterVisual(routerId);
+    return true;
+  }
+
+  async function routeControlSignal(signal,path,token){
+    for(let i=0;i<path.length-1;i++){
+      const from=path[i];
+      const to=path[i+1];
+      if(!await animateDot(signal,from,to,Math.max(300,speed().link*.62),token)) return false;
+      if(nodes.get(to)?.type==="router"){
+        if(!await processControlRouter(to,signal,token)) return false;
+      }
+    }
+    signal.dot?.remove();
+    signal.dot=null;
+    return true;
+  }
+
+  function damagePayload(payload){
+    const chars=Array.from(payload);
+    if(!chars.length) return "#";
+    chars[0]=chars[0]==="#"?"?":"#";
+    return chars.join("");
+  }
+
+  function resetNicAttempt(packet){
+    packet.nicStages={arrive:"waiting",inspect:"waiting",check:"waiting",order:"waiting"};
+    packet.nicDetail="Packet has reached Device B";
+    packet.nicState="arriving";
+    packet.accepted=false;
+    packet.valid=null;
+  }
+
+  function updateNic(packet,state,detail,stage=null,stageState=null){
+    packet.nicState=state;
+    packet.nicDetail=detail;
+    if(stage&&stageState) packet.nicStages[stage]=stageState;
+    activePacketIndex=packet.index;
+    renderReceiveQueue();
+    renderSendQueue();
+  }
+
+  async function sendNakAndRetry(packet,token,rejectedPath){
+    nakCount++;
+    packet.everRejected=true;
+    packet.nakState="generated";
+    packet.nicState="nak";
+    packet.status=`NAK ${packet.index} generated`;
+    packet.nicDetail=`Checksum mismatch: request Packet ${packet.index} again`;
+    $("receiveNicStatus").className="nic-status bad";
+    $("receiveNicStatus").textContent=`NAK ${packet.index}`;
+    setNetworkStatus("NAK generated",`Device B rejected ${packet.id} and requests a clean retransmission.`);
+    renderDeviceQueues();
+    renderOverview();
+
+    if(!await wait(Math.max(180,speed().check*.75),token)) return false;
+
+    packet.nakState="travelling";
+    packet.nicState="retry-wait";
+    packet.nicDetail=`NAK ${packet.index} is travelling back to Device A`;
+    renderReceiveQueue();
+
+    const signal={
+      id:`NAK ${packet.index}`,
+      index:packet.index,
+      colour:"#d84b40",
+      signalType:"nak",
+      dot:null
+    };
+    const reverse=[...rejectedPath].reverse();
+    if(!await routeControlSignal(signal,reverse,token)) return false;
+
+    packet.nakState="received";
+    packet.status=`NAK received · retry ${packet.index}`;
+    packet.nicDetail=`Device A received NAK ${packet.index}`;
+    $("sendNicStatus").className="nic-status warn";
+    $("sendNicStatus").textContent=`NAK ${packet.index} received`;
+    setNetworkStatus("NAK reached Device A",`${packet.id} is placed back into the NIC send queue.`);
+    renderDeviceQueues();
+
+    if(!await wait(Math.max(220,speed().check),token)) return false;
+
+    packet.retryCount++;
+    packet.nakState="retrying";
+    packet.nicState="retrying";
+    packet.status=`retransmitting ${packet.id}`;
+    packet.nicDetail=`Retransmission attempt ${packet.retryCount+1} is leaving Device A`;
+    $("sendNicStatus").className="nic-status active";
+    $("sendNicStatus").textContent=`retrying ${packet.id}`;
+    renderDeviceQueues();
+
+    const candidates=routeCandidates();
+    if(!candidates.length){
+      setNetworkStatus("Retransmission blocked","The route disappeared before the requested packet could be resent.");
+      return false;
+    }
+
+    return routePacket(packet,null,token,0,true);
+  }
+
+  async function receivePacket(packet,token,isRetry=false){
+    packet.dot?.remove();
+    packet.dot=null;
+    packet.attempts++;
+    packet.receivedPayload=packet.payload;
+    packet.damaged=false;
+    resetNicAttempt(packet);
+
+    const shouldCorrupt=
+      !isRetry &&
+      packet.attempts===1 &&
+      optionEnabled("useChecksum") &&
+      optionEnabled("corruptPacket") &&
+      packet.index===corruptTargetIndex;
+
+    if(shouldCorrupt){
+      packet.receivedPayload=damagePayload(packet.payload);
+      packet.damaged=true;
+    }
+
+    const record={
+      packetIndex:packet.index,
+      attempt:packet.attempts,
+      valid:null
+    };
+    arrivalHistory.push(record);
+    packet.lastArrivalOrder=arrivalHistory.length;
+    if(packet.firstArrivalOrder===null) packet.firstArrivalOrder=packet.lastArrivalOrder;
+
+    packet.status=packet.attempts>1?"retry arrived":"arrived";
+    packet.nicStages.arrive="active";
+    activePacketIndex=packet.index;
+    $("receiveNicStatus").className="nic-status active";
+    $("receiveNicStatus").textContent=`arrival ${packet.id}`;
+    renderDeviceQueues();
+    renderOverview();
+
+    if(!await wait(Math.max(160,speed().check*.65),token)) return false;
+    packet.nicStages.arrive="pass";
+    packet.nicState="waiting-inspection";
+    packet.nicDetail=nicRuntime.queue
+      ? `Waiting behind ${nicRuntime.queue} packet${nicRuntime.queue===1?"":"s"}`
+      : "Queued for NIC inspection";
+    renderReceiveQueue();
+
+    const previous=nicRuntime.tail;
+    let release;
+    nicRuntime.tail=new Promise(resolve=>{release=resolve});
+    nicRuntime.queue++;
+    await previous;
+
+    if(token!==runToken){
+      nicRuntime.queue=Math.max(0,nicRuntime.queue-1);
+      release();
+      return false;
+    }
+
+    nicRuntime.queue=Math.max(0,nicRuntime.queue-1);
+    nicRuntime.current=packet;
+    packet.nicStages.inspect="active";
+    packet.nicState="inspecting";
+    packet.nicDetail=optionEnabled("showHeaders")
+      ? "Reading source, destination, packet number and payload"
+      : "Reading packet number and payload";
+    packet.status="NIC inspecting";
+    $("receiveNicStatus").className="nic-status warn";
+    $("receiveNicStatus").textContent=`inspecting ${packet.id}`;
+    renderDeviceQueues();
+
+    const stageDelay=optionEnabled("detailedChecks")
+      ? speed().check
+      : Math.max(160,speed().check*.68);
+    if(!await wait(stageDelay,token)){
+      release();
+      return false;
+    }
+
+    packet.nicStages.inspect="pass";
+    packet.nicStages.check="active";
+    packet.nicState="checking";
+    packet.nicDetail=optionEnabled("useChecksum")
+      ? `Recalculating checksum for "${packet.receivedPayload.replace(/ /g,"␠")}"`
+      : optionEnabled("showHeaders")
+        ? "Confirming source A and destination B"
+        : "No optional integrity field enabled";
+    packet.status="NIC checking";
+    renderDeviceQueues();
+
+    if(!await wait(stageDelay,token)){
+      release();
+      return false;
+    }
+
+    const headerPass=true;
+    let checksumPass=true;
+    let receivedChecksum=null;
+    if(optionEnabled("useChecksum")){
+      receivedChecksum=checksum(packet.receivedPayload);
+      checksumPass=receivedChecksum===packet.checksum;
+    }
+    packet.valid=headerPass&&checksumPass;
+    record.valid=packet.valid;
+
+    if(packet.valid){
+      packet.nicStages.check=(optionEnabled("useChecksum")||optionEnabled("showHeaders"))?"pass":"skip";
+      packet.nicStages.order="active";
+      packet.nicState="ordering";
+      packet.nicDetail=packet.attempts>1
+        ? `Retry passed; moving Packet ${packet.index} into sequence slot ${packet.index}`
+        : `Moving Packet ${packet.index} into sequence slot ${packet.index}`;
+      packet.status="ordering";
+      renderDeviceQueues();
+
+      if(!await wait(Math.max(190,stageDelay*.8),token)){
+        release();
+        return false;
+      }
+
+      packet.nicStages.order="pass";
+      packet.nicState="accepted";
+      packet.accepted=true;
+      packet.status=packet.retryCount?"retry accepted":"accepted";
+      packet.nicDetail=packet.retryCount
+        ? `Accepted after NAK recovery · sequence slot ${packet.index}`
+        : `Accepted · sequence slot ${packet.index}`;
+      if(packet.retryCount) packet.nakState="recovered";
+      orderedBuffer[packet.index-1]=packet;
+      if(!arrivals.includes(packet)) arrivals.push(packet);
+      $("receiveNicStatus").className="nic-status active";
+      $("receiveNicStatus").textContent=`accepted ${packet.id}`;
+      renderDeviceQueues();
+    }else{
+      packet.nicStages.check="fail";
+      packet.nicStages.order="blocked";
+      packet.nicState="rejected";
+      packet.accepted=false;
+      packet.status="rejected";
+      packet.nicDetail=`Checksum ${receivedChecksum} does not match ${packet.checksum}`;
+      orderedBuffer[packet.index-1]=null;
+      $("receiveNicStatus").className="nic-status bad";
+      $("receiveNicStatus").textContent=`rejected ${packet.id}`;
+      renderDeviceQueues();
+
+      if(!await wait(Math.max(220,stageDelay),token)){
+        release();
+        return false;
+      }
+    }
+
+    nicRuntime.current=null;
+    release();
+
+    if(!packet.valid){
+      const rejectedPath=[...packet.route];
+      return sendNakAndRetry(packet,token,rejectedPath);
+    }
+
+    return true;
+  }
+
+  async function routePacket(packet,path,token,launchDelay=0,isRetry=false){
+    if(!await wait(launchDelay,token)) return false;
+
+    const previousPath=packet.route?[...packet.route]:null;
+    if(!path){
+      const candidates=routeCandidates();
+      path=chooseAdaptivePath(candidates,isRetry?previousPath:null);
+    }
+    if(!path){
+      setNetworkStatus("Routing failed",`${packet.id} could not find an open path to Device B.`);
+      return false;
+    }
+
+    packet.route=path;
+    packet.status=isRetry?"retransmission leaving Device A":"leaving Device A";
+    activePacketIndex=packet.index;
+    $("sendNicStatus").className="nic-status active";
+    $("sendNicStatus").textContent=isRetry?`retrying ${packet.id}`:`sending ${packet.id}`;
+    setNetworkStatus(
+      isRetry?"Adaptive retry route":"Adaptive route selected",
+      `${packet.id}: ${path.join(" → ")}. Shorter, less busy paths were favoured; similar paths were chosen at random.`
+    );
+    renderSendQueue();
+
+    for(let i=0;i<path.length-1;i++){
+      const from=path[i];
+      const to=path[i+1];
+      packet.status=`travelling ${from} → ${to}`;
+      activePacketIndex=packet.index;
+      renderSendQueue();
+
+      const variation=((packet.index*43+i*31+(isRetry?71:0))%3)*130;
+      if(!await animateDot(packet,from,to,speed().link+variation,token)) return false;
+
+      if(nodes.get(to)?.type==="router"){
+        if(!await processRouter(to,packet,token)) return false;
+      }
+    }
+
+    return receivePacket(packet,token,isRetry);
+  }
+
+  async function sendPackets(){
+    if(running||!packets.length) return;
+    const candidates=routeCandidates();
+    if(!candidates.length){
+      setOverview("No route to Device B","Connect Device A to Device B through at least one router.","bad");
+      setNetworkStatus("Network disconnected","No complete A → B route exists.");
+      return;
+    }
+
+    const token=++runToken;
+    running=true;
+    paused=false;
+    arrivals=[];
+    arrivalHistory=[];
+    orderedBuffer=Array(packets.length).fill(null);
+    nakCount=0;
+    routeUseCount=new Map();
+    corruptTargetIndex=(
+      optionEnabled("useChecksum") &&
+      optionEnabled("corruptPacket") &&
+      packets.length
+    ) ? shuffle(packets.map(packet=>packet.index))[0] : null;
+    nicRuntime={tail:Promise.resolve(),queue:0,current:null};
+    activePacketIndex=null;
+    edgeTraffic.clear();
+    $("packetLayer").innerHTML="";
+    $("sendButton").textContent="Pause";
+    $("sendButton").disabled=false;
+    $("sendNicStatus").className="nic-status active";
+    $("sendNicStatus").textContent="transmitting";
+    $("receiveNicStatus").className="nic-status";
+    $("receiveNicStatus").textContent="waiting";
+    setEditing(false);
+
+    packets.forEach(packet=>{
+      packet.status="queued";
+      packet.route=null;
+      packet.arrivalOrder=null;
+      packet.receivedPayload=null;
+      packet.valid=null;
+      packet.accepted=false;
+      packet.damaged=false;
+      packet.everRejected=false;
+      packet.attempts=0;
+      packet.retryCount=0;
+      packet.nakState=null;
+      packet.nicState="waiting";
+      packet.nicDetail="Waiting to arrive";
+      packet.nicStages={arrive:"waiting",inspect:"waiting",check:"waiting",order:"waiting"};
+      packet.firstArrivalOrder=null;
+      packet.lastArrivalOrder=null;
+      packet.dot=null;
+    });
+
+    renderDeviceQueues();
+    setOverview(
+      "Packets are travelling independently",
+      `${packets.length} coloured dots choose among ${candidates.length} efficient route${candidates.length===1?"":"s"} at launch, favouring open links and shorter queues.`
+    );
+    renderOverview();
+
+    const launchOrder=shuffle(packets);
+    const tasks=launchOrder.map((packet,position)=>{
+      const jitter=randomUnit()*speed().launch*.82;
+      return routePacket(packet,null,token,position*speed().launch+jitter,false);
+    });
+
+    await Promise.all(tasks);
+    if(token!==runToken) return;
+
+    running=false;
+    paused=false;
+    activePacketIndex=null;
+    $("sendButton").textContent="Send packets";
+    $("sendNicStatus").className="nic-status";
+    $("sendNicStatus").textContent="complete";
+
+    const accepted=orderedBuffer.filter(packet=>packet&&packet.accepted);
+    const valid=accepted.length===packets.length;
+    $("receiveNicStatus").className=valid?"nic-status active":"nic-status bad";
+    $("receiveNicStatus").textContent=valid?"message rebuilt":"message incomplete";
+
+    setEditing(true);
+    renderDeviceQueues();
+    updateReconstruction(true);
+
+    const acceptedOrder=arrivals.map(packet=>packet.index);
+    const outOfOrder=acceptedOrder.some((value,index)=>value!==index+1);
+    const attemptOrder=arrivalHistory.map(entry=>`${entry.packetIndex}${entry.attempt>1?"↻":""}${entry.valid===false?"×":""}`);
+
+    if(valid){
+      setOverview(
+        nakCount?"Message recovered and reconstructed":"Message reconstructed",
+        `${nakCount?`${nakCount} NAK ${nakCount===1?"requested a retransmission":"requests triggered retransmissions"}. `:""}Arrival attempts ${attemptOrder.join(" → ")}; the NIC ordered accepted packets as ${packets.map(packet=>packet.index).join(" → ")}.`,
+        "good"
+      );
+    }else{
+      setOverview(
+        "Reconstruction incomplete",
+        "At least one sequence position still lacks an accepted packet.",
+        "bad"
+      );
+    }
+
+    setNetworkStatus(
+      valid?"Transmission complete":"Transmission incomplete",
+      valid
+        ? `${outOfOrder?"Out-of-order arrivals were corrected. ":""}${nakCount?"NAK recovery was successful.":"All packets passed inspection."}`
+        : "The receiver could not fill every sequence position."
+    );
+    renderOverview();
+  }
+
+  function pauseOrResume(){
+    if(!running){
+      sendPackets();
+      return;
+    }
+    paused=!paused;
+    $("sendButton").textContent=paused?"Resume":"Pause";
+    setOverview(
+      paused?"Transmission paused":"Transmission resumed",
+      paused?"Packet movement, router processing and NIC checks are paused.":"The slowed teaching simulation is continuing.",
+      paused?"warn":""
+    );
+  }
+
+  function cancelTransmission(){
+    runToken++;
+    running=false;
+    paused=false;
+    edgeTraffic.clear();
+    $("packetLayer").innerHTML="";
+    packets.forEach(packet=>{
+      packet.dot=null;
+      if(!packet.accepted) packet.status="queued";
+    });
+    nicRuntime={tail:Promise.resolve(),queue:0,current:null};
+    routerRuntime=new Map();
+    renderNetwork();
+    activePacketIndex=null;
+    $("sendButton").textContent="Send packets";
+    setEditing(true);
+    renderDeviceQueues();
+  }
+
+  $("messageInput").addEventListener("input",()=>{
+    updateMessageMeta();
+    invalidatePackets();
+  });
+  $("payloadSize").addEventListener("change",()=>{
+    updateMessageMeta();
+    invalidatePackets();
+  });
+  $("packetiseButton").addEventListener("click",createPackets);
+  $("sendButton").addEventListener("click",pauseOrResume);
+
+  $("showHeaders").addEventListener("change",renderDeviceQueues);
+  $("detailedChecks").addEventListener("change",renderDeviceQueues);
+  $("corruptPacket").addEventListener("change",renderDeviceQueues);
+  $("useChecksum").addEventListener("change",()=>{
+    $("corruptPacket").disabled=!$("useChecksum").checked;
+    if(!$("useChecksum").checked) $("corruptPacket").checked=false;
+    renderDeviceQueues();
+  });
+
+  $("moveTool").addEventListener("click",()=>setTool("move"));
+  $("connectTool").addEventListener("click",()=>setTool("connect"));
+  $("removeTool").addEventListener("click",()=>setTool("remove"));
+  $("resetTopology").addEventListener("click",resetTopology);
+
+  $("routerPalette").addEventListener("dragstart",event=>{
+    if(running){event.preventDefault();return}
+    event.dataTransfer.setData("text/plain","new-router");
+    event.dataTransfer.effectAllowed="copy";
+  });
+  $("routerPalette").addEventListener("click",()=>{
+    if(running) return;
+    const offset=[...nodes.values()].filter(node=>node.type==="router").length*4;
+    addRouter(54+(offset%22),34+(offset%48));
+  });
+
+  $("networkCanvas").addEventListener("dragover",event=>{
+    if(running) return;
+    event.preventDefault();
+    event.dataTransfer.dropEffect="copy";
+  });
+  $("networkCanvas").addEventListener("drop",event=>{
+    if(running) return;
+    event.preventDefault();
+    if(event.dataTransfer.getData("text/plain")!=="new-router") return;
+    const rect=$("networkCanvas").getBoundingClientRect();
+    addRouter(
+      (event.clientX-rect.left)/rect.width*100,
+      (event.clientY-rect.top)/rect.height*100
+    );
+  });
+  $("networkCanvas").addEventListener("click",()=>{
+    if(tool==="connect"&&connectSource){
+      connectSource=null;
+      renderNodes();
+      setNetworkStatus("Connection cancelled","Select a first node to begin again.");
+    }
+  });
+
+  window.addEventListener("resize",()=>{
+    renderEdges();
+    packets.forEach(packet=>{
+      if(packet.dot&&packet.route){
+        const position=nodePosition(packet.route[0]);
+        packet.dot.style.transform=`translate(${position.x}px,${position.y}px)`;
+      }
+    });
+  });
+
+  window.addEventListener("keydown",event=>{
+    if(event.key==="Escape"){
+      if(running) cancelTransmission();
+      else if(connectSource){
+        connectSource=null;
+        renderNodes();
+        setNetworkStatus("Connection cancelled","Select a first node to begin again.");
+      }
+    }
+  });
+
+  window.__packetSwitchingLabV3={
+    getState:()=>({
+      packets:packets.map(packet=>({
+        index:packet.index,
+        route:packet.route?[...packet.route]:null,
+        attempts:packet.attempts,
+        retryCount:packet.retryCount,
+        everRejected:packet.everRejected,
+        accepted:packet.accepted,
+        firstArrivalOrder:packet.firstArrivalOrder
+      })),
+      arrivalHistory:arrivalHistory.map(entry=>({...entry})),
+      corruptTargetIndex,
+      running,
+      routes:routeCandidates().map(path=>[...path])
+    })
+  };
+
+  resetTopology();
+  updateMessageMeta();
+  createPackets();
+})();
+</script>
+</body>
+</html>

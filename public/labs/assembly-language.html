@@ -1,0 +1,679 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cambridge 9618 Assembly Lab</title>
+<style>
+:root{
+  --bg:#f5f5f7;--panel:#fff;--soft:#fafafa;--ink:#1d1d1f;--muted:#6e6e73;
+  --line:#d9d9de;--accent:#0071e3;--accent-soft:#edf6ff;--good:#15803d;
+  --good-soft:#edf8f0;--bad:#d92d20;--bad-soft:#fff0ee;--warn:#9a5a16;
+  --changed:#fff0bd;--fetch:#2f73c5;--decode:#a06724;--execute:#27764c;
+  --address:#7564bd;--data:#247e62;--control:#b16a31;--mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace;
+  --editor-line:22px;
+}
+*{box-sizing:border-box}
+html{color-scheme:light}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Inter,system-ui,sans-serif}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}button:disabled{opacity:.42;cursor:not-allowed}
+main{width:min(1480px,calc(100% - 24px));margin:18px auto 40px}
+h1{margin:0;font-size:29px;line-height:1.06;letter-spacing:-.035em}
+.sub{margin:6px 0 0;color:var(--muted);font-size:13px;line-height:1.45}
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:13px}
+.syllabus-chip{padding:6px 9px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.8);color:#55555a;font-size:10px;font-weight:800;white-space:nowrap}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:0 12px 32px rgba(0,0,0,.045)}
+.toolbar{padding:9px 10px;display:grid;grid-template-columns:minmax(180px,1fr) auto;gap:10px;align-items:center}
+.toolbar-left,.toolbar-right{display:flex;align-items:end;gap:7px;flex-wrap:wrap}.toolbar-right{justify-content:flex-end}
+.field{display:grid;gap:4px;color:var(--muted);font-size:10px}
+select,input[type="text"]{height:36px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--ink);padding:0 9px}
+select:focus,input:focus,textarea:focus,button:focus-visible,summary:focus-visible{outline:3px solid rgba(0,113,227,.18);outline-offset:1px}
+.ui-button{height:36px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--ink);padding:0 11px;font-size:12px;font-weight:700}
+.ui-button:hover:not(:disabled){border-color:#aaaab1;background:#fcfcfd}.ui-button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.ui-button.run{min-width:86px;display:inline-flex;align-items:center;justify-content:center;gap:6px}.ui-button svg{width:13px;height:13px;fill:currentColor}
+.validation-wrap{position:relative;display:grid;align-items:end}
+.validation-button{width:36px;height:36px;padding:0;display:grid;place-items:center;border:1px solid var(--line);border-radius:50%;background:#fff;font-size:16px;font-weight:900}
+.validation-button.good{color:var(--good);border-color:#acd5b8;background:var(--good-soft)}.validation-button.bad{color:var(--bad);border-color:#e5aaa4;background:var(--bad-soft)}
+.validation-tooltip{position:absolute;z-index:50;right:0;top:calc(100% + 9px);width:min(315px,calc(100vw - 28px));padding:10px 11px;border:1px solid #303034;border-radius:10px;background:rgba(29,29,31,.98);color:#fff;box-shadow:0 14px 34px rgba(0,0,0,.22);font-size:11px;line-height:1.4;opacity:0;visibility:hidden;transform:translateY(-3px);transition:.14s;pointer-events:none}
+.validation-wrap:hover .validation-tooltip,.validation-wrap:focus-within .validation-tooltip{opacity:1;visibility:visible;transform:translateY(0)}
+.validation-tooltip strong{display:block;margin-bottom:4px;font-size:12px}.validation-tooltip ul{margin:5px 0 0;padding-left:17px}.validation-tooltip li+li{margin-top:3px}
+.workspace{margin-top:11px;display:grid;grid-template-columns:minmax(390px,.73fr) minmax(760px,1.55fr);gap:11px;align-items:start}
+.editor-panel,.architecture-panel{min-width:0;padding:12px}.architecture-panel{overflow:hidden}
+.panel-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:9px}.panel-head strong{font-size:15px}.panel-head span{display:block;margin-top:2px;color:var(--muted);font-size:9px;line-height:1.35;text-align:right}
+.editor-shell{position:relative;height:318px;overflow:hidden;border:1px solid var(--line);border-radius:11px;background:#fbfbfc}
+.editor-highlight{position:absolute;z-index:0;left:0;right:0;height:var(--editor-line);background:rgba(0,113,227,.09);border-left:3px solid var(--accent);opacity:0;pointer-events:none}
+.line-numbers{position:absolute;z-index:2;left:0;top:0;bottom:0;width:42px;padding:11px 7px 11px 0;overflow:hidden;border-right:1px solid #e4e4e8;background:#f4f4f6;color:#9a9aa0;font:700 11px/var(--editor-line) var(--mono);text-align:right;user-select:none;pointer-events:none}
+.line-number{height:var(--editor-line);position:relative}.line-number.active{color:var(--accent)}.line-number.error{color:var(--bad)}.line-number.error::before{content:"";position:absolute;left:6px;top:8px;width:6px;height:6px;border-radius:50%;background:var(--bad)}
+#sourceEditor{position:absolute;z-index:1;inset:0;width:100%;height:100%;margin:0;padding:11px 12px 11px 53px;border:0;resize:none;background:transparent;color:#202026;caret-color:var(--accent);font:600 12px/var(--editor-line) var(--mono);tab-size:4;white-space:pre;overflow:auto}
+#sourceEditor:focus{outline:none}.editor-meta{min-height:32px;padding:7px 2px 0;display:flex;justify-content:space-between;gap:10px;color:var(--muted);font-size:10px}.editor-meta strong{color:var(--ink)}
+.translation{margin-top:10px;border:1px solid var(--line);border-radius:11px;overflow:hidden}.translation-head{padding:9px 10px;display:flex;justify-content:space-between;gap:10px;align-items:center;border-bottom:1px solid var(--line);background:#fafafa}.translation-head strong{font-size:12px}
+.pass-chips{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}.pass-chip{padding:3px 6px;border:1px solid var(--line);border-radius:999px;background:#fff;color:#66666b;font-size:8px;font-weight:800}
+.symbols{min-height:34px;padding:7px 8px;display:flex;align-items:center;gap:5px;flex-wrap:wrap;border-bottom:1px solid var(--line);background:#fff}.symbol-chip{padding:3px 6px;border-radius:6px;background:var(--accent-soft);color:#1c5ca0;font:750 9px var(--mono)}.symbol-empty{color:var(--muted);font-size:9px}
+.translation-scroll{max-height:250px;overflow:auto}.translation-table{width:100%;border-collapse:collapse;table-layout:fixed}.translation-table th{position:sticky;top:0;z-index:2;padding:6px 7px;border-bottom:1px solid var(--line);background:#f7f7f8;color:#7a7a80;text-align:left;font-size:8px;text-transform:uppercase;letter-spacing:.05em}.translation-table td{padding:6px 7px;border-bottom:1px solid #ededf0;vertical-align:top;font-size:9px}.translation-table tr:last-child td{border-bottom:0}.translation-table tr.active{background:var(--accent-soft);box-shadow:inset 3px 0 0 var(--accent)}
+.translation-table .addr{width:53px;font:800 9px var(--mono);color:#5f5f65}.translation-table .source{width:42%;font:650 9px/1.35 var(--mono);overflow-wrap:anywhere}.translation-table .machine{font:800 9px/1.35 var(--mono);color:#225f56;overflow-wrap:anywhere}
+.mode-tag{display:inline-block;margin-top:3px;padding:2px 4px;border-radius:4px;background:#f0f0f2;color:#77777d;font:700 7px var(--mono)}.translation-empty{padding:20px 12px;color:var(--muted);text-align:center;font-size:10px}.encoding-note{padding:7px 9px;border-top:1px solid var(--line);background:#fafafa;color:var(--muted);font-size:8.5px;line-height:1.35}
+.io-panel{margin-top:10px;display:grid;grid-template-columns:minmax(120px,.8fr) minmax(170px,1.2fr);gap:8px}.io-box{min-width:0;padding:8px;border:1px solid var(--line);border-radius:10px;background:#fafafa}.io-box label,.io-title{display:block;margin-bottom:5px;color:var(--muted);font-size:8px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}.io-box input{width:100%;height:32px;font:700 11px var(--mono)}
+.output-console{min-height:32px;max-height:70px;overflow:auto;padding:7px 8px;border:1px solid #dedee2;border-radius:7px;background:#fff;color:#242428;font:750 11px/1.4 var(--mono);white-space:pre-wrap;overflow-wrap:anywhere}.io-note{margin-top:4px;color:var(--muted);font-size:8px}
+.reference{margin-top:10px;border-top:1px solid var(--line);padding-top:8px}.reference summary{width:max-content;cursor:pointer;color:#4f4f54;font-size:10px;font-weight:750}.reference-grid{margin-top:8px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.reference-group{padding:7px;border:1px solid var(--line);border-radius:8px;background:#fafafa}.reference-group strong{display:block;margin-bottom:4px;font-size:9px}.reference-group code{display:block;color:#54545a;font:700 8px/1.45 var(--mono)}
+.architecture-status{display:flex;align-items:center;gap:7px;flex-wrap:wrap;justify-content:flex-end}.status-pill{padding:4px 7px;border:1px solid var(--line);border-radius:999px;background:#fafafa;color:#68686e;font:800 9px var(--mono)}.status-pill.complete{color:var(--good);border-color:#b3d7bf;background:var(--good-soft)}.status-pill.error{color:var(--bad);border-color:#e6b1ab;background:var(--bad-soft)}
+.phase-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:9px}.phase{min-height:29px;display:grid;place-items:center;border:1px solid var(--line);border-radius:9px;background:#fafafa;color:#8a8a90;font-size:9px;font-weight:850;letter-spacing:.05em}.phase.active.fetch{color:var(--fetch);border-color:#bed5ee;background:#eff6ff}.phase.active.decode{color:var(--decode);border-color:#e7cfad;background:#fff6e9}.phase.active.execute{color:var(--execute);border-color:#bedbc8;background:#eff8f2}
+.computer-grid{display:grid;grid-template-columns:minmax(450px,1fr) 160px minmax(245px,.56fr);gap:12px;align-items:stretch}.cpu-board,.ram-card{min-width:0;border:1px solid var(--line);border-radius:13px;background:#fafafa}.cpu-board{position:relative;padding:10px;overflow:hidden}.cpu-board::before{content:"";position:absolute;left:50%;top:47px;bottom:18px;width:2px;transform:translateX(-50%);background:#e2e2e6}.cpu-board.internal-active::before{background:var(--accent);box-shadow:0 0 10px rgba(0,113,227,.34)}
+.board-title{position:relative;z-index:2;display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:8px}.board-title strong{font-size:13px}.board-title span{color:var(--muted);font-size:8px}.internal-value{position:absolute;z-index:3;left:50%;top:50%;max-width:170px;transform:translate(-50%,-50%);padding:3px 6px;border:1px solid var(--line);border-radius:6px;background:#fff;color:var(--accent);font:850 8px var(--mono);opacity:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.cpu-board.internal-active .internal-value{opacity:1}
+.cpu-grid{position:relative;z-index:2;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}.component{position:relative;min-width:0;min-height:76px;padding:7px 8px;border:1px solid #d4d4d9;border-radius:10px;background:#fff;transition:.14s}.component.active{border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,113,227,.11)}.component.changed{border-color:#d1a029;background:var(--changed);box-shadow:0 0 0 3px rgba(209,160,41,.12)}
+.component-name{display:block;color:#535359;font-size:9px;font-weight:850;letter-spacing:.04em}.component-full{display:block;margin-top:1px;color:#98989e;font-size:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.component-main{display:block;margin-top:8px;font:850 15px/1.1 var(--mono);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.component-bits{display:block;margin-top:4px;color:#696970;font:700 7.5px/1.25 var(--mono);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.component-note{display:block;margin-top:3px;color:#8b8b91;font-size:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#regACC{grid-column:span 2}#regIX,#regSTATUS{grid-column:span 1}#unitALU,#unitCU{grid-column:span 2;min-height:88px}#regPC,#regMAR{grid-column:span 1}#regMDR{grid-column:span 2}#regCIR{grid-column:1/-1;min-height:82px}.unit{display:grid;align-content:center;text-align:center;background:linear-gradient(#fff,#fbfbfc)}.unit .component-name{font-size:12px;color:#2d2d31}.unit .component-full{font-size:8px}.unit .component-main{margin-top:7px;font-size:11px;color:#57575d}
+.bus-bridge{min-width:0;display:grid;align-content:center;gap:23px;padding:18px 0}.bus-lane{min-width:0;color:var(--muted)}.bus-head{display:flex;justify-content:space-between;gap:6px;margin-bottom:6px;font-size:8px;font-weight:850}.bus-head span:last-child{font:700 7px var(--mono);color:#99999f}.bus-track{position:relative;height:27px}.bus-line{position:absolute;left:-12px;right:-12px;top:50%;height:6px;transform:translateY(-50%);border-radius:999px;background:#d7d7dc;overflow:hidden}.bus-line::after{content:"";position:absolute;inset:0;opacity:0;background:repeating-linear-gradient(90deg,transparent 0 8px,rgba(255,255,255,.9) 8px 13px,transparent 13px 24px)}
+.bus-value{position:absolute;z-index:2;left:50%;top:50%;width:max-content;max-width:142px;transform:translate(-50%,-50%);padding:3px 5px;border:1px solid var(--line);border-radius:5px;background:#fff;color:#66666c;font:850 7.5px var(--mono);opacity:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.bus-arrow-right,.bus-arrow-left{position:absolute;top:50%;width:0;height:0;transform:translateY(-50%);border-top:6px solid transparent;border-bottom:6px solid transparent}.bus-arrow-right{right:-15px;border-left:9px solid #c0c0c6}.bus-arrow-left{left:-15px;border-right:9px solid #c0c0c6}.bus-lane.active .bus-value{opacity:1}.bus-lane.active .bus-line::after{opacity:1}.bus-lane.to-ram .bus-line::after{animation:busRight .72s linear infinite}.bus-lane.to-cpu .bus-line::after{animation:busLeft .72s linear infinite}
+.bus-lane.address.active{color:var(--address)}.bus-lane.address.active .bus-line{background:var(--address);box-shadow:0 0 9px rgba(118,101,197,.3)}.bus-lane.address.active .bus-arrow-right{border-left-color:var(--address)}.bus-lane.data.active{color:var(--data)}.bus-lane.data.active .bus-line{background:var(--data);box-shadow:0 0 9px rgba(25,130,101,.3)}.bus-lane.data.active .bus-arrow-right{border-left-color:var(--data)}.bus-lane.data.active .bus-arrow-left{border-right-color:var(--data)}.bus-lane.control.active{color:var(--control)}.bus-lane.control.active .bus-line{background:var(--control);box-shadow:0 0 9px rgba(178,103,45,.3)}.bus-lane.control.active .bus-arrow-right{border-left-color:var(--control)}.bus-lane.control.active .bus-arrow-left{border-right-color:var(--control)}
+@keyframes busRight{to{background-position:48px 0}}@keyframes busLeft{from{background-position:48px 0}to{background-position:0 0}}
+.ram-card{display:grid;grid-template-rows:auto 1fr;overflow:hidden}.ram-head{padding:9px 10px;display:flex;justify-content:space-between;gap:8px;align-items:flex-start;border-bottom:1px solid var(--line);background:#f7faf8}.ram-head strong{font-size:13px}.ram-head span{color:var(--muted);font-size:7.5px;line-height:1.3;text-align:right}.ram-scroll{min-height:420px;max-height:500px;overflow:auto;background:#fff}.ram-row{display:grid;grid-template-columns:45px 1fr;min-height:43px;border-bottom:1px solid #ededf0;transition:.14s}.ram-row.active{background:var(--accent-soft);box-shadow:inset 3px 0 0 var(--accent)}.ram-row.changed{background:var(--changed);box-shadow:inset 3px 0 0 #c9911a}.ram-address{padding:7px 5px;display:grid;align-content:center;justify-items:center;border-right:1px solid #ededf0;color:#626268;font:850 8px var(--mono)}.ram-address small{display:block;margin-top:2px;color:#a0a0a6;font-size:6px}.ram-content{min-width:0;padding:6px 7px}.ram-word{display:block;color:#295f55;font:850 7.5px/1.3 var(--mono);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ram-source{display:block;margin-top:3px;color:#515157;font:700 8px/1.25 var(--mono);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ram-meta{display:flex;gap:4px;align-items:center;margin-top:3px;color:#94949a;font-size:6.5px}.ram-type{padding:1px 4px;border-radius:4px;background:#eff0f2;color:#737379;font-weight:850}.ram-type.code{background:#eef5ff;color:#3269a3}.ram-type.data{background:#eef8f3;color:#34755e}.ram-type.modified{background:#fff1cf;color:#8a5c07}
+.micro-card{margin-top:10px;min-height:86px;padding:10px 11px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;border:1px solid var(--line);border-radius:12px;background:#fafafa}.micro-phase{min-width:69px;padding:7px 8px;border:1px solid var(--line);border-radius:9px;background:#fff;color:#77777d;text-align:center;font-size:9px;font-weight:900;letter-spacing:.06em}.micro-phase.fetch{color:var(--fetch);border-color:#bed5ee;background:#eff6ff}.micro-phase.decode{color:var(--decode);border-color:#e7cfad;background:#fff6e9}.micro-phase.execute{color:var(--execute);border-color:#bedbc8;background:#eff8f2}.operation{min-width:0}.operation code{display:block;color:#242429;font:850 14px/1.25 var(--mono);overflow-wrap:anywhere}.operation p{margin:4px 0 0;color:var(--muted);font-size:10px;line-height:1.4}.tick-box{text-align:right;color:var(--muted);font:750 8px/1.5 var(--mono);white-space:nowrap}.tick-box strong{display:block;color:var(--ink);font-size:10px}
+.footer-note{margin-top:9px;color:#85858b;font-size:8.5px;line-height:1.4}
+@media(max-width:1250px){.workspace{grid-template-columns:1fr}.editor-panel{display:grid;grid-template-columns:minmax(330px,.8fr) minmax(430px,1.2fr);gap:10px;align-items:start}.editor-panel>.panel-head{grid-column:1/-1}.editor-main{min-width:0}.translation{margin-top:0}.io-panel,.reference{grid-column:1}.architecture-panel{grid-column:1/-1}}
+@media(max-width:900px){main{width:min(100% - 12px,1480px);margin-top:9px}.page-head{display:block}.syllabus-chip{display:inline-block;margin-top:9px}.toolbar{grid-template-columns:1fr}.toolbar-right{justify-content:flex-start}.editor-panel{display:block}.translation{margin-top:10px}.computer-grid{grid-template-columns:1fr;gap:10px}.cpu-board{overflow:auto}.cpu-grid{min-width:520px}.bus-bridge{grid-template-columns:repeat(3,1fr);gap:10px;padding:0 16px}.bus-line{left:0;right:0}.bus-arrow-right{right:-2px}.bus-arrow-left{left:-2px}.ram-scroll{min-height:260px;max-height:360px}}
+@media(max-width:560px){h1{font-size:25px}.toolbar-left,.toolbar-right{align-items:stretch}.field{flex:1 1 145px}.field select{width:100%}.ui-button{flex:1 1 auto}.validation-wrap{flex:0 0 auto}.editor-shell{height:292px}.io-panel{grid-template-columns:1fr}.reference-grid{grid-template-columns:1fr}.bus-bridge{grid-template-columns:1fr;padding:0 12px}.micro-card{grid-template-columns:1fr}.micro-phase{width:max-content}.tick-box{text-align:left}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}}
+</style>
+</head>
+<body>
+<main>
+  <header class="page-head">
+    <div>
+      <h1>Cambridge 9618 Assembly Lab</h1>
+      <p class="sub">Translate a two-pass assembly program, then watch each fetch, decode and execute micro-operation inside a stored-program computer.</p>
+    </div>
+    <span class="syllabus-chip">AS Level · Processor fundamentals</span>
+  </header>
+
+  <section class="panel toolbar" aria-label="Program and execution controls">
+    <div class="toolbar-left">
+      <label class="field">Example program
+        <select id="exampleSelect">
+          <option value="add" selected>Add and store</option>
+          <option value="count">Count to five</option>
+          <option value="indirect">Indirect addressing</option>
+          <option value="indexed">Indexed addressing</option>
+          <option value="output">ASCII output</option>
+          <option value="bits">Bit mask and shift</option>
+        </select>
+      </label>
+    </div>
+    <div class="toolbar-right">
+      <label class="field">Auto speed
+        <select id="speedSelect">
+          <option value="420" selected>Slow</option>
+          <option value="260">Normal</option>
+          <option value="140">Fast</option>
+        </select>
+      </label>
+      <button id="resetButton" class="ui-button" type="button">Reset CPU</button>
+      <button id="stepButton" class="ui-button" type="button">Step</button>
+      <button id="runButton" class="ui-button primary run" type="button">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6 4.5v11l9-5.5-9-5.5Z"/></svg><span>Run</span>
+      </button>
+      <div class="validation-wrap">
+        <button id="validationButton" class="validation-button good" type="button" aria-label="Code is valid" aria-describedby="validationTooltip">✓</button>
+        <div id="validationTooltip" class="validation-tooltip" role="status"></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="workspace">
+    <section class="panel editor-panel">
+      <div class="panel-head">
+        <div><strong>Assembly source</strong><span style="text-align:left">Edit Cambridge-style mnemonics, labels and data.</span></div>
+        <span id="sourceStatus">Ready</span>
+      </div>
+
+      <div class="editor-main">
+        <div class="editor-shell">
+          <div id="editorHighlight" class="editor-highlight"></div>
+          <div id="lineNumbers" class="line-numbers" aria-hidden="true"></div>
+          <textarea id="sourceEditor" aria-label="Assembly source code" autocomplete="off" autocapitalize="off" spellcheck="false"></textarea>
+        </div>
+        <div class="editor-meta">
+          <span id="assemblySummary"><strong>0</strong> memory words</span>
+          <span id="entrySummary">Entry —</span>
+        </div>
+      </div>
+
+      <section class="translation" aria-label="Two-pass assembly translation">
+        <div class="translation-head">
+          <strong>Two-pass translation</strong>
+          <div class="pass-chips">
+            <span id="passOneChip" class="pass-chip">Pass 1 · 0 labels</span>
+            <span id="passTwoChip" class="pass-chip">Pass 2 · waiting</span>
+          </div>
+        </div>
+        <div id="symbols" class="symbols"></div>
+        <div id="translationBody" class="translation-scroll"></div>
+        <div class="encoding-note">Teaching encoding: every RAM location is one 16-bit word. Instructions use an 8-bit opcode and 8-bit operand; data occupies the same memory.</div>
+      </section>
+
+      <section class="io-panel" aria-label="Program input and output">
+        <div class="io-box">
+          <label for="inputBuffer">ASCII input for IN</label>
+          <input id="inputBuffer" type="text" maxlength="64" value="A" autocomplete="off" spellcheck="false">
+          <div id="inputNote" class="io-note">0 of 1 characters consumed</div>
+        </div>
+        <div class="io-box">
+          <span class="io-title">Output from OUT</span>
+          <div id="outputConsole" class="output-console" aria-live="polite">—</div>
+          <div class="io-note">Printable ASCII is shown directly.</div>
+        </div>
+      </section>
+
+      <details class="reference">
+        <summary>Instruction reference</summary>
+        <div class="reference-grid">
+          <div class="reference-group"><strong>Data movement</strong><code>LDM #n · LDD address · LDI address</code><code>LDX address · LDR #n · MOV IX · STO address</code></div>
+          <div class="reference-group"><strong>Arithmetic and compare</strong><code>ADD value/address · SUB value/address</code><code>INC ACC/IX · DEC ACC/IX · CMP · CMI</code></div>
+          <div class="reference-group"><strong>Control and I/O</strong><code>JMP · JPE · JPN · IN · OUT · END</code><code>JPE follows an equal compare; JPN follows a non-equal compare.</code></div>
+          <div class="reference-group"><strong>Bit manipulation</strong><code>AND · OR · XOR · LSL #n · LSR #n</code><code>#15 denary · B00001111 binary · &amp;0F hexadecimal</code></div>
+          <div class="reference-group" style="grid-column:1/-1"><strong>Addressing modes</strong><code>Immediate: value in the instruction · Direct: address in the instruction</code><code>Indirect: address stored at an address · Indexed: address + IX</code><code>Relative: target formed from PC + offset; the syllabus example table gives no separate relative opcode.</code></div>
+        </div>
+      </details>
+    </section>
+
+    <section class="panel architecture-panel">
+      <div class="panel-head">
+        <div><strong>Von Neumann execution</strong><span style="text-align:left">Instructions and data share RAM; the active source line follows the CPU.</span></div>
+        <div class="architecture-status">
+          <span id="runStatus" class="status-pill">Ready</span>
+          <span id="tickStatus" class="status-pill">Tick 0</span>
+          <span id="instructionStatus" class="status-pill">Instruction 0</span>
+        </div>
+      </div>
+
+      <div class="phase-strip" aria-label="Fetch decode execute phase">
+        <div id="phaseFetch" class="phase fetch active">FETCH</div>
+        <div id="phaseDecode" class="phase decode">DECODE</div>
+        <div id="phaseExecute" class="phase execute">EXECUTE</div>
+      </div>
+
+      <div class="computer-grid">
+        <section id="cpuBoard" class="cpu-board" aria-label="Central processing unit">
+          <div class="board-title"><strong>CPU</strong><span>registers · ALU · control unit</span></div>
+          <div id="internalValue" class="internal-value"></div>
+          <div class="cpu-grid">
+            <div id="regACC" class="component"><span class="component-name">ACC</span><span class="component-full">Accumulator</span><strong id="accMain" class="component-main">0</strong><code id="accBits" class="component-bits">00000000</code><span id="accNote" class="component-note">0x00</span></div>
+            <div id="regIX" class="component"><span class="component-name">IX</span><span class="component-full">Index Register</span><strong id="ixMain" class="component-main">0</strong><code id="ixBits" class="component-bits">00000000</code><span id="ixNote" class="component-note">0x00</span></div>
+            <div id="regSTATUS" class="component"><span class="component-name">STATUS</span><span class="component-full">Compare flags</span><strong id="statusMain" class="component-main">—</strong><code id="statusBits" class="component-bits">EQ = —</code><span id="statusNote" class="component-note">No comparison</span></div>
+
+            <div id="unitALU" class="component unit"><span class="component-name">ALU</span><span class="component-full">Arithmetic and Logic Unit</span><strong id="aluMain" class="component-main">idle</strong></div>
+            <div id="unitCU" class="component unit"><span class="component-name">CU</span><span class="component-full">Control Unit</span><strong id="cuMain" class="component-main">ready</strong></div>
+
+            <div id="regPC" class="component"><span class="component-name">PC</span><span class="component-full">Program Counter</span><strong id="pcMain" class="component-main">0x00</strong><code id="pcBits" class="component-bits">00000000</code><span id="pcNote" class="component-note">address 0</span></div>
+            <div id="regMAR" class="component"><span class="component-name">MAR</span><span class="component-full">Memory Address Register</span><strong id="marMain" class="component-main">—</strong><code id="marBits" class="component-bits">────────</code><span id="marNote" class="component-note">no address</span></div>
+            <div id="regMDR" class="component"><span class="component-name">MDR</span><span class="component-full">Memory Data Register</span><strong id="mdrMain" class="component-main">—</strong><code id="mdrBits" class="component-bits">──────── ────────</code><span id="mdrNote" class="component-note">no memory word</span></div>
+            <div id="regCIR" class="component"><span class="component-name">CIR</span><span class="component-full">Current Instruction Register</span><strong id="cirMain" class="component-main">—</strong><code id="cirBits" class="component-bits">──────── ────────</code><span id="cirNote" class="component-note">no instruction</span></div>
+          </div>
+        </section>
+
+        <section class="bus-bridge" aria-label="System buses">
+          <div id="addressBus" class="bus-lane address"><div class="bus-head"><span>Address bus</span><span>CPU → RAM</span></div><div class="bus-track"><i class="bus-line"></i><i class="bus-arrow-right"></i><code class="bus-value"></code></div></div>
+          <div id="dataBus" class="bus-lane data"><div class="bus-head"><span>Data bus</span><span>CPU ↔ RAM</span></div><div class="bus-track"><i class="bus-line"></i><i class="bus-arrow-left"></i><i class="bus-arrow-right"></i><code class="bus-value"></code></div></div>
+          <div id="controlBus" class="bus-lane control"><div class="bus-head"><span>Control bus</span><span>CU → memory</span></div><div class="bus-track"><i class="bus-line"></i><i class="bus-arrow-left"></i><i class="bus-arrow-right"></i><code class="bus-value"></code></div></div>
+        </section>
+
+        <section class="ram-card" aria-label="Random access memory">
+          <div class="ram-head"><strong>RAM</strong><span>stored program<br>and data</span></div>
+          <div id="ramScroll" class="ram-scroll"></div>
+        </section>
+      </div>
+
+      <section class="micro-card" aria-live="polite">
+        <div id="microPhase" class="micro-phase fetch">FETCH</div>
+        <div class="operation"><code id="operationNotation">PC contains the entry address</code><p id="operationNote">Press Step for one micro-operation, or Run for automatic execution.</p></div>
+        <div class="tick-box"><strong id="operationTick">Tick 0</strong><span id="operationInstruction">before instruction 1</span></div>
+      </section>
+    </section>
+  </div>
+
+  <div class="footer-note">Cambridge supplies an example mnemonic instruction set rather than one mandatory binary opcode map. This standalone lab therefore uses a visible, consistent teaching encoding while preserving the syllabus syntax and processor behaviour.</div>
+</main>
+<script>
+(() => {
+  "use strict";
+  const $ = id => document.getElementById(id);
+  const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  const MEMORY_SIZE = 256;
+  const MAX_INSTRUCTIONS = 1000;
+  const MAX_MICRO_STEPS = 8000;
+
+  const EXAMPLES = {
+    add:`; Add two immediate values and store the result
+        LDM #7
+        ADD #6
+        STO RESULT
+        END
+
+RESULT: 0`,
+    count:`; Repeat until COUNT equals five
+        LDM #0
+        STO COUNT
+LOOP:   LDD COUNT
+        INC ACC
+        STO COUNT
+        CMP #5
+        JPN LOOP
+        END
+
+COUNT:  0`,
+    indirect:`; POINTER stores the address of VALUE
+        LDI POINTER
+        STO COPY
+        END
+
+POINTER: VALUE
+VALUE:   42
+COPY:    0`,
+    indexed:`; IX selects one item after the base address
+        LDR #2
+        LDX VALUES
+        STO COPY
+        END
+
+VALUES:  10
+         20
+         30
+COPY:     0`,
+    output:`; OUT displays the ASCII character held in ACC
+        LDM #72
+        OUT
+        LDM #73
+        OUT
+        END`,
+    bits:`; Keep the low nibble, then shift it left
+        LDM B10101100
+        AND B00001111
+        LSL #1
+        STO RESULT
+        END
+
+RESULT: B00000000`
+  };
+
+  // Stable teaching encoding. Cambridge defines the mnemonic forms, not a
+  // mandatory binary opcode map.
+  const OPCODES = {
+    END:0x00,LDM:0x01,LDD:0x02,LDI:0x03,LDX:0x04,LDR:0x05,STO:0x06,MOV:0x07,
+    ADD_IMM:0x08,ADD_DIR:0x09,SUB_IMM:0x0A,SUB_DIR:0x0B,INC:0x0C,DEC:0x0D,
+    IN:0x0E,OUT:0x0F,JMP:0x10,JPE:0x11,JPN:0x12,
+    CMP_IMM:0x17,CMP_DIR:0x18,CMI:0x19,
+    AND_IMM:0x1A,AND_DIR:0x1B,OR_IMM:0x1C,OR_DIR:0x1D,
+    XOR_IMM:0x1E,XOR_DIR:0x1F,LSL:0x21,LSR:0x22
+  };
+
+  const DECODE_TABLE = new Map([
+    [0x00,{mnemonic:"END",mode:"none"}],[0x01,{mnemonic:"LDM",mode:"immediate"}],
+    [0x02,{mnemonic:"LDD",mode:"direct"}],[0x03,{mnemonic:"LDI",mode:"indirect"}],
+    [0x04,{mnemonic:"LDX",mode:"indexed"}],[0x05,{mnemonic:"LDR",mode:"immediate"}],
+    [0x06,{mnemonic:"STO",mode:"direct"}],[0x07,{mnemonic:"MOV",mode:"register"}],
+    [0x08,{mnemonic:"ADD",mode:"immediate"}],[0x09,{mnemonic:"ADD",mode:"direct"}],
+    [0x0A,{mnemonic:"SUB",mode:"immediate"}],[0x0B,{mnemonic:"SUB",mode:"direct"}],
+    [0x0C,{mnemonic:"INC",mode:"register"}],[0x0D,{mnemonic:"DEC",mode:"register"}],
+    [0x0E,{mnemonic:"IN",mode:"none"}],[0x0F,{mnemonic:"OUT",mode:"none"}],
+    [0x10,{mnemonic:"JMP",mode:"direct"}],[0x11,{mnemonic:"JPE",mode:"direct"}],
+    [0x12,{mnemonic:"JPN",mode:"direct"}],[0x17,{mnemonic:"CMP",mode:"immediate"}],
+    [0x18,{mnemonic:"CMP",mode:"direct"}],[0x19,{mnemonic:"CMI",mode:"indirect"}],
+    [0x1A,{mnemonic:"AND",mode:"immediate"}],[0x1B,{mnemonic:"AND",mode:"direct"}],
+    [0x1C,{mnemonic:"OR",mode:"immediate"}],[0x1D,{mnemonic:"OR",mode:"direct"}],
+    [0x1E,{mnemonic:"XOR",mode:"immediate"}],[0x1F,{mnemonic:"XOR",mode:"direct"}],
+    [0x21,{mnemonic:"LSL",mode:"immediate"}],[0x22,{mnemonic:"LSR",mode:"immediate"}]
+  ]);
+
+  const OPCODE_NAMES = new Set(["LDM","LDD","LDI","LDX","LDR","MOV","STO","ADD","SUB","INC","DEC","JMP","CMP","CMI","JPE","JPN","IN","OUT","END","AND","OR","XOR","LSL","LSR"]);
+  const RESERVED = new Set([...OPCODE_NAMES,"ACC","IX"]);
+  const DIRECT_ONLY = new Set(["LDD","LDI","LDX","STO","JMP","CMI","JPE","JPN"]);
+  const IMMEDIATE_ONLY = new Set(["LDM","LDR","LSL","LSR"]);
+  const DUAL_MODE = new Set(["ADD","SUB","CMP","AND","OR","XOR"]);
+  const REGISTER_OPS = new Set(["MOV","INC","DEC"]);
+  const NO_OPERAND = new Set(["IN","OUT","END"]);
+
+  let compilation=null,memory=[],cpu=null,microQueue=[],currentDecoded=null,currentInstructionAddress=null;
+  let running=false,runToken=0,runtimeError=null,waitingForInput=false,inputCursor=0,outputText="";
+  let tickCount=0,instructionCount=0,compileTimer=null,visual=emptyVisual();
+
+  function emptyVisual(){return {active:[],changed:[],internalValue:"",memoryAddress:null,memoryChanged:false,buses:{address:null,data:null,control:null}}}
+  function bits(value,width=8){return (Number(value)>>>0).toString(2).padStart(width,"0").slice(-width)}
+  function hex(value,width=2){return (Number(value)>>>0).toString(16).toUpperCase().padStart(width,"0").slice(-width)}
+  function wrap8(value){return ((Number(value)%256)+256)%256}
+  function wordBits(word){return `${bits((word>>>8)&255)} ${bits(word&255)}`}
+  function wordHex(word){return `0x${hex(word,4)}`}
+  function addressText(value){return value===null||value===undefined?"—":`0x${hex(value,2)}`}
+  function byteSummary(value){return `${wrap8(value)} · 0x${hex(value,2)}`}
+  function encode(opcode,operand=0){return ((opcode&255)<<8)|(operand&255)}
+  function sleep(ms){return new Promise(resolve=>setTimeout(resolve,reduceMotion?Math.min(ms,20):ms))}
+  function escapeHtml(value){return String(value??"").replace(/[&<>"']/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[char]))}
+  function stripComment(line){const i=line.indexOf(";");return (i===-1?line:line.slice(0,i)).trimEnd()}
+  function isLabelToken(token){return /^[A-Za-z_][A-Za-z0-9_]*$/.test(String(token||""))}
+  function issue(line,message){return {line,message}}
+
+  function parseNumberToken(token,{allowPlain=false}={}){
+    const raw=String(token||"").trim();let value=null,form=null;
+    if(/^#[0-9]+$/i.test(raw)){value=Number(raw.slice(1));form="denary"}
+    else if(/^B[01]+$/i.test(raw)){value=parseInt(raw.slice(1),2);form="binary"}
+    else if(/^&[0-9A-F]+$/i.test(raw)){value=parseInt(raw.slice(1),16);form="hexadecimal"}
+    else if(allowPlain&&/^[0-9]+$/.test(raw)){value=Number(raw);form="denary"}
+    if(value===null||!Number.isInteger(value)) return null;
+    return {value,form,raw};
+  }
+
+  function opcodeFor(mnemonic,mode){
+    const dual={ADD:[OPCODES.ADD_IMM,OPCODES.ADD_DIR],SUB:[OPCODES.SUB_IMM,OPCODES.SUB_DIR],CMP:[OPCODES.CMP_IMM,OPCODES.CMP_DIR],AND:[OPCODES.AND_IMM,OPCODES.AND_DIR],OR:[OPCODES.OR_IMM,OPCODES.OR_DIR],XOR:[OPCODES.XOR_IMM,OPCODES.XOR_DIR]};
+    return dual[mnemonic]?dual[mnemonic][mode==="immediate"?0:1]:OPCODES[mnemonic];
+  }
+
+  function assemble(source){
+    const lines=String(source).replace(/\r\n?/g,"\n").split("\n");
+    const errors=[],symbols=new Map(),records=[];let address=0;
+
+    // Pass 1: labels and memory addresses.
+    lines.forEach((original,index)=>{
+      const line=index+1,clean=stripComment(original);let rest=clean.trim(),label=null;
+      if(rest){
+        const match=rest.match(/^([A-Za-z_][A-Za-z0-9_]*):/);
+        if(match){
+          label=match[1];rest=rest.slice(match[0].length).trim();const key=label.toUpperCase();
+          if(RESERVED.has(key)) errors.push(issue(line,`"${label}" is reserved and cannot be a label.`));
+          else if(symbols.has(key)) errors.push(issue(line,`Duplicate label "${label}".`));
+          else symbols.set(key,{name:label,address,line});
+        }else if(/^[^\s:]+:/.test(rest)) errors.push(issue(line,"Labels must start with a letter or underscore and contain only letters, digits or underscores."));
+      }
+      if(!rest){records.push({line,original,label,address:null,kind:"blank",rest:""});return}
+      if(address>=MEMORY_SIZE){errors.push(issue(line,"Program exceeds the 256-word memory."));records.push({line,original,label,address:null,kind:"overflow",rest});return}
+      const first=(rest.split(/\s+/)[0]||"").toUpperCase();
+      records.push({line,original,label,address,kind:OPCODE_NAMES.has(first)?"instruction":"data",rest});address++;
+    });
+
+    const words=[],byAddress=new Map(),branchTargets=[];let entry=null,endCount=0;
+    function resolveAddress(token,line){
+      const n=parseNumberToken(token,{allowPlain:true});
+      if(n){if(n.value>255){errors.push(issue(line,"Address must be between 0 and 255."));return null}return {value:n.value,label:null}}
+      if(!isLabelToken(token)){errors.push(issue(line,`"${token}" is not a valid address or label.`));return null}
+      const symbol=symbols.get(token.toUpperCase());
+      if(!symbol){errors.push(issue(line,`Undefined label "${token}".`));return null}
+      return {value:symbol.address,label:symbol.name};
+    }
+    function resolveImmediate(token,line){
+      const n=parseNumberToken(token);
+      if(!n){errors.push(issue(line,"Immediate values must use #denary, Bbinary or &hexadecimal notation."));return null}
+      if(n.value>255){errors.push(issue(line,"Immediate value must fit in 8 bits (0 to 255)."));return null}
+      return n;
+    }
+
+    // Pass 2: opcode selection and operand resolution.
+    records.forEach(record=>{
+      if(record.address===null) return;
+      const all=record.rest.split(/\s+/).filter(Boolean),head=(all.shift()||"").toUpperCase(),operands=all;
+      let word=null,mode="data",decoded=null;
+      if(record.kind==="instruction"){
+        if(entry===null) entry=record.address;
+        const mnemonic=head,operand=operands[0]||null;
+        if(operands.length>1) errors.push(issue(record.line,`Too many operands for ${mnemonic}.`));
+        if(NO_OPERAND.has(mnemonic)){
+          if(operand) errors.push(issue(record.line,`${mnemonic} does not take an operand.`));
+          if(mnemonic==="END") endCount++;
+          word=encode(opcodeFor(mnemonic,"none"));mode="none";decoded={mnemonic,mode,operand:0};
+        }else if(REGISTER_OPS.has(mnemonic)){
+          if(!operand) errors.push(issue(record.line,`${mnemonic} needs a register operand.`));
+          else{
+            const register=operand.toUpperCase(),allowed=mnemonic==="MOV"?["IX"]:["ACC","IX"];
+            if(!allowed.includes(register)) errors.push(issue(record.line,`${mnemonic} accepts ${allowed.join(" or ")}.`));
+            else{const code=register==="IX"?1:0;word=encode(opcodeFor(mnemonic,"register"),code);mode="register";decoded={mnemonic,mode,operand:code,register}}
+          }
+        }else if(IMMEDIATE_ONLY.has(mnemonic)){
+          if(!operand) errors.push(issue(record.line,`${mnemonic} needs an immediate operand.`));
+          const n=operand?resolveImmediate(operand,record.line):null;
+          if(n){word=encode(opcodeFor(mnemonic,"immediate"),n.value);mode="immediate";decoded={mnemonic,mode,operand:n.value}}
+        }else if(DIRECT_ONLY.has(mnemonic)){
+          if(!operand) errors.push(issue(record.line,`${mnemonic} needs an address operand.`));
+          const r=operand?resolveAddress(operand,record.line):null;
+          if(r){mode=(mnemonic==="LDI"||mnemonic==="CMI")?"indirect":mnemonic==="LDX"?"indexed":"direct";word=encode(opcodeFor(mnemonic,mode),r.value);decoded={mnemonic,mode,operand:r.value,label:r.label};if(["JMP","JPE","JPN"].includes(mnemonic)) branchTargets.push({line:record.line,address:r.value,label:r.label||operand})}
+        }else if(DUAL_MODE.has(mnemonic)){
+          if(!operand) errors.push(issue(record.line,`${mnemonic} needs an operand.`));
+          if(operand){
+            const n=parseNumberToken(operand);
+            if(n){if(n.value>255) errors.push(issue(record.line,"Immediate value must fit in 8 bits (0 to 255)."));else{mode="immediate";word=encode(opcodeFor(mnemonic,mode),n.value);decoded={mnemonic,mode,operand:n.value}}}
+            else{const r=resolveAddress(operand,record.line);if(r){mode="direct";word=encode(opcodeFor(mnemonic,mode),r.value);decoded={mnemonic,mode,operand:r.value,label:r.label}}}
+          }
+        }
+      }else{
+        if(operands.length>0){
+          if(!record.label&&!parseNumberToken(head,{allowPlain:true})){
+            errors.push(issue(record.line,`Unknown opcode "${head}".`));
+            return;
+          }
+          errors.push(issue(record.line,"A data location contains one value or one symbolic address."));
+        }
+        let value=null;const n=parseNumberToken(head,{allowPlain:true});
+        if(n) value=n.value;
+        else if(isLabelToken(head)){const symbol=symbols.get(head.toUpperCase());if(symbol)value=symbol.address;else errors.push(issue(record.line,`Undefined data label "${head}".`))}
+        else errors.push(issue(record.line,`Unknown opcode or invalid data value "${head}".`));
+        if(value!==null){if(value>255) errors.push(issue(record.line,"Data value must fit in 8 bits (0 to 255)."));else word=value}
+        decoded={mnemonic:null,mode:"data",operand:value};
+      }
+      if(word!==null){const item={address:record.address,word,kind:record.kind,line:record.line,label:record.label,source:record.rest,mode,decoded};words.push(item);byAddress.set(item.address,item)}
+    });
+
+    if(entry===null) errors.push(issue(1,"Add at least one instruction."));
+    if(endCount===0) errors.push(issue(Math.max(1,lines.length),"Program needs an END instruction so execution can return to the operating system."));
+    branchTargets.forEach(target=>{const item=byAddress.get(target.address);if(item&&item.kind!=="instruction") errors.push(issue(target.line,`Jump target "${target.label}" points to data, not an instruction.`))});
+    const seen=new Set(),uniqueErrors=errors.filter(error=>{const key=`${error.line}|${error.message}`;if(seen.has(key))return false;seen.add(key);return true});
+    return {valid:uniqueErrors.length===0,errors:uniqueErrors,lines,records,symbols,words,byAddress,entry:entry??0,highestAddress:words.length?Math.max(...words.map(w=>w.address)):0};
+  }
+
+  function decodeWord(word){const opcode=(word>>>8)&255,operand=word&255,def=DECODE_TABLE.get(opcode);if(!def)return null;const result={...def,opcode,operand};if(def.mode==="register")result.register=operand===1?"IX":operand===0?"ACC":"?";return result}
+  function decodedText(decoded){if(!decoded)return "unknown";if(decoded.mode==="none")return decoded.mnemonic;if(decoded.mode==="register")return `${decoded.mnemonic} ${decoded.register}`;if(decoded.mode==="immediate")return `${decoded.mnemonic} #${decoded.operand}`;return `${decoded.mnemonic} ${decoded.operand}`}
+
+  function cloneMemory(){
+    const result=Array.from({length:MEMORY_SIZE},(_,address)=>({address,word:0,kind:"empty",source:"0",label:null,line:null,modified:false}));
+    compilation.words.forEach(item=>result[item.address]={address:item.address,word:item.word,kind:item.kind,source:item.source,label:item.label,line:item.line,modified:false});return result;
+  }
+  function stopRunning(){running=false;runToken++}
+  function setOperation(phase,notation,note){const p=["fetch","decode","execute"].includes(phase)?phase:"fetch";$("microPhase").className=`micro-phase ${p}`;$("microPhase").textContent=p.toUpperCase();$("operationNotation").textContent=notation;$("operationNote").textContent=note}
+  function setVisual(next={}){visual={...emptyVisual(),...next,buses:{...emptyVisual().buses,...(next.buses||{})}}}
+
+  function resetRuntime(){
+    stopRunning();runtimeError=null;waitingForInput=false;microQueue=[];currentDecoded=null;currentInstructionAddress=null;inputCursor=0;outputText="";tickCount=0;instructionCount=0;visual=emptyVisual();
+    if(!compilation?.valid){memory=[];cpu={PC:0,MAR:null,MDR:null,CIR:null,ACC:0,IX:0,STATUS:{eq:null,relation:null},ALU:"idle",CU:"blocked",halted:false};renderAll();return}
+    memory=cloneMemory();cpu={PC:compilation.entry,MAR:null,MDR:null,CIR:null,ACC:0,IX:0,STATUS:{eq:null,relation:null},ALU:"idle",CU:"ready",halted:false};
+    setOperation("fetch","PC contains the entry address","Press Step for one micro-operation, or Run for automatic execution.");renderAll();
+  }
+
+  function runtimeStop(message){runtimeError=message;stopRunning();cpu.CU="error";setOperation("execute","Execution stopped",message);visual=emptyVisual();renderAll()}
+  function ensureAddress(address,context){if(!Number.isInteger(address)||address<0||address>=MEMORY_SIZE){runtimeStop(`${context} produced address ${address}; valid addresses are 0 to 255.`);return false}return true}
+  function readWord(address){return memory[address]?.word??0}
+  function writeData(address,value){const old=memory[address]||{address};memory[address]={...old,address,word:wrap8(value),kind:"data",source:`${wrap8(value)} (written by STO)`,modified:true}}
+  function compareWith(value){const right=wrap8(value);cpu.STATUS.eq=cpu.ACC===right;cpu.STATUS.relation=cpu.ACC===right?"equal":cpu.ACC<right?"less":"greater"}
+  function pushMicro(...ops){microQueue.push(...ops.filter(Boolean))}
+
+  function enqueueRead(address,{after,title="operand"}={}){
+    pushMicro(
+      {phase:"execute",notation:`MAR ← ${addressText(address)}`,note:`Place the ${title} address in MAR.`,apply(){if(!ensureAddress(address,"Address calculation"))return;cpu.MAR=address;setVisual({active:["regCIR"],changed:["regMAR"],internalValue:addressText(address)})}},
+      {phase:"execute",notation:"Address bus ← MAR; Control bus ← READ",note:"MAR selects the RAM location and the Control Unit requests a read.",apply(){setVisual({active:["regMAR","unitCU"],memoryAddress:cpu.MAR,buses:{address:{value:`${addressText(cpu.MAR)} · ${bits(cpu.MAR)}`,direction:"to-ram"},control:{value:"READ",direction:"to-ram"}}})}},
+      {phase:"execute",notation:"MDR ← M[MAR]",note:"RAM returns the selected word along the data bus into MDR.",apply(){cpu.MDR=readWord(cpu.MAR);setVisual({changed:["regMDR"],memoryAddress:cpu.MAR,buses:{data:{value:wordBits(cpu.MDR),direction:"to-cpu"}}})}},
+      after
+    );
+  }
+
+  function enqueueIndirectRead(pointerAddress,{after,purpose="value"}={}){
+    enqueueRead(pointerAddress,{title:"pointer",after:{phase:"execute",notation:"MAR ← low byte of MDR",note:`The first memory word contains the address of the ${purpose}.`,apply(){const address=cpu.MDR&255;if(!ensureAddress(address,"Indirect addressing"))return;cpu.MAR=address;setVisual({active:["regMDR"],changed:["regMAR"],internalValue:addressText(address)})}}});
+    pushMicro(
+      {phase:"execute",notation:"Address bus ← MAR; Control bus ← READ",note:`The indirect address now selects the ${purpose}.`,apply(){setVisual({active:["regMAR","unitCU"],memoryAddress:cpu.MAR,buses:{address:{value:`${addressText(cpu.MAR)} · ${bits(cpu.MAR)}`,direction:"to-ram"},control:{value:"READ",direction:"to-ram"}}})}},
+      {phase:"execute",notation:"MDR ← M[MAR]",note:`RAM returns the indirectly addressed ${purpose}.`,apply(){cpu.MDR=readWord(cpu.MAR);setVisual({changed:["regMDR"],memoryAddress:cpu.MAR,buses:{data:{value:wordBits(cpu.MDR),direction:"to-cpu"}}})}},
+      after
+    );
+  }
+
+  function enqueueFetch(){
+    const address=cpu.PC;currentInstructionAddress=address;
+    pushMicro(
+      {phase:"fetch",notation:"MAR ← PC",note:"Copy the address of the next instruction from PC into MAR.",apply(){cpu.MAR=cpu.PC;cpu.CU="fetch";setVisual({active:["regPC"],changed:["regMAR"],internalValue:addressText(cpu.PC)})}},
+      {phase:"fetch",notation:"Address bus ← MAR; Control bus ← READ",note:"The address bus selects the instruction while the control bus carries READ.",apply(){setVisual({active:["regMAR","unitCU"],memoryAddress:cpu.MAR,buses:{address:{value:`${addressText(cpu.MAR)} · ${bits(cpu.MAR)}`,direction:"to-ram"},control:{value:"READ",direction:"to-ram"}}})}},
+      {phase:"fetch",notation:"MDR ← M[MAR]",note:"The complete 16-bit instruction word travels from RAM to MDR on the data bus.",apply(){cpu.MDR=readWord(cpu.MAR);setVisual({changed:["regMDR"],memoryAddress:cpu.MAR,buses:{data:{value:wordBits(cpu.MDR),direction:"to-cpu"}}})}},
+      {phase:"fetch",notation:"CIR ← MDR",note:"Copy the fetched instruction into the Current Instruction Register.",apply(){cpu.CIR=cpu.MDR;setVisual({active:["regMDR"],changed:["regCIR"],internalValue:wordBits(cpu.MDR)})}},
+      {phase:"fetch",notation:"PC ← PC + 1",note:"Advance PC so it already points to the next sequential instruction.",apply(){cpu.PC=wrap8(cpu.PC+1);cpu.ALU="PC + 1";setVisual({changed:["regPC"],active:["unitALU"],internalValue:addressText(cpu.PC)})}},
+      {phase:"decode",notation:"CU decodes CIR",note:"The Control Unit separates the opcode from its operand and prepares the execute steps.",apply(){currentDecoded=decodeWord(cpu.CIR);if(!currentDecoded){runtimeStop(`Unknown machine opcode 0x${hex((cpu.CIR>>>8)&255,2)} at address ${currentInstructionAddress}.`);return}cpu.CU=decodedText(currentDecoded);setVisual({active:["regCIR"],changed:["unitCU"],internalValue:decodedText(currentDecoded)});enqueueExecute(currentDecoded)}}
+    );
+  }
+
+  function enqueueExecute(decoded){
+    const operand=decoded.operand,register=decoded.register,finish=()=>{instructionCount++};
+    switch(decoded.mnemonic){
+      case "END":
+        pushMicro({phase:"execute",notation:"END",note:"Return control to the operating system and stop execution.",apply(){cpu.CU="halted";cpu.ALU="idle";cpu.halted=true;finish();setVisual({changed:["unitCU"],internalValue:"halt"})}});break;
+      case "LDM":
+        pushMicro({phase:"execute",notation:"ACC ← CIR operand",note:`Immediate value ${operand} is already inside CIR; no second RAM read is needed.`,apply(){cpu.ACC=operand;finish();setVisual({active:["regCIR"],changed:["regACC"],internalValue:bits(operand)})}});break;
+      case "LDR":
+        pushMicro({phase:"execute",notation:"IX ← CIR operand",note:`Load immediate value ${operand} into the Index Register.`,apply(){cpu.IX=operand;finish();setVisual({active:["regCIR"],changed:["regIX"],internalValue:bits(operand)})}});break;
+      case "MOV":
+        pushMicro({phase:"execute",notation:`${register} ← ACC`,note:"Move the accumulator value into IX.",apply(){if(register!=="IX"){runtimeStop(`MOV encoded an invalid register value ${operand}.`);return}cpu.IX=cpu.ACC;finish();setVisual({active:["regACC"],changed:["regIX"],internalValue:bits(cpu.ACC)})}});break;
+      case "LDD":
+        enqueueRead(operand,{after:{phase:"execute",notation:"ACC ← low byte of MDR",note:"Load the directly addressed data value into ACC.",apply(){cpu.ACC=cpu.MDR&255;finish();setVisual({active:["regMDR"],changed:["regACC"],internalValue:bits(cpu.ACC)})}}});break;
+      case "LDI":
+        enqueueIndirectRead(operand,{purpose:"data value",after:{phase:"execute",notation:"ACC ← low byte of MDR",note:"Load the indirectly addressed data value into ACC.",apply(){cpu.ACC=cpu.MDR&255;finish();setVisual({active:["regMDR"],changed:["regACC"],internalValue:bits(cpu.ACC)})}}});break;
+      case "LDX":
+        pushMicro(
+          {phase:"execute",notation:"effective address ← operand + IX",note:`The ALU adds base address ${operand} to IX.`,apply(){const effective=operand+cpu.IX;if(!ensureAddress(effective,"Indexed addressing"))return;cpu.ALU=`${operand} + ${cpu.IX} = ${effective}`;cpu.MAR=effective;setVisual({active:["regCIR","regIX","unitALU"],changed:["regMAR"],internalValue:addressText(effective)})}},
+          {phase:"execute",notation:"Address bus ← MAR; Control bus ← READ",note:"Read the indexed memory location.",apply(){setVisual({active:["regMAR","unitCU"],memoryAddress:cpu.MAR,buses:{address:{value:`${addressText(cpu.MAR)} · ${bits(cpu.MAR)}`,direction:"to-ram"},control:{value:"READ",direction:"to-ram"}}})}},
+          {phase:"execute",notation:"MDR ← M[MAR]",note:"RAM returns the indexed data word on the data bus.",apply(){cpu.MDR=readWord(cpu.MAR);setVisual({changed:["regMDR"],memoryAddress:cpu.MAR,buses:{data:{value:wordBits(cpu.MDR),direction:"to-cpu"}}})}},
+          {phase:"execute",notation:"ACC ← low byte of MDR",note:"Copy the indexed data value into ACC.",apply(){cpu.ACC=cpu.MDR&255;finish();setVisual({active:["regMDR"],changed:["regACC"],internalValue:bits(cpu.ACC)})}}
+        );break;
+      case "STO":
+        pushMicro(
+          {phase:"execute",notation:`MAR ← ${addressText(operand)}`,note:"Place the destination address in MAR.",apply(){cpu.MAR=operand;setVisual({active:["regCIR"],changed:["regMAR"],internalValue:addressText(operand)})}},
+          {phase:"execute",notation:"MDR ← ACC",note:"Copy the accumulator value into the Memory Data Register.",apply(){cpu.MDR=cpu.ACC;setVisual({active:["regACC"],changed:["regMDR"],internalValue:bits(cpu.ACC)})}},
+          {phase:"execute",notation:"M[MAR] ← MDR",note:"Address, data and WRITE travel together; RAM stores the word at the selected location.",apply(){writeData(cpu.MAR,cpu.MDR&255);finish();setVisual({active:["regMAR","regMDR","unitCU"],memoryAddress:cpu.MAR,memoryChanged:true,buses:{address:{value:`${addressText(cpu.MAR)} · ${bits(cpu.MAR)}`,direction:"to-ram"},data:{value:wordBits(cpu.MDR),direction:"to-ram"},control:{value:"WRITE",direction:"to-ram"}}})}}
+        );break;
+      case "ADD":case "SUB":case "AND":case "OR":case "XOR": {
+        const op=decoded.mnemonic,symbol={ADD:"+",SUB:"−",AND:"AND",OR:"OR",XOR:"XOR"}[op];
+        const applyOperation=value=>{const before=cpu.ACC,right=wrap8(value);let result=before;if(op==="ADD")result=before+right;if(op==="SUB")result=before-right;if(op==="AND")result=before&right;if(op==="OR")result=before|right;if(op==="XOR")result=before^right;cpu.ACC=wrap8(result);cpu.ALU=`${before} ${op} ${right} = ${cpu.ACC}`;finish();setVisual({active:["unitALU",decoded.mode==="direct"?"regMDR":"regCIR"],changed:["regACC"],internalValue:bits(cpu.ACC)})};
+        if(decoded.mode==="immediate") pushMicro({phase:"execute",notation:`ACC ← ACC ${symbol} CIR operand`,note:`The ALU uses immediate value ${operand} already held in CIR.`,apply(){applyOperation(operand)}});
+        else enqueueRead(operand,{after:{phase:"execute",notation:`ACC ← ACC ${symbol} low byte of MDR`,note:"The ALU combines ACC with the directly addressed data value.",apply(){applyOperation(cpu.MDR&255)}}});
+        break;
+      }
+      case "INC":case "DEC":
+        pushMicro({phase:"execute",notation:`${register} ← ${register} ${decoded.mnemonic==="INC"?"+":"−"} 1`,note:`The ALU ${decoded.mnemonic==="INC"?"increments":"decrements"} ${register}.`,apply(){if(!["ACC","IX"].includes(register)){runtimeStop(`${decoded.mnemonic} encoded an invalid register value ${operand}.`);return}const before=cpu[register];cpu[register]=wrap8(before+(decoded.mnemonic==="INC"?1:-1));cpu.ALU=`${before} ${decoded.mnemonic==="INC"?"+":"−"} 1 = ${cpu[register]}`;finish();setVisual({active:["unitALU"],changed:[register==="ACC"?"regACC":"regIX"],internalValue:bits(cpu[register])})}});break;
+      case "CMP": {
+        const compare=value=>{compareWith(value);cpu.ALU=`${cpu.ACC} compare ${wrap8(value)}`;finish();setVisual({active:["regACC",decoded.mode==="direct"?"regMDR":"regCIR","unitALU"],changed:["regSTATUS"],internalValue:cpu.STATUS.eq?"equal":"not equal"})};
+        if(decoded.mode==="immediate")pushMicro({phase:"execute",notation:"STATUS ← compare(ACC, CIR operand)",note:`Compare ACC with immediate value ${operand}.`,apply(){compare(operand)}});
+        else enqueueRead(operand,{after:{phase:"execute",notation:"STATUS ← compare(ACC, low byte of MDR)",note:"Compare ACC with the directly addressed value.",apply(){compare(cpu.MDR&255)}}});
+        break;
+      }
+      case "CMI":
+        enqueueIndirectRead(operand,{purpose:"comparison value",after:{phase:"execute",notation:"STATUS ← compare(ACC, low byte of MDR)",note:"Compare ACC with the indirectly addressed value.",apply(){compareWith(cpu.MDR&255);cpu.ALU=`${cpu.ACC} compare ${cpu.MDR&255}`;finish();setVisual({active:["regACC","regMDR","unitALU"],changed:["regSTATUS"],internalValue:cpu.STATUS.eq?"equal":"not equal"})}}});break;
+      case "JMP":
+        pushMicro({phase:"execute",notation:`PC ← ${addressText(operand)}`,note:"Unconditional jump: replace the next sequential address in PC.",apply(){cpu.PC=operand;finish();setVisual({active:["regCIR"],changed:["regPC"],internalValue:addressText(operand)})}});break;
+      case "JPE":case "JPN":
+        pushMicro({phase:"execute",notation:`${decoded.mnemonic}: test STATUS.EQ`,note:"The Control Unit tests the result produced by the previous compare instruction.",apply(){if(cpu.STATUS.eq===null){runtimeStop(`${decoded.mnemonic} executed before CMP or CMI set the compare flag.`);return}const take=decoded.mnemonic==="JPE"?cpu.STATUS.eq:!cpu.STATUS.eq;cpu.CU=take?`${decoded.mnemonic} taken`:`${decoded.mnemonic} not taken`;if(take)cpu.PC=operand;finish();setVisual({active:["regSTATUS","unitCU"],changed:take?["regPC"]:[],internalValue:take?addressText(operand):"continue"})}});break;
+      case "LSL":case "LSR":
+        pushMicro({phase:"execute",notation:`ACC ← ACC ${decoded.mnemonic} ${operand}`,note:`Logical ${decoded.mnemonic==="LSL"?"left":"right"} shift; zeros enter from the opposite side.`,apply(){const before=cpu.ACC;cpu.ACC=operand>=8?0:decoded.mnemonic==="LSL"?wrap8(before<<operand):(before>>>operand);cpu.ALU=`${before} ${decoded.mnemonic} ${operand} = ${cpu.ACC}`;finish();setVisual({active:["regCIR","unitALU"],changed:["regACC"],internalValue:bits(cpu.ACC)})}});break;
+      case "IN":
+        pushMicro({phase:"execute",notation:"ACC ← ASCII(input)",note:"Consume one input character and store its ASCII value in ACC.",needsInput:true,apply(){const char=Array.from($("inputBuffer").value)[inputCursor];if(char===undefined)return;const code=char.codePointAt(0);if(code>255){runtimeStop(`Input character "${char}" does not fit in the 8-bit teaching model.`);return}inputCursor++;cpu.ACC=code;finish();setVisual({active:["unitCU"],changed:["regACC"],internalValue:`${char} → ${bits(code)}`})}});break;
+      case "OUT":
+        pushMicro({phase:"execute",notation:"output ← ASCII(ACC)",note:"Send the character represented by ACC to the output device.",apply(){const value=cpu.ACC;if(value===10)outputText+="\n";else if(value===9)outputText+="\t";else if(value>=32&&value<=126)outputText+=String.fromCharCode(value);else outputText+=`[${hex(value,2)}]`;finish();setVisual({active:["regACC","unitCU"],internalValue:`${value} → output`})}});break;
+      default:runtimeStop(`Instruction ${decoded.mnemonic} is not implemented.`);
+    }
+  }
+
+  function stepMicro(){
+    if(!compilation?.valid||runtimeError||cpu.halted)return false;
+    if(tickCount>=MAX_MICRO_STEPS||instructionCount>=MAX_INSTRUCTIONS){runtimeStop("Safety stop reached. Check for an infinite loop or a jump that never reaches END.");return false}
+    if(microQueue.length===0)enqueueFetch();const micro=microQueue.shift();if(!micro)return false;
+    if(micro.needsInput&&Array.from($("inputBuffer").value)[inputCursor]===undefined){microQueue.unshift(micro);waitingForInput=true;stopRunning();cpu.CU="waiting for input";setOperation("execute","IN is waiting","Type at least one unconsumed ASCII character into the input box, then Step or Run again.");setVisual({active:["unitCU"]});renderAll();return false}
+    waitingForInput=false;tickCount++;visual=emptyVisual();setOperation(micro.phase,micro.notation,micro.note);micro.apply();if(runtimeError)return false;renderAll();
+    if(cpu.halted){stopRunning();setOperation("execute","END","Program complete. Control has returned to the operating system.");renderAll()}
+    return true;
+  }
+
+  async function runLoop(token){while(running&&token===runToken&&!runtimeError&&!cpu.halted){const progressed=stepMicro();if(!progressed)break;await sleep(Number($("speedSelect").value))}if(token===runToken){running=false;renderControls()}}
+  function toggleRun(){if(!compilation?.valid||runtimeError||cpu.halted)return;if(running){stopRunning();renderAll();return}running=true;const token=++runToken;renderControls();runLoop(token)}
+
+  function compileSource({preserveScroll=true}={}){
+    const top=$("sourceEditor").scrollTop;stopRunning();runtimeError=null;compilation=assemble($("sourceEditor").value);resetRuntime();renderEditorLines();if(preserveScroll)$("sourceEditor").scrollTop=top;syncEditorScroll();
+  }
+  function renderEditorLines(){
+    const count=Math.max(1,$("sourceEditor").value.split("\n").length),errorMap=new Map();
+    (compilation?.errors||[]).forEach(error=>{if(!errorMap.has(error.line))errorMap.set(error.line,[]);errorMap.get(error.line).push(error.message)});
+    $("lineNumbers").innerHTML=Array.from({length:count},(_,i)=>{const line=i+1,errors=errorMap.get(line);return `<div class="line-number ${errors?"error":""}" data-line="${line}" title="${errors?escapeHtml(errors.join("\n")):""}">${line}</div>`}).join("");updateActiveSourceLine();
+  }
+  function syncEditorScroll(){$("lineNumbers").scrollTop=$("sourceEditor").scrollTop;updateActiveSourceLine()}
+  function updateActiveSourceLine(){
+    document.querySelectorAll(".line-number.active").forEach(e=>e.classList.remove("active"));
+    const line=currentInstructionAddress!==null?memory[currentInstructionAddress]?.line:null,highlight=$("editorHighlight");
+    if(!line){highlight.style.opacity="0";return}const number=$("lineNumbers").querySelector(`[data-line="${line}"]`);if(number)number.classList.add("active");
+    const top=11+(line-1)*22-$("sourceEditor").scrollTop;if(top<-22||top>$("sourceEditor").clientHeight){highlight.style.opacity="0";return}highlight.style.top=`${top}px`;highlight.style.opacity="1";
+  }
+
+  function renderTranslation(){
+    const symbols=[...(compilation?.symbols?.values?.()||[])].sort((a,b)=>a.address-b.address);
+    $("passOneChip").textContent=`Pass 1 · ${symbols.length} label${symbols.length===1?"":"s"}`;
+    $("passTwoChip").textContent=compilation?.valid?`Pass 2 · ${compilation.words.length} word${compilation.words.length===1?"":"s"}`:"Pass 2 · blocked";
+    $("symbols").innerHTML=symbols.length?symbols.map(s=>`<span class="symbol-chip">${escapeHtml(s.name)} → ${hex(s.address,2)}</span>`).join(""):`<span class="symbol-empty">Pass 1 found no labels.</span>`;
+    if(!compilation?.valid){$("translationBody").innerHTML=`<div class="translation-empty">Fix the marked source lines to complete Pass 2.</div>`;return}
+    const rows=compilation.words.map(item=>{const active=item.address===currentInstructionAddress?"active":"",source=item.label?`${item.label}: ${item.source}`:item.source;return `<tr class="${active}" data-address="${item.address}"><td class="addr">${hex(item.address,2)}<br><span style="color:#aaa;font-size:7px">${item.address}</span></td><td class="source">${escapeHtml(source)}<br><span class="mode-tag">${escapeHtml(item.mode)}</span></td><td class="machine">${wordBits(item.word)}</td></tr>`}).join("");
+    $("translationBody").innerHTML=`<table class="translation-table"><thead><tr><th>Addr</th><th>Source</th><th>Machine word</th></tr></thead><tbody>${rows}</tbody></table>`;
+  }
+
+  function setComponent(prefix,main,bitsText,note){if(main!==undefined)$(prefix+"Main").textContent=main;if(bitsText!==undefined)$(prefix+"Bits").textContent=bitsText;if(note!==undefined)$(prefix+"Note").textContent=note}
+  function renderRegisters(){
+    setComponent("acc",String(cpu.ACC),bits(cpu.ACC),`0x${hex(cpu.ACC,2)}`);setComponent("ix",String(cpu.IX),bits(cpu.IX),`0x${hex(cpu.IX,2)}`);setComponent("pc",addressText(cpu.PC),bits(cpu.PC),`address ${cpu.PC}`);
+    if(cpu.MAR===null)setComponent("mar","—","────────","no address");else setComponent("mar",addressText(cpu.MAR),bits(cpu.MAR),`address ${cpu.MAR}`);
+    if(cpu.MDR===null)setComponent("mdr","—","──────── ────────","no memory word");else{const cell=cpu.MAR===null?null:memory[cpu.MAR];setComponent("mdr",wordHex(cpu.MDR),wordBits(cpu.MDR),cell?.kind==="instruction"?(cell.source||"instruction"):`low byte ${cpu.MDR&255}`)}
+    if(cpu.CIR===null)setComponent("cir","—","──────── ────────","no instruction");else{const decoded=decodeWord(cpu.CIR);setComponent("cir",wordHex(cpu.CIR),wordBits(cpu.CIR),decoded?decodedText(decoded):"unknown opcode")}
+    const eq=cpu.STATUS.eq;setComponent("status",eq===null?"—":eq?"EQUAL":"NOT EQUAL",`EQ = ${eq===null?"—":eq?1:0}`,eq===null?"No comparison":cpu.STATUS.relation);$("aluMain").textContent=cpu.ALU;$("cuMain").textContent=cpu.CU;
+  }
+  function renderVisual(){
+    document.querySelectorAll(".component").forEach(c=>c.classList.remove("active","changed"));visual.active.forEach(id=>$(id)?.classList.add("active"));visual.changed.forEach(id=>$(id)?.classList.add("changed"));
+    $("cpuBoard").classList.toggle("internal-active",Boolean(visual.internalValue));$("internalValue").textContent=visual.internalValue||"";
+    ["address","data","control"].forEach(name=>{const element=$(name+"Bus");element.classList.remove("active","to-ram","to-cpu");const state=visual.buses[name];element.querySelector(".bus-value").textContent=state?.value||"";if(state)element.classList.add("active",state.direction)});
+  }
+  function renderRAM(){
+    if(!memory.length){$("ramScroll").innerHTML=`<div class="translation-empty">Valid code will appear here.</div>`;return}
+    const active=visual.memoryAddress,dynamicHigh=Math.max(compilation.highestAddress,active??0,currentInstructionAddress??0),highest=Math.min(255,Math.max(7,dynamicHigh+3));let html="";
+    for(let address=0;address<=highest;address++){
+      const cell=memory[address],isActive=address===active,changed=isActive&&visual.memoryChanged,type=cell.modified?"modified":cell.kind==="instruction"?"code":cell.kind==="data"?"data":"",label=cell.label?`${cell.label} · `:"",source=cell.kind==="empty"?"empty":cell.source,meta=cell.kind==="instruction"?decodedText(decodeWord(cell.word)):byteSummary(cell.word&255);
+      html+=`<div class="ram-row ${isActive?"active":""} ${changed?"changed":""}" data-address="${address}" data-word="${cell.word}"><div class="ram-address">${hex(address,2)}<small>${address}</small></div><div class="ram-content"><code class="ram-word">${wordBits(cell.word)}</code><code class="ram-source">${escapeHtml(label+source)}</code><div class="ram-meta"><span class="ram-type ${type}">${type?type.toUpperCase():"EMPTY"}</span><span>${escapeHtml(meta)}</span></div></div></div>`;
+    }
+    $("ramScroll").innerHTML=html;
+  }
+  function renderIO(){$("outputConsole").textContent=outputText||"—";const total=Array.from($("inputBuffer").value).length;$("inputNote").textContent=`${inputCursor} of ${total} character${total===1?"":"s"} consumed${waitingForInput?" · IN is waiting":""}`}
+  function renderPhases(){const phase=$("microPhase").textContent.toLowerCase();["fetch","decode","execute"].forEach(name=>$("phase"+name[0].toUpperCase()+name.slice(1)).classList.toggle("active",phase===name))}
+  function renderControls(){const valid=Boolean(compilation?.valid);$("stepButton").disabled=!valid||Boolean(runtimeError)||Boolean(cpu?.halted)||running;$("runButton").disabled=!valid||Boolean(runtimeError)||Boolean(cpu?.halted);$("resetButton").disabled=!valid;$("runButton").querySelector("span").textContent=running?"Pause":"Run"}
+  function renderStatus(){
+    const status=$("runStatus");status.className="status-pill";let text="Ready";
+    if(!compilation?.valid)text="Code error";else if(runtimeError){text="Runtime error";status.classList.add("error")}else if(waitingForInput)text="Waiting for input";else if(cpu.halted){text="Complete";status.classList.add("complete")}else if(running)text="Running";else if(tickCount>0)text="Paused";status.textContent=text;
+    $("tickStatus").textContent=`Tick ${tickCount}`;$("instructionStatus").textContent=`Instruction ${instructionCount}`;$("operationTick").textContent=`Tick ${tickCount}`;$("operationInstruction").textContent=cpu.halted?`${instructionCount} completed`:`executing instruction ${instructionCount+1}`;
+    $("sourceStatus").textContent=compilation?.valid?`${compilation.words.length} word${compilation.words.length===1?"":"s"} · ${compilation.symbols.size} label${compilation.symbols.size===1?"":"s"}`:`${compilation?.errors.length||0} issue${compilation?.errors.length===1?"":"s"}`;
+    $("assemblySummary").innerHTML=`<strong>${compilation?.words.length||0}</strong> memory word${compilation?.words.length===1?"":"s"}`;$("entrySummary").textContent=compilation?.valid?`Entry ${addressText(compilation.entry)}`:"Entry —";
+  }
+  function renderValidation(){
+    const button=$("validationButton"),tooltip=$("validationTooltip");button.className="validation-button";
+    if(runtimeError){button.classList.add("bad");button.textContent="!";button.setAttribute("aria-label","Runtime error");tooltip.innerHTML=`<strong>Runtime error</strong><span>${escapeHtml(runtimeError)}</span><br><span>Reset the CPU after fixing the cause.</span>`;return}
+    if(!compilation?.valid){button.classList.add("bad");button.textContent="!";const count=compilation?.errors.length||0;button.setAttribute("aria-label",`${count} code error${count===1?"":"s"}`);tooltip.innerHTML=`<strong>${count} code issue${count===1?"":"s"}</strong><ul>${(compilation?.errors||[]).slice(0,4).map(error=>`<li>Line ${error.line}: ${escapeHtml(error.message)}</li>`).join("")}</ul>${count>4?`<span>And ${count-4} more.</span>`:""}`;return}
+    button.classList.add("good");button.textContent="✓";button.setAttribute("aria-label","Code is valid");const state=cpu.halted?"Program complete":waitingForInput?"Code valid; execution is waiting for input":"Ready to run";tooltip.innerHTML=`<strong>${state}</strong><span>Pass 1 resolved ${compilation.symbols.size} label${compilation.symbols.size===1?"":"s"}; Pass 2 emitted ${compilation.words.length} memory word${compilation.words.length===1?"":"s"}.</span>`;
+  }
+  function renderAll(){renderRegisters();renderVisual();renderRAM();renderTranslation();renderIO();renderPhases();renderStatus();renderValidation();renderControls();updateActiveSourceLine()}
+
+  function focusFirstError(){const error=compilation?.errors?.[0];if(!error)return;const lines=$("sourceEditor").value.split("\n");let start=0;for(let i=0;i<error.line-1;i++)start+=lines[i].length+1;const end=start+(lines[error.line-1]?.length||0);$("sourceEditor").focus();$("sourceEditor").setSelectionRange(start,end);$("sourceEditor").scrollTop=Math.max(0,(error.line-4)*22);syncEditorScroll()}
+
+  $("exampleSelect").addEventListener("change",event=>{$("sourceEditor").value=EXAMPLES[event.target.value];compileSource({preserveScroll:false})});
+  $("sourceEditor").addEventListener("input",()=>{clearTimeout(compileTimer);compileTimer=setTimeout(()=>compileSource({preserveScroll:true}),110);renderEditorLines()});
+  $("sourceEditor").addEventListener("scroll",syncEditorScroll);
+  $("sourceEditor").addEventListener("keydown",event=>{if(event.key==="Tab"){event.preventDefault();const editor=$("sourceEditor"),start=editor.selectionStart,end=editor.selectionEnd;editor.setRangeText("    ",start,end,"end");editor.dispatchEvent(new Event("input",{bubbles:true}))}if((event.ctrlKey||event.metaKey)&&event.key==="Enter"){event.preventDefault();toggleRun()}});
+  $("stepButton").addEventListener("click",stepMicro);$("runButton").addEventListener("click",toggleRun);$("resetButton").addEventListener("click",resetRuntime);$("validationButton").addEventListener("click",focusFirstError);
+  $("inputBuffer").addEventListener("input",event=>{const clean=event.target.value.replace(/[^\x09\x0A\x20-\x7E]/g,"");if(clean!==event.target.value)event.target.value=clean;if(waitingForInput&&Array.from(clean)[inputCursor]!==undefined){waitingForInput=false;cpu.CU="input ready";setOperation("execute","IN input ready","Step or Run to consume the next character.")}renderAll()});
+
+  window.__assemblyLab={
+    getState:()=>({valid:compilation?.valid,errors:compilation?.errors.map(e=>({...e})),cpu:{...cpu,STATUS:{...cpu.STATUS}},tickCount,instructionCount,halted:cpu?.halted,runtimeError,outputText,inputCursor,memory:memory.map(cell=>cell?{...cell}:cell)}),
+    setSource:source=>{$("sourceEditor").value=source;compileSource({preserveScroll:false})},step:stepMicro,reset:resetRuntime,assemble
+  };
+
+  $("sourceEditor").value=EXAMPLES.add;compilation=assemble($("sourceEditor").value);resetRuntime();renderEditorLines();syncEditorScroll();
+})();
+</script>
+</body>
+</html>

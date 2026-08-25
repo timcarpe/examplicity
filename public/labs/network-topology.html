@@ -1,0 +1,1498 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Network Topology Builder Lab</title>
+<style>
+:root{
+  --bg:#f3f5f7;
+  --panel:#ffffff;
+  --ink:#1d2730;
+  --muted:#687681;
+  --line:#d7dfe5;
+  --accent:#2865d8;
+  --accent-soft:#edf3ff;
+  --good:#26734a;
+  --good-soft:#edf8f1;
+  --warn:#9a601b;
+  --warn-soft:#fff6e8;
+  --bad:#b2453a;
+  --bad-soft:#fff0ee;
+  --network:#101821;
+  --network-grid:#1b2732;
+  --link:#536776;
+  --packet:#4aa3ff;
+}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+button,select{font:inherit}
+button{cursor:pointer}
+button:disabled,select:disabled{opacity:.45;cursor:not-allowed}
+main{width:min(1240px,calc(100% - 20px));margin:15px auto 38px}
+h1{margin:0;font-size:27px;letter-spacing:-.025em}
+.sub{margin:5px 0 12px;color:var(--muted);font-size:13px;line-height:1.45}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px}
+button{
+  min-height:34px;
+  padding:0 10px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:#fff;
+  color:var(--ink);
+}
+button:hover:not(:disabled){border-color:#9ba8b2}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:750}
+button.active-tool{background:var(--accent-soft);border-color:#8eafea;color:#1d58bb;font-weight:800}
+button.danger{color:var(--bad)}
+
+.mission{
+  padding:10px 11px;
+  display:grid;
+  grid-template-columns:minmax(250px,1fr) auto;
+  gap:12px;
+  align-items:center;
+}
+.eyebrow{display:block;margin-bottom:2px;color:var(--accent);font-size:9px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+#missionTitle{display:block;font-size:15px}
+#missionHint{display:block;margin-top:3px;color:var(--muted);font-size:10px;line-height:1.35}
+.task-tabs{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}
+.task-tab{min-height:32px;padding:0 9px;font-size:9px;font-weight:800}
+.task-tab.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.task-tab.complete:not(.active){border-color:#a9d4b9;background:var(--good-soft);color:var(--good)}
+
+.lab-grid{margin-top:10px;display:grid;grid-template-columns:210px minmax(0,1fr);gap:10px;align-items:start}
+.palette{padding:10px;position:sticky;top:10px}
+.palette-head{margin-bottom:8px}
+.palette-head strong{display:block;font-size:14px}
+.palette-head span{display:block;margin-top:2px;color:var(--muted);font-size:9px;line-height:1.35}
+.part-list{display:grid;gap:7px}
+.part-card{
+  width:100%;min-height:66px;padding:8px;
+  display:grid;grid-template-columns:48px minmax(0,1fr) auto;gap:8px;align-items:center;
+  border:1px solid #c8d2d9;border-radius:9px;background:#fff;text-align:left;touch-action:none;user-select:none;
+}
+.part-card:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 3px 8px rgba(36,53,65,.09)}
+.part-card.dragging-source{border-color:var(--accent);background:var(--accent-soft)}
+.part-icon{width:48px;height:42px;display:grid;place-items:center;border:1px solid #d1d9df;border-radius:8px;background:#f6f8fa;color:#50616d}
+.part-icon svg{width:38px;height:30px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.part-copy{min-width:0}
+.part-copy strong{display:block;font-size:10px}
+.part-copy span{display:block;margin-top:2px;color:var(--muted);font-size:8px;line-height:1.25}
+.part-count{min-width:38px;padding:3px 5px;border-radius:999px;background:#eef2f5;color:#556570;text-align:center;font:850 9px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.palette-note{margin-top:8px;color:var(--muted);font-size:8px;line-height:1.35}
+
+.workspace{padding:9px;min-width:0}
+.toolbar{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:7px}
+.tool-group,.action-group{display:flex;gap:5px;flex-wrap:wrap}
+.toolbar button{font-size:9px}
+.canvas-shell{position:relative;overflow:auto;border-radius:11px;background:var(--network)}
+.canvas{
+  position:relative;
+  min-width:960px;
+  min-height:620px;
+  overflow:hidden;
+  border:1px solid #263645;
+  border-radius:11px;
+  background:
+    radial-gradient(circle at 50% 48%,rgba(54,86,112,.17),transparent 24rem),
+    repeating-linear-gradient(0deg,transparent 0 31px,rgba(119,145,164,.075) 32px),
+    repeating-linear-gradient(90deg,transparent 0 31px,rgba(119,145,164,.075) 32px),
+    var(--network);
+  touch-action:pan-x pan-y;
+}
+.canvas.cable-mode{cursor:crosshair}
+.canvas.delete-mode{cursor:not-allowed}
+.canvas.drop-ready{box-shadow:inset 0 0 0 3px rgba(74,163,255,.58)}
+.link-svg,.activity-svg,.node-layer,.packet-layer{position:absolute;inset:0;width:100%;height:100%}
+.link-svg{z-index:1;overflow:visible}
+.activity-svg{z-index:2;overflow:visible;pointer-events:none}
+.node-layer{z-index:4;pointer-events:none}
+.packet-layer{z-index:7;pointer-events:none}
+.link{fill:none;stroke:var(--link);stroke-width:4;stroke-linecap:round;stroke-linejoin:round;transition:.14s}
+.link.bus-branch{stroke:#627887;stroke-width:3.5}
+.link.active{stroke:var(--packet);stroke-width:6;filter:drop-shadow(0 0 5px var(--packet));stroke-dasharray:10 8;animation:linkFlow .65s linear infinite}
+.link-hit{fill:none;stroke:transparent;stroke-width:18;pointer-events:stroke;cursor:pointer}
+.canvas.delete-mode .link-hit:hover{stroke:rgba(255,92,76,.24)}
+.preview-link{fill:none;stroke:#ffd76b;stroke-width:3;stroke-linecap:round;stroke-dasharray:7 6;filter:drop-shadow(0 0 4px rgba(255,215,107,.45))}
+@keyframes linkFlow{to{stroke-dashoffset:-36}}
+
+.network-node{
+  position:absolute;
+  transform:translate(-50%,-50%);
+  pointer-events:auto;
+  user-select:none;
+  touch-action:none;
+  color:#26343d;
+  outline:none;
+}
+.network-node:focus-visible{filter:drop-shadow(0 0 0.35rem #ffd76b)}
+.canvas.cable-mode .network-node{cursor:crosshair}
+.canvas.delete-mode .network-node{cursor:not-allowed}
+.canvas:not(.cable-mode):not(.delete-mode) .network-node{cursor:grab}
+.canvas:not(.cable-mode):not(.delete-mode) .network-node:active{cursor:grabbing}
+.network-node.connect-source{filter:drop-shadow(0 0 9px #ffd76b)}
+.node-shell{position:relative;border:2px solid #718593;background:linear-gradient(145deg,#f5f8fa,#cbd6dd);box-shadow:0 7px 16px rgba(0,0,0,.26);transition:.15s}
+.node-title{font-size:9px;font-weight:900;white-space:nowrap}
+.node-status{margin-top:3px;color:#60707b;font-size:7px;font-weight:850;letter-spacing:.03em;text-transform:uppercase;text-align:center}
+.network-node.sending .node-shell{border-color:#4aa3ff;box-shadow:0 0 0 4px rgba(74,163,255,.24),0 0 18px rgba(74,163,255,.55),0 7px 16px rgba(0,0,0,.26)}
+.network-node.working .node-shell{border-color:#e2aa45;box-shadow:0 0 0 4px rgba(226,170,69,.22),0 0 16px rgba(226,170,69,.45),0 7px 16px rgba(0,0,0,.26)}
+.network-node.received .node-shell{border-color:#51b778;box-shadow:0 0 0 4px rgba(81,183,120,.23),0 0 17px rgba(81,183,120,.48),0 7px 16px rgba(0,0,0,.26)}
+.network-node.ignored .node-shell{border-color:#9b7bd4;box-shadow:0 0 0 3px rgba(155,123,212,.18),0 0 12px rgba(155,123,212,.35),0 7px 16px rgba(0,0,0,.26)}
+.network-node.sending .node-status{color:#1d67aa}
+.network-node.working .node-status{color:#8c5a11}
+.network-node.received .node-status{color:#207448}
+.network-node.ignored .node-status{color:#7650b3}
+
+.station-node{width:104px}
+.station-node .node-shell{height:74px;border-radius:10px;padding:7px 7px 5px;display:grid;grid-template-columns:44px 1fr;gap:7px;align-items:center}
+.station-screen{position:relative;width:44px;height:34px;border:4px solid #303a42;border-radius:5px;background:linear-gradient(145deg,#548bb9,#a9ccdf)}
+.station-screen::after{content:"";position:absolute;left:50%;bottom:-10px;width:22px;height:6px;transform:translateX(-50%);border-radius:50%;background:#87959f}
+.station-copy{min-width:0}.station-copy small{display:block;margin-top:2px;color:#71808a;font-size:7px}
+.nic-light{display:inline-block;width:6px;height:6px;margin-right:4px;border-radius:50%;background:#56b977;box-shadow:0 0 5px rgba(86,185,119,.65)}
+
+.switch-node{width:152px}
+.switch-node .node-shell{height:70px;border-radius:10px;padding:7px}
+.hardware-top{display:flex;justify-content:space-between;gap:5px;align-items:center}
+.hardware-led{width:7px;height:7px;border-radius:50%;background:#55b778;box-shadow:0 0 5px rgba(85,183,120,.65)}
+.port-strip{height:25px;margin-top:6px;padding:5px;display:grid;grid-template-columns:repeat(var(--port-count,12),1fr);gap:3px;border:1px solid #84949f;border-radius:5px;background:#50636f}
+.port-strip i{display:block;border-radius:2px;background:#1e2b33;box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
+
+.bridge-node{width:112px}
+.bridge-node .node-shell{height:66px;border-radius:10px;padding:7px}
+.bridge-body{margin-top:6px;display:grid;grid-template-columns:1fr auto 1fr;gap:5px;align-items:center}
+.bridge-segment{height:20px;border:1px solid #82929c;border-radius:5px;background:#536773}
+.bridge-arrow{color:#64747f;font-size:13px;font-weight:900}
+
+.bus-node{width:460px;height:98px}
+.bus-node.wide-bus{width:820px}
+.bus-node .node-shell{
+  height:98px;border-radius:12px;padding:8px 14px;
+  background:linear-gradient(180deg,rgba(243,247,249,.98),rgba(202,213,220,.96));
+  overflow:visible
+}
+.bus-heading{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.bus-heading small{color:#6e7d87;font-size:7px}
+.bus-cable{position:absolute;left:19px;right:19px;top:42px;height:24px}
+.bus-core{
+  position:absolute;left:14px;right:14px;top:7px;height:11px;border-radius:999px;
+  border:1px solid #17232b;
+  background:linear-gradient(180deg,#667c8a 0 18%,#1a2831 23% 68%,#9a7048 72% 82%,#263742 86%);
+  box-shadow:0 3px 7px rgba(20,32,40,.34),inset 0 2px 2px rgba(255,255,255,.2)
+}
+.bus-core::after{
+  content:"";position:absolute;left:8px;right:8px;top:3px;height:2px;border-radius:99px;background:rgba(255,255,255,.25)
+}
+.bus-terminator{
+  position:absolute;top:1px;width:18px;height:23px;border:2px solid #202e37;border-radius:5px;
+  background:linear-gradient(90deg,#a7b2b9,#53636e 48%,#c6cdd1);
+  box-shadow:0 3px 6px rgba(22,33,40,.28)
+}
+.bus-terminator.left{left:0}.bus-terminator.right{right:0}
+.bus-terminator::after{content:"";position:absolute;left:5px;right:5px;top:5px;bottom:5px;border-radius:2px;background:#26343d}
+.bus-terminator::before{content:"T";position:absolute;inset:0;z-index:2;display:grid;place-items:center;color:#edf4f7;font:900 7px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.bus-taps{position:absolute;left:14px;right:14px;top:-2px;height:30px}
+.bus-tap{position:absolute;top:0;width:9px;height:30px;transform:translateX(-50%)}
+.bus-tap::before{content:"";position:absolute;left:2px;top:0;width:5px;height:9px;border-radius:3px;background:#8e9da6;border:1px solid #3c4d58}
+.bus-tap::after{content:"";position:absolute;left:3px;top:8px;width:3px;height:18px;border-radius:3px;background:#607684}
+.bus-empty-tap{opacity:.45}
+.bus-node .node-status{position:absolute;left:0;right:0;bottom:7px}
+.bus-node.working .bus-core{
+  border-color:#8dc6fb;
+  box-shadow:0 0 0 4px rgba(74,163,255,.18),0 0 18px rgba(74,163,255,.66),0 3px 7px rgba(20,32,40,.34)
+}
+.bus-node.working .bus-core::before{
+  content:"";position:absolute;inset:1px;border-radius:999px;
+  background:repeating-linear-gradient(90deg,transparent 0 14px,rgba(126,199,255,.9) 14px 22px,transparent 22px 36px);
+  animation:busSignal .55s linear infinite
+}
+.bus-node.working .bus-tap::after{background:#347fc5;border-color:#b8ddff;box-shadow:0 0 8px rgba(74,163,255,.85)}
+@keyframes busSignal{to{background-position:72px 0}}
+
+.packet-dot{
+  position:absolute;left:0;top:0;width:19px;height:19px;margin:-9.5px 0 0 -9.5px;
+  display:grid;place-items:center;border:2px solid #fff;border-radius:50%;background:var(--packet);
+  color:#fff;box-shadow:0 0 0 4px rgba(74,163,255,.22),0 0 15px rgba(74,163,255,.9);
+  font:900 7px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+.packet-dot.small{width:13px;height:13px;margin:-6.5px 0 0 -6.5px;font-size:0;box-shadow:0 0 0 3px rgba(74,163,255,.2),0 0 11px rgba(74,163,255,.85)}
+.packet-dot span{position:absolute;left:50%;top:-18px;transform:translateX(-50%);padding:2px 4px;border-radius:4px;background:rgba(7,12,17,.88);color:#fff;white-space:nowrap;font:800 7px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+
+.feedback{
+  margin-top:7px;min-height:48px;padding:8px 10px;border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:9px;background:#fafbfc;
+}
+.feedback strong{display:block;font-size:11px}
+.feedback span{display:block;margin-top:2px;color:var(--muted);font-size:9px;line-height:1.35}
+.feedback.good{border-left-color:var(--good);background:var(--good-soft)}
+.feedback.warn{border-left-color:#d29a37;background:var(--warn-soft)}
+.feedback.bad{border-left-color:var(--bad);background:var(--bad-soft)}
+
+.test-panel{
+  margin-top:7px;padding:8px 9px;border:1px solid #c6d7ef;border-radius:9px;background:var(--accent-soft);
+  display:grid;grid-template-columns:auto 130px auto 130px auto minmax(160px,1fr);gap:7px;align-items:center;
+}
+.test-panel[hidden]{display:none}
+.test-panel label{color:#5e6e7a;font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
+.test-panel select{height:32px;border:1px solid var(--line);border-radius:7px;background:#fff;color:var(--ink);padding:0 7px;font-size:9px}
+#journeyText{min-width:0;color:#50616d;font-size:9px;line-height:1.35}
+#journeyText strong{display:block;color:#23323d;font-size:10px}
+.teaching-note{margin-top:6px;color:var(--muted);font-size:8px;line-height:1.35}
+
+.part-ghost{position:fixed;z-index:1000;pointer-events:none;width:150px;padding:8px;border:1px solid #8eafea;border-radius:9px;background:rgba(247,251,255,.96);box-shadow:0 10px 24px rgba(25,44,58,.24);color:#27435d;font-size:10px;font-weight:800;transform:translate(-50%,-50%)}
+
+@media(max-width:850px){
+  .mission{grid-template-columns:1fr}.task-tabs{justify-content:flex-start}
+  .lab-grid{grid-template-columns:1fr}.palette{position:static}
+  .part-list{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .test-panel{grid-template-columns:auto 1fr auto 1fr auto}.test-panel #journeyText{grid-column:1/-1}
+}
+@media(max-width:560px){
+  main{width:min(100% - 12px,1240px);margin-top:8px}
+  .part-list{grid-template-columns:1fr}
+  .toolbar{align-items:flex-start}.action-group{width:100%}
+  .test-panel{grid-template-columns:1fr 1fr}.test-panel label{align-self:end}.test-panel button{grid-column:1/-1}.test-panel #journeyText{grid-column:1/-1}
+}
+</style>
+</head>
+<body>
+<main>
+  <h1>Network Topology Builder</h1>
+  <div class="sub">Build guided bus, star and mesh networks, then use Hybrid as an open network playground. Send packets through whatever you create.</div>
+
+  <section class="panel mission">
+    <div>
+      <span id="missionStep" class="eyebrow">Guided topology</span>
+      <strong id="missionTitle">Build a bus topology</strong>
+      <span id="missionHint">All stations share one backbone cable.</span>
+    </div>
+    <div id="taskTabs" class="task-tabs" aria-label="Topology missions"></div>
+  </section>
+
+  <div class="lab-grid">
+    <aside class="panel palette">
+      <div class="palette-head">
+        <strong>Parts</strong>
+        <span>Drag a part onto the workspace, or tap it to add.</span>
+      </div>
+      <div id="partList" class="part-list"></div>
+      <div class="palette-note">Choose Cable, then drag between two parts. You can also select one part and then another.</div>
+    </aside>
+
+    <section class="panel workspace">
+      <div class="toolbar">
+        <div class="tool-group" aria-label="Workspace tools">
+          <button id="moveTool" class="active-tool">Move</button>
+          <button id="cableTool">Cable</button>
+          <button id="deleteTool" class="danger">Delete</button>
+        </div>
+        <div class="action-group">
+          <button id="undoButton" disabled>Undo</button>
+          <button id="resetButton">Reset</button>
+          <button id="checkButton" class="primary">Check topology</button>
+        </div>
+      </div>
+
+      <div class="canvas-shell">
+        <div id="canvas" class="canvas">
+          <svg id="linkSvg" class="link-svg" aria-label="Network cables"></svg>
+          <svg id="activitySvg" class="activity-svg" aria-hidden="true"></svg>
+          <div id="nodeLayer" class="node-layer"></div>
+          <div id="packetLayer" class="packet-layer" aria-hidden="true"></div>
+        </div>
+      </div>
+
+      <div id="feedback" class="feedback" role="status" aria-live="polite">
+        <strong>Start with the parts.</strong>
+        <span>Add the required devices, connect them, then check your topology.</span>
+      </div>
+
+      <div id="testPanel" class="test-panel" hidden>
+        <label for="sourceSelect">From</label>
+        <select id="sourceSelect"></select>
+        <label for="destinationSelect">To</label>
+        <select id="destinationSelect"></select>
+        <button id="sendButton" class="primary">Send packet</button>
+        <div id="journeyText"><strong>Topology ready.</strong> Choose two stations and send a packet.</div>
+      </div>
+
+      <div class="teaching-note">Stations send and receive. Switches, bridges and shared buses can carry packets onward. One packet is shown at a time so its journey stays clear.</div>
+    </section>
+  </div>
+</main>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  const sleep = ms => new Promise(resolve => setTimeout(resolve, reduceMotion ? Math.min(ms,80) : ms));
+  const clamp = (value,min,max) => Math.max(min,Math.min(max,value));
+  const svgNS = "http://www.w3.org/2000/svg";
+
+  const TASKS = [
+    {
+      id:"bus", name:"Bus", title:"Build a bus topology",
+      hint:"Use four or more stations. Every station shares one backbone cable.",
+      open:false,
+      parts:{station:{min:4,max:18},bus:{min:1,max:1}}
+    },
+    {
+      id:"star", name:"Star", title:"Build a star topology",
+      hint:"Use four or more stations. Connect every station to one central switch.",
+      open:false,
+      parts:{station:{min:4,max:18},switch:{min:1,max:1}}
+    },
+    {
+      id:"mesh", name:"Mesh", title:"Build a full mesh topology",
+      hint:"Use four or more stations. Every pair needs its own direct cable.",
+      open:false,
+      parts:{station:{min:4,max:12}}
+    },
+    {
+      id:"hybrid", name:"Hybrid", title:"Experiment with a hybrid network",
+      hint:"Build freely with stations, switches, bridges and shared buses. The packet route comes from your network.",
+      open:true,
+      parts:{station:{min:0,max:24},switch:{min:0,max:8},bus:{min:0,max:5},bridge:{min:0,max:8}}
+    }
+  ];
+
+  const PARTS = {
+    station:{
+      name:"Station", copy:"A computer with a network interface.",
+      icon:`<svg viewBox="0 0 48 34" aria-hidden="true"><rect x="9" y="4" width="30" height="20" rx="3"/><path d="M24 24v5M16 30h16"/><circle cx="34" cy="20" r="1.5"/></svg>`
+    },
+    switch:{
+      name:"Switch", copy:"Forwards frames towards their destination.",
+      icon:`<svg viewBox="0 0 48 34" aria-hidden="true"><rect x="5" y="8" width="38" height="19" rx="4"/><path d="M10 14h5M18 14h5M26 14h5M34 14h4"/><circle cx="12" cy="22" r="1.3"/><circle cx="17" cy="22" r="1.3"/></svg>`
+    },
+    bus:{
+      name:"Bus cable", copy:"A terminated shared backbone with many taps.",
+      icon:`<svg viewBox="0 0 48 34" aria-hidden="true"><rect x="2" y="13" width="5" height="10" rx="1"/><rect x="41" y="13" width="5" height="10" rx="1"/><path d="M7 18h34" stroke-width="6"/><path d="M14 9v18M24 9v18M34 9v18"/><circle cx="14" cy="18" r="2"/><circle cx="24" cy="18" r="2"/><circle cx="34" cy="18" r="2"/></svg>`
+    },
+    bridge:{
+      name:"Bridge", copy:"Joins two network sections.",
+      icon:`<svg viewBox="0 0 48 34" aria-hidden="true"><rect x="4" y="9" width="14" height="16" rx="3"/><rect x="30" y="9" width="14" height="16" rx="3"/><path d="M18 17h12M25 13l5 4-5 4"/></svg>`
+    }
+  };
+
+  const STATION_SLOTS = [
+    [12,15],[31,15],[50,15],[69,15],[88,15],
+    [12,85],[31,85],[50,85],[69,85],[88,85],
+    [10,35],[10,56],[90,35],[90,56],
+    [28,35],[72,35],[28,66],[72,66],
+    [18,50],[82,50],[40,28],[60,72],[40,72],[60,28]
+  ];
+
+  const STATION_SLOTS_BY_TASK = {
+    bus:[
+      [10,14],[26,14],[42,14],[58,14],[74,14],[90,14],
+      [10,29],[26,29],[42,29],[58,29],[74,29],[90,29],
+      [10,89],[26,89],[42,89],[58,89],[74,89],[90,89]
+    ],
+    star:[
+      [10,14],[26,14],[42,14],[58,14],[74,14],[90,14],
+      [10,86],[26,86],[42,86],[58,86],[74,86],[90,86],
+      [9,33],[9,50],[9,67],[91,33],[91,50],[91,67]
+    ],
+    mesh:[
+      [15,15],[38,15],[62,15],[85,15],
+      [15,85],[38,85],[62,85],[85,85],
+      [10,38],[10,62],[90,38],[90,62]
+    ],
+    hybrid:STATION_SLOTS
+  };
+
+  const DEFAULT_POSITIONS = {
+    bus:{bus:[[50,61]]},
+    star:{switch:[[50,50]]},
+    mesh:{},
+    hybrid:{
+      switch:[[20,35],[20,65],[20,18],[20,82],[34,35],[34,65],[34,18],[34,82]],
+      bridge:[[42,35],[42,65],[42,18],[42,82],[55,35],[55,65],[55,18],[55,82]],
+      bus:[[72,35],[72,65],[72,18],[72,82],[50,50],[50,28],[50,72],[72,50]]
+    }
+  };
+
+  let taskIndex = 0;
+  let nodes = new Map();
+  let edges = new Set();
+  let history = [];
+  let tool = "move";
+  let connectClickSource = null;
+  let cableDrag = null;
+  let nodeDrag = null;
+  let paletteDrag = null;
+  let topologyValid = false;
+  let completed = new Set();
+  let running = false;
+  let linkElements = new Map();
+  let animationToken = 0;
+
+  function currentTask(){ return TASKS[taskIndex]; }
+  function edgeKey(a,b){ return [a,b].sort().join("|"); }
+  function edgeNodes(key){ return key.split("|"); }
+  function nodeById(id){ return nodes.get(id); }
+  function placedCount(type){ return [...nodes.values()].filter(node=>node.type===type).length; }
+  function partRule(type){ return currentTask().parts[type] || null; }
+  function taskLimit(type){ return partRule(type)?.max || 0; }
+  function availableCount(type){ return Math.max(0,taskLimit(type)-placedCount(type)); }
+
+  function snapshot(){
+    return {
+      nodes:[...nodes.values()].map(node=>({...node})),
+      edges:[...edges]
+    };
+  }
+
+  function pushHistory(){
+    history.push(snapshot());
+    if(history.length>30) history.shift();
+    $("undoButton").disabled = false;
+  }
+
+  function restore(snapshotValue){
+    animationToken++;
+    nodes = new Map(snapshotValue.nodes.map(node=>[node.id,{...node}]));
+    edges = new Set(snapshotValue.edges);
+    topologyValid = false;
+    connectClickSource = null;
+    renderAll();
+    hideTestPanel();
+    setFeedback("", "Topology changed.", "Check it again when you are ready.");
+  }
+
+  function undo(){
+    if(running || !history.length) return;
+    restore(history.pop());
+    $("undoButton").disabled = history.length===0;
+  }
+
+  function resetBuilder(record=true){
+    if(running) return;
+    if(record && (nodes.size || edges.size)) pushHistory();
+    animationToken++;
+    nodes = new Map();
+    edges = new Set();
+    topologyValid = false;
+    connectClickSource = null;
+    hideTestPanel();
+    renderAll();
+    setStartingFeedback();
+  }
+
+  function taskSwitch(index){
+    if(running || index===taskIndex) return;
+    taskIndex = index;
+    history = [];
+    $("undoButton").disabled = true;
+    nodes = new Map();
+    edges = new Set();
+    topologyValid = false;
+    connectClickSource = null;
+    setTool("move");
+    renderAll();
+    hideTestPanel();
+    setStartingFeedback();
+  }
+
+  function renderTaskHeader(){
+    const task=currentTask();
+    $("missionStep").textContent=task.open?"Open builder":"Guided topology";
+    $("missionTitle").textContent=task.title;
+    $("missionHint").textContent=task.hint;
+    $("checkButton").textContent=task.open?"Test network":"Check topology";
+    const root=$("taskTabs");
+    root.innerHTML="";
+    TASKS.forEach((item,index)=>{
+      const button=document.createElement("button");
+      button.className="task-tab"+(index===taskIndex?" active":"")+(!item.open&&completed.has(item.id)?" complete":"");
+      button.textContent=item.name;
+      button.disabled=running;
+      button.addEventListener("click",()=>taskSwitch(index));
+      root.appendChild(button);
+    });
+  }
+
+  function renderPalette(){
+    const root=$("partList");
+    root.innerHTML="";
+    Object.keys(currentTask().parts).forEach(type=>{
+      const meta=PARTS[type];
+      const remaining=availableCount(type);
+      const rule=partRule(type);
+      const button=document.createElement("button");
+      button.className="part-card";
+      button.type="button";
+      button.disabled=remaining===0 || running;
+      button.dataset.type=type;
+      button.title=`${placedCount(type)} placed · up to ${rule.max}`;
+      const countText=`${placedCount(type)}/${rule.max}`;
+      button.innerHTML=`<span class="part-icon">${meta.icon}</span><span class="part-copy"><strong>${meta.name}</strong><span>${meta.copy}</span></span><span class="part-count">${countText}</span>`;
+      button.addEventListener("pointerdown",event=>startPaletteDrag(event,type,button));
+      button.addEventListener("keydown",event=>{
+        if((event.key==="Enter"||event.key===" ")&&!button.disabled){
+          event.preventDefault();
+          addNode(type,...nextSuggestedPosition(type));
+        }
+      });
+      root.appendChild(button);
+    });
+  }
+
+  function positionFits(type,x,y){
+    const canvas=$("canvas");
+    const half=nodeHalfSize(type);
+    for(const existing of nodes.values()){
+      const otherHalf=nodeHalfSize(existing.type);
+      const dx=Math.abs(x-existing.x)/100*canvas.clientWidth;
+      const dy=Math.abs(y-existing.y)/100*canvas.clientHeight;
+      if(dx<half.x+otherHalf.x+12 && dy<half.y+otherHalf.y+12) return false;
+    }
+    return true;
+  }
+
+  function nextSuggestedPosition(type){
+    const preferred=type==="station"
+      ? (STATION_SLOTS_BY_TASK[currentTask().id] || STATION_SLOTS)
+      : (DEFAULT_POSITIONS[currentTask().id]?.[type] || DEFAULT_POSITIONS.hybrid[type] || [[50,50]]);
+    const generated=[];
+    for(let row=0;row<7;row++){
+      for(let column=0;column<7;column++) generated.push([9+column*13.7,10+row*13.3]);
+    }
+    for(const [rawX,rawY] of [...preferred,...generated]){
+      const margin=type==="bus"?(currentTask().id==="bus"?43:25):type==="switch"?9:7;
+      const x=clamp(rawX,margin,100-margin);
+      const y=clamp(rawY,type==="bus"?10:7,type==="bus"?92:93);
+      if(positionFits(type,x,y)) return [x,y];
+    }
+    const fallback=preferred[placedCount(type)%preferred.length] || [50,50];
+    return [clamp(fallback[0],8,92),clamp(fallback[1],8,92)];
+  }
+
+  function nextNodeId(type){
+    let counter=1;
+    while(nodes.has(`${type}-${counter}`)) counter++;
+    return `${type}-${counter}`;
+  }
+
+  function nextLetterLabel(prefix,type){
+    const used=new Set([...nodes.values()].filter(node=>node.type===type).map(node=>node.label));
+    const alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    for(const letter of alphabet){
+      const label=`${prefix} ${letter}`;
+      if(!used.has(label)) return label;
+    }
+    let number=used.size+1;
+    while(used.has(`${prefix} ${number}`)) number++;
+    return `${prefix} ${number}`;
+  }
+
+  function nextStationLabel(){ return nextLetterLabel("Station","station"); }
+
+  function labelForType(type){
+    if(type==="station") return nextStationLabel();
+    if(type==="switch") return nextLetterLabel("Switch","switch");
+    if(type==="bridge") return nextLetterLabel("Bridge","bridge");
+    return nextLetterLabel("Bus","bus");
+  }
+
+  function addNode(type,x,y){
+    if(running || availableCount(type)<=0) return;
+    pushHistory();
+    const id=nextNodeId(type);
+    const xMargin=type==="bus"?(currentTask().id==="bus"?43:25):type==="switch"?9:6;
+    nodes.set(id,{id,type,label:labelForType(type),x:clamp(x,xMargin,100-xMargin),y:clamp(y,8,92)});
+    invalidateTopology("Part added.","Connect it when the layout is ready.");
+    renderAll();
+  }
+
+  function deleteNode(id){
+    if(running || !nodes.has(id)) return;
+    pushHistory();
+    nodes.delete(id);
+    edges=new Set([...edges].filter(key=>!edgeNodes(key).includes(id)));
+    invalidateTopology("Part removed.","Check the topology again after rebuilding.");
+    renderAll();
+  }
+
+  function addEdge(a,b){
+    if(running || !nodes.has(a) || !nodes.has(b) || a===b) return;
+    const key=edgeKey(a,b);
+    if(edges.has(key)){
+      setFeedback("warn","That cable already exists.","Choose a different pair of parts.");
+      return;
+    }
+    pushHistory();
+    edges.add(key);
+    connectClickSource=null;
+    invalidateTopology("Cable connected.","Continue building, then check the topology.");
+    renderAll();
+  }
+
+  function deleteEdge(key){
+    if(running || !edges.has(key)) return;
+    pushHistory();
+    edges.delete(key);
+    invalidateTopology("Cable removed.","Check the topology again after rebuilding.");
+    renderAll();
+  }
+
+  function invalidateTopology(title,detail){
+    topologyValid=false;
+    hideTestPanel();
+    resetRuntimeVisuals();
+    if(title) setFeedback("",title,detail);
+  }
+
+  function busTapPercentages(node){
+    const connected=neighbours(node.id).map(id=>nodeById(id)).filter(Boolean);
+    if(!connected.length) return {positions:[18,34,50,66,82],empty:true};
+    const geometry=busGeometry(node);
+    const positions=connected.map(other=>{
+      const tap=busTap(node,other);
+      return clamp((tap.x-geometry.left)/(geometry.right-geometry.left)*100,2,98);
+    });
+    return {positions,empty:false};
+  }
+
+  function busTapMarkup(node){
+    const {positions,empty}=busTapPercentages(node);
+    return positions.map(position=>`<i class="bus-tap${empty?" bus-empty-tap":""}" style="left:${position}%"></i>`).join("");
+  }
+
+  function updateBusTapVisuals(){
+    nodes.forEach(node=>{
+      if(node.type!=="bus") return;
+      const taps=$("nodeLayer").querySelector(`[data-id="${node.id}"] .bus-taps`);
+      if(taps) taps.innerHTML=busTapMarkup(node);
+    });
+  }
+
+  function partNodeMarkup(node){
+    if(node.type==="station"){
+      return `<div class="node-shell"><div class="station-screen"></div><div class="station-copy"><div class="node-title">${node.label}</div><small><i class="nic-light"></i>NIC ready</small><div class="node-status">idle</div></div></div>`;
+    }
+    if(node.type==="switch"){
+      const portCount=Math.min(24,Math.max(12,neighbours(node.id).length));
+      return `<div class="node-shell"><div class="hardware-top"><span class="node-title">${node.label}</span><i class="hardware-led"></i></div><div class="port-strip" style="--port-count:${portCount}">${"<i></i>".repeat(portCount)}</div><div class="node-status">idle</div></div>`;
+    }
+    if(node.type==="bridge"){
+      return `<div class="node-shell"><div class="hardware-top"><span class="node-title">${node.label}</span><i class="hardware-led"></i></div><div class="bridge-body"><span class="bridge-segment"></span><span class="bridge-arrow">↔</span><span class="bridge-segment"></span></div><div class="node-status">idle</div></div>`;
+    }
+    return `<div class="node-shell"><div class="bus-heading"><span class="node-title">${node.label} · shared backbone</span><small>terminated at both ends</small></div><div class="bus-cable"><i class="bus-terminator left"></i><i class="bus-core"></i><span class="bus-taps">${busTapMarkup(node)}</span><i class="bus-terminator right"></i></div><div class="node-status">idle</div></div>`;
+  }
+
+  function renderNodes(){
+    const root=$("nodeLayer");
+    root.innerHTML="";
+    nodes.forEach(node=>{
+      const element=document.createElement("div");
+      element.className=`network-node ${node.type}-node`+
+        (node.type==="bus"&&currentTask().id==="bus"?" wide-bus":"")+
+        (connectClickSource===node.id?" connect-source":"");
+      element.dataset.id=node.id;
+      element.style.left=node.x+"%";
+      element.style.top=node.y+"%";
+      element.tabIndex=0;
+      element.setAttribute("role","button");
+      element.setAttribute("aria-label",`${node.label}. ${tool==="cable"?"Select to connect":"Drag to move"}.`);
+      element.innerHTML=partNodeMarkup(node);
+      element.addEventListener("pointerdown",event=>handleNodePointerDown(event,node.id));
+      element.addEventListener("keydown",event=>{
+        if(event.key!=="Enter"&&event.key!==" ") return;
+        event.preventDefault();
+        if(tool==="delete") deleteNode(node.id);
+        else if(tool==="cable") handleCableClick(node.id);
+      });
+      root.appendChild(element);
+    });
+  }
+
+  function renderLinks(){
+    const canvas=$("canvas");
+    const svg=$("linkSvg");
+    const width=canvas.clientWidth;
+    const height=canvas.clientHeight;
+    svg.setAttribute("viewBox",`0 0 ${width} ${height}`);
+    svg.innerHTML="";
+    linkElements=new Map();
+
+    edges.forEach(key=>{
+      const [a,b]=edgeNodes(key);
+      if(!nodes.has(a)||!nodes.has(b)) return;
+      const points=edgePoints(a,b);
+      const route=pathData(points);
+      const busBranch=nodeById(a)?.type==="bus"||nodeById(b)?.type==="bus";
+      const group=document.createElementNS(svgNS,"g");
+      group.dataset.key=key;
+      const visible=document.createElementNS(svgNS,"path");
+      visible.setAttribute("class","link"+(busBranch?" bus-branch":""));
+      visible.setAttribute("d",route);
+      visible.dataset.key=key;
+      const hit=document.createElementNS(svgNS,"path");
+      hit.setAttribute("class","link-hit");
+      hit.setAttribute("d",route);
+      hit.dataset.key=key;
+      hit.addEventListener("click",event=>{
+        event.stopPropagation();
+        if(tool==="delete") deleteEdge(key);
+      });
+      group.append(visible,hit);
+      svg.appendChild(group);
+      linkElements.set(key,visible);
+    });
+
+    updateBusTapVisuals();
+    renderPreview();
+  }
+
+  function renderPreview(){
+    const svg=$("linkSvg");
+    svg.querySelectorAll(".preview-link").forEach(item=>item.remove());
+    if(!cableDrag) return;
+    const source=nodeById(cableDrag.from);
+    if(!source) return;
+    const center=nodeCenter(source);
+    const path=document.createElementNS(svgNS,"path");
+    path.setAttribute("class","preview-link");
+    path.setAttribute("d",`M ${center.x} ${center.y} L ${cableDrag.x} ${cableDrag.y}`);
+    svg.appendChild(path);
+  }
+
+  function renderAll(){
+    renderTaskHeader();
+    renderPalette();
+    renderNodes();
+    requestAnimationFrame(renderLinks);
+    $("undoButton").disabled=history.length===0 || running;
+    updateToolClasses();
+  }
+
+  function nodeCenter(node){
+    const canvas=$("canvas");
+    return {x:canvas.clientWidth*node.x/100,y:canvas.clientHeight*node.y/100};
+  }
+
+  function nodeHalfSize(type){
+    return {
+      station:{x:52,y:37},
+      switch:{x:76,y:35},
+      bridge:{x:56,y:33},
+      bus:{x:currentTask().id==="bus"?410:230,y:49}
+    }[type];
+  }
+
+  function normalAnchor(node,toward){
+    const center=nodeCenter(node);
+    const half=nodeHalfSize(node.type);
+    const dx=toward.x-center.x;
+    const dy=toward.y-center.y;
+    if(Math.abs(dx)<.01&&Math.abs(dy)<.01) return center;
+    const tx=half.x/Math.max(Math.abs(dx),.001);
+    const ty=half.y/Math.max(Math.abs(dy),.001);
+    const ratio=Math.min(tx,ty);
+    return {x:center.x+dx*ratio,y:center.y+dy*ratio};
+  }
+
+  function busGeometry(bus){
+    const center=nodeCenter(bus);
+    const half=currentTask().id==="bus"?377:197;
+    return {center,left:center.x-half,right:center.x+half,y:center.y+4};
+  }
+
+  function orderedBusNeighbours(bus){
+    return neighbours(bus.id)
+      .map(id=>nodeById(id))
+      .filter(Boolean)
+      .sort((first,second)=>{
+        const difference=nodeCenter(first).x-nodeCenter(second).x;
+        return Math.abs(difference)>.5?difference:first.id.localeCompare(second.id);
+      });
+  }
+
+  function busTap(bus,other){
+    const geometry=busGeometry(bus);
+    const attached=orderedBusNeighbours(bus);
+    const index=attached.findIndex(node=>node.id===other.id);
+    const margin=18;
+    if(attached.length<=1 || index<0){
+      const otherCenter=nodeCenter(other);
+      return {x:clamp(otherCenter.x,geometry.left+margin,geometry.right-margin),y:geometry.y};
+    }
+    const usable=geometry.right-geometry.left-margin*2;
+    return {x:geometry.left+margin+usable*(index/(attached.length-1)),y:geometry.y};
+  }
+
+  function edgePoints(aId,bId){
+    const a=nodeById(aId),b=nodeById(bId);
+    if(a.type==="bus"){
+      const tap=busTap(a,b);
+      const end=normalAnchor(b,tap);
+      if(Math.abs(tap.x-end.x)<2) return [tap,end];
+      return [tap,{x:tap.x,y:end.y},end];
+    }
+    if(b.type==="bus"){
+      const tap=busTap(b,a);
+      const start=normalAnchor(a,tap);
+      if(Math.abs(tap.x-start.x)<2) return [start,tap];
+      return [start,{x:tap.x,y:start.y},tap];
+    }
+    const ac=nodeCenter(a),bc=nodeCenter(b);
+    return [normalAnchor(a,bc),normalAnchor(b,ac)];
+  }
+
+  function pathData(points){
+    return points.map((point,index)=>`${index?"L":"M"} ${point.x} ${point.y}`).join(" ");
+  }
+
+  function canvasCoordinates(clientX,clientY){
+    const rect=$("canvas").getBoundingClientRect();
+    return {
+      px:clamp(clientX-rect.left,0,rect.width),
+      py:clamp(clientY-rect.top,0,rect.height),
+      x:clamp((clientX-rect.left)/rect.width*100,4,96),
+      y:clamp((clientY-rect.top)/rect.height*100,5,95),
+      inside:clientX>=rect.left&&clientX<=rect.right&&clientY>=rect.top&&clientY<=rect.bottom
+    };
+  }
+
+  function startPaletteDrag(event,type,button){
+    if(button.disabled || running || event.button>0) return;
+    event.preventDefault();
+    paletteDrag={type,button,startX:event.clientX,startY:event.clientY,x:event.clientX,y:event.clientY,moved:false,ghost:null,pointerId:event.pointerId};
+    button.setPointerCapture?.(event.pointerId);
+  }
+
+  function updatePaletteDrag(event){
+    if(!paletteDrag || event.pointerId!==paletteDrag.pointerId) return;
+    paletteDrag.x=event.clientX;paletteDrag.y=event.clientY;
+    const distance=Math.hypot(event.clientX-paletteDrag.startX,event.clientY-paletteDrag.startY);
+    if(distance>6&&!paletteDrag.moved){
+      paletteDrag.moved=true;
+      const ghost=document.createElement("div");
+      ghost.className="part-ghost";
+      ghost.textContent=`Add ${PARTS[paletteDrag.type].name}`;
+      document.body.appendChild(ghost);
+      paletteDrag.ghost=ghost;
+      paletteDrag.button.classList.add("dragging-source");
+    }
+    if(paletteDrag.ghost){
+      paletteDrag.ghost.style.left=event.clientX+"px";
+      paletteDrag.ghost.style.top=event.clientY+"px";
+      $("canvas").classList.toggle("drop-ready",canvasCoordinates(event.clientX,event.clientY).inside);
+    }
+  }
+
+  function finishPaletteDrag(event){
+    if(!paletteDrag || event.pointerId!==paletteDrag.pointerId) return;
+    const drag=paletteDrag;
+    paletteDrag=null;
+    drag.ghost?.remove();
+    drag.button.classList.remove("dragging-source");
+    $("canvas").classList.remove("drop-ready");
+    const point=canvasCoordinates(event.clientX,event.clientY);
+    if(drag.moved && point.inside) addNode(drag.type,point.x,point.y);
+    else if(!drag.moved) addNode(drag.type,...nextSuggestedPosition(drag.type));
+  }
+
+  function handleNodePointerDown(event,id){
+    if(running || event.button>0) return;
+    event.preventDefault();
+    event.stopPropagation();
+    if(tool==="delete"){
+      deleteNode(id);
+      return;
+    }
+    if(tool==="cable"){
+      const point=canvasCoordinates(event.clientX,event.clientY);
+      cableDrag={from:id,x:point.px,y:point.py,startX:event.clientX,startY:event.clientY,pointerId:event.pointerId,moved:false};
+      event.currentTarget.setPointerCapture?.(event.pointerId);
+      renderPreview();
+      return;
+    }
+    const node=nodeById(id);
+    nodeDrag={id,pointerId:event.pointerId,startClientX:event.clientX,startClientY:event.clientY,startX:node.x,startY:node.y,moved:false,historyPushed:false};
+    event.currentTarget.setPointerCapture?.(event.pointerId);
+  }
+
+  function updateNodeDrag(event){
+    if(!nodeDrag || event.pointerId!==nodeDrag.pointerId) return;
+    const node=nodeById(nodeDrag.id);
+    if(!node) return;
+    const canvas=$("canvas");
+    const dx=(event.clientX-nodeDrag.startClientX)/canvas.clientWidth*100;
+    const dy=(event.clientY-nodeDrag.startClientY)/canvas.clientHeight*100;
+    if(Math.hypot(event.clientX-nodeDrag.startClientX,event.clientY-nodeDrag.startClientY)>3){
+      nodeDrag.moved=true;
+      if(!nodeDrag.historyPushed){pushHistory();nodeDrag.historyPushed=true;}
+    }
+    if(!nodeDrag.moved) return;
+    const margin=node.type==="bus"?(currentTask().id==="bus"?43:25):6;
+    node.x=clamp(nodeDrag.startX+dx,margin,100-margin);
+    node.y=clamp(nodeDrag.startY+dy,node.type==="bus"?10:7,node.type==="bus"?90:93);
+    const element=$("nodeLayer").querySelector(`[data-id="${node.id}"]`);
+    if(element){element.style.left=node.x+"%";element.style.top=node.y+"%";}
+    renderLinks();
+  }
+
+  function updateCableDrag(event){
+    if(!cableDrag || event.pointerId!==cableDrag.pointerId) return;
+    const point=canvasCoordinates(event.clientX,event.clientY);
+    cableDrag.x=point.px;cableDrag.y=point.py;
+    if(Math.hypot(event.clientX-cableDrag.startX,event.clientY-cableDrag.startY)>4) cableDrag.moved=true;
+    renderPreview();
+  }
+
+  function finishNodeOrCable(event){
+    if(nodeDrag && event.pointerId===nodeDrag.pointerId){
+      nodeDrag=null;
+      return;
+    }
+    if(!cableDrag || event.pointerId!==cableDrag.pointerId) return;
+    const drag=cableDrag;
+    cableDrag=null;
+    renderPreview();
+    const target=document.elementFromPoint(event.clientX,event.clientY)?.closest?.(".network-node");
+    const targetId=target?.dataset.id;
+    if(drag.moved && targetId && targetId!==drag.from){
+      addEdge(drag.from,targetId);
+      return;
+    }
+    handleCableClick(drag.from);
+  }
+
+  function handleCableClick(id){
+    if(connectClickSource===null){
+      connectClickSource=id;
+      renderNodes();
+      requestAnimationFrame(renderLinks);
+      setFeedback("","First part selected.","Now choose the part at the other end of the cable.");
+      return;
+    }
+    if(connectClickSource===id){
+      connectClickSource=null;
+      renderNodes();
+      requestAnimationFrame(renderLinks);
+      setFeedback("","Cable selection cleared.","Choose two different parts to connect.");
+      return;
+    }
+    const source=connectClickSource;
+    connectClickSource=null;
+    addEdge(source,id);
+  }
+
+  function setTool(next){
+    if(running) return;
+    tool=next;
+    connectClickSource=null;
+    cableDrag=null;
+    nodeDrag=null;
+    renderNodes();
+    requestAnimationFrame(renderLinks);
+    updateToolClasses();
+    const copy={
+      move:["Move parts.","Drag devices around the workspace."],
+      cable:["Make a cable.","Drag from one part to another, or select two parts."],
+      delete:["Remove parts or cables.","Select anything you want to delete."]
+    }[tool];
+    setFeedback("",copy[0],copy[1]);
+  }
+
+  function updateToolClasses(){
+    $("moveTool").classList.toggle("active-tool",tool==="move");
+    $("cableTool").classList.toggle("active-tool",tool==="cable");
+    $("deleteTool").classList.toggle("active-tool",tool==="delete");
+    $("canvas").classList.toggle("cable-mode",tool==="cable");
+    $("canvas").classList.toggle("delete-mode",tool==="delete");
+  }
+
+  function typeCounts(){
+    return [...nodes.values()].reduce((result,node)=>{
+      result[node.type]=(result[node.type]||0)+1;
+      return result;
+    },{});
+  }
+
+  function neighbours(id){
+    const result=[];
+    edges.forEach(key=>{
+      const [a,b]=edgeNodes(key);
+      if(a===id) result.push(b);
+      else if(b===id) result.push(a);
+    });
+    return result;
+  }
+
+  function connectedOnlyTo(nodeId,targetType){
+    const linked=neighbours(nodeId);
+    return linked.length===1 && nodeById(linked[0])?.type===targetType;
+  }
+
+  function countFeedback(){
+    const task=currentTask();
+    if(task.open) return null;
+    const counts=typeCounts();
+    const missing=[];
+    const extra=[];
+    Object.entries(task.parts).forEach(([type,rule])=>{
+      const have=counts[type]||0;
+      if(have<rule.min){
+        const amount=rule.min-have;
+        missing.push(`${amount} ${PARTS[type].name.toLowerCase()}${amount===1?"":"s"}`);
+      }
+      if(have>rule.max){
+        const amount=have-rule.max;
+        extra.push(`${amount} extra ${PARTS[type].name.toLowerCase()}${amount===1?"":"s"}`);
+      }
+    });
+    Object.keys(counts).filter(type=>!task.parts[type]).forEach(type=>{
+      const amount=counts[type];
+      extra.push(`${amount} extra ${PARTS[type].name.toLowerCase()}${amount===1?"":"s"}`);
+    });
+    if(missing.length) return {ok:false,title:"More parts are needed.",detail:`Add ${missing.join(" and ")}.`};
+    if(extra.length) return {ok:false,title:"There are extra parts.",detail:`Remove ${extra.join(" and ")}.`};
+    return null;
+  }
+
+  function reachableStationPairs(stations){
+    const pairs=[];
+    for(let first=0;first<stations.length;first++){
+      for(let second=first+1;second<stations.length;second++){
+        const path=shortestPath(stations[first].id,stations[second].id);
+        if(path) pairs.push({from:stations[first].id,to:stations[second].id,path});
+      }
+    }
+    return pairs;
+  }
+
+  function validateTopology(){
+    const countProblem=countFeedback();
+    if(countProblem) return countProblem;
+    const task=currentTask().id;
+    const stations=[...nodes.values()].filter(node=>node.type==="station");
+
+    if(task==="hybrid"){
+      if(stations.length<2){
+        return {ok:false,title:"Add at least two stations.",detail:"Stations are the packet sender and receiver; the rest of the network carries traffic between them."};
+      }
+      const pairs=reachableStationPairs(stations);
+      if(!pairs.length){
+        return {ok:false,title:"No station-to-station route exists yet.",detail:"Connect the stations through cables, switches, bridges or shared buses."};
+      }
+      const infrastructure=[...nodes.values()].filter(node=>node.type!=="station");
+      const totalPairs=stations.length*(stations.length-1)/2;
+      const unreachable=totalPairs-pairs.length;
+      const detail=`${stations.length} stations · ${infrastructure.length} network devices · ${pairs.length} reachable station pair${pairs.length===1?"":"s"}.`+
+        (unreachable
+          ? ` ${unreachable} station pair${unreachable===1?" has":"s have"} no route yet; connected pairs can still be tested.`
+          : " Every station can reach every other station.");
+      return {
+        ok:true,
+        tone:unreachable?"warn":"good",
+        title:unreachable?"Some sections are disconnected.":"Open network ready to test.",
+        detail
+      };
+    }
+
+    const bus=[...nodes.values()].find(node=>node.type==="bus");
+    const networkSwitch=[...nodes.values()].find(node=>node.type==="switch");
+    const stationCount=stations.length;
+
+    if(task==="bus"){
+      const correct=
+        edges.size===stationCount &&
+        stations.every(node=>connectedOnlyTo(node.id,"bus")) &&
+        neighbours(bus.id).length===stationCount &&
+        [...edges].every(key=>{
+          const pair=edgeNodes(key).map(nodeById);
+          return pair.some(node=>node?.type==="bus")&&pair.some(node=>node?.type==="station");
+        });
+      return correct
+        ? {ok:true,title:"Bus topology complete.",detail:`All ${stationCount} stations share the same terminated backbone cable.`}
+        : {ok:false,title:"The shared bus is not complete.",detail:"Connect every station once to the backbone cable. Stations should not connect directly to each other."};
+    }
+
+    if(task==="star"){
+      const correct=
+        edges.size===stationCount &&
+        stations.every(node=>connectedOnlyTo(node.id,"switch")) &&
+        neighbours(networkSwitch.id).length===stationCount &&
+        [...edges].every(key=>{
+          const pair=edgeNodes(key).map(nodeById);
+          return pair.some(node=>node?.type==="switch")&&pair.some(node=>node?.type==="station");
+        });
+      return correct
+        ? {ok:true,title:"Star topology complete.",detail:`All ${stationCount} stations have their own link to the central switch.`}
+        : {ok:false,title:"The star is not complete.",detail:"Every station should connect only to the single central switch."};
+    }
+
+    const expectedEdges=stationCount*(stationCount-1)/2;
+    const correct=
+      edges.size===expectedEdges &&
+      stations.every(node=>neighbours(node.id).length===stationCount-1) &&
+      [...edges].every(key=>edgeNodes(key).every(id=>nodeById(id)?.type==="station"));
+    return correct
+      ? {ok:true,title:"Full mesh complete.",detail:`${stationCount} stations need ${expectedEdges} direct links, and every pair is connected.`}
+      : {ok:false,title:"The full mesh needs more direct links.",detail:`${stationCount} stations require ${expectedEdges} cables so that every pair is connected directly.`};
+  }
+
+  function checkTopology(){
+    if(running) return;
+    const result=validateTopology();
+    topologyValid=result.ok;
+    setFeedback(result.ok?(result.tone||"good"):"bad",result.title,result.detail);
+    if(result.ok){
+      if(!currentTask().open) completed.add(currentTask().id);
+      renderTaskHeader();
+      showTestPanel();
+    }else hideTestPanel();
+  }
+
+  function setStartingFeedback(){
+    if(currentTask().open){
+      setFeedback("","Build anything.","Use any number and combination of stations, switches, bridges and shared buses. Test the network once at least two stations have a route.");
+    }else{
+      setFeedback("","Start with the parts.","Add at least four stations. Extra stations are allowed, but every one must follow the selected topology.");
+    }
+  }
+
+  function setFeedback(kind,title,detail){
+    const box=$("feedback");
+    box.className="feedback"+(kind?` ${kind}`:"");
+    box.innerHTML=`<strong>${title}</strong><span>${detail}</span>`;
+  }
+
+  function stationNodes(){ return [...nodes.values()].filter(node=>node.type==="station").sort((a,b)=>a.label.localeCompare(b.label)); }
+
+  function showTestPanel(){
+    const panel=$("testPanel");
+    panel.hidden=false;
+    const stations=stationNodes();
+    for(const select of [$("sourceSelect"),$("destinationSelect")]){
+      select.innerHTML="";
+      stations.forEach(node=>{
+        const option=document.createElement("option");
+        option.value=node.id;option.textContent=node.label;
+        select.appendChild(option);
+      });
+    }
+    const reachable=reachableStationPairs(stations)[0];
+    const source=reachable?nodeById(reachable.from):stations[0];
+    const destination=reachable?nodeById(reachable.to):stations[stations.length-1];
+    $("sourceSelect").value=source?.id||"";
+    $("destinationSelect").value=destination?.id||"";
+    $("journeyText").innerHTML="<strong>Network ready.</strong> Choose two connected stations and send a packet.";
+    updateDestinationOptions();
+  }
+
+  function hideTestPanel(){ $("testPanel").hidden=true; }
+
+  function updateDestinationOptions(){
+    const source=$("sourceSelect").value;
+    const options=[...$("destinationSelect").options];
+    options.forEach(option=>{
+      option.disabled=option.value===source || !shortestPath(source,option.value);
+    });
+    const selected=options.find(option=>option.value===$("destinationSelect").value);
+    if(!selected || selected.disabled){
+      const alternative=options.find(option=>!option.disabled);
+      if(alternative) $("destinationSelect").value=alternative.value;
+    }
+    $("sendButton").disabled=running || !options.some(option=>!option.disabled);
+  }
+
+  function shortestPath(source,destination){
+    if(!nodes.has(source)||!nodes.has(destination)) return null;
+    const queue=[[source]];
+    const visited=new Set([source]);
+    while(queue.length){
+      const path=queue.shift();
+      const current=path[path.length-1];
+      if(current===destination) return path;
+      for(const next of neighbours(current)){
+        if(visited.has(next)) continue;
+        const nextNode=nodeById(next);
+        if(!nextNode) continue;
+        // Stations are endpoints. They do not relay another station's frame.
+        if(nextNode.type==="station" && next!==destination) continue;
+        visited.add(next);
+        queue.push([...path,next]);
+      }
+    }
+    return null;
+  }
+
+  function resetRuntimeVisuals(){
+    $("packetLayer").innerHTML="";
+    linkElements.forEach(element=>element.classList.remove("active"));
+    $("nodeLayer").querySelectorAll(".network-node").forEach(element=>{
+      element.classList.remove("sending","working","received","ignored");
+      const status=element.querySelector(".node-status");
+      if(status) status.textContent="idle";
+    });
+  }
+
+  function setNodeState(id,state,text){
+    const element=$("nodeLayer").querySelector(`[data-id="${id}"]`);
+    if(!element) return;
+    element.classList.remove("sending","working","received","ignored");
+    if(state) element.classList.add(state);
+    const status=element.querySelector(".node-status");
+    if(status) status.textContent=text || "idle";
+  }
+
+  function setJourney(title,detail){
+    $("journeyText").innerHTML=`<strong>${title}</strong>${detail}`;
+  }
+
+  function setRunning(value){
+    running=value;
+    $("sendButton").disabled=value;
+    $("sourceSelect").disabled=value;
+    $("destinationSelect").disabled=value;
+    $("checkButton").disabled=value;
+    $("resetButton").disabled=value;
+    $("undoButton").disabled=value || history.length===0;
+    $("moveTool").disabled=value;
+    $("cableTool").disabled=value;
+    $("deleteTool").disabled=value;
+    renderTaskHeader();
+    renderPalette();
+  }
+
+  function activeEdge(a,b,active){
+    const element=linkElements.get(edgeKey(a,b));
+    if(element) element.classList.toggle("active",active);
+  }
+
+  function pointAtDistance(points,distance){
+    let remaining=distance;
+    for(let index=0;index<points.length-1;index++){
+      const a=points[index],b=points[index+1];
+      const length=Math.hypot(b.x-a.x,b.y-a.y);
+      if(remaining<=length){
+        const ratio=length?remaining/length:0;
+        return {x:a.x+(b.x-a.x)*ratio,y:a.y+(b.y-a.y)*ratio};
+      }
+      remaining-=length;
+    }
+    return points[points.length-1];
+  }
+
+  function animatePacket(points,duration,label="",small=false,token=animationToken){
+    return new Promise(resolve=>{
+      if(token!==animationToken){resolve(false);return;}
+      const packet=document.createElement("div");
+      packet.className="packet-dot"+(small?" small":"");
+      if(label) packet.innerHTML=`<span>${label}</span>`;
+      $("packetLayer").appendChild(packet);
+      const lengths=[];
+      let total=0;
+      for(let index=0;index<points.length-1;index++){
+        const length=Math.hypot(points[index+1].x-points[index].x,points[index+1].y-points[index].y);
+        lengths.push(length);total+=length;
+      }
+      const actualDuration=reduceMotion?Math.min(duration,120):duration;
+      const start=performance.now();
+      function frame(now){
+        if(token!==animationToken){packet.remove();resolve(false);return;}
+        const progress=clamp((now-start)/actualDuration,0,1);
+        const point=pointAtDistance(points,total*progress);
+        packet.style.transform=`translate(${point.x}px,${point.y}px) translate(-50%,-50%)`;
+        if(progress<1) requestAnimationFrame(frame);
+        else{packet.remove();resolve(true);}
+      }
+      requestAnimationFrame(frame);
+    });
+  }
+
+  async function animateEdge(a,b,label="",small=false,token=animationToken){
+    const points=edgePoints(a,b);
+    activeEdge(a,b,true);
+    const ok=await animatePacket(points,720,label,small,token);
+    activeEdge(a,b,false);
+    return ok;
+  }
+
+  async function animateBus(busId,entryId,exitId,destinationId,packetLabel,token){
+    const bus=nodeById(busId);
+    const entry=nodeById(entryId);
+    const exit=nodeById(exitId);
+    if(!bus||!entry||!exit) return false;
+    const geometry=busGeometry(bus);
+    const entryTap=busTap(bus,entry);
+    setNodeState(busId,"working","signal spreads");
+    setJourney(`${bus.label} carries the frame.`,"A signal on a shared bus travels in both directions along the backbone.");
+    await Promise.all([
+      animatePacket([entryTap,{x:geometry.left,y:geometry.y}],660,"",true,token),
+      animatePacket([entryTap,{x:geometry.right,y:geometry.y}],660,"",true,token)
+    ]);
+    if(token!==animationToken) return false;
+
+    const recipients=neighbours(busId).filter(id=>id!==entryId);
+    const exitIsDestination=exitId===destinationId;
+    setJourney(
+      "Every connected tap sees the frame.",
+      exitIsDestination
+        ? `${exit.label} accepts the destination address; the other connected devices ignore or filter it.`
+        : `${exit.label} is the next device on the selected route. Other taps see the frame but do not carry this copy onward.`
+    );
+
+    await Promise.all(recipients.map(async id=>{
+      const recipient=nodeById(id);
+      await animateEdge(busId,id,id===exitId?packetLabel:"",true,token);
+      if(token!==animationToken||!recipient) return;
+      if(id===exitId){
+        if(exitIsDestination) setNodeState(id,"received","packet accepted");
+        else setNodeState(id,"working",recipient.type==="bus"?"signal arriving":"forwarding");
+      }else if(recipient.type==="station"){
+        setNodeState(id,"ignored","not for me");
+      }else{
+        setNodeState(id,"ignored","frame filtered");
+      }
+    }));
+    setNodeState(busId,"","carried frame");
+    return token===animationToken;
+  }
+
+  async function sendPacket(){
+    if(running || !topologyValid) return;
+    const source=$("sourceSelect").value;
+    const destination=$("destinationSelect").value;
+    if(!source || !destination || source===destination) return;
+    const path=shortestPath(source,destination);
+    if(!path){
+      setFeedback("bad","No route exists.","Stations cannot relay frames. Add a real path through a cable, switch, bridge or shared bus.");
+      updateDestinationOptions();
+      return;
+    }
+
+    animationToken++;
+    const token=animationToken;
+    resetRuntimeVisuals();
+    setRunning(true);
+    const sourceNode=nodeById(source);
+    const destinationNode=nodeById(destination);
+    const shortName=node=>node.label.replace("Station ","");
+    const packetLabel=`${shortName(sourceNode)}→${shortName(destinationNode)}`;
+    setNodeState(source,"sending","sending frame");
+
+    if(currentTask().id==="mesh" && path.length===2){
+      setJourney("A direct link exists.",`${sourceNode.label} sends straight to ${destinationNode.label} in one hop.`);
+    }else{
+      setJourney(`${sourceNode.label} starts the journey.`,`The frame carries ${destinationNode.label}'s destination address.`);
+    }
+
+    let index=0;
+    while(index<path.length-1 && token===animationToken){
+      const currentId=path[index];
+      const currentNode=nodeById(currentId);
+
+      if(currentNode.type==="bus"){
+        const entryId=path[index-1];
+        const exitId=path[index+1];
+        const continued=await animateBus(currentId,entryId,exitId,destination,packetLabel,token);
+        if(!continued || token!==animationToken) break;
+        if(exitId===destination) break;
+        const exitNode=nodeById(exitId);
+        if(exitNode.type==="switch"){
+          setNodeState(exitId,"working","checking address");
+          setJourney(`${exitNode.label} reads the destination.`,`It selects the next link towards ${destinationNode.label}.`);
+          await sleep(480);
+        }else if(exitNode.type==="bridge"){
+          setNodeState(exitId,"working","checking section");
+          setJourney(`${exitNode.label} checks the frame.`,"The bridge decides whether the frame must cross into another network section.");
+          await sleep(480);
+        }
+        index+=1;
+        continue;
+      }
+
+      const nextId=path[index+1];
+      const nextNode=nodeById(nextId);
+      await animateEdge(currentId,nextId,packetLabel,false,token);
+      if(token!==animationToken) break;
+
+      if(currentId===source) setNodeState(currentId,"","sent");
+      else if(currentNode.type!=="station") setNodeState(currentId,"","forwarded");
+
+      if(nextId===destination){
+        setNodeState(nextId,"received","frame accepted");
+        break;
+      }
+
+      if(nextNode.type==="bus"){
+        setNodeState(nextId,"working","signal arriving");
+        index+=1;
+        continue;
+      }
+
+      if(nextNode.type==="switch"){
+        setNodeState(nextId,"working","checking address");
+        setJourney(`${nextNode.label} reads the destination.`,`It selects the next link towards ${destinationNode.label}.`);
+        await sleep(480);
+      }else if(nextNode.type==="bridge"){
+        setNodeState(nextId,"working","checking section");
+        setJourney(`${nextNode.label} checks the frame.`,"The bridge decides whether the frame must cross into another network section.");
+        await sleep(480);
+      }
+      index+=1;
+    }
+
+    if(token===animationToken){
+      const pathTypes=path.map(id=>nodeById(id).type);
+      let detail="The frame reached its destination.";
+      if(currentTask().id==="bus") detail=`Every tap saw the frame; only ${destinationNode.label} accepted it.`;
+      else if(currentTask().id==="star") detail="The switch used the destination address to choose one outgoing link.";
+      else if(currentTask().id==="mesh") detail="The full mesh provided a direct one-hop link.";
+      else{
+        const route=path.map(id=>nodeById(id).label).join(" → ");
+        const busNote=pathTypes.includes("bus")?" A shared bus also exposed the frame to its other taps.":"";
+        detail=`Route: ${route}.${busNote}`;
+      }
+      setJourney("Packet delivered.",detail);
+      setFeedback("good","Packet delivered.",detail);
+    }
+    setRunning(false);
+    updateDestinationOptions();
+  }
+
+  $("moveTool").addEventListener("click",()=>setTool("move"));
+  $("cableTool").addEventListener("click",()=>setTool("cable"));
+  $("deleteTool").addEventListener("click",()=>setTool("delete"));
+  $("undoButton").addEventListener("click",undo);
+  $("resetButton").addEventListener("click",()=>resetBuilder(true));
+  $("checkButton").addEventListener("click",checkTopology);
+  $("sendButton").addEventListener("click",sendPacket);
+  $("sourceSelect").addEventListener("change",updateDestinationOptions);
+  $("destinationSelect").addEventListener("change",()=>{
+    if($("destinationSelect").value===$("sourceSelect").value) updateDestinationOptions();
+  });
+
+  document.addEventListener("pointermove",event=>{
+    updatePaletteDrag(event);
+    updateNodeDrag(event);
+    updateCableDrag(event);
+  });
+  document.addEventListener("pointerup",event=>{
+    finishPaletteDrag(event);
+    finishNodeOrCable(event);
+  });
+  document.addEventListener("pointercancel",event=>{
+    finishPaletteDrag(event);
+    if(nodeDrag?.pointerId===event.pointerId) nodeDrag=null;
+    if(cableDrag?.pointerId===event.pointerId){cableDrag=null;renderPreview();}
+  });
+  window.addEventListener("resize",()=>requestAnimationFrame(renderLinks));
+
+  renderAll();
+  setStartingFeedback();
+})();
+</script>
+</body>
+</html>
