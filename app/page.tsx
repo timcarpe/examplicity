@@ -1,20 +1,21 @@
 'use client';
 
 import { useEffect, useMemo, useState, type PointerEvent as ReactPointerEvent } from 'react';
-import Image from 'next/image';
 import { exams, labs, translator, type Activity, type ExamCode } from './labs';
+import { LabIcon } from './lab-icon';
 
 const movePreview = (event: ReactPointerEvent<HTMLDivElement>) => {
+  if (event.pointerType === 'touch') return;
   const bounds = event.currentTarget.getBoundingClientRect();
   const x = (event.clientX - bounds.left) / bounds.width;
   const y = (event.clientY - bounds.top) / bounds.height;
-  event.currentTarget.style.setProperty('--image-x', `${(0.5 - x) * 18}px`);
-  event.currentTarget.style.setProperty('--image-y', `${(0.5 - y) * 14}px`);
+  event.currentTarget.style.setProperty('--art-x', `${(0.5 - x) * 14}px`);
+  event.currentTarget.style.setProperty('--art-y', `${(0.5 - y) * 10}px`);
 };
 
 const resetPreview = (event: ReactPointerEvent<HTMLDivElement>) => {
-  event.currentTarget.style.setProperty('--image-x', '0px');
-  event.currentTarget.style.setProperty('--image-y', '0px');
+  event.currentTarget.style.setProperty('--art-x', '0px');
+  event.currentTarget.style.setProperty('--art-y', '0px');
 };
 
 export default function Home() {
@@ -83,12 +84,9 @@ export default function Home() {
   return (
     <main>
       <header className="site-header">
-        <a className="brand" href="#top" aria-label="Exam Labs home">
-          <span className="brand-mark" aria-hidden="true">E</span>
-          <span>Exam Labs</span>
-        </a>
+        <a className="brand" href="#top" aria-label="Examplicity home">examplicity</a>
         <div className="header-actions">
-          <span className="header-note">Interactive Computer Science</span>
+          <span className="header-note">Cambridge Computer Science</span>
           <button className="translator-button" type="button" onClick={() => openLab(translator)}>
             <span>Pseudocode ↔ Python</span>
             <i aria-hidden="true">↗</i>
@@ -98,17 +96,17 @@ export default function Home() {
 
       <section className="hero" id="top">
         <div className="hero-copy">
-          <p className="eyebrow">Computer Science labs</p>
-          <h1>Learn it by<br />doing it.</h1>
+          <p className="eyebrow">0478 + 9618 · interactive learning</p>
+          <h1>Make the abstract<br />obvious.</h1>
           <p className="intro">
-            Explore complex ideas through focused, interactive labs built for
-            Cambridge Computer Science.
+            Computer Science labs that turn theory into something you can see,
+            change and understand.
           </p>
         </div>
 
-        <div className="exam-picker" aria-label="Choose an exam syllabus">
+        <div className="exam-picker">
           <span className="picker-label">Choose syllabus</span>
-          <div className="segmented-control" role="group">
+          <div className="segmented-control" role="group" aria-label="Choose an exam syllabus">
             {exams.map((code) => (
               <button
                 className={exam === code ? 'is-active' : ''}
@@ -124,7 +122,7 @@ export default function Home() {
         </div>
       </section>
 
-      <div className="catalog" aria-live="polite">
+      <div className="catalog">
         {[...groupedLabs].map(([topic, topicLabs]) => (
           <section className="topic-section" key={topic}>
             <div className="topic-heading">
@@ -137,16 +135,11 @@ export default function Home() {
                 <article className="lab-card" key={lab.slug}>
                   <button type="button" aria-label={`Open ${lab.title}`} onClick={() => openLab(lab)}>
                     <div className="preview" onPointerMove={movePreview} onPointerLeave={resetPreview}>
-                      <Image
-                        src={lab.image}
-                        alt={`Preview of ${lab.title}`}
-                        fill
-                        sizes="(max-width: 620px) 100vw, (max-width: 900px) 50vw, 33vw"
-                      />
+                      <LabIcon slug={lab.slug} />
                     </div>
                     <div className="card-copy">
                       <div>
-                        <p className="card-kicker">{lab.format}</p>
+                        <p className="card-kicker">{lab.format} · {lab.exams.join(' + ')}</p>
                         <h3>{lab.title}</h3>
                       </div>
                       <span className="arrow" aria-hidden="true">↗</span>
@@ -161,8 +154,8 @@ export default function Home() {
       </div>
 
       <footer>
-        <span>Exam Labs</span>
-        <span>Understand through interaction.</span>
+        <span>examplicity</span>
+        <span>Make complex ideas click.</span>
       </footer>
     </main>
   );

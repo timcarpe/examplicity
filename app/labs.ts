@@ -14,7 +14,6 @@ export type Lab = Activity & {
   format: string;
   kind: 'lab';
   exams: ExamCode[];
-  image: string;
 };
 
 export const translator: Activity = {
@@ -35,7 +34,6 @@ export const labs: Lab[] = [
     kind: 'lab',
     exams: ['0478', '9618'],
     href: '/labs/binary-numbers.html',
-    image: '/lab-previews/binary-numbers.png',
   },
   {
     slug: 'bitmap-compression',
@@ -46,7 +44,6 @@ export const labs: Lab[] = [
     kind: 'lab',
     exams: ['0478', '9618'],
     href: '/labs/bitmap-compression.html',
-    image: '/lab-previews/bitmap-compression.png',
   },
   {
     slug: 'sound-sampling',
@@ -57,7 +54,6 @@ export const labs: Lab[] = [
     kind: 'lab',
     exams: ['0478', '9618'],
     href: '/labs/sound-sampling.html',
-    image: '/lab-previews/sound-sampling.png',
   },
   {
     slug: 'huffman-rover',
@@ -68,7 +64,6 @@ export const labs: Lab[] = [
     kind: 'lab',
     exams: ['9618'],
     href: '/labs/huffman-rover.html',
-    image: '/lab-previews/huffman-rover.png',
   },
   {
     slug: 'parity-arq',
@@ -79,7 +74,6 @@ export const labs: Lab[] = [
     kind: 'lab',
     exams: ['0478', '9618'],
     href: '/labs/parity-arq.html',
-    image: '/lab-previews/parity-arq.png',
   },
   {
     slug: 'network-topology',
@@ -90,7 +84,6 @@ export const labs: Lab[] = [
     kind: 'lab',
     exams: ['9618'],
     href: '/labs/network-topology.html',
-    image: '/lab-previews/network-topology.png',
   },
   {
     slug: 'csma-cd',
@@ -101,7 +94,6 @@ export const labs: Lab[] = [
     kind: 'lab',
     exams: ['9618'],
     href: '/labs/csma-cd.html',
-    image: '/lab-previews/csma-cd.png',
   },
   {
     slug: 'fetch-decode-execute',
@@ -112,7 +104,6 @@ export const labs: Lab[] = [
     kind: 'lab',
     exams: ['0478', '9618'],
     href: '/labs/fetch-decode-execute.html',
-    image: '/lab-previews/fetch-decode-execute.png',
   },
   {
     slug: 'assembly',
@@ -123,7 +114,6 @@ export const labs: Lab[] = [
     kind: 'lab',
     exams: ['9618'],
     href: '/labs/assembly.html',
-    image: '/lab-previews/assembly.png',
   },
   {
     slug: 'software-stack',
@@ -134,7 +124,6 @@ export const labs: Lab[] = [
     kind: 'lab',
     exams: ['0478', '9618'],
     href: '/labs/software-stack.html',
-    image: '/lab-previews/software-stack.png',
   },
   {
     slug: 'memory-management',
@@ -145,6 +134,5 @@ export const labs: Lab[] = [
     kind: 'lab',
     exams: ['0478', '9618'],
     href: '/labs/memory-management.html',
-    image: '/lab-previews/memory-management.png',
   },
 ];

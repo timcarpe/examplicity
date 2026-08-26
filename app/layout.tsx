@@ -3,23 +3,27 @@ import './globals.css';
 
 const deploymentHost = process.env.VERCEL_PROJECT_PRODUCTION_URL;
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
-  ?? (deploymentHost ? `https://${deploymentHost}` : 'http://localhost:3000');
+  ?? (deploymentHost ? `https://${deploymentHost}` : 'https://examplicity.org');
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: 'Exam Labs',
-  description: 'Interactive Computer Science labs for Cambridge 0478 and 9618 exams.',
+  applicationName: 'Examplicity',
+  title: 'Examplicity — Computer science, made obvious',
+  description: 'Interactive Computer Science labs for Cambridge 0478 and 9618.',
+  alternates: { canonical: '/' },
   openGraph: {
-    title: 'Exam Labs',
-    description: 'Interactive Computer Science labs for Cambridge 0478 and 9618 exams.',
+    title: 'Examplicity — Computer science, made obvious',
+    description: 'Interactive Computer Science labs for Cambridge 0478 and 9618.',
     type: 'website',
-    images: [{ url: '/lab-previews/network-topology.png', alt: 'Exam Labs network topology preview' }],
+    url: '/',
+    siteName: 'Examplicity',
+    images: [{ url: '/og.png', alt: 'Examplicity — Computer science, made obvious' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Exam Labs',
-    description: 'Interactive Computer Science labs for Cambridge 0478 and 9618 exams.',
-    images: ['/lab-previews/network-topology.png'],
+    title: 'Examplicity — Computer science, made obvious',
+    description: 'Interactive Computer Science labs for Cambridge 0478 and 9618.',
+    images: ['/og.png'],
   },
 };
 
