@@ -96,8 +96,10 @@ export default function Home() {
 
       <section className="hero" id="top">
         <div className="hero-copy">
-          <p className="eyebrow">0478 + 9618 · interactive learning</p>
-          <h1>Make the abstract<br />obvious.</h1>
+          <h1>
+            <span className="hero-line">Make complex</span>
+            <span className="hero-line">ideas click.</span>
+          </h1>
           <p className="intro">
             Computer Science labs that turn theory into something you can see,
             change and understand.
@@ -139,7 +141,7 @@ export default function Home() {
                     </div>
                     <div className="card-copy">
                       <div>
-                        <p className="card-kicker">{lab.format} · {lab.exams.join(' + ')}</p>
+                        <p className="card-kicker">{lab.format}</p>
                         <h3>{lab.title}</h3>
                       </div>
                       <span className="arrow" aria-hidden="true">↗</span>
@@ -154,8 +156,11 @@ export default function Home() {
       </div>
 
       <footer>
-        <span>examplicity</span>
-        <span>Make complex ideas click.</span>
+        <a href="https://github.com/timcarpe/examplicity">Examplicity™</a>
+        <span>
+          Make complex ideas click. ·{' '}
+          <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>
+        </span>
       </footer>
     </main>
   );

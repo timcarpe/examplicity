@@ -7,13 +7,31 @@ function IconDrawing({ slug }: LabIconProps) {
     case 'binary-numbers':
       return (
         <>
-          <path d="M72 126h496" />
-          {[0, 1, 2, 3, 4, 5, 6, 7].map((cell) => (
-            <rect className={cell === 0 || cell === 3 || cell === 5 ? 'is-solid' : ''} height="64" key={cell} rx="14" width="50" x={82 + cell * 60} y="96" />
-          ))}
-          <path d="M246 216h148m-26-24 26 24-26 24" />
-          <circle cx="218" cy="216" r="11" />
-          <circle className="is-solid" cx="422" cy="216" r="11" />
+          <g className="thin-lines">
+            {[72, 148, 238].map((y) => (
+              <g key={y}>
+                <rect height="58" rx="9" width="432" x="104" y={y} />
+                {[1, 2, 3, 4, 5, 6, 7].map((cell) => <path d={`M${104 + cell * 54} ${y}v58`} key={cell} />)}
+              </g>
+            ))}
+          </g>
+          <path d="M92 218h456" />
+          <path d="M66 166h22m-11-11v22" />
+          {['10110110', '00101101', '11100011'].map((bits, row) => [...bits].map((bit, column) => (
+            <text
+              fill="currentColor"
+              fontFamily="ui-monospace, SFMono-Regular, Menlo, monospace"
+              fontSize="24"
+              fontWeight="800"
+              key={`${row}-${column}`}
+              stroke="none"
+              textAnchor="middle"
+              x={131 + column * 54}
+              y={109 + row * (row === 2 ? 90 : 76)}
+            >
+              {bit}
+            </text>
+          )))}
         </>
       );
     case 'bitmap-compression':
@@ -43,55 +61,86 @@ function IconDrawing({ slug }: LabIconProps) {
     case 'huffman-rover':
       return (
         <>
-          <path d="M320 74v46m0 0-104 58m104-58 104 58m-208 0-60 66m60-66 52 66m156-66-52 66m52-66 60 66" />
-          <circle className="is-solid" cx="320" cy="70" r="15" />
-          {[156, 268, 372, 484].map((x) => <circle cx={x} cy="246" key={x} r="18" />)}
-          <path d="M238 300h164" />
-          <path className="is-solid" d="M294 274h66l18 26h-102z" />
-          <circle className="is-solid" cx="292" cy="310" r="12" />
-          <circle className="is-solid" cx="362" cy="310" r="12" />
+          <path d="M54 126h532" />
+          {[70, 108, 164, 202, 240, 296, 352, 390, 446, 484, 522].map((x, index) => (
+            <rect className={[0, 3, 4, 6, 9].includes(index) ? 'is-solid' : ''} height="34" key={x} rx="8" width="30" x={x} y="82" />
+          ))}
+          <path d="M252 126h136l-34 62h-68zM320 188v42m-18-20 18 20 18-20" />
+          <path className="secondary-line" d="M388 270h78v-72h92" />
+          <path className="is-solid" d="M270 242h94l22 34H248z" />
+          <path d="M286 242v-18h42l18 18" />
+          <circle className="is-solid" cx="278" cy="286" r="13" />
+          <circle className="is-solid" cx="356" cy="286" r="13" />
+          <path d="M548 198v-54m0 8 34 15-34 16" />
+          <circle cx="548" cy="136" r="9" />
         </>
       );
     case 'parity-arq':
       return (
         <>
-          <path d="M90 120h416" />
-          {[0, 1, 2, 3, 4, 5].map((cell) => (
-            <rect className={cell === 4 ? 'is-solid' : ''} height="72" key={cell} rx="12" width="62" x={104 + cell * 66} y="84" />
+          <g className="thin-lines">
+            <rect height="72" rx="12" width="448" x="70" y="102" />
+            {[1, 2, 3, 4, 5, 6, 7].map((cell) => <path d={`M${70 + cell * 56} 102v72`} key={cell} />)}
+          </g>
+          {[0, 1, 2, 3, 4, 5, 6, 7].map((cell) => (
+            <circle className={[0, 2, 3, 6].includes(cell) ? 'is-solid' : ''} cx={98 + cell * 56} cy="138" key={cell} r="11" />
           ))}
-          <path d="M506 120h56m-22-22 22 22-22 22M502 250H142c-42 0-58-18-58-52m0 0 22 24m-22-24-22 24" />
-          <circle cx="506" cy="250" r="13" />
-          <circle className="is-solid" cx="142" cy="250" r="13" />
+          <path d="M518 138h64m-20-18 20 18-20 18" />
+          <path className="is-solid" d="m322 74 8 18 20-6-11 18 17 10-20 4 2 21-16-14-16 14 2-21-20-4 17-10-11-18 20 6z" />
+          <path d="M542 202v34c0 42-30 62-76 62H134c-46 0-68-20-68-58m0 0 22 24m-22-24-22 24" />
         </>
       );
     case 'network-topology':
       return (
         <>
-          <path d="M320 180 164 98m156 82 156-82M320 180 164 262m156-82 156 82" />
-          <path className="secondary-line" d="M164 98v164m312-164v164M164 98h312M164 262h312" />
-          <circle className="is-solid" cx="320" cy="180" r="34" />
-          {[[164, 98], [476, 98], [164, 262], [476, 262]].map(([x, y]) => <circle cx={x} cy={y} key={`${x}-${y}`} r="24" />)}
+          <path className="secondary-line" d="M156 108 286 166M156 252l130-58" />
+          <path d="M354 180h130" />
+          <rect className="is-solid" height="72" rx="14" width="92" x="274" y="144" />
+          {[102, 252].map((y) => (
+            <g key={y}>
+              <rect height="54" rx="9" width="92" x="64" y={y - 27} />
+              <path d={`M110 ${y + 27}v12m-28 0h56`} />
+            </g>
+          ))}
+          <rect height="64" rx="10" width="106" x="484" y="148" />
+          <path d="M537 212v13m-30 0h60" />
+          <circle className="is-solid" cx="426" cy="180" r="12" />
+          <path d="M300 166h12m16 0h12m-40 14h40m-40 14h12m16 0h12" />
         </>
       );
     case 'csma-cd':
       return (
         <>
-          <path d="M72 188h496M128 188v-76m384 76v-76" />
-          <rect height="48" rx="12" width="84" x="86" y="70" />
-          <rect height="48" rx="12" width="84" x="470" y="70" />
-          <path d="m282 188 38-38 38 38-38 38z" />
-          <path className="is-solid" d="m302 170 18-18 18 18-18 18z" />
-          <path d="M126 248h74m-24-20 24 20-24 20m338-20h-74m24-20-24 20 24 20" />
+          <path d="M58 190h524M110 190v-66m210 66v-66m210 66v-66" />
+          {[110, 320, 530].map((x) => (
+            <g key={x}>
+              <rect height="48" rx="10" width="82" x={x - 41} y="72" />
+              <path d={`M${x} 120v4m-24 0h48`} />
+            </g>
+          ))}
+          <path d="M88 190h162m-22-20 22 20-22 20M552 190H390m22-20-22 20 22 20" />
+          <path className="is-solid" d="m320 150 10 24 26-8-14 24 22 14-26 4 2 27-20-18-20 18 2-27-26-4 22-14-14-24 26 8z" />
+          <path className="secondary-line" d="M92 264c54 38 118 38 172 0m-22 0h22v22M548 264c-54 38-118 38-172 0m22 0h-22v22" />
+          <circle cx="150" cy="278" r="7" />
+          <circle cx="476" cy="278" r="7" />
+          <circle cx="500" cy="278" r="7" />
         </>
       );
     case 'fetch-decode-execute':
       return (
         <>
-          <rect className="is-solid" height="116" rx="24" width="146" x="247" y="122" />
-          <rect height="56" rx="12" width="92" x="82" y="152" />
-          <rect height="56" rx="12" width="92" x="466" y="152" />
-          <path d="M174 180h73m146 0h73M320 122V72m0 0-20 22m20-22 20 22" />
-          <path d="M250 274c-72-30-112-80-112-138m0 0-18 28m18-28 26 21M390 86c70 28 110 78 112 136m0 0 18-28m-18 28-26-21" />
+          <rect height="152" rx="15" width="112" x="62" y="104" />
+          {[134, 164, 194, 224].map((y) => <path d={`M62 ${y}h112`} key={y} />)}
+          <rect className="is-solid" height="30" width="112" x="62" y="164" />
+          <path d="M174 180h66m-20-18 20 18-20 18" />
+          <rect height="104" rx="14" width="146" x="260" y="128" />
+          <path d="M312 128v104" />
+          <rect className="is-solid" height="80" rx="7" width="28" x="272" y="140" />
+          {[340, 362, 384].map((x) => <circle cx={x} cy="180" key={x} r="8" />)}
+          <path d="M406 180h64m-20-18 20 18-20 18" />
+          <path d="M488 116h94l30 64-30 64h-94l22-64z" />
+          <path d="M531 154v52m-26-26h52" />
+          <path className="secondary-line" d="M552 274c-66 46-320 46-402 0m0 0 30-2m-30 2 14 26" />
         </>
       );
     case 'assembly':
