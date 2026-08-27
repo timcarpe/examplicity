@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Cambridge 9618 Assembly Lab</title>
+<title>Cambridge Assembly</title>
 <style>
 :root{
   --bg:var(--lab-canvas,#f5f5f7);--panel:var(--lab-surface,#fff);--soft:#fafafa;--ink:var(--lab-ink,#1d1d1f);--muted:var(--lab-muted,#6e6e73);
@@ -22,7 +22,6 @@ main{width:min(1480px,calc(100% - 24px));margin:18px auto 40px}
 h1{margin:0;font-size:29px;line-height:1.06;letter-spacing:-.035em}
 .sub{margin:6px 0 0;color:var(--muted);font-size:13px;line-height:1.45}
 .page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:13px}
-.syllabus-chip{padding:6px 9px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.8);color:#55555a;font-size:10px;font-weight:800;white-space:nowrap}
 .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--lab-panel-radius,12px);box-shadow:var(--lab-panel-shadow,0 1px 2px rgba(29,29,31,.04))}
 .toolbar{padding:9px 10px;display:grid;grid-template-columns:minmax(180px,1fr) auto;gap:10px;align-items:center}
 .toolbar-left,.toolbar-right{display:flex;align-items:end;gap:7px;flex-wrap:wrap}.toolbar-right{justify-content:flex-end}
@@ -45,16 +44,16 @@ select,input[type="text"]{height:36px;border:1px solid var(--line);border-radius
 .line-numbers{position:absolute;z-index:2;left:0;top:0;bottom:0;width:42px;padding:11px 7px 11px 0;overflow:hidden;border-right:1px solid #e4e4e8;background:#f4f4f6;color:#9a9aa0;font:700 11px/var(--editor-line) var(--mono);text-align:right;user-select:none;pointer-events:none}
 .line-number{height:var(--editor-line);position:relative}.line-number.active{color:var(--accent)}.line-number.error{color:var(--bad)}.line-number.error::before{content:"";position:absolute;left:6px;top:8px;width:6px;height:6px;border-radius:50%;background:var(--bad)}
 #sourceEditor{position:absolute;z-index:1;inset:0;width:100%;height:100%;margin:0;padding:11px 12px 11px 53px;border:0;resize:none;background:transparent;color:#202026;caret-color:var(--accent);font:600 12px/var(--editor-line) var(--mono);tab-size:4;white-space:pre;overflow:auto}
-#sourceEditor:focus{outline:none}.editor-meta{min-height:32px;padding:7px 2px 0;display:flex;justify-content:space-between;gap:10px;color:var(--muted);font-size:10px}.editor-meta strong{color:var(--ink)}
+#sourceEditor:focus-visible{outline:3px solid var(--lab-focus);outline-offset:-3px}.editor-meta{min-height:32px;padding:7px 2px 0;display:flex;justify-content:space-between;gap:10px;color:var(--muted);font-size:10px}.editor-meta strong{color:var(--ink)}
 .translation{margin-top:10px;border:1px solid var(--line);border-radius:11px;overflow:hidden}.translation-head{padding:9px 10px;display:flex;justify-content:space-between;gap:10px;align-items:center;border-bottom:1px solid var(--line);background:#fafafa}.translation-head strong{font-size:12px}
-.pass-chips{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}.pass-chip{padding:3px 6px;border:1px solid var(--line);border-radius:999px;background:#fff;color:#66666b;font-size:8px;font-weight:800}
+.pass-chips{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}.pass-chip{padding:3px 6px;border:1px solid var(--line);border-radius:999px;background:#fff;color:#66666b;font-size:9px;font-weight:800}
 .symbols{min-height:34px;padding:7px 8px;display:flex;align-items:center;gap:5px;flex-wrap:wrap;border-bottom:1px solid var(--line);background:#fff}.symbol-chip{padding:3px 6px;border-radius:6px;background:var(--accent-soft);color:#1c5ca0;font:750 9px var(--mono)}.symbol-empty{color:var(--muted);font-size:9px}
-.translation-scroll{max-height:250px;overflow:auto}.translation-table{width:100%;border-collapse:collapse;table-layout:fixed}.translation-table th{position:sticky;top:0;z-index:2;padding:6px 7px;border-bottom:1px solid var(--line);background:#f7f7f8;color:#7a7a80;text-align:left;font-size:8px;text-transform:uppercase;letter-spacing:.05em}.translation-table td{padding:6px 7px;border-bottom:1px solid #ededf0;vertical-align:top;font-size:9px}.translation-table tr:last-child td{border-bottom:0}.translation-table tr.active{background:var(--accent-soft);box-shadow:inset 3px 0 0 var(--accent)}
+.translation-scroll{max-height:250px;overflow:auto}.translation-table{width:100%;border-collapse:collapse;table-layout:fixed}.translation-table th{position:sticky;top:0;z-index:2;padding:6px 7px;border-bottom:1px solid var(--line);background:#f7f7f8;color:#7a7a80;text-align:left;font-size:9px;text-transform:uppercase;letter-spacing:.05em}.translation-table td{padding:6px 7px;border-bottom:1px solid #ededf0;vertical-align:top;font-size:10px}.translation-table tr:last-child td{border-bottom:0}.translation-table tr.active{background:var(--accent-soft);box-shadow:inset 3px 0 0 var(--accent)}
 .translation-table .addr{width:62px;font:850 10px var(--mono);color:#4f4f55}.translation-table .source{width:48%;font:650 9px/1.35 var(--mono);overflow-wrap:anywhere}.translation-table .resolved{font:800 9px/1.35 var(--mono);color:#225f56;overflow-wrap:anywhere}
-.mode-tag{display:inline-block;margin-top:3px;padding:2px 4px;border-radius:4px;background:#f0f0f2;color:#77777d;font:700 7px var(--mono)}.translation-empty{padding:20px 12px;color:var(--muted);text-align:center;font-size:10px}.encoding-note{padding:7px 9px;border-top:1px solid var(--line);background:#fafafa;color:var(--muted);font-size:8.5px;line-height:1.35}
-.io-panel{margin-top:10px;display:grid;grid-template-columns:minmax(120px,.8fr) minmax(170px,1.2fr);gap:8px}.io-box{min-width:0;padding:8px;border:1px solid var(--line);border-radius:10px;background:#fafafa}.io-box label,.io-title{display:block;margin-bottom:5px;color:var(--muted);font-size:8px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}.io-box input{width:100%;height:32px;font:700 11px var(--mono)}
-.output-console{min-height:32px;max-height:70px;overflow:auto;padding:7px 8px;border:1px solid #dedee2;border-radius:7px;background:#fff;color:#242428;font:750 11px/1.4 var(--mono);white-space:pre-wrap;overflow-wrap:anywhere}.io-note{margin-top:4px;color:var(--muted);font-size:8px}
-.reference{margin-top:10px;border-top:1px solid var(--line);padding-top:8px}.reference summary{width:max-content;cursor:pointer;color:#4f4f54;font-size:10px;font-weight:750}.reference-grid{margin-top:8px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.reference-group{padding:7px;border:1px solid var(--line);border-radius:8px;background:#fafafa}.reference-group strong{display:block;margin-bottom:4px;font-size:9px}.reference-group code{display:block;color:#54545a;font:700 8px/1.45 var(--mono)}
+.mode-tag{display:inline-block;margin-top:3px;padding:2px 4px;border-radius:4px;background:#f0f0f2;color:#77777d;font:700 8px var(--mono)}.translation-empty{padding:20px 12px;color:var(--muted);text-align:center;font-size:10px}.encoding-note{padding:7px 9px;border-top:1px solid var(--line);background:#fafafa;color:var(--muted);font-size:10px;line-height:1.35}
+.io-panel{margin-top:10px;display:grid;grid-template-columns:minmax(120px,.8fr) minmax(170px,1.2fr);gap:8px}.io-box{min-width:0;padding:8px;border:1px solid var(--line);border-radius:10px;background:#fafafa}.io-box label,.io-title{display:block;margin-bottom:5px;color:var(--muted);font-size:9px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}.io-box input{width:100%;height:32px;font:700 11px var(--mono)}
+.output-console{min-height:32px;max-height:70px;overflow:auto;padding:7px 8px;border:1px solid #dedee2;border-radius:7px;background:#fff;color:#242428;font:750 11px/1.4 var(--mono);white-space:pre-wrap;overflow-wrap:anywhere}.io-note{margin-top:4px;color:var(--muted);font-size:9px}
+.reference{margin-top:10px;border-top:1px solid var(--line);padding-top:8px}.reference summary{width:max-content;cursor:pointer;color:#4f4f54;font-size:10px;font-weight:750}.reference-grid{margin-top:8px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.reference-group{padding:7px;border:1px solid var(--line);border-radius:8px;background:#fafafa}.reference-group strong{display:block;margin-bottom:4px;font-size:10px}.reference-group code{display:block;color:#54545a;font:700 9px/1.45 var(--mono)}
 .architecture-status{display:flex;align-items:center;gap:7px;flex-wrap:wrap;justify-content:flex-end}.status-pill{padding:4px 7px;border:1px solid var(--line);border-radius:999px;background:#fafafa;color:#68686e;font:800 9px var(--mono)}.status-pill.complete{color:var(--good);border-color:#b3d7bf;background:var(--good-soft)}.status-pill.error{color:var(--bad);border-color:#e6b1ab;background:var(--bad-soft)}
 .phase-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:9px}.phase{min-height:29px;display:grid;place-items:center;border:1px solid var(--line);border-radius:9px;background:#fafafa;color:#8a8a90;font-size:9px;font-weight:850;letter-spacing:.05em}.phase.active.fetch{color:var(--fetch);border-color:#bed5ee;background:#eff6ff}.phase.active.decode{color:var(--decode);border-color:#e7cfad;background:#fff6e9}.phase.active.execute{color:var(--execute);border-color:#bedbc8;background:#eff8f2}
 .translation-table .resolved{font:750 9px/1.35 var(--mono);color:#315f55;overflow-wrap:anywhere}
@@ -80,9 +79,8 @@ select,input[type="text"]{height:36px;border:1px solid var(--line);border-radius
 @media(prefers-reduced-motion:reduce){.system-flow-path{animation:none}.system-flow-pulse{display:none}}
 .ram-card{display:grid;grid-template-rows:auto 1fr;overflow:hidden}.ram-head{padding:9px 10px;display:flex;justify-content:space-between;gap:8px;align-items:flex-start;border-bottom:1px solid var(--line);background:#f7faf8}.ram-head strong{font-size:13px}.ram-head span{color:var(--muted);font-size:7.5px;line-height:1.3;text-align:right}.ram-scroll{min-height:470px;max-height:520px;overflow:auto;background:#fff}.ram-row{display:grid;grid-template-columns:66px 1fr;min-height:43px;border-bottom:1px solid #ededf0;transition:.14s}.ram-row.active{background:var(--accent-soft);box-shadow:inset 3px 0 0 var(--accent)}.ram-row.changed{background:var(--changed);box-shadow:inset 3px 0 0 #c9911a}.ram-address{padding:7px 5px;display:grid;align-content:center;justify-items:center;border-right:1px solid #ededf0;color:#4f565d;font:900 10px var(--mono);text-align:center}.ram-address small{display:block;margin-top:3px;color:#9099a0;font:700 6.5px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;max-width:58px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ram-content{min-width:0;padding:7px 8px}.ram-word{display:block;color:#295f55;font:850 10px/1.3 var(--mono);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ram-meta{display:flex;gap:5px;align-items:center;margin-top:4px;color:#94949a;font-size:6.5px}.ram-type{padding:1px 4px;border-radius:4px;background:#eff0f2;color:#737379;font-weight:850}.ram-type.code{background:#eef5ff;color:#3269a3}.ram-type.data{background:#eef8f3;color:#34755e}.ram-type.modified{background:#fff1cf;color:#8a5c07}
 .micro-card{margin-top:10px;min-height:86px;padding:10px 11px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;border:1px solid var(--line);border-radius:12px;background:#fafafa}.micro-phase{min-width:69px;padding:7px 8px;border:1px solid var(--line);border-radius:9px;background:#fff;color:#77777d;text-align:center;font-size:9px;font-weight:900;letter-spacing:.06em}.micro-phase.fetch{color:var(--fetch);border-color:#bed5ee;background:#eff6ff}.micro-phase.decode{color:var(--decode);border-color:#e7cfad;background:#fff6e9}.micro-phase.execute{color:var(--execute);border-color:#bedbc8;background:#eff8f2}.operation{min-width:0}.operation code{display:block;color:#242429;font:850 14px/1.25 var(--mono);overflow-wrap:anywhere}.operation p{margin:4px 0 0;color:var(--muted);font-size:10px;line-height:1.4}.tick-box{text-align:right;color:var(--muted);font:750 8px/1.5 var(--mono);white-space:nowrap}.tick-box strong{display:block;color:var(--ink);font-size:10px}
-.footer-note{margin-top:9px;color:#85858b;font-size:8.5px;line-height:1.4}
 @container lab-canvas (max-width:1250px){.workspace{grid-template-columns:1fr}.editor-panel{display:grid;grid-template-columns:minmax(330px,.8fr) minmax(430px,1.2fr);gap:10px;align-items:start}.editor-panel>.panel-head{grid-column:1/-1}.editor-main{min-width:0}.translation{margin-top:0}.io-panel,.reference{grid-column:1}.architecture-panel{grid-column:1/-1}}
-@media(max-width:900px){main{width:min(100% - 12px,1480px);margin-top:9px}.page-head{display:block}.syllabus-chip{display:inline-block;margin-top:9px}.toolbar{grid-template-columns:1fr}.toolbar-right{justify-content:flex-start}.editor-panel{display:block}.translation{margin-top:10px}.computer-grid{grid-template-columns:1fr;gap:10px}.cpu-board{overflow:auto}.cpu-diagram{min-width:650px}.bus-bridge{position:static;min-height:0;margin-top:0;display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:0 14px}.bus-lane{position:relative;top:auto!important;left:auto;right:auto}.bus-line{left:0;right:0}.bus-arrow-right{right:-2px}.bus-arrow-left{left:-2px}.io-endpoint{position:relative;left:auto;bottom:auto;transform:none;grid-column:1/-1;justify-self:center}.ram-scroll{min-height:260px;max-height:360px}}
+@media(max-width:900px){main{width:min(100% - 12px,1480px);margin-top:9px}.page-head{display:block}.toolbar{grid-template-columns:1fr}.toolbar-right{justify-content:flex-start}.editor-panel{display:block}.translation{margin-top:10px}.computer-grid{grid-template-columns:1fr;gap:10px}.cpu-board{overflow:auto}.cpu-diagram{min-width:650px}.bus-bridge{position:static;min-height:0;margin-top:0;display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:0 14px}.bus-lane{position:relative;top:auto!important;left:auto;right:auto}.bus-line{left:0;right:0}.bus-arrow-right{right:-2px}.bus-arrow-left{left:-2px}.io-endpoint{position:relative;left:auto;bottom:auto;transform:none;grid-column:1/-1;justify-self:center}.ram-scroll{min-height:260px;max-height:360px}}
 @media(max-width:560px){h1{font-size:25px}.toolbar-left,.toolbar-right{align-items:stretch}.field{flex:1 1 145px}.field select{width:100%}.ui-button{flex:1 1 auto}.validation-wrap{flex:0 0 auto}.editor-shell{height:292px}.io-panel{grid-template-columns:1fr}.reference-grid{grid-template-columns:1fr}.bus-bridge{grid-template-columns:1fr;padding:0 12px}.micro-card{grid-template-columns:1fr}.micro-phase{width:max-content}.tick-box{text-align:left}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}}
 </style>
@@ -148,7 +146,7 @@ body.binary-lab main {
 
 :where(button, input, select, textarea, summary):focus-visible {
   outline: 3px solid var(--lab-focus);
-  outline-offset: 2px;
+  outline-offset: 4px;
 }
 
 @media (max-width: 620px) {
@@ -181,10 +179,9 @@ body.binary-lab main {
 <main>
   <header class="page-head">
     <div>
-      <h1>Cambridge 9618 Assembly Lab</h1>
-      <p class="sub">Trace a Cambridge-style assembly program and follow each register transfer through a connected stored-program computer.</p>
+      <h1>Cambridge Assembly</h1>
+      <p class="sub">Trace a Cambridge 9618-style assembly program and follow each register transfer through a connected stored-program computer.</p>
     </div>
-    <span class="syllabus-chip">AS Level · CPU + assembly trace</span>
   </header>
 
   <section class="panel toolbar" aria-label="Program and execution controls">
@@ -249,7 +246,7 @@ body.binary-lab main {
         </div>
         <div id="symbols" class="symbols"></div>
         <div id="translationBody" class="translation-scroll"></div>
-        <div class="encoding-note">Exam model: Pass 1 records each label. Pass 2 substitutes its numbered location. Machine-code encoding is intentionally hidden.</div>
+        <div class="encoding-note">Exam model: Pass 1 records each label; Pass 2 substitutes its numbered location. Cambridge-style mnemonics and addressing modes are preserved, while machine-code encoding is intentionally hidden.</div>
       </section>
 
       <section class="io-panel" aria-label="Program input and output">
@@ -481,7 +478,6 @@ body.binary-lab main {
     </section>
   </div>
 
-  <div class="footer-note">This is an exam-focused teaching model: it preserves Cambridge-style mnemonics, addressing modes and register transfers while hiding unnecessary machine-code detail.</div>
 </main>
 
 <script>

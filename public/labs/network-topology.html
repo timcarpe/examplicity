@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Network Topology Builder Lab</title>
+<title>Network Topology Builder</title>
 <style>
 :root{
   --bg:var(--lab-canvas);
@@ -13,12 +13,12 @@
   --line:var(--lab-line);
   --accent:var(--lab-accent);
   --accent-soft:var(--lab-accent-soft);
-  --good:#26734a;
-  --good-soft:#edf8f1;
-  --warn:#9a601b;
-  --warn-soft:#fff6e8;
-  --bad:#b2453a;
-  --bad-soft:#fff0ee;
+  --good:var(--lab-good);
+  --good-soft:var(--lab-good-soft);
+  --warn:var(--lab-warn);
+  --warn-soft:var(--lab-warn-soft);
+  --bad:var(--lab-bad);
+  --bad-soft:var(--lab-bad-soft);
   --network:#101821;
   --network-grid:#1b2732;
   --link:#536776;
@@ -52,7 +52,7 @@ button:hover:not(:disabled){border-color:var(--lab-line-strong,#9ba8b2)}
 button.primary{background:var(--lab-accent);border-color:var(--lab-accent);color:#fff;font-weight:750}
 button.active-tool{background:var(--lab-accent-soft);border-color:var(--lab-accent);color:var(--lab-accent);font-weight:800}
 button.mesh-layer-active{background:#f3effd;border-color:#b7a4e8;color:#6748ad;font-weight:800}
-button.mesh-layer-complete{background:var(--good-soft);border-color:#a9d4b9;color:var(--good);font-weight:800}
+button.mesh-layer-complete{background:var(--good-soft);border-color:var(--good);color:var(--good);font-weight:800}
 button.danger{color:var(--bad)}
 
 .mission{
@@ -66,9 +66,9 @@ button.danger{color:var(--bad)}
 #missionTitle{display:block;font-size:15px}
 #missionHint{display:block;margin-top:3px;color:var(--lab-muted);font-size:10px;line-height:1.35}
 .task-tabs{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}
-.task-tab{min-height:32px;padding:0 9px;font-size:9px;font-weight:800}
+.task-tab{min-height:32px;padding:0 9px;font-size:10px;font-weight:800}
 .task-tab.active{background:var(--accent);border-color:var(--accent);color:#fff}
-.task-tab.complete:not(.active){border-color:#a9d4b9;background:var(--good-soft);color:var(--good)}
+.task-tab.complete:not(.active){border-color:var(--good);background:var(--good-soft);color:var(--good)}
 
 .lab-grid{margin-top:10px;display:grid;grid-template-columns:210px minmax(0,1fr);gap:10px;align-items:start}
 .palette{padding:10px;position:sticky;top:10px}
@@ -79,22 +79,22 @@ button.danger{color:var(--bad)}
 .part-card{
   width:100%;min-height:66px;padding:8px;
   display:grid;grid-template-columns:48px minmax(0,1fr) auto;gap:8px;align-items:center;
-  border:1px solid #c8d2d9;border-radius:9px;background:#fff;text-align:left;touch-action:none;user-select:none;
+  border:1px solid var(--lab-line);border-radius:9px;background:var(--lab-surface);text-align:left;touch-action:none;user-select:none;
 }
 .part-card:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 3px 8px rgba(36,53,65,.09)}
 .part-card.dragging-source{border-color:var(--accent);background:var(--accent-soft)}
-.part-icon{width:48px;height:42px;display:grid;place-items:center;border:1px solid #d1d9df;border-radius:8px;background:#f6f8fa;color:#50616d}
+.part-icon{width:48px;height:42px;display:grid;place-items:center;border:1px solid var(--lab-line);border-radius:8px;background:var(--lab-paper);color:var(--lab-muted)}
 .part-icon svg{width:38px;height:30px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 .part-copy{min-width:0}
 .part-copy strong{display:block;font-size:10px}
-.part-copy span{display:block;margin-top:2px;color:var(--muted);font-size:8px;line-height:1.25}
-.part-count{min-width:38px;padding:3px 5px;border-radius:999px;background:#eef2f5;color:#556570;text-align:center;font:850 9px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
-.palette-note{margin-top:8px;color:var(--muted);font-size:8px;line-height:1.35}
+.part-copy span{display:block;margin-top:2px;color:var(--muted);font-size:9px;line-height:1.25}
+.part-count{min-width:38px;padding:3px 5px;border-radius:var(--lab-pill-radius);background:var(--lab-paper);color:var(--lab-muted);text-align:center;font:850 9px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.palette-note{margin-top:8px;color:var(--muted);font-size:9px;line-height:1.35}
 
 .workspace{padding:9px;min-width:0}
 .toolbar{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:7px}
 .tool-group,.action-group{display:flex;gap:5px;flex-wrap:wrap}
-.toolbar button{font-size:9px}
+.toolbar button{font-size:10px}
 .canvas-shell{position:relative;overflow:auto;border-radius:11px;background:var(--network)}
 .canvas{
   position:relative;
@@ -236,24 +236,24 @@ button.danger{color:var(--bad)}
 .packet-dot span{position:absolute;left:50%;top:-18px;transform:translateX(-50%);padding:2px 4px;border-radius:4px;background:rgba(7,12,17,.88);color:#fff;white-space:nowrap;font:800 7px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
 
 .feedback{
-  margin-top:7px;min-height:48px;padding:8px 10px;border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:9px;background:#fafbfc;
+  margin-top:7px;min-height:48px;padding:8px 10px;border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:9px;background:var(--lab-paper);
 }
 .feedback strong{display:block;font-size:11px}
-.feedback span{display:block;margin-top:2px;color:var(--muted);font-size:9px;line-height:1.35}
+.feedback span{display:block;margin-top:2px;color:var(--muted);font-size:10px;line-height:1.35}
 .feedback.good{border-left-color:var(--good);background:var(--good-soft)}
-.feedback.warn{border-left-color:#d29a37;background:var(--warn-soft)}
+.feedback.warn{border-left-color:var(--warn);background:var(--warn-soft)}
 .feedback.bad{border-left-color:var(--bad);background:var(--bad-soft)}
 
 .test-panel{
-  margin-top:7px;padding:8px 9px;border:1px solid #c6d7ef;border-radius:9px;background:var(--accent-soft);
+  margin-top:7px;padding:8px 9px;border:1px solid var(--lab-line);border-radius:9px;background:var(--accent-soft);
   display:grid;grid-template-columns:auto 130px auto 130px auto minmax(160px,1fr);gap:7px;align-items:center;
 }
 .test-panel[hidden]{display:none}
-.test-panel label{color:#5e6e7a;font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
-.test-panel select{height:32px;border:1px solid var(--lab-line);border-radius:7px;background:var(--lab-control,#fff);color:var(--lab-ink);padding:0 7px;font-size:9px}
-#journeyText{min-width:0;color:#50616d;font-size:9px;line-height:1.35}
-#journeyText strong{display:block;color:#23323d;font-size:10px}
-.teaching-note{margin-top:6px;color:var(--muted);font-size:8px;line-height:1.35}
+.test-panel label{color:var(--lab-muted);font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
+.test-panel select{height:32px;border:1px solid var(--lab-line);border-radius:7px;background:var(--lab-control,#fff);color:var(--lab-ink);padding:0 7px;font-size:10px}
+#journeyText{min-width:0;color:var(--lab-muted);font-size:10px;line-height:1.35}
+#journeyText strong{display:block;color:var(--lab-ink);font-size:10px}
+.teaching-note{margin-top:6px;color:var(--muted);font-size:9px;line-height:1.35}
 
 .part-ghost{position:fixed;z-index:1000;pointer-events:none;width:150px;padding:8px;border:1px solid #8eafea;border-radius:9px;background:rgba(247,251,255,.96);box-shadow:0 10px 24px rgba(25,44,58,.24);color:#27435d;font-size:10px;font-weight:800;transform:translate(-50%,-50%)}
 
@@ -332,7 +332,7 @@ body.binary-lab main {
 
 :where(button, input, select, textarea, summary):focus-visible {
   outline: 3px solid var(--lab-focus);
-  outline-offset: 2px;
+  outline-offset: 4px;
 }
 
 @media (max-width: 620px) {

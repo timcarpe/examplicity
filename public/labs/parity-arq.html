@@ -3,15 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Parity &amp; ARQ Transmission Lab</title>
+<title>Parity &amp; ARQ Transmission</title>
 <style>
 :root{
   --bg:var(--lab-canvas);--panel:var(--lab-surface);--ink:var(--lab-ink);--muted:var(--lab-muted);--line:var(--lab-line);
   --accent:#2865d8;--accent-soft:#edf3ff;--parity:#b7772d;--parity-soft:#fff4e6;
   --column-parity:#287970;--column-parity-soft:#e9f7f4;
   --parity-muted:#eef1f3;--parity-muted-ink:#89949c;
-  --good:#237449;--good-soft:#edf8f1;--bad:#b44338;--bad-soft:#fff0ee;
-  --warn:#9a5a16;--warn-soft:#fff6e7;--cell:31px
+  --good:var(--lab-good);--good-soft:var(--lab-good-soft);--bad:var(--lab-bad);--bad-soft:var(--lab-bad-soft);
+  --warn:var(--lab-warn);--warn-soft:var(--lab-warn-soft);--cell:31px
 }
 *{box-sizing:border-box}
 body{
@@ -55,8 +55,8 @@ button.primary{background:var(--lab-accent);border-color:var(--lab-accent);color
 .parity-key.row::before{background:var(--parity-soft);border-color:#d9ab72}
 .parity-key.column::before{background:var(--column-parity-soft);border-color:#70b5ad}
 .status-chip{
-  display:inline-flex;align-items:center;min-height:26px;padding:3px 8px;border-radius:999px;
-  font-weight:750;border:1px solid var(--line);background:#f7f9fa
+  display:inline-flex;align-items:center;min-height:26px;padding:3px 8px;border-radius:var(--lab-pill-radius);
+  font-weight:750;border:1px solid var(--line);background:var(--lab-paper)
 }
 .status-chip.data{color:var(--accent);background:var(--accent-soft);border-color:#cad9fa}
 .status-chip.ack{color:var(--good);background:var(--good-soft);border-color:#cce9d7}
@@ -134,10 +134,10 @@ button.primary{background:var(--lab-accent);border-color:var(--lab-accent);color
 .stage-title{font-size:15px;font-weight:750}
 .stage-title-line{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .access-chip{
-  display:inline-flex;align-items:center;min-height:20px;padding:2px 6px;border:1px solid #ccd5dc;
-  border-radius:999px;background:#eef2f4;color:#63717b;font-size:8px;font-weight:850;letter-spacing:.06em
+  display:inline-flex;align-items:center;min-height:22px;padding:2px 7px;border:1px solid var(--lab-line);
+  border-radius:var(--lab-pill-radius);background:var(--lab-paper);color:var(--lab-muted);font-size:9px;font-weight:850;letter-spacing:.04em
 }
-.access-chip.editable{border-color:#91b2ed;background:#dce9ff;color:#1e58bb}
+.access-chip.editable{border-color:var(--lab-accent);background:var(--lab-accent-soft);color:var(--lab-accent)}
 .stage-note{color:var(--muted);font-size:10px;text-align:right;line-height:1.25}
 
 .blocks{display:grid;gap:8px;align-content:start}
@@ -332,7 +332,7 @@ body.binary-lab main {
 
 :where(button, input, select, textarea, summary):focus-visible {
   outline: 3px solid var(--lab-focus);
-  outline-offset: 2px;
+  outline-offset: 4px;
 }
 
 @media (max-width: 620px) {
@@ -363,7 +363,7 @@ body.binary-lab main {
 </head>
 <body>
 <main>
-<h1>Parity &amp; ARQ Transmission Lab</h1>
+<h1>Parity &amp; ARQ Transmission</h1>
 <div class="sub">
   Change bits while a frame is crossing the channel. Watch parity detect errors and ARQ decide whether to resend.
 </div>

@@ -18,6 +18,18 @@ the production build runs that check automatically.
 
 Do not edit an embedded `LAB_FRAME_STYLES` block directly.
 
+## Homogenization rules
+
+- The visible `h1` and document `<title>` must match the lab name in
+  `app/labs.ts`; do not append redundant “Lab” or version labels.
+- Use chips consistently: navigation chips identify destinations, status chips
+  describe current state, access chips describe editability, and legend chips
+  explain diagram or simulation meaning. Do not use a chip for decorative copy.
+- Surrounding interactive chrome should generally be at least `10px`; diagram
+  labels and other geometry-constrained instructional text are exempt.
+- Keep lab-specific spacing and geometry local when it carries instructional
+  meaning; do not force every internal layout into the shared frame grid.
+
 ## Boundary between chrome and content
 
 Shared tokens may style the page canvas, headings, descriptive copy, ordinary
