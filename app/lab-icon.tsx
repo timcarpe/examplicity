@@ -120,20 +120,12 @@ function IconDrawing({ slug }: LabIconProps) {
     case 'fetch-decode-execute':
       return (
         <>
-          <g className="thin-lines">
-            <rect height="88" rx="12" width="128" x="64" y="78" />
-            <path d="M64 107h128M64 137h128" />
-          </g>
-          <rect className="is-solid" height="23" rx="4" width="116" x="70" y="110" />
-          <rect height="38" rx="9" width="112" x="432" y="78" />
-          <rect className="is-solid tone-four" height="30" rx="6" width="52" x="436" y="82" />
-          <path d="M488 78v38m0 0-38 40m38-40 38 40M440 156h20m56 0h20" />
-          <circle className="is-solid" cx="450" cy="156" r="6" />
-          <circle className="is-solid" cx="526" cy="156" r="6" />
-          <path d="M268 226h78l25 40-25 40h-78l20-40zM326 244v44m-22-22h44" />
-          <path d="M373 266h20" />
-          <circle className="is-solid" cx="402" cy="266" r="8" />
-          <path d="M216 112c60-42 144-42 204 0m0 0-25-3m25 3-14-22M482 184c-10 31-38 56-72 69m0 0 13-22m-13 22 24 8M248 266c-46-10-84-39-100-82m0 0-5 25m5-25 22 13" />
+          <path className="tone-four" d="M210 102c64-42 156-42 220 0m0 0-26-3m26 3-14-22" strokeWidth="6" />
+          <path d="M472 134c38 76-7 152-90 166m0 0 21-17m-21 17 25 9" strokeWidth="6" />
+          <path d="M258 300c-83-14-128-90-90-166M170 159l-2-25-21 14" strokeWidth="6" />
+          <circle cx="320" cy="190" r="40" />
+          <path d="M320 166v24l19 13" />
+          <circle className="is-solid" cx="320" cy="190" r="5" />
         </>
       );
     case 'assembly':
