@@ -6,9 +6,9 @@
 <title>Cambridge 9618 Assembly Lab</title>
 <style>
 :root{
-  --bg:#f5f5f7;--panel:#fff;--soft:#fafafa;--ink:#1d1d1f;--muted:#6e6e73;
-  --line:#d9d9de;--accent:#0071e3;--accent-soft:#edf6ff;--good:#15803d;
-  --good-soft:#edf8f0;--bad:#d92d20;--bad-soft:#fff0ee;--warn:#9a5a16;
+  --bg:var(--lab-canvas,#f5f5f7);--panel:var(--lab-surface,#fff);--soft:#fafafa;--ink:var(--lab-ink,#1d1d1f);--muted:var(--lab-muted,#6e6e73);
+  --line:var(--lab-line,#d9d9de);--accent:var(--lab-accent,#0071e3);--accent-soft:var(--lab-accent-soft,#edf6ff);--good:var(--lab-good,#15803d);
+  --good-soft:var(--lab-good-soft,#edf8f0);--bad:var(--lab-bad,#d92d20);--bad-soft:var(--lab-bad-soft,#fff0ee);--warn:var(--lab-warn,#9a5a16);
   --changed:#fff0bd;--fetch:#2f73c5;--decode:#a06724;--execute:#27764c;
   --address:#7564bd;--data:#247e62;--control:#b16a31;--mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace;
   --editor-line:22px;
@@ -23,14 +23,13 @@ h1{margin:0;font-size:29px;line-height:1.06;letter-spacing:-.035em}
 .sub{margin:6px 0 0;color:var(--muted);font-size:13px;line-height:1.45}
 .page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:13px}
 .syllabus-chip{padding:6px 9px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.8);color:#55555a;font-size:10px;font-weight:800;white-space:nowrap}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:0 12px 32px rgba(0,0,0,.045)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--lab-panel-radius,12px);box-shadow:var(--lab-panel-shadow,0 1px 2px rgba(29,29,31,.04))}
 .toolbar{padding:9px 10px;display:grid;grid-template-columns:minmax(180px,1fr) auto;gap:10px;align-items:center}
 .toolbar-left,.toolbar-right{display:flex;align-items:end;gap:7px;flex-wrap:wrap}.toolbar-right{justify-content:flex-end}
 .field{display:grid;gap:4px;color:var(--muted);font-size:10px}
-select,input[type="text"]{height:36px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--ink);padding:0 9px}
-select:focus,input:focus,textarea:focus,button:focus-visible,summary:focus-visible{outline:3px solid rgba(0,113,227,.18);outline-offset:1px}
-.ui-button{height:36px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--ink);padding:0 11px;font-size:12px;font-weight:700}
-.ui-button:hover:not(:disabled){border-color:#aaaab1;background:#fcfcfd}.ui-button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+select,input[type="text"]{height:36px;border:1px solid var(--line);border-radius:var(--lab-control-radius,9px);background:var(--lab-control,var(--lab-surface,#fff));color:var(--ink);padding:0 9px}
+.ui-button{height:36px;border:1px solid var(--line);border-radius:var(--lab-control-radius,9px);background:var(--lab-control,var(--lab-surface,#fff));color:var(--ink);padding:0 11px;font-size:12px;font-weight:700}
+.ui-button:hover:not(:disabled){border-color:var(--lab-line-strong,#aaaab1);background:#fcfcfd}.ui-button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
 .ui-button.run{min-width:86px;display:inline-flex;align-items:center;justify-content:center;gap:6px}.ui-button svg{width:13px;height:13px;fill:currentColor}
 .validation-wrap{position:relative;display:grid;align-items:end}
 .validation-button{width:36px;height:36px;padding:0;display:grid;place-items:center;border:1px solid var(--line);border-radius:50%;background:#fff;font-size:16px;font-weight:900}
@@ -87,7 +86,96 @@ select:focus,input:focus,textarea:focus,button:focus-visible,summary:focus-visib
 @media(max-width:560px){h1{font-size:25px}.toolbar-left,.toolbar-right{align-items:stretch}.field{flex:1 1 145px}.field select{width:100%}.ui-button{flex:1 1 auto}.validation-wrap{flex:0 0 auto}.editor-shell{height:292px}.io-panel{grid-template-columns:1fr}.reference-grid{grid-template-columns:1fr}.bus-bridge{grid-template-columns:1fr;padding:0 12px}.micro-card{grid-template-columns:1fr}.micro-phase{width:max-content}.tick-box{text-align:left}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}}
 </style>
-<link rel="stylesheet" href="/labs/lab-frame.css">
+<!-- LAB_FRAME_STYLES_START -->
+<style data-lab-frame>
+:root {
+  --lab-canvas: #f3f5f7;
+  --lab-paper: #fbfbfd;
+  --lab-surface: #ffffff;
+  --lab-control: #ffffff;
+  --lab-ink: #1d1d1f;
+  --lab-muted: #6e6e73;
+  --lab-line: #d2d2d7;
+  --lab-line-strong: #a7a7ad;
+  --lab-accent: #5277b8;
+  --lab-accent-soft: #eef2fa;
+  --lab-good: #18794e;
+  --lab-good-soft: #edf8f1;
+  --lab-warn: #946200;
+  --lab-warn-soft: #fff6e7;
+  --lab-bad: #b42318;
+  --lab-bad-soft: #fff0ee;
+  --lab-focus: #1d1d1f;
+  --lab-focus-soft: rgba(29, 29, 31, 0.18);
+  --lab-font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+  --lab-panel-radius: 12px;
+  --lab-control-radius: 8px;
+  --lab-pill-radius: 999px;
+  --lab-control-height: 35px;
+  --lab-panel-shadow: 0 1px 2px rgba(29, 29, 31, 0.04);
+}
+
+html,
+body {
+  background: var(--lab-canvas);
+}
+
+body {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-family: var(--lab-font-sans);
+  padding-bottom: 76px;
+  padding-top: 84px;
+  text-rendering: optimizeLegibility;
+}
+
+html[data-theme="dark"],
+html[data-theme="dark"] body {
+  background: var(--bg);
+}
+
+main {
+  container-name: lab-canvas;
+  container-type: inline-size;
+  margin-bottom: 40px;
+  margin-top: 18px;
+  width: min(1200px, calc(100% - 24px));
+}
+
+body.binary-lab main {
+  width: min(820px, calc(100% - 24px));
+}
+
+:where(button, input, select, textarea, summary):focus-visible {
+  outline: 3px solid var(--lab-focus);
+  outline-offset: 2px;
+}
+
+@media (max-width: 620px) {
+  body {
+    padding-bottom: 94px;
+    padding-top: 70px;
+  }
+
+  main,
+  body.binary-lab main {
+    margin-top: 8px;
+    width: min(100% - 12px, 1200px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+</style>
+<!-- LAB_FRAME_STYLES_END -->
 </head>
 <body>
 <main>

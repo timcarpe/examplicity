@@ -6,11 +6,11 @@
 <title>Fetch–Decode–Execute Lab</title>
 <style>
 :root{
-  --bg:#f3f5f7;
-  --panel:#ffffff;
-  --ink:#1d2730;
-  --muted:#687681;
-  --line:#d7dfe5;
+  --bg:var(--lab-canvas);
+  --panel:var(--lab-surface);
+  --ink:var(--lab-ink);
+  --muted:var(--lab-muted);
+  --line:var(--lab-line);
   --accent:#2865d8;
   --accent-soft:#edf3ff;
   --changed:#fff0c9;
@@ -32,29 +32,29 @@
 *{box-sizing:border-box}
 body{
   margin:0;
-  background:var(--bg);
-  color:var(--ink);
-  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:var(--lab-canvas);
+  color:var(--lab-ink);
+  font-family:var(--lab-font-sans);
 }
 main{width:min(1200px,calc(100% - 24px));margin:18px auto 40px}
 h1{margin:0;font-size:27px;letter-spacing:-.02em}
-.sub{margin:5px 0 14px;color:var(--muted);font-size:13px;line-height:1.45}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px}
+.sub{margin:5px 0 14px;color:var(--lab-muted);font-size:13px;line-height:1.45}
+.panel{background:var(--lab-surface);border:1px solid var(--lab-line);border-radius:var(--lab-panel-radius);box-shadow:var(--lab-panel-shadow,0 1px 2px rgba(29,29,31,.04))}
 
 button,select{font:inherit}
 button{
   height:34px;
-  border:1px solid var(--line);
-  border-radius:8px;
-  background:#fff;
-  color:var(--ink);
+  border:1px solid var(--lab-line);
+  border-radius:var(--lab-control-radius);
+  background:var(--lab-control,#fff);
+  color:var(--lab-ink);
   padding:0 10px;
   cursor:pointer;
   white-space:nowrap;
 }
-button:hover:not(:disabled){border-color:#9eaab4}
+button:hover:not(:disabled){border-color:var(--lab-line-strong,#9eaab4)}
 button:disabled{opacity:.45;cursor:not-allowed}
-button.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700}
+button.primary{background:var(--lab-accent);border-color:var(--lab-accent);color:#fff;font-weight:700}
 .play-button{display:inline-flex;align-items:center;gap:6px}
 .play-button svg{width:14px;height:14px;fill:currentColor}
 
@@ -168,7 +168,7 @@ button.primary{background:var(--accent);border-color:var(--accent);color:#fff;fo
   color:var(--muted);
   font-size:9px;
 }
-.clock-controls select{width:100%;height:32px;border:1px solid var(--line);border-radius:7px;background:#fff;color:var(--ink);padding:0 7px;font-size:11px}
+.clock-controls select{width:100%;height:32px;border:1px solid var(--lab-line);border-radius:7px;background:var(--lab-control,#fff);color:var(--lab-ink);padding:0 7px;font-size:11px}
 .clock-buttons{display:flex;gap:5px}
 .clock-buttons button{height:32px;font-size:11px;padding:0 8px}
 .clock-status{
@@ -562,7 +562,96 @@ button.primary{background:var(--accent);border-color:var(--accent);color:#fff;fo
   .ram-row{grid-template-columns:48px 1fr}
 }
 </style>
-<link rel="stylesheet" href="/labs/lab-frame.css">
+<!-- LAB_FRAME_STYLES_START -->
+<style data-lab-frame>
+:root {
+  --lab-canvas: #f3f5f7;
+  --lab-paper: #fbfbfd;
+  --lab-surface: #ffffff;
+  --lab-control: #ffffff;
+  --lab-ink: #1d1d1f;
+  --lab-muted: #6e6e73;
+  --lab-line: #d2d2d7;
+  --lab-line-strong: #a7a7ad;
+  --lab-accent: #5277b8;
+  --lab-accent-soft: #eef2fa;
+  --lab-good: #18794e;
+  --lab-good-soft: #edf8f1;
+  --lab-warn: #946200;
+  --lab-warn-soft: #fff6e7;
+  --lab-bad: #b42318;
+  --lab-bad-soft: #fff0ee;
+  --lab-focus: #1d1d1f;
+  --lab-focus-soft: rgba(29, 29, 31, 0.18);
+  --lab-font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+  --lab-panel-radius: 12px;
+  --lab-control-radius: 8px;
+  --lab-pill-radius: 999px;
+  --lab-control-height: 35px;
+  --lab-panel-shadow: 0 1px 2px rgba(29, 29, 31, 0.04);
+}
+
+html,
+body {
+  background: var(--lab-canvas);
+}
+
+body {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-family: var(--lab-font-sans);
+  padding-bottom: 76px;
+  padding-top: 84px;
+  text-rendering: optimizeLegibility;
+}
+
+html[data-theme="dark"],
+html[data-theme="dark"] body {
+  background: var(--bg);
+}
+
+main {
+  container-name: lab-canvas;
+  container-type: inline-size;
+  margin-bottom: 40px;
+  margin-top: 18px;
+  width: min(1200px, calc(100% - 24px));
+}
+
+body.binary-lab main {
+  width: min(820px, calc(100% - 24px));
+}
+
+:where(button, input, select, textarea, summary):focus-visible {
+  outline: 3px solid var(--lab-focus);
+  outline-offset: 2px;
+}
+
+@media (max-width: 620px) {
+  body {
+    padding-bottom: 94px;
+    padding-top: 70px;
+  }
+
+  main,
+  body.binary-lab main {
+    margin-top: 8px;
+    width: min(100% - 12px, 1200px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+</style>
+<!-- LAB_FRAME_STYLES_END -->
 </head>
 <body>
 <main>

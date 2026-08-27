@@ -6,18 +6,18 @@
 <title>Mars Rover Huffman Lab</title>
 <style>
 :root{
-  --bg:#efe5da;
-  --panel:#fffaf4;
-  --ink:#2b2623;
-  --muted:#756a62;
-  --line:#d8c8ba;
+  --bg:var(--lab-canvas);
+  --panel:var(--lab-surface);
+  --ink:var(--lab-ink);
+  --muted:var(--lab-muted);
+  --line:var(--lab-line);
   --rust:#b94f32;
   --rust-dark:#843824;
   --sand:#d98455;
   --sand-light:#efa56f;
   --sky:#2f2730;
-  --good:#24744a;
-  --bad:#ae3d34;
+  --good:var(--lab-good);
+  --bad:var(--lab-bad);
   --amber:#f3b742;
 
   --f:#58b9e6;
@@ -36,7 +36,7 @@ body{
     radial-gradient(circle at 15% 5%, rgba(255,255,255,.65), transparent 24rem),
     var(--bg);
   color:var(--ink);
-  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-family:var(--lab-font-sans);
 }
 
 button,input{font:inherit}
@@ -44,13 +44,13 @@ button,input{font:inherit}
 button{
   cursor:pointer;
   border:1px solid var(--line);
-  background:#fff;
+  background:var(--lab-control);
   color:var(--ink);
-  border-radius:9px;
+  border-radius:var(--lab-control-radius);
   padding:8px 11px;
 }
 
-button:hover:not(:disabled){border-color:#9e8876}
+button:hover:not(:disabled){border-color:var(--lab-line-strong)}
 button:disabled{opacity:.45;cursor:not-allowed}
 
 main{
@@ -94,8 +94,8 @@ h2{
 .panel{
   background:var(--panel);
   border:1px solid var(--line);
-  border-radius:14px;
-  box-shadow:0 4px 14px rgba(73,44,28,.06);
+  border-radius:var(--lab-panel-radius);
+  box-shadow:var(--lab-panel-shadow);
 }
 
 .tape-panel{
@@ -671,7 +671,96 @@ h2{
   .decoder-gate{font-size:9px}
 }
 </style>
-<link rel="stylesheet" href="/labs/lab-frame.css">
+<!-- LAB_FRAME_STYLES_START -->
+<style data-lab-frame>
+:root {
+  --lab-canvas: #f3f5f7;
+  --lab-paper: #fbfbfd;
+  --lab-surface: #ffffff;
+  --lab-control: #ffffff;
+  --lab-ink: #1d1d1f;
+  --lab-muted: #6e6e73;
+  --lab-line: #d2d2d7;
+  --lab-line-strong: #a7a7ad;
+  --lab-accent: #5277b8;
+  --lab-accent-soft: #eef2fa;
+  --lab-good: #18794e;
+  --lab-good-soft: #edf8f1;
+  --lab-warn: #946200;
+  --lab-warn-soft: #fff6e7;
+  --lab-bad: #b42318;
+  --lab-bad-soft: #fff0ee;
+  --lab-focus: #1d1d1f;
+  --lab-focus-soft: rgba(29, 29, 31, 0.18);
+  --lab-font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+  --lab-panel-radius: 12px;
+  --lab-control-radius: 8px;
+  --lab-pill-radius: 999px;
+  --lab-control-height: 35px;
+  --lab-panel-shadow: 0 1px 2px rgba(29, 29, 31, 0.04);
+}
+
+html,
+body {
+  background: var(--lab-canvas);
+}
+
+body {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-family: var(--lab-font-sans);
+  padding-bottom: 76px;
+  padding-top: 84px;
+  text-rendering: optimizeLegibility;
+}
+
+html[data-theme="dark"],
+html[data-theme="dark"] body {
+  background: var(--bg);
+}
+
+main {
+  container-name: lab-canvas;
+  container-type: inline-size;
+  margin-bottom: 40px;
+  margin-top: 18px;
+  width: min(1200px, calc(100% - 24px));
+}
+
+body.binary-lab main {
+  width: min(820px, calc(100% - 24px));
+}
+
+:where(button, input, select, textarea, summary):focus-visible {
+  outline: 3px solid var(--lab-focus);
+  outline-offset: 2px;
+}
+
+@media (max-width: 620px) {
+  body {
+    padding-bottom: 94px;
+    padding-top: 70px;
+  }
+
+  main,
+  body.binary-lab main {
+    margin-top: 8px;
+    width: min(100% - 12px, 1200px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+</style>
+<!-- LAB_FRAME_STYLES_END -->
 </head>
 <body>
 <main>

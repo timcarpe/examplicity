@@ -6,15 +6,18 @@
 <title>Bitmap Compression Lab</title>
 <style>
   :root {
-    --bg: #f4f6f8;
-    --panel: #ffffff;
-    --ink: #17202a;
-    --muted: #66727f;
-    --line: #d8dfe6;
-    --accent: #2457d6;
-    --accent-soft: #eaf0ff;
-    --good: #176b3a;
-    --bad: #a33a2b;
+    --bg: var(--lab-canvas);
+    --panel: var(--lab-surface);
+    --ink: var(--lab-ink);
+    --muted: var(--lab-muted);
+    --line: var(--lab-line);
+    --line-strong: var(--lab-line-strong);
+    --accent: var(--lab-accent);
+    --accent-soft: var(--lab-accent-soft);
+    --good: var(--lab-good);
+    --good-soft: var(--lab-good-soft);
+    --bad: var(--lab-bad);
+    --bad-soft: var(--lab-bad-soft);
   }
 
   * { box-sizing: border-box; }
@@ -23,7 +26,7 @@
     margin: 0;
     background: var(--bg);
     color: var(--ink);
-    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-family: var(--lab-font-sans);
   }
 
   main {
@@ -57,7 +60,7 @@
   .panel {
     background: var(--panel);
     border: 1px solid var(--line);
-    border-radius: 12px;
+    border-radius: var(--lab-panel-radius);
     padding: 16px;
   }
 
@@ -79,9 +82,9 @@
     width: 72px;
     padding: 7px 8px;
     border: 1px solid var(--line);
-    border-radius: 7px;
+    border-radius: var(--lab-control-radius);
     font: inherit;
-    background:#fff;
+    background: var(--lab-control);
   }
 
   input[type="color"] {
@@ -89,22 +92,22 @@
     height: 34px;
     padding: 2px;
     border: 1px solid var(--line);
-    border-radius: 7px;
-    background: white;
+    border-radius: var(--lab-control-radius);
+    background: var(--lab-control);
     cursor: pointer;
   }
 
   button {
     border: 1px solid var(--line);
-    background: #fff;
+    background: var(--lab-control);
     color: var(--ink);
-    border-radius: 8px;
+    border-radius: var(--lab-control-radius);
     padding: 8px 11px;
     font: inherit;
     cursor: pointer;
   }
 
-  button:hover { border-color: #9aa6b2; }
+  button:hover { border-color: var(--lab-line-strong); }
 
   .paint-row {
     display: flex;
@@ -124,7 +127,7 @@
     width: 30px;
     height: 30px;
     border: 1px solid #aab3bb;
-    border-radius: 7px;
+    border-radius: var(--lab-control-radius);
     padding: 0;
   }
 
@@ -204,16 +207,16 @@
   .size-indicator{
     flex:0 0 auto;
     border:1px solid var(--line);
-    border-radius:999px;
+    border-radius:var(--lab-pill-radius);
     padding:5px 8px;
-    background:#fff;
+    background:var(--lab-control);
     font-size:12px;
     font-weight:800;
     white-space:nowrap;
   }
 
-  .size-indicator.good{border-color:#a9d2b8;background:#edf8f1}
-  .size-indicator.bad{border-color:#e1b2aa;background:#fff1ef}
+  .size-indicator.good{border-color:#a9d2b8;background:var(--lab-good-soft)}
+  .size-indicator.bad{border-color:#e1b2aa;background:var(--lab-bad-soft)}
 
   .size-comparison{
     display:grid;
@@ -227,7 +230,7 @@
     border:1px solid var(--line);
     border-radius:8px;
     padding:9px 10px;
-    background:#fff;
+    background:var(--lab-control);
   }
 
   .size-stat strong{
@@ -321,7 +324,96 @@
     .size-comparison{grid-template-columns:1fr}
   }
 </style>
-<link rel="stylesheet" href="/labs/lab-frame.css">
+<!-- LAB_FRAME_STYLES_START -->
+<style data-lab-frame>
+:root {
+  --lab-canvas: #f3f5f7;
+  --lab-paper: #fbfbfd;
+  --lab-surface: #ffffff;
+  --lab-control: #ffffff;
+  --lab-ink: #1d1d1f;
+  --lab-muted: #6e6e73;
+  --lab-line: #d2d2d7;
+  --lab-line-strong: #a7a7ad;
+  --lab-accent: #5277b8;
+  --lab-accent-soft: #eef2fa;
+  --lab-good: #18794e;
+  --lab-good-soft: #edf8f1;
+  --lab-warn: #946200;
+  --lab-warn-soft: #fff6e7;
+  --lab-bad: #b42318;
+  --lab-bad-soft: #fff0ee;
+  --lab-focus: #1d1d1f;
+  --lab-focus-soft: rgba(29, 29, 31, 0.18);
+  --lab-font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+  --lab-panel-radius: 12px;
+  --lab-control-radius: 8px;
+  --lab-pill-radius: 999px;
+  --lab-control-height: 35px;
+  --lab-panel-shadow: 0 1px 2px rgba(29, 29, 31, 0.04);
+}
+
+html,
+body {
+  background: var(--lab-canvas);
+}
+
+body {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-family: var(--lab-font-sans);
+  padding-bottom: 76px;
+  padding-top: 84px;
+  text-rendering: optimizeLegibility;
+}
+
+html[data-theme="dark"],
+html[data-theme="dark"] body {
+  background: var(--bg);
+}
+
+main {
+  container-name: lab-canvas;
+  container-type: inline-size;
+  margin-bottom: 40px;
+  margin-top: 18px;
+  width: min(1200px, calc(100% - 24px));
+}
+
+body.binary-lab main {
+  width: min(820px, calc(100% - 24px));
+}
+
+:where(button, input, select, textarea, summary):focus-visible {
+  outline: 3px solid var(--lab-focus);
+  outline-offset: 2px;
+}
+
+@media (max-width: 620px) {
+  body {
+    padding-bottom: 94px;
+    padding-top: 70px;
+  }
+
+  main,
+  body.binary-lab main {
+    margin-top: 8px;
+    width: min(100% - 12px, 1200px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+</style>
+<!-- LAB_FRAME_STYLES_END -->
 </head>
 <body>
 <main>

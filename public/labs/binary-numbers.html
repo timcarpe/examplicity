@@ -6,18 +6,18 @@
 <title>Binary Register Practice</title>
 <style>
 :root{
-  --bg:#f3f5f7;
-  --panel:#ffffff;
-  --ink:#1d2730;
-  --muted:#687681;
-  --line:#d7dfe5;
-  --line-strong:#9da9b2;
-  --accent:#2865d8;
-  --accent-soft:#edf3ff;
-  --good:#237449;
-  --good-soft:#edf8f1;
-  --bad:#b44338;
-  --bad-soft:#fff0ee;
+  --bg:var(--lab-canvas);
+  --panel:var(--lab-surface);
+  --ink:var(--lab-ink);
+  --muted:var(--lab-muted);
+  --line:var(--lab-line);
+  --line-strong:var(--lab-line-strong);
+  --accent:var(--lab-accent);
+  --accent-soft:var(--lab-accent-soft);
+  --good:var(--lab-good);
+  --good-soft:var(--lab-good-soft);
+  --bad:var(--lab-bad);
+  --bad-soft:var(--lab-bad-soft);
 }
 *{box-sizing:border-box}
 body{
@@ -26,7 +26,7 @@ body{
   padding:max(20px,calc((100svh - 540px)/2)) 0 20px;
   background:var(--bg);
   color:var(--ink);
-  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-family:var(--lab-font-sans);
 }
 button,input{font:inherit}
 button{cursor:pointer}
@@ -52,15 +52,15 @@ button{cursor:pointer}
   display:inline-flex;
   padding:3px;
   border:1px solid var(--line);
-  border-radius:999px;
-  background:#fff;
+  border-radius:var(--lab-pill-radius);
+  background:var(--lab-paper);
 }
 .level-toggle{justify-self:start}
 .range-toggle{justify-self:end}
 .pill-toggle button{
   min-height:31px;
   border:0;
-  border-radius:999px;
+  border-radius:var(--lab-pill-radius);
   padding:5px 11px;
   background:transparent;
   color:var(--muted);
@@ -70,14 +70,14 @@ button{cursor:pointer}
 }
 .pill-toggle button[aria-checked="true"]{
   background:var(--accent);
-  color:#fff;
+  color:var(--lab-paper);
 }
 .card{
   padding:28px;
   border:1px solid var(--line);
-  border-radius:16px;
+  border-radius:var(--lab-panel-radius);
   background:var(--panel);
-  box-shadow:0 5px 18px rgba(33,48,60,.06);
+  box-shadow:var(--lab-panel-shadow);
 }
 .prompt-row{
   display:grid;
@@ -99,7 +99,7 @@ button{cursor:pointer}
   place-items:center;
   border:1px solid var(--line);
   border-radius:50%;
-  background:#fff;
+  background:var(--lab-control);
   color:var(--muted);
   font-size:13px;
   font-weight:850;
@@ -107,16 +107,15 @@ button{cursor:pointer}
 .help-button:hover,.help-button:focus-visible,.help-button[aria-expanded="true"]{
   border-color:var(--accent);
   color:var(--accent);
-  outline:none;
 }
 .help-tip{
   display:none;
   margin-top:10px;
   padding:9px 11px;
-  border:1px solid #cad8f5;
+  border:1px solid var(--lab-line);
   border-radius:9px;
-  background:#f8fbff;
-  color:#40536a;
+  background:var(--lab-accent-soft);
+  color:var(--lab-ink);
   font-size:11px;
   line-height:1.45;
 }
@@ -221,7 +220,7 @@ button{cursor:pointer}
 .bit-input:focus{
   position:relative;
   z-index:2;
-  outline:3px solid rgba(40,101,216,.24);
+  outline:3px solid var(--lab-focus-soft);
   outline-offset:-3px;
   background:var(--accent-soft);
 }
@@ -249,13 +248,13 @@ button{cursor:pointer}
   margin:auto;
   border:1px solid var(--line-strong);
   border-radius:8px;
-  background:#fff;
+  background:var(--lab-control);
   color:var(--ink);
   text-align:center;
   font:850 23px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
 }
 .text-answer:focus{
-  outline:3px solid rgba(40,101,216,.2);
+  outline:3px solid var(--lab-focus-soft);
   outline-offset:2px;
   border-color:var(--accent);
 }
@@ -268,8 +267,8 @@ button{cursor:pointer}
   min-width:100px;
   height:43px;
   border:1px solid var(--line);
-  border-radius:999px;
-  background:#fff;
+  border-radius:var(--lab-pill-radius);
+  background:var(--lab-control);
   color:var(--ink);
   font-weight:750;
 }
@@ -311,18 +310,18 @@ button{cursor:pointer}
   border:1px solid var(--line);
   border-radius:8px;
   padding:0 13px;
-  background:#fff;
+  background:var(--lab-control);
   color:var(--ink);
   font-weight:700;
 }
 .actions .primary{
   border-color:var(--accent);
   background:var(--accent);
-  color:#fff;
+  color:var(--lab-paper);
 }
-.actions button:hover{border-color:#9aa7b1}
+.actions button:hover{border-color:var(--lab-line-strong)}
 .actions .primary:hover{border-color:#174fae;background:#174fae}
-button:focus-visible{outline:3px solid rgba(40,101,216,.22);outline-offset:2px}
+button:focus-visible{outline:3px solid var(--lab-focus);outline-offset:2px}
 @media(max-width:640px){
   body{padding-top:10px}
   .topbar{grid-template-columns:auto minmax(0,1fr) auto;gap:8px}
@@ -351,7 +350,96 @@ button:focus-visible{outline:3px solid rgba(40,101,216,.22);outline-offset:2px}
 }
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
 </style>
-<link rel="stylesheet" href="/labs/lab-frame.css">
+<!-- LAB_FRAME_STYLES_START -->
+<style data-lab-frame>
+:root {
+  --lab-canvas: #f3f5f7;
+  --lab-paper: #fbfbfd;
+  --lab-surface: #ffffff;
+  --lab-control: #ffffff;
+  --lab-ink: #1d1d1f;
+  --lab-muted: #6e6e73;
+  --lab-line: #d2d2d7;
+  --lab-line-strong: #a7a7ad;
+  --lab-accent: #5277b8;
+  --lab-accent-soft: #eef2fa;
+  --lab-good: #18794e;
+  --lab-good-soft: #edf8f1;
+  --lab-warn: #946200;
+  --lab-warn-soft: #fff6e7;
+  --lab-bad: #b42318;
+  --lab-bad-soft: #fff0ee;
+  --lab-focus: #1d1d1f;
+  --lab-focus-soft: rgba(29, 29, 31, 0.18);
+  --lab-font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+  --lab-panel-radius: 12px;
+  --lab-control-radius: 8px;
+  --lab-pill-radius: 999px;
+  --lab-control-height: 35px;
+  --lab-panel-shadow: 0 1px 2px rgba(29, 29, 31, 0.04);
+}
+
+html,
+body {
+  background: var(--lab-canvas);
+}
+
+body {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-family: var(--lab-font-sans);
+  padding-bottom: 76px;
+  padding-top: 84px;
+  text-rendering: optimizeLegibility;
+}
+
+html[data-theme="dark"],
+html[data-theme="dark"] body {
+  background: var(--bg);
+}
+
+main {
+  container-name: lab-canvas;
+  container-type: inline-size;
+  margin-bottom: 40px;
+  margin-top: 18px;
+  width: min(1200px, calc(100% - 24px));
+}
+
+body.binary-lab main {
+  width: min(820px, calc(100% - 24px));
+}
+
+:where(button, input, select, textarea, summary):focus-visible {
+  outline: 3px solid var(--lab-focus);
+  outline-offset: 2px;
+}
+
+@media (max-width: 620px) {
+  body {
+    padding-bottom: 94px;
+    padding-top: 70px;
+  }
+
+  main,
+  body.binary-lab main {
+    margin-top: 8px;
+    width: min(100% - 12px, 1200px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+</style>
+<!-- LAB_FRAME_STYLES_END -->
 </head>
 <body class="binary-lab">
 <main class="shell">

@@ -6,27 +6,27 @@
 <title>Digital Sound Sampling Lab</title>
 <style>
 :root{
-  --bg:#f3f5f7;--panel:#fff;--ink:#1d2730;--muted:#687681;--line:#d8e0e6;
-  --accent:#2865d8;--accent-soft:#eef4ff;--ref:#7c8790;--good:#197347;--warn:#9a5a16;
+  --bg:var(--lab-canvas);--panel:var(--lab-surface);--ink:var(--lab-ink);--muted:var(--lab-muted);--line:var(--lab-line);
+  --accent:var(--lab-accent);--accent-soft:var(--lab-accent-soft);--ref:#7c8790;--good:var(--lab-good);--warn:var(--lab-warn);
 }
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--lab-font-sans)}
 main{width:min(1160px,calc(100% - 24px));margin:18px auto 38px}
 h1{margin:0;font-size:27px;letter-spacing:-.02em}
 .sub{margin:5px 0 14px;color:var(--muted);font-size:13px;line-height:1.4}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--lab-panel-radius)}
 .examples{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
-.example{min-width:150px;flex:1 1 0;border:1px solid var(--line);background:#fff;border-radius:9px;padding:9px 11px;text-align:left;cursor:pointer}
+.example{min-width:150px;flex:1 1 0;border:1px solid var(--line);background:var(--lab-control);border-radius:var(--lab-control-radius);padding:9px 11px;text-align:left;cursor:pointer}
 .example.active{border-color:var(--accent);background:var(--accent-soft)}
 .example strong{display:block;font-size:13px}.example span{color:var(--muted);font-size:11px}
 .controls{padding:11px 12px;display:grid;grid-template-columns:165px 150px minmax(230px,1fr) auto;gap:12px;align-items:end}
 .field{min-width:0}.field label{display:block;font-size:11px;color:var(--muted);margin-bottom:4px}
-select{width:100%;height:36px;border:1px solid var(--line);border-radius:8px;background:#fff;padding:0 9px;color:var(--ink);font:inherit}
+select{width:100%;height:36px;border:1px solid var(--line);border-radius:var(--lab-control-radius);background:var(--lab-control);padding:0 9px;color:var(--ink);font:inherit}
 .toggles{height:36px;display:flex;align-items:center;gap:12px;white-space:nowrap;font-size:12px}
 .toggle{display:flex;align-items:center;gap:6px}.toggle input{margin:0}
 .play{display:flex;gap:6px;height:36px}
-button{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:8px;padding:0 11px;font:inherit;cursor:pointer;white-space:nowrap}
-button:hover{border-color:#9eabb5}.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+button{border:1px solid var(--line);background:var(--lab-control);color:var(--ink);border-radius:var(--lab-control-radius);padding:0 11px;font:inherit;cursor:pointer;white-space:nowrap}
+button:hover{border-color:var(--lab-line-strong)}.primary{background:var(--accent);border-color:var(--accent);color:var(--lab-paper)}
 .audio-button{display:inline-flex;align-items:center;gap:6px;font-weight:650}
 .audio-button svg{width:15px;height:15px;fill:currentColor;flex:0 0 auto}
 .status{min-height:42px;border-top:1px solid var(--line);padding:8px 12px;display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;font-size:12px;color:var(--muted)}
@@ -54,7 +54,96 @@ button:hover{border-color:#9eabb5}.primary{background:var(--accent);border-color
 @container lab-canvas (max-width:900px){.controls{grid-template-columns:1fr 1fr}.toggles,.play{grid-column:auto}.play{justify-content:flex-start}.window-label{min-width:120px}}
 @media(max-width:620px){main{width:min(100% - 12px,1160px);margin-top:8px}.examples{display:grid;grid-template-columns:1fr}.controls{grid-template-columns:1fr}.toggles,.play{height:auto;min-height:36px;flex-wrap:wrap}#wave{height:450px}.wave-head{align-items:flex-start;flex-direction:column}.zoom-tools{width:100%;flex-wrap:wrap}.window-label{min-width:0;flex:1 0 100%}.overview-wrap{grid-template-columns:1fr 1fr}.overview-wrap canvas{grid-column:1/-1;grid-row:1}.overview-wrap button{grid-row:2}}
 </style>
-<link rel="stylesheet" href="/labs/lab-frame.css">
+<!-- LAB_FRAME_STYLES_START -->
+<style data-lab-frame>
+:root {
+  --lab-canvas: #f3f5f7;
+  --lab-paper: #fbfbfd;
+  --lab-surface: #ffffff;
+  --lab-control: #ffffff;
+  --lab-ink: #1d1d1f;
+  --lab-muted: #6e6e73;
+  --lab-line: #d2d2d7;
+  --lab-line-strong: #a7a7ad;
+  --lab-accent: #5277b8;
+  --lab-accent-soft: #eef2fa;
+  --lab-good: #18794e;
+  --lab-good-soft: #edf8f1;
+  --lab-warn: #946200;
+  --lab-warn-soft: #fff6e7;
+  --lab-bad: #b42318;
+  --lab-bad-soft: #fff0ee;
+  --lab-focus: #1d1d1f;
+  --lab-focus-soft: rgba(29, 29, 31, 0.18);
+  --lab-font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+  --lab-panel-radius: 12px;
+  --lab-control-radius: 8px;
+  --lab-pill-radius: 999px;
+  --lab-control-height: 35px;
+  --lab-panel-shadow: 0 1px 2px rgba(29, 29, 31, 0.04);
+}
+
+html,
+body {
+  background: var(--lab-canvas);
+}
+
+body {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-family: var(--lab-font-sans);
+  padding-bottom: 76px;
+  padding-top: 84px;
+  text-rendering: optimizeLegibility;
+}
+
+html[data-theme="dark"],
+html[data-theme="dark"] body {
+  background: var(--bg);
+}
+
+main {
+  container-name: lab-canvas;
+  container-type: inline-size;
+  margin-bottom: 40px;
+  margin-top: 18px;
+  width: min(1200px, calc(100% - 24px));
+}
+
+body.binary-lab main {
+  width: min(820px, calc(100% - 24px));
+}
+
+:where(button, input, select, textarea, summary):focus-visible {
+  outline: 3px solid var(--lab-focus);
+  outline-offset: 2px;
+}
+
+@media (max-width: 620px) {
+  body {
+    padding-bottom: 94px;
+    padding-top: 70px;
+  }
+
+  main,
+  body.binary-lab main {
+    margin-top: 8px;
+    width: min(100% - 12px, 1200px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+</style>
+<!-- LAB_FRAME_STYLES_END -->
 </head>
 <body>
 <main>

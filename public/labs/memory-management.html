@@ -6,19 +6,19 @@
 <title>OS Memory Management Lab</title>
 <style>
 :root{
-  --bg:#f3f5f7;
-  --panel:#ffffff;
-  --ink:#1d2730;
-  --muted:#687681;
-  --line:#d7dfe5;
-  --accent:#2865d8;
-  --accent-soft:#edf3ff;
-  --good:#247349;
-  --good-soft:#edf8f1;
-  --warn:#9a5a16;
-  --warn-soft:#fff6e7;
-  --bad:#b44338;
-  --bad-soft:#fff0ee;
+  --bg:var(--lab-canvas,#f3f5f7);
+  --panel:var(--lab-surface,#ffffff);
+  --ink:var(--lab-ink,#1d2730);
+  --muted:var(--lab-muted,#687681);
+  --line:var(--lab-line,#d7dfe5);
+  --accent:var(--lab-accent,#2865d8);
+  --accent-soft:var(--lab-accent-soft,#edf3ff);
+  --good:var(--lab-good,#247349);
+  --good-soft:var(--lab-good-soft,#edf8f1);
+  --warn:var(--lab-warn,#9a5a16);
+  --warn-soft:var(--lab-warn-soft,#fff6e7);
+  --bad:var(--lab-bad,#b44338);
+  --bad-soft:var(--lab-bad-soft,#fff0ee);
   --bus:#377ab6;
   --page:#8d65a8;
   --free:#edf1f4;
@@ -35,16 +35,16 @@ button{cursor:pointer}
 main{width:min(1480px,calc(100% - 24px));margin:18px auto 42px}
 h1{margin:0;font-size:27px;letter-spacing:-.02em}
 .sub{margin:5px 0 14px;color:var(--muted);font-size:13px;line-height:1.45}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--lab-panel-radius,12px);box-shadow:var(--lab-panel-shadow,0 1px 2px rgba(29,29,31,.04))}
 button{
   min-height:35px;
   border:1px solid var(--line);
-  border-radius:8px;
-  background:#fff;
+  border-radius:var(--lab-control-radius,8px);
+  background:var(--lab-control,var(--lab-surface,#fff));
   color:var(--ink);
   padding:0 10px;
 }
-button:hover:not(:disabled){border-color:#9ca8b1}
+button:hover:not(:disabled){border-color:var(--lab-line-strong,#9ca8b1)}
 button:disabled{opacity:.45;cursor:not-allowed}
 button.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:750}
 button.danger{color:var(--bad)}
@@ -52,8 +52,8 @@ select{
   width:100%;
   height:35px;
   border:1px solid var(--line);
-  border-radius:8px;
-  background:#fff;
+  border-radius:var(--lab-control-radius,8px);
+  background:var(--lab-control,var(--lab-surface,#fff));
   color:var(--ink);
   padding:0 8px;
 }
@@ -751,7 +751,96 @@ select{
   .app-stat-grid{grid-template-columns:1fr}
 }
 </style>
-<link rel="stylesheet" href="/labs/lab-frame.css">
+<!-- LAB_FRAME_STYLES_START -->
+<style data-lab-frame>
+:root {
+  --lab-canvas: #f3f5f7;
+  --lab-paper: #fbfbfd;
+  --lab-surface: #ffffff;
+  --lab-control: #ffffff;
+  --lab-ink: #1d1d1f;
+  --lab-muted: #6e6e73;
+  --lab-line: #d2d2d7;
+  --lab-line-strong: #a7a7ad;
+  --lab-accent: #5277b8;
+  --lab-accent-soft: #eef2fa;
+  --lab-good: #18794e;
+  --lab-good-soft: #edf8f1;
+  --lab-warn: #946200;
+  --lab-warn-soft: #fff6e7;
+  --lab-bad: #b42318;
+  --lab-bad-soft: #fff0ee;
+  --lab-focus: #1d1d1f;
+  --lab-focus-soft: rgba(29, 29, 31, 0.18);
+  --lab-font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+  --lab-panel-radius: 12px;
+  --lab-control-radius: 8px;
+  --lab-pill-radius: 999px;
+  --lab-control-height: 35px;
+  --lab-panel-shadow: 0 1px 2px rgba(29, 29, 31, 0.04);
+}
+
+html,
+body {
+  background: var(--lab-canvas);
+}
+
+body {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-family: var(--lab-font-sans);
+  padding-bottom: 76px;
+  padding-top: 84px;
+  text-rendering: optimizeLegibility;
+}
+
+html[data-theme="dark"],
+html[data-theme="dark"] body {
+  background: var(--bg);
+}
+
+main {
+  container-name: lab-canvas;
+  container-type: inline-size;
+  margin-bottom: 40px;
+  margin-top: 18px;
+  width: min(1200px, calc(100% - 24px));
+}
+
+body.binary-lab main {
+  width: min(820px, calc(100% - 24px));
+}
+
+:where(button, input, select, textarea, summary):focus-visible {
+  outline: 3px solid var(--lab-focus);
+  outline-offset: 2px;
+}
+
+@media (max-width: 620px) {
+  body {
+    padding-bottom: 94px;
+    padding-top: 70px;
+  }
+
+  main,
+  body.binary-lab main {
+    margin-top: 8px;
+    width: min(100% - 12px, 1200px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+</style>
+<!-- LAB_FRAME_STYLES_END -->
 </head>
 <body>
 <main>

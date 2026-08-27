@@ -6,13 +6,13 @@
 <title>Ethernet CSMA/CD Lab</title>
 <style>
 :root{
-  --bg:#f3f5f7;
-  --panel:#ffffff;
-  --ink:#1d2730;
-  --muted:#687681;
-  --line:#d7dfe5;
-  --accent:#2865d8;
-  --accent-soft:#edf3ff;
+  --bg:var(--lab-canvas);
+  --panel:var(--lab-surface);
+  --ink:var(--lab-ink);
+  --muted:var(--lab-muted);
+  --line:var(--lab-line);
+  --accent:var(--lab-accent);
+  --accent-soft:var(--lab-accent-soft);
   --good:#26734a;
   --good-soft:#edf8f1;
   --warn:#9a601b;
@@ -26,27 +26,27 @@
 html,body{min-height:100%}
 body{
   margin:0;
-  background:var(--bg);
-  color:var(--ink);
-  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:var(--lab-canvas);
+  color:var(--lab-ink);
+  font-family:var(--lab-font-sans);
 }
 button{font:inherit;cursor:pointer}
 button:disabled{opacity:.45;cursor:not-allowed}
 main{width:min(1120px,calc(100% - 20px));margin:16px auto 38px}
 h1{margin:0;font-size:27px;letter-spacing:-.025em}
-.sub{margin:5px 0 13px;color:var(--muted);font-size:13px;line-height:1.45}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px}
+.sub{margin:5px 0 13px;color:var(--lab-muted);font-size:13px;line-height:1.45}
+.panel{background:var(--lab-surface);border:1px solid var(--lab-line);border-radius:var(--lab-panel-radius);box-shadow:var(--lab-panel-shadow,0 1px 2px rgba(29,29,31,.04))}
 button{
   min-height:34px;
   padding:0 10px;
-  border:1px solid var(--line);
-  border-radius:8px;
-  background:#fff;
-  color:var(--ink);
+  border:1px solid var(--lab-line);
+  border-radius:var(--lab-control-radius);
+  background:var(--lab-control,#fff);
+  color:var(--lab-ink);
 }
-button:hover:not(:disabled){border-color:#9ba8b2}
-button.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:750}
-button.active{background:var(--accent-soft);border-color:#8eafea;color:#1d58bb;font-weight:800}
+button:hover:not(:disabled){border-color:var(--lab-line-strong,#9ba8b2)}
+button.primary{background:var(--lab-accent);border-color:var(--lab-accent);color:#fff;font-weight:750}
+button.active{background:var(--lab-accent-soft);border-color:var(--lab-accent);color:var(--lab-accent);font-weight:800}
 
 .challenge{
   padding:11px 12px;
@@ -58,7 +58,7 @@ button.active{background:var(--accent-soft);border-color:#8eafea;color:#1d58bb;f
 .eyebrow{
   display:block;
   margin-bottom:3px;
-  color:var(--accent);
+  color:var(--lab-accent);
   font-size:9px;
   font-weight:900;
   letter-spacing:.08em;
@@ -311,9 +311,9 @@ button.active{background:var(--accent-soft);border-color:#8eafea;color:#1d58bb;f
 .rule{
   margin-top:8px;
   padding:9px 11px;
-  border-left:3px solid var(--accent);
+  border-left:3px solid var(--lab-accent);
   border-radius:7px;
-  background:var(--accent-soft);
+  background:var(--lab-accent-soft);
   color:#30445a;
   font-size:11px;
   line-height:1.4;
@@ -331,7 +331,96 @@ button.active{background:var(--accent-soft);border-color:#8eafea;color:#1d58bb;f
   .signal{transition-duration:.08s}
 }
 </style>
-<link rel="stylesheet" href="/labs/lab-frame.css">
+<!-- LAB_FRAME_STYLES_START -->
+<style data-lab-frame>
+:root {
+  --lab-canvas: #f3f5f7;
+  --lab-paper: #fbfbfd;
+  --lab-surface: #ffffff;
+  --lab-control: #ffffff;
+  --lab-ink: #1d1d1f;
+  --lab-muted: #6e6e73;
+  --lab-line: #d2d2d7;
+  --lab-line-strong: #a7a7ad;
+  --lab-accent: #5277b8;
+  --lab-accent-soft: #eef2fa;
+  --lab-good: #18794e;
+  --lab-good-soft: #edf8f1;
+  --lab-warn: #946200;
+  --lab-warn-soft: #fff6e7;
+  --lab-bad: #b42318;
+  --lab-bad-soft: #fff0ee;
+  --lab-focus: #1d1d1f;
+  --lab-focus-soft: rgba(29, 29, 31, 0.18);
+  --lab-font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+  --lab-panel-radius: 12px;
+  --lab-control-radius: 8px;
+  --lab-pill-radius: 999px;
+  --lab-control-height: 35px;
+  --lab-panel-shadow: 0 1px 2px rgba(29, 29, 31, 0.04);
+}
+
+html,
+body {
+  background: var(--lab-canvas);
+}
+
+body {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-family: var(--lab-font-sans);
+  padding-bottom: 76px;
+  padding-top: 84px;
+  text-rendering: optimizeLegibility;
+}
+
+html[data-theme="dark"],
+html[data-theme="dark"] body {
+  background: var(--bg);
+}
+
+main {
+  container-name: lab-canvas;
+  container-type: inline-size;
+  margin-bottom: 40px;
+  margin-top: 18px;
+  width: min(1200px, calc(100% - 24px));
+}
+
+body.binary-lab main {
+  width: min(820px, calc(100% - 24px));
+}
+
+:where(button, input, select, textarea, summary):focus-visible {
+  outline: 3px solid var(--lab-focus);
+  outline-offset: 2px;
+}
+
+@media (max-width: 620px) {
+  body {
+    padding-bottom: 94px;
+    padding-top: 70px;
+  }
+
+  main,
+  body.binary-lab main {
+    margin-top: 8px;
+    width: min(100% - 12px, 1200px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+</style>
+<!-- LAB_FRAME_STYLES_END -->
 </head>
 <body>
 <main>
