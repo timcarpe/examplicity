@@ -33,7 +33,7 @@ body{
 button,select{font:inherit}
 button{cursor:pointer}
 main{width:min(1480px,calc(100% - 24px));margin:18px auto 42px}
-h1{margin:0;font-size:27px;letter-spacing:-.02em}
+h1{margin:0;font-size:27px;font-weight:630;letter-spacing:-.02em}
 .sub{margin:5px 0 14px;color:var(--muted);font-size:13px;line-height:1.45}
 .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--lab-panel-radius,12px);box-shadow:var(--lab-panel-shadow,0 1px 2px rgba(29,29,31,.04))}
 button{
@@ -93,8 +93,8 @@ select{
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
 }
 .metric.path strong{font-size:12px}
-.metric.warn{border-color:#e4cd9d;background:var(--warn-soft)}
-.metric.bad{border-color:#e4b6b1;background:var(--bad-soft)}
+.metric.warn{border-color:var(--warn);background:var(--warn-soft)}
+.metric.bad{border-color:var(--bad);background:var(--bad-soft)}
 
 /* Main workspace */
 .workspace{
@@ -675,15 +675,15 @@ select{
 .work-monitor{margin-bottom:10px;padding:9px;border:1px solid #dbe3e8;border-radius:10px;background:linear-gradient(180deg,rgba(237,243,255,.75),rgba(255,255,255,.96)),#fff}
 .work-monitor-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:7px}
 .work-monitor-head strong{display:block;font-size:12px}.work-monitor-head span{display:block;margin-top:2px;color:var(--muted);font-size:8px;line-height:1.3}
-.gate-status{flex:0 0 auto;margin:0!important;padding:3px 7px;border:1px solid var(--line);border-radius:999px;background:#fff;color:#687681!important;font:800 8px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;transition:background-color .18s ease,border-color .18s ease,color .18s ease,opacity .18s ease}
-.gate-status.running{color:var(--accent)!important;border-color:#b7cafa;background:#f4f7ff}
+.gate-status{flex:0 0 auto;margin:0!important;padding:3px 7px;border:1px solid var(--line);border-radius:var(--lab-pill-radius);background:var(--lab-surface);color:var(--muted)!important;font:800 8px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;transition:background-color .18s ease,border-color .18s ease,color .18s ease,opacity .18s ease}
+.gate-status.running{color:var(--accent)!important;border-color:var(--accent);background:var(--accent-soft)}
 .work-cards{min-height:91px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
 .work-card{--clock-visual-duration:200ms;min-width:0;display:grid;grid-template-columns:52px minmax(0,1fr);gap:8px;align-items:center;padding:8px;border:1px solid #cbd7df;border-left:4px solid var(--accent);border-radius:9px;background:#fff;box-shadow:0 3px 9px rgba(39,56,68,.07);animation:workCardIn .16s ease-out}
 .work-card.current{background:#fff}.work-card.queued{border-left-color:#9aa8b2;background:#f8fafb;box-shadow:none;color:#5f6d77}
-.work-card.warn{border-left-color:var(--warn);background:#fffaf2}.work-card.bad{border-left-color:var(--bad);background:#fff6f5}.work-card.good{border-left-color:var(--good);background:#f5fbf7}
+.work-card.warn{border-left-color:var(--warn);background:var(--warn-soft)}.work-card.bad{border-left-color:var(--bad);background:var(--bad-soft)}.work-card.good{border-left-color:var(--good);background:var(--good-soft)}
 .work-card.idle{grid-template-columns:1fr;min-height:74px;place-items:center;text-align:center;color:var(--muted);border-left-width:1px;background:#fbfcfd;box-shadow:none}
 @keyframes workCardIn{from{opacity:.45;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}
-.work-slot-label{display:inline-block;margin-bottom:3px;padding:2px 5px;border-radius:999px;background:#eaf1ff;color:#315f9e;font:850 7px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;text-transform:uppercase;letter-spacing:.04em}
+.work-slot-label{display:inline-block;margin-bottom:3px;padding:2px 5px;border-radius:var(--lab-pill-radius);background:var(--accent-soft);color:var(--accent);font:850 7px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;text-transform:uppercase;letter-spacing:.04em}
 .work-card.queued .work-slot-label{background:#e9eef1;color:#66747d}
 .cycle-clock{position:relative;width:48px;height:48px;border:2px solid #a9b6c0;border-radius:50%;background:radial-gradient(circle,#fff 0 52%,transparent 53%),repeating-conic-gradient(from -3deg,#8997a1 0 2deg,transparent 2deg 30deg),#eef2f5;box-shadow:inset 0 0 0 4px #fff,0 2px 5px rgba(37,52,63,.12)}
 .cycle-clock::before{content:"10";position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#8a969f;font:800 7px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
@@ -706,7 +706,7 @@ select{
 .log-route{min-width:0}.log-route-label{display:block;margin-bottom:4px;color:#7a8790;font-size:7px;font-weight:800;text-transform:uppercase;letter-spacing:.04em}.log-route-track{display:grid;grid-template-columns:minmax(58px,1fr) 42px minmax(58px,1fr);gap:5px;align-items:center}.route-node{padding:4px 5px;border:1px solid #ced7dd;border-radius:6px;background:#f7f9fa;color:#4f5e68;font:800 8px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.route-arrow{position:relative;height:4px;border-radius:99px;background:#b8c6d0}.route-arrow::after{content:"";position:absolute;right:-1px;top:50%;transform:translateY(-50%);width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:7px solid #8fa1ad}
 .log-timing{padding:5px 7px;border:1px solid #dbe2e7;border-radius:7px;background:#f8fafb}.log-timing strong{display:block;font:850 10px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.log-timing span{display:block;margin-top:2px;color:#6f7c85;font:750 7px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.log-copy{min-width:0}.log-copy strong{display:block;font-size:9px}.log-copy span{display:block;margin-top:2px;color:#6d7982;font-size:8px;line-height:1.35}.log-cycle-range{display:block!important;margin-top:4px!important;color:#87939b!important;font:750 7px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace!important}
 
-@media(max-width:1340px){
+@media(max-width:1356px){
   .control-grid{grid-template-columns:repeat(4,1fr)}
   .control-buttons{grid-column:1/-1;justify-content:flex-start}
   .metrics{grid-template-columns:repeat(4,1fr)}
@@ -884,8 +884,8 @@ body.binary-lab main {
       </div>
 
       <div class="field">
-        <label>Model assumptions</label>
-        <button id="explainButton" style="width:100%">View latency assumptions</button>
+        <label>Latency model</label>
+        <button id="explainButton" style="width:100%">Log latency assumptions</button>
       </div>
 
       <div class="control-buttons">
@@ -896,7 +896,7 @@ body.binary-lab main {
     </div>
 
     <div class="metrics">
-      <div class="metric"><span>10-cycle gates</span><strong id="tickMetric">0</strong></div>
+      <div class="metric"><span>10-cycle advances</span><strong id="tickMetric">0</strong></div>
       <div class="metric"><span>Total cycles</span><strong id="cyclesMetric">0</strong></div>
       <div class="metric"><span>Action progress</span><strong id="latencyMetric">0</strong></div>
       <div class="metric path"><span>Last access path</span><strong id="pathMetric">Ready</strong></div>
@@ -910,7 +910,7 @@ body.binary-lab main {
     <section class="panel desktop-panel">
       <div class="panel-head">
         <strong>Interactive desktop</strong>
-        <span>Open programs and create workloads here.<br>Task Manager is the colour key.</span>
+        <span>Open programs and create workloads here.<br>Task Manager colours match the allocated blocks.</span>
       </div>
 
       <div class="monitor">
@@ -921,7 +921,7 @@ body.binary-lab main {
 
 
       <div class="desktop-shortcuts">
-        <button id="workdayButton">Open workday</button>
+        <button id="workdayButton">Open work apps</button>
         <button id="stressButton">Stress memory</button>
         <button id="recoverButton">Close background apps</button>
       </div>
@@ -1066,7 +1066,7 @@ body.binary-lab main {
       </div>
 
       <div class="arch-note">
-        This is a relative teaching model: cache is shown as recently used pages, the page file lives on secondary storage, and actions now remain active for their stated cycle cost rather than all taking equal time.
+        This simulation compares relative latency: cache shows recently used pages, the page file sits on secondary storage, and each action remains active for its stated cycle cost.
       </div>
     </section>
   </div>
@@ -1075,7 +1075,7 @@ body.binary-lab main {
     <div class="log-head">
       <div>
         <strong>OS decision log</strong>
-        <span>Completed actions show the memory block, start and finish of the pathway, cycle cost and total teaching time.</span>
+        <span>Each record shows the start and end of the path, cycle cost and simulated time.</span>
       </div>
       <button id="clearLogButton">Clear log</button>
     </div>
@@ -3094,7 +3094,7 @@ body.binary-lab main {
   $("explainButton").addEventListener("click",()=>{
     appendLog(
       "Relative latency model",
-      "One full clock turn represents 10 cycles. L1=1, L2=5, L3=14, RAM=45. SSD loads take about 220 cycles; HDD loads about 1050. Page-file transfers are slower still.",
+      "One clock step represents 10 cycles. L1=1, L2=5, L3=14, RAM=45. SSD loads take about 220 cycles; HDD loads about 1050. Page-file transfers are slower still.",
       "good",
       {route:{start:"Latency assumptions",finish:"Teaching timeline"},path:"Explanation",cycles:0,owner:"system"}
     );

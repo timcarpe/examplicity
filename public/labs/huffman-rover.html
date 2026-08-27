@@ -60,8 +60,10 @@ main{
 
 h1{
   margin:0;
-  font-size:29px;
-  letter-spacing:-.02em;
+  font-size:27px;
+  font-weight:630;
+  letter-spacing:-.03em;
+  line-height:1.1;
 }
 
 h2{
@@ -794,13 +796,13 @@ body.binary-lab main {
         <h2>Bitstream score</h2>
         <div class="score-box">
           <div>
-            <div class="score-title">Current complete mission</div>
+            <div class="score-title">Current valid route</div>
             <div id="scoreBits">26 bits</div>
           </div>
           <div id="optimality">73%</div>
         </div>
         <div class="meter"><div id="meterFill"></div></div>
-        <div id="scoreText">7 bits above the mission optimum of 19 bits.</div>
+        <div id="scoreText">7 bits above the shortest possible bitstream of 19 bits.</div>
         <button id="executeBtn" class="execute">Run decoded transmission</button>
       </section>
 
@@ -1165,7 +1167,7 @@ body.binary-lab main {
       scoreBits.textContent = "No score";
       optimality.textContent = "—";
       meter.style.width = "0%";
-      text.textContent = "This program hits an obstacle, so it is not a complete mission.";
+      text.textContent = "This program hits an obstacle, so it does not reach the beacon.";
       $("executeBtn").disabled = false;
       return;
     }
@@ -1187,10 +1189,10 @@ body.binary-lab main {
     const gap = bits.length - MISSION_OPTIMUM;
     if(gap===0){
       scoreBits.className = "good";
-      text.textContent = "Mission optimum reached: no valid transmission can use fewer than 19 bits.";
+      text.textContent = "Shortest bitstream reached: no valid route uses fewer than 19 bits.";
     }else{
       scoreBits.className = "";
-      text.textContent = `${gap} ${gap===1 ? "bit" : "bits"} above the mission optimum of 19 bits.`;
+      text.textContent = `${gap} ${gap===1 ? "bit" : "bits"} above the shortest possible bitstream of 19 bits.`;
     }
     $("executeBtn").disabled = false;
   }
@@ -1336,7 +1338,7 @@ body.binary-lab main {
         if(!OPEN.has(key(next.x,next.y))){
           $("rover").classList.add("crash");
           $("decoderStatus").textContent =
-            `${buffer} decoded correctly, but the rover hit an obstacle. Mission failed.`;
+            `${buffer} decoded correctly, but the rover hit an obstacle. The rover did not reach the beacon.`;
           running = false;
           setEditingEnabled(true);
           renderScore(validation);
@@ -1384,7 +1386,7 @@ body.binary-lab main {
       const bits = fullBits.length;
       if(bits===MISSION_OPTIMUM){
         $("decoderStatus").textContent =
-          `Beacon reached. Transmission decoded completely in ${bits} bits — mission optimum.`;
+          `Beacon reached. Transmission decoded completely in ${bits} bits — the shortest possible bitstream.`;
       }else{
         $("decoderStatus").textContent =
           `Beacon reached. Transmission decoded completely in ${bits} bits.`;

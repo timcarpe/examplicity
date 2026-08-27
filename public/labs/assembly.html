@@ -19,7 +19,7 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,Bl
 button,input,select,textarea{font:inherit}
 button{cursor:pointer}button:disabled{opacity:.42;cursor:not-allowed}
 main{width:min(1480px,calc(100% - 24px));margin:18px auto 40px}
-h1{margin:0;font-size:29px;line-height:1.06;letter-spacing:-.035em}
+h1{margin:0;font-size:27px;font-weight:630;line-height:1.06;letter-spacing:-.025em}
 .sub{margin:6px 0 0;color:var(--muted);font-size:13px;line-height:1.45}
 .page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:13px}
 .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--lab-panel-radius,12px);box-shadow:var(--lab-panel-shadow,0 1px 2px rgba(29,29,31,.04))}
@@ -89,6 +89,9 @@ select,input[type="text"]{height:36px;border:1px solid var(--line);border-radius
   .translation-scroll{max-height:250px}
   .io-panel,.reference{grid-column:1}
   .architecture-panel{height:auto;grid-column:1/-1;overflow:hidden}
+}
+@media(max-width:1015px){
+  .computer-grid{grid-template-columns:minmax(500px,1fr) 100px minmax(190px,.48fr);gap:8px}
 }
 @media(max-width:900px){main{width:min(100% - 12px,1480px);margin-top:9px}.page-head{display:block}.toolbar{grid-template-columns:1fr}.toolbar-right{justify-content:flex-start}.editor-panel{display:block}.translation{margin-top:10px}.computer-grid{grid-template-columns:1fr;gap:10px}.cpu-board{overflow:auto}.cpu-diagram{min-width:650px}.bus-bridge{position:static;min-height:0;margin-top:0;display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:0 14px}.bus-lane{position:relative;top:auto!important;left:auto;right:auto}.bus-line{left:0;right:0}.bus-arrow-right{right:-2px}.bus-arrow-left{left:-2px}.io-endpoint{position:relative;left:auto;bottom:auto;transform:none;grid-column:1/-1;justify-self:center}.ram-scroll{min-height:260px;max-height:360px}}
 @media(max-width:560px){h1{font-size:25px}.toolbar-left,.toolbar-right{align-items:stretch}.field{flex:1 1 145px}.field select{width:100%}.ui-button{flex:1 1 auto}.validation-wrap{flex:0 0 auto}.editor-shell{height:292px}.io-panel{grid-template-columns:1fr}.reference-grid{grid-template-columns:1fr}.bus-bridge{grid-template-columns:1fr;padding:0 12px}.micro-card{grid-template-columns:1fr}.micro-phase{width:max-content}.tick-box{text-align:left}}
@@ -185,7 +188,7 @@ body.binary-lab main {
   <header class="page-head">
     <div>
       <h1>Cambridge Assembly</h1>
-      <p class="sub">Trace a Cambridge 9618-style assembly program and follow each register transfer through a connected stored-program computer.</p>
+      <p class="sub">Trace a Cambridge 9618-style assembly program and follow each register transfer within a stored-program computer.</p>
     </div>
   </header>
 
@@ -237,7 +240,7 @@ body.binary-lab main {
         </div>
         <div class="editor-meta">
           <span id="assemblySummary"><strong>0</strong> memory locations</span>
-          <span id="entrySummary">Entry —</span>
+          <span id="entrySummary">Entry address —</span>
         </div>
       </div>
 
@@ -251,7 +254,7 @@ body.binary-lab main {
         </div>
         <div id="symbols" class="symbols"></div>
         <div id="translationBody" class="translation-scroll"></div>
-        <div class="encoding-note">Exam model: Pass 1 records each label; Pass 2 substitutes its numbered location. Cambridge-style mnemonics and addressing modes are preserved, while machine-code encoding is intentionally hidden.</div>
+        <div class="encoding-note">Pass 1 records labels; Pass 2 substitutes each label’s address. This lab preserves Cambridge-style mnemonics and addressing modes without showing machine-code encoding.</div>
       </section>
 
       <section class="io-panel" aria-label="Program input and output">
@@ -281,7 +284,7 @@ body.binary-lab main {
 
     <section class="panel architecture-panel">
       <div class="panel-head">
-        <div><strong>Von Neumann architecture trace</strong><span style="text-align:left">The glowing route follows each exam-style register transfer and system-bus movement.</span></div>
+        <div><strong>Von Neumann architecture trace</strong><span style="text-align:left">Highlighted paths show each register transfer and system-bus movement.</span></div>
         <div class="architecture-status">
           <span id="runStatus" class="status-pill">Ready</span>
           <span id="tickStatus" class="status-pill">Tick 0</span>
@@ -1306,7 +1309,7 @@ RESULT: B00000000`
 
   function renderRAM(){
     if(!memory.length){
-      $("ramScroll").innerHTML=`<div class="translation-empty">Valid code will appear here.</div>`;
+      $("ramScroll").innerHTML=`<div class="translation-empty">Compiled instructions will appear here.</div>`;
       return;
     }
     const active=visual.memoryAddress;
@@ -1337,7 +1340,7 @@ RESULT: B00000000`
     if(!compilation?.valid)text="Code error";else if(runtimeError){text="Runtime error";status.classList.add("error")}else if(waitingForInput)text="Waiting for input";else if(cpu.halted){text="Complete";status.classList.add("complete")}else if(running)text="Running";else if(tickCount>0)text="Paused";status.textContent=text;
     $("tickStatus").textContent=`Tick ${tickCount}`;$("instructionStatus").textContent=`Instruction ${instructionCount}`;$("operationTick").textContent=`Tick ${tickCount}`;$("operationInstruction").textContent=cpu.halted?`${instructionCount} completed`:`executing instruction ${instructionCount+1}`;
     $("sourceStatus").textContent=compilation?.valid?`${compilation.words.length} location${compilation.words.length===1?"":"s"} · ${compilation.symbols.size} label${compilation.symbols.size===1?"":"s"}`:`${compilation?.errors.length||0} issue${compilation?.errors.length===1?"":"s"}`;
-    $("assemblySummary").innerHTML=`<strong>${compilation?.words.length||0}</strong> memory location${compilation?.words.length===1?"":"s"}`;$("entrySummary").textContent=compilation?.valid?`Entry location ${addressText(compilation.entry)}`:"Entry —";
+    $("assemblySummary").innerHTML=`<strong>${compilation?.words.length||0}</strong> memory location${compilation?.words.length===1?"":"s"}`;$("entrySummary").textContent=compilation?.valid?`Entry address ${addressText(compilation.entry)}`:"Entry address —";
   }
   function renderValidation(){
     const button=$("validationButton"),tooltip=$("validationTooltip");button.className="validation-button";

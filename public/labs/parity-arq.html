@@ -7,7 +7,7 @@
 <style>
 :root{
   --bg:var(--lab-canvas);--panel:var(--lab-surface);--ink:var(--lab-ink);--muted:var(--lab-muted);--line:var(--lab-line);
-  --accent:#2865d8;--accent-soft:#edf3ff;--parity:#b7772d;--parity-soft:#fff4e6;
+  --accent:var(--lab-accent);--accent-soft:var(--lab-accent-soft);--parity:#b7772d;--parity-soft:#fff4e6;
   --column-parity:#287970;--column-parity-soft:#e9f7f4;
   --parity-muted:#eef1f3;--parity-muted-ink:#89949c;
   --good:var(--lab-good);--good-soft:var(--lab-good-soft);--bad:var(--lab-bad);--bad-soft:var(--lab-bad-soft);
@@ -19,7 +19,7 @@ body{
   font-family:var(--lab-font-sans)
 }
 main{width:min(1180px,calc(100% - 24px));margin:18px auto 40px}
-h1{margin:0;font-size:27px;letter-spacing:-.02em}
+h1{margin:0;font-size:27px;font-weight:630;letter-spacing:-.02em}
 .sub{margin:5px 0 14px;color:var(--lab-muted);font-size:13px;line-height:1.45}
 .panel{background:var(--lab-surface);border:1px solid var(--lab-line);border-radius:var(--lab-panel-radius);box-shadow:var(--lab-panel-shadow,0 1px 2px rgba(29,29,31,.04))}
 
@@ -58,7 +58,7 @@ button.primary{background:var(--lab-accent);border-color:var(--lab-accent);color
   display:inline-flex;align-items:center;min-height:26px;padding:3px 8px;border-radius:var(--lab-pill-radius);
   font-weight:750;border:1px solid var(--line);background:var(--lab-paper)
 }
-.status-chip.data{color:var(--accent);background:var(--accent-soft);border-color:#cad9fa}
+.status-chip.data{color:var(--accent);background:var(--accent-soft);border-color:color-mix(in srgb,var(--accent) 28%,var(--lab-line))}
 .status-chip.ack{color:var(--good);background:var(--good-soft);border-color:#cce9d7}
 .status-chip.nak{color:var(--bad);background:var(--bad-soft);border-color:#f0ccc7}
 .status-chip.timeout{color:var(--warn);background:var(--warn-soft);border-color:#ecd8ae}
@@ -82,13 +82,13 @@ button.primary{background:var(--lab-accent);border-color:var(--lab-accent);color
   position:absolute;top:19px;z-index:2;width:21px;height:21px;border:4px solid #fff;border-radius:50%;
   background:#a9b5be;box-shadow:0 0 0 2px #cbd4da
 }
-.track-node.sender{left:5%}.track-node.channel{left:50%;transform:translateX(-50%);background:var(--accent);box-shadow:0 0 0 2px #9db9ef}.track-node.receiver{right:5%}
+.track-node.sender{left:5%}.track-node.channel{left:50%;transform:translateX(-50%);background:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 42%,var(--lab-surface))}.track-node.receiver{right:5%}
 .track-label{position:absolute;top:45px;transform:translateX(-50%);color:var(--muted);font-size:9px;font-weight:750}
 .track-label.sender{left:6%}.track-label.channel{left:50%}.track-label.receiver{left:94%}
 .packet{
   position:absolute;left:6%;top:15px;z-index:3;display:inline-flex;align-items:center;gap:5px;
-  min-height:29px;padding:4px 9px;border:1px solid #9db9ef;border-radius:999px;
-  background:var(--accent);color:#fff;box-shadow:0 3px 9px rgba(31,65,110,.22);
+  min-height:29px;padding:4px 9px;border:1px solid color-mix(in srgb,var(--accent) 56%,var(--lab-surface));border-radius:999px;
+  background:var(--accent);color:#fff;box-shadow:0 3px 9px color-mix(in srgb,var(--accent) 22%,transparent);
   font-size:10px;font-weight:850;opacity:0;transform:translateX(-50%);
   transition:left .58s cubic-bezier(.3,.7,.2,1),opacity .2s,transform .2s
 }
@@ -125,8 +125,8 @@ button.primary{background:var(--lab-accent);border-color:var(--lab-accent);color
 .stage.locked-stage{border-color:#d4dce2;background:#f5f7f8}
 .stage.locked-stage.checking{border-color:#d3a562;background:var(--parity-soft);box-shadow:0 0 0 3px rgba(183,119,45,.10)}
 .stage.editable-stage{
-  border:2px solid #6f9eec;background:linear-gradient(180deg,#f4f8ff,#edf4ff);
-  box-shadow:0 4px 14px rgba(40,101,216,.10)
+  border:2px solid color-mix(in srgb,var(--accent) 58%,var(--lab-line));background:linear-gradient(180deg,var(--lab-surface),var(--accent-soft));
+  box-shadow:0 4px 14px color-mix(in srgb,var(--accent) 10%,transparent)
 }
 .stage-head{
   height:42px;margin-bottom:7px;display:flex;align-items:center;justify-content:space-between;gap:8px
@@ -179,12 +179,12 @@ button.primary{background:var(--lab-accent);border-color:var(--lab-accent);color
 .bit.locked-bit.parity-bit{background:var(--parity-soft);border-color:#e4c59e;color:var(--parity)}
 .bit.locked-bit.parity-byte{background:var(--column-parity-soft);border-color:#9bcfc9;color:var(--column-parity)}
 .bit.editable{
-  background:#fff;border:2px solid #729de7;color:#174fAD;
-  box-shadow:0 1px 3px rgba(40,101,216,.13);cursor:pointer
+  background:#fff;border:2px solid color-mix(in srgb,var(--accent) 62%,var(--lab-line));color:var(--accent);
+  box-shadow:0 1px 3px color-mix(in srgb,var(--accent) 13%,transparent);cursor:pointer
 }
-.bit.editable.parity-bit{background:#fffaf3;color:var(--parity);box-shadow:inset 0 0 0 1px #f0d1a9,0 1px 3px rgba(40,101,216,.13)}
-.bit.editable.parity-byte{background:#f2fbf9;color:var(--column-parity);box-shadow:inset 0 0 0 1px #a9d8d2,0 1px 3px rgba(40,101,216,.13)}
-.bit.editable:hover,.bit.editable:focus-visible{transform:translateY(-2px);border-color:#174fae;box-shadow:0 4px 8px rgba(40,101,216,.2);outline:none}
+.bit.editable.parity-bit{background:#fffaf3;color:var(--parity);box-shadow:inset 0 0 0 1px #f0d1a9,0 1px 3px color-mix(in srgb,var(--accent) 13%,transparent)}
+.bit.editable.parity-byte{background:#f2fbf9;color:var(--column-parity);box-shadow:inset 0 0 0 1px #a9d8d2,0 1px 3px color-mix(in srgb,var(--accent) 13%,transparent)}
+.bit.editable:hover,.bit.editable:focus-visible{transform:translateY(-2px);border-color:var(--accent);box-shadow:0 4px 8px color-mix(in srgb,var(--accent) 20%,transparent);outline:none}
 body.busy .bit.editable{pointer-events:none;opacity:.68}
 .bit.flipped{
   background:var(--bad-soft)!important;border-color:var(--bad)!important;color:var(--bad)!important;
@@ -432,7 +432,7 @@ body.binary-lab main {
   <div class="stage-grid">
     <div class="stage locked-stage">
       <div class="stage-head">
-        <div class="stage-title-line"><div class="stage-title">Sender</div><span class="access-chip">LOCKED SOURCE</span></div>
+        <div class="stage-title-line"><div class="stage-title">Sender</div><span class="access-chip">Locked source</span></div>
         <div class="stage-note">parity generated<br>before transmission</div>
       </div>
       <div id="senderBlocks" class="blocks"></div>
@@ -442,7 +442,7 @@ body.binary-lab main {
 
     <div class="stage editable-stage">
       <div class="stage-head">
-        <div class="stage-title-line"><div class="stage-title">In transit</div><span class="access-chip editable">EDITABLE</span></div>
+        <div class="stage-title-line"><div class="stage-title">In transit</div><span class="access-chip editable">Editable</span></div>
         <div class="stage-note">only this blue copy<br>can be changed</div>
       </div>
       <div class="channel-tools stage-tools">
@@ -457,7 +457,7 @@ body.binary-lab main {
 
     <div id="receiverStage" class="stage locked-stage">
       <div class="stage-head">
-        <div class="stage-title-line"><div class="stage-title">Receiver</div><span id="receiverAccess" class="access-chip">LOCKED · WAITING</span></div>
+        <div class="stage-title-line"><div class="stage-title">Receiver</div><span id="receiverAccess" class="access-chip">Locked · waiting</span></div>
         <div class="stage-note" id="receiverNote">row + column<br>parity checks</div>
       </div>
       <div id="receiverBlocks" class="blocks"></div>
@@ -466,8 +466,8 @@ body.binary-lab main {
 </section>
 
 <div class="arq-explainer">
-  <strong>ARQ in one sentence</strong>
-  <span>ACK means “accepted”; NAK means “an error was detected”; silence causes a timeout. A NAK or timeout prompts a resend, but parity cannot request a resend for corruption it fails to detect.</span>
+  <strong>How ARQ responds</strong>
+  <span>ACK accepts the frame; NAK reports a detected error; no reply causes a timeout. A NAK or timeout triggers a resend. Undetected corruption cannot trigger ARQ.</span>
 </div>
 
 <div class="footer" id="footerText"></div>
@@ -684,7 +684,7 @@ body.binary-lab main {
   function markPrepared(){
     receiverGroups=null;
     $("arqButton").hidden=true;
-    $("receiverAccess").textContent="LOCKED · WAITING";
+    $("receiverAccess").textContent="Locked · waiting";
     $("receiverStage").classList.remove("checking");
     resetPackets();
     initialProtocol();
@@ -908,7 +908,7 @@ body.binary-lab main {
     receiverGroups=null;
     history=[];
     $("arqButton").hidden=true;
-    $("receiverAccess").textContent="LOCKED · WAITING";
+    $("receiverAccess").textContent="Locked · waiting";
     $("receiverStage").classList.remove("checking");
     resetPackets();
     if(text){
@@ -1000,12 +1000,12 @@ body.binary-lab main {
     const token=++animationRun;
     setBusy(true);
     receiverGroups=null;
-    $("receiverAccess").textContent="LOCKED · WAITING";
+    $("receiverAccess").textContent="Locked · waiting";
     render();
     if(!await animateData(token,"DATA")) return;
 
     receiverGroups=cloneGroups(channelGroups);
-    $("receiverAccess").textContent="LOCKED · CHECKING";
+    $("receiverAccess").textContent="Locked · checking";
     $("receiverStage").classList.add("checking");
     render();
     setPhase("Receiver recalculates parity and compares every active check.",4,3);
@@ -1018,7 +1018,7 @@ body.binary-lab main {
     const drop=$("dropReply").checked;
     const reply=checks.pass?"ACK":"NAK";
     $("receiverStage").classList.remove("checking");
-    $("receiverAccess").textContent=checks.pass?"LOCKED · ACCEPTED":"LOCKED · REJECTED";
+    $("receiverAccess").textContent=checks.pass?"Locked · accepted":"Locked · rejected";
 
     if(!checks.pass){
       lastOutcome="Error detected; frame rejected";
@@ -1062,13 +1062,13 @@ body.binary-lab main {
     render();
     if(!await animateData(token,"RESEND")) return;
     receiverGroups=cloneGroups(senderGroups);
-    $("receiverAccess").textContent="LOCKED · CHECKING";
+    $("receiverAccess").textContent="Locked · checking";
     $("receiverStage").classList.add("checking");
     render();
     setPhase("Receiver checks the retransmitted frame.",4,3);
     if(!await wait(650,token)) return;
     $("receiverStage").classList.remove("checking");
-    $("receiverAccess").textContent="LOCKED · ACCEPTED";
+    $("receiverAccess").textContent="Locked · accepted";
     setResult("good","ARQ recovery complete","The sender retransmitted the original frame. The receiver's parity checks pass and ACK returns successfully.");
     protocol([{type:"data",text:"RESEND"},{type:"ack",text:"ACK received"}]);
     if(!await animateReply(token,"ACK",false)) return;

@@ -11,8 +11,8 @@
   --ink:var(--lab-ink);
   --muted:var(--lab-muted);
   --line:var(--lab-line);
-  --accent:#2865d8;
-  --accent-soft:#edf3ff;
+  --accent:var(--lab-accent);
+  --accent-soft:var(--lab-accent-soft);
   --changed:#fff0c9;
 
   --fetch:#2f73c5;
@@ -22,7 +22,7 @@
   --address:#7664bb;
   --data:#2f8064;
   --control:#b46c35;
-  --clock:#2865d8;
+  --clock:var(--lab-accent);
 
   --cpu-fill:#f8fafb;
   --ram-board:#eaf3ec;
@@ -37,7 +37,7 @@ body{
   font-family:var(--lab-font-sans);
 }
 main{width:min(1200px,calc(100% - 24px));margin:18px auto 40px}
-h1{margin:0;font-size:27px;letter-spacing:-.02em}
+h1{margin:0;font-size:27px;font-weight:630;letter-spacing:-.02em}
 .sub{margin:5px 0 14px;color:var(--lab-muted);font-size:13px;line-height:1.45}
 .panel{background:var(--lab-surface);border:1px solid var(--lab-line);border-radius:var(--lab-panel-radius);box-shadow:var(--lab-panel-shadow,0 1px 2px rgba(29,29,31,.04))}
 
@@ -523,8 +523,8 @@ button.primary{background:var(--lab-accent);border-color:var(--lab-accent);color
   .clock-controls{grid-template-columns:1fr 1fr}
   .clock-buttons{grid-column:1/-1}
 }
-@media(max-width:820px){main{width:min(100% - 12px,1200px);margin-top:8px}}
-@media(max-width:820px){
+@media(max-width:900px){main{width:min(100% - 12px,1200px);margin-top:8px}}
+@media(max-width:900px){
   .arch-grid{
     grid-template-columns:1fr;
     grid-template-areas:"clock" "cpu" "buses" "ram";
@@ -637,7 +637,7 @@ body.binary-lab main {
 <main>
 <h1>Fetch–Decode–Execute</h1>
 <div class="sub">
-  Step through one instruction at a time and watch the clock, CPU pathways and system buses work together.
+  Follow each micro-operation and watch the clock, CPU pathways and system buses complete the fetch–decode–execute cycle.
 </div>
 
 <section class="panel lab-panel">
@@ -648,7 +648,7 @@ body.binary-lab main {
         <div class="clock-head">
           <div class="clock-title">
             <strong>Clock</strong>
-            <span>one teaching tick per micro-operation; an instruction uses several ticks</span>
+            <span>Each teaching tick represents one micro-operation; each instruction takes several ticks.</span>
           </div>
           <div class="clock-readout">
             <span id="tickCount" class="clock-pill">Tick 0</span>
@@ -680,8 +680,8 @@ body.binary-lab main {
           <label>
             <span>Instruction model</span>
             <select id="displayMode">
-              <option value="simple" selected>GCSE immediate</option>
-              <option value="assembly">Assembly direct</option>
+              <option value="simple" selected>GCSE immediate operands</option>
+              <option value="assembly">Assembly direct addresses</option>
             </select>
           </label>
 
@@ -880,7 +880,7 @@ body.binary-lab main {
 
     <div class="step-card">
       <div>
-        <div class="micro-operation-label">CURRENT MICRO-OPERATION</div>
+        <div class="micro-operation-label">Current micro-operation</div>
         <div id="operation" class="operation">PC contains I1</div>
       </div>
       <div id="operationNote" class="operation-note">

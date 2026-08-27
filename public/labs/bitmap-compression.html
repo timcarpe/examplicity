@@ -37,6 +37,9 @@
   h1 {
     margin: 0 0 5px;
     font-size: 27px;
+    font-weight: 630;
+    letter-spacing: -.03em;
+    line-height: 1.1;
   }
 
   h2 {
@@ -62,6 +65,7 @@
     background: var(--panel);
     border: 1px solid var(--line);
     border-radius: var(--lab-panel-radius);
+    box-shadow: var(--lab-panel-shadow);
     padding: 16px;
   }
 
@@ -415,7 +419,7 @@ body.binary-lab main {
 <main>
   <h1>Bitmap Compression</h1>
   <div class="subtitle">
-    Paint an image, choose its colour depth, then compare Normal, RLE, and Huffman encoding.
+    Paint a bitmap, choose its colour depth, then compare uncompressed, RLE and Huffman encodings.
   </div>
 
   <div class="layout">
@@ -468,7 +472,7 @@ body.binary-lab main {
       <h2>Encoding</h2>
 
       <div class="mode-tabs">
-        <button class="modeBtn active" data-mode="normal">Normal</button>
+        <button class="modeBtn active" data-mode="normal">Uncompressed</button>
         <button class="modeBtn" data-mode="rle">RLE</button>
         <button class="modeBtn" data-mode="huffman">Huffman</button>
       </div>
@@ -484,7 +488,7 @@ body.binary-lab main {
         </div>
         <div class="size-comparison">
           <div class="size-stat">
-            <div class="size-label">Original · Normal</div>
+            <div class="size-label">Original · uncompressed</div>
             <strong id="originalBytes"></strong>
             <span id="originalBits"></span>
           </div>
@@ -945,7 +949,7 @@ body.binary-lab main {
       headerBits,
       totalBits: payloadBits + headerBits,
       headerText:
-        `format=BitmapDemo | encoding=Normal | width=${width} | height=${height} | colour-depth=${colourDepth}-bit`,
+        `format=BitmapDemo | encoding=Uncompressed | width=${width} | height=${height} | colour-depth=${colourDepth}-bit`,
       headerSentence:
         `The header tells the decoder the image dimensions, encoding method, and that every pixel colour uses ${colourDepth} bit${colourDepth===1?"":"s"}.`,
       stream: pixels.map(colour => ({
@@ -1049,13 +1053,14 @@ body.binary-lab main {
   function renderStats(all) {
     const selected = all[activeMode];
     const normal = all.normal;
+    const modeLabel=activeMode==="normal"?"Uncompressed":activeMode.toUpperCase();
     const bitDifference=normal.totalBits-selected.totalBits;
     const byteDifference=bytes(normal.totalBits)-bytes(selected.totalBits);
     const reduction=bitDifference/normal.totalBits*100;
     const indicator=$("sizeChangeIndicator");
     const differenceBytes=$("differenceBytes");
 
-    $("sizeModeLabel").textContent=activeMode.toUpperCase()+" total";
+    $("sizeModeLabel").textContent=modeLabel+" total";
     $("sizeMain").textContent=packedBytes(selected.totalBits);
     $("sizeBits").textContent=selected.totalBits.toLocaleString()+" bits total";
     $("originalBytes").textContent=packedBytes(normal.totalBits);
@@ -1092,7 +1097,7 @@ body.binary-lab main {
     }
 
     $("sizeSub").textContent=
-      activeMode.toUpperCase()+": "+selected.payloadBits.toLocaleString()+" payload bits + "+
+      modeLabel+": "+selected.payloadBits.toLocaleString()+" payload bits + "+
       selected.headerBits.toLocaleString()+" header bits. Both totals use the same image and colour depth.";
   }
 

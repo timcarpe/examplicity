@@ -37,7 +37,7 @@ button,select{font:inherit}
 button{cursor:pointer}
 button:disabled,select:disabled{opacity:.45;cursor:not-allowed}
 main{width:min(1240px,calc(100% - 20px));margin:15px auto 38px}
-h1{margin:0;font-size:27px;letter-spacing:-.025em}
+h1{margin:0;font-size:27px;font-weight:630;letter-spacing:-.025em}
 .sub{margin:5px 0 12px;color:var(--lab-muted);font-size:13px;line-height:1.45}
 .panel{background:var(--lab-surface);border:1px solid var(--lab-line);border-radius:var(--lab-panel-radius);box-shadow:var(--lab-panel-shadow,0 1px 2px rgba(29,29,31,.04))}
 button{
@@ -70,7 +70,7 @@ button.danger{color:var(--bad)}
 .task-tab.complete:not(.active){border-color:var(--good);background:var(--good-soft);color:var(--good)}
 
 .lab-grid{margin-top:10px;display:grid;grid-template-columns:210px minmax(0,1fr);gap:10px;align-items:start}
-.palette{padding:10px;position:sticky;top:10px}
+.palette{padding:10px;position:sticky;top:76px}
 .palette-head{margin-bottom:8px}
 .palette-head strong{display:block;font-size:14px}
 .palette-head span{display:block;margin-top:2px;color:var(--muted);font-size:9px;line-height:1.35}
@@ -358,12 +358,12 @@ body.binary-lab main {
 <body>
 <main>
   <h1>Network Topology Builder</h1>
-  <div class="sub">Build bus, star and mesh networks, then combine them in Hybrid. Send packets through whatever you create.</div>
+  <div class="sub">Build bus, star and mesh networks, combine them in Hybrid, then send packets through the result.</div>
 
   <section class="panel mission">
     <div>
       <strong id="missionTitle">Goal: Connect at least four stations to one shared backbone.</strong>
-      <span id="missionHint">All stations share one backbone cable.</span>
+      <span id="missionHint">Connect each station once to the terminated backbone; do not link stations directly.</span>
     </div>
     <div id="taskTabs" class="task-tabs" aria-label="Topology goals"></div>
   </section>
@@ -413,7 +413,7 @@ body.binary-lab main {
         <label for="destinationSelect">To</label>
         <select id="destinationSelect"></select>
         <button id="sendButton" class="primary">Send packet</button>
-        <div id="journeyText"><strong>Topology ready.</strong> Choose two stations and send a packet.</div>
+        <div id="journeyText"><strong>Network ready.</strong> Choose two stations and send a packet.</div>
       </div>
 
       <div class="teaching-note">Stations send and receive. Switches, bridges and shared buses can carry packets onward. In Hybrid, add direct mesh links over an existing bus or star and compare which route the packet chooses.</div>
@@ -433,25 +433,25 @@ body.binary-lab main {
   const TASKS = [
     {
       id:"bus", name:"Bus", title:"Goal: Connect at least four stations to one shared backbone.",
-      hint:"Use four or more stations. Every station shares one backbone cable.",
+      hint:"Connect each station once to the terminated backbone; do not link stations directly.",
       open:false,
       parts:{station:{min:4,max:18},bus:{min:1,max:1}}
     },
     {
       id:"star", name:"Star", title:"Goal: Connect at least four stations to one central switch.",
-      hint:"Use four or more stations. Connect every station to one central switch.",
+      hint:"Each station needs its own cable to the switch.",
       open:false,
       parts:{station:{min:4,max:18},switch:{min:1,max:1}}
     },
     {
       id:"mesh", name:"Mesh", title:"Goal: Directly connect every pair of at least four stations.",
-      hint:"Use four or more stations. Every pair needs its own direct cable.",
+      hint:"Use stations only; every station connects directly to all others.",
       open:false,
       parts:{station:{min:4,max:12}}
     },
     {
       id:"hybrid", name:"Hybrid", title:"Goal: Combine two topology patterns into a working hybrid network.",
-      hint:"Keep a bus, star or mesh and build another pattern over it. Direct links can form a mesh while switches, bridges and buses carry other routes.",
+      hint:"Start with a bus, star or mesh, then add a second pattern over it.",
       open:true,
       parts:{station:{min:0,max:24},switch:{min:0,max:8},bus:{min:0,max:5},bridge:{min:0,max:8}}
     }
