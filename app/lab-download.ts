@@ -97,7 +97,7 @@ const standaloneChromeStyles = `
     align-items: flex-start;
     flex-direction: column;
     gap: 5px;
-    height: 82px;
+    height: 76px;
     justify-content: center;
     padding: 0 20px;
   }

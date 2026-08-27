@@ -62,7 +62,6 @@ button.danger{color:var(--bad)}
   gap:12px;
   align-items:center;
 }
-.eyebrow{display:block;margin-bottom:2px;color:var(--lab-accent);font-size:9px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
 #missionTitle{display:block;font-size:15px}
 #missionHint{display:block;margin-top:3px;color:var(--lab-muted);font-size:10px;line-height:1.35}
 .task-tabs{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}
@@ -308,8 +307,8 @@ body {
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
   font-family: var(--lab-font-sans);
-  padding-bottom: 76px;
-  padding-top: 84px;
+  padding-bottom: 58px;
+  padding-top: 66px;
   text-rendering: optimizeLegibility;
 }
 
@@ -321,9 +320,6 @@ html[data-theme="dark"] body {
 main {
   container-name: lab-canvas;
   container-type: inline-size;
-  margin-bottom: 40px;
-  margin-top: 18px;
-  width: min(1200px, calc(100% - 24px));
 }
 
 body.binary-lab main {
@@ -337,14 +333,12 @@ body.binary-lab main {
 
 @media (max-width: 620px) {
   body {
-    padding-bottom: 94px;
-    padding-top: 70px;
+    padding-bottom: 76px;
+    padding-top: 60px;
   }
 
-  main,
   body.binary-lab main {
-    margin-top: 8px;
-    width: min(100% - 12px, 1200px);
+    width: min(100% - 12px, 820px);
   }
 }
 
@@ -368,11 +362,10 @@ body.binary-lab main {
 
   <section class="panel mission">
     <div>
-      <span id="missionStep" class="eyebrow">Guided topology</span>
-      <strong id="missionTitle">Build a bus topology</strong>
+      <strong id="missionTitle">Goal: Connect at least four stations to one shared backbone.</strong>
       <span id="missionHint">All stations share one backbone cable.</span>
     </div>
-    <div id="taskTabs" class="task-tabs" aria-label="Topology missions"></div>
+    <div id="taskTabs" class="task-tabs" aria-label="Topology goals"></div>
   </section>
 
   <div class="lab-grid">
@@ -439,25 +432,25 @@ body.binary-lab main {
 
   const TASKS = [
     {
-      id:"bus", name:"Bus", title:"Build a bus topology",
+      id:"bus", name:"Bus", title:"Goal: Connect at least four stations to one shared backbone.",
       hint:"Use four or more stations. Every station shares one backbone cable.",
       open:false,
       parts:{station:{min:4,max:18},bus:{min:1,max:1}}
     },
     {
-      id:"star", name:"Star", title:"Build a star topology",
+      id:"star", name:"Star", title:"Goal: Connect at least four stations to one central switch.",
       hint:"Use four or more stations. Connect every station to one central switch.",
       open:false,
       parts:{station:{min:4,max:18},switch:{min:1,max:1}}
     },
     {
-      id:"mesh", name:"Mesh", title:"Build a full mesh topology",
+      id:"mesh", name:"Mesh", title:"Goal: Directly connect every pair of at least four stations.",
       hint:"Use four or more stations. Every pair needs its own direct cable.",
       open:false,
       parts:{station:{min:4,max:12}}
     },
     {
-      id:"hybrid", name:"Hybrid", title:"Experiment with a hybrid network",
+      id:"hybrid", name:"Hybrid", title:"Goal: Combine two topology patterns into a working hybrid network.",
       hint:"Keep a bus, star or mesh and build another pattern over it. Direct links can form a mesh while switches, bridges and buses carry other routes.",
       open:true,
       parts:{station:{min:0,max:24},switch:{min:0,max:8},bus:{min:0,max:5},bridge:{min:0,max:8}}
@@ -635,7 +628,6 @@ body.binary-lab main {
 
   function renderTaskHeader(){
     const task=currentTask();
-    $("missionStep").textContent=task.open?"Open builder":"Guided topology";
     $("missionTitle").textContent=task.title;
     $("missionHint").textContent=task.hint;
     $("checkButton").textContent=task.open?"Test network":"Check topology";

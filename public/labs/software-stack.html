@@ -37,10 +37,6 @@ h1{margin:0;font-size:27px;letter-spacing:-.02em}
   gap:14px;
   align-items:center;
 }
-.eyebrow{
-  display:block;margin-bottom:3px;color:var(--accent);
-  font-size:10px;font-weight:850;letter-spacing:.07em;text-transform:uppercase;
-}
 #missionText{font-size:15px;line-height:1.35}
 .mission-actions{display:flex;gap:8px;align-items:end;flex-wrap:wrap}
 .mission-actions label{color:var(--muted);font-size:10px}
@@ -433,8 +429,8 @@ body {
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
   font-family: var(--lab-font-sans);
-  padding-bottom: 76px;
-  padding-top: 84px;
+  padding-bottom: 58px;
+  padding-top: 66px;
   text-rendering: optimizeLegibility;
 }
 
@@ -446,9 +442,6 @@ html[data-theme="dark"] body {
 main {
   container-name: lab-canvas;
   container-type: inline-size;
-  margin-bottom: 40px;
-  margin-top: 18px;
-  width: min(1200px, calc(100% - 24px));
 }
 
 body.binary-lab main {
@@ -462,14 +455,12 @@ body.binary-lab main {
 
 @media (max-width: 620px) {
   body {
-    padding-bottom: 94px;
-    padding-top: 70px;
+    padding-bottom: 76px;
+    padding-top: 60px;
   }
 
-  main,
   body.binary-lab main {
-    margin-top: 8px;
-    width: min(100% - 12px, 1200px);
+    width: min(100% - 12px, 820px);
   }
 }
 
@@ -495,8 +486,7 @@ body.binary-lab main {
 
   <section class="panel mission-panel">
     <div class="mission-copy">
-      <span class="eyebrow">Mission</span>
-      <strong id="missionText">Turn on the computer and open the Image Editor.</strong>
+      <strong id="missionText">Goal: Turn on the computer and open the Image Editor.</strong>
     </div>
     <div class="mission-actions">
       <label>
@@ -664,7 +654,7 @@ body.binary-lab main {
   }
 
   function targetApplication(){ return $("targetApplication").value; }
-  function updateMission(){ $("missionText").textContent = `Turn on the computer and open the ${appInfo[targetApplication()].label}.`; }
+  function updateMission(){ $("missionText").textContent = `Goal: Turn on the computer and open the ${appInfo[targetApplication()].label}.`; }
   function isLayerId(id){ return !!layerItems[id]; }
   function isContentId(id){ return !!contentItems[id]; }
   function isApplicationId(id){ return !!layerItems[id] && layerItems[id].kind==="application"; }
@@ -1652,7 +1642,7 @@ body.binary-lab main {
         dialog:{
           title:"Application not found",
           code:"TARGET_APPLICATION_NOT_INSTALLED",
-          body:`One or more applications are installed, but the mission requires the ${appInfo[targetApplication()].label}.`
+          body:`One or more applications are installed, but the selected ${appInfo[targetApplication()].label} is not installed.`
         }
       });
       await finishFailure();

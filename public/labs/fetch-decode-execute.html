@@ -515,19 +515,6 @@ button.primary{background:var(--lab-accent);border-color:var(--lab-accent);color
 .operation-note{color:var(--muted);font-size:11px;line-height:1.4}
 .arch-key{margin-top:9px;color:var(--muted);font-size:10px;line-height:1.35}
 
-.challenge-panel{
-  margin-top:12px;
-  padding:11px 12px;
-  display:grid;
-  grid-template-columns:1fr auto;
-  gap:12px;
-  align-items:center;
-}
-.challenge-title{font-size:13px;font-weight:850}
-.challenge-text{margin-top:3px;color:var(--muted);font-size:12px;line-height:1.4}
-.challenge-answer{min-width:150px;text-align:right;font:850 16px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
-.challenge-answer.hidden{color:transparent;text-shadow:0 0 7px rgba(29,39,48,.45);user-select:none}
-
 @container lab-canvas (max-width:1000px){
   .arch-grid{
     grid-template-columns:minmax(430px,1fr) minmax(155px,.4fr) minmax(225px,.6fr);
@@ -537,7 +524,7 @@ button.primary{background:var(--lab-accent);border-color:var(--lab-accent);color
   .clock-buttons{grid-column:1/-1}
 }
 @media(max-width:820px){main{width:min(100% - 12px,1200px);margin-top:8px}}
-@container lab-canvas (max-width:900px){
+@media(max-width:820px){
   .arch-grid{
     grid-template-columns:1fr;
     grid-template-areas:"clock" "cpu" "buses" "ram";
@@ -548,8 +535,6 @@ button.primary{background:var(--lab-accent);border-color:var(--lab-accent);color
   .bus-track .arrow-right{right:0}
   .bus-track .arrow-left{left:0}
   .step-card{grid-template-columns:1fr}
-  .challenge-panel{grid-template-columns:1fr}
-  .challenge-answer{text-align:left}
 }
 @media(max-width:560px){
   .architecture{padding:13px 9px}
@@ -600,8 +585,8 @@ body {
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
   font-family: var(--lab-font-sans);
-  padding-bottom: 76px;
-  padding-top: 84px;
+  padding-bottom: 58px;
+  padding-top: 66px;
   text-rendering: optimizeLegibility;
 }
 
@@ -613,9 +598,6 @@ html[data-theme="dark"] body {
 main {
   container-name: lab-canvas;
   container-type: inline-size;
-  margin-bottom: 40px;
-  margin-top: 18px;
-  width: min(1200px, calc(100% - 24px));
 }
 
 body.binary-lab main {
@@ -629,14 +611,12 @@ body.binary-lab main {
 
 @media (max-width: 620px) {
   body {
-    padding-bottom: 94px;
-    padding-top: 70px;
+    padding-bottom: 76px;
+    padding-top: 60px;
   }
 
-  main,
   body.binary-lab main {
-    margin-top: 8px;
-    width: min(100% - 12px, 1200px);
+    width: min(100% - 12px, 820px);
   }
 }
 
@@ -914,19 +894,6 @@ body.binary-lab main {
   </div>
 </section>
 
-<section class="panel challenge-panel">
-  <div>
-    <div class="challenge-title">Trace challenge</div>
-    <div id="challengeText" class="challenge-text">
-      What value will be stored in RESULT when the program reaches STOP?
-    </div>
-  </div>
-  <div>
-    <button id="revealBtn">Reveal prediction</button>
-    <div id="challengeAnswer" class="challenge-answer hidden">13</div>
-  </div>
-</section>
-
 </main>
 
 
@@ -940,30 +907,21 @@ body.binary-lab main {
       simpleMemory:{0:"LOADI 8",1:"ADDI 5",2:"STORE 10",3:"STOP",10:0},
       simpleLabels:{0:"I1",1:"I2",2:"I3",3:"I4",10:"RESULT"},
       assemblyStart:100,
-      assemblyMemory:{100:"LDA 105",101:"ADD 106",102:"STA 107",103:"HLT",104:"—",105:8,106:5,107:0},
-      challenge:"What value will be stored in RESULT when the program reaches STOP?",
-      assemblyChallenge:"What value will be stored at address 107 when the program reaches HLT?",
-      answer:"13"
+      assemblyMemory:{100:"LDA 105",101:"ADD 106",102:"STA 107",103:"HLT",104:"—",105:8,106:5,107:0}
     },
     subtract:{
       simpleStart:0,
       simpleMemory:{0:"LOADI 19",1:"SUBI 7",2:"STORE 10",3:"STOP",10:0},
       simpleLabels:{0:"I1",1:"I2",2:"I3",3:"I4",10:"RESULT"},
       assemblyStart:100,
-      assemblyMemory:{100:"LDA 105",101:"SUB 106",102:"STA 107",103:"HLT",104:"—",105:19,106:7,107:0},
-      challenge:"What value will be stored in RESULT when the program reaches STOP?",
-      assemblyChallenge:"What value will be stored at address 107 when the program reaches HLT?",
-      answer:"12"
+      assemblyMemory:{100:"LDA 105",101:"SUB 106",102:"STA 107",103:"HLT",104:"—",105:19,106:7,107:0}
     },
     multiply:{
       simpleStart:0,
       simpleMemory:{0:"LOADI 4",1:"ADDI 4",2:"ADDI 4",3:"STORE 10",4:"STOP",10:0},
       simpleLabels:{0:"I1",1:"I2",2:"I3",3:"I4",4:"I5",10:"RESULT"},
       assemblyStart:100,
-      assemblyMemory:{100:"LDA 105",101:"ADD 105",102:"ADD 105",103:"STA 107",104:"HLT",105:4,106:"—",107:0},
-      challenge:"This program uses repeated addition. What multiplication does it perform, and what is stored in RESULT?",
-      assemblyChallenge:"This program uses repeated addition. What multiplication does it perform, and what value is stored at address 107?",
-      answer:"4 × 3 = 12"
+      assemblyMemory:{100:"LDA 105",101:"ADD 105",102:"ADD 105",103:"STA 107",104:"HLT",105:4,106:"—",107:0}
     }
   };
 
@@ -1510,10 +1468,6 @@ body.binary-lab main {
 
     $("stepBtn").disabled=false;
     $("runBtn").disabled=false;
-    $("challengeText").textContent=simple?p.challenge:p.assemblyChallenge;
-    $("challengeAnswer").textContent=p.answer;
-    $("challengeAnswer").classList.add("hidden");
-    $("revealBtn").textContent="Reveal prediction";
   }
 
   $("stepBtn").addEventListener("click",step);
@@ -1524,12 +1478,6 @@ body.binary-lab main {
   $("speed").addEventListener("change",()=>{
     if(autoTimer){stopAuto();toggleAuto()}
   });
-  $("revealBtn").addEventListener("click",()=>{
-    const answer=$("challengeAnswer");
-    const hidden=answer.classList.toggle("hidden");
-    $("revealBtn").textContent=hidden?"Reveal prediction":"Hide prediction";
-  });
-
   reset();
 })();
 </script>
