@@ -84,7 +84,13 @@ export default function Home() {
   return (
     <main>
       <header className="site-header">
-        <a className="brand" href="#top" aria-label="Examplicity home">examplicity</a>
+        <a className="brand" href="#top" aria-label="Examplicity home">
+          <span className="tone-one">e</span>
+          <span className="tone-two">x</span>
+          <span className="tone-three">a</span>
+          <span className="tone-four">m</span>
+          plicity
+        </a>
         <div className="header-actions">
           <span className="header-note">Cambridge Computer Science</span>
           <button className="translator-button" type="button" onClick={() => openLab(translator)}>
