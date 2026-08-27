@@ -20,44 +20,37 @@ redesign existing labs or introduce a new runtime architecture.
   an icon. The title and topic are not enough to infer its mechanics; identify
   the controls, state changes, feedback, and main visual model in the document.
 - [ ] Do not normalize or refactor unrelated existing monoliths while adding a
-  lab. In particular, the approved shell pilot is
-  `public/labs/bitmap-compression.html`; it is the reference for the shell
-  boundary, not permission to rewrite the other files.
+  lab. The shared frame owns only the standard canvas and surrounding chrome;
+  lab-specific teaching UI remains inside its document.
 
 ## 2. Static document and shell boundary
 
 The host (`app/page.tsx`) opens the manifest `href` in a full-viewport iframe.
 The lab owns its teaching UI and behavior; the host owns the catalogue, loading
-screen, query-string selection, and iframe. Keep those responsibilities separate.
+screen, query-string selection, iframe, and persistent header/footer overlay.
+Keep those responsibilities separate.
 
 - [ ] Keep a complete document beginning with `<!doctype html>`,
   `<html lang="en">`, charset, viewport, and a meaningful `<title>`.
-- [ ] Keep lab CSS and JavaScript inside that HTML. A static file in
+- [ ] Keep lab-specific CSS and JavaScript inside that HTML. A static file in
   `public/labs` does not receive `app/globals.css` and must not depend on a
   React component or an undocumented host callback.
-- [ ] Use the approved Examplicity shell for a future catalogue lab: copy the
-  shell CSS from the pilot into the new document's inline `<style>` block. Do
-  **not** link to the pilot, import a remote stylesheet, or rely on a shared CSS
-  file: each monolithic document must carry its own copy. An exception needs
-  explicit approval.
-- [ ] Keep the copied shell selectors and custom properties namespaced with
-  `examplicity-shell-`, as in `.examplicity-shell-header`,
-  `.examplicity-shell-home`, and `.examplicity-shell-footer`. Do not make lab
-  rules style the shell, and do not make shell rules depend on lab-specific
-  selectors. Lab-only rules remain inside the lab document.
-- [ ] Use the pilot shell markup as the boundary: a header with the
-  `examplicity-shell-brand` and `examplicity-shell-home` links, the lab's own
-  `<main>`, and the `examplicity-shell-footer`. Keep the footer outside the
-  lab's main content.
+- [ ] Link `/labs/lab-frame.css` after the document's inline `<style>` block.
+  It supplies the standard background, 1480px canvas cap, and safe space below
+  the host overlay. Do not duplicate or override those frame rules in a lab.
+- [ ] Keep the lab's own `<main>` as the document boundary. Do not add a second
+  Examplicity header or footer inside the iframe; the host renders that chrome
+  once above every lab.
+- [ ] Use `class="binary-lab"` on `<body>` only for a similarly compact lab
+  approved to use Binary's 820px canvas exception. New labs otherwise use the
+  shared standard width.
 - [ ] Do not add host messaging, parent-frame state, or a second navigation
   system without explicit architecture approval. The current integration is
   only the manifest `href` plus the iframe in `app/page.tsx`.
 
-The pilot's shell links use `href="/" target="_top"`; preserve that behavior.
-It lets the brand, “Back to labs”, GitHub, and license links escape the iframe
-instead of navigating only inside it. Use `target="_top"` for new top-level shell
-links as well. The host's canonical lab URL is `/?lab=<slug>`; the lab should
-not rewrite that outer URL itself.
+The host owns the brand, “Back to labs”, GitHub, and license links. The host's
+canonical lab URL is `/?lab=<slug>`; the lab should not duplicate those links or
+rewrite that outer URL itself.
 
 ## 3. Manifest registration
 
@@ -145,13 +138,14 @@ the default drawing for an approved lab.
   `prefers-reduced-motion`; the host already reduces catalogue motion in
   `app/globals.css`.
 - [ ] Check that lab links and controls do not trap focus in the iframe and
-  that shell navigation uses `target="_top"` as described above.
+  that keyboard focus can still reach the host's overlay navigation.
 
 ## 6. Validation before approval
 
 - [ ] Confirm the three-way path contract and changed-file scope:
   `public/labs/<slug>.html`, its `app/labs.ts` entry, and its
-  `app/lab-icon.tsx` case. No copied shell CSS should be an external import.
+  `app/lab-icon.tsx` case. Confirm the HTML links `/labs/lab-frame.css` once and
+  contains no duplicate Examplicity shell markup.
 - [ ] From `cambridge-labs`, run:
 
   ```text

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState, type PointerEvent as ReactPointerEvent } from 'react';
+import Link from 'next/link';
 import { exams, labs, translator, type Activity, type ExamCode } from './labs';
 import { LabIcon } from './lab-icon';
 
@@ -58,9 +59,24 @@ export default function Home() {
     window.history.pushState({ lab: lab.slug }, '', `?lab=${lab.slug}`);
   };
 
+  const closeLab = () => {
+    setActiveLab(null);
+    setIsLoading(false);
+  };
+
   if (activeLab) {
     return (
       <main className="lab-view">
+        <header className="lab-shell-header">
+          <Link className="brand" href="/" aria-label="Examplicity home" onClick={closeLab}>
+            <span className="tone-one">e</span>
+            <span className="tone-two">x</span>
+            <span className="tone-three">a</span>
+            <span className="tone-four">m</span>
+            plicity
+          </Link>
+          <Link className="lab-shell-home" href="/" onClick={closeLab}>Back to labs</Link>
+        </header>
         {isLoading && (
           <section className="loading-screen" role="status" aria-live="polite">
             <span className="spinner" aria-hidden="true" />
@@ -77,6 +93,13 @@ export default function Home() {
           src={activeLab.href}
           title={activeLab.title}
         />
+        <footer className="lab-shell-footer">
+          <a href="https://github.com/timcarpe/examplicity">Examplicity™</a>
+          <span>
+            Make complex ideas click. ·{' '}
+            <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>
+          </span>
+        </footer>
       </main>
     );
   }
