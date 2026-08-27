@@ -36,7 +36,7 @@ Keep those responsibilities separate.
   `public/labs` does not receive `app/globals.css` and must not depend on a
   React component or an undocumented host callback.
 - [ ] Link `/labs/lab-frame.css` after the document's inline `<style>` block.
-  It supplies the standard background, 1480px canvas cap, and safe space below
+  It supplies the standard background, 1200px canvas cap, and safe space below
   the host overlay. Do not duplicate or override those frame rules in a lab.
 - [ ] Keep the lab's own `<main>` as the document boundary. Do not add a second
   Examplicity header or footer inside the iframe; the host renders that chrome
@@ -44,6 +44,9 @@ Keep those responsibilities separate.
 - [ ] Use `class="binary-lab"` on `<body>` only for a similarly compact lab
   approved to use Binary's 820px canvas exception. New labs otherwise use the
   shared standard width.
+- [ ] Base wide multi-column layout transitions on the named `lab-canvas`
+  container rather than the browser viewport, so they respond to the shared
+  canvas cap as well as narrow screens.
 - [ ] Do not add host messaging, parent-frame state, or a second navigation
   system without explicit architecture approval. The current integration is
   only the manifest `href` plus the iframe in `app/page.tsx`.
