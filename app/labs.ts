@@ -1,6 +1,16 @@
 export const exams = ['0478', '9618'] as const;
 export type ExamCode = (typeof exams)[number];
 
+export const subjects = [
+  {
+    id: 'computer-science',
+    name: 'Computer Science',
+    headerLabel: 'Cambridge Computer Science',
+    exams,
+  },
+] as const;
+export type SubjectId = (typeof subjects)[number]['id'];
+
 export type Activity = {
   slug: string;
   title: string;
@@ -10,22 +20,27 @@ export type Activity = {
 };
 
 export type Lab = Activity & {
+  subject: SubjectId;
   topic: string;
   format: string;
-  kind: 'lab';
   exams: ExamCode[];
 };
 
-export const translator: Activity = {
+export const translator: Lab = {
+  subject: 'computer-science',
   slug: 'translator',
   title: 'Pseudocode ↔ Python',
   description: 'Write, synchronize, run and trace Cambridge-style pseudocode alongside Python.',
+  topic: 'Programming',
+  format: 'Code translator',
   kind: 'tool',
+  exams: ['0478', '9618'],
   href: '/labs/translator.html',
 };
 
 export const labs: Lab[] = [
   {
+    subject: 'computer-science',
     slug: 'binary-numbers',
     title: 'Binary Number Practice',
     description: 'Build fluency with binary and hexadecimal registers through generated GCSE and AS questions.',
@@ -36,6 +51,7 @@ export const labs: Lab[] = [
     href: '/labs/binary-numbers.html',
   },
   {
+    subject: 'computer-science',
     slug: 'bitmap-compression',
     title: 'Bitmap Compression',
     description: 'Paint a bitmap, change its colour depth, and compare normal, RLE and Huffman encoding.',
@@ -46,6 +62,7 @@ export const labs: Lab[] = [
     href: '/labs/bitmap-compression.html',
   },
   {
+    subject: 'computer-science',
     slug: 'sound-sampling',
     title: 'Digital Sound Sampling',
     description: 'Change sample rate and resolution, then compare the reconstructed signal visually and by listening.',
@@ -56,6 +73,7 @@ export const labs: Lab[] = [
     href: '/labs/sound-sampling.html',
   },
   {
+    subject: 'computer-science',
     slug: 'huffman-rover',
     title: 'Huffman Rover',
     description: 'Design variable-length codes, decode a binary transmission and guide a rover across Mars.',
@@ -66,6 +84,7 @@ export const labs: Lab[] = [
     href: '/labs/huffman-rover.html',
   },
   {
+    subject: 'computer-science',
     slug: 'parity-arq',
     title: 'Parity & ARQ Transmission',
     description: 'Corrupt frames in flight and watch parity detection and automatic repeat requests respond.',
@@ -76,6 +95,7 @@ export const labs: Lab[] = [
     href: '/labs/parity-arq.html',
   },
   {
+    subject: 'computer-science',
     slug: 'network-topology',
     title: 'Network Topology Builder',
     description: 'Build bus, star, mesh and hybrid networks, then send packets through your design.',
@@ -86,6 +106,7 @@ export const labs: Lab[] = [
     href: '/labs/network-topology.html',
   },
   {
+    subject: 'computer-science',
     slug: 'csma-cd',
     title: 'Ethernet CSMA/CD',
     description: 'Control three stations on a shared cable and observe collision detection and backoff.',
@@ -96,6 +117,7 @@ export const labs: Lab[] = [
     href: '/labs/csma-cd.html',
   },
   {
+    subject: 'computer-science',
     slug: 'fetch-decode-execute',
     title: 'Fetch–Decode–Execute',
     description: 'Advance one clock tick at a time and follow data across CPU pathways and system buses.',
@@ -106,6 +128,7 @@ export const labs: Lab[] = [
     href: '/labs/fetch-decode-execute.html',
   },
   {
+    subject: 'computer-science',
     slug: 'assembly',
     title: 'Cambridge Assembly',
     description: 'Trace a Cambridge-style assembly program and follow every transfer through the processor.',
@@ -116,6 +139,7 @@ export const labs: Lab[] = [
     href: '/labs/assembly.html',
   },
   {
+    subject: 'computer-science',
     slug: 'software-stack',
     title: 'Software Stack & Boot Process',
     description: 'Build the software layers, power on the system and test whether an application can run.',
@@ -126,6 +150,7 @@ export const labs: Lab[] = [
     href: '/labs/software-stack.html',
   },
   {
+    subject: 'computer-science',
     slug: 'memory-management',
     title: 'OS Memory Management',
     description: 'Create realistic workloads and watch pages move between storage, RAM, page file and cache.',
@@ -135,4 +160,5 @@ export const labs: Lab[] = [
     exams: ['0478', '9618'],
     href: '/labs/memory-management.html',
   },
+  translator,
 ];

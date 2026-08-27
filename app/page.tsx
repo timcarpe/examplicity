@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState, type PointerEvent as ReactPointerEvent } from 'react';
 import Link from 'next/link';
-import { exams, labs, translator, type Activity, type ExamCode } from './labs';
+import { labs, subjects, type Activity, type ExamCode, type SubjectId } from './labs';
 import { createStandaloneLabHtml } from './lab-download';
 import { LabIcon } from './lab-icon';
 
@@ -20,27 +20,48 @@ const resetPreview = (event: ReactPointerEvent<HTMLDivElement>) => {
   event.currentTarget.style.setProperty('--art-y', '0px');
 };
 
+const subjectStorageKey = 'examplicity:subject';
+const examStorageKey = (subjectId: SubjectId) => `examplicity:exam:${subjectId}`;
+const readPreference = (key: string) => {
+  try { return window.localStorage.getItem(key); } catch { return null; }
+};
+const writePreference = (key: string, value: string) => {
+  try { window.localStorage.setItem(key, value); } catch { /* Preferences remain session-only. */ }
+};
+
 export default function Home() {
+  const [subjectId, setSubjectId] = useState<SubjectId>(subjects[0].id);
   const [exam, setExam] = useState<ExamCode>('0478');
   const [activeLab, setActiveLab] = useState<Activity | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [downloadStatus, setDownloadStatus] = useState<'idle' | 'preparing' | 'complete' | 'error'>('idle');
+  const subject = subjects.find((item) => item.id === subjectId) ?? subjects[0];
   const groupedLabs = useMemo(() => {
-    const visibleLabs = labs.filter((lab) => lab.exams.includes(exam));
+    const visibleLabs = labs.filter((lab) => lab.subject === subject.id && lab.exams.includes(exam));
 
     return visibleLabs.reduce<Map<string, typeof labs>>((groups, lab) => {
       const topicLabs = groups.get(lab.topic) ?? [];
       groups.set(lab.topic, [...topicLabs, lab]);
       return groups;
     }, new Map());
-  }, [exam]);
+  }, [exam, subject.id]);
+
+  useEffect(() => {
+    const savedSubjectId = readPreference(subjectStorageKey);
+    const savedSubject = subjects.find((item) => item.id === savedSubjectId) ?? subjects[0];
+    const savedExam = readPreference(examStorageKey(savedSubject.id)) as ExamCode | null;
+    const nextExam = savedExam && savedSubject.exams.includes(savedExam) ? savedExam : savedSubject.exams[0];
+    const restorePreferences = window.setTimeout(() => {
+      setSubjectId(savedSubject.id);
+      setExam(nextExam);
+    }, 0);
+    return () => window.clearTimeout(restorePreferences);
+  }, []);
 
   useEffect(() => {
     const syncLabFromUrl = () => {
       const slug = new URLSearchParams(window.location.search).get('lab');
-      const lab = slug === translator.slug
-        ? translator
-        : labs.find((item) => item.slug === slug) ?? null;
+      const lab = labs.find((item) => item.slug === slug) ?? null;
       setActiveLab(lab);
       setIsLoading(Boolean(lab));
     };
@@ -54,6 +75,20 @@ export default function Home() {
     document.body.style.overflow = activeLab ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
   }, [activeLab]);
+
+  const chooseExam = (code: ExamCode) => {
+    setExam(code);
+    writePreference(examStorageKey(subject.id), code);
+  };
+
+  const chooseSubject = (nextSubjectId: SubjectId) => {
+    const nextSubject = subjects.find((item) => item.id === nextSubjectId);
+    if (!nextSubject) return;
+    const savedExam = readPreference(examStorageKey(nextSubject.id)) as ExamCode | null;
+    setSubjectId(nextSubjectId);
+    setExam(savedExam && nextSubject.exams.includes(savedExam) ? savedExam : nextSubject.exams[0]);
+    writePreference(subjectStorageKey, nextSubjectId);
+  };
 
   const openLab = (lab: Activity) => {
     setActiveLab(lab);
@@ -172,11 +207,7 @@ export default function Home() {
           plicity
         </a>
         <div className="header-actions">
-          <span className="header-note">Cambridge Computer Science</span>
-          <button className="translator-button" type="button" onClick={() => openLab(translator)}>
-            <span>Pseudocode ↔ Python</span>
-            <i aria-hidden="true">↗</i>
-          </button>
+          <span className="header-note">{subject.headerLabel}</span>
         </div>
       </header>
 
@@ -187,25 +218,43 @@ export default function Home() {
             <span className="hero-line">ideas click.</span>
           </h1>
           <p className="intro">
-            Computer Science labs that turn theory into something you can see,
+            {subject.name} labs that turn theory into something you can see,
             change and understand.
           </p>
         </div>
 
-        <div className="exam-picker">
-          <span className="picker-label">Choose syllabus</span>
-          <div className="segmented-control" role="group" aria-label="Choose an exam syllabus">
-            {exams.map((code) => (
-              <button
-                className={exam === code ? 'is-active' : ''}
-                key={code}
-                onClick={() => setExam(code)}
-                type="button"
-                aria-pressed={exam === code}
+        <div className="learning-picker">
+          <div className="subject-picker">
+            <label className="picker-label" htmlFor="subject-select">Choose subject</label>
+            <div className="subject-select-shell">
+              <select
+                id="subject-select"
+                onChange={(event) => chooseSubject(event.target.value as SubjectId)}
+                value={subjectId}
               >
-                {code}
-              </button>
-            ))}
+                {subjects.map((item) => (
+                  <option key={item.id} value={item.id}>{item.name}</option>
+                ))}
+                <option disabled>More subjects — Coming soon</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="exam-picker">
+            <span className="picker-label">Choose syllabus</span>
+            <div className="segmented-control" role="group" aria-label={`Choose a ${subject.name} exam syllabus`}>
+              {subject.exams.map((code) => (
+                <button
+                  className={exam === code ? 'is-active' : ''}
+                  key={code}
+                  onClick={() => chooseExam(code)}
+                  type="button"
+                  aria-pressed={exam === code}
+                >
+                  {code}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </section>

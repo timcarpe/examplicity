@@ -170,6 +170,16 @@ function IconDrawing({ slug }: LabIconProps) {
           <circle cx="494" cy="78" r="9" />
         </>
       );
+    case 'translator':
+      return (
+        <>
+          <rect height="190" rx="22" width="220" x="58" y="82" />
+          <rect className="tone-one" height="190" rx="22" width="220" x="362" y="82" />
+          <path className="secondary-line" d="M92 122h88m-88 36h128m-128 36h106m-106 36h142M396 122h76m-76 36h142m-142 36h112m-112 36h136" />
+          <path d="m126 142-24 20 24 20m64-40 24 20-24 20M428 142l-24 20 24 20m64-40 24 20-24 20" />
+          <path className="is-solid tone-one" d="M302 150h36v-22l42 52-42 52v-22h-36v22l-42-52 42-52z" />
+        </>
+      );
     default:
       return <path d="M160 180h320M320 88v184M210 116l220 128m0-128L210 244" />;
   }
