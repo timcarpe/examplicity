@@ -26,9 +26,9 @@ function IconDrawing({ slug }: LabIconProps) {
           ))}
           <path className="secondary-line" d="M110 214h306" />
           {[110, 230, 290, 410].map((x) => <circle className="is-solid" cx={x} cy="214" key={x} r="6" />)}
-          <path d="M440 214h58m-20-18 20 18-20 18" />
-          <rect height="62" rx="16" width="92" x="498" y="183" />
-          <text fill="currentColor" fontFamily="ui-monospace, SFMono-Regular, Menlo, monospace" fontSize="25" fontWeight="800" stroke="none" textAnchor="middle" x="544" y="223">182</text>
+          <path d="M438 214h42m-18-16 18 16-18 16" />
+          <rect height="62" rx="16" width="86" x="500" y="183" />
+          <text fill="currentColor" fontFamily="ui-monospace, SFMono-Regular, Menlo, monospace" fontSize="25" fontWeight="800" stroke="none" textAnchor="middle" x="543" y="223">182</text>
         </>
       );
     case 'bitmap-compression':
@@ -36,12 +36,12 @@ function IconDrawing({ slug }: LabIconProps) {
         <>
           <g className="thin-lines">
             {[0, 1, 2, 3].map((row) => [0, 1, 2, 3].map((column) => (
-              <rect className={(row + column) % 3 === 0 ? 'is-solid' : ''} height="40" key={`${row}-${column}`} width="40" x={92 + column * 42} y={86 + row * 42} />
+              <rect className={row === 1 && column === 2 ? 'is-solid tone-two' : (row + column) % 3 === 0 ? 'is-solid' : ''} height="40" key={`${row}-${column}`} width="40" x={92 + column * 42} y={86 + row * 42} />
             )))}
           </g>
           <path d="M298 170h74m-22-22 22 22-22 22" />
           <rect height="38" rx="12" width="170" x="398" y="102" />
-          <rect className="is-solid tone-two" height="38" rx="12" width="122" x="398" y="160" />
+          <rect className="is-solid" height="38" rx="12" width="122" x="398" y="160" />
           <rect height="38" rx="12" width="82" x="398" y="218" />
         </>
       );
@@ -82,7 +82,7 @@ function IconDrawing({ slug }: LabIconProps) {
           {[0, 1, 2, 3, 4, 5, 6, 7].map((cell) => (
             <circle className={[0, 2, 3, 6].includes(cell) ? 'is-solid' : ''} cx={98 + cell * 56} cy="138" key={cell} r="11" />
           ))}
-          <path d="M518 138h64m-20-18 20 18-20 18" />
+          <path d="M530 138h52m-18-16 18 16-18 16" />
           <path className="is-solid tone-one" d="m322 74 8 18 20-6-11 18 17 10-20 4 2 21-16-14-16 14 2-21-20-4 17-10-11-18 20 6z" />
           <path d="M542 202v34c0 42-30 62-76 62H134c-46 0-68-20-68-58m0 0 22 24m-22-24-22 24" />
         </>
@@ -126,21 +126,25 @@ function IconDrawing({ slug }: LabIconProps) {
     case 'fetch-decode-execute':
       return (
         <>
-          <circle cx="142" cy="166" r="66" />
-          <circle cx="320" cy="166" r="66" />
-          <circle cx="498" cy="166" r="66" />
-          <path d="M208 166h46m-18-16 18 16-18 16M386 166h46m-18-16 18 16-18 16" />
+          <text fill="currentColor" fontFamily="ui-monospace, SFMono-Regular, Menlo, monospace" fontSize="14" fontWeight="800" letterSpacing="1.5" stroke="none" textAnchor="middle" x="126" y="84">FETCH</text>
+          <text fill="currentColor" fontFamily="ui-monospace, SFMono-Regular, Menlo, monospace" fontSize="14" fontWeight="800" letterSpacing="1.5" stroke="none" textAnchor="middle" x="320" y="84">DECODE</text>
+          <text fill="currentColor" fontFamily="ui-monospace, SFMono-Regular, Menlo, monospace" fontSize="14" fontWeight="800" letterSpacing="1.5" stroke="none" textAnchor="middle" x="514" y="84">EXECUTE</text>
+          {[60, 254, 448].map((x) => <rect height="132" key={x} rx="18" width="132" x={x} y="104" />)}
           <g className="thin-lines">
-            <rect height="72" rx="9" width="76" x="104" y="128" />
-            <path d="M104 152h76M104 176h76" />
+            <rect height="76" rx="9" width="88" x="82" y="130" />
+            <path d="M82 155h88M82 181h88" />
           </g>
-          <rect className="is-solid" height="20" rx="3" width="66" x="109" y="154" />
-          <path className="tone-four" d="M292 140h56M292 140l28 28m28-28-28 28m0 0v30m-24 0h48" />
-          <path d="M470 137h56l18 29-18 29h-56l14-29zM507 149v34m-17-17h34" />
-          <text fill="currentColor" fontFamily="ui-monospace, SFMono-Regular, Menlo, monospace" fontSize="13" fontWeight="800" letterSpacing="2" stroke="none" textAnchor="middle" x="142" y="262">FETCH</text>
-          <text fill="currentColor" fontFamily="ui-monospace, SFMono-Regular, Menlo, monospace" fontSize="13" fontWeight="800" letterSpacing="2" stroke="none" textAnchor="middle" x="320" y="262">DECODE</text>
-          <text fill="currentColor" fontFamily="ui-monospace, SFMono-Regular, Menlo, monospace" fontSize="13" fontWeight="800" letterSpacing="2" stroke="none" textAnchor="middle" x="498" y="262">EXECUTE</text>
-          <path className="secondary-line" d="M514 286c-68 42-316 42-388 0m0 0 29-3m-29 3 16 24" />
+          <rect className="is-solid" height="20" rx="3" width="78" x="87" y="158" />
+          <path d="M208 170h30m-14-13 14 13-14 13M402 170h30m-14-13 14 13-14 13" />
+          <rect height="34" rx="8" width="92" x="274" y="126" />
+          <rect className="is-solid tone-four" height="26" rx="5" width="42" x="278" y="130" />
+          <path d="M320 126v34m0 0-32 36m32-36 32 36M278 196h20m44 0h20" />
+          <circle className="is-solid" cx="288" cy="196" r="6" />
+          <circle className="is-solid" cx="352" cy="196" r="6" />
+          <path d="M466 132h58l20 38-20 38h-58l16-38zM507 150v40m-20-20h40" />
+          <path d="M546 170h14" />
+          <circle className="is-solid" cx="566" cy="170" r="7" />
+          <path className="secondary-line" d="M550 272c-102 42-358 42-460 0m0 0 27-2m-27 2 14 23" />
         </>
       );
     case 'assembly':
@@ -149,7 +153,7 @@ function IconDrawing({ slug }: LabIconProps) {
           <rect height="42" rx="10" width="196" x="76" y="84" />
           <rect className="is-solid tone-one" height="42" rx="10" width="154" x="76" y="146" />
           <rect height="42" rx="10" width="176" x="76" y="208" />
-          <path d="M272 167h80m-24-22 24 22-24 22" />
+          <path d="M288 167h64m-22-20 22 20-22 20" />
           <rect height="178" rx="28" width="154" x="410" y="80" />
           <path d="M448 128h78m-78 44h78m-78 44h48" />
           <circle className="is-solid" cx="524" cy="216" r="12" />
