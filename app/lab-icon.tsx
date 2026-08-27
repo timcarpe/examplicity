@@ -8,27 +8,21 @@ function IconDrawing({ slug }: LabIconProps) {
       return (
         <>
           <g className="thin-lines">
-            <rect height="74" rx="12" width="480" x="80" y="112" />
-            {[1, 2, 3, 4, 5, 6, 7].map((cell) => <path d={`M${80 + cell * 60} 112v74`} key={cell} />)}
+            {[
+              { bits: '10110110', y: 70 },
+              { bits: '00101101', y: 132 },
+              { bits: '11100011', y: 222 },
+            ].map(({ bits, y }, row) => [...bits].map((bit, column) => {
+              const isAccent = row === 2 && column === 2;
+              return (
+                <g className={isAccent ? 'tone-one' : undefined} key={`${row}-${column}`}>
+                  <rect className={isAccent ? 'is-solid' : undefined} height="42" rx="8" width="46" x={122 + column * 50} y={y} />
+                  <text fill={isAccent ? 'var(--paper)' : 'currentColor'} fontFamily="ui-monospace, SFMono-Regular, Menlo, monospace" fontSize="22" fontWeight="800" stroke="none" textAnchor="middle" x={145 + column * 50} y={y + 29}>{bit}</text>
+                </g>
+              );
+            }))}
           </g>
-          {['128', '64', '32', '16', '8', '4', '2', '1'].map((value, column) => (
-            <text fontFamily="ui-monospace, SFMono-Regular, Menlo, monospace" fontSize="14" fontWeight="700" key={value} stroke="none" textAnchor="middle" x={110 + column * 60} y="94">
-              {value}
-            </text>
-          ))}
-          {[1, 0, 1, 1, 0, 1, 1, 0].map((bit, column) => (
-            <g className={column === 2 ? 'tone-one' : undefined} key={column}>
-              {column === 2 && <rect className="is-solid" height="62" rx="7" width="48" x="206" y="118" />}
-              <text fill={column === 2 ? 'var(--paper)' : 'currentColor'} fontFamily="ui-monospace, SFMono-Regular, Menlo, monospace" fontSize="28" fontWeight="800" stroke="none" textAnchor="middle" x={110 + column * 60} y="159">
-                {bit}
-              </text>
-            </g>
-          ))}
-          <path className="secondary-line" d="M110 214h306" />
-          {[110, 230, 290, 410].map((x) => <circle className="is-solid" cx={x} cy="214" key={x} r="6" />)}
-          <path d="M438 214h42m-18-16 18 16-18 16" />
-          <rect height="62" rx="16" width="86" x="500" y="183" />
-          <text fill="currentColor" fontFamily="ui-monospace, SFMono-Regular, Menlo, monospace" fontSize="25" fontWeight="800" stroke="none" textAnchor="middle" x="543" y="223">182</text>
+          <path d="M82 153h24m-12-12v24M104 194h432" />
         </>
       );
     case 'bitmap-compression':
@@ -126,25 +120,20 @@ function IconDrawing({ slug }: LabIconProps) {
     case 'fetch-decode-execute':
       return (
         <>
-          <text fill="currentColor" fontFamily="ui-monospace, SFMono-Regular, Menlo, monospace" fontSize="14" fontWeight="800" letterSpacing="1.5" stroke="none" textAnchor="middle" x="126" y="84">FETCH</text>
-          <text fill="currentColor" fontFamily="ui-monospace, SFMono-Regular, Menlo, monospace" fontSize="14" fontWeight="800" letterSpacing="1.5" stroke="none" textAnchor="middle" x="320" y="84">DECODE</text>
-          <text fill="currentColor" fontFamily="ui-monospace, SFMono-Regular, Menlo, monospace" fontSize="14" fontWeight="800" letterSpacing="1.5" stroke="none" textAnchor="middle" x="514" y="84">EXECUTE</text>
-          {[60, 254, 448].map((x) => <rect height="132" key={x} rx="18" width="132" x={x} y="104" />)}
           <g className="thin-lines">
-            <rect height="76" rx="9" width="88" x="82" y="130" />
-            <path d="M82 155h88M82 181h88" />
+            <rect height="88" rx="12" width="128" x="64" y="78" />
+            <path d="M64 107h128M64 137h128" />
           </g>
-          <rect className="is-solid" height="20" rx="3" width="78" x="87" y="158" />
-          <path d="M208 170h30m-14-13 14 13-14 13M402 170h30m-14-13 14 13-14 13" />
-          <rect height="34" rx="8" width="92" x="274" y="126" />
-          <rect className="is-solid tone-four" height="26" rx="5" width="42" x="278" y="130" />
-          <path d="M320 126v34m0 0-32 36m32-36 32 36M278 196h20m44 0h20" />
-          <circle className="is-solid" cx="288" cy="196" r="6" />
-          <circle className="is-solid" cx="352" cy="196" r="6" />
-          <path d="M466 132h58l20 38-20 38h-58l16-38zM507 150v40m-20-20h40" />
-          <path d="M546 170h14" />
-          <circle className="is-solid" cx="566" cy="170" r="7" />
-          <path className="secondary-line" d="M550 272c-102 42-358 42-460 0m0 0 27-2m-27 2 14 23" />
+          <rect className="is-solid" height="23" rx="4" width="116" x="70" y="110" />
+          <rect height="38" rx="9" width="112" x="432" y="78" />
+          <rect className="is-solid tone-four" height="30" rx="6" width="52" x="436" y="82" />
+          <path d="M488 78v38m0 0-38 40m38-40 38 40M440 156h20m56 0h20" />
+          <circle className="is-solid" cx="450" cy="156" r="6" />
+          <circle className="is-solid" cx="526" cy="156" r="6" />
+          <path d="M268 226h78l25 40-25 40h-78l20-40zM326 244v44m-22-22h44" />
+          <path d="M373 266h20" />
+          <circle className="is-solid" cx="402" cy="266" r="8" />
+          <path d="M216 112c60-42 144-42 204 0m0 0-25-3m25 3-14-22M482 184c-10 31-38 56-72 69m0 0 13-22m-13 22 24 8M248 266c-46-10-84-39-100-82m0 0-5 25m5-25 22 13" />
         </>
       );
     case 'assembly':
