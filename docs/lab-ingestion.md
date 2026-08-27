@@ -53,7 +53,10 @@ Keep those responsibilities separate.
 
 The host owns the brand, “Back to labs”, GitHub, and license links. The host's
 canonical lab URL is `/?lab=<slug>`; the lab should not duplicate those links or
-rewrite that outer URL itself.
+rewrite that outer URL itself. The host's Download action packages a copy of the
+source document with inline standalone Examplicity header/footer chrome and an
+absolute canonical lab link. That generated chrome belongs only to the downloaded
+artifact; do not add it to the source document or its iframe rendering.
 
 ## 3. Manifest registration
 

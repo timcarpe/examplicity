@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState, type PointerEvent as ReactPointerEvent } from 'react';
 import Link from 'next/link';
 import { exams, labs, translator, type Activity, type ExamCode } from './labs';
+import { createStandaloneLabHtml } from './lab-download';
 import { LabIcon } from './lab-icon';
 
 const movePreview = (event: ReactPointerEvent<HTMLDivElement>) => {
@@ -23,6 +24,7 @@ export default function Home() {
   const [exam, setExam] = useState<ExamCode>('0478');
   const [activeLab, setActiveLab] = useState<Activity | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [downloadStatus, setDownloadStatus] = useState<'idle' | 'preparing' | 'complete' | 'error'>('idle');
   const groupedLabs = useMemo(() => {
     const visibleLabs = labs.filter((lab) => lab.exams.includes(exam));
 
@@ -56,12 +58,50 @@ export default function Home() {
   const openLab = (lab: Activity) => {
     setActiveLab(lab);
     setIsLoading(true);
+    setDownloadStatus('idle');
     window.history.pushState({ lab: lab.slug }, '', `?lab=${lab.slug}`);
   };
 
   const closeLab = () => {
     setActiveLab(null);
     setIsLoading(false);
+    setDownloadStatus('idle');
+  };
+
+  const downloadLab = async () => {
+    if (!activeLab || downloadStatus === 'preparing') return;
+
+    setDownloadStatus('preparing');
+
+    try {
+      const response = await fetch(activeLab.href, { cache: 'no-store' });
+      if (!response.ok) throw new Error(`Lab download failed with status ${response.status}.`);
+
+      const source = await response.text();
+      const siteHomeUrl = new URL(window.location.href);
+      siteHomeUrl.search = '';
+      siteHomeUrl.hash = '';
+      const liveLabUrl = new URL(siteHomeUrl);
+      liveLabUrl.searchParams.set('lab', activeLab.slug);
+      const html = createStandaloneLabHtml({
+        source,
+        title: activeLab.title,
+        siteHomeUrl: siteHomeUrl.href,
+        liveLabUrl: liveLabUrl.href,
+      });
+      const objectUrl = URL.createObjectURL(new Blob([html], { type: 'text/html;charset=utf-8' }));
+      const link = document.createElement('a');
+      link.href = objectUrl;
+      link.download = `examplicity-${activeLab.slug}.html`;
+      document.body.append(link);
+      link.click();
+      link.remove();
+      window.setTimeout(() => URL.revokeObjectURL(objectUrl), 0);
+      setDownloadStatus('complete');
+    } catch (error) {
+      console.error('Unable to prepare the lab download.', error);
+      setDownloadStatus('error');
+    }
   };
 
   if (activeLab) {
@@ -75,7 +115,24 @@ export default function Home() {
             <span className="tone-four">m</span>
             plicity
           </Link>
-          <Link className="lab-shell-home" href="/" onClick={closeLab}>Back to labs</Link>
+          <div className="lab-shell-actions">
+            <button
+              aria-busy={downloadStatus === 'preparing'}
+              aria-label={`Download ${activeLab.title} as a standalone HTML file`}
+              className="lab-shell-download"
+              disabled={downloadStatus === 'preparing'}
+              onClick={downloadLab}
+              type="button"
+            >
+              {downloadStatus === 'preparing' ? 'Preparing…' : 'Download'}
+            </button>
+            <Link className="lab-shell-home" href="/" onClick={closeLab}>Back to labs</Link>
+            <span className="lab-download-status" role="status" aria-live="polite">
+              {downloadStatus === 'preparing' && 'Preparing the standalone HTML file.'}
+              {downloadStatus === 'complete' && 'The standalone HTML file is ready.'}
+              {downloadStatus === 'error' && 'The download could not be prepared. Try again.'}
+            </span>
+          </div>
         </header>
         {isLoading && (
           <section className="loading-screen" role="status" aria-live="polite">
