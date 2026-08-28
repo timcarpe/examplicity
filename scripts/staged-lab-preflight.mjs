@@ -1,12 +1,10 @@
 import { access, readFile } from 'node:fs/promises';
-import { createHash } from 'node:crypto';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const siteRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const [stagedPath] = process.argv.slice(2);
 const errors = [];
-let verifiedArtifact = null;
 
 const fail = (message) => errors.push(message);
 const normalizeText = (value) => value
@@ -120,6 +118,9 @@ if (!stagedPath || process.argv.slice(2).length !== 1) {
     }
     if (typeof manifest.topic !== 'string' || !manifest.topic.trim()) fail('manifest.json needs a non-empty topic.');
     if (typeof manifest.format !== 'string' || !manifest.format.trim()) fail('manifest.json needs a non-empty format.');
+    if (typeof manifest.criticalConcept !== 'string' || !manifest.criticalConcept.trim()) {
+      fail('manifest.json needs a non-empty criticalConcept.');
+    }
     if (report.decision !== 'pass') fail('qa/report.json decision must be "pass".');
     if (report.slug !== slug) {
       fail(`qa/report.json slug (${report.slug}) does not match manifest slug (${slug}).`);
@@ -133,13 +134,6 @@ if (!stagedPath || process.argv.slice(2).length !== 1) {
       : path.join(packageRoot, 'dist', 'invalid-slug.html');
     const artifact = await readRequired(artifactPath, 'dist artifact');
     if (artifact) {
-      const actualHash = createHash('sha256').update(artifact).digest('hex');
-      if (!/^[a-f0-9]{64}$/.test(report.artifactSha256 ?? '')) {
-        fail('qa/report.json artifactSha256 must be a lowercase SHA-256 hash.');
-      } else if (report.artifactSha256 !== actualHash) {
-        fail(`Artifact SHA-256 mismatch: report has ${report.artifactSha256}, artifact is ${actualHash}.`);
-      }
-
       if (!/^<!doctype html>/i.test(artifact) || !/<html\b/i.test(artifact) || !/<\/html>\s*$/i.test(artifact)
         || !/<head\b/i.test(artifact) || !/<\/head>/i.test(artifact) || !/<body\b/i.test(artifact) || !/<\/body>/i.test(artifact)) {
         fail('dist artifact must be a complete HTML document.');
@@ -158,7 +152,6 @@ if (!stagedPath || process.argv.slice(2).length !== 1) {
       if (/<(?:script|link|img|iframe|audio|video|source)\b[^>]*(?:\bsrc|\bhref)\s*=/i.test(artifact)) {
         fail('dist artifact must not depend on external resource tags.');
       }
-      verifiedArtifact = { bytes: Buffer.byteLength(artifact, 'utf8'), hash: actualHash };
     }
   }
 }
@@ -171,5 +164,4 @@ if (errors.length > 0) {
   process.exitCode = 1;
 } else {
   console.log(`Staged-lab preflight passed: ${path.resolve(process.cwd(), stagedPath)}`);
-  console.log(`Source artifact: ${verifiedArtifact.bytes.toLocaleString('en-US')} bytes, SHA-256 ${verifiedArtifact.hash}`);
 }

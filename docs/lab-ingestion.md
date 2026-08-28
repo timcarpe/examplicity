@@ -16,16 +16,25 @@ npm run labs:preflight -- "../Lab Creation/Staged Labs/<slug>"
 
 It never copies or modifies the lab. It checks `manifest.json`,
 `qa/report.json`, and `dist/<slug>.html`; passing QA; matching slugs/titles;
-allowed subject and syllabus codes; the exact staged SHA-256; complete
-monolithic HTML; and the current catalogue, iframe/download, frame, and
-style-sync architecture signatures. A passing result prints the upstream
-artifact byte count and SHA-256. Record that upstream approved hash and the Lab
-Creation commit before copying. If a website signature fails, stop and update
-this contract deliberately; do not weaken the preflight.
+allowed subject and syllabus codes; complete monolithic HTML; and the current
+catalogue, iframe/download, frame, and style-sync architecture signatures. It
+is a focused sanity check, not a second QA system. Record the Lab Creation
+commit and staged package path before copying. The website Git commit that adds
+the ledger entry is the integration record. If a website signature fails, stop
+and update this contract deliberately; do not weaken the preflight.
 
 - [ ] Confirm that the source is a **lab**: it teaches one interactive concept and
   belongs in the catalogue. Record its syllabus coverage, topic, short card
   description, and the interaction the card should depict.
+- [ ] Review the package at its recorded Lab Creation commit. Preserve its
+  critical syllabus outcome, real learner action and visible consequence,
+  primary reference relationship, deliberate non-goals/abstractions, distinct
+  gap from existing labs, and concise title/copy direction. These are found in
+  the manifest, QA report, and the staged research brief/evidence where
+  supplied; the current rollout is summarized in Lab Creation's
+  `docs/staged-lab-goals.md` at that commit. Website adaptation may change the
+  shell, taxonomy, card copy, or card SVG, but must not alter those learning
+  relationships. Stop for review if it would.
 - [ ] Preserve the source as one document at
   `public/labs/<slug>.html`. Current labs such as
   `public/labs/binary-numbers.html`, `public/labs/fetch-decode-execute.html`,
@@ -177,10 +186,10 @@ the default drawing for an approved lab.
   `app/lab-icon.tsx` case. Confirm the HTML links `/labs/lab-frame.css` once
   before sync and contains no duplicate Examplicity shell markup.
 - [ ] Run `npm run labs:styles` after the frame link is added. Its embedded
-  output is a derived website artifact, so calculate its SHA-256 and record it
-  separately from the upstream approved staged SHA-256 in
-  `docs/lab-imports.json`. Each ledger record also needs the upstream Lab
-  Creation commit/package path, website path, import date, and rollout batch.
+  output is a derived website artifact; do not calculate or record hashes for
+  it. Each ledger record needs the upstream Lab Creation commit/package path,
+  website path, import date, and rollout batch. The website Git commit that
+  contains the ledger entry provides the integration provenance.
 - [ ] Update `CHANGELOG.md` for the approved import batch only, naming the
   learner-facing labs and any approved topic addition. Do not describe planned
   labs as released.
@@ -192,14 +201,14 @@ the default drawing for an approved lab.
   git diff --check
   ```
 
-- [ ] With `npm run dev`, test the selected subject and exam controls and
-  confirm the new card appears only for its `subject`/`exams`, under the exact
-  `topic`, with the intended `format` and SVG. Open it by clicking the card and
-  directly at `/?lab=<slug>`; verify the loading screen resolves and the iframe
-  loads the intended HTML.
-- [ ] Re-QA the derived website artifact: exercise the lab's main controls,
-  reset/empty/error paths, keyboard paths, mobile layout, shared frame/style,
-  and shell links. Test Download and check the browser console for errors.
+- [ ] With `npm run dev`, confirm the selected subject and exam controls show
+  the new card under the exact `topic`, with the intended `format` and SVG.
+  Open it by clicking the card or directly at `/?lab=<slug>`; verify the
+  loading screen resolves and the iframe loads the intended HTML.
+- [ ] Browser-smoke the integrated document: carry out its primary learner
+  action, observe its central consequence, and confirm one keyboard path and
+  narrow layout. Check Download only when the imported document or download
+  shell changes. This is not a combinatorial or cross-browser test programme.
 - [ ] If the lab cannot remain monolithic, needs shared runtime code, changes
   the host/iframe contract, adds dependencies, or requires a new exam/topic
   convention, stop and request approval for that specific architecture change.
@@ -208,17 +217,18 @@ the default drawing for an approved lab.
 
 Submit the proposal/source for content and syllabus review before integration,
 then submit the bounded integration diff for review with evidence of the
-validation checklist above. Approval means the reviewer has confirmed:
+focused validation checklist above. Approval means the reviewer has confirmed:
 
 1. the interaction teaches the stated Cambridge topic and exam coverage;
 2. the HTML remains self-contained and the shell/lab boundary is respected;
 3. the catalogue paths, subject/topic/format/exam values, accessibility
    behavior, and mechanics-based card SVG are correct; and
-4. preflight, lint, build, direct iframe/query loading, Download, and derived
-   website-artifact interaction checks pass.
+4. preflight, lint, build, route/iframe loading, style synchronization, and
+   the primary browser smoke pass.
 
 Do not merge or publish when any item is unresolved. Record the exact blocker
 or requested architecture decision instead of silently changing the contract.
 If a completed batch needs rollback, revert its public HTML, `Lab` entry, icon
 case, import-ledger record, and changelog entry together. Never alter the
-upstream staged package during rollback.
+upstream staged package during rollback; use one Git revert for the bounded
+website batch.

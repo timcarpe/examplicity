@@ -1,30 +1,38 @@
 # Staged-lab rollout plan
 
-This is a plan, not an import authorization. No rollout batch is approved yet.
-The twelve packages remain in `Lab Creation/Staged Labs` until their individual
-topic/format choices and each batch are approved. No registry, icon, public lab,
-or deployment changes belong to this document.
+This is a plan, not an import authorization. The twelve packages remain in
+`Lab Creation/Staged Labs` until their individual taxonomy and batch are
+approved. No registry, icon, public lab, or deployment changes are made by
+this document.
 
-## Current intake baseline
+## Baseline
 
 - Provider repository: `Lab Creation`
-- Verified staged commit: `e941b35`
-- Eligible packages: 12 of 12 passed the website preflight
+- Planning baseline commit: `d58c255`
+- Eligible packages: 12 staged packages
 - Website import ledger: empty
 
-The commit identifies the present planning baseline. Each future batch must
-preflight its packages again and record the actual upstream commit used; this
-baseline is not permission to import or deploy them.
+The baseline identifies the package set used for planning; the actual Lab
+Creation commit is recorded only when an approved package is integrated.
 
-## Gate used for every batch
+## Gate for each batch
 
-Run website preflight against the exact staged package; record its upstream
-commit and approved source hash; obtain content/taxonomy approval; then import
-only the compiled HTML, `Lab` entry, and icon. Synchronize the shared frame and
-calculate the derived integrated hash (it is expected to differ from the
-upstream approved hash), complete the import ledger, update the batch changelog,
-and run lint, build, diff, browser, Download, exam-filter, frame/style and
-responsive checks. Roll back as one revert if a site integration fails.
+1. Run the website preflight on the proposed package and review it at the
+   chosen Lab Creation commit.
+2. Confirm the website adaptation preserves its critical concept, syllabus
+   outcome, real learner action, visible consequence, primary reference
+   relationship, abstractions/non-goals, existing-lab gap and plain title/copy
+   direction. Stop for review if it cannot.
+3. Approve the exact topic, format, card copy and mechanics-based SVG; then
+   import only the compiled HTML, catalogue entry and icon.
+4. Embed the shared frame, record the source repository/commit/path and batch
+   in the ledger, and update the changelog.
+5. Run lint, build and diff sanity checks, plus a browser smoke of the primary
+   interaction and catalogue filter. Check Download only if that boundary was
+   changed.
+
+Git commits supply provenance and rollback. We do not add artifact hashes,
+byte counts or a separate verification trail.
 
 ## Phased order
 
@@ -40,17 +48,15 @@ responsive checks. Roll back as one revert if a site integration fails.
 
 `Web & internet`, `Databases & data modelling`, `Artificial intelligence`,
 `Logic & automated systems`, and `Security & distributed systems` are proposed
-taxonomy labels, not established site values. Existing-topic fit is intentionally
-limited to the two clear mappings above; forcing the rest into the four current
-topics would make catalogue grouping less honest.
+taxonomy labels, not established site values. Existing-topic fit is limited to
+the two clear mappings above; forcing the rest into current topics would make
+catalogue grouping less honest.
 
-## Canary success and stop conditions
+## Canary stop conditions
 
-Web Page Retrieval is the canary because it is one bounded 0478 lab with a
-clear interactive loop and a proposed topic that can later receive Cookies. It
-is ready to import only after the site-level checks in the batch gate pass.
-
-Stop the rollout and request a decision if the canary exposes a shared-frame
-layout issue, download packaging issue, incorrect syllabus filtering, an
-artifact hash/provenance discrepancy, or a taxonomy disagreement. Do not work
-around those results by changing staged content during website integration.
+Web Page Retrieval is the canary because it is a bounded 0478 experiment with
+a clear learner-controlled loop and a proposed topic that can later receive
+Cookies. Stop and request a decision if the canary changes its learning
+relationship in the shared frame, exposes a host/frame layout issue, fails its
+subject filtering, or reveals a taxonomy disagreement. Do not work around that
+by changing the staged content during website integration.
