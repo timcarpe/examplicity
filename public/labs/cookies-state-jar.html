@@ -1,0 +1,749 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Session and Persistent Cookies</title>
+  <style data-lab-source>
+:root {
+  --canvas: #f2f4f6;
+  --surface: #ffffff;
+  --ink: #1d2730;
+  --muted: #687681;
+  --line: #d7dfe5;
+  --line-strong: #9da9b2;
+  --accent: #2865d8;
+  --accent-dark: #1f56bb;
+  --accent-soft: #edf3ff;
+  --good: #247349;
+  --good-soft: #edf8f1;
+  --warn: #9a5a13;
+  --warn-soft: #fff7e8;
+  --focus: #173b52;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--canvas); color: var(--ink); font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+button, input { font: inherit; }
+button { min-height: 40px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); cursor: pointer; font-size: 12px; font-weight: 750; padding: 0 13px; }
+button:hover:not(:disabled) { border-color: var(--line-strong); }
+button:disabled { cursor: not-allowed; opacity: .45; }
+button.primary { border-color: var(--accent); background: var(--accent); color: #fff; }
+button.primary:hover:not(:disabled) { background: var(--accent-dark); }
+button.quiet { color: var(--muted); }
+button:focus-visible, input:focus-visible + span { outline: 3px solid var(--focus); outline-offset: 3px; }
+
+main { width: min(1240px, calc(100% - 24px)); margin: 18px auto 42px; }
+h1, h2, p { margin-top: 0; }
+h1 { margin-bottom: 5px; font-size: clamp(28px, 4vw, 38px); font-weight: 650; letter-spacing: -.035em; }
+h2 { margin-bottom: 4px; font-size: 16px; letter-spacing: -.015em; }
+.eyebrow, .section-label { margin-bottom: 5px; color: var(--muted); font-size: 9px; font-weight: 850; letter-spacing: .09em; text-transform: uppercase; }
+.lede { max-width: 760px; margin-bottom: 14px; color: var(--muted); font-size: 13px; line-height: 1.5; }
+.panel { border: 1px solid var(--line); border-radius: 12px; background: var(--surface); box-shadow: 0 1px 2px rgba(29, 39, 48, .04); }
+
+.experiment { display: grid; grid-template-columns: minmax(210px, .8fr) minmax(420px, 1.35fr) auto; gap: 18px; align-items: center; padding: 12px; }
+.experiment-copy p:last-child { margin-bottom: 0; color: var(--muted); font-size: 10px; line-height: 1.4; }
+.choice-groups { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+fieldset { min-width: 0; margin: 0; border: 0; padding: 0; }
+fieldset:disabled { opacity: .48; }
+legend { margin-bottom: 6px; color: var(--muted); font-size: 9px; font-weight: 800; }
+.choice-row { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.choice-row label { min-width: 0; cursor: pointer; }
+.choice-row input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.choice-row label > span { display: flex; min-height: 38px; align-items: center; justify-content: center; gap: 7px; border: 1px solid var(--line); border-radius: 8px; background: #fafbfc; color: #4f5e68; font-size: 10px; font-weight: 800; padding: 7px 9px; }
+.choice-row input:checked + span { border-color: var(--accent); background: var(--accent-soft); color: #204f9f; box-shadow: inset 0 0 0 1px var(--accent); }
+.theme-swatch { width: 15px; height: 15px; flex: 0 0 auto; border: 2px solid #fff; border-radius: 50%; box-shadow: 0 0 0 1px #b8c2ca; }
+.ocean-swatch { background: #276b89; }
+.sunrise-swatch { background: #d98753; }
+.actions { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+
+.evidence { display: grid; grid-template-columns: 180px 1fr; gap: 14px; align-items: center; margin-top: 10px; padding: 10px 12px; }
+.evidence h2, .evidence p { margin-bottom: 0; }
+.evidence-items { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.evidence-item { display: flex; min-width: 0; align-items: center; gap: 9px; border: 1px solid var(--line); border-radius: 8px; background: #fafbfc; padding: 8px 10px; }
+.evidence-mark { width: 16px; height: 16px; flex: 0 0 auto; border: 2px solid #aeb9c0; border-radius: 50%; }
+.evidence-item strong, .evidence-item small { display: block; }
+.evidence-item strong { font-size: 10px; }
+.evidence-item small { margin-top: 2px; color: var(--muted); font-size: 8px; line-height: 1.35; }
+.evidence-item[data-state="pending"] { border-color: #e0c38f; background: var(--warn-soft); }
+.evidence-item[data-state="pending"] .evidence-mark { border-color: var(--warn); box-shadow: inset 0 0 0 3px var(--warn-soft); background: var(--warn); }
+.evidence-item[data-state="complete"] { border-color: #b8d8c4; background: var(--good-soft); }
+.evidence-item[data-state="complete"] .evidence-mark { position: relative; border-color: var(--good); background: var(--good); }
+.evidence-item[data-state="complete"] .evidence-mark::after { content: ""; position: absolute; left: 4px; top: 1px; width: 4px; height: 8px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg); }
+
+.pipeline { display: grid; grid-template-columns: minmax(172px, .78fr) 42px minmax(190px, 1fr) 42px minmax(190px, 1fr) 42px minmax(260px, 1.3fr); gap: 8px; align-items: stretch; margin-top: 10px; }
+.state-card { min-width: 0; min-height: 314px; padding: 12px; }
+.card-head { display: flex; justify-content: space-between; align-items: start; gap: 8px; margin-bottom: 14px; }
+.card-head h2, .card-head p { margin-bottom: 0; }
+.count-badge, .state-badge { flex: 0 0 auto; border: 1px solid var(--line); border-radius: 999px; background: #f7f9fa; color: var(--muted); font-size: 8px; font-weight: 850; padding: 4px 7px; text-transform: uppercase; }
+.state-badge[data-active="true"] { border-color: #bad0ef; background: var(--accent-soft); color: #204f9f; }
+
+.jar-shell { position: relative; min-height: 230px; margin: 17px 4px 0; border: 2px solid #aeb8bf; border-radius: 12px 12px 28px 28px; background: linear-gradient(145deg, rgba(255, 255, 255, .94), rgba(231, 238, 242, .7)); box-shadow: inset 12px 0 18px rgba(255, 255, 255, .78); padding: 28px 12px 14px; }
+.jar-shell::after { content: ""; position: absolute; inset: 5px; pointer-events: none; border: 1px solid rgba(255, 255, 255, .8); border-radius: 8px 8px 23px 23px; }
+.jar-lid { position: absolute; z-index: 2; top: -12px; left: -7px; right: -7px; height: 25px; border: 2px solid #87949d; border-radius: 7px; background: repeating-linear-gradient(90deg, #c2cbd0 0 5px, #dae0e3 5px 9px); box-shadow: 0 2px 3px rgba(29, 39, 48, .12); }
+.jar-empty { position: relative; z-index: 1; display: grid; min-height: 180px; place-items: center; align-content: center; color: var(--muted); text-align: center; }
+.jar-empty[hidden] { display: none; }
+.jar-empty > span { display: grid; width: 42px; height: 42px; place-items: center; margin-bottom: 10px; border: 1px dashed #b8c2c9; border-radius: 50%; font: 500 20px/1 var(--mono); }
+.jar-empty strong, .jar-empty small { display: block; }
+.jar-empty strong { font-size: 11px; }
+.jar-empty small { margin-top: 4px; font-size: 8px; }
+.cookie-record { position: relative; z-index: 1; display: grid; gap: 7px; margin: 8px 0 0; }
+.cookie-record[hidden] { display: none; }
+.cookie-record div { border: 1px solid #cbd4da; border-radius: 8px; background: rgba(255, 255, 255, .9); padding: 8px; }
+.cookie-record dt { color: var(--muted); font-size: 7px; font-weight: 850; letter-spacing: .06em; text-transform: uppercase; }
+.cookie-record dd { margin: 3px 0 0; color: #25495c; font: 750 10px/1.3 var(--mono); overflow-wrap: anywhere; }
+
+.protocol-line { min-height: 42px; margin-bottom: 10px; border: 1px solid #283841; border-radius: 8px; background: #15232b; color: #dceaf1; font: 750 10px/1.45 var(--mono); padding: 10px; }
+.message-fields { display: grid; gap: 8px; margin: 0; }
+.message-fields div { min-height: 65px; border: 1px solid var(--line); border-radius: 8px; background: #fafbfc; padding: 9px; }
+.message-fields dt { color: var(--muted); font-size: 7px; font-weight: 850; letter-spacing: .06em; text-transform: uppercase; }
+.message-fields dd { margin: 5px 0 0; font: 700 9px/1.45 var(--mono); overflow-wrap: anywhere; }
+.flow-arrow { display: grid; align-content: center; justify-items: center; color: var(--muted); text-align: center; }
+.flow-arrow span { color: #70808a; font: 500 25px/1 var(--mono); }
+.flow-arrow small { margin-top: 4px; font-size: 7px; line-height: 1.2; }
+
+.browser-card { min-width: 0; min-height: 314px; overflow: hidden; }
+.browser-chrome { display: grid; grid-template-columns: 50px auto 1fr; gap: 8px; align-items: center; min-height: 44px; border-bottom: 1px solid #b9c4cb; background: linear-gradient(#e4e9ec, #d6dde1); padding: 7px 9px; }
+.window-dots { display: flex; gap: 5px; }
+.window-dots i { width: 8px; height: 8px; border: 1px solid #8f9da6; border-radius: 50%; background: #f8fafb; }
+#browser-state { display: inline-flex; align-items: center; gap: 5px; color: #4f5e68; font-size: 8px; font-weight: 850; white-space: nowrap; }
+#browser-state i { width: 7px; height: 7px; border-radius: 50%; background: var(--good); }
+#browser-state[data-open="false"] i { background: #89969e; }
+.address { min-width: 0; overflow: hidden; border: 1px solid #bbc5cb; border-radius: 999px; background: #fff; color: #5e6c75; font-size: 8px; padding: 5px 9px; text-overflow: ellipsis; white-space: nowrap; }
+.site-page { position: relative; min-height: 269px; background: #f5f7f8; color: #27343c; transition: background-color .25s ease, color .25s ease; }
+.site-topbar { display: flex; min-height: 43px; justify-content: space-between; align-items: center; gap: 9px; border-bottom: 1px solid rgba(85, 105, 117, .18); padding: 0 13px; }
+.site-topbar strong { font-size: 11px; letter-spacing: .02em; }
+.site-topbar span { border: 1px solid rgba(90, 109, 120, .24); border-radius: 999px; font-size: 7px; font-weight: 850; padding: 4px 6px; text-transform: uppercase; }
+.site-content { padding: 20px 17px; }
+.site-content > p:first-child { margin-bottom: 6px; color: currentColor; font-size: 8px; font-weight: 850; letter-spacing: .08em; opacity: .6; text-transform: uppercase; }
+.site-content h2 { max-width: 220px; margin-bottom: 14px; font-family: Georgia, "Times New Roman", serif; font-size: 21px; font-weight: 500; letter-spacing: -.02em; }
+.reading-lines { display: grid; gap: 7px; }
+.reading-lines i { display: block; width: 100%; height: 5px; border-radius: 999px; background: currentColor; opacity: .15; }
+.reading-lines i:nth-child(2) { width: 84%; }
+.reading-lines i:nth-child(3) { width: 94%; }
+.reading-lines i:nth-child(4) { width: 61%; }
+.page-note { margin: 17px 0 0; border-left: 3px solid currentColor; color: currentColor; font-size: 8px; line-height: 1.4; opacity: .72; padding-left: 8px; }
+.site-page[data-theme="ocean"] { background: #ddecf0; color: #17485e; }
+.site-page[data-theme="ocean"] .site-topbar { background: #276b89; color: #fff; }
+.site-page[data-theme="sunrise"] { background: #fff1df; color: #6b3c28; }
+.site-page[data-theme="sunrise"] .site-topbar { background: #d98753; color: #2c1d17; }
+.closed-overlay { position: absolute; inset: 0; z-index: 3; display: grid; place-items: center; align-content: center; background: rgba(26, 34, 40, .94); color: #eef3f6; text-align: center; }
+.closed-overlay[hidden] { display: none; }
+.closed-overlay span { display: grid; width: 38px; height: 38px; place-items: center; margin-bottom: 9px; border: 1px solid #6d7a82; border-radius: 50%; color: #acb8bf; font: 400 22px/1 var(--mono); }
+.closed-overlay strong, .closed-overlay small { display: block; }
+.closed-overlay strong { font-size: 12px; }
+.closed-overlay small { margin-top: 4px; color: #aab6bd; font-size: 8px; }
+
+.status { display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: 14px; align-items: center; margin-top: 10px; border-left: 4px solid var(--accent); padding: 11px 13px; }
+#status-label { color: var(--muted); font-size: 9px; font-weight: 850; letter-spacing: .06em; text-transform: uppercase; }
+#status-text { margin-bottom: 0; color: var(--muted); font-size: 11px; line-height: 1.45; }
+#status-text strong { color: var(--ink); }
+
+@media (max-width: 1060px) {
+  .experiment { grid-template-columns: minmax(210px, .8fr) minmax(420px, 1.4fr); }
+  .actions { grid-column: 1 / -1; display: flex; justify-content: flex-end; }
+  .pipeline { grid-template-columns: 1fr; }
+  .flow-arrow { min-height: 30px; }
+  .flow-arrow span { transform: rotate(90deg); }
+  .state-card, .browser-card { min-height: 0; }
+  .jar-shell { min-height: 190px; }
+  .jar-empty { min-height: 140px; }
+}
+
+@media (max-width: 700px) {
+  main { width: calc(100% - 14px); margin-top: 10px; }
+  .experiment { grid-template-columns: 1fr; gap: 13px; }
+  .choice-groups { grid-template-columns: 1fr; }
+  .actions { grid-column: auto; display: grid; grid-template-columns: 1fr 1fr; }
+  .evidence { grid-template-columns: 1fr; gap: 8px; }
+  .evidence-items { grid-template-columns: 1fr; }
+  .status { grid-template-columns: 1fr; gap: 4px; }
+}
+
+@media (max-width: 420px) {
+  h1 { font-size: 29px; }
+  .actions { grid-template-columns: 1fr; }
+  button { width: 100%; }
+  .browser-chrome { grid-template-columns: 42px 1fr; }
+  .address { grid-column: 1 / -1; }
+  .site-content h2 { font-size: 19px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .001ms !important; }
+}
+</style>
+<!-- LAB_FRAME_STYLES_START -->
+<style data-lab-frame>
+:root {
+  --lab-canvas: #f3f5f7;
+  --lab-paper: #fbfbfd;
+  --lab-surface: #ffffff;
+  --lab-control: #ffffff;
+  --lab-ink: #1d1d1f;
+  --lab-muted: #6e6e73;
+  --lab-line: #d2d2d7;
+  --lab-line-strong: #a7a7ad;
+  --lab-accent: #5277b8;
+  --lab-accent-soft: #eef2fa;
+  --lab-good: #18794e;
+  --lab-good-soft: #edf8f1;
+  --lab-warn: #946200;
+  --lab-warn-soft: #fff6e7;
+  --lab-bad: #b42318;
+  --lab-bad-soft: #fff0ee;
+  --lab-focus: #1d1d1f;
+  --lab-focus-soft: rgba(29, 29, 31, 0.18);
+  --lab-font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+  --lab-panel-radius: 12px;
+  --lab-control-radius: 8px;
+  --lab-pill-radius: 999px;
+  --lab-control-height: 35px;
+  --lab-panel-shadow: 0 1px 2px rgba(29, 29, 31, 0.04);
+}
+
+html,
+body {
+  background: var(--lab-canvas);
+}
+
+body {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-family: var(--lab-font-sans);
+  padding-bottom: 58px;
+  padding-top: 66px;
+  text-rendering: optimizeLegibility;
+}
+
+html[data-theme="dark"],
+html[data-theme="dark"] body {
+  background: var(--bg);
+}
+
+main {
+  container-name: lab-canvas;
+  container-type: inline-size;
+}
+
+body.binary-lab main {
+  width: min(820px, calc(100% - 24px));
+}
+
+:where(button, input, select, textarea, summary):focus-visible {
+  outline: 3px solid var(--lab-focus);
+  outline-offset: 4px;
+}
+
+@media (max-width: 620px) {
+  body {
+    padding-bottom: 76px;
+    padding-top: 60px;
+  }
+
+  body.binary-lab main {
+    width: min(100% - 12px, 820px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+</style>
+<!-- LAB_FRAME_STYLES_END -->
+</head>
+<body>
+  <main>
+    <header class="hero">
+      <p class="eyebrow">Browser state experiment</p>
+      <h1>Session and Persistent Cookies</h1>
+      <p class="lede">Choose a theme and lifetime, visit the site, then close and restart the browser to see what the next request remembers.</p>
+    </header>
+
+    <section class="experiment panel" aria-labelledby="experiment-title">
+      <div class="experiment-copy">
+        <p class="section-label">Preference for the next visit</p>
+        <h2 id="experiment-title">Save one reading theme</h2>
+        <p id="choice-help">Choose both values to replace the cookie. Leave both blank to visit using the current jar.</p>
+      </div>
+
+      <div class="choice-groups">
+        <fieldset id="theme-fieldset">
+          <legend>Reading theme</legend>
+          <div class="choice-row theme-choices">
+            <label>
+              <input type="radio" name="theme" value="ocean">
+              <span><i class="theme-swatch ocean-swatch" aria-hidden="true"></i>Ocean</span>
+            </label>
+            <label>
+              <input type="radio" name="theme" value="sunrise">
+              <span><i class="theme-swatch sunrise-swatch" aria-hidden="true"></i>Sunrise</span>
+            </label>
+          </div>
+        </fieldset>
+
+        <fieldset id="lifetime-fieldset">
+          <legend>Cookie lifetime</legend>
+          <div class="choice-row">
+            <label>
+              <input type="radio" name="lifetime" value="session">
+              <span>Session</span>
+            </label>
+            <label>
+              <input type="radio" name="lifetime" value="persistent">
+              <span>Persistent</span>
+            </label>
+          </div>
+        </fieldset>
+      </div>
+
+      <div class="actions" aria-label="Browser actions">
+        <button id="visit-button" class="primary" type="button" aria-describedby="choice-help">Visit site</button>
+        <button id="close-button" type="button">Close browser</button>
+        <button id="restart-button" type="button">Restart browser</button>
+        <button id="clear-button" class="quiet" type="button">Clear cookies</button>
+      </div>
+    </section>
+
+    <section class="evidence panel" aria-labelledby="evidence-title">
+      <div>
+        <p class="section-label">Restart evidence</p>
+        <h2 id="evidence-title">Test both lifetimes</h2>
+      </div>
+      <div class="evidence-items">
+        <div id="session-test" class="evidence-item" data-state="idle">
+          <span class="evidence-mark" aria-hidden="true"></span>
+          <div><strong>Session cookie</strong><small id="session-test-text">Not tested across a restart</small></div>
+        </div>
+        <div id="persistent-test" class="evidence-item" data-state="idle">
+          <span class="evidence-mark" aria-hidden="true"></span>
+          <div><strong>Persistent cookie</strong><small id="persistent-test-text">Not tested across a restart</small></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="pipeline" aria-label="Cookie request and response model">
+      <article id="jar-card" class="state-card jar-card panel" aria-labelledby="jar-title">
+        <header class="card-head">
+          <div><p class="section-label">Browser storage</p><h2 id="jar-title">Cookie jar</h2></div>
+          <span id="jar-count" class="count-badge">0 cookies</span>
+        </header>
+        <div class="jar-shell">
+          <div class="jar-lid" aria-hidden="true"></div>
+          <div id="jar-empty" class="jar-empty">
+            <span aria-hidden="true">∅</span>
+            <strong>Cookie jar empty</strong>
+            <small>No preference is stored</small>
+          </div>
+          <dl id="jar-cookie" class="cookie-record" hidden>
+            <div><dt>Name</dt><dd>theme</dd></div>
+            <div><dt>Value</dt><dd id="jar-value">—</dd></div>
+            <div><dt>Type</dt><dd id="jar-lifetime">—</dd></div>
+          </dl>
+        </div>
+      </article>
+
+      <div class="flow-arrow" aria-hidden="true"><span>→</span><small>browser sends</small></div>
+
+      <article id="request-card" class="state-card message-card panel" aria-labelledby="request-title">
+        <header class="card-head">
+          <div><p class="section-label">Browser → server</p><h2 id="request-title">Outgoing request</h2></div>
+          <span id="request-state" class="state-badge">Idle</span>
+        </header>
+        <p id="request-line" class="protocol-line">No request yet</p>
+        <dl class="message-fields">
+          <div><dt>Cookie</dt><dd id="request-cookie">—</dd></div>
+          <div><dt>Preference choice</dt><dd id="request-choice">—</dd></div>
+        </dl>
+      </article>
+
+      <div class="flow-arrow" aria-hidden="true"><span>→</span><small>server reads</small></div>
+
+      <article id="response-card" class="state-card message-card panel" aria-labelledby="response-title">
+        <header class="card-head">
+          <div><p class="section-label">Server → browser</p><h2 id="response-title">Server response</h2></div>
+          <span id="response-state" class="state-badge">Idle</span>
+        </header>
+        <p id="response-line" class="protocol-line">No response yet</p>
+        <dl class="message-fields">
+          <div><dt>Set-Cookie</dt><dd id="response-cookie">—</dd></div>
+          <div><dt>Page result</dt><dd id="response-result">—</dd></div>
+        </dl>
+      </article>
+
+      <div class="flow-arrow" aria-hidden="true"><span>→</span><small>browser renders</small></div>
+
+      <article id="browser-card" class="browser-card panel" aria-labelledby="page-title">
+        <div class="browser-chrome">
+          <div class="window-dots" aria-hidden="true"><i></i><i></i><i></i></div>
+          <span id="browser-state"><i aria-hidden="true"></i>Browser open</span>
+          <div class="address">cedar-notes.test</div>
+        </div>
+        <div id="site-page" class="site-page" data-theme="default">
+          <div class="site-topbar"><strong>Cedar Notes</strong><span id="page-theme-chip">Standard theme</span></div>
+          <div class="site-content">
+            <p>Field notes</p>
+            <h2 id="page-title">A quiet place to read</h2>
+            <div class="reading-lines" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+            <p id="page-note" class="page-note">Visit the site to load a page.</p>
+          </div>
+          <div id="closed-overlay" class="closed-overlay" hidden>
+            <span aria-hidden="true">×</span>
+            <strong>Browser closed</strong>
+            <small>Restart the browser to visit again</small>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section id="status" class="status panel" role="status" aria-live="polite" aria-atomic="true">
+      <span id="status-label">Browser ready</span>
+      <p id="status-text"><strong>Cookie jar empty.</strong> Choose a theme and lifetime, then visit the site.</p>
+    </section>
+  </main>
+  <script data-lab-source>
+(() => {
+  "use strict";
+
+  const themeNames = { ocean: "Ocean", sunrise: "Sunrise" };
+  const lifetimeNames = { session: "Session", persistent: "Persistent" };
+
+  function makeInitialState() {
+    return {
+      browserOpen: true,
+      cookie: null,
+      draftTheme: null,
+      draftLifetime: null,
+      lastClosedLifetime: null,
+      pendingRestart: null,
+      page: { theme: "default", chip: "Standard theme", note: "Visit the site to load a page." },
+      request: { active: false, line: "No request yet", cookie: "—", choice: "—" },
+      response: { active: false, line: "No response yet", cookie: "—", result: "—" },
+      status: {
+        label: "Browser ready",
+        lead: "Cookie jar empty.",
+        detail: "Choose a theme and lifetime, then visit the site."
+      },
+      tests: {
+        session: { state: "idle", text: "Not tested across a restart" },
+        persistent: { state: "idle", text: "Not tested across a restart" }
+      }
+    };
+  }
+
+  function copyState(state) {
+    return JSON.parse(JSON.stringify(state));
+  }
+
+  function idleExchange(state, requestLine, responseLine) {
+    state.request = { active: false, line: requestLine, cookie: "—", choice: "—" };
+    state.response = { active: false, line: responseLine, cookie: "—", result: "—" };
+  }
+
+  function finishRestartTest(state, cookieSent) {
+    if (state.pendingRestart === "session" && !cookieSent) {
+      state.tests.session = { state: "complete", text: "No cookie sent · standard theme returned" };
+    }
+    if (state.pendingRestart === "persistent" && cookieSent && state.cookie?.lifetime === "persistent") {
+      state.tests.persistent = { state: "complete", text: "Cookie sent · saved theme restored" };
+    }
+    state.pendingRestart = null;
+  }
+
+  function visit(state) {
+    if (!state.browserOpen) {
+      state.status = {
+        label: "Browser closed",
+        lead: "No request sent.",
+        detail: "Restart the browser before visiting the site."
+      };
+      return;
+    }
+
+    const hasTheme = Boolean(state.draftTheme);
+    const hasLifetime = Boolean(state.draftLifetime);
+    if (hasTheme !== hasLifetime) {
+      state.status = {
+        label: "Preference incomplete",
+        lead: "No request sent.",
+        detail: "Choose both a reading theme and a cookie lifetime."
+      };
+      return;
+    }
+
+    const cookieSent = state.cookie ? `theme=${state.cookie.theme}` : null;
+    const hasNewChoice = hasTheme && hasLifetime;
+    const selectedTheme = state.draftTheme;
+    const selectedLifetime = state.draftLifetime;
+
+    state.request = {
+      active: true,
+      line: "GET /notes",
+      cookie: cookieSent ? `Cookie: ${cookieSent}` : "None sent",
+      choice: hasNewChoice ? `theme=${selectedTheme}` : "No new choice"
+    };
+    state.response.active = true;
+    state.response.line = "200 OK";
+
+    if (hasNewChoice) {
+      state.cookie = { theme: selectedTheme, lifetime: selectedLifetime };
+      state.page = {
+        theme: selectedTheme,
+        chip: `${themeNames[selectedTheme]} theme`,
+        note: "The response applied this preference and stored it in the browser."
+      };
+      state.response.cookie = `theme=${selectedTheme} · ${lifetimeNames[selectedLifetime]}`;
+      state.response.result = `${themeNames[selectedTheme]} theme from new choice`;
+      state.status = {
+        label: "Preference saved",
+        lead: `${lifetimeNames[selectedLifetime]} cookie stored.`,
+        detail: "Visit again with no new choice to see the browser return it."
+      };
+      state.pendingRestart = null;
+      state.draftTheme = null;
+      state.draftLifetime = null;
+      return;
+    }
+
+    state.response.cookie = "No new cookie";
+    if (cookieSent) {
+      const restoredTheme = state.cookie.theme;
+      state.page = {
+        theme: restoredTheme,
+        chip: `${themeNames[restoredTheme]} theme`,
+        note: "The response restored the preference received in the Cookie."
+      };
+      state.response.result = `${themeNames[restoredTheme]} theme from Cookie`;
+      state.status = {
+        label: "Cookie sent with request",
+        lead: "Preference restored.",
+        detail: "The request carried the stored theme to the server."
+      };
+    } else {
+      state.page = {
+        theme: "default",
+        chip: "Standard theme",
+        note: "The server received no saved preference."
+      };
+      state.response.result = "Standard theme · no Cookie received";
+      state.status = {
+        label: "Cookie jar empty",
+        lead: "No preference sent.",
+        detail: "The server returned its standard theme."
+      };
+    }
+
+    finishRestartTest(state, cookieSent);
+  }
+
+  function closeBrowser(state) {
+    if (!state.browserOpen) {
+      state.status = {
+        label: "Browser closed",
+        lead: "The browser is already closed.",
+        detail: "Restart it to begin a new session."
+      };
+      return;
+    }
+
+    state.lastClosedLifetime = state.cookie?.lifetime ?? null;
+    const removedSessionCookie = state.cookie?.lifetime === "session";
+    if (removedSessionCookie) state.cookie = null;
+    state.browserOpen = false;
+    state.pendingRestart = null;
+    state.draftTheme = null;
+    state.draftLifetime = null;
+    idleExchange(state, "No request · browser closed", "No response · browser closed");
+    state.status = removedSessionCookie
+      ? {
+          label: "Session cookie removed",
+          lead: "Browser session ended.",
+          detail: "Restart and visit the site to inspect the next request."
+        }
+      : state.cookie
+        ? {
+            label: "Persistent cookie retained",
+            lead: "Browser session ended.",
+            detail: "The cookie remains in the jar while the browser is closed."
+          }
+        : {
+            label: "Browser closed",
+            lead: "Cookie jar empty.",
+            detail: "Restart the browser to visit again."
+          };
+  }
+
+  function restartBrowser(state) {
+    const testedLifetime = state.browserOpen
+      ? state.cookie?.lifetime ?? null
+      : state.lastClosedLifetime;
+
+    if (state.cookie?.lifetime === "session") state.cookie = null;
+    state.browserOpen = true;
+    state.lastClosedLifetime = null;
+    state.pendingRestart = testedLifetime;
+    state.draftTheme = null;
+    state.draftLifetime = null;
+    state.page = {
+      theme: "default",
+      chip: "New browser session",
+      note: "Visit the site to inspect the first request after restart."
+    };
+    idleExchange(state, "No request · browser restarted", "No response · visit required");
+
+    if (testedLifetime === "session") {
+      state.tests.session = { state: "pending", text: "Restarted · visit to inspect the request" };
+      state.status = {
+        label: "Browser restarted",
+        lead: "Cookie jar empty.",
+        detail: "Visit the site to see what the new session sends."
+      };
+    } else if (testedLifetime === "persistent") {
+      state.tests.persistent = { state: "pending", text: "Restarted · visit to inspect the request" };
+      state.status = {
+        label: "Browser restarted",
+        lead: "Persistent cookie still in jar.",
+        detail: "Visit the site to see whether the preference returns."
+      };
+    } else {
+      state.status = {
+        label: "Browser restarted",
+        lead: "Cookie jar empty.",
+        detail: "Choose a preference, or visit with no cookie."
+      };
+    }
+  }
+
+  function clearCookies(state) {
+    const hadCookie = Boolean(state.cookie);
+    state.cookie = null;
+    state.lastClosedLifetime = null;
+    if (state.pendingRestart && state.tests[state.pendingRestart].state === "pending") {
+      state.tests[state.pendingRestart] = { state: "idle", text: "Not tested across a restart" };
+    }
+    state.pendingRestart = null;
+    idleExchange(state, "No request · cookie cleared locally", "No response · visit to load again");
+    state.status = hadCookie
+      ? {
+          label: "Cookie jar empty",
+          lead: "Cookie cleared.",
+          detail: state.browserOpen
+            ? "The current page stays rendered until the next visit."
+            : "The stored preference has been removed."
+        }
+      : {
+          label: "Cookie jar empty",
+          lead: "No cookie to clear.",
+          detail: state.browserOpen ? "The current page is unchanged." : "The browser remains closed."
+        };
+    if (state.browserOpen) state.page.note = "Cookie cleared. This page remains until another request is made.";
+  }
+
+  function transition(previous, action) {
+    const state = copyState(previous);
+    if (action.type === "choose-theme") state.draftTheme = action.value;
+    if (action.type === "choose-lifetime") state.draftLifetime = action.value;
+    if (action.type === "visit") visit(state);
+    if (action.type === "close") closeBrowser(state);
+    if (action.type === "restart") restartBrowser(state);
+    if (action.type === "clear") clearCookies(state);
+    return state;
+  }
+
+  globalThis.CookieLifecycleModel = { makeInitialState, transition };
+  if (typeof document === "undefined") return;
+
+  const $ = (id) => document.getElementById(id);
+  let state = makeInitialState();
+
+  function setStatusText(lead, detail) {
+    const statusText = $("status-text");
+    statusText.replaceChildren();
+    const strong = document.createElement("strong");
+    strong.textContent = lead;
+    statusText.append(strong, document.createTextNode(` ${detail}`));
+  }
+
+  function renderTest(kind) {
+    const test = state.tests[kind];
+    $(`${kind}-test`).dataset.state = test.state;
+    $(`${kind}-test-text`).textContent = test.text;
+  }
+
+  function render() {
+    const hasCookie = Boolean(state.cookie);
+    $("jar-count").textContent = hasCookie ? "1 cookie" : "0 cookies";
+    $("jar-empty").hidden = hasCookie;
+    $("jar-cookie").hidden = !hasCookie;
+    if (hasCookie) {
+      $("jar-value").textContent = state.cookie.theme;
+      $("jar-lifetime").textContent = lifetimeNames[state.cookie.lifetime];
+    }
+
+    $("request-state").textContent = state.request.active ? "Sent" : "Idle";
+    $("request-state").dataset.active = String(state.request.active);
+    $("request-line").textContent = state.request.line;
+    $("request-cookie").textContent = state.request.cookie;
+    $("request-choice").textContent = state.request.choice;
+
+    $("response-state").textContent = state.response.active ? "Received" : "Idle";
+    $("response-state").dataset.active = String(state.response.active);
+    $("response-line").textContent = state.response.line;
+    $("response-cookie").textContent = state.response.cookie;
+    $("response-result").textContent = state.response.result;
+
+    $("site-page").dataset.theme = state.page.theme;
+    $("page-theme-chip").textContent = state.page.chip;
+    $("page-note").textContent = state.page.note;
+    $("closed-overlay").hidden = state.browserOpen;
+    $("browser-state").dataset.open = String(state.browserOpen);
+    $("browser-state").lastChild.textContent = state.browserOpen ? "Browser open" : "Browser closed";
+
+    $("status-label").textContent = state.status.label;
+    setStatusText(state.status.lead, state.status.detail);
+    renderTest("session");
+    renderTest("persistent");
+
+    const partialChoice = Boolean(state.draftTheme) !== Boolean(state.draftLifetime);
+    $("visit-button").disabled = !state.browserOpen || partialChoice;
+    $("close-button").disabled = !state.browserOpen;
+    $("theme-fieldset").disabled = !state.browserOpen;
+    $("lifetime-fieldset").disabled = !state.browserOpen;
+
+    document.querySelectorAll('input[name="theme"]').forEach((input) => {
+      input.checked = input.value === state.draftTheme;
+    });
+    document.querySelectorAll('input[name="lifetime"]').forEach((input) => {
+      input.checked = input.value === state.draftLifetime;
+    });
+  }
+
+  function act(action) {
+    state = transition(state, action);
+    render();
+  }
+
+  document.querySelectorAll('input[name="theme"]').forEach((input) => {
+    input.addEventListener("change", () => act({ type: "choose-theme", value: input.value }));
+  });
+  document.querySelectorAll('input[name="lifetime"]').forEach((input) => {
+    input.addEventListener("change", () => act({ type: "choose-lifetime", value: input.value }));
+  });
+  $("visit-button").addEventListener("click", () => act({ type: "visit" }));
+  $("close-button").addEventListener("click", () => act({ type: "close" }));
+  $("restart-button").addEventListener("click", () => act({ type: "restart" }));
+  $("clear-button").addEventListener("click", () => act({ type: "clear" }));
+
+  render();
+})();
+</script>
+</body>
+</html>

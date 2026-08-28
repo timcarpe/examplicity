@@ -1,0 +1,565 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Database Normalisation</title>
+  <style data-lab-source>
+:root {
+  color-scheme: light;
+  --ink: #172f3b;
+  --muted: #60727a;
+  --paper: #f4f1e9;
+  --panel: #fffdf7;
+  --line: #d6d1c5;
+  --blue: #176f86;
+  --blue-soft: #dceef1;
+  --amber: #ad6a16;
+  --amber-soft: #fff0d7;
+  --green: #287452;
+  --green-soft: #e0f1e7;
+  --red: #a53f38;
+  --red-soft: #f8e4df;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 12% 5%, rgba(23,111,134,.10), transparent 27rem),
+    var(--paper);
+}
+
+button, input, select { font: inherit; }
+
+button, select, input {
+  border: 1px solid #aeb8ba;
+  border-radius: .65rem;
+}
+
+button:focus-visible, select:focus-visible, input:focus-visible {
+  outline: 3px solid #efb759;
+  outline-offset: 2px;
+}
+
+button { cursor: pointer; }
+button:disabled { cursor: not-allowed; opacity: .55; }
+
+main { width: min(1160px, calc(100% - 2rem)); margin: 0 auto; padding: 2.2rem 0 3rem; }
+
+.lab-header { max-width: 790px; margin-bottom: 1.4rem; }
+.eyebrow, .label { margin: 0 0 .35rem; color: var(--blue); font-size: .76rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+h1 { margin: 0; font-size: clamp(2rem, 5vw, 3.5rem); line-height: 1; letter-spacing: -.045em; }
+.subtitle { margin: .8rem 0 0; color: var(--muted); font-size: 1.08rem; line-height: 1.55; }
+h2, h3, p { margin-top: 0; }
+
+.experiment-bar, .panel, .design-picker {
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: rgba(255,253,247,.94);
+  box-shadow: 0 14px 35px rgba(23,47,59,.06);
+}
+
+.experiment-bar { display: flex; align-items: center; justify-content: space-between; gap: 1.2rem; padding: 1rem 1.2rem; }
+.experiment-bar h2 { margin: 0; font-size: 1.08rem; }
+.experiment-status { margin: 0; color: var(--muted); font-weight: 700; text-align: right; }
+
+.design-picker { display: grid; grid-template-columns: repeat(3, 1fr); gap: .45rem; margin: .75rem 0; padding: .45rem; }
+.design-picker button { display: flex; align-items: baseline; gap: .65rem; padding: .8rem; color: var(--muted); background: transparent; border-color: transparent; text-align: left; }
+.design-picker button strong { color: var(--ink); font-size: 1rem; }
+.design-picker button span { font-size: .82rem; }
+.design-picker button[aria-pressed="true"] { background: var(--blue-soft); border-color: #9fc9d2; color: var(--ink); }
+
+.workspace { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(290px, .75fr); gap: .75rem; align-items: start; }
+.panel { padding: 1.1rem; }
+.panel-heading, .comparison-heading { display: flex; align-items: start; justify-content: space-between; gap: 1rem; }
+.panel-heading h2, .comparison-heading h2 { margin: 0; font-size: 1.25rem; }
+.copy-badge { flex: 0 0 auto; padding: .38rem .62rem; border-radius: 999px; background: var(--amber-soft); color: #7b4a0d; font-size: .78rem; font-weight: 800; }
+.dependency { margin: .7rem 0 1rem; padding: .55rem .7rem; border-left: 3px solid var(--blue); background: #f1f7f7; color: #405c65; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: .82rem; }
+
+.tables-region { display: grid; gap: .75rem; }
+.table-card { min-width: 0; border: 1px solid var(--line); border-radius: .75rem; overflow: hidden; background: white; }
+.table-title { display: flex; justify-content: space-between; align-items: center; gap: .5rem; padding: .55rem .7rem; background: #edf1ef; }
+.table-title strong { font-size: .8rem; letter-spacing: .06em; }
+.table-title span { color: var(--muted); font-size: .72rem; }
+.table-scroll { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: .78rem; }
+th, td { padding: .52rem .62rem; border-top: 1px solid #e5e1d8; text-align: left; white-space: nowrap; }
+th { color: var(--muted); background: #faf9f4; font-size: .69rem; letter-spacing: .035em; text-transform: uppercase; }
+th b { margin-left: .25rem; color: var(--blue); font-size: .62rem; }
+td.changed { background: var(--amber-soft); color: #75460d; font-weight: 800; }
+td.source { background: var(--green-soft); color: #1d6143; font-weight: 800; }
+
+.controls-panel label { display: block; margin: .8rem 0 .3rem; font-size: .79rem; font-weight: 800; }
+.control-intro { color: var(--muted); font-size: .9rem; line-height: 1.45; }
+.controls-panel select, .controls-panel input { width: 100%; padding: .7rem .75rem; color: var(--ink); background: white; }
+.actions { display: grid; grid-template-columns: 1fr auto; gap: .55rem; margin: .9rem 0; }
+.actions button { padding: .7rem .8rem; color: var(--ink); background: white; }
+.actions .primary { color: white; background: var(--blue); border-color: var(--blue); font-weight: 800; }
+
+.result { padding: .9rem; border: 1px solid var(--line); border-radius: .8rem; background: #f7f5ef; }
+.result h3 { margin-bottom: .35rem; }
+.result > p:not(.label) { color: var(--muted); font-size: .86rem; line-height: 1.45; }
+.result.is-conflict { background: var(--red-soft); border-color: #e2a49d; }
+.result.is-consistent { background: var(--green-soft); border-color: #9fcbb2; }
+dl { display: grid; gap: .35rem; margin: .7rem 0 0; }
+dl div { display: flex; justify-content: space-between; gap: 1rem; padding-top: .35rem; border-top: 1px solid rgba(23,47,59,.12); }
+dt { color: var(--muted); font-size: .75rem; }
+dd { margin: 0; font-size: .78rem; font-weight: 800; text-align: right; }
+
+.comparison { margin-top: .75rem; }
+.comparison-heading > p { margin: 0; color: var(--muted); font-size: .85rem; }
+.comparison-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .65rem; margin-top: .8rem; }
+.outcome-card { padding: .8rem; border: 1px solid var(--line); border-radius: .75rem; background: white; }
+.outcome-card > span { display: block; margin-bottom: .3rem; color: var(--muted); font-size: .7rem; font-weight: 800; text-transform: uppercase; }
+.outcome-card strong { display: block; }
+.outcome-card p { margin: .3rem 0 0; color: var(--muted); font-size: .82rem; line-height: 1.4; }
+.outcome-card.conflict { border-left: 5px solid var(--red); }
+.outcome-card.consistent { border-left: 5px solid var(--green); }
+.outcome-card.empty { opacity: .72; }
+.inference { margin: .8rem 0 0; padding: .7rem .8rem; border-radius: .7rem; background: var(--blue-soft); color: #245461; font-weight: 700; }
+
+@media (max-width: 820px) {
+  .workspace { grid-template-columns: 1fr; }
+  .design-picker button { align-items: flex-start; flex-direction: column; gap: .15rem; }
+}
+
+@media (max-width: 560px) {
+  main { width: min(100% - 1rem, 1160px); padding-top: 1.2rem; }
+  .experiment-bar, .panel-heading, .comparison-heading { align-items: flex-start; flex-direction: column; }
+  .experiment-status { text-align: left; }
+  .design-picker { grid-template-columns: 1fr; }
+  .design-picker button { flex-direction: row; align-items: baseline; }
+  .comparison-grid { grid-template-columns: 1fr; }
+  .actions { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .001ms !important; animation-duration: .001ms !important; }
+}
+</style>
+<!-- LAB_FRAME_STYLES_START -->
+<style data-lab-frame>
+:root {
+  --lab-canvas: #f3f5f7;
+  --lab-paper: #fbfbfd;
+  --lab-surface: #ffffff;
+  --lab-control: #ffffff;
+  --lab-ink: #1d1d1f;
+  --lab-muted: #6e6e73;
+  --lab-line: #d2d2d7;
+  --lab-line-strong: #a7a7ad;
+  --lab-accent: #5277b8;
+  --lab-accent-soft: #eef2fa;
+  --lab-good: #18794e;
+  --lab-good-soft: #edf8f1;
+  --lab-warn: #946200;
+  --lab-warn-soft: #fff6e7;
+  --lab-bad: #b42318;
+  --lab-bad-soft: #fff0ee;
+  --lab-focus: #1d1d1f;
+  --lab-focus-soft: rgba(29, 29, 31, 0.18);
+  --lab-font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+  --lab-panel-radius: 12px;
+  --lab-control-radius: 8px;
+  --lab-pill-radius: 999px;
+  --lab-control-height: 35px;
+  --lab-panel-shadow: 0 1px 2px rgba(29, 29, 31, 0.04);
+}
+
+html,
+body {
+  background: var(--lab-canvas);
+}
+
+body {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-family: var(--lab-font-sans);
+  padding-bottom: 58px;
+  padding-top: 66px;
+  text-rendering: optimizeLegibility;
+}
+
+html[data-theme="dark"],
+html[data-theme="dark"] body {
+  background: var(--bg);
+}
+
+main {
+  container-name: lab-canvas;
+  container-type: inline-size;
+}
+
+body.binary-lab main {
+  width: min(820px, calc(100% - 24px));
+}
+
+:where(button, input, select, textarea, summary):focus-visible {
+  outline: 3px solid var(--lab-focus);
+  outline-offset: 4px;
+}
+
+@media (max-width: 620px) {
+  body {
+    padding-bottom: 76px;
+    padding-top: 60px;
+  }
+
+  body.binary-lab main {
+    width: min(100% - 12px, 820px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+</style>
+<!-- LAB_FRAME_STYLES_END -->
+</head>
+<body>
+  <main>
+    <header class="lab-header">
+      <p class="eyebrow">Relational databases</p>
+      <h1>Database Normalisation</h1>
+      <p class="subtitle">Correct one tutor name, then observe how the table design changes the number of updates and the consistency of joined data.</p>
+    </header>
+
+    <section class="experiment-bar" aria-labelledby="question-title">
+      <div>
+        <p class="label">Experiment</p>
+        <h2 id="question-title">Can one correction update every course consistently?</h2>
+      </div>
+      <p id="experiment-status" class="experiment-status" role="status" aria-live="polite">Choose a design and run the update.</p>
+    </section>
+
+    <nav class="design-picker" aria-label="Choose a table design">
+      <button type="button" data-design="1nf" aria-pressed="true"><strong>1NF</strong><span>One row per enrolment</span></button>
+      <button type="button" data-design="2nf" aria-pressed="false"><strong>2NF</strong><span>Student and course split</span></button>
+      <button type="button" data-design="3nf" aria-pressed="false"><strong>3NF</strong><span>Tutor stored once</span></button>
+    </nav>
+
+    <div class="workspace">
+      <section class="panel data-panel" aria-labelledby="design-title">
+        <div class="panel-heading">
+          <div>
+            <p id="design-form" class="label">1NF design</p>
+            <h2 id="design-title">Tutor name is copied into enrolment rows</h2>
+          </div>
+          <span id="copy-badge" class="copy-badge">3 stored copies</span>
+        </div>
+        <p id="dependency-copy" class="dependency">StudentID + CourseID → Grade; CourseID → TutorID → TutorName</p>
+        <div id="tables-region" class="tables-region" aria-live="polite"></div>
+      </section>
+
+      <aside class="panel controls-panel" aria-labelledby="update-title">
+        <p class="label">Update test</p>
+        <h2 id="update-title">Correct Dr Noor to Dr Nouri</h2>
+        <p class="control-intro">A database update targets one stored occurrence. Choose which occurrence receives the correction.</p>
+
+        <label for="occurrence">Stored occurrence</label>
+        <select id="occurrence"></select>
+
+        <label for="new-name">Corrected tutor name</label>
+        <input id="new-name" value="Dr Nouri" maxlength="24" autocomplete="off">
+
+        <div class="actions">
+          <button id="run-update" class="primary" type="button">Run update</button>
+          <button id="reset-data" type="button">Reset data</button>
+        </div>
+
+        <section id="result" class="result" aria-labelledby="result-title">
+          <p class="label">Current outcome</p>
+          <h3 id="result-title">No update run</h3>
+          <p id="result-copy">The selected design still contains its original tutor-name values.</p>
+          <dl>
+            <div><dt>Copies needing correction</dt><dd id="copies-needed">3</dd></div>
+            <div><dt>Occurrences updated</dt><dd id="copies-updated">0</dd></div>
+            <div><dt>Joined course facts</dt><dd id="consistency">Not tested</dd></div>
+          </dl>
+        </section>
+      </aside>
+    </div>
+
+    <section class="comparison panel" aria-labelledby="comparison-title">
+      <div class="comparison-heading">
+        <div>
+          <p class="label">Repeatable evidence</p>
+          <h2 id="comparison-title">Previous and current test</h2>
+        </div>
+        <p>Run the same correction in another design.</p>
+      </div>
+      <div class="comparison-grid">
+        <article id="previous-card" class="outcome-card empty">
+          <span>Previous</span>
+          <strong>No earlier result</strong>
+          <p>Your first completed update will appear here after another run.</p>
+        </article>
+        <article id="current-card" class="outcome-card empty">
+          <span>Current</span>
+          <strong>No result yet</strong>
+          <p>Choose one occurrence and run the update.</p>
+        </article>
+      </div>
+      <p id="inference" class="inference">Compare how many copies the database stores and whether every course resolves to the same tutor name.</p>
+    </section>
+  </main>
+  <script data-lab-source>
+(() => {
+  "use strict";
+
+  const DESIGNS = {
+    "1nf": {
+      form: "1NF design",
+      title: "Tutor name is copied into enrolment rows",
+      dependency: "StudentID + CourseID → Grade; CourseID → TutorID → TutorName",
+      tables: [
+        {
+          name: "ENROLMENT_1NF",
+          note: "StudentID + CourseID is the composite key",
+          columns: ["StudentID", "StudentName", "CourseID", "CourseTitle", "TutorID", "TutorName", "Grade"],
+          keys: ["PK", "", "PK", "", "", "", ""],
+          rows: [
+            ["S104", "Mina Patel", "C101", "Databases", "T7", "Dr Noor", "A"],
+            ["S104", "Mina Patel", "C204", "Networks", "T7", "Dr Noor", "B"],
+            ["S212", "Leo Wong", "C101", "Databases", "T7", "Dr Noor", "B"]
+          ]
+        }
+      ],
+      occurrences: [
+        { table: 0, row: 0, column: 5, label: "S104 · C101 enrolment row" },
+        { table: 0, row: 1, column: 5, label: "S104 · C204 enrolment row" },
+        { table: 0, row: 2, column: 5, label: "S212 · C101 enrolment row" }
+      ]
+    },
+    "2nf": {
+      form: "2NF design",
+      title: "Tutor name is copied into course rows",
+      dependency: "CourseID → TutorID → TutorName remains transitive",
+      tables: [
+        { name: "STUDENT", note: "StudentID → StudentName", columns: ["StudentID", "StudentName"], keys: ["PK", ""], rows: [["S104", "Mina Patel"], ["S212", "Leo Wong"]] },
+        { name: "COURSE_2NF", note: "CourseID → CourseTitle, TutorID, TutorName", columns: ["CourseID", "CourseTitle", "TutorID", "TutorName"], keys: ["PK", "", "", ""], rows: [["C101", "Databases", "T7", "Dr Noor"], ["C204", "Networks", "T7", "Dr Noor"]] },
+        { name: "ENROLMENT", note: "StudentID + CourseID → Grade", columns: ["StudentID", "CourseID", "Grade"], keys: ["PK · FK", "PK · FK", ""], rows: [["S104", "C101", "A"], ["S104", "C204", "B"], ["S212", "C101", "B"]] }
+      ],
+      occurrences: [
+        { table: 1, row: 0, column: 3, label: "C101 · Databases course row" },
+        { table: 1, row: 1, column: 3, label: "C204 · Networks course row" }
+      ]
+    },
+    "3nf": {
+      form: "3NF design",
+      title: "Tutor name has one authoritative row",
+      dependency: "TutorID → TutorName; CourseID → TutorID",
+      tables: [
+        { name: "STUDENT", note: "StudentID → StudentName", columns: ["StudentID", "StudentName"], keys: ["PK", ""], rows: [["S104", "Mina Patel"], ["S212", "Leo Wong"]] },
+        { name: "TUTOR", note: "TutorID → TutorName", columns: ["TutorID", "TutorName"], keys: ["PK", ""], rows: [["T7", "Dr Noor"]] },
+        { name: "COURSE", note: "CourseID → CourseTitle, TutorID", columns: ["CourseID", "CourseTitle", "TutorID"], keys: ["PK", "", "FK"], rows: [["C101", "Databases", "T7"], ["C204", "Networks", "T7"]] },
+        { name: "ENROLMENT", note: "StudentID + CourseID → Grade", columns: ["StudentID", "CourseID", "Grade"], keys: ["PK · FK", "PK · FK", ""], rows: [["S104", "C101", "A"], ["S104", "C204", "B"], ["S212", "C101", "B"]] }
+      ],
+      occurrences: [{ table: 1, row: 0, column: 1, label: "T7 · single TUTOR row" }]
+    }
+  };
+
+  const copyDesign = design => ({
+    ...design,
+    tables: design.tables.map(table => ({ ...table, columns: [...table.columns], keys: [...table.keys], rows: table.rows.map(row => [...row]) })),
+    occurrences: design.occurrences.map(item => ({ ...item }))
+  });
+
+  function courseFacts(designKey, design) {
+    if (designKey === "1nf") {
+      const values = new Map();
+      design.tables[0].rows.forEach(row => {
+        const key = `${row[2]} · ${row[3]}`;
+        if (!values.has(key)) values.set(key, new Set());
+        values.get(key).add(row[5]);
+      });
+      return [...values].map(([course, names]) => `${course}: ${[...names].join(" / ")}`);
+    }
+    if (designKey === "2nf") return design.tables[1].rows.map(row => `${row[0]} · ${row[1]}: ${row[3]}`);
+    const tutorName = design.tables[1].rows[0][1];
+    return design.tables[2].rows.map(row => `${row[0]} · ${row[1]}: ${tutorName}`);
+  }
+
+  function init() {
+    const byId = id => document.getElementById(id);
+    const designButtons = [...document.querySelectorAll("[data-design]")];
+    let designKey = "1nf";
+    let design = copyDesign(DESIGNS[designKey]);
+    let changedCell = null;
+    let lastResult = null;
+    let previousResult = null;
+    let runCount = 0;
+
+    function makeTable(tableData, tableIndex) {
+      const card = document.createElement("article");
+      card.className = "table-card";
+      const title = document.createElement("div");
+      title.className = "table-title";
+      const name = document.createElement("strong");
+      name.textContent = tableData.name;
+      const note = document.createElement("span");
+      note.textContent = tableData.note;
+      title.append(name, note);
+
+      const scroll = document.createElement("div");
+      scroll.className = "table-scroll";
+      const table = document.createElement("table");
+      const caption = document.createElement("caption");
+      caption.textContent = `${tableData.name}: ${tableData.note}`;
+      caption.hidden = true;
+      const head = document.createElement("thead");
+      const headRow = document.createElement("tr");
+      tableData.columns.forEach((column, index) => {
+        const th = document.createElement("th");
+        th.scope = "col";
+        th.append(document.createTextNode(column));
+        if (tableData.keys[index]) {
+          const key = document.createElement("b");
+          key.textContent = tableData.keys[index];
+          th.append(key);
+        }
+        headRow.append(th);
+      });
+      head.append(headRow);
+      const body = document.createElement("tbody");
+      tableData.rows.forEach((row, rowIndex) => {
+        const tr = document.createElement("tr");
+        row.forEach((value, columnIndex) => {
+          const td = document.createElement("td");
+          td.textContent = value;
+          if (changedCell && changedCell.table === tableIndex && changedCell.row === rowIndex && changedCell.column === columnIndex) {
+            td.className = designKey === "3nf" ? "source" : "changed";
+          }
+          tr.append(td);
+        });
+        body.append(tr);
+      });
+      table.append(caption, head, body);
+      scroll.append(table);
+      card.append(title, scroll);
+      return card;
+    }
+
+    function renderTables() {
+      byId("tables-region").replaceChildren(...design.tables.map(makeTable));
+    }
+
+    function renderDesign() {
+      byId("design-form").textContent = design.form;
+      byId("design-title").textContent = design.title;
+      byId("dependency-copy").textContent = design.dependency;
+      byId("copy-badge").textContent = `${design.occurrences.length} stored ${design.occurrences.length === 1 ? "copy" : "copies"}`;
+      byId("copies-needed").textContent = String(design.occurrences.length);
+      byId("copies-updated").textContent = "0";
+      byId("consistency").textContent = "Not tested";
+      byId("occurrence").replaceChildren(...design.occurrences.map((item, index) => {
+        const option = document.createElement("option");
+        option.value = String(index);
+        option.textContent = item.label;
+        return option;
+      }));
+      designButtons.forEach(button => button.setAttribute("aria-pressed", String(button.dataset.design === designKey)));
+      renderTables();
+    }
+
+    function resultCard(element, label, result) {
+      element.className = `outcome-card ${result ? (result.consistent ? "consistent" : "conflict") : "empty"}`;
+      element.replaceChildren();
+      const overline = document.createElement("span");
+      overline.textContent = label;
+      const title = document.createElement("strong");
+      title.textContent = result ? `${result.form} · ${result.consistent ? "consistent" : "conflict"}` : (label === "Previous" ? "No earlier result" : "No result yet");
+      const copy = document.createElement("p");
+      copy.textContent = result ? `${result.updated}/1 occurrence updated; ${result.remaining} old ${result.remaining === 1 ? "copy remains" : "copies remain"}. ${result.facts.join(" · ")}` : (label === "Previous" ? "Your first completed update will appear here after another run." : "Choose one occurrence and run the update.");
+      element.append(overline, title, copy);
+    }
+
+    function renderComparison() {
+      resultCard(byId("previous-card"), "Previous", previousResult);
+      resultCard(byId("current-card"), "Current", lastResult);
+      if (runCount >= 2) {
+        byId("inference").textContent = lastResult && lastResult.consistent
+          ? "In 3NF, TutorName is corrected once under TutorID, and both course joins resolve to that same value."
+          : "Repeated TutorName values require repeated updates; changing one copy can leave joined course facts in conflict.";
+      }
+    }
+
+    function resetCurrent(message = "Data reset. Choose an occurrence and run the update again.") {
+      design = copyDesign(DESIGNS[designKey]);
+      changedCell = null;
+      byId("new-name").value = "Dr Nouri";
+      byId("run-update").disabled = false;
+      byId("result").className = "result";
+      byId("result-title").textContent = "No update run";
+      byId("result-copy").textContent = "The selected design still contains its original tutor-name values.";
+      renderDesign();
+      byId("experiment-status").textContent = message;
+    }
+
+    function selectDesign(key) {
+      designKey = key;
+      resetCurrent(`${DESIGNS[key].form} loaded. Run the same tutor-name correction.`);
+    }
+
+    function runUpdate() {
+      const name = byId("new-name").value.trim();
+      if (!name) {
+        byId("experiment-status").textContent = "Enter a corrected tutor name before running the update.";
+        byId("new-name").focus();
+        return;
+      }
+      const occurrence = design.occurrences[Number(byId("occurrence").value)];
+      const copies = design.occurrences.length;
+      design.tables[occurrence.table].rows[occurrence.row][occurrence.column] = name;
+      changedCell = occurrence;
+      const facts = courseFacts(designKey, design);
+      const names = new Set(facts.map(fact => fact.split(": ")[1]));
+      const consistent = names.size === 1;
+      const result = {
+        form: design.form.replace(" design", ""),
+        consistent,
+        updated: 1,
+        remaining: copies - 1,
+        facts
+      };
+      previousResult = lastResult;
+      lastResult = result;
+      runCount += 1;
+      renderTables();
+      byId("run-update").disabled = true;
+      byId("result").className = `result ${consistent ? "is-consistent" : "is-conflict"}`;
+      byId("result-title").textContent = consistent ? "Joined course facts agree" : "Joined course facts conflict";
+      byId("result-copy").textContent = consistent
+        ? "The single TUTOR value changed, so every course using TutorID T7 resolves to Dr Nouri."
+        : "Only one stored occurrence changed. Other copies still say Dr Noor for the same TutorID T7.";
+      byId("copies-needed").textContent = String(copies);
+      byId("copies-updated").textContent = "1";
+      byId("consistency").textContent = consistent ? "Consistent" : "Conflict";
+      byId("experiment-status").textContent = `${design.form}: ${consistent ? "one update kept both course joins consistent" : `${copies - 1} old ${copies - 1 === 1 ? "copy remains" : "copies remain"}`}.`;
+      renderComparison();
+    }
+
+    designButtons.forEach(button => button.addEventListener("click", () => selectDesign(button.dataset.design)));
+    byId("run-update").addEventListener("click", runUpdate);
+    byId("reset-data").addEventListener("click", () => resetCurrent());
+    renderDesign();
+    renderComparison();
+  }
+
+  if (typeof module !== "undefined" && module.exports) module.exports = { DESIGNS, copyDesign, courseFacts };
+  if (typeof document !== "undefined") init();
+})();
+</script>
+</body>
+</html>

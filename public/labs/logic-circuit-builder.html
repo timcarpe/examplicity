@@ -1,0 +1,450 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Logic Circuit Builder</title>
+  <style data-lab-source>
+:root {
+  color-scheme: light;
+  --ink: #1d3038;
+  --muted: #65767b;
+  --canvas: #edf1ed;
+  --panel: #fffef9;
+  --line: #d3dcd7;
+  --blue: #176c78;
+  --blue-dark: #11515a;
+  --signal: #e49a35;
+  --signal-soft: #fff0d7;
+  --good: #28704f;
+  --good-soft: #dff1e6;
+  --bad: #a4423b;
+  --bad-soft: #f7e3df;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; color: var(--ink); background: radial-gradient(circle at 85% 0, rgba(23, 108, 120, .12), transparent 29rem), var(--canvas); }
+button, select { font: inherit; }
+button { cursor: pointer; }
+button:focus-visible, select:focus-visible { outline: 3px solid #e8aa42; outline-offset: 3px; }
+main { width: min(1120px, calc(100% - 2rem)); margin: 0 auto; padding: 2.2rem 0 3rem; }
+.lab-header { max-width: 790px; margin-bottom: 1.25rem; }
+.eyebrow, .label, .component { margin: 0 0 .35rem; color: var(--blue); font-size: .74rem; font-weight: 850; letter-spacing: .105em; text-transform: uppercase; }
+h1 { margin: 0; font-size: clamp(2rem, 5vw, 3.4rem); line-height: 1; letter-spacing: -.045em; }
+h2, h3, p { margin-top: 0; }
+.subtitle { margin: .8rem 0 0; color: var(--muted); font-size: 1.06rem; line-height: 1.55; }
+.goal, .panel { border: 1px solid var(--line); border-radius: 1rem; background: rgba(255, 254, 249, .97); box-shadow: 0 14px 35px rgba(29, 48, 56, .06); }
+.goal { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 1rem 1.15rem; margin-bottom: .75rem; border-left: 5px solid var(--signal); }
+.goal h2 { margin: 0; font-size: 1.12rem; }
+.goal > p { max-width: 330px; margin: 0; color: var(--muted); font-size: .87rem; font-weight: 750; text-align: right; }
+.panel { min-width: 0; padding: 1.1rem; }
+.panel h2 { margin-bottom: .35rem; font-size: 1.3rem; }
+.workspace { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(280px, .55fr); gap: .75rem; align-items: start; }
+.panel-heading { display: flex; justify-content: space-between; gap: 1rem; align-items: start; }
+.input-controls { display: flex; gap: .45rem; }
+.input-switch { display: grid; grid-template-columns: auto 1.8rem; align-items: center; gap: .55rem; min-width: 112px; padding: .55rem .65rem; border: 1px solid #aebbb7; border-radius: .7rem; color: var(--ink); background: white; }
+.input-switch span { font-size: .75rem; font-weight: 800; }
+.input-switch strong { display: grid; place-items: center; width: 1.8rem; height: 1.8rem; border-radius: .45rem; background: #e7ece9; }
+.input-switch[aria-pressed="true"] { border-color: #d28a27; background: var(--signal-soft); }
+.input-switch[aria-pressed="true"] strong { color: #5a3806; background: #f6c875; }
+.circuit-shell { margin-top: .8rem; overflow-x: auto; border: 1px solid var(--line); border-radius: .85rem; background: #f7f8f5; }
+#circuit { display: block; width: 100%; min-width: 610px; height: auto; }
+.wire { fill: none; stroke: #8ea09c; stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; transition: stroke .18s ease, filter .18s ease; }
+.wire.on { stroke: var(--signal); filter: drop-shadow(0 0 3px rgba(228, 154, 53, .45)); }
+.gate path, .gate circle { fill: #fff; stroke: var(--blue); stroke-width: 4; }
+.gate text { fill: var(--blue-dark); font-size: 17px; font-weight: 850; text-anchor: middle; }
+.not-gate.is-bypassed { opacity: .28; }
+.not-gate { transition: opacity .18s ease; }
+.fixed-label { fill: var(--muted); font-size: 12px; font-weight: 750; text-anchor: middle; }
+.signal-label rect { fill: #e7ece9; stroke: #aebbb7; stroke-width: 2; }
+.signal-label text { fill: var(--ink); font-size: 16px; font-weight: 850; text-anchor: middle; }
+.signal-label.on rect, .output-badge.on rect { fill: #f6c875; stroke: #ce8421; }
+.wire-value rect { fill: #fff; stroke: var(--line); stroke-width: 2; }
+.wire-value text { fill: var(--ink); font-size: 15px; font-weight: 850; text-anchor: middle; }
+.output-badge rect { fill: #e7ece9; stroke: #aebbb7; stroke-width: 3; }
+.output-badge text { fill: var(--ink); font-size: 22px; font-weight: 900; text-anchor: middle; }
+.signal-reading { margin: .75rem 0 0; color: #355b60; font: 750 .82rem/1.5 ui-monospace, SFMono-Regular, Consolas, monospace; }
+.builder-panel h2 { margin-bottom: .8rem; }
+.gate-controls { display: grid; gap: .6rem; }
+.gate-controls label { display: grid; gap: .32rem; color: var(--muted); font-size: .76rem; font-weight: 800; }
+select { width: 100%; padding: .62rem .68rem; border: 1px solid #aebbb7; border-radius: .62rem; color: var(--ink); background: white; }
+.expression { margin: 1rem 0; padding: .8rem; border: 1px solid var(--line); border-radius: .75rem; background: #f3f6f3; }
+.expression h3 { margin: 0; font: 800 .88rem/1.5 ui-monospace, SFMono-Regular, Consolas, monospace; overflow-wrap: anywhere; }
+.actions { display: grid; gap: .5rem; }
+button { padding: .7rem .8rem; border: 1px solid #aebbb7; border-radius: .68rem; color: var(--ink); background: white; }
+button.primary { color: white; border-color: var(--blue); background: var(--blue); font-weight: 850; }
+button.primary:hover { background: var(--blue-dark); }
+.truth-panel { margin-top: .75rem; }
+.truth-heading { display: flex; justify-content: space-between; align-items: end; gap: 1rem; }
+.truth-heading h2 { margin: 0; }
+.truth-heading > p { margin: 0; color: var(--muted); font-size: .82rem; font-weight: 750; text-align: right; }
+.table-scroll { margin-top: .8rem; overflow-x: auto; }
+table { width: 100%; min-width: 520px; border-collapse: separate; border-spacing: 0; font-size: .86rem; }
+th, td { padding: .68rem .75rem; border-bottom: 1px solid var(--line); text-align: center; }
+th { color: var(--muted); background: #f3f5f2; font-size: .7rem; letter-spacing: .06em; text-transform: uppercase; }
+th:first-child { border-radius: .55rem 0 0 0; }
+th:last-child { border-radius: 0 .55rem 0 0; }
+tbody tr.current td:first-child { box-shadow: inset 4px 0 0 var(--signal); }
+tbody tr.match { background: var(--good-soft); }
+tbody tr.mismatch { background: var(--bad-soft); }
+.result-word { font-weight: 850; }
+.result-word.match { color: var(--good); }
+.result-word.mismatch { color: var(--bad); }
+.result-explanation { margin: .8rem 0 0; color: #355b60; font-weight: 750; line-height: 1.45; }
+.result-explanation.success { color: var(--good); }
+.result-explanation.failure { color: var(--bad); }
+@media (max-width: 850px) {
+  .workspace { grid-template-columns: 1fr; }
+  .builder-panel { order: -1; }
+  .gate-controls { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 580px) {
+  main { width: min(100% - 1rem, 1120px); padding-top: 1.2rem; }
+  .goal, .panel-heading, .truth-heading { align-items: flex-start; flex-direction: column; }
+  .goal > p, .truth-heading > p { text-align: left; }
+  .input-controls { width: 100%; }
+  .input-switch { min-width: 0; flex: 1; }
+  .gate-controls { grid-template-columns: 1fr; }
+  .circuit-shell { margin-inline: -.35rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .001ms !important; animation-duration: .001ms !important; }
+}
+</style>
+<!-- LAB_FRAME_STYLES_START -->
+<style data-lab-frame>
+:root {
+  --lab-canvas: #f3f5f7;
+  --lab-paper: #fbfbfd;
+  --lab-surface: #ffffff;
+  --lab-control: #ffffff;
+  --lab-ink: #1d1d1f;
+  --lab-muted: #6e6e73;
+  --lab-line: #d2d2d7;
+  --lab-line-strong: #a7a7ad;
+  --lab-accent: #5277b8;
+  --lab-accent-soft: #eef2fa;
+  --lab-good: #18794e;
+  --lab-good-soft: #edf8f1;
+  --lab-warn: #946200;
+  --lab-warn-soft: #fff6e7;
+  --lab-bad: #b42318;
+  --lab-bad-soft: #fff0ee;
+  --lab-focus: #1d1d1f;
+  --lab-focus-soft: rgba(29, 29, 31, 0.18);
+  --lab-font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+  --lab-panel-radius: 12px;
+  --lab-control-radius: 8px;
+  --lab-pill-radius: 999px;
+  --lab-control-height: 35px;
+  --lab-panel-shadow: 0 1px 2px rgba(29, 29, 31, 0.04);
+}
+
+html,
+body {
+  background: var(--lab-canvas);
+}
+
+body {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-family: var(--lab-font-sans);
+  padding-bottom: 58px;
+  padding-top: 66px;
+  text-rendering: optimizeLegibility;
+}
+
+html[data-theme="dark"],
+html[data-theme="dark"] body {
+  background: var(--bg);
+}
+
+main {
+  container-name: lab-canvas;
+  container-type: inline-size;
+}
+
+body.binary-lab main {
+  width: min(820px, calc(100% - 24px));
+}
+
+:where(button, input, select, textarea, summary):focus-visible {
+  outline: 3px solid var(--lab-focus);
+  outline-offset: 4px;
+}
+
+@media (max-width: 620px) {
+  body {
+    padding-bottom: 76px;
+    padding-top: 60px;
+  }
+
+  body.binary-lab main {
+    width: min(100% - 12px, 820px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+</style>
+<!-- LAB_FRAME_STYLES_END -->
+</head>
+<body>
+  <main>
+    <header class="lab-header">
+      <p class="eyebrow">Logic circuits</p>
+      <h1>Logic Circuit Builder</h1>
+      <p class="subtitle">Assign gates, switch A and B, then verify whether the circuit matches every row of the target truth table.</p>
+    </header>
+
+    <section class="goal" aria-labelledby="goal-title">
+      <div><p class="label">Target function</p><h2 id="goal-title">Output 1 when exactly one input is 1</h2></div>
+      <p id="build-status" role="status" aria-live="polite">Choose gates, then verify all four rows.</p>
+    </section>
+
+    <div class="workspace">
+      <section class="panel circuit-panel" aria-labelledby="circuit-title">
+        <div class="panel-heading">
+          <div><p class="component">Circuit</p><h2 id="circuit-title">Build and test the signal path</h2></div>
+          <div class="input-controls" aria-label="Circuit inputs">
+            <button id="input-a" class="input-switch" type="button" aria-pressed="false"><span>Input A</span><strong>0</strong></button>
+            <button id="input-b" class="input-switch" type="button" aria-pressed="false"><span>Input B</span><strong>0</strong></button>
+          </div>
+        </div>
+
+        <div class="circuit-shell">
+          <svg id="circuit" viewBox="0 0 760 360" role="img" aria-labelledby="circuit-svg-title circuit-svg-desc">
+            <title id="circuit-svg-title">Live compound logic circuit</title>
+            <desc id="circuit-svg-desc">Inputs A and B feed upper and lower gate slots. The lower branch can pass through a NOT gate. Both branches meet at a fixed AND gate.</desc>
+            <g id="svg-input-a" class="signal-label input-label" transform="translate(24 102)"><rect width="58" height="36" rx="9"/><text x="29" y="24">A · <tspan id="svg-a">0</tspan></text></g>
+            <g id="svg-input-b" class="signal-label input-label" transform="translate(24 222)"><rect width="58" height="36" rx="9"/><text x="29" y="24">B · <tspan id="svg-b">0</tspan></text></g>
+            <path id="wire-a-top" class="wire" d="M82 120 H164 V85 H214"/>
+            <path id="wire-b-top" class="wire" d="M82 240 H144 V135 H214"/>
+            <path id="wire-a-bottom" class="wire" d="M82 120 H126 V225 H214"/>
+            <path id="wire-b-bottom" class="wire" d="M82 240 H214"/>
+            <g class="gate two-input" transform="translate(214 57)"><path id="gate-top-shape" d="M0 0 H48 C99 0 99 106 48 106 H0 Z"/><text id="gate-top-label" x="47" y="60">AND</text></g>
+            <g class="gate two-input" transform="translate(214 197)"><path id="gate-bottom-shape" d="M0 0 H48 C99 0 99 106 48 106 H0 Z"/><text id="gate-bottom-label" x="47" y="60">AND</text></g>
+            <path id="wire-top-out" class="wire" d="M310 110 H565 V145"/>
+            <path id="wire-bottom-out" class="wire" d="M310 250 H386"/>
+            <g id="not-symbol" class="gate not-gate is-bypassed" transform="translate(386 218)"><path d="M0 0 L64 32 L0 64 Z"/><circle cx="72" cy="32" r="8"/><text x="30" y="38">NOT</text></g>
+            <path id="wire-not-out" class="wire" d="M466 250 H565 V215"/>
+            <g class="gate final-gate" transform="translate(565 117)"><path d="M0 0 H48 C99 0 99 126 48 126 H0 Z"/><text x="47" y="69">AND</text></g>
+            <text class="fixed-label" x="612" y="105">fixed gate</text>
+            <path id="wire-output" class="wire" d="M662 180 H703"/>
+            <g id="output-badge" class="output-badge" transform="translate(699 155)"><rect width="52" height="50" rx="12"/><text id="svg-output" x="26" y="33">0</text></g>
+            <g class="wire-value" transform="translate(329 86)"><rect width="54" height="30" rx="8"/><text id="top-value" x="27" y="21">0</text></g>
+            <g class="wire-value" transform="translate(325 226)"><rect width="54" height="30" rx="8"/><text id="bottom-value" x="27" y="21">0</text></g>
+            <g class="wire-value" transform="translate(487 226)"><rect width="54" height="30" rx="8"/><text id="not-value" x="27" y="21">0</text></g>
+          </svg>
+        </div>
+        <p id="signal-reading" class="signal-reading">A = 0 and B = 0 → upper AND = 0; lower AND = 0; bypass = 0; output = 0.</p>
+      </section>
+
+      <aside class="panel builder-panel" aria-labelledby="builder-title">
+        <p class="component">Gate rack</p>
+        <h2 id="builder-title">Assign the three slots</h2>
+        <div class="gate-controls">
+          <label for="gate-top"><span>Upper branch</span><select id="gate-top"><option value="AND">AND</option><option value="OR">OR</option></select></label>
+          <label for="gate-bottom"><span>Lower branch</span><select id="gate-bottom"><option value="AND">AND</option><option value="OR">OR</option></select></label>
+          <label for="gate-not"><span>Lower signal</span><select id="gate-not"><option value="BYPASS">No NOT gate</option><option value="NOT">NOT</option></select></label>
+        </div>
+        <section class="expression" aria-labelledby="expression-title">
+          <p class="label">Connected expression</p>
+          <h3 id="expression-title"><span id="expression-text">(A AND B) AND (A AND B)</span></h3>
+        </section>
+        <div class="actions"><button id="verify" class="primary" type="button">Verify four rows</button><button id="reset" type="button">Reset circuit</button></div>
+      </aside>
+    </div>
+
+    <section class="panel truth-panel" aria-labelledby="truth-title">
+      <div class="truth-heading"><div><p class="component">Complete test</p><h2 id="truth-title">Target truth table</h2></div><p id="match-count">Actual outputs appear after verification.</p></div>
+      <div class="table-scroll"><table><thead><tr><th scope="col">A</th><th scope="col">B</th><th scope="col">Target</th><th scope="col">Your output</th><th scope="col">Result</th></tr></thead><tbody id="truth-body"></tbody></table></div>
+      <p id="result-explanation" class="result-explanation">Toggle the inputs to inspect one signal path, then verify the circuit against every possible input pair.</p>
+    </section>
+  </main>
+  <script data-lab-source>
+const rows = [
+  { a: 0, b: 0, target: 0 },
+  { a: 0, b: 1, target: 1 },
+  { a: 1, b: 0, target: 1 },
+  { a: 1, b: 1, target: 0 }
+];
+
+const state = { a: 0, b: 0, top: "AND", bottom: "AND", invert: false, verified: false };
+const gatePaths = {
+  AND: "M0 0 H48 C99 0 99 106 48 106 H0 Z",
+  OR: "M0 0 C29 23 29 83 0 106 C42 101 79 85 96 53 C79 21 42 5 0 0 Z"
+};
+
+const elements = {
+  inputA: document.querySelector("#input-a"),
+  inputB: document.querySelector("#input-b"),
+  topSelect: document.querySelector("#gate-top"),
+  bottomSelect: document.querySelector("#gate-bottom"),
+  notSelect: document.querySelector("#gate-not"),
+  verify: document.querySelector("#verify"),
+  reset: document.querySelector("#reset"),
+  body: document.querySelector("#truth-body"),
+  status: document.querySelector("#build-status"),
+  matchCount: document.querySelector("#match-count"),
+  explanation: document.querySelector("#result-explanation"),
+  expression: document.querySelector("#expression-text"),
+  reading: document.querySelector("#signal-reading")
+};
+
+function gate(type, a, b) {
+  return type === "OR" ? Number(Boolean(a || b)) : Number(Boolean(a && b));
+}
+
+function evaluate(a, b) {
+  const top = gate(state.top, a, b);
+  const bottom = gate(state.bottom, a, b);
+  const lower = state.invert ? Number(!bottom) : bottom;
+  return { top, bottom, lower, output: Number(Boolean(top && lower)) };
+}
+
+function setText(selector, value) {
+  document.querySelector(selector).textContent = String(value);
+}
+
+function setOn(selector, on) {
+  document.querySelector(selector).classList.toggle("on", Boolean(on));
+}
+
+function updateInputButton(button, value) {
+  button.setAttribute("aria-pressed", String(Boolean(value)));
+  button.querySelector("strong").textContent = String(value);
+}
+
+function renderCircuit() {
+  const result = evaluate(state.a, state.b);
+  updateInputButton(elements.inputA, state.a);
+  updateInputButton(elements.inputB, state.b);
+  setText("#svg-a", state.a);
+  setText("#svg-b", state.b);
+  setText("#gate-top-label", state.top);
+  setText("#gate-bottom-label", state.bottom);
+  document.querySelector("#gate-top-shape").setAttribute("d", gatePaths[state.top]);
+  document.querySelector("#gate-bottom-shape").setAttribute("d", gatePaths[state.bottom]);
+  setText("#top-value", result.top);
+  setText("#bottom-value", result.bottom);
+  setText("#not-value", result.lower);
+  setText("#svg-output", result.output);
+  setOn("#wire-a-top", state.a);
+  setOn("#wire-a-bottom", state.a);
+  setOn("#wire-b-top", state.b);
+  setOn("#wire-b-bottom", state.b);
+  setOn("#wire-top-out", result.top);
+  setOn("#wire-bottom-out", result.bottom);
+  setOn("#wire-not-out", result.lower);
+  setOn("#wire-output", result.output);
+  setOn("#output-badge", result.output);
+  setOn("#svg-input-a", state.a);
+  setOn("#svg-input-b", state.b);
+  document.querySelector("#not-symbol").classList.toggle("is-bypassed", !state.invert);
+
+  elements.expression.textContent = state.invert
+    ? `(A ${state.top} B) AND NOT(A ${state.bottom} B)`
+    : `(A ${state.top} B) AND (A ${state.bottom} B)`;
+  elements.reading.textContent = `A = ${state.a} and B = ${state.b} → upper ${state.top} = ${result.top}; lower ${state.bottom} = ${result.bottom}; ${state.invert ? "NOT" : "bypass"} = ${result.lower}; output = ${result.output}.`;
+
+  document.querySelectorAll("#truth-body tr").forEach((row) => {
+    row.classList.toggle("current", Number(row.dataset.a) === state.a && Number(row.dataset.b) === state.b);
+  });
+}
+
+function renderTable() {
+  elements.body.replaceChildren();
+  let matches = 0;
+
+  rows.forEach((row) => {
+    const result = evaluate(row.a, row.b);
+    const matchesTarget = result.output === row.target;
+    if (matchesTarget) matches += 1;
+
+    const tr = document.createElement("tr");
+    tr.dataset.a = row.a;
+    tr.dataset.b = row.b;
+    if (state.verified) tr.classList.add(matchesTarget ? "match" : "mismatch");
+    tr.innerHTML = `
+      <td>${row.a}</td>
+      <td>${row.b}</td>
+      <td>${row.target}</td>
+      <td>${state.verified ? result.output : "—"}</td>
+      <td>${state.verified ? `<span class="result-word ${matchesTarget ? "match" : "mismatch"}">${matchesTarget ? "Match" : "Mismatch"}</span>` : "Not tested"}</td>
+    `;
+    elements.body.append(tr);
+  });
+
+  if (!state.verified) {
+    elements.matchCount.textContent = "Actual outputs appear after verification.";
+    elements.explanation.textContent = "Toggle the inputs to inspect one signal path, then verify the circuit against every possible input pair.";
+    elements.explanation.className = "result-explanation";
+  } else if (matches === rows.length) {
+    elements.matchCount.textContent = "4 of 4 rows match";
+    elements.explanation.textContent = "Circuit matched: the connected gates produce 1 only when exactly one input is 1.";
+    elements.explanation.className = "result-explanation success";
+  } else {
+    const mismatches = rows.length - matches;
+    elements.matchCount.textContent = `${matches} of 4 rows match`;
+    elements.explanation.textContent = `${mismatches} ${mismatches === 1 ? "row does" : "rows do"} not match the target. Use the highlighted inputs to trace where the signal differs, then change a gate.`;
+    elements.explanation.className = "result-explanation failure";
+  }
+
+  renderCircuit();
+  return matches;
+}
+
+function gateChanged() {
+  state.top = elements.topSelect.value;
+  state.bottom = elements.bottomSelect.value;
+  state.invert = elements.notSelect.value === "NOT";
+  const matches = renderTable();
+  elements.status.textContent = state.verified
+    ? (matches === 4 ? "Circuit verified: 4 of 4 rows match." : `Circuit changed: ${matches} of 4 rows match.`)
+    : "Circuit changed. Test the live signals or verify all four rows.";
+}
+
+function toggleInput(key) {
+  state[key] = Number(!state[key]);
+  renderCircuit();
+  const current = evaluate(state.a, state.b);
+  elements.status.textContent = `Inputs ${state.a}${state.b}: circuit output ${current.output}, target ${Number(state.a !== state.b)}.`;
+}
+
+elements.inputA.addEventListener("click", () => toggleInput("a"));
+elements.inputB.addEventListener("click", () => toggleInput("b"));
+elements.topSelect.addEventListener("change", gateChanged);
+elements.bottomSelect.addEventListener("change", gateChanged);
+elements.notSelect.addEventListener("change", gateChanged);
+
+elements.verify.addEventListener("click", () => {
+  state.verified = true;
+  const matches = renderTable();
+  elements.status.textContent = matches === 4 ? "Circuit verified: all four rows match." : `Verification complete: ${matches} of 4 rows match.`;
+  elements.matchCount.scrollIntoView({ block: "nearest", behavior: "smooth" });
+});
+
+elements.reset.addEventListener("click", () => {
+  Object.assign(state, { a: 0, b: 0, top: "AND", bottom: "AND", invert: false, verified: false });
+  elements.topSelect.value = "AND";
+  elements.bottomSelect.value = "AND";
+  elements.notSelect.value = "BYPASS";
+  renderTable();
+  elements.status.textContent = "Circuit reset. Choose gates, then verify all four rows.";
+  elements.inputA.focus();
+});
+
+renderTable();
+</script>
+</body>
+</html>

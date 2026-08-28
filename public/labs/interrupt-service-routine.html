@@ -1,0 +1,557 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Interrupt Service Routine</title>
+  <style data-lab-source>
+:root {
+  --canvas: #f2f4f6; --surface: #fff; --ink: #1d2730; --muted: #687681;
+  --line: #d7dfe5; --line-strong: #9da9b2; --accent: #2865d8;
+  --accent-soft: #edf3ff; --event: #b65b17; --event-soft: #fff2e7;
+  --isr: #654b8c; --isr-soft: #f2eef8; --good: #247349; --focus: #173b52;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--canvas); color: var(--ink); font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+button { min-height: 38px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); cursor: pointer; font-family: inherit; font-size: 12px; font-weight: 700; padding: 0 12px; }
+button:hover:not(:disabled) { border-color: var(--line-strong); }
+button:disabled { cursor: not-allowed; opacity: .46; }
+button.primary { border-color: var(--accent); background: var(--accent); color: #fff; }
+button.primary:hover:not(:disabled) { background: #1f56bb; }
+button.quiet { color: var(--muted); }
+button:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+kbd { border: 1px solid #aeb8bf; border-bottom-width: 3px; border-radius: 5px; background: #fff; color: var(--ink); font: 800 .92em/1 ui-monospace, SFMono-Regular, Consolas, monospace; padding: 2px 6px; }
+main { width: min(1120px, calc(100% - 24px)); margin: 18px auto 42px; }
+h1, h2, h3, p { margin-top: 0; }
+h1 { margin-bottom: 5px; font-size: clamp(28px, 4vw, 38px); font-weight: 650; letter-spacing: -.035em; }
+h2 { margin-bottom: 5px; font-size: 17px; letter-spacing: -.015em; }
+.panel { border: 1px solid var(--line); border-radius: 12px; background: var(--surface); box-shadow: 0 1px 2px rgba(29, 39, 48, .04); }
+.eyebrow, .section-label { margin-bottom: 5px; color: var(--muted); font-size: 9px; font-weight: 850; letter-spacing: .09em; text-transform: uppercase; }
+.lede { max-width: 790px; margin-bottom: 14px; color: var(--muted); font-size: 13px; line-height: 1.5; }
+.experiment { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 18px; align-items: center; padding: 12px; }
+.experiment p:last-child { margin-bottom: 0; color: var(--muted); font-size: 11px; line-height: 1.45; }
+.controls { display: flex; gap: 7px; flex-wrap: wrap; justify-content: flex-end; }
+.key-button { border-color: #d8b28f; background: var(--event-soft); color: #88420f; }
+.key-button kbd { margin-right: 5px; border-color: #d7a477; }
+.system-grid { display: grid; grid-template-columns: minmax(0, 1fr) 240px; gap: 12px; margin-top: 12px; }
+.processor, .device { min-width: 0; padding: 14px; }
+.panel-head { display: flex; justify-content: space-between; align-items: start; gap: 12px; margin-bottom: 11px; }
+.panel-head p, .panel-head h2 { margin-bottom: 0; }
+.control-chip { border: 1px solid #bad0ef; border-radius: 999px; background: var(--accent-soft); color: #204f9f; font-size: 9px; font-weight: 850; letter-spacing: .06em; padding: 5px 8px; text-transform: uppercase; }
+.control-chip[data-phase="interrupt"] { border-color: #d3c6e2; background: var(--isr-soft); color: var(--isr); }
+.task-steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 7px; margin: 0; padding: 0; list-style: none; }
+.task-steps li { position: relative; display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 7px; align-items: center; min-height: 82px; border: 1px solid var(--line); border-radius: 9px; background: #fafbfc; color: var(--muted); padding: 9px; }
+.task-steps .number { display: grid; width: 27px; height: 27px; place-items: center; border-radius: 7px; background: #e3e8eb; color: #51616b; font: 850 11px/1 ui-monospace, SFMono-Regular, Consolas, monospace; }
+.task-steps strong, .task-steps small { display: block; }
+.task-steps strong { font-size: 11px; line-height: 1.25; }
+.task-steps small { margin-top: 3px; color: var(--muted); font-size: 8px; line-height: 1.3; }
+.task-steps em { grid-column: 1 / -1; font-size: 8px; font-style: normal; font-weight: 850; letter-spacing: .05em; text-transform: uppercase; }
+.task-steps li[data-state="running"] { border-color: var(--accent); background: var(--accent-soft); color: #204f9f; box-shadow: inset 3px 0 var(--accent); }
+.task-steps li[data-state="running"] .number { background: var(--accent); color: #fff; }
+.task-steps li[data-state="paused"] { border-color: var(--event); background: var(--event-soft); color: #88420f; box-shadow: inset 3px 0 var(--event); }
+.task-steps li[data-state="paused"] .number { background: var(--event); color: #fff; }
+.task-steps li[data-state="complete"] .number { background: var(--good); color: #fff; }
+.saved-marker { position: absolute; right: 6px; bottom: -8px; z-index: 2; border-radius: 999px; background: var(--event); color: #fff; font-size: 7px; font-weight: 850; letter-spacing: .05em; padding: 4px 6px; text-transform: uppercase; }
+.route { display: grid; grid-template-columns: 1fr 62px 1fr 62px 1fr; gap: 6px; align-items: center; margin-top: 17px; padding: 12px; border: 1px solid var(--line); border-radius: 10px; background: #f7f9fa; }
+.route-node { min-width: 0; border: 1px solid var(--line); border-radius: 8px; background: #fff; color: var(--muted); padding: 8px; text-align: center; }
+.route-node span, .route-node strong { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.route-node span { font-size: 8px; text-transform: uppercase; }
+.route-node strong { margin-top: 3px; color: inherit; font-size: 11px; }
+.route-node.is-active { border-color: var(--accent); background: var(--accent-soft); color: #204f9f; box-shadow: 0 0 0 3px rgba(40, 101, 216, .07); }
+#isr-node.is-active { border-color: var(--isr); background: var(--isr-soft); color: var(--isr); }
+#return-node.is-active { border-color: var(--event); background: var(--event-soft); color: #88420f; }
+.route-line { color: var(--muted); font-size: 7px; font-weight: 800; text-align: center; text-transform: uppercase; }
+.route-line i { position: relative; display: block; height: 3px; margin-top: 5px; border-radius: 999px; background: #b9c3c9; }
+.route-line i::after { content: ""; position: absolute; top: 50%; right: -1px; border-top: 4px solid transparent; border-bottom: 4px solid transparent; border-left: 6px solid #b9c3c9; transform: translateY(-50%); }
+.return-line i { transform: scaleX(-1); }
+.device { display: flex; flex-direction: column; }
+.keyboard { margin-bottom: 18px; border: 1px solid #9da8af; border-radius: 10px; background: linear-gradient(#dfe4e7, #c7d0d5); box-shadow: 0 8px 15px rgba(40, 52, 60, .14); padding: 15px 12px; transform: perspective(300px) rotateX(8deg); }
+.keyboard-row { display: flex; gap: 5px; margin-bottom: 5px; }
+.keyboard-row:last-child { margin-bottom: 0; }
+.keyboard-row.offset { padding-left: 8px; }
+.keyboard i, .keyboard b { display: grid; width: 27px; height: 24px; place-items: center; border: 1px solid #adb7bd; border-bottom-width: 3px; border-radius: 4px; background: #f8fafb; color: #6e7b83; font: 850 9px/1 ui-monospace, SFMono-Regular, Consolas, monospace; }
+.keyboard b { border-color: #d49662; background: #fff0e2; color: #9a4d12; }
+.device > p:not(.section-label) { margin-bottom: 12px; color: var(--muted); font-size: 11px; line-height: 1.45; }
+.request-signal { display: flex; align-items: center; gap: 8px; margin-top: auto; border: 1px solid var(--line); border-radius: 8px; background: #f8fafb; color: var(--muted); font-size: 9px; padding: 8px; }
+.request-signal span { width: 8px; height: 8px; border-radius: 50%; background: #9eabb3; }
+.request-signal.is-active { border-color: #d7a77e; background: var(--event-soft); color: #88420f; }
+.request-signal.is-active span { background: var(--event); box-shadow: 0 0 0 4px rgba(182, 91, 23, .12); }
+.status { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 15px; align-items: center; margin-top: 12px; border-left: 4px solid var(--accent); padding: 12px 14px; }
+#status-label { color: var(--muted); font-size: 9px; font-weight: 850; letter-spacing: .06em; text-transform: uppercase; }
+#status-text { margin-bottom: 0; color: var(--muted); font-size: 11px; line-height: 1.5; }
+#status-text strong { color: var(--ink); }
+.comparison { margin-top: 12px; padding: 13px; }
+.comparison > header { display: flex; justify-content: space-between; gap: 14px; align-items: end; margin-bottom: 9px; }
+.comparison header p, .comparison header h2 { margin-bottom: 0; }
+#comparison-hint { max-width: 420px; color: var(--muted); font-size: 9px; line-height: 1.4; text-align: right; }
+.comparison-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.comparison article { border: 1px solid var(--line); border-radius: 9px; background: #fafbfc; padding: 9px; }
+.comparison article.current-result { border-color: #bad0ef; background: var(--accent-soft); }
+.comparison h3 { margin-bottom: 7px; font-size: 10px; text-transform: uppercase; }
+.comparison dl { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 7px; margin: 0; }
+.comparison dl div { min-width: 0; }
+.comparison dt { color: var(--muted); font-size: 7px; font-weight: 850; letter-spacing: .05em; text-transform: uppercase; }
+.comparison dd { margin: 2px 0 0; font-size: 9px; font-weight: 750; line-height: 1.3; overflow-wrap: anywhere; }
+@media (max-width: 780px) {
+  .experiment, .system-grid { grid-template-columns: 1fr; }
+  .controls { justify-content: flex-start; }
+  .device { display: grid; grid-template-columns: 150px 1fr; gap: 0 14px; align-items: center; }
+  .keyboard { grid-row: 1 / 5; margin: 0; }
+  .request-signal { margin-top: 0; }
+}
+@media (max-width: 560px) {
+  main { width: calc(100% - 14px); margin-top: 10px; }
+  .controls { display: grid; grid-template-columns: 1fr 1fr; }
+  .task-steps { grid-template-columns: 1fr 1fr; }
+  .route { grid-template-columns: 1fr 32px 1fr; }
+  .route .return-line, #return-node { grid-row: 2; }
+  .route .return-line { grid-column: 2; }
+  #return-node { grid-column: 1; }
+  .device { display: block; }
+  .keyboard { width: 190px; margin: 0 auto 16px; }
+  .status, .comparison-grid { grid-template-columns: 1fr; }
+  .status { gap: 5px; }
+  .comparison > header { display: block; }
+  #comparison-hint { margin-top: 5px; text-align: left; }
+  .comparison dl { grid-template-columns: 1fr 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .001ms !important; }
+}
+</style>
+<!-- LAB_FRAME_STYLES_START -->
+<style data-lab-frame>
+:root {
+  --lab-canvas: #f3f5f7;
+  --lab-paper: #fbfbfd;
+  --lab-surface: #ffffff;
+  --lab-control: #ffffff;
+  --lab-ink: #1d1d1f;
+  --lab-muted: #6e6e73;
+  --lab-line: #d2d2d7;
+  --lab-line-strong: #a7a7ad;
+  --lab-accent: #5277b8;
+  --lab-accent-soft: #eef2fa;
+  --lab-good: #18794e;
+  --lab-good-soft: #edf8f1;
+  --lab-warn: #946200;
+  --lab-warn-soft: #fff6e7;
+  --lab-bad: #b42318;
+  --lab-bad-soft: #fff0ee;
+  --lab-focus: #1d1d1f;
+  --lab-focus-soft: rgba(29, 29, 31, 0.18);
+  --lab-font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+  --lab-panel-radius: 12px;
+  --lab-control-radius: 8px;
+  --lab-pill-radius: 999px;
+  --lab-control-height: 35px;
+  --lab-panel-shadow: 0 1px 2px rgba(29, 29, 31, 0.04);
+}
+
+html,
+body {
+  background: var(--lab-canvas);
+}
+
+body {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-family: var(--lab-font-sans);
+  padding-bottom: 58px;
+  padding-top: 66px;
+  text-rendering: optimizeLegibility;
+}
+
+html[data-theme="dark"],
+html[data-theme="dark"] body {
+  background: var(--bg);
+}
+
+main {
+  container-name: lab-canvas;
+  container-type: inline-size;
+}
+
+body.binary-lab main {
+  width: min(820px, calc(100% - 24px));
+}
+
+:where(button, input, select, textarea, summary):focus-visible {
+  outline: 3px solid var(--lab-focus);
+  outline-offset: 4px;
+}
+
+@media (max-width: 620px) {
+  body {
+    padding-bottom: 76px;
+    padding-top: 60px;
+  }
+
+  body.binary-lab main {
+    width: min(100% - 12px, 820px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+</style>
+<!-- LAB_FRAME_STYLES_END -->
+</head>
+<body>
+  <main>
+    <header class="hero">
+      <p class="eyebrow">Processor control</p>
+      <h1>Interrupt Service Routine</h1>
+      <p class="lede">Run or step the foreground task, press <kbd>K</kbd> during steps 1–3, and observe where processing returns after the keyboard request is handled.</p>
+    </header>
+
+    <section class="experiment panel" aria-labelledby="experiment-title">
+      <div>
+        <p class="section-label">Timing experiment</p>
+        <h2 id="experiment-title">Does the interrupt timing change where the task resumes?</h2>
+        <p>Complete one run without K, then interrupt two runs at different steps and compare the saved positions.</p>
+      </div>
+      <div class="controls" aria-label="Foreground task controls">
+        <button id="run-button" class="primary" type="button">Run task</button>
+        <button id="step-button" type="button">Step task</button>
+        <button id="interrupt-button" class="key-button" type="button"><kbd>K</kbd> Trigger keyboard request</button>
+        <button id="reset-button" class="quiet" type="button">Reset experiment</button>
+      </div>
+    </section>
+
+    <section class="system-grid" aria-label="Processor and keyboard model">
+      <article class="processor panel" aria-labelledby="processor-title">
+        <header class="panel-head">
+          <div>
+            <p class="section-label">Processor</p>
+            <h2 id="processor-title">Foreground task · render one frame</h2>
+          </div>
+          <span id="control-chip" class="control-chip">Foreground</span>
+        </header>
+
+        <ol id="task-steps" class="task-steps">
+          <li data-step="0"><span class="number">1</span><span><strong>Update position</strong><small>Calculate the next object position</small></span><em>Running</em></li>
+          <li data-step="1"><span class="number">2</span><span><strong>Calculate colour</strong><small>Prepare the object colour</small></span><em>Waiting</em></li>
+          <li data-step="2"><span class="number">3</span><span><strong>Draw object</strong><small>Write the object into the frame</small></span><em>Waiting</em></li>
+          <li data-step="3"><span class="number">4</span><span><strong>Present frame</strong><small>Send the completed frame to the display</small></span><em>Waiting</em></li>
+        </ol>
+
+        <div class="route" aria-label="Current processor control path">
+          <div id="foreground-node" class="route-node is-active"><span>Foreground</span><strong id="foreground-position">Step 1</strong></div>
+          <div class="route-line"><span id="route-label">normal control</span><i></i></div>
+          <div id="isr-node" class="route-node"><span>Keyboard ISR</span><strong id="isr-action">Waiting</strong></div>
+          <div class="route-line return-line"><span>return</span><i></i></div>
+          <div id="return-node" class="route-node"><span>Saved position</span><strong id="saved-position">None</strong></div>
+        </div>
+      </article>
+
+      <aside class="device panel" aria-labelledby="device-title">
+        <div class="keyboard" aria-hidden="true">
+          <div class="keyboard-row"><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="keyboard-row offset"><i></i><b>K</b><i></i><i></i></div>
+          <div class="keyboard-row"><i></i><i></i><i></i><i></i><i></i></div>
+        </div>
+        <p class="section-label">Hardware event</p>
+        <h2 id="device-title">Keyboard request</h2>
+        <p id="device-state">K has not been pressed in this run.</p>
+        <div id="request-signal" class="request-signal"><span></span><strong>Request line idle</strong></div>
+      </aside>
+    </section>
+
+    <section id="status" class="status panel" role="status" aria-live="polite" aria-atomic="true">
+      <span id="status-label">Current run · foreground step 1</span>
+      <p id="status-text"><strong>The foreground task is ready.</strong> Run it without K for a control case, or choose an interrupt time.</p>
+    </section>
+
+    <section class="comparison panel" aria-labelledby="comparison-title">
+      <header>
+        <div>
+          <p class="section-label">Evidence</p>
+          <h2 id="comparison-title">Previous and current runs</h2>
+        </div>
+        <p id="comparison-hint">A completed run becomes the comparison when the next run starts.</p>
+      </header>
+      <div class="comparison-grid">
+        <article>
+          <h3>Previous run</h3>
+          <dl id="previous-result">
+            <div><dt>Interrupt</dt><dd>—</dd></div><div><dt>Saved</dt><dd>—</dd></div><div><dt>Resumed</dt><dd>—</dd></div><div><dt>Outcome</dt><dd>No previous run</dd></div>
+          </dl>
+        </article>
+        <article class="current-result">
+          <h3>Current run</h3>
+          <dl id="current-result">
+            <div><dt>Interrupt</dt><dd>None</dd></div><div><dt>Saved</dt><dd>—</dd></div><div><dt>Resumed</dt><dd>—</dd></div><div><dt>Outcome</dt><dd>In progress</dd></div>
+          </dl>
+        </article>
+      </div>
+    </section>
+  </main>
+  <script data-lab-source>
+(() => {
+  "use strict";
+
+  const TASK_DWELL_MS = 1200;
+  const INTERRUPT_PHASE_MS = 420;
+  const taskNames = ["Update position", "Calculate colour", "Draw object", "Present frame"];
+  const isrNames = ["Request received", "Handle K key", "Return prepared"];
+
+  const elements = {
+    run: document.querySelector("#run-button"),
+    step: document.querySelector("#step-button"),
+    interrupt: document.querySelector("#interrupt-button"),
+    reset: document.querySelector("#reset-button"),
+    steps: [...document.querySelectorAll("[data-step]")],
+    chip: document.querySelector("#control-chip"),
+    foregroundNode: document.querySelector("#foreground-node"),
+    foregroundPosition: document.querySelector("#foreground-position"),
+    isrNode: document.querySelector("#isr-node"),
+    isrAction: document.querySelector("#isr-action"),
+    returnNode: document.querySelector("#return-node"),
+    savedPosition: document.querySelector("#saved-position"),
+    routeLabel: document.querySelector("#route-label"),
+    deviceState: document.querySelector("#device-state"),
+    requestSignal: document.querySelector("#request-signal"),
+    statusLabel: document.querySelector("#status-label"),
+    statusText: document.querySelector("#status-text"),
+    previous: document.querySelector("#previous-result"),
+    current: document.querySelector("#current-result"),
+    comparisonHint: document.querySelector("#comparison-hint")
+  };
+
+  let state;
+  let timer = null;
+  let generation = 0;
+
+  function freshState(previous = null) {
+    return { step: 0, phase: "foreground", running: false, started: false, complete: false, interruptAt: null, resumedAt: null, isrIndex: -1, previous };
+  }
+
+  function clearTimer() {
+    if (timer !== null) window.clearTimeout(timer);
+    timer = null;
+    generation += 1;
+  }
+
+  function schedule(callback, delay) {
+    const scheduledGeneration = generation;
+    timer = window.setTimeout(() => {
+      timer = null;
+      if (scheduledGeneration === generation) callback();
+    }, delay);
+  }
+
+  function resultFromCurrent() {
+    return {
+      interruptAt: state.interruptAt,
+      savedAt: state.interruptAt,
+      resumedAt: state.resumedAt,
+      outcome: state.interruptAt === null ? "Completed without diversion" : `Completed after return to step ${state.resumedAt}`
+    };
+  }
+
+  function startNextRun(shouldRun) {
+    const previous = state.complete ? resultFromCurrent() : state.previous;
+    clearTimer();
+    state = freshState(previous);
+    state.started = true;
+    state.running = shouldRun;
+  }
+
+  function setStepState(step, value, label) {
+    step.dataset.state = value;
+    step.querySelector("em").textContent = label;
+    let marker = step.querySelector(".saved-marker");
+    if (state.interruptAt === Number(step.dataset.step) + 1) {
+      if (!marker) {
+        marker = document.createElement("span");
+        marker.className = "saved-marker";
+        step.append(marker);
+      }
+      marker.textContent = state.resumedAt ? "Resumed here" : "Saved here";
+    } else if (marker) {
+      marker.remove();
+    }
+  }
+
+  function writeResult(target, result, current) {
+    const values = result ? [
+      result.interruptAt === null ? "None" : `During step ${result.interruptAt}`,
+      result.savedAt === null ? "—" : `Step ${result.savedAt}`,
+      result.resumedAt === null ? "—" : `Step ${result.resumedAt}`,
+      result.outcome
+    ] : current ? [
+      state.interruptAt === null ? "None" : `During step ${state.interruptAt}`,
+      state.interruptAt === null ? "—" : `Step ${state.interruptAt}`,
+      state.resumedAt === null ? "—" : `Step ${state.resumedAt}`,
+      state.complete ? resultFromCurrent().outcome : state.phase === "isr" ? "Foreground paused" : "In progress"
+    ] : ["—", "—", "—", "No previous run"];
+    [...target.querySelectorAll("dd")].forEach((node, index) => { node.textContent = values[index]; });
+  }
+
+  function renderTask() {
+    elements.steps.forEach((step, index) => {
+      if (state.complete || index < state.step) setStepState(step, "complete", "Complete");
+      else if (index === state.step) {
+        if (["isr", "request", "return"].includes(state.phase)) setStepState(step, "paused", "Paused");
+        else setStepState(step, "running", "Running");
+      } else setStepState(step, "waiting", "Waiting");
+    });
+    elements.foregroundPosition.textContent = state.complete ? "Complete" : `Step ${state.step + 1}`;
+  }
+
+  function renderRoute() {
+    const inInterrupt = ["request", "isr", "return"].includes(state.phase);
+    elements.foregroundNode.classList.toggle("is-active", state.phase === "foreground");
+    elements.isrNode.classList.toggle("is-active", state.phase === "request" || state.phase === "isr");
+    elements.returnNode.classList.toggle("is-active", state.phase === "return");
+    elements.chip.textContent = state.phase === "isr" || state.phase === "request" ? "Keyboard ISR" : state.phase === "return" ? "Returning" : "Foreground";
+    elements.chip.dataset.phase = inInterrupt ? "interrupt" : "foreground";
+    elements.routeLabel.textContent = state.phase === "request" ? "request" : state.phase === "isr" ? "diverted" : "normal control";
+    elements.isrAction.textContent = state.phase === "request" ? "Request received" : state.phase === "isr" ? isrNames[state.isrIndex] : state.resumedAt ? "Handled" : "Waiting";
+    elements.savedPosition.textContent = state.interruptAt === null ? "None" : `Step ${state.interruptAt}`;
+    elements.requestSignal.classList.toggle("is-active", inInterrupt);
+    elements.requestSignal.querySelector("strong").textContent = inInterrupt ? "Request line active" : "Request line idle";
+    elements.deviceState.textContent = state.interruptAt === null ? "K has not been pressed in this run." : `K arrived during foreground step ${state.interruptAt}.`;
+  }
+
+  function renderStatus() {
+    if (state.complete) {
+      elements.statusLabel.textContent = "Current run · complete";
+      elements.statusText.innerHTML = state.interruptAt === null
+        ? "<strong>The control run stayed in the foreground.</strong> Start another run and press K during a task step."
+        : `<strong>The task completed after returning to step ${state.resumedAt}.</strong> Start another run and choose a different interrupt time.`;
+    } else if (state.phase === "request") {
+      elements.statusLabel.textContent = `Keyboard request · saved step ${state.interruptAt}`;
+      elements.statusText.innerHTML = `<strong>The request paused ${taskNames[state.step]}.</strong> Its foreground position remains saved while control moves to the ISR.`;
+    } else if (state.phase === "isr") {
+      elements.statusLabel.textContent = `Keyboard ISR · ${state.isrIndex + 1} of ${isrNames.length}`;
+      elements.statusText.innerHTML = `<strong>${isrNames[state.isrIndex]}.</strong> Foreground step ${state.interruptAt} remains paused.`;
+    } else if (state.phase === "return") {
+      elements.statusLabel.textContent = `Return · foreground step ${state.interruptAt}`;
+      elements.statusText.innerHTML = `<strong>The keyboard request is handled.</strong> Control follows the saved position back to step ${state.interruptAt}.`;
+    } else if (state.resumedAt) {
+      elements.statusLabel.textContent = `Current run · foreground step ${state.step + 1}`;
+      elements.statusText.innerHTML = `<strong>Foreground processing resumed at step ${state.resumedAt}.</strong> Control continued from the saved work; no completed step was repeated.`;
+    } else {
+      elements.statusLabel.textContent = `Current run · foreground step ${state.step + 1}`;
+      elements.statusText.innerHTML = `<strong>${taskNames[state.step]} is running.</strong> Press K now to save this position, or let the foreground task continue.`;
+    }
+  }
+
+  function renderControls() {
+    const locked = ["request", "isr", "return"].includes(state.phase);
+    elements.run.disabled = locked;
+    elements.step.disabled = locked || state.running;
+    elements.interrupt.disabled = locked || state.complete || state.step > 2 || state.interruptAt !== null;
+    elements.run.textContent = state.complete ? "Run another task" : state.running ? "Pause task" : "Run task";
+    elements.comparisonHint.textContent = state.previous
+      ? "Compare how the interrupt time determines the saved and resumed step."
+      : "Complete a run, then start another to place its evidence here.";
+  }
+
+  function render() {
+    renderTask();
+    renderRoute();
+    renderStatus();
+    renderControls();
+    writeResult(elements.previous, state.previous, false);
+    writeResult(elements.current, null, true);
+  }
+
+  function completeTask() {
+    clearTimer();
+    state.complete = true;
+    state.running = false;
+    state.phase = "foreground";
+    render();
+  }
+
+  function advanceTask() {
+    if (state.complete || state.phase !== "foreground") return;
+    state.started = true;
+    if (state.step === taskNames.length - 1) {
+      completeTask();
+      return;
+    }
+    state.step += 1;
+    render();
+    if (state.running) schedule(advanceTask, TASK_DWELL_MS);
+  }
+
+  function continueInterrupt() {
+    if (state.phase === "request") {
+      state.phase = "isr";
+      state.isrIndex = 0;
+    } else if (state.phase === "isr" && state.isrIndex < isrNames.length - 1) {
+      state.isrIndex += 1;
+    } else if (state.phase === "isr") {
+      state.phase = "return";
+    } else if (state.phase === "return") {
+      state.phase = "foreground";
+      state.resumedAt = state.interruptAt;
+      render();
+      if (state.running) schedule(advanceTask, TASK_DWELL_MS);
+      return;
+    }
+    render();
+    schedule(continueInterrupt, INTERRUPT_PHASE_MS);
+  }
+
+  function triggerInterrupt() {
+    if (elements.interrupt.disabled) return;
+    clearTimer();
+    state.started = true;
+    state.interruptAt = state.step + 1;
+    state.phase = "request";
+    state.isrIndex = -1;
+    render();
+    schedule(continueInterrupt, INTERRUPT_PHASE_MS);
+  }
+
+  elements.run.addEventListener("click", () => {
+    if (state.complete) startNextRun(true);
+    else {
+      state.started = true;
+      state.running = !state.running;
+      clearTimer();
+    }
+    render();
+    if (state.running) schedule(advanceTask, TASK_DWELL_MS);
+  });
+
+  elements.step.addEventListener("click", () => {
+    if (state.complete) startNextRun(false);
+    else advanceTask();
+    render();
+  });
+
+  elements.interrupt.addEventListener("click", triggerInterrupt);
+  document.addEventListener("keydown", event => {
+    if (event.key.toLowerCase() === "k" && !event.altKey && !event.ctrlKey && !event.metaKey && !event.repeat && !elements.interrupt.disabled) {
+      event.preventDefault();
+      triggerInterrupt();
+    }
+  });
+
+  elements.reset.addEventListener("click", () => {
+    clearTimer();
+    state = freshState();
+    render();
+    elements.run.focus();
+  });
+
+  state = freshState();
+  render();
+})();
+</script>
+</body>
+</html>

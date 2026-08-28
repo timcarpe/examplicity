@@ -1,16 +1,15 @@
 # Staged-lab rollout plan
 
-This is a plan, not an import authorization. The twelve packages remain in
-`Lab Creation/Staged Labs` until their individual taxonomy and batch are
-approved. No registry, icon, public lab, or deployment changes are made by
-this document.
+The twelve staged packages were integrated locally as one approved batch. This
+document now records the completed grouping and the checks required before any
+future publication; it does not authorize a push or deployment.
 
 ## Baseline
 
 - Provider repository: `Lab Creation`
 - Planning baseline commit: `d58c255`
-- Eligible packages: 12 staged packages
-- Website import ledger: empty
+- Integrated packages: 12
+- Website import ledger: `2026-08-staged-labs`
 
 The baseline identifies the package set used for planning; the actual Lab
 Creation commit is recorded only when an approved package is integrated.
@@ -34,29 +33,25 @@ Creation commit is recorded only when an approved package is integrated.
 Git commits supply provenance and rollback. We do not add artifact hashes,
 byte counts or a separate verification trail.
 
-## Phased order
+## Completed grouping
 
-| Phase | Labs | Proposed website topic / format | Approval decision |
+| Phase | Labs | Website topic / format | Result |
 | --- | --- | --- | --- |
-| Canary | Web Page Retrieval | `Web & internet` / `DNS experiment` | Add this topic and run one-lab canary only. |
-| Existing-topic fits | Symmetric and Asymmetric Encryption; Interrupt Service Routine | `Networks & communication` / `Key experiment`; `Processors & memory` / `Interrupt model` | Existing topic placement and order still require approval. |
-| New taxonomy: web | Session and Persistent Cookies | `Web & internet` / `Cookie experiment` | Approve whether this joins the canary topic. |
-| New taxonomy: data and databases | Database Normalisation; File Organisation and Access | `Databases & data modelling` / `Data model`; `Record access` | Approve the topic name and whether these ship together. |
-| New taxonomy: artificial intelligence | Dijkstra and A* Graph Search; Expert System Rule Builder | `Artificial intelligence` / `Graph search`; `Rule builder` | Approve the topic name and order. |
-| New taxonomy: systems and logic | Logic Circuit Builder; Automation Chain Builder; Ticket Gate State-Transition Diagram | `Logic & automated systems` / `Logic builder`; `Control systems`; `State model` | Approve whether one topic is coherent or should be split. |
-| New taxonomy: security and distributed systems | Blockchain Tamper Evidence | `Security & distributed systems` / `Ledger experiment` | Approve the topic name and placement. |
+| Canary | Web Page Retrieval | `Web & internet` / `DNS experiment` | Passed locally before the remaining imports. |
+| Existing-topic fits | Symmetric and Asymmetric Encryption; Interrupt Service Routine | `Networks & communication` / `Key experiment`; `Processors & memory` / `Interrupt model` | Integrated. |
+| Web | Session and Persistent Cookies | `Web & internet` / `Cookie experiment` | Integrated with the canary topic. |
+| Data and databases | Database Normalisation; File Organisation and Access | `Databases & data modelling` / `Data model`; `Record access` | Integrated. |
+| Artificial intelligence | Dijkstra and A* Graph Search; Expert System Rule Builder | `Artificial intelligence` / `Graph search`; `Rule builder` | Integrated. |
+| Systems and logic | Logic Circuit Builder; Automation Chain Builder; Ticket Gate State-Transition Diagram | `Logic & automated systems` / `Logic builder`; `Control systems`; `State model` | Integrated. |
+| Security and distributed systems | Blockchain Tamper Evidence | `Security & distributed systems` / `Ledger experiment` | Integrated. |
 
 `Web & internet`, `Databases & data modelling`, `Artificial intelligence`,
-`Logic & automated systems`, and `Security & distributed systems` are proposed
-taxonomy labels, not established site values. Existing-topic fit is limited to
-the two clear mappings above; forcing the rest into current topics would make
-catalogue grouping less honest.
+`Logic & automated systems`, and `Security & distributed systems` are the
+established labels for this batch. Their exact spelling prevents split groups.
 
 ## Canary stop conditions
 
-Web Page Retrieval is the canary because it is a bounded 0478 experiment with
-a clear learner-controlled loop and a proposed topic that can later receive
-Cookies. Stop and request a decision if the canary changes its learning
-relationship in the shared frame, exposes a host/frame layout issue, fails its
-subject filtering, or reveals a taxonomy disagreement. Do not work around that
-by changing the staged content during website integration.
+Web Page Retrieval passed locally before the remaining imports: the shared
+frame preserved its learning relationship, both DNS paths reached the intended
+pages, and the 0478 filter placed it correctly. Future batches retain the same
+stop conditions for their canary.

@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ticket Gate State-Transition Diagram</title>
+  <style data-lab-source>
+:root {
+  --canvas: #f3f5f7; --surface: #fff; --control: #fff; --ink: #1d2730; --muted: #687681;
+  --line: #d7dfe5; --line-strong: #9ca8b1; --accent: #2865d8; --accent-soft: #edf3ff;
+  --good: #247349; --good-soft: #edf8f1; --bad: #b44338; --bad-soft: #fff0ee;
+  --focus: #1d2730; --radius: 12px; color-scheme: light;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--canvas); color: var(--ink); font: 15px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+main { width: min(1120px, calc(100% - 32px)); margin: 0 auto; padding: 30px 0 48px; }
+h1, h2, p { margin-top: 0; }
+h1 { margin-bottom: 5px; font-size: clamp(1.75rem, 4vw, 2.35rem); line-height: 1.12; letter-spacing: -.025em; }
+h2 { margin-bottom: 0; font-size: 1.05rem; }
+.sub { max-width: 760px; margin-bottom: 15px; color: var(--muted); }
+.goal { margin-bottom: 18px; padding: 10px 13px; border-left: 4px solid var(--accent); background: var(--accent-soft); }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: 0 1px 2px rgba(29,39,48,.04); }
+.setup, .gate-panel, .model-panel, .trace-panel { padding: 18px; }
+.section-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; margin-bottom: 15px; }
+.eyebrow { margin-bottom: 2px; color: var(--muted); font-size: .76rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.progress, .state-readout, .event-readout, .trace-count { flex: 0 0 auto; padding: 5px 9px; border: 1px solid var(--line); border-radius: 999px; background: var(--control); color: var(--muted); font-size: .8rem; font-weight: 700; }
+.label-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; margin-bottom: 14px; }
+.transition-label { min-width: 0; margin: 0; padding: 12px; border: 1px solid var(--line); border-radius: 9px; }
+.transition-label.correct { border-color: #9fc9af; background: var(--good-soft); }
+.transition-label.incorrect { border-color: #ddb1aa; background: var(--bad-soft); }
+legend { padding: 0 5px; font-weight: 700; }
+.state-name { color: var(--accent); }
+.select-row { display: grid; grid-template-columns: minmax(0,1fr) auto minmax(0,1fr); align-items: end; gap: 9px; }
+label { display: grid; gap: 4px; color: var(--muted); font-size: .78rem; font-weight: 700; }
+select, button { min-height: 38px; border: 1px solid var(--line-strong); border-radius: 8px; background: var(--control); color: var(--ink); font: inherit; }
+select { width: 100%; padding: 7px 30px 7px 9px; }
+button { padding: 8px 13px; cursor: pointer; font-weight: 650; }
+button:hover:not(:disabled) { border-color: var(--accent); }
+button:focus-visible, select:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+button.primary { border-color: var(--accent); background: var(--accent); color: #fff; }
+button:disabled { cursor: not-allowed; opacity: .48; }
+.slash { padding-bottom: 9px; color: var(--muted); font-weight: 800; }
+.field-feedback { min-height: 19px; margin: 8px 0 0; color: var(--muted); font-size: .82rem; }
+.incorrect .field-feedback { color: var(--bad); }
+.correct .field-feedback { color: var(--good); }
+.experiment { display: grid; grid-template-columns: minmax(280px,.85fr) minmax(430px,1.35fr); gap: 14px; margin-top: 14px; }
+.experiment[aria-disabled="true"] { opacity: .68; }
+.gate-stage { overflow: hidden; border: 1px solid var(--line); border-radius: 9px; background: linear-gradient(#f6f9fb 0 74%,#e7ebee 74%); }
+.gate-stage svg, .state-diagram { display: block; width: 100%; height: auto; }
+.floor { stroke: #a5afb7; stroke-width: 3; }
+.gate-body { fill: #50616e; stroke: #33434e; stroke-width: 3; }
+.reader { fill: #17242e; stroke: #83929d; stroke-width: 2; }
+.card-mark { fill: none; stroke: #75a6ef; stroke-width: 5; stroke-linecap: round; }
+.pivot { fill: #2f3c45; stroke: #dce4e9; stroke-width: 4; }
+.barrier { fill: #d55a51; transform-origin: 189px 145px; transition: transform .3s ease; }
+.gate-stage.is-unlocked .barrier { fill: #4c9a69; transform: rotate(-67deg); }
+.person { fill: none; stroke: #52616c; stroke-width: 7; stroke-linecap: round; stroke-linejoin: round; }
+.gate-output { margin: 0; padding: 9px 12px; border-top: 1px solid var(--line); background: var(--surface); font-weight: 700; text-align: center; }
+.gate-output.invalid { color: var(--bad); background: var(--bad-soft); }
+.gate-output.valid { color: var(--good); background: var(--good-soft); }
+.event-controls { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 8px; margin-top: 12px; }
+.state-diagram .transition { fill: none; stroke: #9ba8b2; stroke-width: 3; }
+.state-diagram marker path { fill: #9ba8b2; }
+.state-diagram .transition.active { stroke: var(--accent); stroke-width: 5; }
+.state-diagram .transition.invalid { stroke: var(--bad); stroke-dasharray: 7 5; }
+.state-diagram .transition-text text { fill: var(--ink); font-size: 15px; font-weight: 650; }
+.state-diagram .transition-text.incomplete text { fill: var(--muted); font-style: italic; font-weight: 500; }
+.state-diagram .transition-text.minor text { fill: var(--muted); font-size: 12px; }
+.state-diagram .transition-text.active text { fill: var(--accent); }
+.state-node circle { fill: var(--surface); stroke: #82919c; stroke-width: 3; }
+.state-node text { fill: var(--ink); font-size: 17px; font-weight: 700; }
+.state-node.active circle { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 5; }
+.state-node.invalid circle { fill: var(--bad-soft); stroke: var(--bad); }
+.model-status { min-height: 44px; margin: 0; padding: 10px 12px; border-left: 4px solid var(--line-strong); background: var(--canvas); }
+.model-status.invalid { border-color: var(--bad); background: var(--bad-soft); }
+.model-status.valid { border-color: var(--good); background: var(--good-soft); }
+.trace-panel { margin-top: 14px; }
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: 9px 10px; border-bottom: 1px solid var(--line); text-align: left; }
+th { color: var(--muted); font-size: .78rem; text-transform: uppercase; letter-spacing: .04em; }
+td { vertical-align: top; }
+tr.invalid td { background: var(--bad-soft); }
+.discovery { margin: 12px 0 0; color: var(--muted); }
+.discovery.found { color: var(--good); font-weight: 700; }
+[hidden] { display: none !important; }
+@media (max-width: 820px) { .experiment, .label-grid { grid-template-columns: 1fr; } }
+@media (max-width: 520px) {
+  main { width: min(100% - 20px,1120px); padding-top: 20px; }
+  .setup, .gate-panel, .model-panel, .trace-panel { padding: 14px; }
+  .progress, .event-readout, .trace-count { white-space: nowrap; }
+  .select-row, .event-controls { grid-template-columns: 1fr; }
+  .slash { display: none; }
+  .event-controls button { min-height: 44px; }
+  .state-diagram { margin: 4px -5px; width: calc(100% + 10px); }
+  th, td { padding: 8px 7px; font-size: .82rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .001ms !important; animation-duration: .001ms !important; animation-iteration-count: 1 !important; }
+}
+</style>
+<!-- LAB_FRAME_STYLES_START -->
+<style data-lab-frame>
+:root {
+  --lab-canvas: #f3f5f7;
+  --lab-paper: #fbfbfd;
+  --lab-surface: #ffffff;
+  --lab-control: #ffffff;
+  --lab-ink: #1d1d1f;
+  --lab-muted: #6e6e73;
+  --lab-line: #d2d2d7;
+  --lab-line-strong: #a7a7ad;
+  --lab-accent: #5277b8;
+  --lab-accent-soft: #eef2fa;
+  --lab-good: #18794e;
+  --lab-good-soft: #edf8f1;
+  --lab-warn: #946200;
+  --lab-warn-soft: #fff6e7;
+  --lab-bad: #b42318;
+  --lab-bad-soft: #fff0ee;
+  --lab-focus: #1d1d1f;
+  --lab-focus-soft: rgba(29, 29, 31, 0.18);
+  --lab-font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+  --lab-panel-radius: 12px;
+  --lab-control-radius: 8px;
+  --lab-pill-radius: 999px;
+  --lab-control-height: 35px;
+  --lab-panel-shadow: 0 1px 2px rgba(29, 29, 31, 0.04);
+}
+
+html,
+body {
+  background: var(--lab-canvas);
+}
+
+body {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-family: var(--lab-font-sans);
+  padding-bottom: 58px;
+  padding-top: 66px;
+  text-rendering: optimizeLegibility;
+}
+
+html[data-theme="dark"],
+html[data-theme="dark"] body {
+  background: var(--bg);
+}
+
+main {
+  container-name: lab-canvas;
+  container-type: inline-size;
+}
+
+body.binary-lab main {
+  width: min(820px, calc(100% - 24px));
+}
+
+:where(button, input, select, textarea, summary):focus-visible {
+  outline: 3px solid var(--lab-focus);
+  outline-offset: 4px;
+}
+
+@media (max-width: 620px) {
+  body {
+    padding-bottom: 76px;
+    padding-top: 60px;
+  }
+
+  body.binary-lab main {
+    width: min(100% - 12px, 820px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+</style>
+<!-- LAB_FRAME_STYLES_END -->
+</head>
+<body>
+  <main>
+    <h1>Ticket Gate State-Transition Diagram</h1>
+    <p class="sub">Complete the diagram, then operate the gate and watch each event select a transition, output, and next state.</p>
+    <p class="goal" id="goal"><strong>Goal:</strong> Complete the two missing transition labels.</p>
+
+    <section class="panel setup" aria-labelledby="setup-title">
+      <div class="section-heading">
+        <div><p class="eyebrow">Before the gate can run</p><h2 id="setup-title">Complete the diagram</h2></div>
+        <span class="progress" id="label-progress">0 of 2 correct</span>
+      </div>
+      <div class="label-grid">
+        <fieldset class="transition-label" id="unlock-field">
+          <legend><span class="state-name">Locked</span> → <span class="state-name">Unlocked</span></legend>
+          <div class="select-row">
+            <label>Event<select id="unlock-event"><option value="">Choose</option><option value="card">Card</option><option value="push">Push gate</option><option value="reset">Reset gate</option></select></label>
+            <span class="slash" aria-hidden="true">/</span>
+            <label>Output<select id="unlock-output"><option value="">Choose</option><option value="unlocks">Gate unlocks</option><option value="locks">Gate locks</option><option value="none">No transition</option></select></label>
+          </div>
+          <p class="field-feedback" id="unlock-feedback" aria-live="polite">Choose the event and output for this transition.</p>
+        </fieldset>
+        <fieldset class="transition-label" id="lock-field">
+          <legend><span class="state-name">Unlocked</span> → <span class="state-name">Locked</span></legend>
+          <div class="select-row">
+            <label>Event<select id="lock-event"><option value="">Choose</option><option value="card">Card</option><option value="push">Push gate</option><option value="reset">Reset gate</option></select></label>
+            <span class="slash" aria-hidden="true">/</span>
+            <label>Output<select id="lock-output"><option value="">Choose</option><option value="unlocks">Gate unlocks</option><option value="locks">Gate locks</option><option value="none">No transition</option></select></label>
+          </div>
+          <p class="field-feedback" id="lock-feedback" aria-live="polite">Choose the event and output for this transition.</p>
+        </fieldset>
+      </div>
+      <button type="button" class="primary" id="complete-diagram">Use this diagram</button>
+    </section>
+
+    <div class="experiment" id="experiment" aria-disabled="true">
+      <section class="panel gate-panel" aria-labelledby="gate-title">
+        <div class="section-heading">
+          <div><p class="eyebrow">Physical system</p><h2 id="gate-title">Ticket gate</h2></div>
+          <span class="state-readout" id="gate-state">Locked</span>
+        </div>
+        <div class="gate-stage" id="gate-stage">
+          <svg viewBox="0 0 420 230" role="img" aria-labelledby="gate-visual-title gate-visual-desc">
+            <title id="gate-visual-title">Ticket gate</title>
+            <desc id="gate-visual-desc">A ticket reader and barrier showing whether the gate is locked or unlocked.</desc>
+            <path class="floor" d="M35 199H385" />
+            <rect class="gate-body" x="77" y="74" width="112" height="125" rx="12" />
+            <rect class="reader" x="91" y="89" width="84" height="48" rx="7" />
+            <path class="card-mark" d="M111 108h44M111 119h29" />
+            <circle class="pivot" cx="189" cy="145" r="14" />
+            <g class="barrier"><rect x="187" y="138" width="178" height="14" rx="7" /><circle cx="347" cy="145" r="15" /></g>
+            <path class="person" d="M337 89a15 15 0 1 0 0-30 15 15 0 0 0 0 30Zm0 6v53m-24-31 24-16 24 16m-24 31-20 38m20-38 20 38" />
+          </svg>
+          <p class="gate-output" id="gate-output">Waiting for an event</p>
+        </div>
+        <div class="event-controls" aria-label="Gate events">
+          <button type="button" data-event="card" disabled>Card</button>
+          <button type="button" data-event="push" disabled>Push gate</button>
+          <button type="button" data-event="reset" disabled>Reset gate</button>
+        </div>
+      </section>
+
+      <section class="panel model-panel" aria-labelledby="model-title">
+        <div class="section-heading">
+          <div><p class="eyebrow">Algorithm model</p><h2 id="model-title">State-transition diagram</h2></div>
+          <span class="event-readout" id="last-event">No event</span>
+        </div>
+        <svg class="state-diagram" viewBox="0 0 560 285" role="img" aria-labelledby="diagram-title diagram-desc">
+          <title id="diagram-title">Ticket gate state-transition diagram</title>
+          <desc id="diagram-desc">Locked and Unlocked states connected by Card, Push gate, and Reset gate transitions.</desc>
+          <defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10Z" /></marker></defs>
+          <path class="transition" data-transition="unlock" d="M190 105C238 35 322 35 370 105" marker-end="url(#arrow)" />
+          <path class="transition" data-transition="lock" d="M370 173C320 246 240 246 190 173" marker-end="url(#arrow)" />
+          <path class="transition reset-path" data-transition="reset" d="M435 132C511 132 510 238 427 228C369 220 366 185 377 170" marker-end="url(#arrow)" />
+          <path class="transition reset-path" data-transition="reset-same" d="M125 131C48 131 49 238 132 228C190 220 193 185 182 170" marker-end="url(#arrow)" />
+          <g class="transition-text incomplete" data-transition-label="unlock"><text id="unlock-label" x="280" y="43" text-anchor="middle">Missing event / output</text></g>
+          <g class="transition-text incomplete" data-transition-label="lock"><text id="lock-label" x="280" y="256" text-anchor="middle">Missing event / output</text></g>
+          <g class="transition-text minor" data-transition-label="reset"><text x="462" y="199" text-anchor="middle">Reset /</text><text x="462" y="216" text-anchor="middle">Gate locks</text></g>
+          <g class="transition-text minor" data-transition-label="reset-same"><text x="98" y="199" text-anchor="middle">Reset /</text><text x="98" y="216" text-anchor="middle">Stays locked</text></g>
+          <g class="state-node active" data-state="locked"><circle cx="155" cy="140" r="50" /><text x="155" y="146" text-anchor="middle">Locked</text></g>
+          <g class="state-node" data-state="unlocked"><circle cx="405" cy="140" r="50" /><text x="405" y="146" text-anchor="middle">Unlocked</text></g>
+        </svg>
+        <p class="model-status" id="model-status" aria-live="polite">Complete the missing labels to operate the gate.</p>
+      </section>
+    </div>
+
+    <section class="panel trace-panel" id="trace-panel" aria-labelledby="trace-title" hidden>
+      <div class="section-heading">
+        <div><p class="eyebrow">Observed behaviour</p><h2 id="trace-title">Event trace</h2></div>
+        <span class="trace-count" id="trace-count">0 events</span>
+      </div>
+      <div class="table-wrap"><table><thead><tr><th scope="col">Event</th><th scope="col">Current state</th><th scope="col">Output</th><th scope="col">Next state</th></tr></thead><tbody id="trace-body"></tbody></table></div>
+      <p class="discovery" id="discovery" aria-live="polite">Try events in both states. The trace keeps every result, including events with no valid transition.</p>
+    </section>
+  </main>
+  <script data-lab-source>
+(() => {
+  "use strict";
+  const expected = { unlock: { event: "card", output: "unlocks" }, lock: { event: "push", output: "locks" } };
+  const labels = { card: "Card", push: "Push gate", reset: "Reset gate" };
+  let state = "locked";
+  let trace = [];
+  const eventStates = { card: new Set(), push: new Set(), reset: new Set() };
+
+  const completeButton = document.getElementById("complete-diagram");
+  const experiment = document.getElementById("experiment");
+  const eventButtons = [...document.querySelectorAll("[data-event]")];
+  const gateStage = document.getElementById("gate-stage");
+  const gateState = document.getElementById("gate-state");
+  const gateOutput = document.getElementById("gate-output");
+  const lastEvent = document.getElementById("last-event");
+  const modelStatus = document.getElementById("model-status");
+  const tracePanel = document.getElementById("trace-panel");
+  const traceBody = document.getElementById("trace-body");
+  const traceCount = document.getElementById("trace-count");
+  const discovery = document.getElementById("discovery");
+  const goal = document.getElementById("goal");
+
+  function checkLabel(name) {
+    const event = document.getElementById(`${name}-event`).value;
+    const output = document.getElementById(`${name}-output`).value;
+    const field = document.getElementById(`${name}-field`);
+    const feedback = document.getElementById(`${name}-feedback`);
+    const correct = event === expected[name].event && output === expected[name].output;
+    field.classList.toggle("correct", correct);
+    field.classList.toggle("incorrect", !correct);
+    if (correct) feedback.textContent = "Correct — this event produces the shown change of state.";
+    else if (!event || !output) feedback.textContent = "Choose both an event and its output.";
+    else if (event !== expected[name].event && output !== expected[name].output) feedback.textContent = "Both parts conflict with the direction of this transition.";
+    else if (event !== expected[name].event) feedback.textContent = "The event does not cause this change of state.";
+    else feedback.textContent = "The output must describe what the physical gate does.";
+    return correct;
+  }
+
+  function completeDiagram() {
+    const unlockCorrect = checkLabel("unlock");
+    const lockCorrect = checkLabel("lock");
+    const total = Number(unlockCorrect) + Number(lockCorrect);
+    document.getElementById("label-progress").textContent = `${total} of 2 correct`;
+    if (total !== 2) return;
+    experiment.setAttribute("aria-disabled", "false");
+    eventButtons.forEach((button) => { button.disabled = false; });
+    document.querySelectorAll("#unlock-field select, #lock-field select").forEach((select) => { select.disabled = true; });
+    completeButton.disabled = true;
+    completeButton.textContent = "Diagram ready";
+    document.getElementById("unlock-label").textContent = "Card / Gate unlocks";
+    document.getElementById("lock-label").textContent = "Push gate / Gate locks";
+    document.querySelectorAll(".transition-text.incomplete").forEach((label) => label.classList.remove("incomplete"));
+    goal.innerHTML = "<strong>Goal:</strong> Trigger events in both states. Find how the current state changes the result.";
+    modelStatus.textContent = "The gate is Locked. Choose any event to test the diagram.";
+    eventButtons[0].focus();
+  }
+
+  function transitionFor(eventName) {
+    if (state === "locked") {
+      if (eventName === "card") return { next: "unlocked", output: "Gate unlocks", key: "unlock", valid: true };
+      if (eventName === "reset") return { next: "locked", output: "Gate stays locked", key: "reset-same", valid: true };
+      return { next: "locked", output: "No transition from Locked", key: null, valid: false };
+    }
+    if (eventName === "push") return { next: "locked", output: "Gate locks", key: "lock", valid: true };
+    if (eventName === "reset") return { next: "locked", output: "Gate locks", key: "reset", valid: true };
+    return { next: "unlocked", output: "No transition from Unlocked", key: null, valid: false };
+  }
+
+  function clearHighlights() {
+    document.querySelectorAll(".transition, .transition-text").forEach((element) => element.classList.remove("active", "invalid"));
+    document.querySelectorAll(".state-node").forEach((element) => element.classList.remove("invalid"));
+  }
+
+  function renderState() {
+    gateStage.classList.toggle("is-unlocked", state === "unlocked");
+    gateState.textContent = state === "locked" ? "Locked" : "Unlocked";
+    document.querySelectorAll("[data-state]").forEach((node) => node.classList.toggle("active", node.dataset.state === state));
+  }
+
+  function renderTrace() {
+    traceBody.innerHTML = trace.map((row) => `<tr${row.valid ? "" : " class=\"invalid\""}><td>${row.event}</td><td>${row.current}</td><td>${row.output}</td><td>${row.next}</td></tr>`).join("");
+    traceCount.textContent = `${trace.length} event${trace.length === 1 ? "" : "s"}`;
+    const comparedEvent = Object.entries(eventStates).find(([, states]) => states.size === 2);
+    const sawInvalid = trace.some((row) => !row.valid);
+    if (comparedEvent && sawInvalid) {
+      discovery.textContent = `${labels[comparedEvent[0]]} has now been tested from both states. The trace also records that an event without a valid outgoing transition leaves the state unchanged.`;
+      discovery.classList.add("found");
+    } else if (comparedEvent) {
+      discovery.textContent = `${labels[comparedEvent[0]]} has now been tested from both states. Try to produce an event with no valid transition.`;
+      discovery.classList.add("found");
+    } else if (sawInvalid) {
+      discovery.textContent = "You found an event with no valid transition. Now test the same event from both states.";
+      discovery.classList.remove("found");
+    }
+  }
+
+  function triggerEvent(eventName) {
+    const current = state;
+    const result = transitionFor(eventName);
+    eventStates[eventName].add(current);
+    state = result.next;
+    trace.push({ event: labels[eventName], current: current === "locked" ? "Locked" : "Unlocked", output: result.output, next: state === "locked" ? "Locked" : "Unlocked", valid: result.valid });
+    clearHighlights();
+    if (result.key) document.querySelectorAll(`[data-transition="${result.key}"], [data-transition-label="${result.key}"]`).forEach((element) => element.classList.add("active"));
+    else document.querySelector(`[data-state="${current}"]`).classList.add("invalid");
+    lastEvent.textContent = labels[eventName];
+    gateOutput.textContent = result.output;
+    gateOutput.className = `gate-output ${result.valid ? "valid" : "invalid"}`;
+    modelStatus.className = `model-status ${result.valid ? "valid" : "invalid"}`;
+    modelStatus.textContent = result.valid
+      ? `${current === "locked" ? "Locked" : "Unlocked"} + ${labels[eventName]} selected ${result.output} → ${state === "locked" ? "Locked" : "Unlocked"}.`
+      : `${labels[eventName]} has no valid transition from ${current === "locked" ? "Locked" : "Unlocked"}; the state remains ${state === "locked" ? "Locked" : "Unlocked"}.`;
+    renderState();
+    tracePanel.hidden = false;
+    renderTrace();
+  }
+
+  completeButton.addEventListener("click", completeDiagram);
+  eventButtons.forEach((button) => button.addEventListener("click", () => triggerEvent(button.dataset.event)));
+  renderState();
+})();
+</script>
+</body>
+</html>
