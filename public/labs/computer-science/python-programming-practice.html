@@ -371,7 +371,9 @@ html[data-theme="dark"]{
 }
 *{box-sizing:border-box}
 html,body{height:100%}
-body{margin:0;overflow:auto;background:var(--bg);color:var(--ink);font-family:var(--sans)}
+body{margin:0;overflow:hidden;background:var(--bg);color:var(--ink);font-family:var(--sans)}
+body>main.lab-page{height:calc(100dvh - 36px);display:flex;flex-direction:column}
+.lab-manifest-header{flex:0 0 auto;margin-bottom:12px;padding-bottom:14px}
 button,input,textarea{font:inherit}
 button{
   min-height:34px;
@@ -392,46 +394,19 @@ button.primary{background:var(--accent);border-color:var(--accent);color:#fff;fo
 button.primary:hover:not(:disabled){background:color-mix(in srgb,var(--accent) 88%,#000);border-color:var(--accent)}
 button.good{background:var(--good);border-color:var(--good);color:#fff;font-weight:760}
 button.icon{width:36px;padding:0;display:grid;place-items:center;font-size:17px}
-.practice-toolbar{
-  min-height:52px;
-  margin:0 0 12px;
-  padding:8px 10px 8px 14px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  border:1px solid var(--line);
-  border-radius:10px;
-  background:var(--panel);
-  box-shadow:var(--shadow);
-}
-.practice-actions{display:flex;align-items:center;gap:7px}
-.suite-progress{color:var(--muted);font-size:11px;font-weight:720;white-space:nowrap}
-.resource-notice{
-  margin:0 0 14px;
-  padding:11px 13px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:14px;
-  border:1px solid color-mix(in srgb,var(--accent) 22%,var(--line));
-  border-left:3px solid color-mix(in srgb,var(--accent) 58%,var(--line));
-  border-radius:9px;
-  background:color-mix(in srgb,var(--accent-soft) 58%,var(--panel));
-  color:var(--muted);
-  font-size:11px;
-  line-height:1.45;
-}
-.resource-notice p{margin:0}
-.resource-links{display:flex;align-items:center;gap:12px;white-space:nowrap}
-.resource-links a{color:var(--accent);font-weight:780;text-underline-offset:2px}
-.resource-links a.secondary{color:var(--muted);font-weight:680}
-.app-shell{width:100%;height:max(680px,calc(100vh - 330px));min-height:680px;margin:0;display:grid;grid-template-columns:272px minmax(0,1fr);border:1px solid var(--line);border-radius:12px;background:var(--panel);box-shadow:var(--shadow);overflow:hidden}
+.app-shell{width:100%;min-height:0;flex:1 1 auto;margin:0;display:grid;grid-template-columns:272px minmax(0,1fr);border:1px solid var(--line);border-radius:12px;background:var(--panel);box-shadow:var(--shadow);overflow:hidden}
 .sidebar{min-height:0;display:grid;grid-template-rows:auto auto minmax(0,1fr);background:var(--panel);border-right:1px solid var(--line)}
-.sidebar-head{padding:15px 14px 10px}
-.sidebar-head strong{display:block;font-size:13px}
-.sidebar-head span{display:block;margin-top:3px;color:var(--muted);font-size:10px}
-.search-wrap{padding:0 12px 10px}
+.sidebar-head{padding:12px 12px 9px;display:grid;gap:8px;border-bottom:1px solid var(--line)}
+.sidebar-title-row{min-width:0;display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.sidebar-title-row strong{min-width:0;font-size:13px}
+.suite-progress{flex:0 0 auto;color:var(--muted);font:760 9px var(--mono);white-space:nowrap}
+.sidebar-tools{display:grid;grid-template-columns:1fr 1fr 34px;gap:5px}
+.sidebar-tools button{min-width:0;min-height:30px;height:30px;padding:0 7px;font-size:9px}
+.resource-notice{flex:0 0 auto;margin:0 0 10px;padding:7px 10px;display:flex;align-items:center;justify-content:space-between;gap:6px 12px;flex-wrap:wrap;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--muted);font-size:9px;line-height:1.3}
+.resource-notice p{margin:0}
+.resource-links{display:flex;align-items:center;gap:10px;white-space:nowrap}
+.resource-links a{color:var(--ink);font-weight:720;text-underline-offset:2px}
+.search-wrap{padding:10px 12px}
 .search-wrap input{width:100%;height:35px;border:1px solid var(--line);border-radius:8px;background:var(--panel-2);color:var(--ink);padding:0 10px;font-size:11px}
 .lesson-list{min-height:0;overflow:auto;padding:0 8px 18px}
 .lesson-button{width:100%;height:auto;min-height:48px;margin:2px 0;padding:7px 8px;display:grid;grid-template-columns:31px minmax(0,1fr) auto;gap:7px;align-items:center;text-align:left;border-color:transparent;background:transparent}
@@ -441,20 +416,22 @@ button.icon{width:36px;padding:0;display:grid;place-items:center;font-size:17px}
 .lesson-name{min-width:0;font-size:11px;font-weight:720;line-height:1.25}
 .lesson-count{font:800 9px var(--mono);color:var(--muted)}
 .lesson-count.complete{color:var(--good)}
-.main{width:100%;min-width:0;min-height:0;overflow:auto;padding:17px 18px 26px}
-.lesson-head{max-width:1420px;margin:0 auto 12px;display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+.main{width:100%;min-width:0;min-height:0;overflow:hidden;padding:13px 14px 14px;display:flex;flex-direction:column}
+.lesson-head{width:100%;max-width:1420px;margin:0 auto 12px;display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+.lesson-heading{min-width:0;flex:1 1 auto}
+.lesson-meta{min-width:0;display:flex;align-items:center;gap:10px}
 .lesson-kicker{color:var(--accent);font-size:10px;font-weight:850;letter-spacing:.08em;text-transform:uppercase}
 .lesson-head h2{margin:3px 0 2px;font-size:25px;letter-spacing:-.025em}
-.lesson-question{margin:0;max-width:760px;color:var(--muted);font-size:12px;line-height:1.45}
-.lesson-progress-card{min-width:118px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--panel);text-align:right}
-.lesson-progress-card strong{display:block;font:850 18px var(--mono)}
-.lesson-progress-card span{display:block;color:var(--muted);font-size:9px}
-.view-tabs{max-width:1420px;margin:0 auto 10px;padding:4px;display:flex;gap:4px;border:1px solid var(--line);border-radius:10px;background:var(--panel);box-shadow:var(--shadow)}
-.view-tab{position:relative;flex:0 1 155px;height:35px;border-color:transparent;background:transparent;color:var(--muted);font-size:11px;font-weight:780}
+.lesson-question{margin:0;max-width:760px;color:var(--muted);font-size:12px;line-height:1.4;overflow-wrap:anywhere}
+.lesson-progress-card{flex:0 0 auto;display:flex;align-items:center;gap:4px;color:var(--muted);white-space:nowrap}
+.lesson-progress-card strong{font:850 10px var(--mono);color:var(--ink)}
+.lesson-progress-card span{font-size:9px}
+.view-tabs{width:100%;max-width:1420px;margin:0 auto 10px;padding:4px;display:flex;gap:4px;border:1px solid var(--line);border-radius:10px;background:var(--panel);box-shadow:var(--shadow)}
+.view-tab{position:relative;flex:1 1 0;height:35px;border-color:transparent;background:transparent;color:var(--muted);font-size:11px;font-weight:780}
 .view-tab.active{background:var(--panel-2);border-color:var(--line);color:var(--ink)}
 .view-tab.completed{color:var(--good)}
 .view-tab .tab-mark{margin-left:5px;font-size:9px}
-.surface{max-width:1420px;margin:0 auto;border:1px solid var(--line);border-radius:12px;background:var(--panel);box-shadow:var(--shadow);overflow:hidden}
+.surface{width:100%;max-width:1420px;min-height:0;flex:1 1 auto;margin:0 auto;border:1px solid var(--line);border-radius:12px;background:var(--panel);box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column}
 .surface-head{min-height:51px;padding:8px 11px 8px 15px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);background:var(--panel-2)}
 .surface-head strong{display:block;font-size:13px}
 .surface-head span{display:block;margin-top:2px;color:var(--muted);font-size:9px}
@@ -463,13 +440,13 @@ button.icon{width:36px;padding:0;display:grid;place-items:center;font-size:17px}
 .example-code-wrap{min-width:0;min-height:0;display:grid;grid-template-columns:48px minmax(0,1fr);background:var(--editor)}
 .example-lines,.editor-lines{margin:0;padding:13px 8px;text-align:right;overflow:hidden;background:var(--editor-gutter);border-right:1px solid var(--line);color:var(--muted);font:11px/21px var(--mono);user-select:none}
 .example-code{margin:0;padding:13px 16px;overflow:auto;background:var(--editor);color:var(--editor-ink);font:13px/21px var(--mono);tab-size:4;white-space:pre}
-.challenge-brief{padding:16px 18px;display:grid;grid-template-columns:58px minmax(0,1fr) auto;gap:16px;align-items:center;border-bottom:1px solid var(--line);background:linear-gradient(115deg,var(--accent-soft),var(--panel) 55%)}
+.challenge-brief{min-height:0;max-height:55%;padding:16px 18px;overflow:auto;display:grid;grid-template-columns:58px minmax(0,1fr) auto;gap:16px;align-items:center;border-bottom:1px solid var(--line);background:linear-gradient(115deg,var(--accent-soft),var(--panel) 55%)}
 .challenge-number{width:54px;height:54px;display:grid;place-items:center;border:1px solid color-mix(in srgb,var(--accent) 38%,var(--line));border-radius:13px;background:var(--panel);color:var(--accent);box-shadow:0 4px 14px rgba(22,31,39,.07)}
 .challenge-number strong{font:850 20px var(--mono)}
-.challenge-copy{min-width:0}
+.challenge-copy{min-width:0;overflow:hidden}
 .task-kicker{display:block;margin-bottom:3px;color:var(--accent);font-size:8px;font-weight:900;letter-spacing:.12em;text-transform:uppercase}
 .challenge-brief h3{margin:0 0 6px;font-size:15px;letter-spacing:-.01em}
-.challenge-prompt{margin:0;max-width:1050px;color:var(--ink);font-size:14px;line-height:1.62}
+.challenge-prompt{margin:0;max-width:1050px;color:var(--ink);font-size:14px;line-height:1.62;overflow-wrap:anywhere}
 .challenge-prompt .semantic-call{color:#1750eb;font-family:"JetBrains Mono",var(--mono);font-weight:650}
 .challenge-prompt .semantic-literal{color:#067d17;font-family:"JetBrains Mono",var(--mono)}
 html[data-theme="dark"] .challenge-prompt .semantic-call{color:var(--syntax-builtin)}
@@ -479,7 +456,7 @@ html[data-theme="dark"] .challenge-prompt .semantic-literal{color:var(--syntax-s
 .status-pill{padding:5px 8px;border:1px solid var(--line);border-radius:999px;background:var(--panel-2);color:var(--muted);font-size:9px;font-weight:800;white-space:nowrap}
 .status-pill.complete{border-color:color-mix(in srgb,var(--good) 45%,var(--line));background:var(--good-soft);color:var(--good)}
 .status-pill.attempted{border-color:color-mix(in srgb,var(--warn) 45%,var(--line));background:var(--warn-soft);color:var(--warn)}
-.workspace{height:max(490px,calc(100vh - 480px));min-height:490px;display:grid;grid-template-columns:minmax(360px,1.38fr) minmax(280px,.72fr)}
+.workspace{min-height:130px;flex:1 1 auto;display:grid;grid-template-columns:minmax(360px,1.38fr) minmax(280px,.72fr)}
 .editor-pane{min-width:0;min-height:0;display:grid;grid-template-rows:41px minmax(0,1fr) 48px;border-right:1px solid var(--line);background:var(--editor)}
 .pane-head{padding:0 10px 0 13px;display:flex;align-items:center;justify-content:space-between;gap:8px;border-bottom:1px solid var(--line);background:var(--panel-2)}
 .pane-title{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:780}
@@ -524,6 +501,7 @@ html[data-theme="dark"] .challenge-prompt .semantic-literal{color:var(--syntax-s
 [hidden]{display:none!important}
 @media (max-width:980px){
   body{overflow:auto}
+  body>main.lab-page{height:auto;display:block}
   .app-shell{height:auto;min-height:0;grid-template-columns:1fr}
   .sidebar{position:static;grid-template-rows:auto auto auto;border-right:0;border-bottom:1px solid var(--line)}
   .lesson-list{display:flex;overflow:auto;padding:0 9px 10px}
@@ -533,15 +511,11 @@ html[data-theme="dark"] .challenge-prompt .semantic-literal{color:var(--syntax-s
   .editor-pane{border-right:0;border-bottom:1px solid var(--line)}
 }
 @media (max-width:620px){
-  .practice-toolbar,.resource-notice{align-items:stretch;flex-direction:column}
-  .practice-actions{display:grid;grid-template-columns:1fr 1fr 36px}
-  .practice-actions button:not(.icon){padding:0 7px;font-size:9px}
-  .resource-links{justify-content:flex-start;white-space:normal}
   .main{padding:13px 10px 22px}
   .lesson-head h2{font-size:21px}
   .lesson-progress-card{display:none}
   .view-tabs{overflow:auto}
-  .view-tab{min-width:118px}
+  .view-tab{min-width:118px;flex:0 0 118px}
   .surface-head{align-items:flex-start;flex-direction:column}
   .surface-actions{width:100%;flex-wrap:wrap}
   .surface-actions button{flex:1}
@@ -584,36 +558,40 @@ html[data-theme="dark"] .challenge-prompt .semantic-literal{color:var(--syntax-s
 <!-- LAB_SYLLABUS_CHIPS_END -->
 </header>
 <!-- LAB_MANIFEST_HEADER_END -->
-<section class="practice-toolbar" data-lab-workspace aria-label="Progress and backup controls">
-  <span id="suiteProgress" class="suite-progress">0 of 99 challenges complete</span>
-  <div class="practice-actions">
-    <button id="exportButton" type="button">Export progress</button>
-    <button id="importButton" type="button">Import progress</button>
-    <button id="themeButton" class="icon" type="button" aria-label="Switch colour scheme" title="Switch colour scheme">◐</button>
-  </div>
-</section>
-<aside class="resource-notice" aria-label="Download complete Python lesson resources">
-  <p>Want to run these lessons in your classroom or learn at home? Download the full lesson resources here.</p>
+<aside class="resource-notice" aria-label="Complete Python lesson resources">
+  <p>Complete lesson resources for classroom or home use.</p>
   <div class="resource-links">
-    <a href="https://github.com/timcarpe/PRIMM-Python-Lessons/releases/latest" target="_blank" rel="noopener noreferrer">Download latest release</a>
-    <a class="secondary" href="https://github.com/timcarpe/PRIMM-Python-Lessons" target="_blank" rel="noopener noreferrer">View repository</a>
+    <a href="https://github.com/timcarpe/PRIMM-Python-Lessons/releases/latest" target="_blank" rel="noopener noreferrer">Download</a>
+    <a href="https://github.com/timcarpe/PRIMM-Python-Lessons" target="_blank" rel="noopener noreferrer">Repository</a>
   </div>
 </aside>
 <div class="app-shell" data-lab-workspace>
   <aside class="sidebar" aria-label="Lesson navigation">
-    <div class="sidebar-head"><strong>Programming lessons</strong><span>All lessons are selectable</span></div>
+    <div class="sidebar-head">
+      <div class="sidebar-title-row">
+        <strong>Programming lessons</strong>
+        <span id="suiteProgress" class="suite-progress">0 / 99 complete</span>
+      </div>
+      <div class="sidebar-tools" aria-label="Progress and appearance controls">
+        <button id="exportButton" type="button">Export</button>
+        <button id="importButton" type="button">Import</button>
+        <button id="themeButton" class="icon" type="button" aria-label="Switch colour scheme" title="Switch colour scheme">◐</button>
+      </div>
+    </div>
     <div class="search-wrap"><input id="lessonSearch" type="search" placeholder="Find a lesson…" aria-label="Find a lesson"></div>
     <nav id="lessonList" class="lesson-list"></nav>
   </aside>
   <div class="main">
 <span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span>
     <header class="lesson-head">
-      <div>
-        <div id="lessonKicker" class="lesson-kicker"></div>
+      <div class="lesson-heading">
+        <div class="lesson-meta">
+          <div id="lessonKicker" class="lesson-kicker"></div>
+          <div class="lesson-progress-card"><strong id="lessonProgress">0/3</strong><span>complete</span></div>
+        </div>
         <h2 id="lessonTitle"></h2>
         <p id="lessonQuestion" class="lesson-question"></p>
       </div>
-      <div class="lesson-progress-card"><strong id="lessonProgress">0/3</strong><span>challenges complete</span></div>
     </header>
     <nav id="viewTabs" class="view-tabs" aria-label="Lesson sections"></nav>
     <section class="surface">
@@ -2121,7 +2099,7 @@ Sk.builtinFiles={"files":{"src/builtin/sys.js":"var $builtinmodule=function(){va
     elements.lessonTitle.textContent = lesson.title;
     elements.lessonQuestion.textContent = lesson.drivingQuestion;
     elements.lessonProgress.textContent = `${completed}/3`;
-    elements.suiteProgress.textContent = `${totalCompleted()} of ${TOTAL_CHALLENGES} challenges complete`;
+    elements.suiteProgress.textContent = `${totalCompleted()} / ${TOTAL_CHALLENGES} complete`;
     renderSidebar();
     renderTabs();
     if (view === "example") renderExample(lesson);

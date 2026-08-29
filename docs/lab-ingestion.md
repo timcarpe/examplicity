@@ -26,9 +26,10 @@ redesign existing labs or introduce a new runtime architecture.
 
 ## 2. Static document and shell boundary
 
-The host (`app/catalogue.tsx`) opens the manifest `href` in a full-viewport iframe.
-The lab owns its teaching UI and behavior; the host owns the catalogue, loading
-screen, query-string selection, iframe, and persistent header/footer overlay.
+The host (`app/catalogue.tsx`) opens the manifest `href` in the middle row of a
+full-viewport header/iframe/footer grid. The lab owns its teaching UI and
+behavior; the host owns the catalogue, loading screen, query-string selection,
+iframe, and persistent header/footer chrome.
 Keep those responsibilities separate.
 
 - [ ] Keep a complete document beginning with `<!doctype html>`,
@@ -59,6 +60,11 @@ Keep those responsibilities separate.
   principal panels and actions above the fold; stacking them below it is not an
   acceptable ingestion fix. Mild lab-owned compaction, proportional geometry
   changes and container-query transitions are appropriate.
+- [ ] For application-style labs, size the outer application to the iframe's
+  available height rather than the browser's full height. At `1280×720`, the
+  lab document itself must not scroll behind the host footer: keep persistent
+  utility controls inside the application chrome, let designated panes scroll,
+  and avoid a minimum workspace height larger than the host's content row.
 - [ ] Do not add host messaging, parent-frame state, or a second navigation
   system without explicit architecture approval. The current integration is
   only the manifest `href` plus the iframe in `app/catalogue.tsx`.
