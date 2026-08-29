@@ -243,11 +243,13 @@ export default function Catalogue({ initialExam, initialSubjectId }: CataloguePr
           title={activeLab.title}
         />
         <footer className="lab-shell-footer">
-          <a href="https://github.com/timcarpe/examplicity">Examplicity™</a>
+          <div className="footer-left">
+            <a href="https://github.com/timcarpe/examplicity">Examplicity™</a>
+            <BugReportDialog frameRef={labFrameRef} lab={activeLab} />
+          </div>
           <span>
             Make complex ideas click. ·{' '}
-            <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> ·{' '}
-            <BugReportDialog frameRef={labFrameRef} lab={activeLab} />
+            <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>
           </span>
         </footer>
       </main>
@@ -375,11 +377,13 @@ export default function Catalogue({ initialExam, initialSubjectId }: CataloguePr
       </div>
 
       <footer>
-        <a href="https://github.com/timcarpe/examplicity">Examplicity™</a>
+        <div className="footer-left">
+          <a href="https://github.com/timcarpe/examplicity">Examplicity™</a>
+          <BugReportDialog />
+        </div>
         <span>
           IGCSE, AS &amp; A Level exam practice and concept labs. ·{' '}
-          <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> ·{' '}
-          <BugReportDialog />
+          <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>
         </span>
       </footer>
     </main>

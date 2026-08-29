@@ -46,6 +46,10 @@ for (const lab of labs) {
     || count(packaged, '<style data-examplicity-download-chrome>') !== 1
     || count(packaged, '<header class="examplicity-download-header"') !== 1
     || count(packaged, '<footer class="examplicity-download-footer"') !== 1
+    || /report a bug/i.test(packaged)
+    || packaged.includes('/api/bug-reports')
+    || packaged.includes('DATABASE_URL')
+    || /postgres(?:ql)?:\/\//i.test(packaged)
   ) {
     throw new Error(`${lab.slug} produced invalid packaged HTML`);
   }

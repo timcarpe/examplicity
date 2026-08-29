@@ -237,6 +237,9 @@ export function BugReportDialog({ frameRef, lab = null }: BugReportDialogProps) 
     <>
       <button className="bug-report-trigger" onClick={openDialog} ref={triggerRef} type="button">
         Report a bug
+        <svg aria-hidden="true" viewBox="0 0 24 24">
+          <path d="M8 7.5h8M9.5 4.5 11 7.5m3.5-3L13 7.5M7 11H4m16 0h-3M7 15H4m16 0h-3M8 18.5l-2 2m10-2 2 2M7 10a5 5 0 0 1 10 0v5a5 5 0 0 1-10 0Z" />
+        </svg>
       </button>
       {isOpen && createPortal((
         <div
