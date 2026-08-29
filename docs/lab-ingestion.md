@@ -175,6 +175,14 @@ the default drawing for an approved lab.
   as `<path>`, `<rect>`, `<circle>`, and `<g>`, and no external image or inline
   colour. The parent `.icon-drawing` in `app/globals.css` supplies
   `currentColor`, rounded caps/joins, and the base stroke.
+- [ ] Use exactly one semantic blue object per card drawing. Apply one `tone-*`
+  class to the single object that best expresses the mechanic; keep every
+  supporting object in the standard ink or `secondary-line` treatment. Do not
+  colour an entire region, several packets, or both a container and its content.
+- [ ] Centre arrows on the source and destination geometry. Arrow shafts and
+  heads must stop with visible clearance from object borders and must not run
+  through, behind, or over another shape. Review the rendered card—not only the
+  path coordinates—before approval.
 - [ ] Use the established semantic drawing classes when helpful: `is-solid`
   for filled emphasis, `secondary-line` for quiet supporting lines, and
   `thin-lines` for dense grids. Keep the drawing legible in the 16:9 card

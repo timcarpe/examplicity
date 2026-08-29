@@ -15,8 +15,8 @@ function IconDrawing({ slug }: LabIconProps) {
             ].map(({ bits, y }, row) => [...bits].map((bit, column) => {
               const isAccent = row === 2 && column === 2;
               return (
-                <g className={isAccent ? 'tone-one' : undefined} key={`${row}-${column}`}>
-                  <rect className={isAccent ? 'is-solid' : undefined} height="42" rx="8" width="46" x={122 + column * 50} y={y} />
+                <g key={`${row}-${column}`}>
+                  <rect className={isAccent ? 'is-solid tone-one' : undefined} height="42" rx="8" width="46" x={122 + column * 50} y={y} />
                   <text fill={isAccent ? 'var(--paper)' : 'currentColor'} fontFamily="ui-monospace, SFMono-Regular, Menlo, monospace" fontSize="22" fontWeight="800" stroke="none" textAnchor="middle" x={145 + column * 50} y={y + 29}>{bit}</text>
                 </g>
               );
@@ -33,13 +33,13 @@ function IconDrawing({ slug }: LabIconProps) {
               <rect className={cell === 0 ? 'is-solid' : ''} height="46" key={`m-${cell}`} rx="7" width="48" x={54 + cell * 52} y="82" />
             ))}
             {[0, 1, 2].map((cell) => (
-              <rect className={cell === 2 ? 'is-solid tone-three' : 'tone-three'} height="46" key={`e-${cell}`} rx="7" width="48" x={326 + cell * 52} y="82" />
+              <rect className={cell === 2 ? 'is-solid tone-three' : ''} height="46" key={`e-${cell}`} rx="7" width="48" x={326 + cell * 52} y="82" />
             ))}
           </g>
           <path d="M314 64v84m-12-12 12 12 12-12" />
           <path className="secondary-line" d="M64 238h236m40 0h236" />
           {[110, 146, 182, 218, 254].map((x) => <circle className="is-solid" cx={x} cy="238" key={x} r="7" />)}
-          {[372, 460, 548].map((x, index) => <circle className={index === 1 ? 'is-solid tone-three' : 'tone-three'} cx={x} cy="238" key={x} r="9" />)}
+          {[372, 460, 548].map((x, index) => <circle className={index === 1 ? 'is-solid' : ''} cx={x} cy="238" key={x} r="9" />)}
           <path d="M84 282h196m-14-10 14 10-14 10M556 282H360m14-10-14 10 14 10" />
         </>
       );
@@ -51,7 +51,7 @@ function IconDrawing({ slug }: LabIconProps) {
               <rect className={row === 1 && column === 2 ? 'is-solid tone-two' : (row + column) % 3 === 0 ? 'is-solid' : ''} height="40" key={`${row}-${column}`} width="40" x={92 + column * 42} y={86 + row * 42} />
             )))}
           </g>
-          <path d="M298 170h74m-22-22 22 22-22 22" />
+          <path d="M292 170h74m-22-22 22 22-22 22" />
           <rect height="38" rx="12" width="170" x="398" y="102" />
           <rect className="is-solid" height="38" rx="12" width="122" x="398" y="160" />
           <rect height="38" rx="12" width="82" x="398" y="218" />
@@ -107,7 +107,6 @@ function IconDrawing({ slug }: LabIconProps) {
           <g className="thin-lines">
             {[0, 1, 2, 3].map((line) => <path d={`M160 ${145 + line * 23}H480`} key={line} />)}
           </g>
-          <circle className="tone-three" cx="320" cy="180" r="62" />
           <path className="is-solid tone-three" d="m320 140 10 28 29-8-18 24 24 17-30 1-2 30-19-23-23 19 7-29-28-7 26-14-14-27 27 13z" />
           <path d="M72 180h64m368 0h64" />
         </>
@@ -155,10 +154,10 @@ function IconDrawing({ slug }: LabIconProps) {
             <rect className={packet === 1 ? 'is-solid tone-one' : ''} height="40" key={packet} rx="8" width="54" x={54} y={82 + packet * 48} />
           ))}
           <circle cx="278" cy="98" r="28" />
-          <circle className="tone-three" cx="278" cy="260" r="28" />
+          <circle cx="278" cy="260" r="28" />
           <circle className="is-solid" cx="410" cy="180" r="32" />
-          <path d="M108 102 250 98M108 150l142-52M108 198l142 62M108 246l142 14M306 98l76 62m-76 100 76-60" />
-          <path className="secondary-line" d="M442 180h132" />
+          <path d="M108 102 250 98M108 150l143-44M108 198l144 52M108 246l142 12M302 113l81 50m-81 82 81-48" />
+          <path className="secondary-line" d="M442 180h48m-14-14 14 14-14 14" />
           {[0, 1, 2, 3].map((packet) => <rect height="40" key={`r-${packet}`} rx="8" width="18" x={502 + packet * 20} y="160" />)}
         </>
       );
@@ -166,7 +165,7 @@ function IconDrawing({ slug }: LabIconProps) {
       return (
         <>
           <rect className="tone-one" height="214" rx="24" width="214" x="54" y="72" />
-          <rect className="tone-three" height="214" rx="24" width="214" x="372" y="72" />
+          <rect height="214" rx="24" width="214" x="372" y="72" />
           {[{ x: 105, y: 126 }, { x: 208, y: 126 }, { x: 105, y: 232 }, { x: 208, y: 232 }, { x: 423, y: 126 }, { x: 526, y: 126 }, { x: 423, y: 232 }, { x: 526, y: 232 }].map(({ x, y }) => <circle cx={x} cy={y} key={`${x}-${y}`} r="14" />)}
           <rect className="is-solid" height="74" rx="14" width="74" x="283" y="143" />
           <path d="M268 180h15m74 0h15M320 116v27m0 74v27" />
@@ -177,14 +176,12 @@ function IconDrawing({ slug }: LabIconProps) {
         <>
           <rect height="92" rx="16" width="122" x="54" y="98" />
           <rect height="92" rx="16" width="122" x="464" y="98" />
-          <path d="M176 144h288M320 144v92" />
+          <path d="M176 144h288M320 144v82" />
           {[214, 258, 302, 346, 390].map((x, index) => (
-            <rect className={index > 1 ? 'is-solid tone-one' : undefined} height="32" key={x} rx="7" width="32" x={x} y="128" />
+            <rect className={index > 1 ? 'is-solid' : undefined} height="32" key={x} rx="7" width="32" x={x} y="128" />
           ))}
           <path className="secondary-line" d="M264 104h112l-18-24h-76z" />
-          <circle cx="320" cy="262" r="42" />
-          <path d="M300 262h40m-12 0v18m0-18 14-14" />
-          <circle className="is-solid tone-three" cx="300" cy="262" r="10" />
+          <path className="is-solid tone-three" fillRule="evenodd" d="M294 238a24 24 0 1 0 0 48 24 24 0 0 0 22-15h22v13h12v-13h14v17h12v-17h12v-12h-72a24 24 0 0 0-22-21zm0 12a12 12 0 1 1 0 24 12 12 0 0 1 0-24z" />
         </>
       );
     case 'dns-web-page-retrieval':
@@ -193,25 +190,25 @@ function IconDrawing({ slug }: LabIconProps) {
           <rect height="188" rx="18" width="214" x="48" y="82" />
           <path className="secondary-line" d="M48 124h214M78 104h118" />
           <rect className="is-solid tone-two" height="54" rx="9" width="150" x="80" y="158" />
-          <path d="M262 142h76m-20-18 20 18-20 18" />
-          <path d="M338 220h-76m20-18-20 18 20 18" />
+          <path d="M274 122h64m-20-18 20 18-20 18" />
+          <path d="M338 238h-64m20-18-20 18 20 18" />
           <g className="thin-lines">
             <rect height="76" rx="12" width="104" x="354" y="84" />
             <rect height="76" rx="12" width="104" x="354" y="200" />
           </g>
           <path d="M458 122h74v116h-74" />
           <circle className="is-solid" cx="406" cy="122" r="10" />
-          <circle className="is-solid tone-one" cx="406" cy="238" r="10" />
+          <circle className="is-solid" cx="406" cy="238" r="10" />
         </>
       );
     case 'tcp-ip-encapsulation':
       return (
         <>
           <rect height="194" rx="24" width="242" x="72" y="82" />
-          <rect className="tone-one" height="154" rx="20" width="202" x="92" y="102" />
+          <rect height="154" rx="20" width="202" x="92" y="102" />
           <rect height="112" rx="16" width="160" x="113" y="123" />
           <rect className="is-solid tone-three" height="68" rx="12" width="116" x="135" y="145" />
-          <path d="M330 180h78m-22-22 22 22-22 22" />
+          <path d="M337 180h78m-22-22 22 22-22 22" />
           <g className="thin-lines">
             <rect height="42" rx="9" width="122" x="438" y="92" />
             <rect height="42" rx="9" width="122" x="438" y="144" />
@@ -237,7 +234,7 @@ function IconDrawing({ slug }: LabIconProps) {
           <rect height="42" rx="10" width="196" x="76" y="84" />
           <rect className="is-solid tone-one" height="42" rx="10" width="154" x="76" y="146" />
           <rect height="42" rx="10" width="176" x="76" y="208" />
-          <path d="M288 167h64m-22-20 22 20-22 20" />
+          <path d="M306 167h70m-20-20 20 20-20 20" />
           <rect height="178" rx="28" width="154" x="410" y="80" />
           <path d="M448 128h78m-78 44h78m-78 44h48" />
           <circle className="is-solid" cx="524" cy="216" r="12" />
@@ -246,7 +243,7 @@ function IconDrawing({ slug }: LabIconProps) {
     case 'software-stack':
       return (
         <>
-          <path className="secondary-line" d="M320 54v46m-18-18 18 18 18-18" />
+          <path className="secondary-line" d="M320 54v30m-18-18 18 18 18-18" />
           <rect height="42" rx="12" width="216" x="212" y="96" />
           <rect className="is-solid tone-two" height="42" rx="12" width="270" x="185" y="142" />
           <rect height="42" rx="12" width="320" x="160" y="188" />
@@ -277,9 +274,9 @@ function IconDrawing({ slug }: LabIconProps) {
       return (
         <>
           <rect height="190" rx="18" width="154" x="52" y="84" />
-          <rect className="tone-two" height="190" rx="18" width="154" x="244" y="84" />
+          <rect height="190" rx="18" width="154" x="244" y="84" />
           <rect height="190" rx="18" width="154" x="436" y="84" />
-          <path d="M206 152h38m-16-16 16 16-16 16M398 208h38m-16-16 16 16-16 16" />
+          <path d="M214 152h22m-16-14 16 14-16 14M406 208h22m-16-14 16 14-16 14" />
           <rect className="is-solid" height="34" rx="8" width="104" x="76" y="118" />
           <rect height="34" rx="8" width="104" x="76" y="168" />
           <rect className="is-solid tone-one" height="72" rx="12" width="104" x="269" y="138" />
@@ -292,12 +289,12 @@ function IconDrawing({ slug }: LabIconProps) {
         <>
           <rect height="62" rx="14" width="116" x="48" y="149" />
           <path className="secondary-line" d="M76 180h60m-30-30v60" />
-          <path d="M164 180h78m-18-18 18 18-18 18" />
+          <path d="M176 180h54m-18-16 18 16-18 16" />
           <rect className="is-solid tone-one" height="82" rx="16" width="136" x="242" y="139" />
-          <path d="M378 180h66m-18-18 18 18-18 18" />
-          <path className="tone-three" d="m500 126 62 54-62 54-62-54z" />
-          <path d="M562 180h30m-18-18 18 18-18 18M500 234v48H106v-71m-18 18 18-18 18 18" />
-          <circle className="is-solid tone-three" cx="592" cy="180" r="10" />
+          <path d="M390 180h36m-16-16 16 16-16 16" />
+          <path d="m500 126 62 54-62 54-62-54z" />
+          <path d="M566 180h10m-10-9 10 9-10 9M500 234v48H106v-59m-16 16 16-16 16 16" />
+          <circle className="is-solid" cx="592" cy="180" r="10" />
         </>
       );
     case 'python-programming-practice':
@@ -306,7 +303,7 @@ function IconDrawing({ slug }: LabIconProps) {
           <rect height="224" rx="22" width="284" x="62" y="68" />
           <path className="secondary-line" d="M96 112h118m-118 38h202m-202 38h162m-162 38h190" />
           <path d="m116 134-18 16 18 16m72-32 18 16-18 16" />
-          <rect className="tone-one" height="64" rx="14" width="174" x="402" y="78" />
+          <rect height="64" rx="14" width="174" x="402" y="78" />
           <rect className="is-solid tone-one" height="64" rx="14" width="174" x="402" y="158" />
           <rect height="48" rx="14" width="174" x="402" y="242" />
           <path d="m430 190 18 18 34-42M430 266h118" />
@@ -316,10 +313,10 @@ function IconDrawing({ slug }: LabIconProps) {
       return (
         <>
           <rect height="190" rx="22" width="220" x="58" y="82" />
-          <rect className="tone-one" height="190" rx="22" width="220" x="362" y="82" />
+          <rect height="190" rx="22" width="220" x="362" y="82" />
           <path className="secondary-line" d="M92 122h88m-88 36h128m-128 36h106m-106 36h142M396 122h76m-76 36h142m-142 36h112m-112 36h136" />
           <path d="m126 142-24 20 24 20m64-40 24 20-24 20M428 142l-24 20 24 20m64-40 24 20-24 20" />
-          <path className="is-solid tone-one" d="M302 150h36v-22l42 52-42 52v-22h-36v22l-42-52 42-52z" />
+          <path className="is-solid tone-one" d="M310 164h10v-16l30 32-30 32v-16h-10v16l-20-32 20-32z" />
         </>
       );
     default:
