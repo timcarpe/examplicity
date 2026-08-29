@@ -46,6 +46,7 @@
   --lab-pill-radius: 999px;
   --lab-control-height: 35px;
   --lab-panel-shadow: 0 1px 2px rgba(29, 29, 31, 0.04);
+  --lab-page-gutter: max(28px, calc((100vw - 1200px) / 2));
 }
 
 html,
@@ -219,16 +220,17 @@ html[data-theme="dark"] body {
 main {
   container-name: lab-canvas;
   container-type: inline-size;
+  margin-left: var(--lab-page-gutter) !important;
+  margin-right: auto !important;
+  max-width: 1200px;
+  width: calc(100vw - var(--lab-page-gutter) - var(--lab-page-gutter)) !important;
 }
 
-body.binary-lab main {
-  width: min(820px, calc(100% - 24px));
-}
-
-body.binary-lab .lab-manifest-header {
-  margin-left: 50%;
-  transform: translateX(-50%);
-  width: min(1120px, calc(100vw - 56px));
+body.binary-lab .topbar,
+body.binary-lab .card {
+  margin-left: auto;
+  margin-right: auto;
+  width: min(820px, 100%);
 }
 
 :where(button, input, select, textarea, summary):focus-visible {
@@ -237,17 +239,13 @@ body.binary-lab .lab-manifest-header {
 }
 
 @media (max-width: 620px) {
+  :root {
+    --lab-page-gutter: 18px;
+  }
+
   body {
     padding-bottom: 76px;
     padding-top: 60px;
-  }
-
-  body.binary-lab main {
-    width: min(100% - 12px, 820px);
-  }
-
-  body.binary-lab .lab-manifest-header {
-    width: calc(100vw - 24px);
   }
 
   .lab-manifest-header {
@@ -408,6 +406,7 @@ h1{display:inline-block;font-size:24px}.sub{display:inline-block;margin:0 0 0 10
 .timeline-panel{padding:6px}.timeline-head{margin-bottom:3px}.timeline{padding:4px}.timeline-legend{margin-top:3px}
 
 .lab-grid{margin-top:6px}.workspace{gap:6px}.timeline-panel{padding:6px 6px 5px}
+.state-panel,.timeline-panel{min-width:0}.scheduler-gate.compact-scheduler{grid-template-columns:175px minmax(0,1fr) 175px}.state-board{grid-template-columns:minmax(385px,1.35fr) 28px minmax(240px,.82fr) 28px minmax(225px,.82fr)}
 /* Expanded top-of-lab failure guidance: causal feedback without turning the lab into a question flow */
 .target-row{align-items:stretch}
 .failure-insight{flex:1 1 560px;min-width:420px;min-height:34px;display:grid;grid-template-columns:auto minmax(0,1fr) minmax(0,1.12fr);gap:7px;align-items:stretch;padding:4px 7px;border:1px solid #e0aaa4;border-radius:8px;background:linear-gradient(90deg,#fff5f3,#fff9f7);box-shadow:inset 3px 0 0 var(--lab-bad)}

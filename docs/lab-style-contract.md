@@ -22,6 +22,10 @@ Do not edit an embedded `LAB_FRAME_STYLES`, `LAB_MANIFEST_HEAD`,
 
 ## Homogenization rules
 
+- Use the generated lab page rail for the outer layout: it is capped at
+  `1200px`, with `28px` minimum desktop gutters and `18px` mobile gutters, to
+  align with the host header controls. Dense teaching interfaces may constrain
+  an inner workspace further, but must not increase the outer page width.
 - The visible `h1` and document `<title>` must match the lab name in
   `app/labs.ts`; do not append redundant “Lab” or version labels.
 - Use chips consistently: navigation chips identify destinations, status chips
