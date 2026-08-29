@@ -263,7 +263,12 @@ export default function Catalogue({ initialExam, initialSubjectId }: CataloguePr
         {[...groupedLabs].map(([topic, topicLabs]) => (
           <section className="topic-section" key={topic}>
             <div className="topic-heading">
-              <h2>{topic}</h2>
+              <div className="topic-heading-copy">
+                <h2>{topic}</h2>
+                <p className="topic-briefing">
+                  {view.topicBriefings[topic as keyof typeof view.topicBriefings]}
+                </p>
+              </div>
               <span>{topicLabs.length} {topicLabs.length === 1 ? 'lab' : 'labs'} · {exam}</span>
             </div>
 
