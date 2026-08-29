@@ -181,8 +181,10 @@ the default drawing for an approved lab.
   colour an entire region, several packets, or both a container and its content.
 - [ ] Centre arrows on the source and destination geometry. Arrow shafts and
   heads must stop with visible clearance from object borders and must not run
-  through, behind, or over another shape. Review the rendered card—not only the
-  path coordinates—before approval.
+  through, behind, or over another shape. Inspect the complete rendered shaft
+  and head—not only its endpoints—and align each head to the path's actual
+  direction before approval. Split connector paths at every intervening object;
+  hiding an unbroken line behind a later SVG shape does not satisfy this check.
 - [ ] Use the established semantic drawing classes when helpful: `is-solid`
   for filled emphasis, `secondary-line` for quiet supporting lines, and
   `thin-lines` for dense grids. Keep the drawing legible in the 16:9 card
