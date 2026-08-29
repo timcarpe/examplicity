@@ -43,7 +43,7 @@ export const syllabusRegistry = {
 
 export type ExamCode = keyof typeof syllabusRegistry;
 
-export const qualificationLevels = ['GCSE', 'AS', 'A'] as const;
+export const qualificationLevels = ['IGCSE', 'AS', 'A'] as const;
 export type QualificationLevel = (typeof qualificationLevels)[number];
 export type SyllabusQualification = QualificationLevel | 'AS/A';
 
@@ -78,7 +78,7 @@ export const subjects = [
       },
     },
     qualificationViews: {
-      GCSE: {
+      IGCSE: {
         exam: '0478',
         headerLabel: 'Cambridge IGCSE Computer Science · 0478',
         intro: 'Interactive Cambridge IGCSE Computer Science (0478) labs for exam practice and visual concept explanations you can see, change and understand.',
@@ -159,7 +159,7 @@ export const translator: Lab = {
   format: 'Code translator',
   kind: 'tool',
   syllabuses: [
-    { code: '0478', qualification: 'GCSE', sections: [{ id: '4.2', page: 20, primary: true }] },
+    { code: '0478', qualification: 'IGCSE', sections: [{ id: '4.2', page: 20, primary: true }] },
     { code: '9618', qualification: 'AS', sections: [{ id: '5.2', page: 23, primary: true }] },
   ],
   href: '/labs/computer-science/translator.html',
@@ -170,7 +170,7 @@ export const labs: Lab[] = [
     subject: 'computer-science',
     slug: 'binary-numbers',
     title: 'Binary Number Practice',
-    description: 'Build fluency with binary and hexadecimal registers through generated GCSE and AS questions.',
+    description: 'Build fluency with binary and hexadecimal registers through generated IGCSE and AS questions.',
     metaDescription: 'Practise binary, denary and hexadecimal conversions for Cambridge Computer Science 0478 and 9618.',
     subtitle: 'Practise binary arithmetic and convert between binary, denary and hexadecimal for Cambridge IGCSE Computer Science 0478 and AS Level Computer Science 9618.',
     topic: 'Data representation',
@@ -178,7 +178,7 @@ export const labs: Lab[] = [
     layout: 'compact',
     kind: 'lab',
     syllabuses: [
-      { code: '0478', qualification: 'GCSE', sections: [{ id: '1.1', page: 11, primary: true }] },
+      { code: '0478', qualification: 'IGCSE', sections: [{ id: '1.1', page: 11, primary: true }] },
       { code: '9618', qualification: 'AS/A', sections: [{ id: '1.1', page: 14, primary: true }, { id: '4.3', page: 22 }] },
     ],
     href: '/labs/computer-science/binary-numbers.html',
@@ -194,7 +194,7 @@ export const labs: Lab[] = [
     format: 'Visual experiment',
     kind: 'lab',
     syllabuses: [
-      { code: '0478', qualification: 'GCSE', sections: [{ id: '1.3', page: 13, primary: true }, { id: '1.2', page: 13 }] },
+      { code: '0478', qualification: 'IGCSE', sections: [{ id: '1.3', page: 13, primary: true }, { id: '1.2', page: 13 }] },
       { code: '9618', qualification: 'AS', sections: [{ id: '1.3', page: 15, primary: true }, { id: '1.2', page: 15 }] },
     ],
     href: '/labs/computer-science/bitmap-compression.html',
@@ -225,7 +225,7 @@ export const labs: Lab[] = [
     format: 'Signal lab',
     kind: 'lab',
     syllabuses: [
-      { code: '0478', qualification: 'GCSE', sections: [{ id: '1.2', page: 12, primary: true }] },
+      { code: '0478', qualification: 'IGCSE', sections: [{ id: '1.2', page: 12, primary: true }] },
       { code: '9618', qualification: 'AS', sections: [{ id: '1.2', page: 15, primary: true }] },
     ],
     href: '/labs/computer-science/sound-sampling.html',
@@ -256,7 +256,7 @@ export const labs: Lab[] = [
     format: 'Protocol lab',
     kind: 'lab',
     syllabuses: [
-      { code: '0478', qualification: 'GCSE', sections: [{ id: '2.2', page: 15, primary: true }] },
+      { code: '0478', qualification: 'IGCSE', sections: [{ id: '2.2', page: 15, primary: true }] },
       { code: '9618', qualification: 'AS', sections: [{ id: '6.2', page: 24, primary: true }] },
     ],
     href: '/labs/computer-science/parity-arq.html',
@@ -272,7 +272,7 @@ export const labs: Lab[] = [
     format: 'Transmission experiment',
     kind: 'lab',
     syllabuses: [
-      { code: '0478', qualification: 'GCSE', sections: [{ id: '2.1', page: 14, primary: true }, { id: '2.2', page: 15 }] },
+      { code: '0478', qualification: 'IGCSE', sections: [{ id: '2.1', page: 14, primary: true }, { id: '2.2', page: 15 }] },
     ],
     href: '/labs/computer-science/data-transmission-methods.html',
   },
@@ -302,7 +302,7 @@ export const labs: Lab[] = [
     format: 'Network simulation',
     kind: 'lab',
     syllabuses: [
-      { code: '0478', qualification: 'GCSE', sections: [{ id: '2.1', page: 14, primary: true }] },
+      { code: '0478', qualification: 'IGCSE', sections: [{ id: '2.1', page: 14, primary: true }] },
       { code: '9618', qualification: 'A', sections: [{ id: '14.2', page: 33, primary: true }] },
     ],
     href: '/labs/computer-science/packet-switching.html',
@@ -348,7 +348,7 @@ export const labs: Lab[] = [
     format: 'Security experiment',
     kind: 'lab',
     syllabuses: [
-      { code: '0478', qualification: 'GCSE', sections: [{ id: '2.3', page: 15, primary: true }] },
+      { code: '0478', qualification: 'IGCSE', sections: [{ id: '2.3', page: 15, primary: true }] },
       { code: '9618', qualification: 'A', sections: [{ id: '17.1', page: 36, primary: true }] },
     ],
     href: '/labs/computer-science/encryption-in-data-transmission.html',
@@ -364,7 +364,7 @@ export const labs: Lab[] = [
     format: 'Browser simulation',
     kind: 'lab',
     syllabuses: [
-      { code: '0478', qualification: 'GCSE', sections: [{ id: '5.1', page: 22, primary: true }] },
+      { code: '0478', qualification: 'IGCSE', sections: [{ id: '5.1', page: 22, primary: true }] },
       { code: '9618', qualification: 'AS/A', sections: [{ id: '2.1', page: 17, primary: true }, { id: '14.1', page: 33 }] },
     ],
     href: '/labs/computer-science/dns-web-page-retrieval.html',
@@ -395,7 +395,7 @@ export const labs: Lab[] = [
     format: 'CPU simulator',
     kind: 'lab',
     syllabuses: [
-      { code: '0478', qualification: 'GCSE', sections: [{ id: '3.1', page: 16, primary: true }] },
+      { code: '0478', qualification: 'IGCSE', sections: [{ id: '3.1', page: 16, primary: true }] },
       { code: '9618', qualification: 'AS', sections: [{ id: '4.1', page: 19, primary: true }] },
     ],
     href: '/labs/computer-science/fetch-decode-execute.html',
@@ -426,7 +426,7 @@ export const labs: Lab[] = [
     format: 'Systems model',
     kind: 'lab',
     syllabuses: [
-      { code: '0478', qualification: 'GCSE', sections: [{ id: '4.1', page: 20, primary: true }] },
+      { code: '0478', qualification: 'IGCSE', sections: [{ id: '4.1', page: 20, primary: true }] },
       { code: '9618', qualification: 'AS', sections: [{ id: '5.1', page: 23, primary: true }] },
     ],
     href: '/labs/computer-science/software-stack.html',
@@ -442,7 +442,7 @@ export const labs: Lab[] = [
     format: 'OS simulation',
     kind: 'lab',
     syllabuses: [
-      { code: '0478', qualification: 'GCSE', sections: [{ id: '3.3', page: 18, primary: true }, { id: '3.1', page: 16 }] },
+      { code: '0478', qualification: 'IGCSE', sections: [{ id: '3.3', page: 18, primary: true }, { id: '3.1', page: 16 }] },
       { code: '9618', qualification: 'A', sections: [{ id: '16.1', page: 35, primary: true }] },
     ],
     href: '/labs/computer-science/memory-management.html',
@@ -473,7 +473,7 @@ export const labs: Lab[] = [
     format: 'Flowchart builder',
     kind: 'lab',
     syllabuses: [
-      { code: '0478', qualification: 'GCSE', sections: [{ id: '6.1', page: 23, primary: true }, { id: '3.2', page: 17 }] },
+      { code: '0478', qualification: 'IGCSE', sections: [{ id: '6.1', page: 23, primary: true }, { id: '3.2', page: 17 }] },
       { code: '9618', qualification: 'AS', sections: [{ id: '3.1', page: 17, primary: true }, { id: '9.2', page: 27 }] },
     ],
     href: '/labs/computer-science/automated-system-control-flowcharts.html',
@@ -489,7 +489,7 @@ export const labs: Lab[] = [
     format: 'Guided coding',
     kind: 'tool',
     syllabuses: [
-      { code: '0478', qualification: 'GCSE', sections: [{ id: '8.1', page: 27, primary: true }, { id: '8.2', page: 29 }] },
+      { code: '0478', qualification: 'IGCSE', sections: [{ id: '8.1', page: 27, primary: true }, { id: '8.2', page: 29 }] },
       { code: '9618', qualification: 'AS', sections: [{ id: '11.1', page: 29, primary: true }, { id: '11.2', page: 29 }, { id: '11.3', page: 30 }, { id: '10.2', page: 28 }] },
     ],
     href: '/labs/computer-science/python-programming-practice.html',

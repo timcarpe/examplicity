@@ -43,7 +43,7 @@ export default function OpenGraphImage() {
             <span>ideas click.</span>
           </div>
           <div style={{ color: '#6e6e73', display: 'flex', fontSize: 30, lineHeight: 1.25, marginTop: 38 }}>
-            GCSE, AS &amp; A Level exam practice and visual concept labs.
+            IGCSE, AS &amp; A Level exam practice and visual concept labs.
           </div>
         </div>
 

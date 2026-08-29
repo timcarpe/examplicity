@@ -45,7 +45,7 @@ const normalizeManagedHead = (source: string) => {
 };
 
 const qualificationLevels = {
-  GCSE: ['GCSE'],
+  IGCSE: ['IGCSE'],
   AS: ['AS Level'],
   A: ['A Level'],
   'AS/A': ['AS Level', 'A Level'],

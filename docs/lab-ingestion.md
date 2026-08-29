@@ -98,7 +98,7 @@ fields:
   syllabuses: [
     {
       code: '0478',
-      qualification: 'GCSE',
+      qualification: 'IGCSE',
       sections: [
         { id: '1.2', page: 13, primary: true },
         { id: '1.3', page: 13 },
@@ -121,7 +121,7 @@ fields:
   Computer Science, 0478 or 9618.
 - [ ] Give every lab one `syllabuses` entry for each applicable syllabus. The
   `code` controls catalogue visibility. `qualification` is the learner-facing
-  stage (`GCSE`, `AS`, `A` or a justified combined label), and `sections`
+  stage (`IGCSE`, `AS`, `A` or a justified combined label), and `sections`
   contains the exact syllabus `topic.subtopic` references and PDF pages.
 - [ ] Mark exactly one section per syllabus as `primary: true`. Add other
   section references only when the interaction directly teaches them. Do not

@@ -377,7 +377,7 @@ export default function Catalogue({ initialExam, initialSubjectId }: CataloguePr
       <footer>
         <a href="https://github.com/timcarpe/examplicity">Examplicity™</a>
         <span>
-          GCSE, AS &amp; A Level exam practice and concept labs. ·{' '}
+          IGCSE, AS &amp; A Level exam practice and concept labs. ·{' '}
           <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> ·{' '}
           <BugReportDialog />
         </span>
