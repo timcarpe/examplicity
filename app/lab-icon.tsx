@@ -299,6 +299,38 @@ function IconDrawing({ slug }: LabIconProps) {
           <circle className="is-solid" cx="604" cy="180" r="10" />
         </>
       );
+    case 'combinational-logic-circuit-design':
+      return (
+        <>
+          <circle cx="72" cy="126" r="18" />
+          <circle cx="72" cy="234" r="18" />
+          <path d="M90 126h118l32 34M90 234h118l32-34" />
+          <path className="is-solid tone-one" d="M240 102h72c54 0 88 32 88 78s-34 78-88 78h-72z" />
+          <path d="M400 180h82" />
+          <rect height="72" rx="14" width="98" x="482" y="144" />
+          <path className="secondary-line" d="M510 168h42m-42 24h42" />
+          <text fill="currentColor" fontSize="18" fontWeight="800" stroke="none" textAnchor="middle" x="72" y="132">A</text>
+          <text fill="currentColor" fontSize="18" fontWeight="800" stroke="none" textAnchor="middle" x="72" y="240">B</text>
+          <text fill="var(--paper)" fontSize="20" fontWeight="850" stroke="none" textAnchor="middle" x="310" y="187">AND</text>
+          <text fill="currentColor" fontSize="18" fontWeight="800" stroke="none" textAnchor="middle" x="531" y="190">Y</text>
+        </>
+      );
+    case 'dijkstra-a-star-graph-search':
+      return (
+        <>
+          <path className="secondary-line" d="M102 166 198 104M102 194l96 62M244 92l132 8M244 268l132-8M238 112l144 128M424 112l114 54M424 248l114-54" />
+          <path d="M102 194l96 62M244 268l132-8M424 248l114-54" />
+          <circle cx="78" cy="180" r="26" />
+          <circle cx="220" cy="90" r="24" />
+          <circle cx="220" cy="270" r="24" />
+          <circle className="is-solid tone-one" cx="400" cy="100" r="24" />
+          <circle cx="400" cy="260" r="24" />
+          <circle cx="562" cy="180" r="26" />
+          <text fill="currentColor" fontSize="18" fontWeight="850" stroke="none" textAnchor="middle" x="78" y="187">S</text>
+          <text fill="var(--paper)" fontSize="18" fontWeight="850" stroke="none" textAnchor="middle" x="400" y="107">A</text>
+          <text fill="currentColor" fontSize="18" fontWeight="850" stroke="none" textAnchor="middle" x="562" y="187">G</text>
+        </>
+      );
     case 'python-programming-practice':
       return (
         <>
