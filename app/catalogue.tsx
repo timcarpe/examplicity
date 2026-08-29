@@ -55,6 +55,7 @@ export default function Catalogue({ initialExam, initialSubjectId }: CataloguePr
   });
   const [activeLab, setActiveLab] = useState<Lab | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [showMobileNotice, setShowMobileNotice] = useState(true);
   const [downloadStatus, setDownloadStatus] = useState<'idle' | 'preparing' | 'complete' | 'error'>('idle');
   const subject = subjects.find((item) => item.id === subjectId) ?? subjects[0];
   const view = subject.qualificationViews[level];
@@ -189,6 +190,17 @@ export default function Catalogue({ initialExam, initialSubjectId }: CataloguePr
             plicity
           </Link>
           <div className="lab-shell-actions">
+            <Link
+              aria-label={`Open AI Lab Remix for ${activeLab.title}`}
+              className="lab-shell-remix"
+              href={`/remix?lab=${encodeURIComponent(activeLab.slug)}&from=${encodeURIComponent(examView.href)}`}
+            >
+              AI Lab Remix
+              <svg aria-hidden="true" viewBox="0 0 20 20">
+                <path d="M9.5 2.5c.6 3.3 2 4.7 5.3 5.3-3.3.6-4.7 2-5.3 5.3-.6-3.3-2-4.7-5.3-5.3 3.3-.6 4.7-2 5.3-5.3Z" />
+                <path d="M15.2 12.2c.3 1.6 1 2.3 2.6 2.6-1.6.3-2.3 1-2.6 2.6-.3-1.6-1-2.3-2.6-2.6 1.6-.3 2.3-1 2.6-2.6Z" />
+              </svg>
+            </Link>
             <button
               aria-busy={downloadStatus === 'preparing'}
               aria-label={`Download ${activeLab.title} as a standalone HTML file`}
@@ -197,9 +209,13 @@ export default function Catalogue({ initialExam, initialSubjectId }: CataloguePr
               onClick={downloadLab}
               type="button"
             >
-              {downloadStatus === 'preparing' ? 'Preparing…' : 'Download'}
+              {downloadStatus === 'preparing' ? 'Preparing…' : 'Download Lab'}
+              <svg aria-hidden="true" viewBox="0 0 20 20">
+                <path d="M10 2.5v10" />
+                <path d="m6.5 9 3.5 3.5L13.5 9" />
+                <path d="M3.5 14.5v2h13v-2" />
+              </svg>
             </button>
-            <Link className="lab-shell-home" href={examView.href} onClick={closeLab}>Back to labs</Link>
             <span className="lab-download-status" role="status" aria-live="polite">
               {downloadStatus === 'preparing' && 'Preparing the standalone HTML file.'}
               {downloadStatus === 'complete' && 'The standalone HTML file is ready.'}
@@ -236,6 +252,20 @@ export default function Catalogue({ initialExam, initialSubjectId }: CataloguePr
 
   return (
     <main>
+      {showMobileNotice && (
+        <aside className="mobile-notice" aria-label="Viewing recommendation">
+          <p>
+            Examplicity is best viewed on a desktop computer, as many labs require a large viewing area.
+          </p>
+          <button
+            aria-label="Dismiss viewing recommendation"
+            onClick={() => setShowMobileNotice(false)}
+            type="button"
+          >
+            <span aria-hidden="true">×</span>
+          </button>
+        </aside>
+      )}
       <header className="site-header">
         <a className="brand" href="#top" aria-label="Examplicity home">
           <span className="tone-one">e</span>

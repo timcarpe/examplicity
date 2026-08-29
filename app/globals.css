@@ -30,6 +30,8 @@ button { border: 0; }
 .tone-three { color: var(--tone-three); }
 .tone-four { color: var(--tone-four); }
 
+.mobile-notice { display: none; }
+
 .site-header {
   align-items: center;
   -webkit-backdrop-filter: saturate(180%) blur(18px);
@@ -255,29 +257,28 @@ footer a:hover { text-decoration-color: currentColor; }
   padding: 0 max(28px, calc((100vw - 1200px) / 2));
   top: 0;
 }
-.lab-shell-home {
-  background: var(--ink);
-  border: 1px solid var(--ink);
-  border-radius: 999px;
-  color: var(--paper);
-  font-size: 12px;
-  font-weight: 620;
-  padding: 9px 15px;
-  text-decoration: none;
-}
 .lab-shell-actions { align-items: center; display: flex; gap: 8px; }
-.lab-shell-download {
+.lab-shell-download,
+.lab-shell-remix {
+  align-items: center;
   background: var(--paper);
   border: 1px solid var(--line);
   border-radius: 999px;
   color: var(--ink);
   cursor: pointer;
+  display: inline-flex;
   font-size: 12px;
   font-weight: 620;
+  gap: 7px;
   padding: 9px 15px;
+  text-decoration: none;
   transition: background .2s ease, border-color .2s ease, color .2s ease, transform .2s ease;
 }
-.lab-shell-download:hover:not(:disabled) { border-color: var(--ink); transform: translateY(-1px); }
+.lab-shell-remix { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+.lab-shell-download svg,
+.lab-shell-remix svg { fill: none; height: 15px; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.7; width: 15px; }
+.lab-shell-download:hover:not(:disabled),
+.lab-shell-remix:hover { border-color: var(--ink); transform: translateY(-1px); }
 .lab-shell-download:disabled { cursor: wait; opacity: .62; }
 .lab-download-status {
   clip: rect(0 0 0 0);
@@ -330,6 +331,95 @@ footer a:hover { text-decoration-color: currentColor; }
 .spinner { animation: spin .8s linear infinite; border: 2px solid #d2d2d7; border-radius: 50%; border-top-color: var(--ink); height: 28px; width: 28px; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
+.remix-page { background: var(--paper); min-height: 100dvh; }
+.remix-site-header { height: 60px; }
+.remix-site-header .brand { font-size: 18px; }
+.remix-intro,
+.remix-steps { box-sizing: border-box; margin-inline: auto; }
+.remix-intro,
+.remix-steps { max-width: 816px; }
+.remix-back { font-size: 12px; font-weight: 620; text-underline-offset: 4px; }
+.remix-intro { padding: 70px 28px 0; }
+.remix-intro h1 { font-size: clamp(42px, 7vw, 66px); line-height: .98; margin: 0 0 16px; }
+.remix-intro > p:last-child { color: var(--muted); font-size: 16px; margin: 0; }
+.remix-steps { margin-bottom: 100px; margin-top: 54px; padding: 0 28px; position: relative; }
+.remix-steps::before { background: var(--line); bottom: 56px; content: ''; left: 54px; position: absolute; top: 56px; width: 1px; }
+.remix-step {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  box-shadow: 0 12px 30px #1d1d1f08;
+  margin-bottom: 34px;
+  max-width: 760px;
+  padding: 30px 32px 28px 68px;
+  position: relative;
+}
+.remix-step:not(:last-child)::after {
+  align-items: center;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  bottom: -24px;
+  color: var(--muted);
+  content: '↓';
+  display: flex;
+  font-size: 13px;
+  height: 28px;
+  justify-content: center;
+  left: 12px;
+  position: absolute;
+  width: 28px;
+  z-index: 1;
+}
+.remix-step-heading { align-items: flex-start; display: flex; gap: 17px; }
+.remix-step-heading h2 { font-size: 23px; font-weight: 620; letter-spacing: -.035em; line-height: 1.1; margin: 0; }
+.remix-step-heading p { color: var(--muted); font-size: 13px; line-height: 1.45; margin: 6px 0 0; }
+.remix-step-number { align-items: center; background: var(--ink); border-radius: 50%; color: var(--paper); display: flex; flex: 0 0 auto; font-size: 12px; font-weight: 650; height: 34px; justify-content: center; left: 9px; position: absolute; top: 28px; width: 34px; z-index: 2; }
+.remix-primary-action,
+.remix-secondary-action {
+  align-items: center;
+  border-radius: 999px;
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 13px;
+  font-weight: 650;
+  gap: 9px;
+  justify-content: center;
+  padding: 12px 18px;
+  text-decoration: none;
+  transition: opacity .2s ease, transform .2s ease;
+}
+.remix-primary-action { background: var(--ink); color: var(--paper); margin-top: 22px; }
+.remix-secondary-action { background: transparent; border: 1px solid var(--line); color: var(--ink); }
+.remix-primary-action:hover:not(:disabled),
+.remix-secondary-action:hover:not(:disabled) { transform: translateY(-1px); }
+.remix-primary-action:disabled,
+.remix-secondary-action:disabled { cursor: default; opacity: .5; }
+.remix-primary-action svg { fill: none; height: 17px; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.7; width: 17px; }
+.remix-inline-status { color: var(--muted); font-size: 11px; margin: 10px 0 0; min-height: 16px; }
+.remix-prompt-label { display: block; font-size: 12px; font-weight: 650; margin: 24px 0 9px; }
+.remix-step textarea {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  color: var(--ink);
+  font: 13px/1.55 ui-monospace, SFMono-Regular, Consolas, monospace;
+  min-height: 230px;
+  padding: 16px;
+  resize: vertical;
+  width: 100%;
+}
+.remix-prompt-actions { align-items: center; display: flex; gap: 9px; }
+.remix-prompt-actions .remix-primary-action { margin-top: 12px; }
+.remix-prompt-actions .remix-secondary-action { margin-top: 12px; }
+.remix-prompt-actions > span { color: var(--muted); font-size: 11px; margin-left: auto; }
+.remix-idea-chips { align-items: center; display: flex; flex-wrap: wrap; gap: 7px; margin-top: 22px; }
+.remix-idea-chips > span { color: var(--muted); font-size: 11px; margin-right: 2px; }
+.remix-idea-chips button { background: transparent; border: 1px solid var(--line); border-radius: 999px; cursor: pointer; font-size: 11px; padding: 7px 10px; transition: background .2s ease, border-color .2s ease; }
+.remix-idea-chips button:hover { background: var(--paper-hover); border-color: var(--muted); }
+.remix-idea-chips button[aria-pressed='true'] { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+.remix-page :is(button, a, textarea):focus-visible { outline: 3px solid var(--ink); outline-offset: 4px; }
+
 @media (max-width: 900px) {
   .hero { grid-template-columns: 1fr; min-height: auto; padding-top: 92px; }
   .learning-picker { align-items: flex-start; }
@@ -345,6 +435,34 @@ footer a:hover { text-decoration-color: currentColor; }
 }
 
 @media (max-width: 620px) {
+  .mobile-notice {
+    align-items: center;
+    background: var(--ink);
+    color: var(--paper);
+    display: flex;
+    font-size: 13px;
+    gap: 14px;
+    justify-content: space-between;
+    line-height: 1.4;
+    padding: 12px 18px;
+  }
+  .mobile-notice p { margin: 0; }
+  .mobile-notice button {
+    align-items: center;
+    align-self: stretch;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    display: flex;
+    flex: 0 0 32px;
+    font-size: 24px;
+    justify-content: center;
+    margin: -6px -8px -6px 0;
+  }
+  .mobile-notice button:focus-visible {
+    outline: 2px solid var(--paper);
+    outline-offset: 2px;
+  }
   .site-header { height: 60px; padding: 0 18px; }
   .brand { font-size: 18px; }
   .header-note { display: none; }
@@ -364,8 +482,19 @@ footer a:hover { text-decoration-color: currentColor; }
   .lab-shell-header { height: 60px; padding: 0 18px; }
   .lab-shell-actions { gap: 6px; }
   .lab-shell-download,
-  .lab-shell-home { padding: 8px 12px; }
+  .lab-shell-remix { font-size: 11px; gap: 6px; padding: 8px 10px; }
   .lab-shell-footer { align-items: flex-start; gap: 4px; height: 76px; justify-content: center; padding: 0 20px; }
+  .lab-shell-download svg,
+  .lab-shell-remix svg { height: 15px; width: 15px; }
+  .remix-intro { padding: 52px 20px 0; }
+  .remix-intro h1 { font-size: clamp(38px, 12vw, 54px); }
+  .remix-steps { margin: 40px auto 70px; padding: 0 20px; }
+  .remix-step { border-radius: 18px; padding: 25px 20px 24px 62px; }
+  .remix-step-number { left: 7px; top: 23px; }
+  .remix-step:not(:last-child)::after { left: 10px; }
+  .remix-steps::before { left: 44px; }
+  .remix-prompt-actions { flex-wrap: wrap; }
+  .remix-prompt-actions > span { margin-left: 0; width: 100%; }
 }
 
 @media (prefers-reduced-motion: reduce) {
