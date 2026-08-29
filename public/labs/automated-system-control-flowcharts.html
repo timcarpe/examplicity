@@ -1,0 +1,1097 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- LAB_MANIFEST_HEAD_START -->
+<title>Automated Systems</title>
+<meta name="description" content="Build and test automated systems with sensors, analogue-to-digital conversion, microprocessors, decisions, feedback and actuators for Cambridge Computer Science 0478 and 9618.">
+<link rel="canonical" href="https://www.examplicity.org/labs/automated-system-control-flowcharts.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Examplicity">
+<meta property="og:title" content="Automated Systems">
+<meta property="og:description" content="Build and test automated systems with sensors, analogue-to-digital conversion, microprocessors, decisions, feedback and actuators for Cambridge Computer Science 0478 and 9618.">
+<meta property="og:url" content="https://www.examplicity.org/labs/automated-system-control-flowcharts.html">
+<meta property="og:image" content="https://www.examplicity.org/opengraph-image">
+<meta property="og:image:alt" content="Examplicity — Make complex ideas click">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Automated Systems">
+<meta name="twitter:description" content="Build and test automated systems with sensors, analogue-to-digital conversion, microprocessors, decisions, feedback and actuators for Cambridge Computer Science 0478 and 9618.">
+<meta name="twitter:image" content="https://www.examplicity.org/opengraph-image">
+<!-- LAB_MANIFEST_HEAD_END -->
+<!-- LAB_FRAME_STYLES_START -->
+<style data-lab-frame>
+:root {
+  --lab-canvas: #f3f5f7;
+  --lab-paper: #fbfbfd;
+  --lab-surface: #ffffff;
+  --lab-control: #ffffff;
+  --lab-ink: #1d1d1f;
+  --lab-muted: #6e6e73;
+  --lab-line: #d2d2d7;
+  --lab-line-strong: #a7a7ad;
+  --lab-accent: #5277b8;
+  --lab-accent-soft: #eef2fa;
+  --lab-good: #18794e;
+  --lab-good-soft: #edf8f1;
+  --lab-warn: #946200;
+  --lab-warn-soft: #fff6e7;
+  --lab-bad: #b42318;
+  --lab-bad-soft: #fff0ee;
+  --lab-focus: #1d1d1f;
+  --lab-focus-soft: rgba(29, 29, 31, 0.18);
+  --lab-font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+  --lab-panel-radius: 12px;
+  --lab-control-radius: 8px;
+  --lab-pill-radius: 999px;
+  --lab-control-height: 35px;
+  --lab-panel-shadow: 0 1px 2px rgba(29, 29, 31, 0.04);
+}
+
+html,
+body {
+  background: var(--lab-canvas);
+}
+
+body {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-family: var(--lab-font-sans);
+  padding-bottom: 58px;
+  padding-top: 66px;
+  text-rendering: optimizeLegibility;
+}
+
+.lab-manifest-header {
+  align-items: start;
+  border-bottom: 1px solid var(--line, var(--lab-line));
+  display: grid;
+  gap: 18px 28px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  margin-bottom: 26px;
+  padding-bottom: 22px;
+}
+
+.lab-manifest-heading {
+  min-width: 0;
+}
+
+.lab-manifest-header h1 {
+  color: var(--ink, var(--lab-ink));
+  font-family: var(--lab-font-sans);
+  font-size: clamp(25px, 3.2vw, 40px);
+  font-weight: 650;
+  letter-spacing: -0.045em;
+  line-height: 1.02;
+  margin: 0;
+  max-width: 24ch;
+  padding: 0;
+  text-align: left;
+}
+
+.lab-manifest-subtitle {
+  color: var(--muted, var(--lab-muted));
+  font-family: var(--lab-font-sans);
+  font-size: 13px;
+  letter-spacing: 0;
+  line-height: 1.5;
+  margin: 10px 0 0;
+  max-width: 72ch;
+  padding: 0;
+  text-align: left;
+}
+
+.lab-authored-title-slot {
+  min-width: 0;
+}
+
+.lab-syllabus-chips {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+  margin: 1px 0 0 auto;
+  max-width: 100%;
+}
+
+.lab-syllabus-chip {
+  align-items: center;
+  background: var(--panel, var(--lab-surface));
+  border: 1px solid var(--line, var(--lab-line));
+  border-radius: var(--lab-pill-radius);
+  color: var(--ink, var(--lab-ink));
+  display: inline-flex;
+  font-size: 11px;
+  font-weight: 650;
+  gap: 4px;
+  line-height: 1;
+  min-height: 29px;
+  padding: 8px 10px;
+  position: relative;
+  transition: background-color 140ms ease, border-color 140ms ease;
+  white-space: nowrap;
+}
+
+.lab-syllabus-chip:hover {
+  background: var(--syllabus-chip-hover);
+  border-color: var(--syllabus-chip-border);
+}
+
+.lab-syllabus-primary-link {
+  border-radius: inherit;
+  inset: 0;
+  position: absolute;
+  z-index: 0;
+}
+
+.lab-syllabus-primary-link:focus-visible {
+  outline: 2px solid var(--syllabus-chip-text);
+  outline-offset: 2px;
+}
+
+.lab-syllabus-name,
+.lab-syllabus-divider,
+.lab-syllabus-sections {
+  pointer-events: none;
+  position: relative;
+  z-index: 1;
+}
+
+.lab-syllabus-section {
+  border-radius: 4px;
+  color: inherit;
+  padding: 2px;
+  text-decoration: none;
+}
+
+a.lab-syllabus-section {
+  pointer-events: auto;
+}
+
+a.lab-syllabus-section:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+a.lab-syllabus-section:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 1px;
+}
+
+.lab-syllabus-name {
+  color: var(--syllabus-chip-text) !important;
+}
+
+.lab-syllabus-divider,
+.lab-syllabus-separator {
+  color: var(--muted, var(--lab-muted));
+}
+
+.lab-syllabus-prefix {
+  opacity: 0.72;
+  padding-left: 5px;
+}
+
+.lab-syllabus-sections {
+  align-items: center;
+  display: inline-flex;
+}
+
+.lab-syllabus-separator {
+  margin-inline: 0 2px;
+}
+
+html[data-theme="dark"] .lab-syllabus-name {
+  color: var(--syllabus-chip-border) !important;
+}
+
+html[data-theme="dark"] .lab-syllabus-chip:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+html[data-theme="dark"],
+html[data-theme="dark"] body {
+  background: var(--bg);
+}
+
+main {
+  container-name: lab-canvas;
+  container-type: inline-size;
+}
+
+body.binary-lab main {
+  width: min(820px, calc(100% - 24px));
+}
+
+body.binary-lab .lab-manifest-header {
+  margin-left: 50%;
+  transform: translateX(-50%);
+  width: min(1120px, calc(100vw - 56px));
+}
+
+:where(button, input, select, textarea, summary):focus-visible {
+  outline: 3px solid var(--lab-focus);
+  outline-offset: 4px;
+}
+
+@media (max-width: 620px) {
+  body {
+    padding-bottom: 76px;
+    padding-top: 60px;
+  }
+
+  body.binary-lab main {
+    width: min(100% - 12px, 820px);
+  }
+
+  body.binary-lab .lab-manifest-header {
+    width: calc(100vw - 24px);
+  }
+
+  .lab-manifest-header {
+    gap: 14px;
+    grid-template-columns: 1fr;
+    margin-bottom: 20px;
+    padding-bottom: 18px;
+  }
+
+  .lab-manifest-header h1 {
+    font-size: clamp(24px, 8vw, 34px);
+  }
+
+  .lab-syllabus-chips {
+    gap: 4px;
+    justify-content: flex-start;
+    margin: 0;
+  }
+
+  .lab-syllabus-chip {
+    font-size: 10px;
+    min-height: 27px;
+    padding: 7px 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+</style>
+<!-- LAB_FRAME_STYLES_END -->
+<style>
+:root{
+  --lab-canvas:#f3f5f7;--lab-paper:#fbfbfd;--lab-surface:#fff;--lab-control:#fff;--lab-ink:#1d1d1f;--lab-muted:#6e6e73;
+  --lab-line:#d2d2d7;--lab-line-strong:#a7a7ad;--lab-accent:#5277b8;--lab-accent-soft:#eef2fa;
+  --lab-good:#18794e;--lab-good-soft:#edf8f1;--lab-warn:#946200;--lab-warn-soft:#fff6e7;--lab-bad:#b42318;--lab-bad-soft:#fff0ee;
+  --lab-focus:#1d1d1f;--lab-font-sans:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif;
+  --lab-panel-radius:12px;--lab-control-radius:8px;--lab-pill-radius:999px;--lab-panel-shadow:0 1px 2px rgba(29,29,31,.04);
+  --chart:#f8fafb;--grid:#e4e9ed;--flow:#687984;--active:#cf8a27;--factory:#edf1f3;--belt:#586975;
+}
+*{box-sizing:border-box}
+html,body{min-height:100%;background:var(--lab-canvas)}
+body{margin:0;padding:66px 0 58px;color:var(--lab-ink);font-family:var(--lab-font-sans);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+main{width:min(1360px,calc(100% - 20px));margin:14px auto 38px}
+h1{margin:0;font-size:27px;font-weight:630;letter-spacing:-.025em;line-height:1.1}.subtitle{margin:5px 0 12px;color:var(--lab-muted);font-size:13px;line-height:1.45}
+.panel{background:var(--lab-surface);border:1px solid var(--lab-line);border-radius:var(--lab-panel-radius);box-shadow:var(--lab-panel-shadow)}
+button,select{font:inherit}button{min-height:36px;padding:0 10px;border:1px solid var(--lab-line);border-radius:var(--lab-control-radius);background:var(--lab-control);color:var(--lab-ink);cursor:pointer}button:hover:not(:disabled){border-color:var(--lab-line-strong)}button:disabled{opacity:.45;cursor:not-allowed}button.primary{background:var(--lab-accent);border-color:var(--lab-accent);color:#fff;font-weight:750}button.danger{color:var(--lab-bad)}
+:where(button,select):focus-visible{outline:3px solid var(--lab-focus);outline-offset:3px}
+
+.scenario{padding:10px 12px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;border-left:4px solid #7b8992}
+.scenario strong{display:block;font-size:13px}.scenario p{margin:3px 0 0;color:var(--lab-muted);font-size:10px;line-height:1.45}.rule-chips{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}.rule-chip{padding:5px 8px;border:1px solid var(--lab-line);border-radius:999px;background:var(--lab-paper);font-size:9px;font-weight:850;white-space:nowrap}.rule-chip.good{border-color:#add4ba;background:var(--lab-good-soft);color:var(--lab-good)}.rule-chip.bad{border-color:#e5b8b1;background:var(--lab-bad-soft);color:var(--lab-bad)}
+
+.challenge{margin-top:10px;min-height:100px;padding:11px 12px;display:grid;grid-template-columns:minmax(430px,1fr) auto;gap:14px;align-items:center}.challenge-step{color:var(--lab-accent);font-size:9px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}.challenge-title{display:block;margin-top:2px;font-size:17px}.challenge-lines{display:grid;gap:3px;margin-top:5px}.challenge-line{display:grid;grid-template-columns:66px minmax(0,1fr);gap:6px;font-size:10px;line-height:1.4}.challenge-line span{color:var(--lab-muted)}.challenge-line b{color:var(--lab-good)}.challenge-status{margin-top:7px;display:flex;gap:6px;align-items:center;flex-wrap:wrap}.status-chip{display:inline-flex;align-items:center;gap:5px;min-height:25px;padding:3px 8px;border:1px solid var(--lab-line);border-radius:999px;background:var(--lab-paper);color:var(--lab-muted);font-size:9px;font-weight:850}.status-chip::before{content:"";width:7px;height:7px;border-radius:50%;background:#aab4bb}.status-chip.pass{border-color:#a8d1b7;background:var(--lab-good-soft);color:var(--lab-good)}.status-chip.pass::before{background:var(--lab-good)}.status-chip.fail{border-color:#e1b1aa;background:var(--lab-bad-soft);color:var(--lab-bad)}.status-chip.fail::before{background:var(--lab-bad)}.status-chip.testing{border-color:#b9c8e4;background:var(--lab-accent-soft);color:var(--lab-accent)}.status-chip.testing::before{background:var(--lab-accent)}
+.challenge-tabs{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}.challenge-tab{min-height:32px;padding:0 9px;font-size:10px;font-weight:800}.challenge-tab.active{border-color:var(--lab-accent);background:var(--lab-accent);color:#fff}.challenge-tab.complete:not(.active){border-color:var(--lab-good);background:var(--lab-good-soft);color:var(--lab-good)}.challenge-tab:disabled{opacity:.45}
+
+.workspace{margin-top:10px;display:grid;grid-template-columns:minmax(740px,1.34fr) minmax(430px,.66fr);gap:10px;align-items:start}.chart-panel,.factory-panel{min-width:0}.panel-head{min-height:49px;padding:10px 11px;border-bottom:1px solid var(--lab-line);display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.panel-head strong{display:block;font-size:14px}.panel-head span{display:block;margin-top:2px;color:var(--lab-muted);font-size:9px;line-height:1.35}.head-actions{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}.head-actions button{font-size:10px}
+
+.editor{padding:10px}.palette-label{display:block;margin-bottom:5px;color:var(--lab-muted);font-size:9px;font-weight:850;letter-spacing:.06em;text-transform:uppercase}.palette{display:grid;grid-template-columns:repeat(4,minmax(125px,1fr));gap:6px}.palette-card{min-width:0;min-height:66px;padding:7px;display:grid;grid-template-columns:48px minmax(0,1fr);gap:7px;align-items:center;text-align:left;touch-action:none;user-select:none}.palette-card.drag-source{border-color:var(--lab-accent);background:var(--lab-accent-soft)}.palette-icon{width:48px;height:42px;display:grid;place-items:center;color:#49606e}.palette-icon svg{width:46px;height:38px;overflow:visible}.palette-icon path,.palette-icon rect,.palette-icon ellipse{fill:#f9fbfc;stroke:currentColor;stroke-width:2}.palette-card strong{display:block;font-size:10px}.palette-card small{display:block;margin-top:2px;color:var(--lab-muted);font-size:8px;line-height:1.25}.editor-tools{margin-top:7px;display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap}.tool-help{color:var(--lab-muted);font-size:9px;line-height:1.35}.tool-help strong{color:var(--lab-ink)}.tool-actions{display:flex;gap:5px;flex-wrap:wrap}.tool-actions button{min-height:31px;font-size:9px}
+.chart-shell{position:relative;margin-top:7px;overflow-x:auto;overflow-y:visible;border:1px solid var(--lab-line);border-radius:11px;background:var(--chart)}#flowchart{display:block;width:100%;min-width:720px;height:auto;touch-action:none;user-select:none}.chart-grid{opacity:.9}.edge{fill:none;stroke:var(--flow);stroke-width:3;stroke-linecap:round;stroke-linejoin:round;cursor:pointer;pointer-events:stroke}.edge.selected{stroke:var(--lab-accent);stroke-width:5}.edge.active{stroke:var(--active);stroke-width:5;filter:drop-shadow(0 0 3px rgba(207,138,39,.35))}.edge.bad{stroke:var(--lab-bad);stroke-width:5}.edge-label{fill:#566872;font-size:9px;font-weight:900;paint-order:stroke;stroke:#f8fafb;stroke-width:4px;stroke-linejoin:round}.wire-preview{fill:none;stroke:var(--lab-accent);stroke-width:3;stroke-dasharray:7 6;pointer-events:none}.node{cursor:grab;outline:none}.node:active{cursor:grabbing}.node-shape{fill:#fff;stroke:#748994;stroke-width:2.3}.node.selected .node-shape{stroke:var(--lab-accent);stroke-width:3.2}.node.active .node-shape{stroke:var(--active);stroke-width:4}.node.bad .node-shape{stroke:var(--lab-bad);stroke-width:4}.node.good .node-shape{stroke:var(--lab-good);stroke-width:4}.node-text{fill:#263842;font-size:9.4px;font-weight:800;text-anchor:middle;pointer-events:none}.node-sub{fill:#6d7c85;font-size:7.4px;font-weight:700;text-anchor:middle;pointer-events:none}.port{cursor:crosshair;pointer-events:bounding-box}.port-hit{fill:rgba(255,255,255,.001);pointer-events:all}.port-dot{fill:#e0e8ec;stroke:#4c6472;stroke-width:2}.port:hover .port-dot,.port.pending .port-dot{fill:#b9daf0;stroke:var(--lab-accent)}.port-label{fill:#60717b;font-size:7.5px;font-weight:900;pointer-events:none}.drop-hint{position:absolute;z-index:8;padding:5px 8px;border-radius:6px;background:rgba(22,32,39,.92);color:#fff;font-size:9px;font-weight:800;pointer-events:none;transform:translate(-50%,-125%)}
+.config{position:absolute;z-index:11;right:9px;top:9px;width:260px;padding:10px;border:1px solid #a9bac4;border-radius:10px;background:rgba(255,255,255,.99);box-shadow:0 9px 25px rgba(31,48,59,.18)}.config[hidden]{display:none}.config-head{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.config-head strong{font-size:12px}.config-head span{display:block;margin-top:2px;color:var(--lab-muted);font-size:8px;line-height:1.35}.config-close{width:27px;min-height:27px;padding:0}.config-field{margin-top:9px}.config-field label{display:block;margin-bottom:4px;color:var(--lab-muted);font-size:9px;font-weight:800}.config-field select{width:100%;height:36px;border:1px solid var(--lab-line);border-radius:7px;background:#fff;color:var(--lab-ink);padding:0 7px}.config-note{margin-top:8px;padding:7px 8px;border-left:3px solid var(--lab-accent);border-radius:6px;background:#f5f8fc;color:#596b76;font-size:8px;line-height:1.4}.config-actions{margin-top:8px;display:flex;justify-content:flex-end;gap:6px}.config-actions button{min-height:30px;font-size:9px}
+.run-popup{position:absolute;z-index:10;max-width:238px;padding:7px 9px;border:1px solid #c3ced5;border-radius:8px;background:rgba(255,255,255,.99);color:#44555f;font-size:9px;line-height:1.35;box-shadow:0 5px 16px rgba(32,52,64,.14);opacity:0;pointer-events:none;transform:translateY(-4px);transition:.12s}.run-popup.show{opacity:1;transform:none}.run-popup strong{display:block;color:#253741;font-size:10px}.run-popup.bad{border-color:#e2aaa3;background:#fff6f4}.run-popup.good{border-color:#add4ba;background:#f3faf5}
+.flow-feedback{margin-top:7px;min-height:47px;padding:8px 10px;border:1px solid var(--lab-line);border-left:4px solid var(--lab-accent);border-radius:9px;background:var(--lab-paper)}.flow-feedback strong{display:block;font-size:11px}.flow-feedback span{display:block;margin-top:2px;color:var(--lab-muted);font-size:9px;line-height:1.4}.flow-feedback.good{border-left-color:var(--lab-good);background:var(--lab-good-soft)}.flow-feedback.bad{border-left-color:var(--lab-bad);background:var(--lab-bad-soft)}
+
+.factory-body{padding:10px}.factory-rule{padding:7px 9px;border:1px solid var(--lab-line);border-radius:8px;background:var(--lab-paper);font-size:9px;line-height:1.4;color:#5c6b75}.factory-rule strong{color:var(--lab-ink)}.factory-wrap{position:relative;margin-top:8px;overflow:hidden;border:1px solid var(--lab-line);border-radius:11px;background:linear-gradient(#f8fafb,#e9eef1)}#factory-svg{display:block;width:100%;height:auto}.factory-label{fill:#61717b;font-size:9px;font-weight:850;text-anchor:middle}.machine-label{fill:#263741;font-size:9px;font-weight:900;text-anchor:middle}.machine-sub{fill:#687881;font-size:7px;font-weight:700;text-anchor:middle}.machine-hidden{opacity:.12}.machine-ready{opacity:1}.machine-active{filter:drop-shadow(0 0 5px rgba(207,138,39,.65))}.factory-bubble{position:absolute;z-index:8;max-width:225px;padding:6px 8px;border:1px solid #bac8d0;border-radius:8px;background:rgba(255,255,255,.98);font-size:8px;line-height:1.35;color:#4c5d66;box-shadow:0 4px 12px rgba(34,51,62,.12);opacity:0;pointer-events:none;transform:translate(-50%,-5px);transition:.12s}.factory-bubble.show{opacity:1;transform:translate(-50%,0)}.factory-bubble strong{display:block;color:#263741;font-size:9px}.factory-bubble.bad{border-color:#dfa7a1;background:#fff6f4}.factory-bubble.good{border-color:#afd4bc;background:#f3faf5}.batch{margin-top:8px;padding:7px;border:1px solid var(--lab-line);border-radius:8px;background:#fbfcfd}.batch-head{display:flex;justify-content:space-between;gap:7px;color:var(--lab-muted);font-size:8px}.batch-list{margin-top:5px;display:grid;grid-template-columns:repeat(6,1fr);gap:4px}.batch-item{min-width:0;padding:5px 3px;border:1px solid #d9e0e4;border-radius:6px;background:#fff;text-align:center;font-size:8px;font-weight:800}.batch-item.current{border-color:var(--lab-accent);background:var(--lab-accent-soft)}.batch-item.good{border-color:#add4ba;background:var(--lab-good-soft);color:var(--lab-good)}.batch-item.bad{border-color:#e0aaa3;background:var(--lab-bad-soft);color:var(--lab-bad)}.batch-item small{display:block;margin-top:1px;color:var(--lab-muted);font-size:7px;font-weight:700}.test-feedback{margin-top:7px;min-height:53px;padding:8px 10px;border:1px solid var(--lab-line);border-left:4px solid var(--lab-accent);border-radius:9px;background:var(--lab-paper)}.test-feedback strong{display:block;font-size:11px}.test-feedback span{display:block;margin-top:2px;color:var(--lab-muted);font-size:9px;line-height:1.4}.test-feedback.good{border-left-color:var(--lab-good);background:var(--lab-good-soft)}.test-feedback.bad{border-left-color:var(--lab-bad);background:var(--lab-bad-soft)}
+.completion{margin-top:10px;padding:10px 12px;border-left:4px solid var(--lab-good);background:var(--lab-good-soft);border-radius:8px;font-size:10px;line-height:1.45}.completion strong{display:block;font-size:12px}.completion[hidden]{display:none}
+
+@media(max-width:1050px){.workspace{grid-template-columns:1fr}.factory-panel{order:2}.palette{grid-template-columns:repeat(4,minmax(110px,1fr))}}
+@media(max-width:1120px){.workspace{grid-template-columns:1fr}.factory-panel{grid-row:2}.chart-panel{grid-row:1}}
+@media(max-width:720px){main{width:min(100% - 12px,1360px);margin-top:8px}.scenario,.challenge{grid-template-columns:1fr}.rule-chips,.challenge-tabs{justify-content:flex-start}.challenge-line{grid-template-columns:58px minmax(0,1fr)}.palette{grid-template-columns:repeat(2,minmax(0,1fr))}.panel-head{display:block}.head-actions{justify-content:flex-start;margin-top:7px}.config{position:relative;right:auto;top:auto;width:100%;margin-top:7px}.chart-shell{overflow-x:auto}.batch-list{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:390px){.palette-card{grid-template-columns:42px minmax(0,1fr)}.palette-icon{width:42px}.scenario p{font-size:9px}.challenge-title{font-size:15px}}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}}
+</style>
+</head>
+<body>
+<main id="lab-root">
+<!-- LAB_MANIFEST_HEADER_START -->
+<header class="lab-manifest-header">
+  <div class="lab-manifest-heading">
+    <h1 data-lab-manifest="title">Automated Systems</h1>
+  <p class="lab-manifest-subtitle" data-lab-manifest="subtitle">For Cambridge IGCSE 0478 and AS Level 9618, build a sensor-to-actuator control flowchart and test it on an automated bottle-inspection line.</p>
+  </div>
+  <!-- LAB_SYLLABUS_CHIPS_START -->
+<nav class="lab-syllabus-chips" aria-label="Syllabus alignment">
+  <section class="lab-syllabus-chip" style="--syllabus-chip-bg:#edf4ff;--syllabus-chip-border:#9ab6e6;--syllabus-chip-text:#173d78;--syllabus-chip-hover:#dce9fc" aria-label="GCSE 0478 syllabus alignment">
+    <a class="lab-syllabus-primary-link" href="https://www.cambridgeinternational.org/Images/697167-2026-2028-syllabus.pdf#page=23" target="_blank" rel="noopener noreferrer" aria-label="Open GCSE 0478 syllabus section 6.1"></a>
+    <span class="lab-syllabus-name">GCSE 0478</span>
+    <span class="lab-syllabus-divider" aria-hidden="true">·</span>
+    <span class="lab-syllabus-sections"><a class="lab-syllabus-section is-primary" href="https://www.cambridgeinternational.org/Images/697167-2026-2028-syllabus.pdf#page=23" target="_blank" rel="noopener noreferrer" aria-label="Open primary GCSE 0478 syllabus section 6.1">6.1</a><span class="lab-syllabus-separator" aria-hidden="true">,</span><a class="lab-syllabus-section" href="https://www.cambridgeinternational.org/Images/697167-2026-2028-syllabus.pdf#page=17" target="_blank" rel="noopener noreferrer" aria-label="Open GCSE 0478 syllabus section 3.2">3.2</a></span>
+  </section>
+  <section class="lab-syllabus-chip" style="--syllabus-chip-bg:#f4effb;--syllabus-chip-border:#b9a2dc;--syllabus-chip-text:#4f2b77;--syllabus-chip-hover:#e8ddf6" aria-label="AS 9618 syllabus alignment">
+    <a class="lab-syllabus-primary-link" href="https://www.cambridgeinternational.org/Images/697372-2026-syllabus.pdf#page=17" target="_blank" rel="noopener noreferrer" aria-label="Open AS 9618 syllabus section 3.1"></a>
+    <span class="lab-syllabus-name">AS 9618</span>
+    <span class="lab-syllabus-divider" aria-hidden="true">·</span>
+    <span class="lab-syllabus-sections"><a class="lab-syllabus-section is-primary" href="https://www.cambridgeinternational.org/Images/697372-2026-syllabus.pdf#page=17" target="_blank" rel="noopener noreferrer" aria-label="Open primary AS 9618 syllabus section 3.1">3.1</a><span class="lab-syllabus-separator" aria-hidden="true">,</span><a class="lab-syllabus-section" href="https://www.cambridgeinternational.org/Images/697372-2026-syllabus.pdf#page=27" target="_blank" rel="noopener noreferrer" aria-label="Open AS 9618 syllabus section 9.2">9.2</a></span>
+  </section>
+</nav>
+<!-- LAB_SYLLABUS_CHIPS_END -->
+</header>
+<!-- LAB_MANIFEST_HEADER_END -->
+<span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span>
+  <span data-lab-authored-subtitle-slot hidden></span>
+
+  <section class="panel scenario">
+    <div>
+      <strong>Factory requirement</strong>
+      <p>A correctly filled bottle weighs 490–510 g. A pressure sensor sits under the weighing plate: more liquid produces more bottle weight, so the measured force is calibrated to bottle mass. The sensor reading is analogue and must be converted to digital data before the microprocessor can use it.</p>
+    </div>
+    <div class="rule-chips" aria-label="Bottle routing rule">
+      <span class="rule-chip good">490–510 g → ship</span>
+      <span class="rule-chip bad">outside range → reject</span>
+    </div>
+  </section>
+
+  <section class="panel challenge" aria-live="polite">
+    <div>
+      <span id="challenge-step" class="challenge-step"></span>
+      <strong id="challenge-title" class="challenge-title"></strong>
+      <div class="challenge-lines">
+        <div class="challenge-line"><span>Goal</span><strong id="challenge-goal"></strong></div>
+        <div class="challenge-line"><span>Pass when</span><b id="challenge-pass"></b></div>
+      </div>
+      <div class="challenge-status"><span id="challenge-status" class="status-chip">Not tested</span></div>
+    </div>
+    <div id="challenge-tabs" class="challenge-tabs" aria-label="Challenges"></div>
+  </section>
+
+  <div class="workspace">
+    <section class="panel chart-panel">
+      <div class="panel-head">
+        <div><strong>Controller flowchart</strong><span>Choose the correct Cambridge symbol, configure its statement, position it, then connect the arrows.</span></div>
+        <div class="head-actions"><button id="undo" type="button" disabled>Undo</button><button id="delete-selected" type="button" class="danger" disabled>Delete selected</button><button id="clear-chart" type="button">Clear chart</button></div>
+      </div>
+      <div class="editor">
+        <span class="palette-label">Flowchart symbols</span>
+        <div id="palette" class="palette"></div>
+        <div class="editor-tools">
+          <div class="tool-help"><strong>Connect:</strong> drag from an output circle to an input circle, or click one output then one input. Decision outputs are fixed as YES left and NO right. The chart expands downward as your controller grows.</div>
+          <div class="tool-actions"><button id="auto-layout" type="button">Arrange chart</button></div>
+        </div>
+        <div id="chart-shell" class="chart-shell">
+          <svg id="flowchart" viewBox="0 0 820 560" role="img" aria-labelledby="flow-title flow-desc">
+            <title id="flow-title">Interactive automated system flowchart</title>
+            <desc id="flow-desc">Drag standard flowchart symbols onto the chart, configure their statements and connect arrows from START through sensor, processing, decision and actuator stages.</desc>
+            <defs>
+              <pattern id="chart-grid" width="22" height="22" patternUnits="userSpaceOnUse"><path d="M22 0H0V22" fill="none" stroke="var(--grid)" stroke-width="1"/></pattern>
+              <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="context-stroke"/></marker>
+            </defs>
+            <rect id="chart-grid-rect" class="chart-grid" width="820" height="560" fill="url(#chart-grid)"/>
+            <g id="edge-layer"></g>
+            <g id="preview-layer"></g>
+            <g id="node-layer"></g>
+            <g id="port-layer"></g>
+            <circle id="flow-token" r="6" fill="var(--active)" stroke="#fff" stroke-width="2" visibility="hidden"/>
+          </svg>
+          <div id="drop-hint" class="drop-hint" hidden>Drop symbol</div>
+          <div id="config" class="config" hidden>
+            <div class="config-head"><div><strong id="config-title"></strong><span id="config-sub"></span></div><button id="config-close" class="config-close" type="button" aria-label="Close configuration">×</button></div>
+            <div class="config-field"><label for="config-operation">Statement</label><select id="config-operation"></select></div>
+            <div id="config-note" class="config-note"></div>
+            <div class="config-actions"><button id="config-delete" type="button" class="danger">Delete symbol</button></div>
+          </div>
+          <div id="run-popup" class="run-popup"></div>
+        </div>
+        <div id="flow-feedback" class="flow-feedback" role="status" aria-live="polite"><strong>Build the first challenge.</strong><span>Nothing runs until you choose Run challenge test.</span></div>
+      </div>
+    </section>
+
+    <section class="panel factory-panel">
+      <div class="panel-head">
+        <div><strong>Bottle line</strong><span>The test follows your arrows exactly. If the chart ends, the physical process stops there.</span></div>
+        <div class="head-actions"><button id="run-test" type="button" class="primary">Run challenge test</button><button id="reset-line" type="button">Reset line</button></div>
+      </div>
+      <div class="factory-body">
+        <div class="factory-rule"><strong>Required behaviour:</strong> sensor reads the bottle → analogue reading becomes digital → digital data reaches the microprocessor → data is compared with stored values → decision → reject actuator only when the bottle is outside 490–510 g → repeat.</div>
+        <div id="factory-wrap" class="factory-wrap">
+          <svg id="factory-svg" viewBox="0 0 700 430" role="img" aria-labelledby="factory-title factory-desc">
+            <title id="factory-title">Automated bottle inspection line</title>
+            <desc id="factory-desc">A bottle travels over a pressure sensor to a microprocessor and reject actuator. Accepted bottles continue to shipping while rejected bottles are pushed into a lower chute.</desc>
+            <defs>
+              <linearGradient id="beltMetal" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#788a95"/><stop offset=".5" stop-color="#455965"/><stop offset="1" stop-color="#81919b"/></linearGradient>
+              <linearGradient id="glass" x1="0" x2="1"><stop offset="0" stop-color="#f9fdff" stop-opacity=".88"/><stop offset=".5" stop-color="#d9edf5" stop-opacity=".55"/><stop offset="1" stop-color="#ffffff" stop-opacity=".82"/></linearGradient>
+              <clipPath id="bottle-clip"><path d="M-12 -52H12V-38C12-34 19-30 19-20V34C19 45 11 52 0 52S-19 45-19 34V-20C-19-30-12-34-12-38Z"/></clipPath>
+            </defs>
+            <rect width="700" height="430" fill="#f4f7f8"/>
+            <path d="M38 222H650" stroke="#c6d0d6" stroke-width="42" stroke-linecap="round"/>
+            <path d="M38 222H650" stroke="url(#beltMetal)" stroke-width="23" stroke-linecap="round"/>
+            <g stroke="#2f414b" stroke-width="3" opacity=".55">
+              <circle cx="80" cy="222" r="18" fill="#82929c"/><circle cx="160" cy="222" r="18" fill="#82929c"/><circle cx="240" cy="222" r="18" fill="#82929c"/><circle cx="320" cy="222" r="18" fill="#82929c"/><circle cx="400" cy="222" r="18" fill="#82929c"/><circle cx="480" cy="222" r="18" fill="#82929c"/><circle cx="560" cy="222" r="18" fill="#82929c"/><circle cx="640" cy="222" r="18" fill="#82929c"/>
+            </g>
+            <path d="M510 226Q535 268 584 324" fill="none" stroke="#c6d0d6" stroke-width="42" stroke-linecap="round"/>
+            <path d="M510 226Q535 268 584 324" fill="none" stroke="url(#beltMetal)" stroke-width="23" stroke-linecap="round"/>
+            <rect x="570" y="292" width="112" height="116" rx="10" fill="#dfe6ea" stroke="#81919b" stroke-width="3"/><path d="M570 314H682" stroke="#aebbc2" stroke-width="3"/><text x="594" y="327" class="machine-label">REJECT</text><text x="594" y="342" class="machine-sub">outside range</text>
+            <rect x="611" y="116" width="72" height="75" rx="9" fill="#e7ecef" stroke="#85949d" stroke-width="3"/><text x="647" y="144" class="machine-label">SHIP</text><text x="647" y="159" class="machine-sub">490–510 g</text>
+
+            <g id="sensor-machine" class="machine-hidden">
+              <rect x="151" y="193" width="88" height="18" rx="5" fill="#d4a95a" stroke="#7b633a" stroke-width="2"/>
+              <rect x="168" y="161" width="54" height="29" rx="5" fill="#edf2f4" stroke="#768791" stroke-width="2"/>
+              <text x="195" y="173" class="machine-label">PRESSURE</text><text x="195" y="184" class="machine-sub">weighing plate</text>
+              <circle id="sensor-led" cx="225" cy="169" r="4" fill="#9aa6ad"/>
+            </g>
+            <g id="cpu-machine" class="machine-hidden">
+              <rect x="300" y="105" width="120" height="91" rx="10" fill="#d8e1e6" stroke="#687b86" stroke-width="3"/>
+              <rect x="318" y="122" width="84" height="34" rx="5" fill="#263944"/><text id="cpu-screen" x="360" y="143" text-anchor="middle" fill="#d7f2ff" font-size="10" font-weight="850">WAITING</text>
+              <circle id="cpu-led" cx="322" cy="172" r="5" fill="#8e9aa1"/><text x="360" y="181" class="machine-label">MICROPROCESSOR</text>
+            </g>
+            <g id="actuator-machine" class="machine-hidden">
+              <rect x="461" y="128" width="78" height="42" rx="8" fill="#d6dfe4" stroke="#667984" stroke-width="3"/>
+              <rect id="pusher-arm" x="487" y="168" width="27" height="47" rx="5" fill="#b5c1c8" stroke="#596c77" stroke-width="3"/>
+              <text x="500" y="144" class="machine-label">ACTUATOR</text><text x="500" y="157" class="machine-sub">reject pusher</text>
+            </g>
+            <g id="bottle" visibility="hidden" transform="translate(45 170)">
+              <rect x="-10" y="-58" width="20" height="10" rx="3" fill="#6d7f88"/>
+              <path d="M-12 -52H12V-38C12-34 19-30 19-20V34C19 45 11 52 0 52S-19 45-19 34V-20C-19-30-12-34-12-38Z" fill="url(#glass)" stroke="#607682" stroke-width="2"/>
+              <rect id="liquid" x="-17" y="-4" width="34" height="51" fill="#67a9d0" clip-path="url(#bottle-clip)" opacity=".78"/>
+              <text id="bottle-mass" x="0" y="18" text-anchor="middle" fill="#263944" font-size="9" font-weight="900">500g</text>
+            </g>
+            <g id="wrong-mark" visibility="hidden"><circle cx="0" cy="0" r="12" fill="var(--lab-bad)"/><text x="0" y="4" text-anchor="middle" fill="#fff" font-size="14" font-weight="900">!</text></g>
+          </svg>
+          <div id="sensor-bubble" class="factory-bubble" style="left:28%;top:13%"></div>
+          <div id="cpu-bubble" class="factory-bubble" style="left:52%;top:4%"></div>
+          <div id="actuator-bubble" class="factory-bubble" style="left:73%;top:13%"></div>
+        </div>
+        <div id="batch" class="batch" hidden><div class="batch-head"><strong>Automatic batch</strong><span id="batch-note"></span></div><div id="batch-list" class="batch-list"></div></div>
+        <div id="test-feedback" class="test-feedback" role="status" aria-live="polite"><strong>Ready.</strong><span>Build the flowchart, then choose Run challenge test.</span></div>
+      </div>
+    </section>
+  </div>
+
+  <div id="completion" class="completion" hidden><strong>Complete automated system proved.</strong>The same sensor → ADC → microprocessor → comparison → decision → actuator process now repeats for every bottle until the system is stopped.</div>
+</main>
+
+<script>
+(() => {
+  const root = document.querySelector('#lab-root');
+  if (root.dataset.initialized) return;
+  root.dataset.initialized = 'true';
+  const $ = (id) => document.getElementById(id);
+  const svgNS = 'http://www.w3.org/2000/svg';
+  const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  const wait = (ms) => new Promise(resolve => setTimeout(resolve, reduceMotion ? Math.min(ms, 20) : ms));
+  const clamp = (v,min,max) => Math.max(min,Math.min(max,v));
+  const BASE_CHART_W = 820;
+  const BASE_CHART_H = 560;
+  let chartSize = {w:BASE_CHART_W,h:BASE_CHART_H};
+  const snap40 = value => Math.ceil(value/40)*40;
+
+  function requiredChartHeight(){
+    let bottom = BASE_CHART_H - 90;
+    state.nodes.forEach(node => {
+      const d=nodeDims(node.type);
+      bottom=Math.max(bottom,node.y+d.h/2);
+    });
+    const progressive = 455 + Math.max(0,state.nodes.length-3)*54;
+    return snap40(Math.max(BASE_CHART_H,bottom+100,progressive));
+  }
+  function setChartHeight(height,allowShrink=false){
+    const next=snap40(Math.max(BASE_CHART_H,height));
+    chartSize.h=allowShrink?next:Math.max(chartSize.h,next);
+    const chart=$('flowchart');
+    chart.setAttribute('viewBox',`0 0 ${chartSize.w} ${chartSize.h}`);
+    const grid=$('chart-grid-rect');
+    if(grid){grid.setAttribute('width',chartSize.w);grid.setAttribute('height',chartSize.h)}
+  }
+  function ensureChartHeight(allowShrink=false){setChartHeight(requiredChartHeight(),allowShrink)}
+
+  const CHALLENGES = [
+    {
+      id:'sense', name:'1 Sense', title:'Sense and digitise the bottle',
+      goal:'Represent START, the pressure-sensor reading, and conversion of analogue sensor data to digital data.',
+      pass:'the correct three statements use the correct symbols, are connected in order, and a 500 g test reaches the digital-data step.'
+    },
+    {
+      id:'decide', name:'2 Decide', title:'Send, compare and decide',
+      goal:'Continue the chart so digital sensor data is sent to the microprocessor, compared with stored limits, then tested with a YES/NO decision.',
+      pass:'475 g and 525 g give NO, while 500 g gives YES for “mass is in the acceptable range”.'
+    },
+    {
+      id:'act', name:'3 Act', title:'Turn the NO branch into physical action',
+      goal:'When the decision is NO, send a signal to the reject actuator. A YES bottle must continue to shipping without actuator movement.',
+      pass:'the automatic test ships 500 g and rejects 475 g and 525 g.'
+    },
+    {
+      id:'loop', name:'4 Repeat', title:'Make the control process repeat',
+      goal:'Complete the same loop shown in the automated-systems process: YES returns to the sensor; NO operates the actuator, then returns to the sensor.',
+      pass:'six bottles run from one START without any dead end in the final flowchart.'
+    }
+  ];
+
+  const OPS = {
+    terminator:[
+      {id:'start',label:'START',lines:['START'],note:'A flowchart begins with a START terminator and one arrow leaving it.'},
+      {id:'stop',label:'STOP',lines:['STOP'],note:'STOP ends a process. This automated line should repeat until it is turned off.'}
+    ],
+    io:[
+      {id:'sensorPressure',label:'Sensor reads bottle weight',lines:['Sensor reads','bottle weight'],sub:'pressure sensor · analogue',note:'Correct input. The pressure sensor measures force on the weighing plate; the reading represents bottle mass and is analogue.'},
+      {id:'sensorLight',label:'Sensor reads light level',lines:['Sensor reads','light level'],sub:'light sensor · analogue',note:'This is a valid sensor type, but it does not measure how much liquid is in this bottle.'},
+      {id:'outputStatus',label:'OUTPUT inspection status',lines:['OUTPUT','inspection status'],sub:'data output',note:'An output symbol is valid flowchart notation, but this factory needs the bottle sensor as its input.'}
+    ],
+    process:[
+      {id:'adc',label:'Convert analogue data to digital',lines:['Convert analogue','data to digital'],sub:'ADC',note:'Correct: the sensor produces analogue real-world data; an analogue-to-digital converter changes it to digital data.'},
+      {id:'sendCPU',label:'Send digital data to microprocessor',lines:['Send digital data','to microprocessor'],sub:'digital reading',note:'Correct: after conversion, the digital reading is sent to the microprocessor.'},
+      {id:'compare',label:'Compare data with stored values',lines:['Compare data with','stored values'],sub:'490 g and 510 g',note:'Correct: the microprocessor compares the received digital data with stored values.'},
+      {id:'signalActuator',label:'Send signal to reject actuator',lines:['Send signal to','reject actuator'],sub:'physical output',note:'Correct on the NO branch: the microprocessor signals the actuator, which creates movement.'},
+      {id:'storeAnalogue',label:'Store analogue reading in microprocessor',lines:['Store analogue','in microprocessor'],sub:'incorrect sequence',note:'The coursebook states the analogue sensor reading must be converted to digital before the microprocessor uses it.'}
+    ],
+    decision:[
+      {id:'inRange',label:'Is mass between 490 g and 510 g?',lines:['Is mass between','490 g and 510 g?'],sub:'YES = acceptable',note:'Correct condition. YES means the bottle is acceptable; NO means it is outside the stored range.'},
+      {id:'aboveMax',label:'Is mass above 510 g?',lines:['Is mass above','510 g?'],sub:'only detects overfill',note:'This misses underfilled bottles.'},
+      {id:'belowMin',label:'Is mass below 490 g?',lines:['Is mass below','490 g?'],sub:'only detects underfill',note:'This misses overfilled bottles.'}
+    ]
+  };
+
+  const PALETTE = [
+    {type:'terminator',name:'Start / Stop',hint:'terminator',icon:'terminator'},
+    {type:'io',name:'Input / Output',hint:'data enters or leaves',icon:'io'},
+    {type:'process',name:'Process',hint:'an action is performed',icon:'process'},
+    {type:'decision',name:'Decision',hint:'YES / NO comparison',icon:'decision'}
+  ];
+
+  const state = {
+    challenge:0, nodes:[], edges:[], nextNode:1, nextEdge:1, selected:null, pendingPort:null,
+    nodeDrag:null, paletteDrag:null, wireDrag:null, history:[], completed:new Set(), busy:false, runToken:0,
+    testStatus:['idle','idle','idle','idle']
+  };
+
+  function svg(tag, attrs={}){
+    const el = document.createElementNS(svgNS, tag);
+    Object.entries(attrs).forEach(([k,v]) => el.setAttribute(k,String(v)));
+    return el;
+  }
+
+  function icon(type){
+    if(type==='terminator') return '<svg viewBox="0 0 58 38"><rect x="4" y="8" width="50" height="22" rx="11"/></svg>';
+    if(type==='io') return '<svg viewBox="0 0 58 38"><path d="M12 7H54L46 31H4Z"/></svg>';
+    if(type==='decision') return '<svg viewBox="0 0 58 38"><path d="M29 3L53 19 29 35 5 19Z"/></svg>';
+    return '<svg viewBox="0 0 58 38"><rect x="5" y="5" width="48" height="28" rx="2"/></svg>';
+  }
+
+  function renderPalette(){
+    const box = $('palette'); box.replaceChildren();
+    PALETTE.forEach(meta => {
+      const b = document.createElement('button');
+      b.type='button'; b.className='palette-card'; b.dataset.type=meta.type;
+      b.innerHTML=`<span class="palette-icon">${icon(meta.icon)}</span><span><strong>${meta.name}</strong><small>${meta.hint}</small></span>`;
+      b.addEventListener('click',()=>{ if(!b.dataset.suppressClick) addNode(meta.type); });
+      b.addEventListener('pointerdown',e=>beginPaletteDrag(e,meta.type,b));
+      box.append(b);
+    });
+  }
+
+  function snapshot(){ return {nodes:state.nodes.map(n=>({...n,config:{...n.config}})),edges:state.edges.map(e=>({...e,from:{...e.from},to:{...e.to}})),nextNode:state.nextNode,nextEdge:state.nextEdge}; }
+  function remember(){ state.history.push(snapshot()); if(state.history.length>40) state.history.shift(); $('undo').disabled=false; }
+  function restore(s){ state.nodes=s.nodes.map(n=>({...n,config:{...n.config}})); state.edges=s.edges.map(e=>({...e,from:{...e.from},to:{...e.to}})); state.nextNode=s.nextNode; state.nextEdge=s.nextEdge; state.selected=null;state.pendingPort=null;chartSize={w:BASE_CHART_W,h:BASE_CHART_H};ensureChartHeight(true);renderAll(); }
+  function undo(){ if(state.busy||!state.history.length)return; restore(state.history.pop()); $('undo').disabled=!state.history.length; setFlowFeedback('','Undone.','Run the test when you want to check the chart.'); }
+
+  function defaultPosition(type){
+    // New symbols continue down a central spine. This avoids stacking a child above its parent
+    // and gives later challenges room to grow before learners arrange the chart themselves.
+    const x=410;
+    const used=state.nodes.map(n=>n.y).sort((a,b)=>a-b);
+    let y=60;
+    while(used.some(v=>Math.abs(v-y)<54)) y+=86;
+    const d=nodeDims(type);
+    if(y+d.h/2+90>chartSize.h) setChartHeight(y+d.h/2+110);
+    return {x,y};
+  }
+  function defaultOp(type){ return OPS[type][0].id; }
+  function addNode(type,pos=defaultPosition(type)){
+    if(state.busy)return;
+    remember();
+    const node={id:`N${state.nextNode++}`,type,x:pos.x,y:pos.y,config:{op:defaultOp(type)}};
+    state.nodes.push(node); state.selected={kind:'node',id:node.id};
+    renderAll(); openConfig(node.id); setFlowFeedback('','Symbol added.','Configure the statement, position the symbol, then connect its arrows. Nothing runs automatically.');
+    return node;
+  }
+  function getNode(id){return state.nodes.find(n=>n.id===id)||null}
+  function getOp(node){return OPS[node.type].find(o=>o.id===node.config.op)||OPS[node.type][0]}
+  function opNode(op){return state.nodes.find(n=>n.config.op===op)||null}
+  function opNodes(op){return state.nodes.filter(n=>n.config.op===op)}
+
+  function nodeDims(type){
+    if(type==='terminator')return{w:146,h:50};
+    if(type==='io')return{w:166,h:66};
+    if(type==='decision')return{w:186,h:98};
+    return{w:166,h:62};
+  }
+
+  function drawNodeShape(g,node){
+    const {w,h}=nodeDims(node.type); const x=node.x,y=node.y;
+    let shape;
+    if(node.type==='terminator') shape=svg('rect',{class:'node-shape',x:x-w/2,y:y-h/2,width:w,height:h,rx:h/2});
+    else if(node.type==='io') shape=svg('path',{class:'node-shape',d:`M${x-w/2+18} ${y-h/2}H${x+w/2}L${x+w/2-18} ${y+h/2}H${x-w/2}Z`});
+    else if(node.type==='decision') shape=svg('path',{class:'node-shape',d:`M${x} ${y-h/2}L${x+w/2} ${y}L${x} ${y+h/2}L${x-w/2} ${y}Z`});
+    else shape=svg('rect',{class:'node-shape',x:x-w/2,y:y-h/2,width:w,height:h,rx:3});
+    g.append(shape);
+    const op=getOp(node); const lines=op.lines||[op.label];
+    const lineGap=node.type==='decision'?14:13; const startY=y-((lines.length-1)*lineGap)/2-(op.sub?5:0);
+    lines.slice(0,3).forEach((line,i)=>{const t=svg('text',{class:'node-text',x,y:startY+i*lineGap});t.textContent=line;g.append(t)});
+    if(op.sub){const s=svg('text',{class:'node-sub',x,y:startY+lines.length*lineGap+3});s.textContent=op.sub;g.append(s)}
+  }
+
+  function portsFor(node){
+    const {w,h}=nodeDims(node.type); const ports=[];
+    if(!(node.type==='terminator'&&node.config.op==='start')) ports.push({kind:'in',x:node.x,y:node.y-h/2,label:''});
+    if(node.type==='decision'){
+      ports.push({kind:'yes',x:node.x-w/2,y:node.y,label:'YES',dx:-24,dy:-8});
+      ports.push({kind:'no',x:node.x+w/2,y:node.y,label:'NO',dx:24,dy:-8});
+    }else if(!(node.type==='terminator'&&node.config.op==='stop')) ports.push({kind:'out',x:node.x,y:node.y+h/2,label:''});
+    return ports;
+  }
+  function portPoint(nodeId,kind){const n=getNode(nodeId);return n?portsFor(n).find(p=>p.kind===kind)||null:null}
+
+  function renderPort(layer,node,p){
+    const g=svg('g',{class:'port'+(state.pendingPort?.node===node.id&&state.pendingPort.kind===p.kind?' pending':''),role:'button',tabindex:'0','aria-label':`${getOp(node).label} ${p.kind} connection`});
+    g.dataset.node=node.id; g.dataset.kind=p.kind; g.setAttribute('transform',`translate(${p.x} ${p.y})`);
+    g.append(svg('circle',{class:'port-hit',r:11})); g.append(svg('circle',{class:'port-dot',r:6}));
+    if(p.label){const t=svg('text',{class:'port-label',x:p.dx||0,y:p.dy||0,'text-anchor':p.kind==='yes'?'end':'start'});t.textContent=p.label;g.append(t)}
+    g.addEventListener('pointerdown',e=>beginWire(e,node.id,p.kind));
+    g.addEventListener('click',e=>{e.stopPropagation();choosePort(node.id,p.kind)});
+    g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();choosePort(node.id,p.kind)}});
+    layer.append(g);
+  }
+
+  function edgeKey(fromNode,fromKind){return `${fromNode}:${fromKind}`}
+  function edgeFrom(node,kind){return state.edges.find(e=>e.from.node===node&&e.from.kind===kind)||null}
+  function incoming(node){return state.edges.filter(e=>e.to.node===node)}
+  function edgeExists(a,kind,b){return state.edges.some(e=>e.from.node===a&&e.from.kind===kind&&e.to.node===b)}
+
+  function connect(fromNode,fromKind,toNode){
+    if(fromNode===toNode)return false;
+    const from=getNode(fromNode),to=getNode(toNode); if(!from||!to)return false;
+    if(fromKind==='in'||!portsFor(from).some(p=>p.kind===fromKind)||!portsFor(to).some(p=>p.kind==='in'))return false;
+    // One arrow per output. Most symbols accept one incoming arrow. The pressure-sensor input can receive merged return paths.
+    remember();
+    state.edges=state.edges.filter(e=>!(e.from.node===fromNode&&e.from.kind===fromKind));
+    if(to.config.op!=='sensorPressure') state.edges=state.edges.filter(e=>e.to.node!==toNode);
+    if(wouldCycleBadly(fromNode,toNode,fromKind)) { state.history.pop(); $('undo').disabled=!state.history.length; setFlowFeedback('bad','That connection is not allowed.','Return loops are allowed only back to the pressure-sensor input.'); return false; }
+    state.edges.push({id:`E${state.nextEdge++}`,from:{node:fromNode,kind:fromKind},to:{node:toNode,kind:'in'}});
+    state.pendingPort=null; state.selected=null; renderAll(); setFlowFeedback('','Arrow connected.','The test will follow this arrow exactly.'); return true;
+  }
+  function wouldCycleBadly(fromNode,toNode,kind){
+    const to=getNode(toNode); if(to?.config.op==='sensorPressure') return false;
+    // Prevent all other cycles.
+    const seen=new Set();
+    function reaches(id){if(id===fromNode)return true;if(seen.has(id))return false;seen.add(id);return state.edges.filter(e=>e.from.node===id).some(e=>reaches(e.to.node));}
+    return reaches(toNode);
+  }
+
+  function choosePort(node,kind){
+    if(state.busy)return;
+    if(!state.pendingPort){ state.pendingPort={node,kind}; renderAll(); return; }
+    const first=state.pendingPort;
+    if(first.node===node&&first.kind===kind){state.pendingPort=null;renderAll();return}
+    if(first.kind==='in'&&kind!=='in') connect(node,kind,first.node);
+    else if(first.kind!=='in'&&kind==='in') connect(first.node,first.kind,node);
+    else {state.pendingPort={node,kind};renderAll()}
+  }
+
+  function beginWire(e,node,kind){
+    if(state.busy||e.button>0)return;e.preventDefault();e.stopPropagation();
+    const p=portPoint(node,kind); if(!p)return;
+    state.wireDrag={pointerId:e.pointerId,node,kind,start:{x:p.x,y:p.y},current:{x:p.x,y:p.y}};
+    $('flowchart').setPointerCapture?.(e.pointerId); renderPreview();
+  }
+  function updateWire(e){
+    const d=state.wireDrag;if(!d||d.pointerId!==e.pointerId)return;
+    const p=chartPoint(e.clientX,e.clientY);d.current=p;renderPreview();
+  }
+  function finishWire(e){
+    const d=state.wireDrag;if(!d||d.pointerId!==e.pointerId)return;
+    const target=document.elementFromPoint(e.clientX,e.clientY)?.closest?.('.port');
+    if(target){const tn=target.dataset.node,tk=target.dataset.kind;if(d.kind==='in'&&tk!=='in')connect(tn,tk,d.node);else if(d.kind!=='in'&&tk==='in')connect(d.node,d.kind,tn);else choosePort(d.node,d.kind)}
+    else choosePort(d.node,d.kind);
+    state.wireDrag=null;renderPreview();
+  }
+  function renderPreview(){
+    const layer=$('preview-layer');layer.replaceChildren();if(!state.wireDrag)return;
+    const d=state.wireDrag; const a=d.kind==='in'?d.current:d.start,b=d.kind==='in'?d.start:d.current;
+    layer.append(svg('path',{class:'wire-preview',d:orthogonal(a,b,false)}));
+  }
+
+  function chartPoint(clientX,clientY){const s=$('flowchart');const pt=s.createSVGPoint();pt.x=clientX;pt.y=clientY;return pt.matrixTransform(s.getScreenCTM().inverse())}
+  function beginNodeDrag(e,id){if(state.busy||e.button>0||e.target.closest?.('.port'))return;e.preventDefault();const n=getNode(id);const p=chartPoint(e.clientX,e.clientY);state.nodeDrag={pointerId:e.pointerId,id,startX:p.x,startY:p.y,origX:n.x,origY:n.y,moved:false,snapshot:snapshot()};$('flowchart').setPointerCapture?.(e.pointerId)}
+  function updateNodeDrag(e){const d=state.nodeDrag;if(!d||d.pointerId!==e.pointerId)return;const p=chartPoint(e.clientX,e.clientY);const dx=p.x-d.startX,dy=p.y-d.startY;if(!d.moved&&Math.hypot(dx,dy)>3)d.moved=true;const n=getNode(d.id);if(n){const dims=nodeDims(n.type);const proposedY=d.origY+dy;if(proposedY+dims.h/2+72>chartSize.h)setChartHeight(proposedY+dims.h/2+96);n.x=clamp(d.origX+dx,dims.w/2+24,chartSize.w-dims.w/2-24);n.y=clamp(proposedY,dims.h/2+24,chartSize.h-dims.h/2-36);renderAll(false)}}
+  function finishNodeDrag(e){const d=state.nodeDrag;if(!d||d.pointerId!==e.pointerId)return;if(d.moved){state.history.push(d.snapshot);if(state.history.length>40)state.history.shift();$('undo').disabled=false;setFlowFeedback('','Symbol moved.','Flow lines were rerouted. Run the test when ready.')}else{state.selected={kind:'node',id:d.id};renderAll();openConfig(d.id)}state.nodeDrag=null}
+
+  function beginPaletteDrag(e,type,button){if(state.busy||e.button>0)return;e.preventDefault();state.paletteDrag={pointerId:e.pointerId,type,button,startX:e.clientX,startY:e.clientY,moved:false,ghost:null};button.setPointerCapture?.(e.pointerId)}
+  function updatePaletteDrag(e){const d=state.paletteDrag;if(!d||d.pointerId!==e.pointerId)return;if(!d.moved&&Math.hypot(e.clientX-d.startX,e.clientY-d.startY)>5){d.moved=true;d.button.classList.add('drag-source');d.ghost=document.createElement('div');d.ghost.className='drop-hint';d.ghost.textContent=PALETTE.find(p=>p.type===d.type).name;d.ghost.style.position='fixed';d.ghost.style.zIndex='1000';d.ghost.style.transform='translate(-50%,-120%)';document.body.append(d.ghost)}if(d.ghost){d.ghost.style.left=e.clientX+'px';d.ghost.style.top=e.clientY+'px'}const r=$('chart-shell').getBoundingClientRect();$('drop-hint').hidden=!(e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom);if(!$('drop-hint').hidden){$('drop-hint').style.left=(e.clientX-r.left)+'px';$('drop-hint').style.top=(e.clientY-r.top)+'px'}}
+  function finishPaletteDrag(e){const d=state.paletteDrag;if(!d||d.pointerId!==e.pointerId)return;d.button.classList.remove('drag-source');d.ghost?.remove();$('drop-hint').hidden=true;if(d.moved){d.button.dataset.suppressClick='1';setTimeout(()=>delete d.button.dataset.suppressClick,0);const r=$('flowchart').getBoundingClientRect();if(e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom){const p=chartPoint(e.clientX,e.clientY);addNode(d.type,p)}}state.paletteDrag=null}
+
+  function pointsPath(points){
+    return points.map((p,i)=>(i?'L':'M')+p.x+' '+p.y).join('');
+  }
+
+  function normalEdgePath(edge,a,b){
+    const from=getNode(edge.from.node),to=getNode(edge.to.node);
+    if(!from||!to)return'';
+    const fd=nodeDims(from.type),td=nodeDims(to.type);
+    // Normal top-to-bottom flow: a compact mid-line dogleg.
+    if(b.y>=a.y+4){
+      const midY=a.y+Math.max(24,(b.y-a.y)*.5);
+      return pointsPath([{x:a.x,y:a.y},{x:a.x,y:midY},{x:b.x,y:midY},{x:b.x,y:b.y}]);
+    }
+    // If a learner places the next step above or almost level with its parent,
+    // route locally around the two shapes rather than around the whole canvas.
+    const sourceLeft=from.x-fd.w/2,sourceRight=from.x+fd.w/2;
+    const targetLeft=to.x-td.w/2,targetRight=to.x+td.w/2;
+    const preferLeft=edge.from.kind==='yes'||(edge.from.kind!=='no'&&b.x<a.x);
+    let laneX;
+    // If the two shapes have a real horizontal gap, use that gap as the routing lane.
+    // This keeps an upward/right or upward/left connection local instead of wrapping around both shapes.
+    if(b.x>a.x && targetLeft-sourceRight>=26) laneX=(sourceRight+targetLeft)/2;
+    else if(b.x<a.x && sourceLeft-targetRight>=26) laneX=(sourceLeft+targetRight)/2;
+    else laneX=preferLeft?Math.min(sourceLeft,targetLeft)-38:Math.max(sourceRight,targetRight)+38;
+    laneX=clamp(laneX,26,chartSize.w-26);
+    const departY=edge.from.kind==='yes'||edge.from.kind==='no'?a.y:a.y+24;
+    const approachY=b.y-24;
+    const pts=[{x:a.x,y:a.y}];
+    if(departY!==a.y)pts.push({x:a.x,y:departY});
+    pts.push({x:laneX,y:departY},{x:laneX,y:approachY},{x:b.x,y:approachY},{x:b.x,y:b.y});
+    return pointsPath(pts);
+  }
+
+  function sensorJoinPoint(node){const p=portPoint(node.id,'in');return p?{x:p.x,y:p.y-24}:null}
+  function returnLoopPath(edge,a,join){
+    const from=getNode(edge.from.node);if(!from||!join)return'';
+    const fd=nodeDims(from.type);
+    const left=edge.from.kind==='yes';
+    const laneX=left
+      ? clamp(Math.min(from.x-fd.w/2-42,join.x-235),28,chartSize.w-28)
+      : clamp(Math.max(from.x+fd.w/2+42,join.x+235),28,chartSize.w-28);
+    const departY=(edge.from.kind==='yes'||edge.from.kind==='no')?a.y:a.y+24;
+    const pts=[{x:a.x,y:a.y}];
+    if(departY!==a.y)pts.push({x:a.x,y:departY});
+    pts.push({x:laneX,y:departY},{x:laneX,y:join.y},{x:join.x,y:join.y});
+    return pointsPath(pts);
+  }
+
+  function orthogonal(a,b){
+    const mid=a.y+(b.y-a.y)*.5;
+    return pointsPath([{x:a.x,y:a.y},{x:a.x,y:mid},{x:b.x,y:mid},{x:b.x,y:b.y}]);
+  }
+
+  function edgePath(edge){
+    const a=portPoint(edge.from.node,edge.from.kind);const target=portPoint(edge.to.node,'in');if(!a||!target)return'';
+    const s=structure().sensor;
+    if(s&&edge.to.node===s.id){
+      const join=sensorJoinPoint(s);
+      // START and returning branches all merge above the sensor, leaving one clear arrow into input.
+      if(structure().start?.id===edge.from.node)return orthogonal(a,join||target);
+      return returnLoopPath(edge,a,join||target);
+    }
+    return normalEdgePath(edge,a,target);
+  }
+  function edgeLabelPoint(edge){const a=portPoint(edge.from.node,edge.from.kind),b=portPoint(edge.to.node,'in');if(!a||!b)return{x:0,y:0};if(edge.from.kind==='yes')return{x:a.x-18,y:a.y-10};if(edge.from.kind==='no')return{x:a.x+18,y:a.y-10};return{x:(a.x+b.x)/2,y:a.y+16}}
+
+  function renderEdges(){
+    const layer=$('edge-layer');layer.replaceChildren();const sensor=structure().sensor;
+    state.edges.forEach(edge=>{
+      const toSensor=!!(sensor&&edge.to.node===sensor.id);
+      const attrs={id:`path-${edge.id}`,class:'edge'+(state.selected?.kind==='edge'&&state.selected.id===edge.id?' selected':''),d:edgePath(edge)};
+      if(!toSensor)attrs['marker-end']='url(#arrow)';
+      const path=svg('path',attrs);path.dataset.edge=edge.id;path.addEventListener('click',e=>{e.stopPropagation();if(state.busy)return;state.selected={kind:'edge',id:edge.id};renderAll()});layer.append(path);
+    });
+    if(sensor&&incoming(sensor.id).length){const j=sensorJoinPoint(sensor),p=portPoint(sensor.id,'in');if(j&&p)layer.append(svg('path',{class:'edge',d:`M${j.x} ${j.y}L${p.x} ${p.y}`,'marker-end':'url(#arrow)'}))}
+  }
+
+  function renderNodes(){
+    const nodes=$('node-layer'),ports=$('port-layer');nodes.replaceChildren();ports.replaceChildren();
+    state.nodes.forEach(node=>{
+      const g=svg('g',{class:'node'+(state.selected?.kind==='node'&&state.selected.id===node.id?' selected':''),tabindex:'0',role:'button','aria-label':getOp(node).label});g.dataset.node=node.id;drawNodeShape(g,node);
+      g.addEventListener('pointerdown',e=>beginNodeDrag(e,node.id));g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();state.selected={kind:'node',id:node.id};renderAll();openConfig(node.id)}else if((e.key==='Delete'||e.key==='Backspace')&&!state.busy){e.preventDefault();deleteNode(node.id)}});nodes.append(g);portsFor(node).forEach(p=>renderPort(ports,node,p));
+    });
+  }
+  function renderAll(closeConfig=false){ensureChartHeight(false);renderEdges();renderNodes();renderTabs();renderMachineVisibility();updateDeleteButton();if(closeConfig&&$('config').hidden===false)$('config').hidden=true}
+  function updateDeleteButton(){$('delete-selected').disabled=!state.selected}
+
+  function openConfig(id){
+    const n=getNode(id);if(!n)return;const panel=$('config');$('config-title').textContent=PALETTE.find(p=>p.type===n.type).name;$('config-sub').textContent='One statement belongs inside each flowchart shape.';
+    const sel=$('config-operation');sel.replaceChildren();OPS[n.type].forEach(o=>{const opt=document.createElement('option');opt.value=o.id;opt.textContent=o.label;sel.append(opt)});sel.value=n.config.op;$('config-note').textContent=getOp(n).note;sel.onchange=()=>{if(state.busy)return;remember();n.config.op=sel.value;state.edges=state.edges.filter(e=>{if(e.from.node===n.id&&!portsFor(n).some(p=>p.kind===e.from.kind))return false;if(e.to.node===n.id&&!portsFor(n).some(p=>p.kind==='in'))return false;return true});$('config-note').textContent=getOp(n).note;renderAll(false);setFlowFeedback('','Statement changed.','The chart has not run. Choose Run challenge test when ready.')};$('config-delete').onclick=()=>deleteNode(id);panel.hidden=false;
+  }
+  function deleteNode(id){if(state.busy)return;remember();state.nodes=state.nodes.filter(n=>n.id!==id);state.edges=state.edges.filter(e=>e.from.node!==id&&e.to.node!==id);state.selected=null;state.pendingPort=null;$('config').hidden=true;renderAll();setFlowFeedback('','Symbol deleted.','Reconnect any arrows that depended on it.')}
+  function deleteSelected(){if(!state.selected||state.busy)return;if(state.selected.kind==='node')deleteNode(state.selected.id);else{remember();state.edges=state.edges.filter(e=>e.id!==state.selected.id);state.selected=null;renderAll();setFlowFeedback('','Arrow deleted.','Run the test when the flowchart is ready.')}}
+  function clearChart(){if(state.busy)return;if(state.nodes.length||state.edges.length)remember();state.nodes=[];state.edges=[];state.nextNode=1;state.nextEdge=1;state.selected=null;state.pendingPort=null;chartSize={w:BASE_CHART_W,h:BASE_CHART_H};$('config').hidden=true;ensureChartHeight(true);renderAll();resetLine();setFlowFeedback('','Chart cleared.','Start again with the standard symbols.')}
+
+  function centerChartSpine(){
+    const shell=$('chart-shell'),chart=$('flowchart');
+    if(!shell||!chart||shell.scrollWidth<=shell.clientWidth)return;
+    const target=(410/chartSize.w)*chart.getBoundingClientRect().width;
+    shell.scrollLeft=clamp(target-shell.clientWidth/2,0,shell.scrollWidth-shell.clientWidth);
+  }
+
+  function autoLayout(){
+    if(state.busy)return;remember();
+    const mainOps=['start','sensorPressure','adc','sendCPU','compare','inRange'];
+    const present=mainOps.map(op=>opNode(op)).filter(Boolean);
+    let y=58;
+    present.forEach((n,index)=>{
+      n.x=410;
+      n.y=y;
+      const d=nodeDims(n.type);
+      y+=d.h/2+(index===present.length-1?0:44)+nodeDims(present[index+1]?.type||'process').h/2;
+    });
+    const decision=opNode('inRange');
+    const actuator=opNode('signalActuator');
+    if(actuator){
+      const anchorY=decision?decision.y:Math.max(220,y-20);
+      actuator.x=635;actuator.y=anchorY;
+    }
+    // Leave a clean bottom margin for the final decision branches and visible loop lanes.
+    chartSize.h=BASE_CHART_H;
+    ensureChartHeight(true);
+    if(decision)setChartHeight(Math.max(chartSize.h,decision.y+nodeDims('decision').h/2+120),false);
+    renderAll();requestAnimationFrame(centerChartSpine);setFlowFeedback('','Chart arranged.','Symbols were spaced on a vertical flow. Loop branches use the side lanes; no arrows or statements were changed.');
+  }
+
+  function setFlowFeedback(kind,title,detail){const el=$('flow-feedback');el.className='flow-feedback'+(kind?` ${kind}`:'');el.innerHTML=`<strong>${title}</strong><span>${detail}</span>`}
+  function setTestFeedback(kind,title,detail){const el=$('test-feedback');el.className='test-feedback'+(kind?` ${kind}`:'');el.innerHTML=`<strong>${title}</strong><span>${detail}</span>`}
+  function setChallengeStatus(kind,text){const el=$('challenge-status');el.className='status-chip'+(kind?` ${kind}`:'');el.textContent=text;state.testStatus[state.challenge]=kind==='pass'?'pass':kind==='fail'?'fail':kind==='testing'?'testing':'idle'}
+
+  function renderTabs(){
+    const c=CHALLENGES[state.challenge];$('challenge-step').textContent=`Challenge ${state.challenge+1} of ${CHALLENGES.length}`;$('challenge-title').textContent=c.title;$('challenge-goal').textContent=c.goal;$('challenge-pass').textContent=c.pass;
+    const status=state.testStatus[state.challenge];if(status==='pass')setChallengeStatus('pass','Passed');else if(status==='fail')setChallengeStatus('fail','Needs revision');else if(status==='testing')setChallengeStatus('testing','Testing…');else setChallengeStatus('','Not tested');
+    const box=$('challenge-tabs');box.replaceChildren();CHALLENGES.forEach((item,i)=>{const b=document.createElement('button');b.type='button';b.className='challenge-tab'+(i===state.challenge?' active':'')+(state.completed.has(item.id)&&i!==state.challenge?' complete':'');b.textContent=state.completed.has(item.id)?`${item.name} ✓`:item.name;b.disabled=state.busy||(i>0&&!state.completed.has(CHALLENGES[i-1].id));b.addEventListener('click',()=>selectChallenge(i));box.append(b)});
+  }
+  function selectChallenge(i){if(state.busy||i===state.challenge)return;if(i>0&&!state.completed.has(CHALLENGES[i-1].id))return;state.challenge=i;state.selected=null;state.pendingPort=null;$('config').hidden=true;resetLine();renderAll();setFlowFeedback('','Challenge changed.','Keep building on the same flowchart. Nothing runs until you start the test.')}
+
+  function structure(){
+    const start=opNode('start');
+    const sensor=start ? getNode(edgeFrom(start.id,'out')?.to.node) : null;
+    const adc=sensor ? getNode(edgeFrom(sensor.id,'out')?.to.node) : null;
+    const send=adc ? getNode(edgeFrom(adc.id,'out')?.to.node) : null;
+    const compare=send ? getNode(edgeFrom(send.id,'out')?.to.node) : null;
+    const decision=compare ? getNode(edgeFrom(compare.id,'out')?.to.node) : null;
+    const actuator=decision ? getNode(edgeFrom(decision.id,'no')?.to.node) : null;
+    return {start,sensor,adc,send,compare,decision,actuator,
+      startSensor:!!(start&&sensor&&edgeExists(start.id,'out',sensor.id)),
+      sensorAdc:!!(sensor&&adc&&edgeExists(sensor.id,'out',adc.id)),
+      adcSend:!!(adc&&send&&edgeExists(adc.id,'out',send.id)),
+      sendCompare:!!(send&&compare&&edgeExists(send.id,'out',compare.id)),
+      compareDecision:!!(compare&&decision&&edgeExists(compare.id,'out',decision.id)),
+      noActuator:!!(decision&&actuator&&edgeExists(decision.id,'no',actuator.id)),
+      yesSensor:!!(decision&&sensor&&edgeExists(decision.id,'yes',sensor.id)),
+      actuatorSensor:!!(actuator&&sensor&&edgeExists(actuator.id,'out',sensor.id))
+    };
+  }
+
+  function validateStage(stage){
+    const s=structure();
+    if(stage>=1){
+      if(!s.start)return{ok:false,title:'START is missing.',detail:'Use a Start/Stop terminator configured as START.'};
+      if(!s.sensor)return{ok:false,title:'START does not lead to an input step.',detail:'Connect START to the flowchart symbol you think should represent the sensor reading.'};
+      if(s.sensor.type!=='io')return{ok:false,title:'The first step uses the wrong symbol.',detail:'Sensor data enters the controller, so choose the Cambridge symbol used for input.'};
+      if(!s.adc)return{ok:false,title:'The sensor step has no next process.',detail:'Connect the sensor-reading symbol to the step that handles its analogue data.'};
+      if(s.adc.type!=='process')return{ok:false,title:'The second step uses the wrong symbol.',detail:'Converting data is an action performed by the system, so it belongs in a Process symbol.'};
+    }
+    if(stage>=2){
+      if(!s.send||s.send.type!=='process')return{ok:false,title:'The next process after conversion is missing.',detail:'Continue the flowchart with a Process that handles the converted digital data.'};
+      if(!s.compare||s.compare.type!=='process')return{ok:false,title:'The comparison process is missing.',detail:'The microprocessor must compare the received data with stored values before a decision is made.'};
+      if(!s.decision||s.decision.type!=='decision')return{ok:false,title:'The YES/NO decision is missing or uses the wrong symbol.',detail:'After comparison, use a Decision diamond with two outcomes.'};
+    }
+    if(stage>=3){
+      if(!s.actuator)return{ok:false,title:'The NO branch has no action.',detail:'Connect Decision NO to the step that should signal the reject actuator.'};
+      if(s.actuator.type!=='process')return{ok:false,title:'The NO branch uses the wrong symbol.',detail:'Sending a signal to operate the actuator is an action performed by the controller, so use a Process symbol.'};
+    }
+    if(stage>=4){
+      if(!s.yesSensor||!s.actuatorSensor)return{ok:false,title:'The repeat loop is incomplete.',detail:'Connect Decision YES → sensor input, and the reject-actuator process → sensor input. Both outcomes must begin the next sensor reading.'};
+      const dead=state.nodes.filter(n=>n.config.op!=='stop'&&portsFor(n).some(p=>p.kind!=='in'&&!edgeFrom(n.id,p.kind)));
+      if(dead.length)return{ok:false,title:'The final flowchart still has a dead end.',detail:'Every output arrow must lead somewhere. The process repeats until the automated system is turned off.'};
+    }
+    return{ok:true,s};
+  }
+
+  function evaluateDecision(mass,op='inRange'){
+    if(op==='inRange')return mass>=490&&mass<=510;
+    if(op==='aboveMax')return mass>510;
+    if(op==='belowMin')return mass<490;
+    return false;
+  }
+
+  function renderMachineVisibility(){
+    const s=structure();
+    $('sensor-machine').setAttribute('class',s.sensor?'machine-ready':'machine-hidden');
+    $('cpu-machine').setAttribute('class',(s.send||s.compare||s.decision)?'machine-ready':'machine-hidden');
+    $('actuator-machine').setAttribute('class',s.actuator?'machine-ready':'machine-hidden');
+  }
+
+  function resetLine(){
+    $('bottle').setAttribute('visibility','hidden');$('bottle').setAttribute('transform','translate(45 170)');$('wrong-mark').setAttribute('visibility','hidden');$('pusher-arm').setAttribute('transform','translate(0 0)');$('sensor-led').setAttribute('fill','#9aa6ad');$('cpu-led').setAttribute('fill','#8e9aa1');$('cpu-screen').textContent='WAITING';hideBubbles();hideRunPopup();clearActive();$('batch').hidden=true;setTestFeedback('','Ready.','Build the flowchart, then choose Run challenge test.');
+  }
+  function stageBottle(mass){
+    const bottle=$('bottle');bottle.setAttribute('visibility','visible');bottle.setAttribute('transform','translate(45 170)');bottle.dataset.x='45';bottle.dataset.y='170';bottle.dataset.route='';$('bottle-mass').textContent=`${mass}g`;
+    const pct=clamp((mass-450)/100,.18,.95);const h=72*pct;const y=47-h;$('liquid').setAttribute('y',y.toFixed(1));$('liquid').setAttribute('height',h.toFixed(1));$('wrong-mark').setAttribute('visibility','hidden');
+  }
+  function setBottlePos(x,y,rot=0){$('bottle').setAttribute('transform',`translate(${x} ${y}) rotate(${rot})`);$('bottle').dataset.x=String(x);$('bottle').dataset.y=String(y)}
+  async function animateSegment(toX,toY,toRot=0,duration=360){
+    const fromX=Number($('bottle').dataset.x||45),fromY=Number($('bottle').dataset.y||170);const start=performance.now();const d=reduceMotion?1:duration;
+    return new Promise(resolve=>{function frame(now){const t=clamp((now-start)/d,0,1);const e=t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;setBottlePos(fromX+(toX-fromX)*e,fromY+(toY-fromY)*e,toRot*e);if(t<1)requestAnimationFrame(frame);else resolve()}requestAnimationFrame(frame)});
+  }
+  async function moveToSensor(){await animateSegment(195,170,0,420)}
+  async function moveToCPU(){await animateSegment(360,170,0,420)}
+  async function moveToActuator(){await animateSegment(495,170,0,310)}
+  async function shipBottle(){await animateSegment(620,170,0,360);await animateSegment(648,148,0,180);$('bottle').dataset.route='SHIP'}
+  async function rejectBottle(){
+    await moveToActuator(); $('pusher-arm').setAttribute('transform','translate(0 21)'); await wait(130);
+    await animateSegment(520,205,6,160); await animateSegment(548,247,12,190); await animateSegment(585,300,8,190); await animateSegment(650,349,0,230); $('pusher-arm').setAttribute('transform','translate(0 0)'); $('bottle').dataset.route='REJECT';
+  }
+  function markWrong(x,y){const m=$('wrong-mark');m.setAttribute('transform',`translate(${x} ${y})`);m.setAttribute('visibility','visible')}
+
+  function bubble(which,title,detail,kind=''){
+    const el=$(`${which}-bubble`);el.className='factory-bubble show'+(kind?` ${kind}`:'');el.innerHTML=`<strong>${title}</strong>${detail}`;
+  }
+  function hideBubbles(){['sensor','cpu','actuator'].forEach(w=>{$(`${w}-bubble`).className='factory-bubble'})}
+  function runPopup(node,title,detail,kind=''){
+    if(!node)return;const el=$('run-popup'),shell=$('chart-shell'),svgEl=$('flowchart');const shellRect=shell.getBoundingClientRect(),svgRect=svgEl.getBoundingClientRect();const scaleX=svgRect.width/chartSize.w,scaleY=svgRect.height/chartSize.h;el.style.left=(svgRect.left-shellRect.left+node.x*scaleX+18)+'px';el.style.top=(svgRect.top-shellRect.top+node.y*scaleY-15)+'px';el.className='run-popup show'+(kind?` ${kind}`:'');el.innerHTML=`<strong>${title}</strong>${detail}`;
+  }
+  function hideRunPopup(){$('run-popup').className='run-popup'}
+
+  function clearActive(){document.querySelectorAll('.node.active,.node.bad,.node.good').forEach(e=>e.classList.remove('active','bad','good'));document.querySelectorAll('.edge.active,.edge.bad').forEach(e=>e.classList.remove('active','bad'));$('flow-token').setAttribute('visibility','hidden')}
+  function nodeClass(id,cls){document.querySelector(`.node[data-node="${id}"]`)?.classList.add(cls)}
+  function edgeClass(edge,cls){const el=document.querySelector(`.edge[data-edge="${edge.id}"]`);if(!el)return;if(cls)el.classList.add(cls);else el.classList.remove('active','bad')}
+  async function pulseEdge(edge){
+    if(!edge)return;const path=document.getElementById(`path-${edge.id}`);if(!path)return;edgeClass(edge,'active');const token=$('flow-token');token.setAttribute('visibility','visible');const len=path.getTotalLength();const start=performance.now(),dur=reduceMotion?1:260;
+    await new Promise(resolve=>{function frame(now){const t=clamp((now-start)/dur,0,1);const p=path.getPointAtLength(len*t);token.setAttribute('cx',p.x);token.setAttribute('cy',p.y);if(t<1)requestAnimationFrame(frame);else resolve()}requestAnimationFrame(frame)});token.setAttribute('visibility','hidden');edgeClass(edge,'');
+  }
+
+  function edgeBetween(a,kind,b){return state.edges.find(e=>e.from.node===a.id&&e.from.kind===kind&&e.to.node===b.id)||null}
+  async function showNode(node,title,detail,where='cpu'){
+    clearActive();nodeClass(node.id,'active');runPopup(node,title,detail);if(where)bubble(where,title,detail);await wait(360);hideRunPopup();if(where)hideBubbles();clearActive();
+  }
+
+  async function runSensePath(mass,s){
+    stageBottle(mass);await moveToSensor();$('sensor-led').setAttribute('fill','var(--active)');
+    const sensorOp=getOp(s.sensor);
+    clearActive();nodeClass(s.sensor.id,s.sensor.config.op==='sensorPressure'?'active':'bad');
+    if(s.sensor.config.op==='sensorPressure'){
+      runPopup(s.sensor,'Pressure sensor reads environment',`The weighing plate measures force. This is an analogue sensor reading representing ${mass} g.`);
+      bubble('sensor','Pressure sensor reads environment',`Force on the weighing plate gives an analogue reading representing ${mass} g.`);
+      await wait(360);hideRunPopup();hideBubbles();clearActive();$('sensor-led').setAttribute('fill','#9aa6ad');
+    }else{
+      runPopup(s.sensor,'Wrong sensor input',`${sensorOp.label} does not provide the bottle-mass reading needed by this factory.`,'bad');
+      bubble('sensor','Wrong sensor input',`${sensorOp.label} does not measure the bottle weight required for fill inspection.`,'bad');
+      await wait(420);$('sensor-led').setAttribute('fill','#9aa6ad');return{digitalMass:null,ok:false,reason:'sensor'};
+    }
+    await pulseEdge(edgeBetween(s.sensor,'out',s.adc));
+    const adcCorrect=s.adc.config.op==='adc';clearActive();nodeClass(s.adc.id,adcCorrect?'active':'bad');
+    if(adcCorrect){
+      runPopup(s.adc,'Analogue-to-digital conversion','ADC converts the analogue sensor reading into digital data so the microprocessor can process it.');
+      bubble('cpu','Analogue → digital','The analogue pressure reading is converted into digital data before it reaches the microprocessor.');
+      await wait(360);hideRunPopup();hideBubbles();clearActive();return{digitalMass:mass,ok:true};
+    }
+    runPopup(s.adc,'Analogue data not converted',`${getOp(s.adc).label} happens here, but the analogue sensor reading still has not been converted to digital.`,'bad');
+    bubble('cpu','Microprocessor cannot use this yet','The sensor reading is still analogue. Convert it to digital data first.','bad');
+    await wait(430);return{digitalMass:null,ok:false,reason:'adc'};
+  }
+
+  async function runDecisionPath(mass,s){
+    const data=await runSensePath(mass,s);if(!data.ok)return null;
+    await pulseEdge(edgeBetween(s.adc,'out',s.send));await moveToCPU();$('cpu-led').setAttribute('fill','var(--active)');$('cpu-screen').textContent=`${mass} g DIGITAL`;
+    if(s.send.config.op!=='sendCPU'){
+      nodeClass(s.send.id,'bad');runPopup(s.send,'Wrong process',`After ADC, the digital data must be sent to the microprocessor. This box is “${getOp(s.send).label}”.`,'bad');bubble('cpu','Digital data not sent correctly','The microprocessor has not received the converted sensor reading.','bad');await wait(430);return null;
+    }
+    await showNode(s.send,'Digital data sent to microprocessor',`The controller receives digital mass data: ${mass} g.`,'cpu');
+    await pulseEdge(edgeBetween(s.send,'out',s.compare));
+    if(s.compare.config.op!=='compare'){
+      nodeClass(s.compare.id,'bad');runPopup(s.compare,'Wrong process',`The microprocessor must compare the received data with stored values before the decision.`,'bad');bubble('cpu','Comparison missing','The digital reading has reached the microprocessor, but it has not been compared with the stored 490 g and 510 g limits.','bad');await wait(430);return null;
+    }
+    await showNode(s.compare,'Microprocessor compares stored values',`${mass} g is compared with the stored minimum 490 g and maximum 510 g.`,'cpu');
+    await pulseEdge(edgeBetween(s.compare,'out',s.decision));
+    const result=evaluateDecision(data.digitalMass,s.decision.config.op);$('cpu-screen').textContent=result?'YES · IN RANGE':'NO · OUTSIDE';
+    await showNode(s.decision,'Decision',`${mass} g: “${getOp(s.decision).label}” → ${result?'YES':'NO'}.`,'cpu');$('cpu-led').setAttribute('fill','#8e9aa1');return result;
+  }
+
+  async function runPhysicalBottle(mass,s,useLoop=false){
+    const result=await runDecisionPath(mass,s);if(result===null){markWrong(Number($('bottle').dataset.x||360),Number($('bottle').dataset.y||170));return{mass,route:'STOPPED',expected:(mass>=490&&mass<=510)?'SHIP':'REJECT',correct:false,decision:null}}
+    const expectedIn=mass>=490&&mass<=510;let route;
+    if(result){
+      const yesEdge=edgeFrom(s.decision.id,'yes');if(useLoop&&yesEdge)await pulseEdge(yesEdge);await shipBottle();route='SHIP';
+    }else{
+      const noEdge=edgeFrom(s.decision.id,'no');await pulseEdge(noEdge);await moveToActuator();
+      if(noEdge?.to.node===s.actuator.id&&s.actuator.config.op==='signalActuator'){
+        nodeClass(s.actuator.id,'active');bubble('actuator','Signal sent to actuator','The microprocessor output causes the reject pusher to move.');runPopup(s.actuator,'Actuator output','Electrical signal → physical movement.');$('pusher-arm').setAttribute('transform','translate(0 21)');await wait(180);hideBubbles();hideRunPopup();clearActive();$('pusher-arm').setAttribute('transform','translate(0 0)');await rejectBottle();route='REJECT';if(useLoop){const back=edgeFrom(s.actuator.id,'out');if(back)await pulseEdge(back)}
+      }else{
+        nodeClass(s.actuator.id,'bad');runPopup(s.actuator,'Wrong actuator process',`The NO branch reaches “${getOp(s.actuator).label}”, so no reject signal operates the pusher.`,'bad');bubble('actuator','No reject movement','The controller did not send the required signal to the reject actuator.','bad');await wait(360);hideRunPopup();hideBubbles();clearActive();await shipBottle();route='SHIP';
+      }
+    }
+    const expected=expectedIn?'SHIP':'REJECT';const correct=route===expected;if(!correct){const x=Number($('bottle').dataset.x),y=Number($('bottle').dataset.y);markWrong(x,y)}return{mass,route,expected,correct,decision:result};
+  }
+
+  function renderBatch(masses,results,current=-1){
+    $('batch').hidden=false;$('batch-note').textContent=`${results.filter(Boolean).filter(r=>r.correct).length}/${masses.length} correct`;$('batch-list').replaceChildren();
+    masses.forEach((m,i)=>{const d=document.createElement('div');d.className='batch-item'+(i===current?' current':'')+(results[i]?.correct?' good':results[i]&&!results[i].correct?' bad':'');d.innerHTML=`${m} g<small>${results[i]?results[i].route||results[i].branch:'waiting'}</small>`;$('batch-list').append(d)});
+  }
+
+  async function failValidation(v){setChallengeStatus('fail','Needs revision');setFlowFeedback('bad',v.title,v.detail);setTestFeedback('bad','Test cannot begin.',v.detail);return false}
+  async function testSense(){
+    const v=validateStage(1);if(!v.ok)return failValidation(v);const s=v.s;setTestFeedback('','Testing one bottle.','Watch the physical sensor and the flowchart data-conversion step.');await pulseEdge(edgeBetween(s.start,'out',s.sensor));const result=await runSensePath(500,s);if(!result.ok){setChallengeStatus('fail','Needs revision');if(result.reason==='sensor'){setFlowFeedback('bad','The input step uses the wrong sensor data.','The factory needs a pressure sensor on the weighing plate so bottle weight can represent fill.');setTestFeedback('bad','Failed at the sensor.','Choose the sensor input that measures bottle weight.')}else{setFlowFeedback('bad','The analogue reading was not converted.','The sensor produces analogue real-world data. Add/configure the process that converts it to digital data before the microprocessor.');setTestFeedback('bad','Failed before digital processing.','The ADC conversion step is required.')}return false}state.completed.add('sense');setChallengeStatus('pass','Passed');setFlowFeedback('good','Sensor and ADC sequence proved.','The sensor supplies analogue environmental data; the ADC converts it to digital data. Challenge 2 is unlocked.');setTestFeedback('good','Passed.','500 g was read by the pressure sensor and converted to digital data before any microprocessor processing.');return true;
+  }
+  async function testDecide(){
+    const v=validateStage(2);if(!v.ok)return failValidation(v);const s=v.s;const masses=[475,500,525],results=[];renderBatch(masses,results);for(let i=0;i<masses.length;i++){resetFactoryVisualOnly();await pulseEdge(edgeBetween(s.start,'out',s.sensor));const branch=await runDecisionPath(masses[i],s);const expected=masses[i]>=490&&masses[i]<=510;const r={mass:masses[i],branch:branch?'YES':'NO',route:branch?'YES':'NO',correct:branch===expected};results[i]=r;renderBatch(masses,results,i);if(!r.correct){nodeClass(s.decision.id,'bad');runPopup(s.decision,'Wrong decision branch',`${masses[i]} g should give ${expected?'YES':'NO'} for the in-range condition.`,'bad');markWrong(Number($('bottle').dataset.x),Number($('bottle').dataset.y));await wait(450);break}await wait(160)}const pass=results.length===3&&results.every(r=>r.correct);if(pass){state.completed.add('decide');setChallengeStatus('pass','Passed');setFlowFeedback('good','Microprocessor sequence proved.','Digital data is sent to the microprocessor, compared with stored limits, then the decision produces YES or NO.');setTestFeedback('good','Passed.','475 g → NO, 500 g → YES, 525 g → NO. Challenge 3 is unlocked.')}else{setChallengeStatus('fail','Needs revision');setFlowFeedback('bad','Decision test failed.','Use the full condition: mass is between 490 g and 510 g. The decision must occur after the comparison process.');setTestFeedback('bad','Failed.','At least one test mass followed the wrong decision branch.')}return pass;
+  }
+  async function testAct(){
+    const v=validateStage(3);if(!v.ok)return failValidation(v);const s=v.s;const masses=[475,500,525],results=[];renderBatch(masses,results);for(let i=0;i<masses.length;i++){resetFactoryVisualOnly();await pulseEdge(edgeBetween(s.start,'out',s.sensor));const r=await runPhysicalBottle(masses[i],s,false);results[i]=r;renderBatch(masses,results,i);if(!r.correct){setFlowFeedback('bad','Wrong physical route.',`${masses[i]} g went to ${r.route}; it should go to ${r.expected}.`);setTestFeedback('bad','Failed physical output test.',`Check the decision condition and that the NO branch connects to “Send signal to reject actuator”.`);break}await wait(170)}const pass=results.length===3&&results.every(r=>r.correct);if(pass){state.completed.add('act');setChallengeStatus('pass','Passed');setFlowFeedback('good','Physical output proved.','YES needs no actuator movement. NO sends a signal to the reject actuator, which changes the bottle route.');setTestFeedback('good','Passed.','500 g shipped; 475 g and 525 g were rejected. Challenge 4 is unlocked.')}else setChallengeStatus('fail','Needs revision');return pass;
+  }
+  async function testLoop(){
+    const v=validateStage(4);if(!v.ok)return failValidation(v);const s=v.s;const masses=[500,475,505,525,495,480],results=[];renderBatch(masses,results);await pulseEdge(edgeBetween(s.start,'out',s.sensor));for(let i=0;i<masses.length;i++){resetFactoryVisualOnly(false);const r=await runPhysicalBottle(masses[i],s,true);results[i]=r;renderBatch(masses,results,i);if(!r.correct){setChallengeStatus('fail','Needs revision');setFlowFeedback('bad','Continuous test failed.',`${masses[i]} g reached ${r.route}, expected ${r.expected}.`);setTestFeedback('bad','Batch stopped at the first wrong result.','Follow the highlighted flowchart path to find the incorrect statement or arrow.');return false}if(i<masses.length-1){bubble('sensor','Loop returns to sensor','The previous outcome returns control here. The next bottle begins with a new sensor reading.','good');await wait(220);hideBubbles()}}
+    state.completed.add('loop');setChallengeStatus('pass','Passed');setFlowFeedback('good','Complete flowchart proved.','Both decision outcomes return to the sensor, so the same control process repeats without another START.');setTestFeedback('good','Passed · 6/6 bottles correct.','One START launched a continuous sensor → ADC → microprocessor → decision → actuator loop.');$('completion').hidden=false;return true;
+  }
+
+  function resetFactoryVisualOnly(hide=true){$('wrong-mark').setAttribute('visibility','hidden');$('pusher-arm').setAttribute('transform','translate(0 0)');$('sensor-led').setAttribute('fill','#9aa6ad');$('cpu-led').setAttribute('fill','#8e9aa1');$('cpu-screen').textContent='WAITING';hideBubbles();hideRunPopup();clearActive();if(hide)$('bottle').setAttribute('visibility','hidden')}
+
+  async function runTest(){
+    if(state.busy)return;state.busy=true;state.runToken++;const token=state.runToken;$('run-test').disabled=true;$('reset-line').disabled=true;setChallengeStatus('testing','Testing…');resetLine();renderTabs();
+    try{if(state.challenge===0)await testSense();else if(state.challenge===1)await testDecide();else if(state.challenge===2)await testAct();else await testLoop();}
+    catch(error){console.error(error);setChallengeStatus('fail','Test error');setTestFeedback('bad','The test encountered an error.','Reset the line and try again.');}
+    finally{if(token===state.runToken){state.busy=false;$('run-test').disabled=false;$('reset-line').disabled=false;renderAll()}}
+  }
+
+  function resetLab(){state.runToken++;state.busy=false;state.nodes=[];state.edges=[];state.nextNode=1;state.nextEdge=1;state.selected=null;state.pendingPort=null;state.history=[];state.completed.clear();state.testStatus=['idle','idle','idle','idle'];state.challenge=0;chartSize={w:BASE_CHART_W,h:BASE_CHART_H};$('undo').disabled=true;$('completion').hidden=true;$('config').hidden=true;ensureChartHeight(true);renderAll();resetLine();setFlowFeedback('','Build the first challenge.','Nothing runs until you choose Run challenge test.')}
+
+  // Deterministic helper used for browser regression testing; it builds the same chart learners can build manually.
+  function debugBuildFull(){
+    state.nodes=[];state.edges=[];state.nextNode=1;state.nextEdge=1;state.history=[];state.selected=null;
+    function n(type,op,x,y){const node={id:`N${state.nextNode++}`,type,x,y,config:{op}};state.nodes.push(node);return node}
+    const start=n('terminator','start',410,58),sensor=n('io','sensorPressure',410,150),adc=n('process','adc',410,238),send=n('process','sendCPU',410,326),compare=n('process','compare',410,414),decision=n('decision','inRange',410,522),actuator=n('process','signalActuator',635,522);
+    function e(a,k,b){state.edges.push({id:`E${state.nextEdge++}`,from:{node:a.id,kind:k},to:{node:b.id,kind:'in'}})}
+    e(start,'out',sensor);e(sensor,'out',adc);e(adc,'out',send);e(send,'out',compare);e(compare,'out',decision);e(decision,'no',actuator);e(decision,'yes',sensor);e(actuator,'out',sensor);chartSize={w:BASE_CHART_W,h:700};setChartHeight(700,true);renderAll();return{start,sensor,adc,send,compare,decision,actuator};
+  }
+
+  $('config-close').addEventListener('click',()=>{$('config').hidden=true});
+  $('delete-selected').addEventListener('click',deleteSelected);$('undo').addEventListener('click',undo);$('clear-chart').addEventListener('click',clearChart);$('auto-layout').addEventListener('click',autoLayout);$('run-test').addEventListener('click',runTest);$('reset-line').addEventListener('click',resetLine);
+  $('flowchart').addEventListener('click',e=>{if(e.target===$('flowchart')||e.target.classList.contains('chart-grid')){state.selected=null;state.pendingPort=null;$('config').hidden=true;renderAll()}});
+  window.addEventListener('pointermove',e=>{updatePaletteDrag(e);updateNodeDrag(e);updateWire(e)});window.addEventListener('pointerup',e=>{finishPaletteDrag(e);finishNodeDrag(e);finishWire(e)});
+  window.addEventListener('keydown',e=>{if((e.key==='Delete'||e.key==='Backspace')&&state.selected&&!state.busy&&!['SELECT','INPUT','TEXTAREA'].includes(document.activeElement?.tagName)){e.preventDefault();deleteSelected()}});
+
+  window.__labDebug={state,debugBuildFull,structure,validateStage,runTest,selectChallenge,resetLab,getNode,opNode,connect,addNode,renderAll,runPhysicalBottle,resetLine};
+  renderPalette();renderTabs();renderAll();resetLine();
+})();
+</script>
+</body>
+</html>

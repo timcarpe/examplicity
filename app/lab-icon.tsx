@@ -250,6 +250,19 @@ function IconDrawing({ slug }: LabIconProps) {
           <path className="secondary-line" d="M488 184h52m-52 24h52m-52 24h34" />
         </>
       );
+    case 'automated-system-control-flowcharts':
+      return (
+        <>
+          <rect height="62" rx="14" width="116" x="48" y="149" />
+          <path className="secondary-line" d="M76 180h60m-30-30v60" />
+          <path d="M164 180h78m-18-18 18 18-18 18" />
+          <rect className="is-solid tone-one" height="82" rx="16" width="136" x="242" y="139" />
+          <path d="M378 180h66m-18-18 18 18-18 18" />
+          <path className="tone-three" d="m500 126 62 54-62 54-62-54z" />
+          <path d="M562 180h30m-18-18 18 18-18 18M500 234v48H106v-71m-18 18 18-18 18 18" />
+          <circle className="is-solid tone-three" cx="592" cy="180" r="10" />
+        </>
+      );
     case 'translator':
       return (
         <>
