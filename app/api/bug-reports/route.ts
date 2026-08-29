@@ -1,4 +1,4 @@
-import { randomUUID } from 'node:crypto';
+import { createHmac, randomUUID } from 'node:crypto';
 import { neon } from '@neondatabase/serverless';
 
 import {
@@ -156,6 +156,21 @@ function serializedField(value: BugReportPayload[keyof BugReportPayload] | undef
   return JSON.stringify(value) ?? null;
 }
 
+export function clientIp(request: Request, isVercel = process.env.VERCEL === '1'): string {
+  const forwarded = isVercel
+    ? request.headers.get('x-vercel-forwarded-for')
+    : request.headers.get('x-vercel-forwarded-for') ?? request.headers.get('x-forwarded-for');
+  const candidate = forwarded?.split(',')[0]?.trim();
+  if (!candidate || candidate.length > 64 || !/^[0-9a-f:.]+$/i.test(candidate)) {
+    return 'unknown';
+  }
+  return candidate.toLowerCase();
+}
+
+export function ipFingerprint(ip: string, salt: string): string {
+  return createHmac('sha256', salt).update(`bug-report:v1\0${ip}`).digest('hex');
+}
+
 export async function POST(request: Request) {
   if (!isSameOrigin(request)) {
     return response({ error: 'Invalid request.' }, 403);
@@ -200,19 +215,27 @@ export async function POST(request: Request) {
   const reportId = randomUUID();
 
   try {
+    const salt = process.env.BUG_REPORT_IP_SALT;
+    if (!salt) throw new Error('BUG_REPORT_IP_SALT is not configured');
+    const ip = clientIp(request);
+    if (process.env.VERCEL === '1' && ip === 'unknown') {
+      throw new Error('Client IP is unavailable');
+    }
+    const fingerprint = ipFingerprint(ip, salt);
     const rows = await getDatabaseClient()`
-      INSERT INTO bug_reports (
-        id,
-        description,
-        contact_email,
-        lab_slug,
-        page_url,
-        deployment_sha,
-        user_agent,
-        diagnostics,
-        lab_state
+      WITH claimed AS (
+        INSERT INTO bug_report_rate_limits (ip_hash, last_submitted_at)
+        VALUES (${fingerprint}, now())
+        ON CONFLICT (ip_hash) DO UPDATE
+          SET last_submitted_at = EXCLUDED.last_submitted_at
+          WHERE bug_report_rate_limits.last_submitted_at <= now() - interval '24 hours'
+        RETURNING 1
       )
-      VALUES (
+      INSERT INTO bug_reports (
+        id, description, contact_email, lab_slug, page_url, deployment_sha,
+        user_agent, diagnostics, lab_state
+      )
+      SELECT
         ${reportId},
         ${payload.description},
         ${payload.email ?? null},
@@ -226,11 +249,17 @@ export async function POST(request: Request) {
           : null},
         ${serializedField(payload.diagnostics)}::jsonb,
         ${serializedField(payload.labState)}::jsonb
-      )
+      FROM claimed
       RETURNING id
     `;
     const insertedId = (rows as unknown as Array<{ id?: unknown }>)[0]?.id;
-    return createdResponse(typeof insertedId === 'string' ? insertedId : reportId);
+    if (typeof insertedId !== 'string') {
+      return Response.json(
+        { error: 'You can submit one bug report every 24 hours.' },
+        { status: 429, headers: { 'Retry-After': '86400' } },
+      );
+    }
+    return createdResponse(insertedId);
   } catch {
     return response({ error: 'Unable to submit report.' }, 500);
   }

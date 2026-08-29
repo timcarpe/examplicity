@@ -4,7 +4,8 @@ CREATE TABLE IF NOT EXISTS bug_reports (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   created_at timestamptz NOT NULL DEFAULT now(),
   status text NOT NULL DEFAULT 'new'
-    CHECK (status IN ('new', 'triaged', 'confirmed', 'resolved', 'duplicate', 'rejected')),
+    CONSTRAINT bug_reports_status_check
+    CHECK (status IN ('new', 'triaged', 'confirmed', 'resolved', 'duplicate', 'rejected', 'spam')),
   description text NOT NULL
     CHECK (length(btrim(description)) > 0 AND octet_length(description) <= 8192),
   contact_email text CHECK (contact_email IS NULL OR octet_length(contact_email) <= 254),
@@ -27,3 +28,19 @@ CREATE INDEX IF NOT EXISTS bug_reports_status_created_at_idx
 
 CREATE INDEX IF NOT EXISTS bug_reports_created_at_idx
   ON bug_reports (created_at DESC);
+
+ALTER TABLE bug_reports DROP CONSTRAINT IF EXISTS bug_reports_status_check;
+ALTER TABLE bug_reports ADD CONSTRAINT bug_reports_status_check
+  CHECK (status IN ('new', 'triaged', 'confirmed', 'resolved', 'duplicate', 'rejected', 'spam'));
+
+CREATE TABLE IF NOT EXISTS bug_report_rate_limits (
+  ip_hash text PRIMARY KEY CHECK (length(ip_hash) = 64),
+  last_submitted_at timestamptz NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS bug_report_rate_limits_last_submitted_at_idx
+  ON bug_report_rate_limits (last_submitted_at);
+
+ALTER TABLE bug_reports DROP CONSTRAINT IF EXISTS bug_reports_duplicate_of_fkey;
+ALTER TABLE bug_reports ADD CONSTRAINT bug_reports_duplicate_of_fkey
+  FOREIGN KEY (duplicate_of) REFERENCES bug_reports (id) ON DELETE SET NULL;

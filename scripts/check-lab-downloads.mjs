@@ -49,6 +49,9 @@ for (const lab of labs) {
     || /report a bug/i.test(packaged)
     || packaged.includes('/api/bug-reports')
     || packaged.includes('DATABASE_URL')
+    || packaged.includes('BUG_REPORT_IP_SALT')
+    || packaged.includes('CRON_SECRET')
+    || packaged.includes('bug_report_rate_limits')
     || /postgres(?:ql)?:\/\//i.test(packaged)
   ) {
     throw new Error(`${lab.slug} produced invalid packaged HTML`);
