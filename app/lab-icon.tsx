@@ -326,18 +326,13 @@ function IconDrawing({ slug }: LabIconProps) {
     case 'prime-factors-hcf-lcm':
       return (
         <>
-          <rect height="58" rx="15" width="110" x="86" y="62" />
-          <rect height="58" rx="15" width="110" x="444" y="62" />
-          <path className="secondary-line" d="M141 120v24M141 144 92 178M141 144l49 34M499 120v24M499 144l-49 34M499 144l49 34" />
-          <g className="thin-lines">
-            <circle cx="82" cy="200" r="22" />
-            <circle cx="190" cy="200" r="22" />
-            <circle cx="450" cy="200" r="22" />
-            <circle cx="558" cy="200" r="22" />
-          </g>
-          <path d="M212 200h64M428 200h-64" />
-          <circle className="is-solid tone-one" cx="320" cy="200" r="28" />
-          <path className="secondary-line" d="M82 222v46h476v-46" />
+          <rect height="96" rx="48" width="328" x="68" y="94" />
+          <rect height="96" rx="48" width="328" x="244" y="170" />
+          <circle cx="148" cy="142" r="22" />
+          <circle cx="212" cy="142" r="22" />
+          <circle className="is-solid tone-one" cx="320" cy="180" r="28" />
+          <circle cx="428" cy="218" r="22" />
+          <circle cx="492" cy="218" r="22" />
         </>
       );
     case 'database-normalisation':
@@ -354,47 +349,34 @@ function IconDrawing({ slug }: LabIconProps) {
     case 'ratio-concentration-flow-rate':
       return (
         <>
-          <rect className="is-solid tone-one" height="108" rx="22" width="124" x="64" y="62" />
-          <rect height="108" rx="22" width="124" x="64" y="214" />
-          <path d="M188 116h102v46M188 268h102v-46" />
-          <circle cx="324" cy="192" r="48" />
-          <path d="M372 192h82" />
-          <path className="secondary-line" d="M420 192v76" />
-          <path d="M454 192h48" />
-          <path d="M502 158h66v68c0 38-24 66-66 66z" />
+          <path d="M194 72v184c0 52 42 94 94 94h64c52 0 94-42 94-94V72" />
+          <path className="secondary-line" d="M214 156h212" />
+          <path className="is-solid tone-one" d="M214 218h212v38c0 41-33 74-74 74h-64c-41 0-74-33-74-74z" />
         </>
       );
     case 'recurring-decimals-fractions':
       return (
         <>
-          <g className="thin-lines">
-            <rect height="52" rx="13" width="52" x="72" y="92" />
-            <rect height="52" rx="13" width="52" x="136" y="92" />
-            <rect height="52" rx="13" width="52" x="200" y="92" />
-            <rect height="52" rx="13" width="52" x="264" y="92" />
-            <rect height="52" rx="13" width="52" x="328" y="92" />
-            <rect height="52" rx="13" width="52" x="392" y="92" />
-            <rect height="52" rx="13" width="52" x="456" y="92" />
-            <rect height="52" rx="13" width="52" x="136" y="216" />
-            <rect height="52" rx="13" width="52" x="200" y="216" />
-            <rect height="52" rx="13" width="52" x="264" y="216" />
-            <rect height="52" rx="13" width="52" x="328" y="216" />
-            <rect height="52" rx="13" width="52" x="392" y="216" />
-            <rect height="52" rx="13" width="52" x="456" y="216" />
-          </g>
-          <rect className="is-solid tone-one" height="52" rx="13" width="52" x="520" y="92" />
-          <path d="M82 180h476" />
-          <circle cx="112" cy="180" r="22" />
+          <path d="M82 212c38-82 84-82 122 0s84 82 122 0 84-82 122 0 84 82 122 0" />
+          <circle cx="82" cy="212" r="18" />
+          <circle cx="326" cy="212" r="18" />
+          <circle className="is-solid tone-one" cx="570" cy="212" r="22" />
+          <path className="secondary-line" d="M82 118h488" />
         </>
       );
     case 'rounded-measurements-bounds':
       return (
         <>
-          <path d="M86 180h468M86 158v44M554 158v44" />
-          <path className="secondary-line" d="M180 166v28M274 166v28M368 166v28M462 166v28" />
-          <path d="M196 112v136M444 112v136" />
+          <path d="M118 180h404M118 128v104M522 128v104" />
           <circle className="is-solid tone-one" cx="320" cy="180" r="30" />
-          <path className="secondary-line" d="M196 272h248" />
+        </>
+      );
+    case 'repeated-percentage-change':
+      return (
+        <>
+          <rect className="is-solid tone-one" height="96" rx="20" width="144" x="248" y="132" />
+          <rect height="160" rx="24" width="240" x="200" y="100" />
+          <rect height="232" rx="30" width="348" x="146" y="64" />
         </>
       );
     case 'set-membership-operations':
@@ -403,12 +385,6 @@ function IconDrawing({ slug }: LabIconProps) {
           <circle cx="254" cy="180" r="112" />
           <circle cx="386" cy="180" r="112" />
           <path className="is-solid tone-one" d="M320 89a112 112 0 0 1 0 182 112 112 0 0 1 0-182z" />
-          <g className="thin-lines">
-            <rect height="34" rx="10" width="54" x="94" y="90" />
-            <rect height="34" rx="10" width="54" x="492" y="90" />
-            <rect height="34" rx="10" width="54" x="94" y="236" />
-            <rect height="34" rx="10" width="54" x="492" y="236" />
-          </g>
         </>
       );
     case 'python-programming-practice':

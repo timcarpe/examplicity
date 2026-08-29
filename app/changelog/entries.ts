@@ -10,7 +10,7 @@ export const changelogEntries: readonly ChangelogEntry[] = [
     date: '2026-08-29',
     displayDate: '29 August 2026',
     publicChanges: [
-      'Added five Cambridge IGCSE Mathematics 0580 labs covering prime factors, set operations, recurring decimals, rounded bounds, and ratio, concentration and flow rate.',
+      'Added six Cambridge IGCSE Mathematics 0580 labs covering prime factors, set operations, recurring decimals, rounded bounds, ratio and flow rate, and repeated percentage change.',
       'Added a database normalisation experiment for Cambridge International AS Level Computer Science 9618.',
       'Added Data Transmission Methods, Packet Switching, IPv4 Subnetting, Python Programming Practice, Combinational Logic Circuit Design, and Dijkstra and A* Graph Search.',
       'Added persistent subject and qualification controls, with course-specific topic guidance and syllabus labels.',
