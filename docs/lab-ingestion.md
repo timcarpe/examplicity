@@ -51,6 +51,13 @@ Keep those responsibilities separate.
 - [ ] Base wide multi-column layout transitions on the named `lab-canvas`
   container rather than the browser viewport, so they respond to the shared
   canvas cap as well as narrow screens.
+- [ ] Treat `1200px` as the lab's native desktop composition, not a final wrapper
+  imposed after authoring. At `1440×1000` and `1366×768`, the complete primary
+  workspace must fit the shared rail without page-level horizontal overflow,
+  clipped controls, or a hidden scrollbar behind host chrome. Keep the existing
+  principal panels and actions above the fold; stacking them below it is not an
+  acceptable ingestion fix. Mild lab-owned compaction, proportional geometry
+  changes and container-query transitions are appropriate.
 - [ ] Do not add host messaging, parent-frame state, or a second navigation
   system without explicit architecture approval. The current integration is
   only the manifest `href` plus the iframe in `app/catalogue.tsx`.
@@ -173,6 +180,11 @@ the default drawing for an approved lab.
 - [ ] Use semantic headings and sections, real `<button type="button">` and
   form controls, labels, and visible focus styles. Do not make a clickable
   `<div>` the only control.
+- [ ] Keep ordinary interface controls on the shared palette. Generic buttons,
+  active-tool states and fields must resolve through `--lab-control`,
+  `--lab-accent` and `--lab-accent-soft`; do not retain a source lab's brighter
+  one-off button colour. Preserve local colours only where they encode meaning
+  in the instructional visualization, and keep those colours out of the chrome.
 - [ ] Give interactive visualizations an accessible name or role. Existing
   examples include the bitmap's `aria-label="Paintable bitmap"`, the CPU SVGs'
   `role="img"` plus `aria-label`, and the translator's labelled editors and
@@ -218,6 +230,12 @@ the default drawing for an approved lab.
   screen resolves and the iframe loads the intended HTML.
 - [ ] Exercise the lab's main controls, reset/empty/error paths, keyboard
   paths, mobile layout, and shell links. Check the browser console for errors.
+- [ ] At both `1440×1000` and `1366×768`, record a standalone browser check that
+  `document.documentElement.scrollWidth <= document.documentElement.clientWidth`.
+  Visually confirm all intended primary panels and controls remain above the
+  current fold, fixed visualizations start in a useful fully readable position,
+  and compaction has not created conspicuous whitespace. Repeat at 1200, 900 and
+  390 pixels for responsive behavior.
 - [ ] If the lab cannot remain monolithic, needs shared runtime code, changes
   the host/iframe contract, adds dependencies, or requires a new exam/topic
   convention, stop and request approval for that specific architecture change.

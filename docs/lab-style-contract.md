@@ -24,8 +24,20 @@ Do not edit an embedded `LAB_FRAME_STYLES`, `LAB_MANIFEST_HEAD`,
 
 - Use the generated lab page rail for the outer layout: it is capped at
   `1200px`, with `28px` minimum desktop gutters and `18px` mobile gutters, to
-  align with the host header controls. Dense teaching interfaces may constrain
-  an inner workspace further, but must not increase the outer page width.
+  align with the host header controls. Every standard lab must compose natively
+  inside that rail. A clipped fixed-width canvas, hidden page-level horizontal
+  scrollbar, or wrapper-level overflow workaround is a failed layout—not a
+  supported compatibility technique.
+- Preserve the lab's intended single-screen desktop composition at both
+  `1440×1000` and `1366×768`. Adapt lab-owned columns, fixed canvases, controls,
+  spacing and typography to the 1200px rail. Do not satisfy the width contract
+  by stacking a primary panel below the fold or leaving a conspicuous gap where
+  content used to be.
+- Base wide-layout transitions on the `lab-canvas` container. Viewport media
+  queries do not detect when a capped 1200px rail is narrower than the viewport.
+  Fixed instructional geometry may use an intentionally labelled internal
+  scroller only when the full starting state and essential controls remain
+  visible; page-level horizontal overflow is never acceptable.
 - The manifest-controlled `compact` layout keeps the same outer rail and adds
   the standard `18px` desktop (`8px` mobile) top offset. Elements marked with
   `data-lab-workspace` use the supported `820px` compact workspace maximum.
@@ -52,6 +64,13 @@ Shared tokens may style the page canvas, headings, descriptive copy, ordinary
 panels, generic buttons and fields, focus indicators, and semantic status
 surfaces.
 
+Ordinary buttons and selected-tool states must use the shared control and accent
+tokens (`--lab-control`, `--lab-accent`, and `--lab-accent-soft`). Do not introduce
+a saturated local button colour during ingestion. A local colour is justified
+only when it carries instructional meaning inside the operated model, such as a
+packet route, signal, bus, warning or diagram legend; that colour must not leak
+into surrounding interface chrome.
+
 Keep these local to each lab:
 
 - diagram, canvas, waveform, packet, signal, bus, syntax, and command colors;
@@ -70,6 +89,10 @@ scrolling behavior.
 2. Run `npm run labs:sync`.
 3. Run `npm run labs:sync:check`, lint, and the production build.
 4. Check keyboard focus and reduced motion.
-5. Resize at 1600, 1200, 900, and 390 pixels; also check lab-specific
-   breakpoints and Binary at 820, 640, and 390 pixels.
-6. Smoke-test the lab interaction before committing.
+5. Check the standalone lab at `1440×1000` and `1366×768`. At each size, verify
+   `document.documentElement.scrollWidth <= document.documentElement.clientWidth`,
+   the intended primary panels and controls remain above the current fold, and
+   no noticeable dead space was introduced.
+6. Resize at 1200, 900, and 390 pixels; also check lab-specific breakpoints and
+   Binary at 820, 640, and 390 pixels.
+7. Smoke-test the lab interaction before committing.
