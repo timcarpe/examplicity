@@ -12,13 +12,13 @@ and reduced-motion defaults. Its custom properties are namespaced with
 `--lab-` so they cannot silently replace instructional variables.
 
 Run `npm run labs:sync` after changing the contract. It copies the stylesheet
-into every marked `LAB_FRAME_STYLES` block and renders the manifest-owned
-syllabus chips into every `LAB_SYLLABUS_CHIPS` block. `npm run labs:sync:check`
-verifies both generated surfaces, and the production build runs that check
-automatically.
+into every marked `LAB_FRAME_STYLES` block. The content generator writes each
+`LAB_MANIFEST_HEAD`, visible manifest title, optional subtitle and
+`LAB_SYLLABUS_CHIPS` block. `npm run labs:sync:check` verifies every generated
+surface, and the production build runs that check automatically.
 
-Do not edit an embedded `LAB_FRAME_STYLES` or `LAB_SYLLABUS_CHIPS` block
-directly.
+Do not edit an embedded `LAB_FRAME_STYLES`, `LAB_MANIFEST_HEAD`,
+`data-lab-manifest` or `LAB_SYLLABUS_CHIPS` region directly.
 
 ## Homogenization rules
 

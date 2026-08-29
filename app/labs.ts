@@ -43,6 +43,24 @@ export const syllabusRegistry = {
 
 export type ExamCode = keyof typeof syllabusRegistry;
 
+export const qualificationLevels = ['GCSE', 'AS', 'A'] as const;
+export type QualificationLevel = (typeof qualificationLevels)[number];
+export type SyllabusQualification = QualificationLevel | 'AS/A';
+
+export const syllabusAlignmentIncludesLevel = (
+  qualification: SyllabusQualification,
+  level: QualificationLevel,
+) => qualification === level || (qualification === 'AS/A' && (level === 'AS' || level === 'A'));
+
+export const topics = [
+  'Data representation',
+  'Networks & communication',
+  'Processors & memory',
+  'System software',
+  'Programming',
+] as const;
+export type Topic = (typeof topics)[number];
+
 export const subjects = [
   {
     id: 'computer-science',
@@ -51,15 +69,49 @@ export const subjects = [
     views: {
       '0478': {
         href: '/computer-science/0478',
-        headerLabel: 'Cambridge IGCSE Computer Science · 0478',
-        intro: 'Interactive Cambridge IGCSE Computer Science (0478) labs for exam practice and visual concept explanations you can see, change and understand.',
         metaDescription: 'Interactive Cambridge IGCSE Computer Science 0478 labs for exam practice, revision and visual concept explanations.',
       },
       '9618': {
         href: '/computer-science/9618',
-        headerLabel: 'Cambridge AS & A Level Computer Science · 9618',
-        intro: 'Interactive Cambridge International AS & A Level Computer Science (9618) labs for exam practice and visual concept explanations you can see, change and understand.',
         metaDescription: 'Interactive Cambridge International AS & A Level Computer Science 9618 labs for exam practice, revision and visual concept explanations.',
+      },
+    },
+    qualificationViews: {
+      GCSE: {
+        exam: '0478',
+        headerLabel: 'Cambridge IGCSE Computer Science · 0478',
+        intro: 'Interactive Cambridge IGCSE Computer Science (0478) labs for exam practice and visual concept explanations you can see, change and understand.',
+        topicBriefings: {
+          'Data representation': 'Practise binary and hexadecimal conversion, bitmap compression and digital sound representation for Cambridge IGCSE Computer Science 0478.',
+          'Networks & communication': 'Explore parity, ARQ, encryption, DNS and web page retrieval for Cambridge IGCSE Computer Science 0478.',
+          'Processors & memory': 'Follow the fetch–decode–execute cycle through CPU registers and system buses for Cambridge IGCSE Computer Science 0478.',
+          'System software': 'Investigate operating systems, the boot process, paging, virtual memory and cache for Cambridge IGCSE Computer Science 0478.',
+          Programming: 'Write, run and trace Cambridge-style pseudocode alongside Python for Cambridge IGCSE Computer Science 0478 exam practice.',
+        } satisfies Record<Topic, string>,
+      },
+      AS: {
+        exam: '9618',
+        headerLabel: 'Cambridge International AS Level Computer Science · 9618',
+        intro: 'Interactive Cambridge International AS Level Computer Science (9618) labs for exam practice and visual concept explanations you can see, change and understand.',
+        topicBriefings: {
+          'Data representation': 'Practise binary and hexadecimal, image and sound representation, RLE and Huffman coding for Cambridge International AS Level Computer Science 9618.',
+          'Networks & communication': 'Explore parity, DNS, network topologies and Ethernet CSMA/CD for Cambridge International AS Level Computer Science 9618.',
+          'Processors & memory': 'Trace the fetch–decode–execute cycle and Cambridge assembly across CPU registers and buses for Cambridge International AS Level Computer Science 9618.',
+          'System software': 'Examine software layers, booting and memory management for Cambridge International AS Level Computer Science 9618.',
+          Programming: 'Write, translate, run and trace Cambridge-style pseudocode alongside Python for Cambridge International AS Level Computer Science 9618 exam practice.',
+        } satisfies Record<Topic, string>,
+      },
+      A: {
+        exam: '9618',
+        headerLabel: 'Cambridge International A Level Computer Science · 9618',
+        intro: 'Interactive Cambridge International A Level Computer Science (9618) labs for exam practice and visual concept explanations you can see, change and understand.',
+        topicBriefings: {
+          'Data representation': 'Explore binary floating-point representation and shared 9618 data-representation foundations for Cambridge International A Level Computer Science 9618.',
+          'Networks & communication': 'Explore encryption, DNS and the TCP/IP protocol stack for Cambridge International A Level Computer Science 9618.',
+          'Processors & memory': 'Trace Cambridge assembly and shared processor foundations across CPU registers and buses for Cambridge International A Level Computer Science 9618.',
+          'System software': 'Examine memory management, process states and CPU scheduling for Cambridge International A Level Computer Science 9618.',
+          Programming: 'Write, translate, run and trace Cambridge-style pseudocode alongside Python for Cambridge International A Level Computer Science 9618 exam practice.',
+        } satisfies Record<Topic, string>,
       },
     },
   },
@@ -76,11 +128,13 @@ export type Activity = {
 
 export type Lab = Activity & {
   subject: SubjectId;
-  topic: string;
+  topic: Topic;
   format: string;
+  metaDescription: string;
+  subtitle: string | null;
   syllabuses: {
     code: ExamCode;
-    qualification: string;
+    qualification: SyllabusQualification;
     sections: {
       id: string;
       page: number;
@@ -94,6 +148,8 @@ export const translator: Lab = {
   slug: 'translator',
   title: 'Pseudocode ↔ Python',
   description: 'Write, synchronize, run and trace Cambridge-style pseudocode alongside Python.',
+  metaDescription: 'Write, translate, run and trace Cambridge-style pseudocode alongside Python for Computer Science 0478 and 9618.',
+  subtitle: 'For Cambridge IGCSE and AS & A Level Computer Science (0478 and 9618), write pseudocode or Python, then run or trace either version.',
   topic: 'Programming',
   format: 'Code translator',
   kind: 'tool',
@@ -110,6 +166,8 @@ export const labs: Lab[] = [
     slug: 'binary-numbers',
     title: 'Binary Number Practice',
     description: 'Build fluency with binary and hexadecimal registers through generated GCSE and AS questions.',
+    metaDescription: 'Practise binary, denary and hexadecimal conversions for Cambridge Computer Science 0478 and 9618.',
+    subtitle: 'Practise binary arithmetic and convert between binary, denary and hexadecimal for Cambridge IGCSE Computer Science 0478 and AS Level Computer Science 9618.',
     topic: 'Data representation',
     format: 'Practice',
     kind: 'lab',
@@ -124,6 +182,8 @@ export const labs: Lab[] = [
     slug: 'bitmap-compression',
     title: 'Bitmap Compression',
     description: 'Paint a bitmap, change its colour depth, and compare normal, RLE and Huffman encoding.',
+    metaDescription: 'Explore bitmap colour depth, uncompressed data, run-length encoding and Huffman coding for Cambridge 0478 and 9618.',
+    subtitle: 'For Cambridge IGCSE and AS & A Level Computer Science (0478 and 9618), paint a bitmap, choose its colour depth, then compare uncompressed, RLE and Huffman encodings.',
     topic: 'Data representation',
     format: 'Visual experiment',
     kind: 'lab',
@@ -138,6 +198,8 @@ export const labs: Lab[] = [
     slug: 'binary-floating-point',
     title: 'Binary Floating-Point Precision and Range',
     description: 'Allocate bits between the mantissa and exponent, test authentic datasets, and observe precision, range, rounding, overflow and underflow.',
+    metaDescription: 'Explore binary floating-point mantissa and exponent allocation, precision, range, rounding, overflow and underflow for Cambridge A Level Computer Science 9618.',
+    subtitle: 'For Cambridge A Level Computer Science 9618, allocate bits between the mantissa and exponent, then compare precision, range, rounding, overflow and underflow.',
     topic: 'Data representation',
     format: 'Representation experiment',
     kind: 'lab',
@@ -151,6 +213,8 @@ export const labs: Lab[] = [
     slug: 'sound-sampling',
     title: 'Digital Sound Sampling',
     description: 'Change sample rate and resolution, then compare the reconstructed signal visually and by listening.',
+    metaDescription: 'Explore sample rate, bit depth and digital sound reconstruction for Cambridge Computer Science 0478 and 9618.',
+    subtitle: 'For Cambridge IGCSE and AS & A Level Computer Science (0478 and 9618), change sample rate and bit depth, then compare the reconstructed sound.',
     topic: 'Data representation',
     format: 'Signal lab',
     kind: 'lab',
@@ -165,6 +229,8 @@ export const labs: Lab[] = [
     slug: 'huffman-rover',
     title: 'Huffman Rover',
     description: 'Design variable-length codes, decode a binary transmission and guide a rover across Mars.',
+    metaDescription: 'Practise Huffman coding, variable-length codes and binary decoding for Cambridge A Level Computer Science 9618.',
+    subtitle: 'Practise Huffman coding for Cambridge AS & A Level Computer Science 9618 as the rover decodes one movement command at a time.',
     topic: 'Data representation',
     format: 'Coding challenge',
     kind: 'lab',
@@ -178,6 +244,8 @@ export const labs: Lab[] = [
     slug: 'parity-arq',
     title: 'Parity & ARQ Transmission',
     description: 'Corrupt frames in flight and watch parity detection and automatic repeat requests respond.',
+    metaDescription: 'Explore parity checks, transmission errors and automatic repeat requests for Cambridge Computer Science 0478 and 9618.',
+    subtitle: 'For Cambridge IGCSE and AS & A Level Computer Science (0478 and 9618), change bits in transit, then watch parity and ARQ respond.',
     topic: 'Networks & communication',
     format: 'Protocol lab',
     kind: 'lab',
@@ -192,6 +260,8 @@ export const labs: Lab[] = [
     slug: 'network-topology',
     title: 'Network Topology Builder',
     description: 'Build bus, star, mesh and hybrid networks, then send packets through your design.',
+    metaDescription: 'Build bus, star, mesh and hybrid network topologies for Cambridge A Level Computer Science 9618.',
+    subtitle: 'For Cambridge AS & A Level Computer Science 9618, build bus, star, mesh and hybrid networks, then send packets through the result.',
     topic: 'Networks & communication',
     format: 'Network builder',
     kind: 'lab',
@@ -205,6 +275,8 @@ export const labs: Lab[] = [
     slug: 'csma-cd',
     title: 'Ethernet CSMA/CD',
     description: 'Control three stations on a shared cable and observe collision detection and backoff.',
+    metaDescription: 'Explore carrier sensing, Ethernet collisions and binary exponential backoff for Cambridge A Level Computer Science 9618.',
+    subtitle: 'Explore CSMA/CD for Cambridge AS & A Level Computer Science 9618 as three stations share one cable and respond when two begin at once.',
     topic: 'Networks & communication',
     format: 'Network simulation',
     kind: 'lab',
@@ -218,6 +290,8 @@ export const labs: Lab[] = [
     slug: 'encryption-in-data-transmission',
     title: 'Encryption in Data Transmission',
     description: 'Send plaintext across a shared channel, place symmetric or asymmetric keys, and compare what the receiver and interceptor can read.',
+    metaDescription: 'Explore plaintext, ciphertext and symmetric and asymmetric keys in an interactive transmission lab for Cambridge Computer Science 0478 and 9618.',
+    subtitle: 'Type a message. Watch plain text become cipher text on the shared line. Keys decide who can turn it back into plain text.',
     topic: 'Networks & communication',
     format: 'Security experiment',
     kind: 'lab',
@@ -232,6 +306,8 @@ export const labs: Lab[] = [
     slug: 'dns-web-page-retrieval',
     title: 'DNS and Web Page Retrieval',
     description: 'Enter a URL, trace DNS and web-server requests, and watch returned HTML become a rendered page.',
+    metaDescription: 'Trace how a browser uses a URL, DNS, an IP address, a web server and HTML to retrieve and display a page for Cambridge Computer Science 0478 and 9618.',
+    subtitle: 'Use the browser, then follow each transfer as DNS turns a domain into an IP address and the browser retrieves the requested HTML page.',
     topic: 'Networks & communication',
     format: 'Browser simulation',
     kind: 'lab',
@@ -246,6 +322,8 @@ export const labs: Lab[] = [
     slug: 'tcp-ip-encapsulation',
     title: 'TCP/IP Protocol Stack',
     description: 'Wrap an application message in transport, internet and link-layer headers, then unpack it at the receiver.',
+    metaDescription: 'Build and unpack the four-layer TCP/IP protocol stack to see how ports, IP addresses and MAC addresses support communication for Cambridge 9618.',
+    subtitle: 'Build one transmitted object. Each lower layer adds its own header around everything the layer above already produced.',
     topic: 'Networks & communication',
     format: 'Protocol lab',
     kind: 'lab',
@@ -259,6 +337,8 @@ export const labs: Lab[] = [
     slug: 'fetch-decode-execute',
     title: 'Fetch–Decode–Execute',
     description: 'Advance one clock tick at a time and follow data across CPU pathways and system buses.',
+    metaDescription: 'Follow the fetch–decode–execute cycle, CPU registers and system buses for Cambridge Computer Science 0478 and 9618.',
+    subtitle: 'For Cambridge IGCSE and AS & A Level Computer Science (0478 and 9618), follow each micro-operation through the fetch–decode–execute cycle.',
     topic: 'Processors & memory',
     format: 'CPU simulator',
     kind: 'lab',
@@ -273,6 +353,8 @@ export const labs: Lab[] = [
     slug: 'assembly',
     title: 'Cambridge Assembly',
     description: 'Trace a Cambridge-style assembly program and follow every transfer through the processor.',
+    metaDescription: 'Trace Cambridge 9618 assembly instructions and follow register transfers through a stored-program computer.',
+    subtitle: 'Practise assembly for Cambridge AS & A Level Computer Science 9618 and follow each register transfer within a stored-program computer.',
     topic: 'Processors & memory',
     format: 'Code tracer',
     kind: 'lab',
@@ -286,6 +368,8 @@ export const labs: Lab[] = [
     slug: 'software-stack',
     title: 'Software Stack & Boot Process',
     description: 'Build the software layers, power on the system and test whether an application can run.',
+    metaDescription: 'Explore the operating-system software stack and computer boot process for Cambridge Computer Science 0478 and 9618.',
+    subtitle: 'For Cambridge IGCSE and AS & A Level Computer Science (0478 and 9618), arrange the software layers, boot the system and test an application.',
     topic: 'System software',
     format: 'Systems model',
     kind: 'lab',
@@ -300,6 +384,8 @@ export const labs: Lab[] = [
     slug: 'memory-management',
     title: 'OS Memory Management',
     description: 'Create realistic workloads and watch pages move between storage, RAM, page file and cache.',
+    metaDescription: 'Explore operating-system paging, RAM, virtual memory and CPU cache for Cambridge Computer Science 0478 and 9618.',
+    subtitle: 'For Cambridge IGCSE and AS & A Level Computer Science (0478 and 9618), create workloads and watch pages move between storage, RAM, the page file and CPU cache.',
     topic: 'System software',
     format: 'OS simulation',
     kind: 'lab',
@@ -314,6 +400,8 @@ export const labs: Lab[] = [
     slug: 'process-states-scheduling',
     title: 'Process States and Scheduling',
     description: 'Build CPU scheduling rules, move processes through ready, running and blocked states, and compare waiting and response times.',
+    metaDescription: 'Compare process states and CPU scheduling routines including FCFS, SJF, SRTF and round robin for Cambridge A Level Computer Science 9618.',
+    subtitle: 'Build the scheduler rather than selecting its name. Watch each rule change who waits in Ready, who runs, and when blocked work becomes eligible again.',
     topic: 'System software',
     format: 'OS simulation',
     kind: 'lab',
