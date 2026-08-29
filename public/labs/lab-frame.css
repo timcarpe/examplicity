@@ -104,38 +104,56 @@ body {
   gap: 4px;
   line-height: 1;
   min-height: 29px;
-  padding: 2px 4px;
+  padding: 8px 10px;
+  position: relative;
+  transition: background-color 140ms ease, border-color 140ms ease;
   white-space: nowrap;
 }
 
-.lab-syllabus-chip::before {
-  background: var(--syllabus-chip-text);
-  border-radius: 50%;
-  content: '';
-  height: 6px;
-  margin-left: 5px;
-  width: 6px;
+.lab-syllabus-chip:hover {
+  background: var(--syllabus-chip-hover);
+  border-color: var(--syllabus-chip-border);
 }
 
-.lab-syllabus-chip a {
-  border-radius: var(--lab-pill-radius);
+.lab-syllabus-primary-link {
+  border-radius: inherit;
+  inset: 0;
+  position: absolute;
+  z-index: 0;
+}
+
+.lab-syllabus-primary-link:focus-visible {
+  outline: 2px solid var(--syllabus-chip-text);
+  outline-offset: 2px;
+}
+
+.lab-syllabus-name,
+.lab-syllabus-divider,
+.lab-syllabus-sections {
+  pointer-events: none;
+  position: relative;
+  z-index: 1;
+}
+
+.lab-syllabus-section {
+  border-radius: 4px;
   color: inherit;
-  padding: 5px 6px;
+  padding: 2px;
   text-decoration: none;
 }
 
-.lab-syllabus-chip a:hover {
-  background: var(--syllabus-chip-hover);
+a.lab-syllabus-section {
+  pointer-events: auto;
 }
 
-.lab-syllabus-chip a:focus-visible {
+a.lab-syllabus-section:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+a.lab-syllabus-section:focus-visible {
   outline: 2px solid currentColor;
   outline-offset: 1px;
-}
-
-.lab-syllabus-name strong,
-.lab-syllabus-section.is-primary {
-  font-weight: 800;
 }
 
 .lab-syllabus-name {
@@ -165,11 +183,7 @@ html[data-theme="dark"] .lab-syllabus-name {
   color: var(--syllabus-chip-border) !important;
 }
 
-html[data-theme="dark"] .lab-syllabus-chip::before {
-  background: var(--syllabus-chip-border);
-}
-
-html[data-theme="dark"] .lab-syllabus-chip a:hover {
+html[data-theme="dark"] .lab-syllabus-chip:hover {
   background: rgba(255, 255, 255, 0.08);
 }
 
@@ -187,6 +201,12 @@ body.binary-lab main {
   width: min(820px, calc(100% - 24px));
 }
 
+body.binary-lab .lab-manifest-header {
+  margin-left: 50%;
+  transform: translateX(-50%);
+  width: min(1120px, calc(100vw - 56px));
+}
+
 :where(button, input, select, textarea, summary):focus-visible {
   outline: 3px solid var(--lab-focus);
   outline-offset: 4px;
@@ -200,6 +220,10 @@ body.binary-lab main {
 
   body.binary-lab main {
     width: min(100% - 12px, 820px);
+  }
+
+  body.binary-lab .lab-manifest-header {
+    width: calc(100vw - 24px);
   }
 
   .lab-manifest-header {
@@ -222,11 +246,7 @@ body.binary-lab main {
   .lab-syllabus-chip {
     font-size: 10px;
     min-height: 27px;
-    padding: 2px 4px;
-  }
-
-  .lab-syllabus-chip a {
-    padding: 4px;
+    padding: 7px 8px;
   }
 }
 

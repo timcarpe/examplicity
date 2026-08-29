@@ -62,6 +62,9 @@ const renderSyllabusChips = (lab: Lab) => {
 
     const seenSections = new Set<string>();
     const sections = [...alignment.sections].sort((left, right) => Number(right.primary) - Number(left.primary));
+    const primarySection = sections.find((section) => section.primary);
+    if (!primarySection) throw new Error(`${lab.slug} has no primary section for ${alignment.code}`);
+    const hasMultipleSections = sections.length > 1;
     const sectionLinks = sections.map((section) => {
       if (!/^\d+\.\d+$/.test(section.id) || !Number.isInteger(section.page) || section.page < 1) {
         throw new Error(`${lab.slug} has an invalid ${alignment.code} section reference`);
@@ -70,6 +73,9 @@ const renderSyllabusChips = (lab: Lab) => {
       seenSections.add(section.id);
 
       const primaryClass = section.primary ? ' is-primary' : '';
+      if (!hasMultipleSections) {
+        return `<span class="lab-syllabus-section${primaryClass}">${escapeHtml(section.id)}</span>`;
+      }
       const primaryText = section.primary ? 'primary ' : '';
       return `<a class="lab-syllabus-section${primaryClass}" href="${escapeHtml(syllabus.documentUrl)}#page=${section.page}" target="_blank" rel="noopener noreferrer" aria-label="Open ${primaryText}${escapeHtml(alignment.qualification)} ${escapeHtml(alignment.code)} syllabus section ${escapeHtml(section.id)}">${escapeHtml(section.id)}</a>`;
     }).join('<span class="lab-syllabus-separator" aria-hidden="true">,</span>');
@@ -77,7 +83,8 @@ const renderSyllabusChips = (lab: Lab) => {
     const palette = syllabus.palette;
     const style = `--syllabus-chip-bg:${palette.background};--syllabus-chip-border:${palette.border};--syllabus-chip-text:${palette.text};--syllabus-chip-hover:${palette.hover}`;
     return `  <section class="lab-syllabus-chip" style="${style}" aria-label="${escapeHtml(alignment.qualification)} ${escapeHtml(alignment.code)} syllabus alignment">
-    <a class="lab-syllabus-name" href="${escapeHtml(syllabus.officialPage)}" target="_blank" rel="noopener noreferrer" aria-label="Open the official Cambridge ${escapeHtml(alignment.qualification)} ${escapeHtml(alignment.code)} syllabus page">${escapeHtml(alignment.qualification)} <strong>${escapeHtml(alignment.code)}</strong></a>
+    <a class="lab-syllabus-primary-link" href="${escapeHtml(syllabus.documentUrl)}#page=${primarySection.page}" target="_blank" rel="noopener noreferrer" aria-label="Open ${escapeHtml(alignment.qualification)} ${escapeHtml(alignment.code)} syllabus section ${escapeHtml(primarySection.id)}"></a>
+    <span class="lab-syllabus-name">${escapeHtml(alignment.qualification)} ${escapeHtml(alignment.code)}</span>
     <span class="lab-syllabus-divider" aria-hidden="true">·</span>
     <span class="lab-syllabus-sections">${sectionLinks}</span>
   </section>`;

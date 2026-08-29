@@ -27,10 +27,11 @@ Do not edit an embedded `LAB_FRAME_STYLES`, `LAB_MANIFEST_HEAD`,
 - Use chips consistently: navigation chips identify destinations, status chips
   describe current state, access chips describe editability, and legend chips
   explain diagram or simulation meaning. Do not use a chip for decorative copy.
-- The top-right syllabus chips are generated navigation. Their qualification
-  label opens Cambridge's official syllabus page; each numbered section opens
-  the corresponding page in the official syllabus document. Colour supports
-  the visible qualification and exam-code label but never replaces it.
+- The top-right syllabus chips are generated navigation. The whole chip opens
+  the primary section in Cambridge's official syllabus document. When a chip
+  lists multiple sections, each numbered section also opens its corresponding
+  document page. Colour supports the visible qualification and exam-code label
+  but never replaces it.
 - Surrounding interactive chrome should generally be at least `10px`; diagram
   labels and other geometry-constrained instructional text are exempt.
 - Keep lab-specific spacing and geometry local when it carries instructional

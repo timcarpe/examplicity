@@ -188,38 +188,56 @@ body {
   gap: 4px;
   line-height: 1;
   min-height: 29px;
-  padding: 2px 4px;
+  padding: 8px 10px;
+  position: relative;
+  transition: background-color 140ms ease, border-color 140ms ease;
   white-space: nowrap;
 }
 
-.lab-syllabus-chip::before {
-  background: var(--syllabus-chip-text);
-  border-radius: 50%;
-  content: '';
-  height: 6px;
-  margin-left: 5px;
-  width: 6px;
+.lab-syllabus-chip:hover {
+  background: var(--syllabus-chip-hover);
+  border-color: var(--syllabus-chip-border);
 }
 
-.lab-syllabus-chip a {
-  border-radius: var(--lab-pill-radius);
+.lab-syllabus-primary-link {
+  border-radius: inherit;
+  inset: 0;
+  position: absolute;
+  z-index: 0;
+}
+
+.lab-syllabus-primary-link:focus-visible {
+  outline: 2px solid var(--syllabus-chip-text);
+  outline-offset: 2px;
+}
+
+.lab-syllabus-name,
+.lab-syllabus-divider,
+.lab-syllabus-sections {
+  pointer-events: none;
+  position: relative;
+  z-index: 1;
+}
+
+.lab-syllabus-section {
+  border-radius: 4px;
   color: inherit;
-  padding: 5px 6px;
+  padding: 2px;
   text-decoration: none;
 }
 
-.lab-syllabus-chip a:hover {
-  background: var(--syllabus-chip-hover);
+a.lab-syllabus-section {
+  pointer-events: auto;
 }
 
-.lab-syllabus-chip a:focus-visible {
+a.lab-syllabus-section:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+a.lab-syllabus-section:focus-visible {
   outline: 2px solid currentColor;
   outline-offset: 1px;
-}
-
-.lab-syllabus-name strong,
-.lab-syllabus-section.is-primary {
-  font-weight: 800;
 }
 
 .lab-syllabus-name {
@@ -249,11 +267,7 @@ html[data-theme="dark"] .lab-syllabus-name {
   color: var(--syllabus-chip-border) !important;
 }
 
-html[data-theme="dark"] .lab-syllabus-chip::before {
-  background: var(--syllabus-chip-border);
-}
-
-html[data-theme="dark"] .lab-syllabus-chip a:hover {
+html[data-theme="dark"] .lab-syllabus-chip:hover {
   background: rgba(255, 255, 255, 0.08);
 }
 
@@ -271,6 +285,12 @@ body.binary-lab main {
   width: min(820px, calc(100% - 24px));
 }
 
+body.binary-lab .lab-manifest-header {
+  margin-left: 50%;
+  transform: translateX(-50%);
+  width: min(1120px, calc(100vw - 56px));
+}
+
 :where(button, input, select, textarea, summary):focus-visible {
   outline: 3px solid var(--lab-focus);
   outline-offset: 4px;
@@ -284,6 +304,10 @@ body.binary-lab main {
 
   body.binary-lab main {
     width: min(100% - 12px, 820px);
+  }
+
+  body.binary-lab .lab-manifest-header {
+    width: calc(100vw - 24px);
   }
 
   .lab-manifest-header {
@@ -306,11 +330,7 @@ body.binary-lab main {
   .lab-syllabus-chip {
     font-size: 10px;
     min-height: 27px;
-    padding: 2px 4px;
-  }
-
-  .lab-syllabus-chip a {
-    padding: 4px;
+    padding: 7px 8px;
   }
 }
 
@@ -338,14 +358,16 @@ body.binary-lab main {
   <!-- LAB_SYLLABUS_CHIPS_START -->
 <nav class="lab-syllabus-chips" aria-label="Syllabus alignment">
   <section class="lab-syllabus-chip" style="--syllabus-chip-bg:#edf4ff;--syllabus-chip-border:#9ab6e6;--syllabus-chip-text:#173d78;--syllabus-chip-hover:#dce9fc" aria-label="GCSE 0478 syllabus alignment">
-    <a class="lab-syllabus-name" href="https://www.cambridgeinternational.org/programmes-and-qualifications/cambridge-igcse-computer-science-0478/" target="_blank" rel="noopener noreferrer" aria-label="Open the official Cambridge GCSE 0478 syllabus page">GCSE <strong>0478</strong></a>
+    <a class="lab-syllabus-primary-link" href="https://www.cambridgeinternational.org/Images/697167-2026-2028-syllabus.pdf#page=15" target="_blank" rel="noopener noreferrer" aria-label="Open GCSE 0478 syllabus section 2.3"></a>
+    <span class="lab-syllabus-name">GCSE 0478</span>
     <span class="lab-syllabus-divider" aria-hidden="true">·</span>
-    <span class="lab-syllabus-sections"><a class="lab-syllabus-section is-primary" href="https://www.cambridgeinternational.org/Images/697167-2026-2028-syllabus.pdf#page=15" target="_blank" rel="noopener noreferrer" aria-label="Open primary GCSE 0478 syllabus section 2.3">2.3</a></span>
+    <span class="lab-syllabus-sections"><span class="lab-syllabus-section is-primary">2.3</span></span>
   </section>
   <section class="lab-syllabus-chip" style="--syllabus-chip-bg:#f4effb;--syllabus-chip-border:#b9a2dc;--syllabus-chip-text:#4f2b77;--syllabus-chip-hover:#e8ddf6" aria-label="A 9618 syllabus alignment">
-    <a class="lab-syllabus-name" href="https://www.cambridgeinternational.org/programmes-and-qualifications/cambridge-international-as-and-a-level-computer-science-9618/" target="_blank" rel="noopener noreferrer" aria-label="Open the official Cambridge A 9618 syllabus page">A <strong>9618</strong></a>
+    <a class="lab-syllabus-primary-link" href="https://www.cambridgeinternational.org/Images/697372-2026-syllabus.pdf#page=36" target="_blank" rel="noopener noreferrer" aria-label="Open A 9618 syllabus section 17.1"></a>
+    <span class="lab-syllabus-name">A 9618</span>
     <span class="lab-syllabus-divider" aria-hidden="true">·</span>
-    <span class="lab-syllabus-sections"><a class="lab-syllabus-section is-primary" href="https://www.cambridgeinternational.org/Images/697372-2026-syllabus.pdf#page=36" target="_blank" rel="noopener noreferrer" aria-label="Open primary A 9618 syllabus section 17.1">17.1</a></span>
+    <span class="lab-syllabus-sections"><span class="lab-syllabus-section is-primary">17.1</span></span>
   </section>
 </nav>
 <!-- LAB_SYLLABUS_CHIPS_END -->
