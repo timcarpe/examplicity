@@ -3,7 +3,17 @@
 import { useEffect, useMemo, useState, type PointerEvent as ReactPointerEvent } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { labs, subjects, type ExamCode, type Lab, type SubjectId, type Topic } from './labs';
+import {
+  labs,
+  qualificationLevels,
+  subjects,
+  syllabusAlignmentIncludesLevel,
+  type ExamCode,
+  type Lab,
+  type QualificationLevel,
+  type SubjectId,
+  type Topic,
+} from './labs';
 import { createStandaloneLabHtml } from './lab-download';
 import { LabIcon } from './lab-icon';
 
@@ -22,7 +32,7 @@ const resetPreview = (event: ReactPointerEvent<HTMLDivElement>) => {
 };
 
 const subjectStorageKey = 'examplicity:subject';
-const examStorageKey = (subjectId: SubjectId) => `examplicity:exam:${subjectId}`;
+const levelStorageKey = (subjectId: SubjectId) => `examplicity:level:${subjectId}`;
 const readPreference = (key: string) => {
   try { return window.localStorage.getItem(key); } catch { return null; }
 };
@@ -38,15 +48,23 @@ type CatalogueProps = {
 export default function Catalogue({ initialExam, initialSubjectId }: CatalogueProps) {
   const router = useRouter();
   const [subjectId, setSubjectId] = useState<SubjectId>(initialSubjectId);
-  const [exam, setExam] = useState<ExamCode>(initialExam);
+  const [level, setLevel] = useState<QualificationLevel>(() => {
+    const initialSubject = subjects.find((item) => item.id === initialSubjectId) ?? subjects[0];
+    return qualificationLevels.find((item) => initialSubject.qualificationViews[item].exam === initialExam)
+      ?? qualificationLevels[0];
+  });
   const [activeLab, setActiveLab] = useState<Lab | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [downloadStatus, setDownloadStatus] = useState<'idle' | 'preparing' | 'complete' | 'error'>('idle');
   const subject = subjects.find((item) => item.id === subjectId) ?? subjects[0];
-  const view = subject.views[exam];
+  const view = subject.qualificationViews[level];
+  const exam = view.exam;
+  const examView = subject.views[exam];
   const groupedLabs = useMemo(() => {
     const visibleLabs = labs.filter((lab) => (
-      lab.subject === subject.id && lab.syllabuses.some((syllabus) => syllabus.code === exam)
+      lab.subject === subject.id && lab.syllabuses.some((syllabus) => (
+        syllabus.code === exam && syllabusAlignmentIncludesLevel(syllabus.qualification, level)
+      ))
     ));
 
     return visibleLabs.reduce<Map<Topic, typeof labs>>((groups, lab) => {
@@ -54,7 +72,7 @@ export default function Catalogue({ initialExam, initialSubjectId }: CataloguePr
       groups.set(lab.topic, [...topicLabs, lab]);
       return groups;
     }, new Map());
-  }, [exam, subject.id]);
+  }, [exam, level, subject.id]);
 
   useEffect(() => {
     const syncLabFromUrl = () => {
@@ -74,18 +92,21 @@ export default function Catalogue({ initialExam, initialSubjectId }: CataloguePr
     return () => { document.body.style.overflow = ''; };
   }, [activeLab]);
 
-  const chooseExam = (code: ExamCode) => {
-    setExam(code);
-    writePreference(examStorageKey(subject.id), code);
+  const chooseLevel = (nextLevel: QualificationLevel) => {
+    const nextView = subject.qualificationViews[nextLevel];
+    setLevel(nextLevel);
+    writePreference(levelStorageKey(subject.id), nextLevel);
+    if (nextView.exam !== exam) router.push(subject.views[nextView.exam].href, { scroll: false });
   };
 
   const chooseSubject = (nextSubjectId: SubjectId) => {
     const nextSubject = subjects.find((item) => item.id === nextSubjectId);
     if (!nextSubject) return;
-    const savedExam = readPreference(examStorageKey(nextSubject.id)) as ExamCode | null;
-    const nextExam = savedExam && nextSubject.exams.includes(savedExam) ? savedExam : nextSubject.exams[0];
+    const savedLevel = readPreference(levelStorageKey(nextSubject.id)) as QualificationLevel | null;
+    const nextLevel = savedLevel && qualificationLevels.includes(savedLevel) ? savedLevel : qualificationLevels[0];
+    const nextExam = nextSubject.qualificationViews[nextLevel].exam;
     setSubjectId(nextSubjectId);
-    setExam(nextExam);
+    setLevel(nextLevel);
     writePreference(subjectStorageKey, nextSubjectId);
     router.push(nextSubject.views[nextExam].href);
   };
@@ -145,7 +166,7 @@ export default function Catalogue({ initialExam, initialSubjectId }: CataloguePr
     return (
       <main className="lab-view">
         <header className="lab-shell-header">
-          <Link className="brand" href={view.href} aria-label="Examplicity home" onClick={closeLab}>
+          <Link className="brand" href={examView.href} aria-label="Examplicity home" onClick={closeLab}>
             <span className="tone-one">e</span>
             <span className="tone-two">x</span>
             <span className="tone-three">a</span>
@@ -163,7 +184,7 @@ export default function Catalogue({ initialExam, initialSubjectId }: CataloguePr
             >
               {downloadStatus === 'preparing' ? 'Preparing…' : 'Download'}
             </button>
-            <Link className="lab-shell-home" href={view.href} onClick={closeLab}>Back to labs</Link>
+            <Link className="lab-shell-home" href={examView.href} onClick={closeLab}>Back to labs</Link>
             <span className="lab-download-status" role="status" aria-live="polite">
               {downloadStatus === 'preparing' && 'Preparing the standalone HTML file.'}
               {downloadStatus === 'complete' && 'The standalone HTML file is ready.'}
@@ -242,19 +263,18 @@ export default function Catalogue({ initialExam, initialSubjectId }: CataloguePr
           </div>
 
           <div className="exam-picker">
-            <span className="picker-label">Choose syllabus</span>
-            <div className="segmented-control" role="group" aria-label={`Choose a ${subject.name} exam syllabus`}>
-              {subject.exams.map((code) => (
-                <Link
-                  aria-current={exam === code ? 'page' : undefined}
-                  className={exam === code ? 'is-active' : ''}
-                  href={subject.views[code].href}
-                  key={code}
-                  onClick={() => chooseExam(code)}
-                  scroll={false}
+            <span className="picker-label">Choose level</span>
+            <div className="segmented-control" role="group" aria-label={`Choose a ${subject.name} qualification level`}>
+              {qualificationLevels.map((item) => (
+                <button
+                  aria-pressed={level === item}
+                  className={level === item ? 'is-active' : ''}
+                  key={item}
+                  onClick={() => chooseLevel(item)}
+                  type="button"
                 >
-                  {code}
-                </Link>
+                  {item}
+                </button>
               ))}
             </div>
           </div>
@@ -271,7 +291,7 @@ export default function Catalogue({ initialExam, initialSubjectId }: CataloguePr
                   {view.topicBriefings[topic]}
                 </p>
               </div>
-              <span>{topicLabs.length} {topicLabs.length === 1 ? 'lab' : 'labs'} · {exam}</span>
+              <span>{topicLabs.length} {topicLabs.length === 1 ? 'lab' : 'labs'} · {level} {exam}</span>
             </div>
 
             <div className="lab-grid">

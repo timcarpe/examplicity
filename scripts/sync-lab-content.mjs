@@ -2,7 +2,7 @@ import { readFile, readdir, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { applyLabManifestContent } from '../app/lab-content.ts';
-import { labs, subjects, topics } from '../app/labs.ts';
+import { labs, subjects, syllabusAlignmentIncludesLevel, topics } from '../app/labs.ts';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const labsDirectory = path.join(root, 'public', 'labs');
@@ -47,18 +47,30 @@ for (const subject of subjects) {
   for (const exam of subject.exams) {
     const view = subject.views[exam];
     if (!view) throw new Error(`${subject.id} has no view for ${exam}`);
+    if (!view.href || !view.metaDescription.trim()) throw new Error(`${subject.id} ${exam} has incomplete search metadata`);
+  }
+
+  for (const [level, view] of Object.entries(subject.qualificationViews)) {
+    if (!subject.exams.includes(view.exam)) {
+      throw new Error(`${subject.id} ${level} references unknown exam ${view.exam}`);
+    }
+    if (!view.headerLabel.trim() || !view.intro.trim()) {
+      throw new Error(`${subject.id} ${level} has incomplete visible text`);
+    }
     const visibleTopics = new Set(
       labs
-        .filter((lab) => lab.subject === subject.id && lab.syllabuses.some((alignment) => alignment.code === exam))
+        .filter((lab) => lab.subject === subject.id && lab.syllabuses.some((alignment) => (
+          alignment.code === view.exam && syllabusAlignmentIncludesLevel(alignment.qualification, level)
+        )))
         .map((lab) => lab.topic),
     );
     for (const topic of visibleTopics) {
       if (!view.topicBriefings[topic]?.trim()) {
-        throw new Error(`${subject.id} ${exam} has no briefing for ${topic}`);
+        throw new Error(`${subject.id} ${level} has no briefing for ${topic}`);
       }
     }
     for (const topic of Object.keys(view.topicBriefings)) {
-      if (!topics.includes(topic)) throw new Error(`${subject.id} ${exam} has unknown briefing topic ${topic}`);
+      if (!topics.includes(topic)) throw new Error(`${subject.id} ${level} has unknown briefing topic ${topic}`);
     }
   }
 }

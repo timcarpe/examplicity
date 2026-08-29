@@ -19,6 +19,7 @@ for (const lab of labs) {
   const expectedSubtitleCount = lab.subtitle === null ? 0 : 1;
   if (
     count(packaged, '<!-- LAB_MANIFEST_HEAD_START -->') !== 1
+    || count(packaged, '<!-- LAB_MANIFEST_HEADER_START -->') !== 1
     || count(packaged, 'data-lab-manifest="title"') !== 1
     || count(packaged, 'data-lab-manifest="subtitle"') !== expectedSubtitleCount
     || count(packaged, '<!-- LAB_SYLLABUS_CHIPS_START -->') !== 1

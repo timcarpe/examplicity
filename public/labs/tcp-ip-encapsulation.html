@@ -62,31 +62,82 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+.lab-manifest-header {
+  align-items: start;
+  border-bottom: 1px solid var(--line, var(--lab-line));
+  display: grid;
+  gap: 18px 28px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  margin-bottom: 26px;
+  padding-bottom: 22px;
+}
+
+.lab-manifest-heading {
+  min-width: 0;
+}
+
+.lab-manifest-header h1 {
+  color: var(--ink, var(--lab-ink));
+  font-family: var(--lab-font-sans);
+  font-size: clamp(25px, 3.2vw, 40px);
+  font-weight: 650;
+  letter-spacing: -0.045em;
+  line-height: 1.02;
+  margin: 0;
+  max-width: 24ch;
+  padding: 0;
+  text-align: left;
+}
+
+.lab-manifest-subtitle {
+  color: var(--muted, var(--lab-muted));
+  font-family: var(--lab-font-sans);
+  font-size: 13px;
+  letter-spacing: 0;
+  line-height: 1.5;
+  margin: 10px 0 0;
+  max-width: 72ch;
+  padding: 0;
+  text-align: left;
+}
+
+.lab-authored-title-slot {
+  min-width: 0;
+}
+
 .lab-syllabus-chips {
   align-items: center;
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
   justify-content: flex-end;
-  margin: 0 0 12px auto;
+  margin: 1px 0 0 auto;
   max-width: 100%;
 }
 
 .lab-syllabus-chip {
   align-items: center;
-  background: var(--syllabus-chip-bg);
-  border: 1px solid var(--syllabus-chip-border);
+  background: var(--panel, var(--lab-surface));
+  border: 1px solid var(--line, var(--lab-line));
   border-radius: var(--lab-pill-radius);
-  box-shadow: 0 1px 2px rgba(29, 29, 31, 0.08);
-  color: var(--syllabus-chip-text);
+  color: var(--ink, var(--lab-ink));
   display: inline-flex;
   font-size: 11px;
   font-weight: 650;
   gap: 4px;
   line-height: 1;
-  min-height: 30px;
-  padding: 3px 5px;
+  min-height: 29px;
+  padding: 2px 4px;
   white-space: nowrap;
+}
+
+.lab-syllabus-chip::before {
+  background: var(--syllabus-chip-text);
+  border-radius: 50%;
+  content: '';
+  height: 6px;
+  margin-left: 5px;
+  width: 6px;
 }
 
 .lab-syllabus-chip a {
@@ -110,6 +161,15 @@ body {
   font-weight: 800;
 }
 
+.lab-syllabus-name {
+  color: var(--syllabus-chip-text) !important;
+}
+
+.lab-syllabus-divider,
+.lab-syllabus-separator {
+  color: var(--muted, var(--lab-muted));
+}
+
 .lab-syllabus-prefix {
   opacity: 0.72;
   padding-left: 5px;
@@ -122,6 +182,18 @@ body {
 
 .lab-syllabus-separator {
   margin-inline: 0 2px;
+}
+
+html[data-theme="dark"] .lab-syllabus-name {
+  color: var(--syllabus-chip-border) !important;
+}
+
+html[data-theme="dark"] .lab-syllabus-chip::before {
+  background: var(--syllabus-chip-border);
+}
+
+html[data-theme="dark"] .lab-syllabus-chip a:hover {
+  background: rgba(255, 255, 255, 0.08);
 }
 
 html[data-theme="dark"],
@@ -153,9 +225,21 @@ body.binary-lab main {
     width: min(100% - 12px, 820px);
   }
 
+  .lab-manifest-header {
+    gap: 14px;
+    grid-template-columns: 1fr;
+    margin-bottom: 20px;
+    padding-bottom: 18px;
+  }
+
+  .lab-manifest-header h1 {
+    font-size: clamp(24px, 8vw, 34px);
+  }
+
   .lab-syllabus-chips {
     gap: 4px;
-    justify-content: flex-end;
+    justify-content: flex-start;
+    margin: 0;
   }
 
   .lab-syllabus-chip {
@@ -326,7 +410,13 @@ h1{margin:0;font-size:28px;font-weight:640;letter-spacing:-.03em;line-height:1.1
 </head>
 <body>
 <main>
-<!-- LAB_SYLLABUS_CHIPS_START -->
+<!-- LAB_MANIFEST_HEADER_START -->
+<header class="lab-manifest-header">
+  <div class="lab-manifest-heading">
+    <h1 data-lab-manifest="title">TCP/IP Protocol Stack</h1>
+  <p class="lab-manifest-subtitle" data-lab-manifest="subtitle">Build one transmitted object. Each lower layer adds its own header around everything the layer above already produced.</p>
+  </div>
+  <!-- LAB_SYLLABUS_CHIPS_START -->
 <nav class="lab-syllabus-chips" aria-label="Syllabus alignment">
   <section class="lab-syllabus-chip" style="--syllabus-chip-bg:#f4effb;--syllabus-chip-border:#b9a2dc;--syllabus-chip-text:#4f2b77;--syllabus-chip-hover:#e8ddf6" aria-label="A 9618 syllabus alignment">
     <a class="lab-syllabus-name" href="https://www.cambridgeinternational.org/programmes-and-qualifications/cambridge-international-as-and-a-level-computer-science-9618/" target="_blank" rel="noopener noreferrer" aria-label="Open the official Cambridge A 9618 syllabus page">A <strong>9618</strong></a>
@@ -335,8 +425,10 @@ h1{margin:0;font-size:28px;font-weight:640;letter-spacing:-.03em;line-height:1.1
   </section>
 </nav>
 <!-- LAB_SYLLABUS_CHIPS_END -->
-  <h1 data-lab-manifest="title">TCP/IP Protocol Stack</h1>
-  <div class="sub" data-lab-manifest="subtitle">Build one transmitted object. Each lower layer adds its own header around everything the layer above already produced.</div>
+</header>
+<!-- LAB_MANIFEST_HEADER_END -->
+<span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span>
+  <span data-lab-authored-subtitle-slot hidden></span>
 
   <section class="panel challenge-bar">
     <div class="challenge-copy">

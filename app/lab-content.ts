@@ -3,6 +3,8 @@ import { productionSiteUrl, siteTitle } from './site.ts';
 
 const headStart = '<!-- LAB_MANIFEST_HEAD_START -->';
 const headEnd = '<!-- LAB_MANIFEST_HEAD_END -->';
+const headerStart = '<!-- LAB_MANIFEST_HEADER_START -->';
+const headerEnd = '<!-- LAB_MANIFEST_HEADER_END -->';
 const chipsStart = '<!-- LAB_SYLLABUS_CHIPS_START -->';
 const chipsEnd = '<!-- LAB_SYLLABUS_CHIPS_END -->';
 
@@ -88,6 +90,21 @@ ${chips}
 ${chipsEnd}`;
 };
 
+const renderManifestHeader = (lab: Lab) => {
+  const subtitle = lab.subtitle === null
+    ? ''
+    : `\n  <p class="lab-manifest-subtitle" data-lab-manifest="subtitle">${escapeHtml(lab.subtitle)}</p>`;
+
+  return `${headerStart}
+<header class="lab-manifest-header">
+  <div class="lab-manifest-heading">
+    <h1 data-lab-manifest="title">${escapeHtml(lab.title)}</h1>${subtitle}
+  </div>
+  ${renderSyllabusChips(lab)}
+</header>
+${headerEnd}`;
+};
+
 const replaceHead = (source: string, lab: Lab) => {
   const markedPattern = new RegExp(`${escapeRegExp(headStart)}[\\s\\S]*?${escapeRegExp(headEnd)}`, 'g');
   const markedCount = countMatches(source, markedPattern);
@@ -99,59 +116,48 @@ const replaceHead = (source: string, lab: Lab) => {
   return source.replace(legacyPattern, renderHead(lab));
 };
 
-const replaceTitle = (source: string, lab: Lab) => {
-  const markedPattern = /<h1\b([^>]*data-lab-manifest=["']title["'][^>]*)>[\s\S]*?<\/h1>/gi;
-  const markedCount = countMatches(source, markedPattern);
-  if (markedCount > 1) throw new Error(`${lab.slug} repeats its manifest title`);
-  if (markedCount === 1) {
-    return source.replace(markedPattern, `<h1$1>${escapeHtml(lab.title)}</h1>`);
+const replaceManifestHeader = (source: string, lab: Lab) => {
+  const headerPattern = new RegExp(`${escapeRegExp(headerStart)}[\\s\\S]*?${escapeRegExp(headerEnd)}`, 'g');
+  const headerCount = countMatches(source, headerPattern);
+  if (headerCount > 1) throw new Error(`${lab.slug} repeats its manifest header`);
+
+  let nextSource = source.replace(headerPattern, '');
+  const chipsPattern = new RegExp(`${escapeRegExp(chipsStart)}[\\s\\S]*?${escapeRegExp(chipsEnd)}`, 'g');
+  const chipsCount = countMatches(nextSource, chipsPattern);
+  if (chipsCount > 1) throw new Error(`${lab.slug} repeats its syllabus chips`);
+  nextSource = nextSource.replace(chipsPattern, '');
+
+  if (!nextSource.includes('data-lab-authored-title-slot')) {
+    const markedTitlePattern = /<h1\b[^>]*data-lab-manifest=["']title["'][^>]*>[\s\S]*?<\/h1>/i;
+    const legacyTitlePattern = /<h1\b[^>]*>[\s\S]*?<\/h1>/i;
+    const titlePattern = markedTitlePattern.test(nextSource) ? markedTitlePattern : legacyTitlePattern;
+    if (!titlePattern.test(nextSource)) throw new Error(`${lab.slug} has no authored h1 slot`);
+    nextSource = nextSource.replace(titlePattern, '<span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span>');
   }
 
-  const legacyPattern = /<h1\b([^>]*)>[\s\S]*?<\/h1>/i;
-  if (!legacyPattern.test(source)) throw new Error(`${lab.slug} has no h1 for its manifest title`);
-  return source.replace(legacyPattern, `<h1$1 data-lab-manifest="title">${escapeHtml(lab.title)}</h1>`);
-};
-
-const replaceSubtitle = (source: string, lab: Lab) => {
-  const markedPattern = /<(p|div)\b([^>]*data-lab-manifest=["']subtitle["'][^>]*)>[\s\S]*?<\/\1>/gi;
-  const markedCount = countMatches(source, markedPattern);
-  if (markedCount > 1) throw new Error(`${lab.slug} repeats its manifest subtitle`);
-
-  if (lab.subtitle === null) {
-    if (markedCount > 0) throw new Error(`${lab.slug} has a subtitle marker but its manifest subtitle is null`);
-    return source;
+  if (!nextSource.includes('data-lab-authored-subtitle-slot')) {
+    const markedSubtitlePattern = /<(p|div)\b[^>]*data-lab-manifest=["']subtitle["'][^>]*>[\s\S]*?<\/\1>/i;
+    const legacySubtitlePattern = /<(p|div)\b[^>]*class=["'][^"']*(?:\bsub\b|\bsubtitle\b)[^"']*["'][^>]*>[\s\S]*?<\/\1>/i;
+    const subtitlePattern = markedSubtitlePattern.test(nextSource)
+      ? markedSubtitlePattern
+      : legacySubtitlePattern;
+    if (subtitlePattern.test(nextSource)) {
+      nextSource = nextSource.replace(subtitlePattern, '<span data-lab-authored-subtitle-slot hidden></span>');
+    }
   }
-
-  if (markedCount === 1) {
-    return source.replace(markedPattern, `<$1$2>${escapeHtml(lab.subtitle)}</$1>`);
-  }
-
-  const legacyPattern = /<(p|div)\b([^>]*class=["'][^"']*(?:\bsub\b|\bsubtitle\b)[^"']*["'][^>]*)>[\s\S]*?<\/\1>/i;
-  if (!legacyPattern.test(source)) throw new Error(`${lab.slug} has no existing subtitle slot`);
-  return source.replace(legacyPattern, `<$1$2 data-lab-manifest="subtitle">${escapeHtml(lab.subtitle)}</$1>`);
-};
-
-const replaceSyllabusChips = (source: string, lab: Lab) => {
-  const markedPattern = new RegExp(`${escapeRegExp(chipsStart)}[\\s\\S]*?${escapeRegExp(chipsEnd)}`, 'g');
-  const markedCount = countMatches(source, markedPattern);
-  if (markedCount > 1) throw new Error(`${lab.slug} repeats its syllabus chips`);
-  if (markedCount === 1) return source.replace(markedPattern, renderSyllabusChips(lab));
 
   const bodyMatch = /<body\b[^>]*>/i.exec(source);
   if (!bodyMatch) throw new Error(`${lab.slug} has no body element`);
   const bodyEnd = bodyMatch.index + bodyMatch[0].length;
-  const mainMatch = /<main\b[^>]*>/i.exec(source.slice(bodyEnd));
+  const mainMatch = /<main\b[^>]*>/i.exec(nextSource.slice(bodyEnd));
   if (!mainMatch) throw new Error(`${lab.slug} has no main element after body`);
   const mainEnd = bodyEnd + mainMatch.index + mainMatch[0].length;
-  return `${source.slice(0, mainEnd)}\n${renderSyllabusChips(lab)}${source.slice(mainEnd)}`;
+  return `${nextSource.slice(0, mainEnd)}\n${renderManifestHeader(lab)}\n${nextSource.slice(mainEnd).trimStart()}`;
 };
 
 export const applyLabManifestContent = (source: string, lab: Lab) => {
   if (!lab.metaDescription.trim()) throw new Error(`${lab.slug} has no meta description`);
   if (lab.subtitle !== null && !lab.subtitle.trim()) throw new Error(`${lab.slug} has an empty subtitle`);
 
-  let nextSource = replaceHead(source, lab);
-  nextSource = replaceTitle(nextSource, lab);
-  nextSource = replaceSubtitle(nextSource, lab);
-  return replaceSyllabusChips(nextSource, lab);
+  return replaceManifestHeader(replaceHead(source, lab), lab);
 };

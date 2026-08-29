@@ -43,6 +43,15 @@ export const syllabusRegistry = {
 
 export type ExamCode = keyof typeof syllabusRegistry;
 
+export const qualificationLevels = ['GCSE', 'AS', 'A'] as const;
+export type QualificationLevel = (typeof qualificationLevels)[number];
+export type SyllabusQualification = QualificationLevel | 'AS/A';
+
+export const syllabusAlignmentIncludesLevel = (
+  qualification: SyllabusQualification,
+  level: QualificationLevel,
+) => qualification === level || (qualification === 'AS/A' && (level === 'AS' || level === 'A'));
+
 export const topics = [
   'Data representation',
   'Networks & communication',
@@ -60,9 +69,18 @@ export const subjects = [
     views: {
       '0478': {
         href: '/computer-science/0478',
+        metaDescription: 'Interactive Cambridge IGCSE Computer Science 0478 labs for exam practice, revision and visual concept explanations.',
+      },
+      '9618': {
+        href: '/computer-science/9618',
+        metaDescription: 'Interactive Cambridge International AS & A Level Computer Science 9618 labs for exam practice, revision and visual concept explanations.',
+      },
+    },
+    qualificationViews: {
+      GCSE: {
+        exam: '0478',
         headerLabel: 'Cambridge IGCSE Computer Science · 0478',
         intro: 'Interactive Cambridge IGCSE Computer Science (0478) labs for exam practice and visual concept explanations you can see, change and understand.',
-        metaDescription: 'Interactive Cambridge IGCSE Computer Science 0478 labs for exam practice, revision and visual concept explanations.',
         topicBriefings: {
           'Data representation': 'Practise binary and hexadecimal conversion, bitmap compression and digital sound representation for Cambridge IGCSE Computer Science 0478.',
           'Networks & communication': 'Explore parity, ARQ, encryption, DNS and web page retrieval for Cambridge IGCSE Computer Science 0478.',
@@ -71,17 +89,28 @@ export const subjects = [
           Programming: 'Write, run and trace Cambridge-style pseudocode alongside Python for Cambridge IGCSE Computer Science 0478 exam practice.',
         } satisfies Record<Topic, string>,
       },
-      '9618': {
-        href: '/computer-science/9618',
-        headerLabel: 'Cambridge AS & A Level Computer Science · 9618',
-        intro: 'Interactive Cambridge International AS & A Level Computer Science (9618) labs for exam practice and visual concept explanations you can see, change and understand.',
-        metaDescription: 'Interactive Cambridge International AS & A Level Computer Science 9618 labs for exam practice, revision and visual concept explanations.',
+      AS: {
+        exam: '9618',
+        headerLabel: 'Cambridge International AS Level Computer Science · 9618',
+        intro: 'Interactive Cambridge International AS Level Computer Science (9618) labs for exam practice and visual concept explanations you can see, change and understand.',
         topicBriefings: {
-          'Data representation': 'Practise binary and hexadecimal, image and sound representation, RLE and Huffman coding for Cambridge International Computer Science 9618.',
-          'Networks & communication': 'Explore parity, encryption, DNS, TCP/IP, network topologies and Ethernet CSMA/CD for Cambridge International Computer Science 9618.',
-          'Processors & memory': 'Trace the fetch–decode–execute cycle and Cambridge assembly across CPU registers and buses for Cambridge International Computer Science 9618.',
-          'System software': 'Examine software layers, booting, memory management, process states and CPU scheduling for Cambridge International Computer Science 9618.',
-          Programming: 'Write, translate, run and trace Cambridge-style pseudocode alongside Python for Cambridge International Computer Science 9618 exam practice.',
+          'Data representation': 'Practise binary and hexadecimal, image and sound representation, RLE and Huffman coding for Cambridge International AS Level Computer Science 9618.',
+          'Networks & communication': 'Explore parity, DNS, network topologies and Ethernet CSMA/CD for Cambridge International AS Level Computer Science 9618.',
+          'Processors & memory': 'Trace the fetch–decode–execute cycle and Cambridge assembly across CPU registers and buses for Cambridge International AS Level Computer Science 9618.',
+          'System software': 'Examine software layers, booting and memory management for Cambridge International AS Level Computer Science 9618.',
+          Programming: 'Write, translate, run and trace Cambridge-style pseudocode alongside Python for Cambridge International AS Level Computer Science 9618 exam practice.',
+        } satisfies Record<Topic, string>,
+      },
+      A: {
+        exam: '9618',
+        headerLabel: 'Cambridge International A Level Computer Science · 9618',
+        intro: 'Interactive Cambridge International A Level Computer Science (9618) labs for exam practice and visual concept explanations you can see, change and understand.',
+        topicBriefings: {
+          'Data representation': 'Explore binary floating-point representation and shared 9618 data-representation foundations for Cambridge International A Level Computer Science 9618.',
+          'Networks & communication': 'Explore encryption, DNS and the TCP/IP protocol stack for Cambridge International A Level Computer Science 9618.',
+          'Processors & memory': 'Trace Cambridge assembly and shared processor foundations across CPU registers and buses for Cambridge International A Level Computer Science 9618.',
+          'System software': 'Examine memory management, process states and CPU scheduling for Cambridge International A Level Computer Science 9618.',
+          Programming: 'Write, translate, run and trace Cambridge-style pseudocode alongside Python for Cambridge International A Level Computer Science 9618 exam practice.',
         } satisfies Record<Topic, string>,
       },
     },
@@ -105,7 +134,7 @@ export type Lab = Activity & {
   subtitle: string | null;
   syllabuses: {
     code: ExamCode;
-    qualification: string;
+    qualification: SyllabusQualification;
     sections: {
       id: string;
       page: number;
@@ -138,7 +167,7 @@ export const labs: Lab[] = [
     title: 'Binary Number Practice',
     description: 'Build fluency with binary and hexadecimal registers through generated GCSE and AS questions.',
     metaDescription: 'Practise binary, denary and hexadecimal conversions for Cambridge Computer Science 0478 and 9618.',
-    subtitle: null,
+    subtitle: 'Practise binary arithmetic and convert between binary, denary and hexadecimal for Cambridge IGCSE Computer Science 0478 and AS Level Computer Science 9618.',
     topic: 'Data representation',
     format: 'Practice',
     kind: 'lab',
@@ -169,6 +198,8 @@ export const labs: Lab[] = [
     slug: 'binary-floating-point',
     title: 'Binary Floating-Point Precision and Range',
     description: 'Allocate bits between the mantissa and exponent, test authentic datasets, and observe precision, range, rounding, overflow and underflow.',
+    metaDescription: 'Explore binary floating-point mantissa and exponent allocation, precision, range, rounding, overflow and underflow for Cambridge A Level Computer Science 9618.',
+    subtitle: 'For Cambridge A Level Computer Science 9618, allocate bits between the mantissa and exponent, then compare precision, range, rounding, overflow and underflow.',
     topic: 'Data representation',
     format: 'Representation experiment',
     kind: 'lab',
