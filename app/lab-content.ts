@@ -18,6 +18,31 @@ const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\
 
 const countMatches = (source: string, pattern: RegExp) => [...source.matchAll(pattern)].length;
 
+const stripManagedHeadTags = (source: string) => source
+  .replace(/<title\b[^>]*>[\s\S]*?<\/title>\s*/gi, '')
+  .replace(/<(?:meta|link)\b[^>]*>\s*/gi, (tag) => {
+    const managesDescription = /\bname=["']description["']/i.test(tag);
+    const managesCanonical = /\brel=["']canonical["']/i.test(tag);
+    const managesOpenGraph = /\bproperty=["']og:(?:type|site_name|title|description|url|image|image:alt)["']/i.test(tag);
+    const managesTwitter = /\bname=["']twitter:(?:card|title|description|image)["']/i.test(tag);
+    return managesDescription || managesCanonical || managesOpenGraph || managesTwitter ? '' : tag;
+  });
+
+const normalizeManagedHead = (source: string) => {
+  const startIndex = source.indexOf(headStart);
+  const endIndex = source.indexOf(headEnd, startIndex);
+  if (startIndex === -1 || endIndex === -1) throw new Error('Manifest head block is incomplete');
+
+  const headOpenIndex = source.search(/<head\b[^>]*>/i);
+  const headCloseIndex = source.search(/<\/head>/i);
+  if (headOpenIndex === -1 || headCloseIndex === -1 || headCloseIndex < endIndex) {
+    throw new Error('Manifest head block is outside the document head');
+  }
+
+  const blockEnd = endIndex + headEnd.length;
+  return `${stripManagedHeadTags(source.slice(0, startIndex))}${source.slice(startIndex, blockEnd)}${stripManagedHeadTags(source.slice(blockEnd, headCloseIndex))}${source.slice(headCloseIndex)}`;
+};
+
 const renderHead = (lab: Lab) => {
   const canonicalUrl = `${productionSiteUrl}${lab.href}`;
   const socialImage = `${productionSiteUrl}/opengraph-image`;
@@ -128,11 +153,11 @@ const replaceHead = (source: string, lab: Lab) => {
   const markedPattern = new RegExp(`${escapeRegExp(headStart)}[\\s\\S]*?${escapeRegExp(headEnd)}`, 'g');
   const markedCount = countMatches(source, markedPattern);
   if (markedCount > 1) throw new Error(`${lab.slug} repeats its manifest head block`);
-  if (markedCount === 1) return source.replace(markedPattern, renderHead(lab));
+  if (markedCount === 1) return normalizeManagedHead(source.replace(markedPattern, renderHead(lab)));
 
   const legacyPattern = /<title>[\s\S]*?<meta name="twitter:card" content="[^"]+">/i;
   if (!legacyPattern.test(source)) throw new Error(`${lab.slug} has no manifest or legacy metadata block`);
-  return source.replace(legacyPattern, renderHead(lab));
+  return normalizeManagedHead(source.replace(legacyPattern, renderHead(lab)));
 };
 
 const replaceManifestHeader = (source: string, lab: Lab) => {
