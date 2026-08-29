@@ -1,16 +1,32 @@
 import type { Metadata } from 'next';
 import './globals.css';
-
-const deploymentHost = process.env.VERCEL_PROJECT_PRODUCTION_URL;
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
-  ?? (deploymentHost ? `https://${deploymentHost}` : 'https://examplicity.org');
+import { siteDescription, siteTitle, siteUrl } from './site';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   applicationName: 'Examplicity',
-  title: 'Examplicity — Make complex ideas click',
-  description: 'Interactive Computer Science labs for Cambridge 0478 and 9618.',
-  alternates: { canonical: '/' },
+  title: siteTitle,
+  description: siteDescription,
+  openGraph: {
+    description: siteDescription,
+    images: [{
+      url: '/opengraph-image',
+      width: 1200,
+      height: 630,
+      alt: siteTitle,
+    }],
+    locale: 'en_GB',
+    siteName: 'Examplicity',
+    title: siteTitle,
+    type: 'website',
+    url: siteUrl,
+  },
+  twitter: {
+    card: 'summary_large_image',
+    description: siteDescription,
+    images: ['/opengraph-image'],
+    title: siteTitle,
+  },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

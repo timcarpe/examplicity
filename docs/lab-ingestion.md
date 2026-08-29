@@ -25,7 +25,7 @@ redesign existing labs or introduce a new runtime architecture.
 
 ## 2. Static document and shell boundary
 
-The host (`app/page.tsx`) opens the manifest `href` in a full-viewport iframe.
+The host (`app/catalogue.tsx`) opens the manifest `href` in a full-viewport iframe.
 The lab owns its teaching UI and behavior; the host owns the catalogue, loading
 screen, query-string selection, iframe, and persistent header/footer overlay.
 Keep those responsibilities separate.
@@ -49,14 +49,15 @@ Keep those responsibilities separate.
   canvas cap as well as narrow screens.
 - [ ] Do not add host messaging, parent-frame state, or a second navigation
   system without explicit architecture approval. The current integration is
-  only the manifest `href` plus the iframe in `app/page.tsx`.
+  only the manifest `href` plus the iframe in `app/catalogue.tsx`.
 
-The host owns the brand, “Back to labs”, GitHub, and license links. The host's
-canonical lab URL is `/?lab=<slug>`; the lab should not duplicate those links or
-rewrite that outer URL itself. The host's Download action packages a copy of the
-source document with inline standalone Examplicity header/footer chrome and an
-absolute canonical lab link. That generated chrome belongs only to the downloaded
-artifact; do not add it to the source document or its iframe rendering.
+The host owns the brand, “Back to labs”, GitHub, and license links. Catalogue
+cards link to the canonical `/labs/<slug>.html` document, while an ordinary click
+opens the same document in the existing iframe shell. The selected syllabus view
+remains at `/computer-science/<exam>` with `?lab=<slug>` as transient UI state.
+The host's Download action packages a copy of the source document with inline
+standalone Examplicity header/footer chrome. That generated chrome belongs only
+to the downloaded artifact; do not add it to the source document or its iframe.
 
 ## 3. Manifest registration
 
@@ -78,7 +79,7 @@ fields:
 ```
 
 - [ ] `slug` is unique, lowercase ASCII, and kebab-case. It is the basename of
-  the file and the value used in the outer query string, so these three values
+  the file and the value used for transient shell state, so these three values
   must agree exactly: `example-lab`, `public/labs/example-lab.html`, and
   `/labs/example-lab.html`. Do not use spaces, uppercase, or a second spelling.
 - [ ] Use only the exam codes declared by `exams` in `app/labs.ts`: `'0478'`
@@ -86,7 +87,7 @@ fields:
   learner selects that syllabus; it is not decorative copy.
 - [ ] Reuse the current topic labels and capitalization when the content fits:
   `Data representation`, `Networks & communication`,
-  `Processors & memory`, and `System software`. `app/page.tsx` groups by the
+  `Processors & memory`, and `System software`. `app/catalogue.tsx` groups by the
   exact `topic` string, so do not create accidental spelling/case variants.
 - [ ] Keep `format` short and card-sized, following existing examples such as
   `Practice`, `Visual experiment`, `Signal lab`, `Protocol lab`,
@@ -95,14 +96,11 @@ fields:
   about what the learner can change, observe, or compare. The page renders
   these values directly in the card, loading screen, and iframe title.
 
-### The translator is a tool, not a catalogue lab
+### Tools in the catalogue
 
-`translator` in `app/labs.ts` is an `Activity` with `kind: 'tool'`, only
-`slug`, `title`, `description`, `kind`, and `href`. It is intentionally kept
-outside the `labs` array: `app/page.tsx` opens it from the header button and
-special-cases its slug when reading `?lab=translator`. Do not add translator
-to the lab list, invent `topic`/`format`/`exams` for it, or give it a lab card.
-Use the `Lab` shape only for future catalogue labs.
+The translator is registered as a `Lab` with `kind: 'tool'`, syllabus coverage,
+topic and format metadata. Use `kind: 'tool'` for a substantial teaching tool
+that belongs in the catalogue, while retaining the same path and card contract.
 
 ## 4. Catalogue card SVG
 
@@ -124,7 +122,7 @@ the default drawing for an approved lab.
   `thin-lines` for dense grids. Keep the drawing legible in the 16:9 card
   preview and meaningful in both light and hover colours.
 - [ ] Keep the icon decorative. `LabIcon` renders `aria-hidden="true"`; the
-  surrounding card button in `app/page.tsx` supplies the accessible name
+  surrounding card link in `app/catalogue.tsx` supplies the accessible name
   (`Open <title>`). Do not put essential instructions only in the SVG.
 
 ## 5. Interaction and accessibility review
@@ -162,9 +160,9 @@ the default drawing for an approved lab.
 
 - [ ] With `npm run dev`, test the selected exam tabs and confirm the new card
   appears only for its `exams`, under the exact `topic`, with the intended
-  `format` and SVG. Open it by clicking the card and directly at
-  `/?lab=<slug>`; verify the loading screen resolves and the iframe loads the
-  intended HTML.
+  `format` and SVG. Confirm the card links directly to `/labs/<slug>.html`, then
+  open it from `/computer-science/<exam>?lab=<slug>` and verify the loading
+  screen resolves and the iframe loads the intended HTML.
 - [ ] Exercise the lab's main controls, reset/empty/error paths, keyboard
   paths, mobile layout, and shell links. Check the browser console for errors.
 - [ ] If the lab cannot remain monolithic, needs shared runtime code, changes

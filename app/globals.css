@@ -124,7 +124,7 @@ h1 {
 }
 .subject-select-shell select:hover { background: var(--paper-hover); box-shadow: 0 4px 12px #1d1d1f14; transform: translateY(-1px); }
 .segmented-control { align-items: stretch; border: 1px solid var(--ink); border-radius: 999px; display: flex; height: var(--picker-control-height); padding: 3px; }
-.segmented-control button {
+.segmented-control :is(button, a) {
   align-items: center;
   background: var(--paper);
   border-radius: 999px;
@@ -134,13 +134,14 @@ h1 {
   justify-content: center;
   min-width: 82px;
   padding: 0 18px;
+  text-decoration: none;
   transition: background .2s ease, color .2s ease;
 }
-.segmented-control button.is-active { background: var(--ink); color: var(--paper); font-weight: 650; }
+.segmented-control :is(button, a).is-active { background: var(--ink); color: var(--paper); font-weight: 650; }
 .brand:focus-visible,
 .subject-select-shell select:focus-visible,
-.segmented-control button:focus-visible,
-.lab-card button:focus-visible {
+.segmented-control :is(button, a):focus-visible,
+.lab-card > a:focus-visible {
   outline: 3px solid var(--ink);
   outline-offset: 4px;
 }
@@ -165,7 +166,7 @@ h1 {
 .topic-heading > span { color: var(--muted); font-size: 12px; padding-bottom: 4px; }
 .lab-grid { display: grid; gap: 48px 20px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .lab-card { min-width: 0; }
-.lab-card button { background: transparent; cursor: pointer; padding: 0; text-align: left; width: 100%; }
+.lab-card > a { background: transparent; color: inherit; cursor: pointer; display: block; padding: 0; text-align: left; text-decoration: none; width: 100%; }
 .preview {
   --art-x: 0px;
   --art-y: 0px;
@@ -336,9 +337,9 @@ footer a:hover { text-decoration-color: currentColor; }
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .lab-card button:hover .preview { background: var(--paper-hover); color: var(--ink); transform: translateY(-4px); }
-  .lab-card button:hover .icon-drawing { transform: translate(var(--art-x), var(--art-y)) scale(1.025); }
-  .lab-card button:hover .arrow { background: var(--ink); color: var(--paper); transform: translate(2px, -2px); }
+  .lab-card > a:hover .preview { background: var(--paper-hover); color: var(--ink); transform: translateY(-4px); }
+  .lab-card > a:hover .icon-drawing { transform: translate(var(--art-x), var(--art-y)) scale(1.025); }
+  .lab-card > a:hover .arrow { background: var(--ink); color: var(--paper); transform: translate(2px, -2px); }
 }
 
 @media (max-width: 620px) {
@@ -353,7 +354,7 @@ footer a:hover { text-decoration-color: currentColor; }
   .exam-picker { align-items: stretch; }
   .subject-select-shell select { width: 100%; }
   .segmented-control { width: 100%; }
-  .segmented-control button { flex: 1; min-width: 0; }
+  .segmented-control :is(button, a) { flex: 1; min-width: 0; }
   .topic-section { padding: 66px 20px 78px; }
   .topic-heading { align-items: start; grid-template-columns: 1fr; }
   .lab-grid { column-gap: 0; grid-template-columns: 1fr; row-gap: 44px; }

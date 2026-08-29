@@ -5,8 +5,21 @@ export const subjects = [
   {
     id: 'computer-science',
     name: 'Computer Science',
-    headerLabel: 'Cambridge Computer Science',
     exams,
+    views: {
+      '0478': {
+        href: '/computer-science/0478',
+        headerLabel: 'Cambridge IGCSE Computer Science · 0478',
+        intro: 'Interactive Cambridge IGCSE Computer Science (0478) labs for exam practice and visual concept explanations you can see, change and understand.',
+        metaDescription: 'Interactive Cambridge IGCSE Computer Science 0478 labs for exam practice, revision and visual concept explanations.',
+      },
+      '9618': {
+        href: '/computer-science/9618',
+        headerLabel: 'Cambridge AS & A Level Computer Science · 9618',
+        intro: 'Interactive Cambridge International AS & A Level Computer Science (9618) labs for exam practice and visual concept explanations you can see, change and understand.',
+        metaDescription: 'Interactive Cambridge International AS & A Level Computer Science 9618 labs for exam practice, revision and visual concept explanations.',
+      },
+    },
   },
 ] as const;
 export type SubjectId = (typeof subjects)[number]['id'];
