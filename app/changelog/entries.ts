@@ -14,7 +14,7 @@ export const changelogEntries: readonly ChangelogEntry[] = [
       'Added persistent subject and qualification controls, with course-specific topic guidance and syllabus labels.',
       'Made labs downloadable as standalone HTML files and added a guided AI remix workflow.',
       'Added feedback reporting from both the catalogue and open labs, with clearer categories and privacy safeguards.',
-      'Refined the Python workspace, catalogue illustrations, and shared lab frame across screen sizes.',
+      'Refined the Python workspace, clearer catalogue illustrations, and the shared lab frame across screen sizes.',
       'Added this changelog so visitors can review meaningful learner-facing improvements in one place.',
     ],
     internalChanges: [

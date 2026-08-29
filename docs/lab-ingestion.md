@@ -181,6 +181,11 @@ the default drawing for an approved lab.
   as `<path>`, `<rect>`, `<circle>`, and `<g>`, and no external image or inline
   colour. The parent `.icon-drawing` in `app/globals.css` supplies
   `currentColor`, rounded caps/joins, and the base stroke.
+- [ ] Do not embed lettering or numbering in a catalogue SVG. Do not use
+  `<text>` or convert characters into paths. Communicate the lab mechanic with
+  geometry, state, flow, and emphasis only. Binary Number Practice is the sole
+  current exception because its digits are the operated concept. Any further
+  subject-specific exception requires an explicit revision to this contract.
 - [ ] Use exactly one semantic blue object per card drawing. Apply one `tone-*`
   class to the single object that best expresses the mechanic; keep every
   supporting object in the standard ink or `secondary-line` treatment. Do not
