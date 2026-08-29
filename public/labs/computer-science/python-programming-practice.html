@@ -371,7 +371,7 @@ html[data-theme="dark"]{
 }
 *{box-sizing:border-box}
 html,body{height:100%}
-body{margin:0;overflow:hidden;background:var(--bg);color:var(--ink);font-family:var(--sans)}
+body{margin:0;overflow:auto;background:var(--bg);color:var(--ink);font-family:var(--sans)}
 button,input,textarea{font:inherit}
 button{
   min-height:34px;
@@ -392,25 +392,41 @@ button.primary{background:var(--accent);border-color:var(--accent);color:#fff;fo
 button.primary:hover:not(:disabled){background:color-mix(in srgb,var(--accent) 88%,#000);border-color:var(--accent)}
 button.good{background:var(--good);border-color:var(--good);color:#fff;font-weight:760}
 button.icon{width:36px;padding:0;display:grid;place-items:center;font-size:17px}
-.topbar{
-  height:64px;
-  width:min(1200px,100%);
-  margin:0 auto;
-  padding:0 18px;
+.practice-toolbar{
+  min-height:52px;
+  margin:0 0 12px;
+  padding:8px 10px 8px 14px;
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:18px;
+  gap:12px;
+  border:1px solid var(--line);
+  border-radius:10px;
   background:var(--panel);
-  border-bottom:1px solid var(--line);
+  box-shadow:var(--shadow);
 }
-.brand{min-width:0;display:flex;align-items:center;gap:11px}
-.brand-mark{width:36px;height:36px;display:grid;place-items:center;border-radius:10px;background:var(--accent);color:#fff;font:850 18px var(--mono)}
-.brand h1{margin:0;font-size:18px;letter-spacing:-.02em}
-.brand p{margin:2px 0 0;color:var(--muted);font-size:10px}
-.top-actions{display:flex;align-items:center;gap:7px}
-.suite-progress{margin-right:7px;color:var(--muted);font-size:11px;font-weight:720;white-space:nowrap}
-.app-shell{width:min(1200px,100%);height:calc(100% - 64px);margin:0 auto;display:grid;grid-template-columns:272px minmax(0,1fr)}
+.practice-actions{display:flex;align-items:center;gap:7px}
+.suite-progress{color:var(--muted);font-size:11px;font-weight:720;white-space:nowrap}
+.resource-notice{
+  margin:0 0 14px;
+  padding:11px 13px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  border:1px solid color-mix(in srgb,var(--accent) 22%,var(--line));
+  border-left:3px solid color-mix(in srgb,var(--accent) 58%,var(--line));
+  border-radius:9px;
+  background:color-mix(in srgb,var(--accent-soft) 58%,var(--panel));
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.45;
+}
+.resource-notice p{margin:0}
+.resource-links{display:flex;align-items:center;gap:12px;white-space:nowrap}
+.resource-links a{color:var(--accent);font-weight:780;text-underline-offset:2px}
+.resource-links a.secondary{color:var(--muted);font-weight:680}
+.app-shell{width:100%;height:max(680px,calc(100vh - 330px));min-height:680px;margin:0;display:grid;grid-template-columns:272px minmax(0,1fr);border:1px solid var(--line);border-radius:12px;background:var(--panel);box-shadow:var(--shadow);overflow:hidden}
 .sidebar{min-height:0;display:grid;grid-template-rows:auto auto minmax(0,1fr);background:var(--panel);border-right:1px solid var(--line)}
 .sidebar-head{padding:15px 14px 10px}
 .sidebar-head strong{display:block;font-size:13px}
@@ -418,8 +434,6 @@ button.icon{width:36px;padding:0;display:grid;place-items:center;font-size:17px}
 .search-wrap{padding:0 12px 10px}
 .search-wrap input{width:100%;height:35px;border:1px solid var(--line);border-radius:8px;background:var(--panel-2);color:var(--ink);padding:0 10px;font-size:11px}
 .lesson-list{min-height:0;overflow:auto;padding:0 8px 18px}
-.grade-group{margin-top:7px}
-.grade-label{padding:8px 8px 5px;color:var(--muted);font-size:9px;font-weight:850;letter-spacing:.1em;text-transform:uppercase}
 .lesson-button{width:100%;height:auto;min-height:48px;margin:2px 0;padding:7px 8px;display:grid;grid-template-columns:31px minmax(0,1fr) auto;gap:7px;align-items:center;text-align:left;border-color:transparent;background:transparent}
 .lesson-button.active{border-color:color-mix(in srgb,var(--accent) 38%,var(--line));background:var(--accent-soft)}
 .lesson-number{width:29px;height:29px;display:grid;place-items:center;border-radius:8px;background:var(--panel-2);color:var(--muted);font:800 10px var(--mono)}
@@ -465,7 +479,7 @@ html[data-theme="dark"] .challenge-prompt .semantic-literal{color:var(--syntax-s
 .status-pill{padding:5px 8px;border:1px solid var(--line);border-radius:999px;background:var(--panel-2);color:var(--muted);font-size:9px;font-weight:800;white-space:nowrap}
 .status-pill.complete{border-color:color-mix(in srgb,var(--good) 45%,var(--line));background:var(--good-soft);color:var(--good)}
 .status-pill.attempted{border-color:color-mix(in srgb,var(--warn) 45%,var(--line));background:var(--warn-soft);color:var(--warn)}
-.workspace{min-height:0;height:calc(100vh - 282px);min-height:490px;display:grid;grid-template-columns:minmax(360px,1.38fr) minmax(280px,.72fr)}
+.workspace{height:max(490px,calc(100vh - 480px));min-height:490px;display:grid;grid-template-columns:minmax(360px,1.38fr) minmax(280px,.72fr)}
 .editor-pane{min-width:0;min-height:0;display:grid;grid-template-rows:41px minmax(0,1fr) 48px;border-right:1px solid var(--line);background:var(--editor)}
 .pane-head{padding:0 10px 0 13px;display:flex;align-items:center;justify-content:space-between;gap:8px;border-bottom:1px solid var(--line);background:var(--panel-2)}
 .pane-title{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:780}
@@ -510,21 +524,19 @@ html[data-theme="dark"] .challenge-prompt .semantic-literal{color:var(--syntax-s
 [hidden]{display:none!important}
 @media (max-width:980px){
   body{overflow:auto}
-  .app-shell{height:auto;min-height:calc(100vh - 64px);grid-template-columns:1fr}
+  .app-shell{height:auto;min-height:0;grid-template-columns:1fr}
   .sidebar{position:static;grid-template-rows:auto auto auto;border-right:0;border-bottom:1px solid var(--line)}
   .lesson-list{display:flex;overflow:auto;padding:0 9px 10px}
-  .grade-group{display:flex;gap:4px;margin:0}
-  .grade-label{writing-mode:vertical-rl;transform:rotate(180deg);padding:7px 4px}
   .lesson-button{width:170px;min-width:170px}
   .main{overflow:visible}
   .workspace{height:auto;grid-template-columns:1fr;grid-template-rows:500px 330px}
   .editor-pane{border-right:0;border-bottom:1px solid var(--line)}
 }
 @media (max-width:620px){
-  .topbar{height:auto;min-height:64px;padding:10px 12px;align-items:flex-start}
-  .brand p,.suite-progress{display:none}
-  .top-actions button:not(.icon){padding:0 7px;font-size:9px}
-  .app-shell{min-height:calc(100vh - 64px)}
+  .practice-toolbar,.resource-notice{align-items:stretch;flex-direction:column}
+  .practice-actions{display:grid;grid-template-columns:1fr 1fr 36px}
+  .practice-actions button:not(.icon){padding:0 7px;font-size:9px}
+  .resource-links{justify-content:flex-start;white-space:normal}
   .main{padding:13px 10px 22px}
   .lesson-head h2{font-size:21px}
   .lesson-progress-card{display:none}
@@ -547,25 +559,7 @@ html[data-theme="dark"] .challenge-prompt .semantic-literal{color:var(--syntax-s
 </style>
 </head>
 <body data-lab-layout="standard">
-<header class="topbar">
-  <div class="brand">
-    <div class="brand-mark" aria-hidden="true">Py</div>
-    <div><strong>Python lessons</strong><p>Examples, challenges and browser-based Python</p></div>
-  </div>
-  <div class="top-actions">
-    <span id="suiteProgress" class="suite-progress">0 of 99 challenges complete</span>
-    <button id="exportButton" type="button">Export backup</button>
-    <button id="importButton" type="button">Import backup</button>
-    <button id="themeButton" class="icon" type="button" aria-label="Switch colour scheme" title="Switch colour scheme">◐</button>
-  </div>
-</header>
-<div class="app-shell">
-  <aside class="sidebar" aria-label="Lesson navigation">
-    <div class="sidebar-head"><strong>Programming lessons</strong><span>All lessons are selectable</span></div>
-    <div class="search-wrap"><input id="lessonSearch" type="search" placeholder="Find a lesson…" aria-label="Find a lesson"></div>
-    <nav id="lessonList" class="lesson-list"></nav>
-  </aside>
-  <main class="main">
+<main class="lab-page">
 <!-- LAB_MANIFEST_HEADER_START -->
 <header class="lab-manifest-header">
   <div class="lab-manifest-heading">
@@ -590,6 +584,28 @@ html[data-theme="dark"] .challenge-prompt .semantic-literal{color:var(--syntax-s
 <!-- LAB_SYLLABUS_CHIPS_END -->
 </header>
 <!-- LAB_MANIFEST_HEADER_END -->
+<section class="practice-toolbar" data-lab-workspace aria-label="Progress and backup controls">
+  <span id="suiteProgress" class="suite-progress">0 of 99 challenges complete</span>
+  <div class="practice-actions">
+    <button id="exportButton" type="button">Export progress</button>
+    <button id="importButton" type="button">Import progress</button>
+    <button id="themeButton" class="icon" type="button" aria-label="Switch colour scheme" title="Switch colour scheme">◐</button>
+  </div>
+</section>
+<aside class="resource-notice" aria-label="Download complete Python lesson resources">
+  <p>Want to run these lessons in your classroom or learn at home? Download the full lesson resources here.</p>
+  <div class="resource-links">
+    <a href="https://github.com/timcarpe/PRIMM-Python-Lessons/releases/latest" target="_blank" rel="noopener noreferrer">Download latest release</a>
+    <a class="secondary" href="https://github.com/timcarpe/PRIMM-Python-Lessons" target="_blank" rel="noopener noreferrer">View repository</a>
+  </div>
+</aside>
+<div class="app-shell" data-lab-workspace>
+  <aside class="sidebar" aria-label="Lesson navigation">
+    <div class="sidebar-head"><strong>Programming lessons</strong><span>All lessons are selectable</span></div>
+    <div class="search-wrap"><input id="lessonSearch" type="search" placeholder="Find a lesson…" aria-label="Find a lesson"></div>
+    <nav id="lessonList" class="lesson-list"></nav>
+  </aside>
+  <div class="main">
 <span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span>
     <header class="lesson-head">
       <div>
@@ -670,8 +686,9 @@ html[data-theme="dark"] .challenge-prompt .semantic-literal{color:var(--syntax-s
         </section>
       </div>
     </section>
-  </main>
+  </div>
 </div>
+</main>
 <input id="importFile" type="file" accept="application/json,.json" hidden>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
@@ -1763,6 +1780,7 @@ Sk.builtinFiles={"files":{"src/builtin/sys.js":"var $builtinmodule=function(){va
 
   const LESSONS = JSON.parse(document.getElementById("lessonData").textContent);
   const LESSON_BY_NUMBER = new Map(LESSONS.map(lesson => [lesson.number, lesson]));
+  const LESSON_ORDINAL_BY_NUMBER = new Map(LESSONS.map((lesson, index) => [lesson.number, index + 1]));
   const STORAGE_KEY = "python-primm-lesson-lab-v1";
   const SUITE_ID = "vas-python-primm-33-lessons-2026-08-26";
   const BACKUP_FORMAT = "python-primm-lesson-suite-backup";
@@ -1914,42 +1932,31 @@ Sk.builtinFiles={"files":{"src/builtin/sys.js":"var $builtinmodule=function(){va
 
   function renderSidebar() {
     const query = elements.lessonSearch.value.trim().toLowerCase();
-    const groups = new Map([[6, []], [7, []], [8, []]]);
-    for (const lesson of LESSONS) {
-      const text = `${lesson.number} ${lesson.title} ${lesson.concept}`.toLowerCase();
-      if (!query || text.includes(query)) groups.get(lesson.grade).push(lesson);
-    }
+    const lessons = LESSONS.filter(lesson => {
+      const lessonOrdinal = LESSON_ORDINAL_BY_NUMBER.get(lesson.number);
+      const text = `${lessonOrdinal} ${lesson.title} ${lesson.concept}`.toLowerCase();
+      return !query || text.includes(query);
+    });
     elements.lessonList.replaceChildren();
-    let visible = 0;
-    for (const [grade, lessons] of groups) {
-      if (!lessons.length) continue;
-      visible += lessons.length;
-      const group = document.createElement("section");
-      group.className = "grade-group";
-      const label = document.createElement("div");
-      label.className = "grade-label";
-      label.textContent = `Grade ${grade}`;
-      group.append(label);
-      for (const lesson of lessons) {
-        const complete = completedCountForLesson(lesson.number);
-        const button = document.createElement("button");
-        button.type = "button";
-        button.className = `lesson-button${lesson.number === state.selectedLesson ? " active" : ""}`;
-        button.setAttribute("aria-current", lesson.number === state.selectedLesson ? "page" : "false");
-        button.innerHTML = `<span class="lesson-number">${String(lesson.number).padStart(2, "0")}</span><span class="lesson-name"></span><span class="lesson-count${complete === 3 ? " complete" : ""}">${complete}/3</span>`;
-        button.querySelector(".lesson-name").textContent = lesson.title;
-        button.addEventListener("click", () => {
-          if (running) return;
-          state.selectedLesson = lesson.number;
-          saveState();
-          clearConsole();
-          render();
-        });
-        group.append(button);
-      }
-      elements.lessonList.append(group);
+    for (const lesson of lessons) {
+      const complete = completedCountForLesson(lesson.number);
+      const lessonOrdinal = LESSON_ORDINAL_BY_NUMBER.get(lesson.number);
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = `lesson-button${lesson.number === state.selectedLesson ? " active" : ""}`;
+      button.setAttribute("aria-current", lesson.number === state.selectedLesson ? "page" : "false");
+      button.innerHTML = `<span class="lesson-number">${String(lessonOrdinal).padStart(2, "0")}</span><span class="lesson-name"></span><span class="lesson-count${complete === 3 ? " complete" : ""}">${complete}/3</span>`;
+      button.querySelector(".lesson-name").textContent = lesson.title;
+      button.addEventListener("click", () => {
+        if (running) return;
+        state.selectedLesson = lesson.number;
+        saveState();
+        clearConsole();
+        render();
+      });
+      elements.lessonList.append(button);
     }
-    if (!visible) {
+    if (!lessons.length) {
       const empty = document.createElement("div");
       empty.className = "empty-search";
       empty.textContent = "No lessons match that search.";
@@ -2108,8 +2115,9 @@ Sk.builtinFiles={"files":{"src/builtin/sys.js":"var $builtinmodule=function(){va
     const lesson = activeLesson();
     const view = activeView();
     const completed = completedCountForLesson(lesson.number);
+    const lessonOrdinal = LESSON_ORDINAL_BY_NUMBER.get(lesson.number);
     document.documentElement.dataset.theme = state.theme;
-    elements.lessonKicker.textContent = `Grade ${lesson.grade} · Lesson ${String(lesson.number).padStart(2, "0")} · ${lesson.concept}`;
+    elements.lessonKicker.textContent = `Lesson ${String(lessonOrdinal).padStart(2, "0")} · ${lesson.concept}`;
     elements.lessonTitle.textContent = lesson.title;
     elements.lessonQuestion.textContent = lesson.drivingQuestion;
     elements.lessonProgress.textContent = `${completed}/3`;

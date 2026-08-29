@@ -738,6 +738,10 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
   const plural=(number,word)=>number===1?word:word+"s";
   const maxUnsigned=bits=>2**bits-1;
 
+  function normaliseDenaryInput(value){
+    return value.replace(/[−–—]/g,"-");
+  }
+
   function binaryString(value,bits=8){
     const modulus=2**bits;
     const normalised=((value%modulus)+modulus)%modulus;
@@ -1500,7 +1504,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
         });
       }else{
         input.addEventListener("input",()=>{
-          input.value=input.value.replace(/[^0-9-]/g,"").replace(/(?!^)-/g,"");
+          input.value=normaliseDenaryInput(input.value).replace(/[^0-9-]/g,"").replace(/(?!^)-/g,"");
           clearAnswerState();
         });
       }
@@ -1630,8 +1634,9 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
     const raw=input.value.trim();
     if(!raw) return {complete:false};
     if(expected.kind==="denary"){
-      if(!/^-?\d+$/.test(raw)) return {complete:false};
-      return {complete:true,value:Number(raw)};
+      const normalised=normaliseDenaryInput(raw);
+      if(!/^-?\d+$/.test(normalised)) return {complete:false};
+      return {complete:true,value:Number(normalised)};
     }
     const digits=expected.digits||expected.value.length;
     if(!new RegExp(`^[0-9A-Fa-f]{1,${digits}}$`).test(raw)) return {complete:false};
