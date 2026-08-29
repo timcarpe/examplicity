@@ -99,6 +99,19 @@ function IconDrawing({ slug }: LabIconProps) {
           <path d="M542 202v34c0 42-30 62-76 62H134c-46 0-68-20-68-58m0 0 22 24m-22-24-22 24" />
         </>
       );
+    case 'data-transmission-methods':
+      return (
+        <>
+          <rect height="112" rx="18" width="112" x="48" y="124" />
+          <rect height="112" rx="18" width="112" x="480" y="124" />
+          <g className="thin-lines">
+            {[0, 1, 2, 3].map((line) => <path d={`M160 ${145 + line * 23}H480`} key={line} />)}
+          </g>
+          <circle className="tone-three" cx="320" cy="180" r="62" />
+          <path className="is-solid tone-three" d="m320 140 10 28 29-8-18 24 24 17-30 1-2 30-19-23-23 19 7-29-28-7 26-14-14-27 27 13z" />
+          <path d="M72 180h64m368 0h64" />
+        </>
+      );
     case 'network-topology':
       return (
         <>
@@ -133,6 +146,30 @@ function IconDrawing({ slug }: LabIconProps) {
           <circle cx="150" cy="278" r="7" />
           <circle cx="476" cy="278" r="7" />
           <circle cx="500" cy="278" r="7" />
+        </>
+      );
+    case 'packet-switching':
+      return (
+        <>
+          {[0, 1, 2, 3].map((packet) => (
+            <rect className={packet === 1 ? 'is-solid tone-one' : ''} height="40" key={packet} rx="8" width="54" x={54} y={82 + packet * 48} />
+          ))}
+          <circle cx="278" cy="98" r="28" />
+          <circle className="tone-three" cx="278" cy="260" r="28" />
+          <circle className="is-solid" cx="410" cy="180" r="32" />
+          <path d="M108 102 250 98M108 150l142-52M108 198l142 62M108 246l142 14M306 98l76 62m-76 100 76-60" />
+          <path className="secondary-line" d="M442 180h132" />
+          {[0, 1, 2, 3].map((packet) => <rect height="40" key={`r-${packet}`} rx="8" width="18" x={502 + packet * 20} y="160" />)}
+        </>
+      );
+    case 'ipv4-subnetting':
+      return (
+        <>
+          <rect className="tone-one" height="214" rx="24" width="214" x="54" y="72" />
+          <rect className="tone-three" height="214" rx="24" width="214" x="372" y="72" />
+          {[{ x: 105, y: 126 }, { x: 208, y: 126 }, { x: 105, y: 232 }, { x: 208, y: 232 }, { x: 423, y: 126 }, { x: 526, y: 126 }, { x: 423, y: 232 }, { x: 526, y: 232 }].map(({ x, y }) => <circle cx={x} cy={y} key={`${x}-${y}`} r="14" />)}
+          <rect className="is-solid" height="74" rx="14" width="74" x="283" y="143" />
+          <path d="M268 180h15m74 0h15M320 116v27m0 74v27" />
         </>
       );
     case 'encryption-in-data-transmission':
@@ -261,6 +298,18 @@ function IconDrawing({ slug }: LabIconProps) {
           <path className="tone-three" d="m500 126 62 54-62 54-62-54z" />
           <path d="M562 180h30m-18-18 18 18-18 18M500 234v48H106v-71m-18 18 18-18 18 18" />
           <circle className="is-solid tone-three" cx="592" cy="180" r="10" />
+        </>
+      );
+    case 'python-programming-practice':
+      return (
+        <>
+          <rect height="224" rx="22" width="284" x="62" y="68" />
+          <path className="secondary-line" d="M96 112h118m-118 38h202m-202 38h162m-162 38h190" />
+          <path d="m116 134-18 16 18 16m72-32 18 16-18 16" />
+          <rect className="tone-one" height="64" rx="14" width="174" x="402" y="78" />
+          <rect className="is-solid tone-one" height="64" rx="14" width="174" x="402" y="158" />
+          <rect height="48" rx="14" width="174" x="402" y="242" />
+          <path d="m430 190 18 18 34-42M430 266h118" />
         </>
       );
     case 'translator':

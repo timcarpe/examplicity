@@ -1,0 +1,2329 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- LAB_MANIFEST_HEAD_START -->
+<title>IPv4 Subnetting</title>
+<meta name="description" content="Explore IPv4 subnetting, network masks, broadcast boundaries and local-or-remote routing for Cambridge International AS Level Computer Science 9618.">
+<link rel="canonical" href="https://www.examplicity.org/labs/ipv4-subnetting.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Examplicity">
+<meta property="og:title" content="IPv4 Subnetting">
+<meta property="og:description" content="Explore IPv4 subnetting, network masks, broadcast boundaries and local-or-remote routing for Cambridge International AS Level Computer Science 9618.">
+<meta property="og:url" content="https://www.examplicity.org/labs/ipv4-subnetting.html">
+<meta property="og:image" content="https://www.examplicity.org/opengraph-image">
+<meta property="og:image:alt" content="Examplicity — Make complex ideas click">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="IPv4 Subnetting">
+<meta name="twitter:description" content="Explore IPv4 subnetting, network masks, broadcast boundaries and local-or-remote routing for Cambridge International AS Level Computer Science 9618.">
+<meta name="twitter:image" content="https://www.examplicity.org/opengraph-image">
+<script type="application/ld+json" data-lab-manifest="structured-data">{"@context":"https://schema.org","@type":"LearningResource","@id":"https://www.examplicity.org/labs/ipv4-subnetting.html#learning-resource","url":"https://www.examplicity.org/labs/ipv4-subnetting.html","name":"IPv4 Subnetting","description":"Explore IPv4 subnetting, network masks, broadcast boundaries and local-or-remote routing for Cambridge International AS Level Computer Science 9618.","inLanguage":"en-GB","isAccessibleForFree":true,"interactivityType":"active","learningResourceType":"Network design experiment","teaches":"Networks & communication","educationalLevel":["AS Level"],"educationalAlignment":[{"@type":"AlignmentObject","alignmentType":"educationalSubject","educationalFramework":"Cambridge International AS & A Level Computer Science","targetName":"AS 9618 section 2.1","targetUrl":"https://www.cambridgeinternational.org/Images/697372-2026-syllabus.pdf#page=17"}],"about":{"@type":"Thing","name":"Computer Science"},"audience":{"@type":"EducationalAudience","educationalRole":"student"},"provider":{"@type":"Organization","name":"Examplicity","url":"https://www.examplicity.org"},"isPartOf":{"@type":"WebSite","@id":"https://www.examplicity.org/#website","name":"Examplicity","url":"https://www.examplicity.org"}}</script>
+<!-- LAB_MANIFEST_HEAD_END -->
+<!-- LAB_FRAME_STYLES_START -->
+<style data-lab-frame>
+:root {
+  --lab-canvas: #f3f5f7;
+  --lab-paper: #fbfbfd;
+  --lab-surface: #ffffff;
+  --lab-control: #ffffff;
+  --lab-ink: #1d1d1f;
+  --lab-muted: #6e6e73;
+  --lab-line: #d2d2d7;
+  --lab-line-strong: #a7a7ad;
+  --lab-accent: #5277b8;
+  --lab-accent-soft: #eef2fa;
+  --lab-good: #18794e;
+  --lab-good-soft: #edf8f1;
+  --lab-warn: #946200;
+  --lab-warn-soft: #fff6e7;
+  --lab-bad: #b42318;
+  --lab-bad-soft: #fff0ee;
+  --lab-focus: #1d1d1f;
+  --lab-focus-soft: rgba(29, 29, 31, 0.18);
+  --lab-font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+  --lab-panel-radius: 12px;
+  --lab-control-radius: 8px;
+  --lab-pill-radius: 999px;
+  --lab-control-height: 35px;
+  --lab-panel-shadow: 0 1px 2px rgba(29, 29, 31, 0.04);
+  --lab-page-gutter: max(28px, calc((100vw - 1200px) / 2));
+  --lab-compact-workspace-max: 820px;
+}
+
+html,
+body {
+  background: var(--lab-canvas);
+}
+
+body {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  align-content: start !important;
+  font-family: var(--lab-font-sans);
+  padding-bottom: 58px;
+  padding-top: 66px !important;
+  text-rendering: optimizeLegibility;
+}
+
+.lab-manifest-header {
+  align-items: start;
+  border-bottom: 1px solid var(--line, var(--lab-line));
+  display: grid;
+  gap: 18px 28px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  margin-bottom: 26px;
+  padding-bottom: 22px;
+}
+
+.lab-manifest-heading {
+  min-width: 0;
+}
+
+.lab-manifest-header h1 {
+  color: var(--ink, var(--lab-ink));
+  font-family: var(--lab-font-sans);
+  font-size: clamp(25px, 3.2vw, 40px);
+  font-weight: 650;
+  letter-spacing: -0.045em;
+  line-height: 1.02;
+  margin: 0;
+  max-width: 24ch;
+  padding: 0;
+  text-align: left;
+}
+
+.lab-manifest-subtitle {
+  color: var(--muted, var(--lab-muted));
+  font-family: var(--lab-font-sans);
+  font-size: 13px;
+  letter-spacing: 0;
+  line-height: 1.5;
+  margin: 10px 0 0;
+  max-width: 72ch;
+  padding: 0;
+  text-align: left;
+}
+
+.lab-authored-title-slot {
+  min-width: 0;
+}
+
+.lab-syllabus-chips {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+  margin: 0 0 0 auto;
+  max-width: 100%;
+}
+
+.lab-syllabus-chip {
+  align-items: center;
+  background: var(--panel, var(--lab-surface));
+  border: 1px solid var(--line, var(--lab-line));
+  border-radius: var(--lab-pill-radius);
+  color: var(--ink, var(--lab-ink));
+  display: inline-flex;
+  font-size: 11px;
+  font-weight: 650;
+  gap: 4px;
+  line-height: 1;
+  min-height: 29px;
+  padding: 8px 10px;
+  position: relative;
+  transition: background-color 140ms ease, border-color 140ms ease;
+  white-space: nowrap;
+}
+
+.lab-syllabus-chip:hover {
+  background: var(--syllabus-chip-hover);
+  border-color: var(--syllabus-chip-border);
+}
+
+.lab-syllabus-primary-link {
+  border-radius: inherit;
+  inset: 0;
+  position: absolute;
+  z-index: 0;
+}
+
+.lab-syllabus-primary-link:focus-visible {
+  outline: 2px solid var(--syllabus-chip-text);
+  outline-offset: 2px;
+}
+
+.lab-syllabus-name,
+.lab-syllabus-divider,
+.lab-syllabus-sections {
+  pointer-events: none;
+  position: relative;
+  z-index: 1;
+}
+
+.lab-syllabus-section {
+  border-radius: 4px;
+  color: inherit;
+  padding: 2px;
+  text-decoration: none;
+}
+
+a.lab-syllabus-section {
+  pointer-events: auto;
+}
+
+a.lab-syllabus-section:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+a.lab-syllabus-section:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 1px;
+}
+
+.lab-syllabus-name {
+  color: var(--syllabus-chip-text) !important;
+}
+
+.lab-syllabus-divider,
+.lab-syllabus-separator {
+  color: var(--muted, var(--lab-muted));
+}
+
+.lab-syllabus-prefix {
+  opacity: 0.72;
+  padding-left: 5px;
+}
+
+.lab-syllabus-sections {
+  align-items: center;
+  display: inline-flex;
+}
+
+.lab-syllabus-separator {
+  margin-inline: 0 2px;
+}
+
+html[data-theme="dark"] .lab-syllabus-name {
+  color: var(--syllabus-chip-border) !important;
+}
+
+html[data-theme="dark"] .lab-syllabus-chip:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+html[data-theme="dark"],
+html[data-theme="dark"] body {
+  background: var(--bg);
+}
+
+main {
+  container-name: lab-canvas;
+  container-type: inline-size;
+  margin-left: var(--lab-page-gutter) !important;
+  margin-right: auto !important;
+  margin-top: 18px !important;
+  max-width: 1200px;
+  width: calc(100vw - var(--lab-page-gutter) - var(--lab-page-gutter)) !important;
+}
+
+body[data-lab-layout="compact"] .lab-manifest-header {
+  margin-bottom: 17px;
+  padding-bottom: 13px;
+}
+
+body[data-lab-layout="compact"] [data-lab-workspace] {
+  margin-left: auto;
+  margin-right: auto;
+  width: min(var(--lab-compact-workspace-max), 100%);
+}
+
+:where(button, input, select, textarea, summary):focus-visible {
+  outline: 3px solid var(--lab-focus);
+  outline-offset: 4px;
+}
+
+@media (max-width: 620px) {
+  :root {
+    --lab-page-gutter: 18px;
+  }
+
+  body {
+    padding-bottom: 76px;
+    padding-top: 60px !important;
+  }
+
+  .lab-manifest-header {
+    gap: 14px;
+    grid-template-columns: 1fr;
+    margin-bottom: 20px;
+    padding-bottom: 18px;
+  }
+
+  body[data-lab-layout="compact"] .lab-manifest-header {
+    margin-bottom: 16px;
+    padding-bottom: 14px;
+  }
+
+  .lab-manifest-header h1 {
+    font-size: clamp(24px, 8vw, 34px);
+  }
+
+  .lab-syllabus-chips {
+    gap: 4px;
+    justify-content: flex-start;
+    margin: 0;
+  }
+
+  .lab-syllabus-chip {
+    font-size: 10px;
+    min-height: 27px;
+    padding: 7px 8px;
+  }
+
+  main {
+    margin-top: 8px !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+</style>
+<!-- LAB_FRAME_STYLES_END -->
+<style>
+:root{
+  --bg:#f3f5f7;
+  --panel:#ffffff;
+  --ink:#1d2730;
+  --muted:#687681;
+  --line:#d7dfe5;
+  --accent:#2865d8;
+  --accent-soft:#edf3ff;
+  --good:#26734a;
+  --good-soft:#edf8f1;
+  --warn:#a46a19;
+  --warn-soft:#fff6e7;
+  --bad:#b2453a;
+  --bad-soft:#fff0ee;
+  --network:#101821;
+  --network-grid:#1b2732;
+  --link:#536776;
+  --broadcast:#e5a43a;
+  --packet:#4aa3ff;
+  --reply:#55b97a;
+  --zone-a:#4a8bd8;
+  --zone-b:#55a977;
+  --zone-c:#d69a38;
+  --zone-d:#9a74d0;
+  --ip:#7b65c6;
+  --ip-soft:#f1edff;
+}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+button,input,select{font:inherit}
+button{cursor:pointer}
+button:disabled,input:disabled,select:disabled{opacity:.45;cursor:not-allowed}
+main{width:min(1450px,calc(100% - 20px));margin:14px auto 38px}
+h1{margin:0;font-size:27px;letter-spacing:-.025em}
+.sub{margin:5px 0 12px;color:var(--muted);font-size:13px;line-height:1.45}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px}
+button{
+  min-height:34px;
+  padding:0 10px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:#fff;
+  color:var(--ink);
+}
+button:hover:not(:disabled){border-color:#9aa8b2}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:760}
+button.active{background:var(--accent-soft);border-color:#8eafea;color:#1d58bb;font-weight:800}
+button.danger{color:var(--bad)}
+
+.lesson-bar{
+  padding:10px 12px;
+  display:grid;
+  grid-template-columns:minmax(260px,1fr) auto auto;
+  gap:12px;
+  align-items:center;
+}
+.lesson-copy strong{display:block;font-size:14px}
+.lesson-copy span{display:block;margin-top:2px;color:var(--muted);font-size:10px;line-height:1.35}
+.tab-set,.scenario-set{display:flex;gap:5px;flex-wrap:wrap}
+.tab-set button,.scenario-set button{min-height:31px;font-size:9px;font-weight:800}
+.tab-set button.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.view-tools{margin-top:5px;display:flex;gap:5px;align-items:center;flex-wrap:wrap}
+.ip-toggle{
+  min-height:31px;padding:4px 8px;display:inline-flex;align-items:center;gap:7px;
+  border-color:#cbd3da;background:#fff;color:#596771;text-align:left
+}
+.ip-toggle strong{display:block;font-size:9px;line-height:1.1}
+.ip-toggle small{display:block;margin-top:1px;color:#7b8790;font-size:7px;line-height:1.1}
+.ip-switch{position:relative;width:29px;height:17px;flex:0 0 auto;border-radius:999px;background:#c5ced5;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}
+.ip-switch::after{content:"";position:absolute;left:2px;top:2px;width:13px;height:13px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(26,39,48,.28);transition:.15s}
+.ip-toggle[aria-pressed="true"]{border-color:#ae9be4;background:var(--ip-soft);color:#51428f;box-shadow:inset 0 0 0 1px rgba(123,101,198,.14)}
+.ip-toggle[aria-pressed="true"] .ip-switch{background:var(--ip)}
+.ip-toggle[aria-pressed="true"] .ip-switch::after{transform:translateX(12px)}
+.metrics{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}
+.metric{min-width:102px;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:#fafbfc}
+.metric span{display:block;color:var(--muted);font-size:8px;font-weight:850;letter-spacing:.045em;text-transform:uppercase}
+.metric strong{display:block;margin-top:2px;font:850 13px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.metric.warn{border-color:#e4c786;background:var(--warn-soft)}
+.metric.good{border-color:#b9dbc6;background:var(--good-soft)}
+
+.lab-grid{
+  margin-top:10px;
+  display:grid;
+  grid-template-columns:minmax(0,1.9fr) minmax(300px,.68fr);
+  gap:10px;
+  align-items:start;
+}
+.network-panel{padding:9px;min-width:0}
+.story-card{
+  min-height:112px;
+  padding:10px 11px;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:12px;
+  align-items:center;
+  border:1px solid var(--line);
+  border-left:5px solid var(--accent);
+  border-radius:10px;
+  background:#fbfcfd;
+}
+.story-card.warn{border-left-color:var(--broadcast);background:var(--warn-soft)}
+.story-card.good{border-left-color:var(--good);background:var(--good-soft)}
+.story-card.bad{border-left-color:var(--bad);background:var(--bad-soft)}
+.step-kicker{color:var(--accent);font-size:9px;font-weight:900;letter-spacing:.075em;text-transform:uppercase}
+.story-card.warn .step-kicker{color:#8d5b13}.story-card.good .step-kicker{color:var(--good)}
+#storyTitle{display:block;margin-top:3px;font-size:17px;line-height:1.25}
+#storyText{display:block;margin-top:4px;color:var(--muted);font-size:11px;line-height:1.45;max-width:760px}
+.story-actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.story-actions button{font-size:9px}
+.progress-dots{margin-top:9px;display:flex;gap:5px;align-items:center;min-height:8px}
+.progress-dot{width:22px;height:5px;border-radius:99px;background:#d9e0e5}
+.progress-dot.done{background:#8eb0ea}.progress-dot.active{background:var(--accent);box-shadow:0 0 0 3px rgba(40,101,216,.13)}
+
+.ip-stage{
+  margin-top:8px;padding:9px 10px;border:1px solid #cfc5ed;border-left:5px solid var(--ip);
+  border-radius:10px;background:linear-gradient(180deg,#faf8ff,#f4f1ff)
+}
+.ip-stage[hidden]{display:none}
+.ip-stage.warn{border-color:#e7d2a7;border-left-color:var(--broadcast);background:var(--warn-soft)}
+.ip-stage.good{border-color:#bdddc9;border-left-color:var(--good);background:var(--good-soft)}
+.ip-stage.route{border-left-color:var(--ip)}
+.ip-stage-head{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.ip-stage-kicker{color:var(--ip);font-size:8px;font-weight:900;letter-spacing:.075em;text-transform:uppercase}
+.ip-stage.warn .ip-stage-kicker{color:#8c5a15}.ip-stage.good .ip-stage-kicker{color:var(--good)}
+.ip-stage-head strong{font-size:12px}
+.ip-context{margin-left:auto;padding:3px 7px;border:1px solid #d6cdec;border-radius:999px;background:#fff;color:#6555a0;font-size:7px;font-weight:850;white-space:nowrap}
+.ip-stage-grid{margin-top:7px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.ip-fact{min-width:0;padding:6px 7px;border:1px solid rgba(115,98,169,.21);border-radius:8px;background:rgba(255,255,255,.82)}
+.ip-fact span{display:block;color:#756b91;font-size:7px;font-weight:850;letter-spacing:.035em;text-transform:uppercase}
+.ip-fact strong{display:block;margin-top:2px;color:#302a43;font:850 9px/1.3 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;overflow-wrap:anywhere}
+.ip-fact small{display:block;margin-top:2px;color:#776f84;font-size:7px;line-height:1.25}
+.ip-explanation{margin-top:7px;color:#514a60;font-size:9px;line-height:1.4}
+.ip-formula{margin-top:6px;padding:6px 7px;border:1px solid rgba(115,98,169,.19);border-radius:7px;background:rgba(255,255,255,.76);color:#4c4274;font:750 8px/1.45 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre-wrap}
+.ip-formula[hidden]{display:none}
+.ip-stage-foot{margin-top:6px;color:#776f84;font-size:7px;line-height:1.35}
+
+
+.ip-workbench{
+  margin-top:8px;padding:10px;border:1px solid #cfc5ed;border-left:5px solid var(--ip);
+  border-radius:10px;background:linear-gradient(180deg,#fbf9ff,#f4f1ff)
+}
+.ip-workbench[hidden]{display:none}
+.ip-workbench.local{border-left-color:var(--good);border-color:#bdddc9;background:linear-gradient(180deg,#f7fcf9,#edf8f1)}
+.ip-workbench.route{border-left-color:var(--ip)}
+.ip-workbench.warn{border-left-color:var(--broadcast);border-color:#e5cf9e;background:linear-gradient(180deg,#fffaf0,#fff6e7)}
+.ip-workbench-head{display:grid;grid-template-columns:minmax(190px,.55fr) minmax(360px,1.45fr);gap:12px;align-items:center}
+.ip-workbench-kicker,.ip-panel-label{display:block;color:var(--ip);font-size:8px;font-weight:900;letter-spacing:.075em;text-transform:uppercase}
+.ip-workbench-head strong{display:block;margin-top:2px;font-size:14px}
+.ip-workbench-head small{display:block;margin-top:2px;color:#716982;font-size:8px;line-height:1.3}
+.ip-actor-strip{display:flex;align-items:flex-start;justify-content:flex-end;gap:0;min-width:0}
+.ip-actor{position:relative;flex:1 1 0;min-width:56px;display:grid;justify-items:center;gap:4px;color:#8c849b;text-align:center;font-size:7px;font-weight:850}
+.ip-actor:not(:last-child)::after{content:"";position:absolute;left:calc(50% + 13px);right:calc(-50% + 13px);top:11px;height:2px;background:#d8d0e8}
+.ip-actor i{position:relative;z-index:1;width:24px;height:24px;display:grid;place-items:center;border:2px solid #d1c9e2;border-radius:50%;background:#fff;color:#807596;font-style:normal;font-size:9px}
+.ip-actor.done{color:#4f7b5f}.ip-actor.done i{border-color:#8dc0a0;background:var(--good-soft);color:var(--good)}
+.ip-actor.done:not(:last-child)::after{background:#9ec9ae}
+.ip-actor.active{color:#51428f}.ip-actor.active i{border-color:var(--ip);background:var(--ip-soft);color:var(--ip);box-shadow:0 0 0 4px rgba(123,101,198,.13)}
+.ip-actor.skipped{opacity:.35}
+.ip-workbench-grid{margin-top:9px;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(190px,.62fr) minmax(250px,.9fr);gap:8px;align-items:stretch}
+.ip-read-panel,.ip-decision-panel,.ip-envelope-panel{min-width:0;padding:8px;border:1px solid rgba(115,98,169,.2);border-radius:9px;background:rgba(255,255,255,.82)}
+.ip-read-grid{margin-top:6px;display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.ip-read-card{min-width:0;padding:6px 7px;border:1px solid #ddd7ea;border-radius:7px;background:#fff}
+.ip-read-card span{display:block;color:#7b718e;font-size:7px;font-weight:850;letter-spacing:.035em;text-transform:uppercase}
+.ip-read-card strong{display:block;margin-top:2px;color:#302a43;font:850 9px/1.3 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;overflow-wrap:anywhere}
+.ip-read-card small{display:block;margin-top:2px;color:#756e80;font-size:7px;line-height:1.25}
+.ip-decision-panel{display:flex;flex-direction:column;justify-content:center;border-left:4px solid var(--ip)}
+.ip-decision-panel.local{border-left-color:var(--good);background:var(--good-soft)}
+.ip-decision-panel.warn{border-left-color:var(--broadcast);background:var(--warn-soft)}
+.ip-decision-panel strong{display:block;margin-top:7px;font-size:13px;line-height:1.3}
+.ip-decision-panel>span:last-child{display:block;margin-top:4px;color:#655d70;font-size:9px;line-height:1.4}
+.ip-bit-compare{margin-top:7px;display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.ip-bit-compare[hidden]{display:none}
+.ip-bit-card{padding:6px;border:1px solid #d9d2e7;border-radius:8px;background:#fbfaff}
+.ip-bit-card-title{display:flex;justify-content:space-between;gap:6px;color:#51476b;font-size:8px;font-weight:850}
+.ip-bit-row{margin-top:5px;display:grid;grid-template-columns:58px auto;gap:5px;align-items:center}
+.ip-bit-row>span{color:#766e82;font-size:7px;font-weight:800}
+.ip-octets{display:flex;align-items:center;min-width:0;font:800 8px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.ip-fixed-prefix{margin-right:3px;color:#51428f;white-space:nowrap}
+.ip-bit{width:14px;height:19px;display:grid;place-items:center;border:1px solid #ccd3d9;background:#f2f4f6;color:#65727c}
+.ip-bit:first-of-type{border-radius:5px 0 0 5px}.ip-bit:last-child{border-radius:0 5px 5px 0}
+.ip-bit.net{border-color:#aa99df;background:#e9e2ff;color:#4e3d91}.ip-bit.host{background:#eef1f3;color:#65727c}
+.ip-bit-result{margin-top:5px;padding-top:5px;border-top:1px solid #e2ddea;color:#51476b;font:800 8px/1.35 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.ip-envelope{margin-top:6px;min-height:108px;display:grid;place-items:center}
+.ip-envelope-empty{color:#8b8296;font-size:9px;text-align:center;line-height:1.4}
+.arp-envelope{width:100%;padding:10px;border:2px solid var(--broadcast);border-radius:9px;background:var(--warn-soft);color:#614514}
+.arp-envelope strong{display:block;font-size:11px}.arp-envelope span{display:block;margin-top:3px;font:800 8px/1.4 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.arp-envelope small{display:block;margin-top:5px;color:#7b5c28;font-size:7px;line-height:1.35}
+.ethernet-frame{width:100%;padding:7px;border:2px solid #5e7789;border-radius:9px;background:#edf2f5}
+.frame-label{display:flex;justify-content:space-between;gap:7px;color:#4e6371;font-size:7px;font-weight:900;text-transform:uppercase;letter-spacing:.04em}
+.frame-hop{margin-top:4px;color:#3e5260;font:800 8px/1.35 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.ip-packet-shell{margin-top:6px;padding:7px;border:2px solid var(--ip);border-radius:8px;background:var(--ip-soft)}
+.ip-packet-shell>strong{display:block;color:#51428f;font-size:9px}
+.ip-address-line{margin-top:3px;color:#4d4561;font:800 7px/1.35 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.payload-shell{margin-top:5px;padding:5px;border:1px solid #b9dbc6;border-radius:6px;background:var(--good-soft);color:#365f46;font-size:8px;font-weight:800;text-align:center}
+.router-reframe{width:100%;display:grid;gap:5px;align-items:center}.router-reframe.inspect{grid-template-columns:1fr auto 1fr}.router-reframe.rebuild{grid-template-columns:1fr auto 1fr auto 1fr}
+.mini-frame{padding:7px;border:1px solid #8296a4;border-radius:7px;background:#edf2f5;color:#405562;font-size:7px;line-height:1.35;text-align:center}
+.mini-frame.old{opacity:.48;text-decoration:line-through}.mini-frame.new{border-color:#8873c8;background:var(--ip-soft);color:#51428f}
+.reframe-arrow{color:#7b718c;font-weight:900}
+.ip-insight{margin-top:8px;padding:7px 9px;border-left:4px solid var(--ip);border-radius:7px;background:#fff;color:#564f61;font-size:9px;line-height:1.4}
+.ip-mode #scenarioControls{display:none}
+.ip-mode .address-details{display:none}
+.ip-mode .metric strong{font-size:10px}
+.ip-mode .story-card{border-left-color:var(--ip)}
+.ip-mode .step-kicker{color:var(--ip)}
+
+.canvas-shell{position:relative;margin-top:8px;overflow:auto;border-radius:11px;background:var(--network)}
+.network-canvas{
+  position:relative;
+  width:980px;
+  height:560px;
+  overflow:hidden;
+  border:1px solid #263645;
+  border-radius:11px;
+  background:
+    radial-gradient(circle at 50% 48%,rgba(54,86,112,.18),transparent 24rem),
+    repeating-linear-gradient(0deg,transparent 0 31px,rgba(119,145,164,.07) 32px),
+    repeating-linear-gradient(90deg,transparent 0 31px,rgba(119,145,164,.07) 32px),
+    var(--network);
+}
+.zone-layer,.network-svg,.node-layer,.packet-layer,.overlay-layer{position:absolute;inset:0;width:100%;height:100%}
+.zone-layer{z-index:0;pointer-events:none}
+.network-svg{z-index:1;overflow:visible}
+.node-layer{z-index:3;pointer-events:none}
+.packet-layer{z-index:6;pointer-events:none}
+.overlay-layer{z-index:8;pointer-events:none}
+.link{stroke:var(--link);stroke-width:3.5;stroke-linecap:round;transition:.16s}
+.link.router-link{stroke:#607b8e;stroke-width:4.5}
+.link.active{stroke:var(--flow,var(--packet));stroke-width:6;filter:drop-shadow(0 0 5px var(--flow,var(--packet)));stroke-dasharray:10 8;animation:linkFlow .72s linear infinite}
+@keyframes linkFlow{to{stroke-dashoffset:-36}}
+
+.network-zone{
+  position:absolute;
+  border:2px dashed color-mix(in srgb,var(--zone) 76%,#fff 24%);
+  border-radius:15px;
+  background:color-mix(in srgb,var(--zone) 9%,transparent);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.035);
+  transition:.18s;
+}
+.network-zone.broadcasting{
+  border-style:solid;
+  border-color:var(--broadcast);
+  background:rgba(229,164,58,.09);
+  box-shadow:inset 0 0 0 3px rgba(229,164,58,.16),0 0 24px rgba(229,164,58,.32);
+  animation:zonePulse 1s ease-in-out infinite alternate;
+}
+.network-zone.focused{box-shadow:inset 0 0 0 3px color-mix(in srgb,var(--zone) 22%,transparent),0 0 20px color-mix(in srgb,var(--zone) 32%,transparent)}
+.network-zone.dimmed{opacity:.32;filter:saturate(.45)}
+@keyframes zonePulse{to{filter:brightness(1.16)}}
+.zone-heading{position:absolute;left:11px;top:9px;right:11px;display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.zone-heading strong{color:#eef5fa;font-size:11px}
+.zone-heading span{color:#a9bbc8;font-size:8px;font-weight:750;text-align:right;line-height:1.25}
+.zone-foot{position:absolute;left:11px;right:11px;bottom:8px;color:#8fa4b2;font-size:7px;font-weight:760;display:flex;justify-content:space-between;gap:8px;align-items:flex-end}
+.zone-ip-line{display:none;color:#d9cdf8;font:800 6.5px/1.3 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;text-align:right}
+.network-canvas.show-ip .zone-ip-line{display:block}
+.zone-banner{
+  position:absolute;left:50%;top:12px;transform:translateX(-50%);
+  padding:5px 8px;border:1px solid rgba(255,255,255,.18);border-radius:999px;
+  background:rgba(8,14,19,.92);color:#eef4f7;font-size:8px;font-weight:850;white-space:nowrap;
+  box-shadow:0 7px 17px rgba(0,0,0,.25)
+}
+.zone-banner.warn{color:#ffd27a}.zone-banner.good{color:#8de0aa}
+
+.network-node{
+  position:absolute;
+  transform:translate(-50%,-50%);
+  pointer-events:auto;
+  user-select:none;
+  color:#26343d;
+  transition:opacity .16s,filter .16s;
+}
+.network-node.dimmed{opacity:.28;filter:saturate(.45)}
+.node-shell{position:relative;border:2px solid #718593;background:linear-gradient(145deg,#f5f8fa,#cbd6dd);box-shadow:0 7px 16px rgba(0,0,0,.26);transition:.16s}
+.node-status{margin-top:3px;color:#9eb0bc;font-size:7px;font-weight:850;letter-spacing:.03em;text-transform:uppercase;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ip-node-label{display:none;margin-top:2px;color:#cdbef3;text-align:center;font:800 6.5px/1.25 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:nowrap}
+.network-canvas.show-ip .ip-node-label{display:block}
+.network-node.source .node-shell{border-color:var(--packet);box-shadow:0 0 0 4px rgba(74,163,255,.23),0 0 19px rgba(74,163,255,.55),0 7px 16px rgba(0,0,0,.26)}
+.network-node.target .node-shell{border-color:var(--reply);box-shadow:0 0 0 4px rgba(85,185,122,.23),0 0 19px rgba(85,185,122,.5),0 7px 16px rgba(0,0,0,.26)}
+.network-node.checking .node-shell{border-color:var(--broadcast);background:linear-gradient(145deg,#fff9ec,#e9d3a5);box-shadow:0 0 0 4px rgba(229,164,58,.22),0 0 18px rgba(229,164,58,.48),0 7px 16px rgba(0,0,0,.26)}
+.network-node.answering .node-shell{border-color:var(--reply);background:linear-gradient(145deg,#f2fbf5,#cbe4d4);box-shadow:0 0 0 4px rgba(85,185,122,.22),0 0 19px rgba(85,185,122,.5),0 7px 16px rgba(0,0,0,.26)}
+.network-node.routing .node-shell{border-color:#9a74d0;box-shadow:0 0 0 4px rgba(154,116,208,.22),0 0 18px rgba(154,116,208,.5),0 7px 16px rgba(0,0,0,.26)}
+.network-node.stop .node-shell{border-color:var(--broadcast);box-shadow:0 0 0 4px rgba(229,164,58,.2),0 0 17px rgba(229,164,58,.42),0 7px 16px rgba(0,0,0,.26)}
+.network-node.source .node-status{color:#68b5f7}.network-node.target .node-status,.network-node.answering .node-status{color:#78d49a}.network-node.checking .node-status,.network-node.stop .node-status{color:#f0c66d}.network-node.routing .node-status{color:#c8a9ef}
+
+.department-node{width:120px}
+.department-node .node-shell{min-height:61px;border-radius:10px;padding:6px;display:grid;grid-template-columns:36px 1fr;gap:6px;align-items:center}
+.dept-icon{width:36px;height:36px;display:grid;place-items:center;border:1px solid #b9c6ce;border-radius:8px;background:#f8fafb;color:#50616d}
+.dept-icon svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.dept-copy{min-width:0}.dept-copy strong{display:block;font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.dept-copy span{display:block;margin-top:3px;color:#687681;font-size:7px;line-height:1.2}
+.check-badge{
+  position:absolute;right:-9px;top:-10px;min-width:33px;padding:4px 5px;border:2px solid #fff;border-radius:999px;
+  background:var(--broadcast);color:#fff;text-align:center;font:900 8px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  box-shadow:0 0 0 3px rgba(229,164,58,.2),0 5px 10px rgba(0,0,0,.2)
+}
+
+.switch-node{width:78px}
+.switch-node .node-shell{height:50px;border-radius:9px;padding:6px}
+.switch-top{display:flex;justify-content:space-between;gap:5px;align-items:center}.switch-top strong{font-size:8px}.switch-led{width:6px;height:6px;border-radius:50%;background:#55b778;box-shadow:0 0 5px rgba(85,183,120,.65)}
+.switch-ports{height:18px;margin-top:5px;padding:4px;display:grid;grid-template-columns:repeat(6,1fr);gap:3px;border:1px solid #84949f;border-radius:4px;background:#50636f}.switch-ports i{display:block;border-radius:2px;background:#1e2b33;box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
+
+.router-node{width:102px}
+.router-node .node-shell{height:76px;border-radius:12px;padding:8px;border-color:#7b8f9e;background:linear-gradient(145deg,#f6f8fa,#cbd6dd)}
+.router-title{display:flex;justify-content:space-between;gap:5px;align-items:center;font-size:10px;font-weight:900}.router-led{width:7px;height:7px;border-radius:50%;background:#56bb79;box-shadow:0 0 5px rgba(86,187,121,.7)}
+.router-body{position:relative;height:27px;margin-top:7px;border:1px solid #84939e;border-radius:6px;background:#536673}.router-body::before{content:"";position:absolute;left:6px;right:6px;top:6px;height:7px;background:repeating-linear-gradient(90deg,#1f2b33 0 8px,transparent 8px 12px)}.router-body::after{content:"ROUTE";position:absolute;left:0;right:0;bottom:3px;color:#eaf1f5;text-align:center;font:850 6px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:.08em}
+
+.packet-dot{
+  position:absolute;left:0;top:0;width:18px;height:18px;margin:-9px 0 0 -9px;display:grid;place-items:center;
+  border:2px solid #fff;border-radius:50%;background:var(--packet-colour,var(--packet));color:#fff;
+  box-shadow:0 0 0 4px color-mix(in srgb,var(--packet-colour,var(--packet)) 24%,transparent),0 0 15px var(--packet-colour,var(--packet));
+  font:900 6px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+.packet-dot.small{width:13px;height:13px;margin:-6.5px 0 0 -6.5px;font-size:0;box-shadow:0 0 0 3px color-mix(in srgb,var(--packet-colour,var(--packet)) 22%,transparent),0 0 11px var(--packet-colour,var(--packet))}
+.packet-dot span{position:absolute;left:50%;top:-19px;transform:translateX(-50%);padding:2px 4px;border-radius:4px;background:rgba(7,12,17,.9);color:#fff;white-space:nowrap;font:800 7px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+
+.callout{
+  position:absolute;transform:translate(-50%,-100%);max-width:175px;padding:7px 9px;border:1px solid rgba(255,255,255,.19);border-radius:9px;
+  background:rgba(8,14,19,.95);color:#eef4f7;box-shadow:0 10px 20px rgba(0,0,0,.3);font-size:9px;line-height:1.35;text-align:center;
+}
+.callout::after{content:"";position:absolute;left:50%;bottom:-6px;width:10px;height:10px;transform:translateX(-50%) rotate(45deg);background:rgba(8,14,19,.95);border-right:1px solid rgba(255,255,255,.19);border-bottom:1px solid rgba(255,255,255,.19)}
+.callout.warn{color:#ffd27a}.callout.good{color:#8de0aa}.callout.route{color:#d3b8f2}
+
+.canvas-caption{
+  margin-top:7px;min-height:48px;padding:8px 10px;border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:9px;background:#fafbfc;
+}
+.canvas-caption strong{display:block;font-size:11px}.canvas-caption span{display:block;margin-top:2px;color:var(--muted);font-size:9px;line-height:1.4}
+.canvas-caption.warn{border-left-color:var(--broadcast);background:var(--warn-soft)}.canvas-caption.good{border-left-color:var(--good);background:var(--good-soft)}
+
+.planner{padding:10px;position:sticky;top:10px;max-height:calc(100vh - 20px);overflow:auto}
+.planner-head strong{display:block;font-size:15px}.planner-head span{display:block;margin-top:2px;color:var(--muted);font-size:9px;line-height:1.35}
+.builder-summary{margin-top:10px;display:grid;gap:8px}
+.summary-intro{padding:8px 9px;border:1px solid #b9dbc6;border-radius:9px;background:var(--good-soft);color:#335e44;font-size:9px;line-height:1.4}
+.summary-zones{display:grid;gap:6px}
+.summary-zone{padding:8px 9px;border:1px solid var(--line);border-left:5px solid var(--subnet-colour);border-radius:9px;background:#fff}
+.summary-zone strong{display:block;font-size:10px}.summary-zone span{display:block;margin-top:2px;color:var(--muted);font-size:8px;line-height:1.35}
+.summary-actions{display:grid;grid-template-columns:1fr;gap:6px}.summary-actions button{font-size:9px}
+.locked-planner{margin-top:10px;min-height:260px;display:grid;place-items:center;padding:22px;border:1px dashed #c5d0d7;border-radius:10px;background:#fafbfc;text-align:center}
+.locked-icon{width:54px;height:54px;margin:auto;display:grid;place-items:center;border-radius:16px;background:var(--accent-soft);color:var(--accent)}
+.locked-icon svg{width:28px;height:28px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.locked-planner strong{display:block;margin-top:12px;font-size:13px}.locked-planner span{display:block;margin-top:5px;color:var(--muted);font-size:9px;line-height:1.45}
+.builder[hidden],.locked-planner[hidden],.builder-summary[hidden]{display:none}
+.planner-label{display:flex;justify-content:space-between;gap:8px;margin:10px 0 5px;color:#65737d;font-size:8px;font-weight:900;letter-spacing:.05em;text-transform:uppercase}
+.department-bank,.subnet-drop{min-height:54px;padding:6px;display:grid;gap:5px;border:1px dashed #bdc8d0;border-radius:9px;background:#fafbfc}
+.department-bank{grid-template-columns:1fr 1fr}.department-bank.drop-ready,.subnet-drop.drop-ready{border-color:var(--accent);background:var(--accent-soft)}
+.empty-drop{grid-column:1/-1;min-height:39px;display:grid;place-items:center;color:#8c979f;font-size:8px;text-align:center}
+.department-card{position:relative;min-width:0;padding:7px;border:1px solid #c8d2d9;border-radius:8px;background:#fff;cursor:grab;user-select:none;touch-action:none}
+.department-card:hover{border-color:#9aabb7;box-shadow:0 2px 7px rgba(36,53,65,.08)}.department-card.selected{border-color:var(--accent);background:var(--accent-soft);box-shadow:inset 0 0 0 1px var(--accent)}.department-card.dragging{opacity:.45}
+.department-card strong{display:block;padding-right:17px;font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.department-card span{display:block;margin-top:2px;color:var(--muted);font-size:7px;line-height:1.25}
+.card-return{position:absolute;right:4px;top:4px;width:18px;height:18px;min-height:18px;padding:0;border-radius:6px;color:#75818a;font-size:11px;line-height:1}
+.subnet-list{display:grid;gap:7px}.subnet-card{--subnet-colour:var(--zone-a);border:1px solid #c9d3da;border-left:5px solid var(--subnet-colour);border-radius:9px;background:#fff;padding:7px}.subnet-card.invalid{border-color:#e2aaa4;border-left-color:var(--bad);background:var(--bad-soft)}
+.subnet-head{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.subnet-title strong{display:block;font-size:10px}.subnet-title span{display:block;margin-top:2px;color:var(--muted);font-size:7px;line-height:1.3}.remove-subnet{width:27px;height:27px;min-height:27px;padding:0;color:#7a858d}
+.subnet-capacity{margin:6px 0 5px;display:flex;justify-content:space-between;gap:8px;color:#65737d;font-size:8px}.capacity-bar{height:6px;border-radius:999px;background:#e7ecef;overflow:hidden}.capacity-bar span{display:block;height:100%;background:var(--subnet-colour);transition:.18s}.subnet-drop{margin-top:6px;grid-template-columns:1fr}
+.drop-action{min-height:27px;height:27px;padding:0 7px;border-style:dashed;background:#f8fafb;color:#65737d;font-size:8px}.drop-action:not(:disabled){border-color:#8eafea;background:var(--accent-soft);color:#1d58bb;font-weight:800}
+.planner-actions{margin-top:8px;display:grid;grid-template-columns:1fr 1fr;gap:6px}.planner-actions button{font-size:9px}#applyDesign{grid-column:1/-1}
+.plan-feedback{margin-top:8px;min-height:45px;padding:7px 8px;border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:8px;background:#fafbfc;color:var(--muted);font-size:8.5px;line-height:1.35}.plan-feedback strong{display:block;color:#26343d;font-size:9px}.plan-feedback.good{border-left-color:var(--good);background:var(--good-soft)}.plan-feedback.warn{border-left-color:var(--broadcast);background:var(--warn-soft)}.plan-feedback.bad{border-left-color:var(--bad);background:var(--bad-soft)}
+.address-details{margin-top:8px;border:1px solid var(--line);border-radius:9px;background:#fbfcfd}.address-details summary{padding:8px 9px;cursor:pointer;color:#55646f;font-size:9px;font-weight:850}.address-body{padding:0 9px 9px}.address-intro{color:var(--muted);font-size:8px;line-height:1.4}.address-list{margin-top:7px;display:grid;gap:5px}.address-row{padding:6px 7px;border:1px solid var(--line);border-left:4px solid var(--subnet-colour);border-radius:7px;background:#fff}.address-row strong{display:block;font-size:8px}.address-row span{display:block;margin-top:2px;color:var(--muted);font:700 7px/1.35 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.address-ruler{position:relative;height:28px;margin-top:7px;border:1px solid #cbd5dc;border-radius:7px;overflow:hidden;background:repeating-linear-gradient(135deg,#edf1f3 0 6px,#e2e7ea 6px 12px)}.address-segment{position:absolute;top:0;bottom:0;display:grid;place-items:center;color:#fff;font:850 7px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;text-shadow:0 1px 2px rgba(0,0,0,.3);border-right:1px solid rgba(255,255,255,.65)}
+.decision-math{margin-top:7px;padding:7px;border-radius:7px;background:var(--accent-soft);color:#315783;font:700 7px/1.45 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre-wrap}
+
+.takeaway{margin-top:10px;padding:10px 12px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center}.takeaway strong{display:block;font-size:12px}.takeaway span{display:block;margin-top:2px;color:var(--muted);font-size:9px;line-height:1.4}.takeaway-stat{min-width:170px;text-align:right;color:var(--accent);font:850 14px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+
+@media(max-width:1050px){
+  .lesson-bar{grid-template-columns:1fr}.metrics{justify-content:flex-start}
+  .lab-grid{grid-template-columns:1fr}.planner{position:static;max-height:none}.department-bank{grid-template-columns:repeat(3,1fr)}
+}
+@media(max-width:650px){
+  main{width:min(100% - 12px,1280px);margin-top:8px}
+  .story-card{grid-template-columns:1fr}.story-actions{justify-content:flex-start}
+  .ip-workbench-head{grid-template-columns:1fr}.ip-actor-strip{justify-content:flex-start}
+  .ip-workbench-grid{grid-template-columns:1fr}.ip-bit-compare{grid-template-columns:1fr}
+  .department-bank{grid-template-columns:1fr 1fr}.takeaway{grid-template-columns:1fr}.takeaway-stat{text-align:left}
+}
+@media(max-width:390px){.department-bank{grid-template-columns:1fr}.tab-set,.scenario-set{display:grid;grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body data-lab-layout="standard">
+<main>
+<!-- LAB_MANIFEST_HEADER_START -->
+<header class="lab-manifest-header">
+  <div class="lab-manifest-heading">
+    <h1 data-lab-manifest="title">IPv4 Subnetting</h1>
+  <p class="lab-manifest-subtitle" data-lab-manifest="subtitle">For Cambridge International AS Level Computer Science 9618, divide a campus network into subnets, then trace how a device uses its mask to choose a local host or default gateway.</p>
+  </div>
+  <!-- LAB_SYLLABUS_CHIPS_START -->
+<nav class="lab-syllabus-chips" aria-label="Syllabus alignment">
+  <section class="lab-syllabus-chip" style="--syllabus-chip-bg:#f4effb;--syllabus-chip-border:#b9a2dc;--syllabus-chip-text:#4f2b77;--syllabus-chip-hover:#e8ddf6" aria-label="AS 9618 syllabus alignment">
+    <a class="lab-syllabus-primary-link" href="https://www.cambridgeinternational.org/Images/697372-2026-syllabus.pdf#page=17" target="_blank" rel="noopener noreferrer" aria-label="Open AS 9618 syllabus section 2.1"></a>
+    <span class="lab-syllabus-name">AS 9618</span>
+    <span class="lab-syllabus-divider" aria-hidden="true">·</span>
+    <span class="lab-syllabus-sections"><span class="lab-syllabus-section is-primary">2.1</span></span>
+  </section>
+</nav>
+<!-- LAB_SYLLABUS_CHIPS_END -->
+</header>
+<!-- LAB_MANIFEST_HEADER_END -->
+<span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span>
+  <span data-lab-authored-subtitle-slot hidden></span>
+
+  <section class="panel lesson-bar">
+    <div class="lesson-copy">
+      <strong id="lessonTitle">Start with one large broadcast domain.</strong>
+      <span id="lessonDetail">Watch one noisy sensor force every device to inspect the same local message.</span>
+    </div>
+    <div>
+      <div class="tab-set" aria-label="Network view">
+        <button id="flatTab" class="active">Before subnetting</button>
+        <button id="designTab" disabled>Your design</button>
+      </div>
+      <div id="scenarioControls" class="scenario-set" aria-label="Traffic story" style="margin-top:5px">
+        <button id="noiseScenario" class="active">Noisy sensor</button>
+        <button id="requestScenario">Find the server</button>
+      </div>
+      <div class="view-tools">
+        <button id="ipToggle" class="ip-toggle" type="button" aria-pressed="false" aria-controls="ipStage">
+          <span class="ip-switch" aria-hidden="true"></span>
+          <span><strong>IP walkthrough</strong><small>follow one packet decision by decision</small></span>
+        </button>
+      </div>
+    </div>
+    <div class="metrics">
+      <div id="interruptMetricBox" class="metric"><span id="interruptMetricLabel">Devices interrupted</span><strong id="interruptMetric">0</strong></div>
+      <div id="routerMetricBox" class="metric"><span id="routerMetricLabel">Router forwards</span><strong id="routerMetric">0</strong></div>
+      <div id="areaMetricBox" class="metric"><span id="areaMetricLabel">Broadcast area</span><strong id="areaMetric">Whole campus</strong></div>
+    </div>
+  </section>
+
+  <div class="lab-grid">
+    <section class="panel network-panel">
+      <div id="storyCard" class="story-card">
+        <div>
+          <div id="stepKicker" class="step-kicker">Ready</div>
+          <strong id="storyTitle">One IoT sensor starts searching for a service.</strong>
+          <span id="storyText">Start the story. Watch one broadcast become everybody's problem.</span>
+          <div id="progressDots" class="progress-dots" aria-label="Story progress"></div>
+        </div>
+        <div class="story-actions">
+          <button id="resetStory">Reset</button>
+          <button id="autoStory">Play slowly</button>
+          <button id="nextStory" class="primary">Start story</button>
+        </div>
+      </div>
+
+      <section id="ipStage" class="ip-workbench" hidden aria-live="polite">
+        <div class="ip-workbench-head">
+          <div>
+            <span class="ip-workbench-kicker">Who is processing the packet?</span>
+            <strong id="ipWhoTitle">Classroom laptop</strong>
+            <small id="ipWhoAction">reads its network configuration</small>
+          </div>
+          <div id="ipActorStrip" class="ip-actor-strip" aria-label="Packet processing path"></div>
+        </div>
+        <div class="ip-workbench-grid">
+          <section class="ip-read-panel">
+            <span class="ip-panel-label">Values being read</span>
+            <div id="ipReadGrid" class="ip-read-grid"></div>
+            <div id="ipBitCompare" class="ip-bit-compare" hidden></div>
+          </section>
+          <section id="ipDecisionPanel" class="ip-decision-panel">
+            <span class="ip-panel-label">Decision made here</span>
+            <strong id="ipDecisionTitle">No decision yet</strong>
+            <span id="ipDecisionText">The laptop must decide whether the destination is local.</span>
+          </section>
+          <section class="ip-envelope-panel">
+            <span class="ip-panel-label">What is travelling</span>
+            <div id="ipEnvelope" class="ip-envelope"></div>
+          </section>
+        </div>
+        <div id="ipInsight" class="ip-insight"></div>
+      </section>
+
+      <div class="canvas-shell">
+        <div id="networkCanvas" class="network-canvas" role="img" aria-label="Animated logical campus network">
+          <div id="zoneLayer" class="zone-layer"></div>
+          <svg id="networkSvg" class="network-svg" aria-hidden="true"></svg>
+          <div id="nodeLayer" class="node-layer"></div>
+          <div id="packetLayer" class="packet-layer"></div>
+          <div id="overlayLayer" class="overlay-layer" aria-live="polite"></div>
+        </div>
+      </div>
+
+      <div id="canvasCaption" class="canvas-caption">
+        <strong id="captionTitle">What to notice</strong>
+        <span id="captionText">The dashed line is one broadcast boundary. The router is not used when both devices are inside it.</span>
+      </div>
+    </section>
+
+    <aside class="panel planner">
+      <div class="planner-head">
+        <strong id="plannerTitle">Redraw the boundary</strong>
+        <span id="plannerDetail">Group departments into smaller local networks. Address details stay hidden unless opened.</span>
+      </div>
+
+      <div id="lockedPlanner" class="locked-planner">
+        <div>
+          <div class="locked-icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+          </div>
+          <strong>First, see the problem.</strong>
+          <span>Finish either traffic story on the large network. The planner will then unlock.</span>
+        </div>
+      </div>
+
+      <div id="builderSummary" class="builder-summary" hidden>
+        <div class="summary-intro"><strong>Design applied.</strong> The network story now uses these subnet boundaries.</div>
+        <div id="summaryZones" class="summary-zones"></div>
+        <div class="summary-actions"><button id="editPlan">Edit groups</button></div>
+      </div>
+
+      <div id="builder" class="builder" hidden>
+        <div class="planner-label"><span>Unassigned departments</span><span id="unassignedCount">5</span></div>
+        <div id="departmentBank" class="department-bank" data-drop="bank"></div>
+
+        <div class="planner-label"><span>Local networks</span><span>2–4</span></div>
+        <div id="subnetList" class="subnet-list"></div>
+
+        <div class="planner-actions">
+          <button id="addSubnet">Add local network</button>
+          <button id="resetPlan">Reset groups</button>
+          <button id="applyDesign" class="primary">Use this subnet design</button>
+        </div>
+
+        <div id="planFeedback" class="plan-feedback">
+          <strong>Choose useful boundaries</strong>
+          Put devices together when they need the same local broadcasts. Separate noisy or sensitive groups.
+        </div>
+
+        <details class="address-details">
+          <summary>Optional: see the IPv4 address plan</summary>
+          <div class="address-body">
+            <div class="address-intro">The lab chooses the smallest fitting subnet block for each group. One usable address in every block is reserved for the router interface.</div>
+            <div id="addressList" class="address-list"></div>
+            <div id="addressRuler" class="address-ruler"></div>
+            <div id="decisionMath" class="decision-math">Apply a design to see how a device decides “local or gateway”.</div>
+          </div>
+        </details>
+      </div>
+    </aside>
+  </div>
+
+  <section class="panel takeaway">
+    <div>
+      <strong id="takeawayTitle">A broadcast is local, not private.</strong>
+      <span id="takeawayText">A switch copies a broadcast to every device inside the same broadcast domain. A router marks the boundary.</span>
+    </div>
+    <div id="takeawayStat" class="takeaway-stat">watch → divide → compare</div>
+  </section>
+</main>
+
+<script>
+(() => {
+  const $=id=>document.getElementById(id);
+  const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+  const reduceMotion=matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const BASE="192.168.40";
+  const ZONE_COLOURS=["#4a8bd8","#55a977","#d69a38","#9a74d0"];
+  const ZONE_NAMES=["Blue","Green","Gold","Purple"];
+
+  const departments={
+    admin:{id:"admin",name:"Administration",short:"Admin",count:10,role:"staff and records",icon:"admin"},
+    classrooms:{id:"classrooms",name:"Classrooms",short:"Classrooms",count:28,role:"student devices",icon:"classrooms"},
+    media:{id:"media",name:"Media",short:"Media",count:12,role:"editing and printing",icon:"media"},
+    iot:{id:"iot",name:"IoT devices",short:"IoT",count:18,role:"sensors and displays",icon:"iot"},
+    servers:{id:"servers",name:"Learning servers",short:"Servers",count:4,role:"school services",icon:"servers"}
+  };
+
+  const state={
+    mode:"flat",
+    scenario:"noise",
+    baselineSeen:false,
+    appliedSubnets:null,
+    draftSubnets:[{id:"s1",departments:[]},{id:"s2",departments:[]}],
+    nextSubnetNumber:3,
+    selectedDepartment:null,
+    storyIndex:-1,
+    busy:false,
+    auto:false,
+    autoTimer:null,
+    animationToken:0,
+    interruptions:0,
+    routerTrips:0,
+    broadcastArea:"Whole campus",
+    draftDirty:false,
+    editingPlan:false,
+    lastDecision:null,
+    ipView:false,
+    previousScenario:"noise",
+    currentIpStage:null
+  };
+
+  let model=null;
+  let nodePositions=new Map();
+  let linkElements=new Map();
+  let zoneElements=new Map();
+
+  function iconSVG(kind){
+    const icons={
+      admin:'<svg viewBox="0 0 24 24"><path d="M5 20V8l7-4 7 4v12"/><path d="M9 20v-5h6v5M8 10h2M14 10h2"/></svg>',
+      classrooms:'<svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="11" rx="2"/><path d="M8 20h8M12 16v4"/><path d="M7 9h10M7 12h7"/></svg>',
+      media:'<svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="2"/><circle cx="9" cy="10" r="1.5"/><path d="M6 17l4-4 3 3 3-5 2 6"/></svg>',
+      iot:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/></svg>',
+      servers:'<svg viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="5" rx="1"/><rect x="5" y="10" width="14" height="5" rx="1"/><rect x="5" y="16" width="14" height="4" rx="1"/><path d="M8 6.5h.1M8 12.5h.1M8 18h.1"/></svg>'
+    };
+    return icons[kind]||icons.classrooms;
+  }
+
+  function totalDevices(ids=Object.keys(departments)){
+    return ids.reduce((sum,id)=>sum+departments[id].count,0);
+  }
+
+  function prefixInfo(prefix){
+    const block=2**(32-prefix);
+    return {prefix,block,usable:block-2,devicePlaces:block-3,maskLast:prefix===24?0:256-block};
+  }
+
+  function smallestPrefix(deviceCount){
+    for(const prefix of [29,28,27,26,25,24]){
+      const info=prefixInfo(prefix);
+      if(info.usable>=deviceCount+1) return info;
+    }
+    return prefixInfo(24);
+  }
+
+  function deepPlan(plan){return plan.map(item=>({id:item.id,departments:[...item.departments]}));}
+
+  function allocatePlan(plan){
+    const all=Object.keys(departments);
+    const assigned=plan.flatMap(item=>item.departments);
+    const duplicates=assigned.filter((id,index)=>assigned.indexOf(id)!==index);
+    const unassigned=all.filter(id=>!assigned.includes(id));
+    const errors=[];
+    if(plan.length<2||plan.length>4) errors.push("Use between two and four local networks.");
+    if(unassigned.length) errors.push(`Assign ${unassigned.length} department${unassigned.length===1?"":"s"}.`);
+    if(duplicates.length) errors.push("A department can belong to only one local network.");
+    plan.forEach((item,index)=>{if(!item.departments.length) errors.push(`${ZONE_NAMES[index]} network is empty.`);});
+
+    const infos=plan.map((item,index)=>{
+      const deviceCount=totalDevices(item.departments);
+      return {item,index,deviceCount,...smallestPrefix(deviceCount)};
+    });
+    const sorted=[...infos].sort((a,b)=>b.block-a.block||a.index-b.index);
+    let cursor=0;
+    const allocations=new Map();
+    sorted.forEach(info=>{
+      cursor=Math.ceil(cursor/info.block)*info.block;
+      const allocation={
+        id:info.item.id,index:info.index,departments:[...info.item.departments],deviceCount:info.deviceCount,
+        prefix:info.prefix,block:info.block,usable:info.usable,devicePlaces:info.devicePlaces,
+        networkOffset:cursor,gatewayOffset:cursor+1,broadcastOffset:cursor+info.block-1,colour:ZONE_COLOURS[info.index],ranges:new Map()
+      };
+      let host=cursor+2;
+      info.item.departments.forEach(id=>{
+        const count=departments[id].count;
+        allocation.ranges.set(id,{start:host,end:host+count-1,representative:host});
+        host+=count;
+      });
+      allocations.set(info.item.id,allocation);
+      cursor+=info.block;
+    });
+    if(cursor>256) errors.push("The automatic address blocks no longer fit inside one /24 network.");
+    return {valid:errors.length===0,errors,unassigned,allocations,reserved:cursor};
+  }
+
+  function buildModel(){
+    if(state.mode==="flat"){
+      const allocation={
+        id:"flat",index:0,departments:Object.keys(departments),deviceCount:totalDevices(),prefix:24,block:256,
+        usable:254,devicePlaces:253,networkOffset:0,gatewayOffset:1,broadcastOffset:255,colour:ZONE_COLOURS[0],ranges:new Map()
+      };
+      let host=10;
+      allocation.departments.forEach(id=>{
+        allocation.ranges.set(id,{start:host,end:host+departments[id].count-1,representative:host});
+        host+=departments[id].count;
+      });
+      return {mode:"flat",zones:[allocation],allocations:new Map([["flat",allocation]])};
+    }
+    const allocation=allocatePlan(state.appliedSubnets||state.draftSubnets);
+    const zones=(state.appliedSubnets||state.draftSubnets).map(item=>allocation.allocations.get(item.id)).filter(Boolean);
+    return {mode:"design",zones,allocations:allocation.allocations};
+  }
+
+  function zoneForDepartment(id){return model.zones.find(zone=>zone.departments.includes(id));}
+  function ipAddress(offset){return `${BASE}.${offset}`;}
+  function zoneIpInfo(zone){
+    return {
+      network:`${ipAddress(zone.networkOffset)}/${zone.prefix}`,
+      networkAddress:ipAddress(zone.networkOffset),
+      mask:maskText(zone.prefix),
+      gateway:ipAddress(zone.gatewayOffset),
+      broadcast:ipAddress(zone.broadcastOffset),
+      prefix:zone.prefix
+    };
+  }
+  function departmentIpInfo(id){
+    const zone=zoneForDepartment(id);if(!zone)return null;
+    const range=zone.ranges.get(id);if(!range)return null;
+    return {id,ip:ipAddress(range.representative),offset:range.representative,zone,...zoneIpInfo(zone)};
+  }
+  function compareIpNetworks(source,destination){
+    const maskLast=prefixInfo(source.prefix).maskLast;
+    const sourceNetworkLast=source.offset&maskLast;
+    const destinationNetworkLast=destination.offset&maskLast;
+    return {maskLast,sourceNetworkLast,destinationNetworkLast,local:sourceNetworkLast===destinationNetworkLast};
+  }
+  function ipFact(label,value,note=""){return {label,value,note};}
+  function refreshIpVisuals(){
+    const canvas=$("networkCanvas");if(!canvas||!model)return;
+    canvas.classList.toggle("show-ip",state.ipView);
+    model.zones.forEach(zone=>{
+      const info=zoneIpInfo(zone);
+      const line=zoneElements.get(zone.id)?.querySelector(".zone-ip-line");
+      if(line)line.textContent=`${info.network} · gateway ${info.gateway}`;
+      zone.departments.forEach(id=>{
+        const label=$("nodeLayer").querySelector(`[data-node="${nodeId(id)}"] .ip-node-label`);
+        const device=departmentIpInfo(id);
+        if(label&&device)label.textContent=`${device.ip}/${device.prefix}`;
+      });
+    });
+  }
+  function setIpStage(stage){state.currentIpStage=stage;renderIpStage();}
+  function ipActors(context){
+    return context.same
+      ? [{label:"Laptop",icon:"1"},{label:"Switch",icon:"2"},{label:"Server",icon:"3"}]
+      : [{label:"Laptop",icon:"1"},{label:"Source switch",icon:"2"},{label:"Router",icon:"3"},{label:"Destination switch",icon:"4"},{label:"Server",icon:"5"}];
+  }
+  function bitCells(value,prefix){
+    const bits=binary8(value);const networkBits=Math.max(0,Math.min(8,prefix-24));
+    return [...bits].map((bit,index)=>`<i class="ip-bit ${index<networkBits?"net":"host"}">${bit}</i>`).join("");
+  }
+  function addressOperation(label,offset,prefix,networkOffset){
+    const mask=prefixInfo(prefix).maskLast;
+    return `<div class="ip-bit-card">
+      <div class="ip-bit-card-title"><span>${label}</span><span>/${prefix}</span></div>
+      <div class="ip-bit-row"><span>IP</span><div class="ip-octets"><b class="ip-fixed-prefix">${BASE}.</b>${bitCells(offset,prefix)}</div></div>
+      <div class="ip-bit-row"><span>AND mask</span><div class="ip-octets"><b class="ip-fixed-prefix">255.255.255.</b>${bitCells(mask,prefix)}</div></div>
+      <div class="ip-bit-result">network result → ${ipAddress(networkOffset)}</div>
+    </div>`;
+  }
+  function renderBitComparison(bits){
+    const box=$("ipBitCompare");
+    if(!bits){box.hidden=true;box.innerHTML="";return;}
+    box.hidden=false;
+    box.innerHTML=addressOperation("Laptop",bits.sourceOffset,bits.prefix,bits.sourceNetwork)+
+      addressOperation("Destination as seen by laptop",bits.destinationOffset,bits.prefix,bits.destinationNetwork);
+  }
+  function frameHtml(frame){
+    return `<div class="ethernet-frame">
+      <div class="frame-label"><span>Ethernet frame · one local hop</span><span>${frame.hop}</span></div>
+      <div class="frame-hop">from ${frame.ethernetFrom}<br>to ${frame.ethernetTo}</div>
+      <div class="ip-packet-shell">
+        <strong>IP packet · end to end</strong>
+        <div class="ip-address-line">source ${frame.ipFrom}<br>destination ${frame.ipTo}</div>
+        <div class="payload-shell">${frame.payload||"Learning request"}</div>
+      </div>
+    </div>`;
+  }
+  function renderEnvelope(envelope){
+    const box=$("ipEnvelope");
+    if(!envelope||envelope.type==="none"){
+      box.innerHTML='<div class="ip-envelope-empty">Nothing has left the laptop yet.</div>';return;
+    }
+    if(envelope.type==="ip"){
+      box.innerHTML=`<div class="ip-packet-shell" style="width:100%;margin-top:0"><strong>IP packet prepared</strong><div class="ip-address-line">source ${envelope.ipFrom}<br>destination ${envelope.ipTo}</div><div class="payload-shell">${envelope.payload||"Learning request"}</div></div>`;return;
+    }
+    if(envelope.type==="arp"){
+      box.innerHTML=`<div class="arp-envelope"><strong>ARP request · local broadcast</strong><span>Who owns ${envelope.targetIp}?</span><small>Every interface inside ${envelope.network} receives the question. The router does not forward it.</small></div>`;return;
+    }
+    if(envelope.type==="frame"){
+      box.innerHTML=frameHtml(envelope);return;
+    }
+    if(envelope.type==="router"){
+      box.innerHTML=`<div class="router-reframe inspect"><div class="mini-frame old">Incoming Ethernet frame<br>for gateway</div><span class="reframe-arrow">→</span><div class="ip-packet-shell" style="margin:0"><strong>IP packet kept</strong><div class="ip-address-line">destination ${envelope.ipTo}</div></div></div>`;return;
+    }
+    if(envelope.type==="reframe"){
+      box.innerHTML=`<div class="router-reframe rebuild"><div class="mini-frame old">Old local frame<br>removed</div><span class="reframe-arrow">→</span><div class="ip-packet-shell" style="margin:0"><strong>Same IP packet</strong><div class="ip-address-line">destination ${envelope.ipTo}</div></div><span class="reframe-arrow">→</span><div class="mini-frame new">New local frame<br>to ${envelope.ethernetTo}</div></div>`;return;
+    }
+    if(envelope.type==="delivered"){
+      box.innerHTML=frameHtml(envelope)+`<div style="margin-top:5px;color:#356247;font-size:8px;font-weight:850;text-align:center">Server removes the frame, then accepts the IP packet.</div>`;return;
+    }
+    box.innerHTML='<div class="ip-envelope-empty">No transmission shown.</div>';
+  }
+  function setIpMetrics(metrics){
+    $("interruptMetricLabel").textContent="Source network";
+    $("routerMetricLabel").textContent="Destination result";
+    $("areaMetricLabel").textContent="Next hop";
+    $("interruptMetric").textContent=metrics.sourceNetwork;
+    $("routerMetric").textContent=metrics.destinationNetwork;
+    $("areaMetric").textContent=metrics.nextHop;
+    $("interruptMetricBox").className="metric";
+    $("routerMetricBox").className=`metric${metrics.same===null?"":metrics.same?" good":" warn"}`;
+    $("areaMetricBox").className=`metric${metrics.nextHop==="pending"?"":metrics.same?" good":" warn"}`;
+  }
+  function renderIpStage(){
+    const panel=$("ipStage");if(!panel)return;
+    document.querySelector("main").classList.toggle("ip-mode",state.ipView);
+    panel.hidden=!state.ipView;
+    $("ipToggle").setAttribute("aria-pressed",String(state.ipView));
+    refreshIpVisuals();
+    if(!state.ipView)return;
+    const stage=state.currentIpStage||initialIpWalkthroughStage();
+    panel.className=`ip-workbench${stage.tone?` ${stage.tone}`:""}`;
+    $("ipWhoTitle").textContent=stage.who;
+    $("ipWhoAction").textContent=stage.action;
+    const actors=ipActors(stage.context);
+    $("ipActorStrip").innerHTML=actors.map((actor,index)=>{
+      const active=(stage.activeActors||[]).includes(index);
+      const done=index<(stage.progress||0);
+      const skipped=(stage.skippedActors||[]).includes(index);
+      return `<div class="ip-actor${done?" done":""}${active?" active":""}${skipped?" skipped":""}"><i>${actor.icon}</i><span>${actor.label}</span></div>`;
+    }).join("");
+    $("ipReadGrid").innerHTML=(stage.read||[]).map(item=>`<div class="ip-read-card"><span>${item.label}</span><strong>${item.value}</strong>${item.note?`<small>${item.note}</small>`:""}</div>`).join("");
+    renderBitComparison(stage.bits||null);
+    $("ipDecisionPanel").className=`ip-decision-panel${stage.decisionTone?` ${stage.decisionTone}`:""}`;
+    $("ipDecisionTitle").textContent=stage.decisionTitle;
+    $("ipDecisionText").textContent=stage.decisionText;
+    renderEnvelope(stage.envelope);
+    $("ipInsight").textContent=stage.insight;
+    setIpMetrics(stage.metrics);
+  }
+  function zoneTotal(zoneId){const zone=model.zones.find(item=>item.id===zoneId);return zone?zone.deviceCount:0;}
+  function switchId(zoneId){return `switch-${zoneId}`;}
+  function nodeId(departmentId){return `dept-${departmentId}`;}
+  function edgeKey(a,b){return [a,b].sort().join("::");}
+
+  function layoutZones(count){
+    if(count===1) return [{x:22,y:24,w:936,h:512}];
+    if(count===2) return [{x:18,y:54,w:392,h:452},{x:570,y:54,w:392,h:452}];
+    if(count===3) return [{x:18,y:20,w:392,h:248},{x:18,y:292,w:392,h:248},{x:570,y:156,w:392,h:248}];
+    return [{x:18,y:20,w:392,h:244},{x:570,y:20,w:392,h:244},{x:18,y:296,w:392,h:244},{x:570,y:296,w:392,h:244}];
+  }
+
+  function departmentPositions(rect,count,switchPosition,isFlat){
+    if(isFlat){
+      return [{x:150,y:130},{x:150,y:280},{x:150,y:430},{x:670,y:145},{x:670,y:415}].slice(0,count);
+    }
+    const onLeft=rect.x<490;
+    const xValues=onLeft?[rect.x+82,rect.x+232]:[rect.x+160,rect.x+310];
+    const yValues=rect.h>300?[rect.y+112,rect.y+226,rect.y+340]:[rect.y+82,rect.y+166];
+    if(count===1) return [{x:onLeft?rect.x+170:rect.x+222,y:rect.y+rect.h/2}];
+    const points=[];
+    yValues.forEach(y=>xValues.forEach(x=>points.push({x,y})));
+    return points.slice(0,count);
+  }
+
+  function renderNetwork(){
+    state.animationToken++;
+    model=buildModel();
+    nodePositions=new Map();linkElements=new Map();zoneElements=new Map();
+    $("zoneLayer").innerHTML="";$("networkSvg").innerHTML="";$("nodeLayer").innerHTML="";$("packetLayer").innerHTML="";$("overlayLayer").innerHTML="";
+    const rects=layoutZones(model.zones.length);
+    const routerPosition=model.mode==="flat"?{x:850,y:280}:{x:490,y:280};
+
+    model.zones.forEach((zone,index)=>{
+      const rect=rects[index];
+      const colour=model.mode==="flat"?ZONE_COLOURS[0]:zone.colour;
+      const zoneEl=document.createElement("div");
+      zoneEl.className="network-zone";
+      zoneEl.dataset.zone=zone.id;
+      zoneEl.style.cssText=`left:${rect.x}px;top:${rect.y}px;width:${rect.w}px;height:${rect.h}px;--zone:${colour}`;
+      const label=model.mode==="flat"?"One broadcast domain":`${ZONE_NAMES[index]} subnet`;
+      const detail=`${zone.deviceCount} devices`;
+      zoneEl.innerHTML=`<div class="zone-heading"><strong>${label}</strong><span>${detail}</span></div><div class="zone-foot"><span>Broadcasts stop at this boundary</span><strong class="zone-ip-line"></strong></div>`;
+      $("zoneLayer").appendChild(zoneEl);zoneElements.set(zone.id,zoneEl);
+
+      const onLeft=rect.x<490;
+      const sw=model.mode==="flat"?{x:490,y:280}:{x:onLeft?rect.x+rect.w-42:rect.x+42,y:rect.y+rect.h/2};
+      nodePositions.set(switchId(zone.id),sw);
+      renderSwitch(switchId(zone.id),sw);
+
+      const positions=departmentPositions(rect,zone.departments.length,sw,model.mode==="flat");
+      zone.departments.forEach((departmentId,deptIndex)=>{
+        const pos=positions[deptIndex];
+        nodePositions.set(nodeId(departmentId),pos);
+        renderDepartment(departmentId,pos);
+        drawLink(nodeId(departmentId),switchId(zone.id),"access");
+      });
+      if(model.mode!=="flat") drawLink(switchId(zone.id),"router","router");
+    });
+
+    nodePositions.set("router",routerPosition);renderRouter(routerPosition);
+    if(model.mode==="flat") drawLink("switch-flat","router","router");
+    clearVisuals();refreshIpVisuals();
+  }
+
+  function renderDepartment(id,pos){
+    const d=departments[id];
+    const el=document.createElement("div");
+    el.className="network-node department-node";el.dataset.node=nodeId(id);el.style.left=`${pos.x}px`;el.style.top=`${pos.y}px`;
+    el.innerHTML=`<div class="node-shell"><div class="dept-icon">${iconSVG(d.icon)}</div><div class="dept-copy"><strong>${d.short}</strong><span>${d.count} devices</span></div></div><div class="node-status">idle</div><div class="ip-node-label"></div>`;
+    $("nodeLayer").appendChild(el);
+  }
+
+  function renderSwitch(id,pos){
+    const el=document.createElement("div");
+    el.className="network-node switch-node";el.dataset.node=id;el.style.left=`${pos.x}px`;el.style.top=`${pos.y}px`;
+    el.innerHTML=`<div class="node-shell"><div class="switch-top"><strong>Switch</strong><i class="switch-led"></i></div><div class="switch-ports">${"<i></i>".repeat(6)}</div></div><div class="node-status">idle</div>`;
+    $("nodeLayer").appendChild(el);
+  }
+
+  function renderRouter(pos){
+    const el=document.createElement("div");
+    el.className="network-node router-node";el.dataset.node="router";el.style.left=`${pos.x}px`;el.style.top=`${pos.y}px`;
+    el.innerHTML='<div class="node-shell"><div class="router-title"><span>Router</span><i class="router-led"></i></div><div class="router-body"></div></div><div class="node-status">idle</div>';
+    $("nodeLayer").appendChild(el);
+  }
+
+  function drawLink(a,b,kind){
+    const start=nodePositions.get(a),end=nodePositions.get(b);if(!start||!end)return;
+    const line=document.createElementNS("http://www.w3.org/2000/svg","line");
+    line.setAttribute("x1",start.x);line.setAttribute("y1",start.y);line.setAttribute("x2",end.x);line.setAttribute("y2",end.y);
+    line.setAttribute("class",`link${kind==="router"?" router-link":""}`);line.dataset.edge=edgeKey(a,b);
+    $("networkSvg").appendChild(line);linkElements.set(edgeKey(a,b),line);
+  }
+
+  function setNode(id,stateName="",status="idle",badge=null){
+    const el=$("nodeLayer").querySelector(`[data-node="${id}"]`);if(!el)return;
+    el.classList.remove("source","target","checking","answering","routing","stop","dimmed");
+    if(stateName) el.classList.add(stateName);
+    const statusEl=el.querySelector(".node-status");if(statusEl)statusEl.textContent=status;
+    el.querySelector(".check-badge")?.remove();
+    if(badge!==null){
+      const b=document.createElement("div");b.className="check-badge";b.textContent=badge;el.appendChild(b);
+    }
+  }
+
+  function clearVisuals(){
+    $("packetLayer").innerHTML="";$("overlayLayer").innerHTML="";
+    $("nodeLayer").querySelectorAll(".network-node").forEach(el=>{
+      el.classList.remove("source","target","checking","answering","routing","stop","dimmed");
+      el.querySelector(".check-badge")?.remove();
+      const status=el.querySelector(".node-status");if(status)status.textContent="idle";
+    });
+    zoneElements.forEach(el=>{el.classList.remove("broadcasting","focused","dimmed");el.querySelector(".zone-banner")?.remove();});
+    linkElements.forEach(el=>{el.classList.remove("active");el.style.removeProperty("--flow");});
+  }
+
+  function dimOtherZones(zoneIds){
+    const keep=new Set(Array.isArray(zoneIds)?zoneIds:[zoneIds]);
+    zoneElements.forEach((el,id)=>el.classList.toggle("dimmed",!keep.has(id)));
+    model.zones.forEach(zone=>{
+      if(!keep.has(zone.id)){
+        zone.departments.forEach(id=>$("nodeLayer").querySelector(`[data-node="${nodeId(id)}"]`)?.classList.add("dimmed"));
+        $("nodeLayer").querySelector(`[data-node="${switchId(zone.id)}"]`)?.classList.add("dimmed");
+      }
+    });
+  }
+
+  function showCallout(id,text,tone=""){
+    const pos=nodePositions.get(id);if(!pos)return;
+    const el=document.createElement("div");el.className=`callout${tone?` ${tone}`:""}`;el.style.left=`${pos.x}px`;el.style.top=`${pos.y-39}px`;el.textContent=text;$("overlayLayer").appendChild(el);
+  }
+
+  function showZoneBanner(zoneId,text,tone=""){
+    const zone=zoneElements.get(zoneId);if(!zone)return;
+    zone.querySelector(".zone-banner")?.remove();
+    const banner=document.createElement("div");banner.className=`zone-banner${tone?` ${tone}`:""}`;banner.textContent=text;zone.appendChild(banner);
+  }
+
+  function focusPoint(x,behavior="smooth"){
+    const shell=document.querySelector(".canvas-shell");
+    if(!shell||shell.clientWidth>=shell.scrollWidth-8)return;
+    const left=Math.max(0,Math.min(shell.scrollWidth-shell.clientWidth,x-shell.clientWidth/2));
+    shell.scrollTo({left,behavior:reduceMotion?"auto":behavior});
+  }
+
+  function focusNode(id,behavior="smooth"){
+    const point=nodePositions.get(id);if(point)focusPoint(point.x,behavior);
+  }
+
+  function focusZone(zoneId,behavior="smooth"){
+    const zone=zoneElements.get(zoneId);if(!zone)return;
+    focusPoint(zone.offsetLeft+zone.offsetWidth/2,behavior);
+  }
+
+  function activeLink(a,b,active,colour){
+    const line=linkElements.get(edgeKey(a,b));if(!line)return;
+    line.classList.toggle("active",active);if(colour)line.style.setProperty("--flow",colour);
+  }
+
+  function animatePacket(fromId,toId,{label="",colour="var(--packet)",small=false,duration=930,token=state.animationToken}={}){
+    return new Promise(resolve=>{
+      const start=nodePositions.get(fromId),end=nodePositions.get(toId);
+      if(!start||!end||token!==state.animationToken){resolve(false);return;}
+      const dot=document.createElement("div");dot.className=`packet-dot${small?" small":""}`;dot.style.setProperty("--packet-colour",colour);if(label)dot.innerHTML=`<span>${label}</span>`;$("packetLayer").appendChild(dot);
+      activeLink(fromId,toId,true,colour);
+      const actual=reduceMotion?Math.min(120,duration):duration;
+      if(!small){focusPoint(start.x);setTimeout(()=>{if(token===state.animationToken)focusPoint(end.x);},Math.max(60,actual*.48));}
+      const startTime=performance.now();
+      function frame(now){
+        if(token!==state.animationToken){dot.remove();activeLink(fromId,toId,false);resolve(false);return;}
+        const p=Math.max(0,Math.min(1,(now-startTime)/actual));
+        const x=start.x+(end.x-start.x)*p,y=start.y+(end.y-start.y)*p;
+        dot.style.transform=`translate(${x}px,${y}px) translate(-50%,-50%)`;
+        if(p<1)requestAnimationFrame(frame);else{dot.remove();activeLink(fromId,toId,false);resolve(true);}
+      }
+      requestAnimationFrame(frame);
+    });
+  }
+
+  async function animatePath(ids,options={}){
+    for(let i=0;i<ids.length-1;i++){
+      const ok=await animatePacket(ids[i],ids[i+1],{...options,label:i===0?options.label||"":""});
+      if(!ok)return false;
+    }
+    return true;
+  }
+
+  function recipientsForBroadcast(sourceDepartment,zoneId,routerIsSource=false){
+    const zone=model.zones.find(item=>item.id===zoneId);if(!zone)return 0;
+    return routerIsSource?zone.deviceCount:zone.deviceCount-1;
+  }
+
+  async function broadcastFromDepartment(sourceDepartment,zoneId,label="ARP question"){
+    const token=state.animationToken;
+    const source=nodeId(sourceDepartment),sw=switchId(zoneId);
+    setNode(source,"source","broadcasting");setNode(sw,"routing","copies broadcast");
+    zoneElements.get(zoneId)?.classList.add("broadcasting");
+    await animatePacket(source,sw,{label,colour:"var(--broadcast)",duration:980,token});
+    if(token!==state.animationToken)return false;
+    const zone=model.zones.find(item=>item.id===zoneId);
+    const targets=zone.departments.filter(id=>id!==sourceDepartment).map(nodeId);
+    targets.push("router");
+    await Promise.all(targets.map(id=>animatePacket(sw,id,{colour:"var(--broadcast)",small:true,duration:1050,token})));
+    return token===state.animationToken;
+  }
+
+  async function broadcastFromRouter(zoneId,label="Who has the server?"){
+    const token=state.animationToken,sw=switchId(zoneId);
+    zoneElements.get(zoneId)?.classList.add("broadcasting");
+    setNode("router","source","asks locally");setNode(sw,"routing","copies broadcast");
+    await animatePacket("router",sw,{label,colour:"var(--broadcast)",duration:980,token});
+    if(token!==state.animationToken)return false;
+    const zone=model.zones.find(item=>item.id===zoneId);
+    await Promise.all(zone.departments.map(id=>animatePacket(sw,nodeId(id),{colour:"var(--broadcast)",small:true,duration:1050,token})));
+    return token===state.animationToken;
+  }
+
+  function showBroadcastChecks(sourceDepartment,zoneId,destinationDepartment=null,routerIsSource=false){
+    const zone=model.zones.find(item=>item.id===zoneId);if(!zone)return;
+    focusZone(zoneId);
+    zoneElements.get(zoneId)?.classList.add("broadcasting");
+    zone.departments.forEach(id=>{
+      const count=routerIsSource?departments[id].count:departments[id].count-(id===sourceDepartment?1:0);
+      if(count<=0)return;
+      const status=id===destinationDepartment?"one device answers":"checks: not for me";
+      setNode(nodeId(id),id===destinationDepartment?"answering":"checking",status,count);
+    });
+    setNode("router",destinationDepartment===null?"stop":"checking",destinationDepartment===null?"does not forward":"also hears it");
+  }
+
+  function updateMetrics(interruptions=0,routerTrips=0,area=state.mode==="flat"?"Whole campus":"One subnet"){
+    $("interruptMetricLabel").textContent="Devices interrupted";
+    $("routerMetricLabel").textContent="Router forwards";
+    $("areaMetricLabel").textContent="Broadcast area";
+    state.interruptions=interruptions;state.routerTrips=routerTrips;state.broadcastArea=area;
+    $("interruptMetric").textContent=interruptions.toLocaleString();$("routerMetric").textContent=routerTrips.toLocaleString();$("areaMetric").textContent=area;
+    $("interruptMetricBox").className=`metric${interruptions?" warn":""}`;
+    $("routerMetricBox").className=`metric${routerTrips?" good":""}`;
+    $("areaMetricBox").className=`metric${state.mode==="design"?" good":""}`;
+  }
+
+  function setCaption(title,text,tone=""){
+    $("canvasCaption").className=`canvas-caption${tone?` ${tone}`:""}`;$("captionTitle").textContent=title;$("captionText").textContent=text;
+  }
+
+  function setTakeaway(title,text,stat){$("takeawayTitle").textContent=title;$("takeawayText").textContent=text;$("takeawayStat").textContent=stat;}
+
+  function requestContext(){
+    const source="classrooms",destination="servers";
+    const sourceZone=zoneForDepartment(source),destinationZone=zoneForDepartment(destination);
+    const same=sourceZone.id===destinationZone.id;
+    const sourceChecks=sourceZone.deviceCount-1;
+    const destinationChecks=same?0:destinationZone.deviceCount;
+    return {source,destination,sourceZone,destinationZone,same,sourceChecks,destinationChecks,totalChecks:sourceChecks+destinationChecks};
+  }
+
+  function noiseContext(){
+    const source="iot",zone=zoneForDepartment(source),perWave=zone.deviceCount-1;
+    return {source,zone,perWave,total:perWave*3};
+  }
+
+  function requestIpStage(c,phase){
+    const source=departmentIpInfo(c.source),destination=departmentIpInfo(c.destination);
+    const sourceZone=zoneIpInfo(c.sourceZone),destinationZone=zoneIpInfo(c.destinationZone);
+    const decision=compareIpNetworks(source,destination);
+    const nextHop=c.same?destination.ip:sourceZone.gateway;
+    const decisionFormula=
+`${source.ip} AND ${sourceZone.mask} = ${ipAddress(decision.sourceNetworkLast)}
+${destination.ip} AND ${sourceZone.mask} = ${ipAddress(decision.destinationNetworkLast)}
+${decision.local?"same network address → send locally":"different network addresses → use the default gateway"}`;
+
+    const stages={
+      ready:{
+        title:"Each endpoint has an IPv4 address.",
+        fields:[
+          ipFact("Source device",source.ip,"example classroom laptop"),
+          ipFact("Destination device",destination.ip,"example learning server"),
+          ipFact("Source subnet",sourceZone.network,`mask ${sourceZone.mask}`),
+          ipFact("Current action","not sent","choose local device or gateway")
+        ],
+        explanation:"The source already knows the server's IPv4 address. Before sending, it uses its own subnet mask to decide whether that address is local."
+      },
+      decision:{
+        title:c.same?"The two addresses resolve to the same network.":"The two addresses resolve to different networks.",
+        tone:c.same?"good":"route",
+        fields:[
+          ipFact("Source IPv4",source.ip,sourceZone.network),
+          ipFact("Destination IPv4",destination.ip,destinationZone.network),
+          ipFact("Subnet mask",sourceZone.mask,`prefix /${source.prefix}`),
+          ipFact("Next hop",nextHop,c.same?"send to the server":"default gateway")
+        ],
+        explanation:c.same
+          ?"Matching network addresses mean the server is local. The router is not the next hop."
+          :"Different network addresses mean the server is remote. The IP packet still names the server, but the first local hop is the router.",
+        formula:decisionFormula
+      },
+      arpRequest:{
+        title:c.same?"ARP resolves the server's local hardware address.":"ARP resolves the gateway's local hardware address.",
+        tone:"warn",
+        fields:[
+          ipFact("Asking device",source.ip,"classroom laptop"),
+          ipFact("ARP target",nextHop,c.same?"server IPv4":"gateway IPv4"),
+          ipFact("Local subnet",sourceZone.network,`broadcast stays inside /${source.prefix}`),
+          ipFact("Delivery","Ethernet broadcast","not an IP packet")
+        ],
+        explanation:`ARP asks which local network interface owns ${nextHop}. It uses an IPv4 address to find a hardware address, but the ARP request itself is broadcast only inside ${sourceZone.network}.`
+      },
+      arpCheck:{
+        title:"Every local interface checks the ARP target address.",
+        tone:"warn",
+        fields:[
+          ipFact("ARP target",nextHop,c.same?"server answers":"gateway answers"),
+          ipFact("Devices checking",String(c.sourceChecks),"other local devices"),
+          ipFact("Broadcast boundary",sourceZone.network,"router does not forward it"),
+          ipFact("Useful reply","one unicast reply","owner returns its hardware address")
+        ],
+        explanation:"Only the interface whose IPv4 address matches the ARP target replies. Every other interface discards the request after checking it."
+      },
+      firstHop:{
+        title:c.same?"The laptop has resolved the server as its direct next hop.":"The IP packet reaches the default gateway.",
+        tone:c.same?"good":"route",
+        fields:c.same?[
+          ipFact("Resolved IPv4",destination.ip,"learning server"),
+          ipFact("Reply type","unicast","only the laptop receives it"),
+          ipFact("Next data hop",destination.ip,"direct local delivery"),
+          ipFact("Router","not used","same subnet")
+        ]:[
+          ipFact("IP source",source.ip,"unchanged"),
+          ipFact("IP destination",destination.ip,"still the learning server"),
+          ipFact("Local next hop",sourceZone.gateway,"gateway interface"),
+          ipFact("Router action","read destination IP","choose outgoing subnet")
+        ],
+        explanation:c.same
+          ?"The laptop can now send the data directly to the server on the same subnet."
+          :"The local Ethernet frame is addressed to the gateway, but the IP destination remains the learning server. The router forwards according to that IP destination."
+      },
+      routerArp:{
+        title:"The router resolves the server on the outgoing subnet.",
+        tone:"warn",
+        fields:[
+          ipFact("IP destination",destination.ip,"carried through the router"),
+          ipFact("Outgoing subnet",destinationZone.network,`mask ${destinationZone.mask}`),
+          ipFact("ARP target",destination.ip,"server IPv4"),
+          ipFact("Local sender",destinationZone.gateway,"router interface")
+        ],
+        explanation:`The first ARP broadcast was not forwarded. The router starts a new ARP request inside ${destinationZone.network} so it can deliver the packet on that local link.`
+      },
+      routerArpCheck:{
+        title:"The server recognises its IPv4 address in the ARP request.",
+        tone:"warn",
+        fields:[
+          ipFact("ARP target",destination.ip,"server answers"),
+          ipFact("Devices checking",String(c.destinationChecks),"inside the server subnet"),
+          ipFact("Broadcast boundary",destinationZone.network,"does not escape"),
+          ipFact("IP destination",destination.ip,"unchanged")
+        ],
+        explanation:"The server returns its hardware address to the router. Other devices in this subnet inspect and discard the request."
+      },
+      data:{
+        title:c.same?"The IP packet travels directly inside one subnet.":"The router forwards the IP packet between subnets.",
+        tone:"good",
+        fields:[
+          ipFact("IP source",source.ip,"classroom laptop"),
+          ipFact("IP destination",destination.ip,"learning server"),
+          ipFact("Path",c.same?"one local subnet":"source → router → destination","unicast"),
+          ipFact("Broadcasts now","none","hardware addresses are known")
+        ],
+        explanation:c.same
+          ?"The source and destination IP addresses identify the endpoints; the switch carries the unicast frame inside the subnet."
+          :"The router changes the local link-layer frame for the outgoing subnet, while the source and destination IPv4 addresses continue to identify the original endpoints."
+      },
+      summary:{
+        title:"The subnet boundary determined where broadcasts stopped.",
+        tone:c.totalChecks<71?"good":"warn",
+        fields:[
+          ipFact("Source subnet",sourceZone.network,`gateway ${sourceZone.gateway}`),
+          ipFact("Destination subnet",destinationZone.network,c.same?"same as source":"different network"),
+          ipFact("Devices checking",String(c.totalChecks),"ARP broadcast checks"),
+          ipFact("Router forwards",String(c.same?0:1),c.same?"local delivery":"cross-subnet delivery")
+        ],
+        explanation:"Subnetting changes the network prefix used for the local-or-remote decision. It also limits which devices receive each local broadcast."
+      }
+    };
+    return stages[phase]||stages.ready;
+  }
+
+  function noiseIpStage(c,phase){
+    const source=departmentIpInfo(c.source),zone=zoneIpInfo(c.zone);
+    const stages={
+      ready:{
+        title:"The sensor has an IPv4 address inside one subnet.",
+        fields:[
+          ipFact("Sensor IPv4",source.ip,"example IoT device"),
+          ipFact("Local subnet",zone.network,`mask ${zone.mask}`),
+          ipFact("Default gateway",zone.gateway,"used for remote destinations"),
+          ipFact("Broadcast address",zone.broadcast,"reserved for all local devices")
+        ],
+        explanation:"The subnet mask tells the sensor which IPv4 addresses are local. The final address in this subnet is reserved as its local broadcast address."
+      },
+      broadcast:{
+        title:"The sensor sends to the subnet's IPv4 broadcast address.",
+        tone:"warn",
+        fields:[
+          ipFact("IP source",source.ip,"faulty sensor"),
+          ipFact("IP destination",zone.broadcast,"subnet broadcast address"),
+          ipFact("Broadcast subnet",zone.network,`${c.zone.deviceCount} devices total`),
+          ipFact("Router action","do not forward","broadcast remains local")
+        ],
+        explanation:`${zone.broadcast} is not assigned to one device. It represents every device inside ${zone.network}, so the switch copies the transmission across that local network.`
+      },
+      checks:{
+        title:"Each device sees the broadcast destination and checks the message.",
+        tone:"warn",
+        fields:[
+          ipFact("Broadcast destination",zone.broadcast,"all local interfaces"),
+          ipFact("Other devices",String(c.perWave),"must inspect this message"),
+          ipFact("Network boundary",zone.network,"defined by the prefix"),
+          ipFact("Router forwards","0","broadcast stops here")
+        ],
+        explanation:"The IP broadcast address and the subnet boundary describe the same local group. Devices outside this subnet never receive the broadcast."
+      },
+      repeat:{
+        title:"The same local IPv4 broadcast is repeated three times.",
+        tone:"warn",
+        fields:[
+          ipFact("IP destination",zone.broadcast,"same each time"),
+          ipFact("Messages sent","3","fault repeats"),
+          ipFact("Checks per message",String(c.perWave),"local devices only"),
+          ipFact("Total checks",String(c.total),"3 × local reach")
+        ],
+        explanation:"Subnetting does not repair the faulty sensor. It changes the size of the address group represented by the broadcast address, containing the effect."
+      },
+      summary:{
+        title:"A smaller IP subnet means a smaller broadcast group.",
+        tone:c.total<213?"good":"warn",
+        fields:[
+          ipFact("Subnet",zone.network,`mask ${zone.mask}`),
+          ipFact("Broadcast address",zone.broadcast,"last address in the subnet"),
+          ipFact("Devices reached",String(c.zone.deviceCount),"including the sender"),
+          ipFact("Interruptions",String(c.total),"three broadcasts")
+        ],
+        explanation:"Changing the prefix changes the network address, usable host range and broadcast address. The broadcast can affect only devices assigned to that subnet."
+      }
+    };
+    return stages[phase]||stages.ready;
+  }
+
+  function initialIpStage(){
+    return state.scenario==="request"?requestIpStage(requestContext(),"ready"):noiseIpStage(noiseContext(),"ready");
+  }
+
+  function baselineForScenario(){return state.scenario==="request"?71:213;}
+
+  function storySteps(){
+    if(state.ipView)return ipWalkthroughSteps();
+    return state.scenario==="request"?requestSteps():noiseSteps();
+  }
+
+
+  function ipWalkthroughContext(){
+    const request=requestContext();
+    const source=departmentIpInfo(request.source),destination=departmentIpInfo(request.destination);
+    const sourceZone=zoneIpInfo(request.sourceZone),destinationZone=zoneIpInfo(request.destinationZone);
+    const comparison=compareIpNetworks(source,destination);
+    const nextHopIp=request.same?destination.ip:sourceZone.gateway;
+    const nextHopLabel=request.same?"server":"gateway";
+    return {
+      ...request,source,destination,sourceZone,destinationZone,comparison,nextHopIp,nextHopLabel,
+      sourceNetwork:ipAddress(comparison.sourceNetworkLast),
+      destinationNetworkSeen:ipAddress(comparison.destinationNetworkLast)
+    };
+  }
+  function ipStageMetrics(c,decision="pending"){
+    return {sourceNetwork:`${c.sourceNetwork}/${c.source.prefix}`,destinationNetwork:c.destinationNetworkSeen,nextHop:decision,same:decision==="pending"?null:c.same};
+  }
+  function ipBits(c){
+    return {sourceOffset:c.source.offset,destinationOffset:c.destination.offset,prefix:c.source.prefix,sourceNetwork:c.comparison.sourceNetworkLast,destinationNetwork:c.comparison.destinationNetworkLast};
+  }
+  function initialIpWalkthroughStage(){
+    const c=ipWalkthroughContext();
+    return {
+      context:c,who:"Classroom laptop",action:"is ready to contact the learning server",activeActors:[0],progress:0,
+      read:[
+        ipFact("My IPv4 address",c.source.ip,"identifies this laptop interface"),
+        ipFact("Destination IPv4",c.destination.ip,"the learning server"),
+        ipFact("My subnet mask",`${c.sourceZone.mask}  /${c.source.prefix}`,"marks network and host bits"),
+        ipFact("Default gateway",c.sourceZone.gateway,"used only for remote networks")
+      ],
+      decisionTitle:"Question: local or remote?",decisionText:"The laptop has not sent anything. It must first choose the correct local next hop.",
+      envelope:{type:"none"},insight:"The subnet mask gives meaning to an IP address by showing which bits identify the local network.",metrics:ipStageMetrics(c)
+    };
+  }
+  function ipWalkthroughSteps(){
+    const c=ipWalkthroughContext();
+    const sourceNode=nodeId(c.source.id),destinationNode=nodeId(c.destination.id);
+    const sourceSwitch=switchId(c.source.zone.id),destinationSwitch=switchId(c.destination.zone.id);
+    const nextHopNode=c.same?destinationNode:"router";
+    const sourceArea=state.mode==="flat"?"Whole campus":`${ZONE_NAMES[c.source.zone.index]} subnet`;
+    const actors=ipActors(c);
+    const sourceActor=0,sourceSwitchActor=1,routerActor=c.same?-1:2,destinationSwitchActor=c.same?1:3,serverActor=c.same?2:4;
+    const steps=[
+      {
+        title:"The laptop starts with four network values.",
+        text:"Its own IP address, the server's IP address, its subnet mask, and its default gateway are all needed before transmission begins.",
+        caption:"Nothing is moving yet. The decision starts inside the source device.",
+        ipStage:initialIpWalkthroughStage(),
+        run:async()=>{focusNode(sourceNode);setNode(sourceNode,"source","reads configuration");setNode(destinationNode,"target","final destination");showCallout(sourceNode,"First: local or remote?");}
+      },
+      {
+        title:"The subnet mask reveals the network part of each address.",
+        text:"Mask bits set to 1 mark the network portion. Host bits are cleared to 0, producing a network address.",
+        caption:"Purple bits belong to the network portion. Grey bits identify a host inside that network.",
+        ipStage:{
+          context:c,who:"Classroom laptop",action:"applies its own subnet mask to both IP addresses",activeActors:[sourceActor],progress:0,
+          read:[ipFact("Mask",`${c.sourceZone.mask}  /${c.source.prefix}`,"1 = network bit · 0 = host bit"),ipFact("Operation","IP address AND mask","performed for source and destination")],
+          bits:ipBits(c),decisionTitle:"Produce two network addresses",decisionText:"The laptop uses the same local mask for both calculations so it can compare the results.",
+          envelope:{type:"none"},insight:"An IP address alone does not tell the device what is local. The subnet mask supplies the boundary.",metrics:ipStageMetrics(c)
+        },
+        run:async()=>{focusNode(sourceNode);setNode(sourceNode,"source","IP AND mask");showCallout(sourceNode,"Find both network addresses","route");}
+      },
+      {
+        title:c.same?"The two network results match.":"The two network results are different.",
+        text:c.same?"The server is local, so the laptop can send to it directly.":"The server is remote, so the laptop must send the first local frame to its default gateway.",
+        caption:c.same?"Same network address means direct local delivery.":"Different network addresses mean the router becomes the next local hop.",
+        tone:c.same?"good":"",
+        ipStage:{
+          context:c,who:"Classroom laptop",action:"compares the two network results",activeActors:[sourceActor],progress:0,tone:c.same?"local":"route",
+          read:[
+            ipFact("Laptop network",`${c.sourceNetwork}/${c.source.prefix}`),
+            ipFact("Destination result",c.destinationNetworkSeen,"calculated with laptop's mask"),
+            ipFact("Final IP destination",c.destination.ip,"always the learning server"),
+            ipFact("Chosen next hop",c.same?c.destination.ip:c.sourceZone.gateway,c.same?"server":"default gateway")
+          ],
+          bits:ipBits(c),decisionTone:c.same?"local":"",decisionTitle:c.same?"Send directly to the server":"Send first to the gateway",
+          decisionText:c.same?"The router is not used for this packet.":"The gateway is only the local next hop; the IP packet still names the server.",
+          envelope:{type:"ip",ipFrom:c.source.ip,ipTo:c.destination.ip},insight:"Subnetting changes the local-or-remote decision. It does not change the packet's final IP destination.",metrics:ipStageMetrics(c,c.nextHopLabel)
+        },
+        run:async()=>{
+          zoneElements.get(c.source.zone.id)?.classList.add("focused");
+          if(!c.same)zoneElements.get(c.destination.zone.id)?.classList.add("focused");
+          setNode(sourceNode,"source",c.same?"server is local":"use default gateway");setNode(nextHopNode,"target","chosen next hop");
+          showCallout(sourceNode,c.same?"Same network → server":"Different network → gateway",c.same?"good":"route");
+        }
+      },
+      {
+        title:c.same?"The laptop asks who owns the server IP.":"The laptop asks who owns the gateway IP.",
+        text:"ARP turns the chosen next-hop IP address into a local hardware destination. The request is a broadcast, but only inside the source subnet.",
+        caption:"ARP is local. The first broadcast never crosses the router.",
+        tone:"warn",
+        ipStage:{
+          context:c,who:"Laptop and source switch",action:"resolve the next hop on the local link",activeActors:[sourceActor,sourceSwitchActor],progress:0,tone:"warn",
+          read:[
+            ipFact("ARP target",c.nextHopIp,c.same?"server interface":"gateway interface"),
+            ipFact("Broadcast network",c.sourceZone.network),
+            ipFact("Other devices checking",String(c.sourceChecks),"inside this subnet"),
+            ipFact("Router forwards ARP","No","local broadcast only")
+          ],
+          decisionTone:"warn",decisionTitle:"Find the next hop's hardware address",decisionText:"Only the interface that owns the target IP replies. All other local devices inspect and discard the question.",
+          envelope:{type:"arp",targetIp:c.nextHopIp,network:c.sourceZone.network},insight:"ARP uses an IP address as its question, but the ARP request itself is delivered as a local Ethernet broadcast.",metrics:ipStageMetrics(c,c.nextHopLabel)
+        },
+        run:async()=>{
+          dimOtherZones(c.source.zone.id);showZoneBanner(c.source.zone.id,`ARP: who owns ${c.nextHopIp}?`,"warn");
+          await broadcastFromDepartment(c.source.id,c.source.zone.id,c.same?"Who has server?":"Who is gateway?");
+          showBroadcastChecks(c.source.id,c.source.zone.id,c.same?c.destination.id:null,false);
+          if(c.same)setNode(destinationNode,"answering","server replies");else setNode("router","answering","gateway replies");
+          await sleep(reduceMotion?20:360);
+          await animatePath([nextHopNode,sourceSwitch,sourceNode],{label:"ARP reply",colour:"var(--reply)",duration:980});
+        }
+      },
+      {
+        title:"The laptop wraps the IP packet in a local Ethernet frame.",
+        text:c.same?"The frame and the IP packet both point to the server.":"The frame points to the gateway, while the IP packet still points to the server.",
+        caption:"The outer frame is for one local hop. The inner IP packet identifies the end-to-end devices.",
+        ipStage:{
+          context:c,who:"Classroom laptop",action:"builds the frame for the chosen next hop",activeActors:[sourceActor],progress:0,tone:c.same?"local":"route",
+          read:[
+            ipFact("Ethernet destination",c.same?"Learning server interface":"Gateway interface","local next hop"),
+            ipFact("IP destination",c.destination.ip,"final endpoint"),
+            ipFact("Source IP",c.source.ip),
+            ipFact("Payload","Learning request")
+          ],
+          decisionTone:c.same?"local":"",decisionTitle:"One local frame, one end-to-end IP packet",decisionText:c.same?"Both layers name the server because it is local.":"The two destination fields differ because the gateway is only the next hop.",
+          envelope:{type:"frame",hop:c.same?"laptop → server":"laptop → gateway",ethernetFrom:"Laptop interface",ethernetTo:c.same?"Server interface":"Gateway interface",ipFrom:c.source.ip,ipTo:c.destination.ip},
+          insight:"Ethernet moves data across one local network. IP keeps the original source and final destination visible across routed networks.",metrics:ipStageMetrics(c,c.nextHopLabel)
+        },
+        run:async()=>{focusNode(sourceNode);setNode(sourceNode,"source","builds Ethernet frame");setNode(nextHopNode,"target","local next hop");showCallout(sourceNode,"Frame outside, IP packet inside","route");}
+      },
+      {
+        title:c.same?"The switch forwards the frame to the server.":"The switch forwards the frame to the gateway.",
+        text:"The switch follows the local Ethernet destination. It does not apply the subnet mask or choose the remote network.",
+        caption:"The source device already made the subnet decision. The switch now performs local forwarding.",
+        ipStage:{
+          context:c,who:"Source switch",action:"forwards the local Ethernet frame",activeActors:[sourceSwitchActor],progress:1,tone:c.same?"local":"route",
+          read:[
+            ipFact("Switch reads","Ethernet destination"),
+            ipFact("Frame destination",c.same?"Server interface":"Gateway interface"),
+            ipFact("Switch does not read","Subnet mask","decision already made by laptop"),
+            ipFact("IP destination",c.destination.ip,"carried inside")
+          ],
+          decisionTone:c.same?"local":"",decisionTitle:`Forward toward the ${c.same?"server":"gateway"}`,decisionText:"Only the selected local path carries the unicast frame.",
+          envelope:{type:"frame",hop:c.same?"laptop → server":"laptop → gateway",ethernetFrom:"Laptop interface",ethernetTo:c.same?"Server interface":"Gateway interface",ipFrom:c.source.ip,ipTo:c.destination.ip},
+          insight:"A switch operates within the subnet. The router is involved only when the source device chose a gateway.",metrics:ipStageMetrics(c,c.nextHopLabel)
+        },
+        run:async()=>{setNode(sourceNode,"source","sends frame");setNode(sourceSwitch,"routing","reads Ethernet destination");setNode(nextHopNode,"target","receives local frame");await animatePath([sourceNode,sourceSwitch,nextHopNode],{label:"FRAME",colour:"var(--packet)",duration:1080});}
+      }
+    ];
+
+    if(!c.same){
+      steps.push({
+        title:"The router removes the old frame and reads the destination IP.",
+        text:"The incoming Ethernet frame has completed its local hop. The router keeps the IP packet and chooses an outgoing subnet from the destination address.",
+        caption:"Routers make forwarding decisions from IP addresses, not from the source device's subnet mask calculation.",
+        ipStage:{
+          context:c,who:"Router",action:"opens the incoming frame and reads the IP header",activeActors:[routerActor],progress:2,tone:"route",
+          read:[
+            ipFact("Incoming frame ended at","Gateway interface"),
+            ipFact("IP destination",c.destination.ip,"learning server"),
+            ipFact("Matching outgoing subnet",c.destinationZone.network),
+            ipFact("Next local action","Resolve server interface")
+          ],
+          decisionTitle:`Use the interface for ${c.destinationZone.network}`,decisionText:"The old Ethernet frame is discarded. The IP packet remains the object being routed.",
+          envelope:{type:"router",ipTo:c.destination.ip},insight:"Each routed hop gets a new local Ethernet frame. The source and destination IP addresses continue to identify the same endpoints.",metrics:ipStageMetrics(c,"router")
+        },
+        run:async()=>{focusNode("router");setNode("router","routing","reads destination IP");zoneElements.get(c.destination.zone.id)?.classList.add("focused");showCallout("router",`Route to ${c.destinationZone.network}`,"route");}
+      });
+      steps.push({
+        title:"The router asks who owns the server IP.",
+        text:"The first ARP broadcast was not forwarded. The router starts a new local ARP request inside the destination subnet.",
+        caption:"This second broadcast is separate and cannot escape the server's subnet.",
+        tone:"warn",
+        ipStage:{
+          context:c,who:"Router and destination switch",action:"resolve the server on the outgoing local link",activeActors:[routerActor,destinationSwitchActor],progress:2,tone:"warn",
+          read:[
+            ipFact("ARP target",c.destination.ip,"server interface"),
+            ipFact("ARP network",c.destinationZone.network),
+            ipFact("Other devices checking",String(c.destinationChecks),"inside this subnet"),
+            ipFact("IP packet","Waiting at router","not broadcast")
+          ],
+          decisionTone:"warn",decisionTitle:"Find the server's hardware address",decisionText:"The router needs a local Ethernet destination before it can send the IP packet on this subnet.",
+          envelope:{type:"arp",targetIp:c.destination.ip,network:c.destinationZone.network},insight:"Routers do not forward ARP broadcasts. They create a separate local ARP exchange on each connected subnet when needed.",metrics:ipStageMetrics(c,"server")
+        },
+        run:async()=>{
+          dimOtherZones(c.destination.zone.id);showZoneBanner(c.destination.zone.id,`ARP: who owns ${c.destination.ip}?`,"warn");
+          await broadcastFromRouter(c.destination.zone.id,"Who has server?");
+          showBroadcastChecks(null,c.destination.zone.id,c.destination.id,true);
+          setNode("router","source","sent local ARP");
+          await sleep(reduceMotion?20:360);
+          await animatePath([destinationNode,destinationSwitch,"router"],{label:"ARP reply",colour:"var(--reply)",duration:980});
+        }
+      });
+      steps.push({
+        title:"The router wraps the same IP packet in a new local frame.",
+        text:"The old frame is gone. The IP packet is unchanged, but its new Ethernet destination is the server interface.",
+        caption:"The router changes the local wrapper, not the packet's final IP destination.",
+        ipStage:{
+          context:c,who:"Router",action:"builds the outgoing Ethernet frame",activeActors:[routerActor],progress:2,tone:"route",
+          read:[
+            ipFact("Old frame","Removed","source subnet hop complete"),
+            ipFact("IP destination",c.destination.ip,"unchanged"),
+            ipFact("New Ethernet source","Router interface"),
+            ipFact("New Ethernet destination","Server interface")
+          ],
+          decisionTitle:"New local frame; same IP packet",decisionText:"The new frame fits the destination subnet, while the packet still identifies the original laptop and server.",
+          envelope:{type:"reframe",ethernetTo:"server interface",ipTo:c.destination.ip},insight:"Every routed hop can use different Ethernet addresses. The end-to-end IP addresses remain the same.",metrics:ipStageMetrics(c,"server")
+        },
+        run:async()=>{focusNode("router");setNode("router","routing","builds new frame");setNode(destinationNode,"target","next local hop");showCallout("router","Same IP packet, new frame","route");}
+      });
+      steps.push({
+        title:"The destination switch forwards the new frame to the server.",
+        text:"The outer Ethernet destination now names the server interface. The inner IP destination is still the same server address.",
+        caption:"The packet has crossed the subnet boundary, but its end-to-end IP addresses remain meaningful.",
+        ipStage:{
+          context:c,who:"Destination switch",action:"forwards the router's new local frame",activeActors:[destinationSwitchActor],progress:3,tone:"route",
+          read:[
+            ipFact("Ethernet source","Router interface"),ipFact("Ethernet destination","Server interface"),
+            ipFact("IP source",c.source.ip),ipFact("IP destination",c.destination.ip)
+          ],
+          decisionTitle:"Forward to the server port",decisionText:"The switch uses the new local frame created by the router.",
+          envelope:{type:"frame",hop:"router → server",ethernetFrom:"Router interface",ethernetTo:"Server interface",ipFrom:c.source.ip,ipTo:c.destination.ip},
+          insight:"The link-layer addresses changed at the router. The IP addresses did not.",metrics:ipStageMetrics(c,"server")
+        },
+        run:async()=>{setNode("router","source","sends new frame");setNode(destinationSwitch,"routing","reads Ethernet destination");setNode(destinationNode,"target","receives frame");await animatePath(["router",destinationSwitch,destinationNode],{label:"FRAME",colour:"var(--packet)",duration:1080});}
+      });
+    }
+
+    steps.push({
+      title:"The server opens the frame and accepts the IP packet.",
+      text:"The local frame destination matches the server interface, and the IP destination matches the server's own address. The payload can now move up to the application.",
+      caption:"Processing reverses the wrapping: Ethernet frame, then IP packet, then application data.",
+      tone:"good",
+      ipStage:{
+        context:c,who:"Learning server",action:"removes the local frame and checks the IP destination",activeActors:[serverActor],progress:serverActor,tone:"local",
+        read:[
+          ipFact("Ethernet destination","Server interface","local delivery accepted"),
+          ipFact("IP destination",c.destination.ip,"matches this server"),
+          ipFact("IP source",c.source.ip,"original laptop"),
+          ipFact("Payload","Learning request","passed to application")
+        ],
+        decisionTone:"local",decisionTitle:"Destination matches: deliver the data",decisionText:"The server accepts the packet because the IP destination identifies this interface.",
+        envelope:{type:"delivered",hop:c.same?"laptop → server":"router → server",ethernetFrom:c.same?"Laptop interface":"Router interface",ethernetTo:"Server interface",ipFrom:c.source.ip,ipTo:c.destination.ip},
+        insight:"IP addresses identify the end devices. Ethernet addresses identify the interfaces used on the current local hop.",metrics:ipStageMetrics(c,"delivered")
+      },
+      run:async()=>{focusNode(destinationNode);setNode(destinationNode,"answering","IP destination matches");showCallout(destinationNode,"This IP address is mine","good");}
+    });
+
+    steps.push({
+      title:"The subnet mask decided the path before anything moved.",
+      text:c.same?`Both endpoints were inside ${c.sourceZone.network}, so no router was needed.`:`The laptop used its gateway because the network results differed. Each ARP broadcast stayed inside one subnet.`,
+      caption:"Subnetting creates local address groups. Devices use the mask; routers move IP packets between those groups.",
+      tone:"good",
+      ipStage:{
+        context:c,who:"Complete path",action:"connects the subnet decision to the observed transmission",activeActors:[],progress:actors.length,tone:"local",
+        read:[
+          ipFact("Laptop network",`${c.sourceNetwork}/${c.source.prefix}`),
+          ipFact("Destination result",c.destinationNetworkSeen),
+          ipFact("Local ARP checks",String(c.totalChecks),c.same?"one subnet":"across two separate local broadcasts"),
+          ipFact("Router forwards",String(c.same?0:1),c.same?"not required":"one IP packet")
+        ],
+        decisionTone:"local",decisionTitle:"Mask → next hop → local frame → optional router",decisionText:"That sequence is the practical relationship between IP addressing and subnetting.",
+        envelope:{type:"none"},insight:"A smaller subnet does not make IP more secure by itself. It creates a smaller local broadcast group and a clear routing boundary.",metrics:ipStageMetrics(c,c.same?"server":"gateway")
+      },
+      run:async()=>{
+        clearVisuals();zoneElements.get(c.source.zone.id)?.classList.add("focused");zoneElements.get(c.destination.zone.id)?.classList.add("focused");
+        setNode(sourceNode,"source","source IP");setNode(destinationNode,"answering","destination IP");if(!c.same)setNode("router","routing","one forward");
+        const checks=c.totalChecks;const baseline=71;const reduction=Math.round((1-checks/baseline)*100);
+        if(state.mode==="flat")setTakeaway("The /24 mask made the whole campus local.","The laptop sent directly, but its ARP broadcast reached every other campus device.","71 local checks");
+        else setTakeaway(checks<baseline?"Your subnet boundaries reduced local broadcast reach.":"Your current grouping has not reduced this ARP reach.",`Before subnetting: 71 checks. Your design: ${checks}.`,`${Math.max(0,reduction)}% fewer checks`);
+      }
+    });
+    return steps;
+  }
+
+  function requestSteps(){
+    const c=requestContext();
+    const sourceNode=nodeId(c.source),destinationNode=nodeId(c.destination);
+    const areaName=state.mode==="flat"?"Whole campus":`${ZONE_NAMES[c.sourceZone.index]} subnet`;
+    const steps=[
+      {
+        title:"A classroom laptop needs the learning server.",
+        text:"The laptop knows the server's IP address, but it still needs a local delivery decision.",
+        caption:"Source and destination are highlighted. No message has been sent yet.",
+        ip:()=>requestIpStage(c,"ready"),
+        run:async()=>{focusNode(sourceNode);setNode(sourceNode,"source","wants server");setNode(destinationNode,"target","destination");showCallout(sourceNode,"I need the learning server");updateMetrics(0,0,areaName);}
+      },
+      {
+        title:c.same?"The laptop decides the server is local.":"The laptop decides the server is on another subnet.",
+        text:c.same?"Both addresses belong to the same local network, so the laptop will deliver directly.":"The destination is outside the laptop's local boundary, so the next hop must be the default gateway.",
+        caption:c.same?"Same subnet means no router is needed for this packet.":"Different subnet means the router becomes the next local destination.",
+        ip:()=>requestIpStage(c,"decision"),
+        run:async()=>{
+          setNode(sourceNode,"source",c.same?"same subnet":"uses gateway");setNode(destinationNode,"target","destination");
+          zoneElements.get(c.sourceZone.id)?.classList.add("focused");if(!c.same)dimOtherZones(c.sourceZone.id);
+          showCallout(sourceNode,c.same?"Same subnet: send directly":"Different subnet: send to gateway",c.same?"good":"route");
+          updateMetrics(0,0,areaName);updateDecisionMath(c);
+        }
+      },
+      {
+        title:c.same?"The laptop asks: “Who has the server?”":"The laptop asks: “Who is my gateway?”",
+        text:"This is an ARP broadcast. The switch cannot aim it at one port, so it copies the question across the whole local network.",
+        caption:"Watch the yellow copies. They stop at the dashed subnet boundary.",
+        tone:"warn",
+        ip:()=>requestIpStage(c,"arpRequest"),
+        run:async()=>{
+          if(!c.same)dimOtherZones(c.sourceZone.id);
+          showZoneBanner(c.sourceZone.id,"Broadcast spreads inside this boundary","warn");
+          await broadcastFromDepartment(c.source,c.sourceZone.id,c.same?"Who has server?":"Who is gateway?");
+          updateMetrics(c.sourceChecks,0,areaName);
+        }
+      },
+      {
+        title:`${c.sourceChecks} other devices must inspect the question.`,
+        text:c.same?"Only one server has the answer. Every other device checks the broadcast and discards it.":"The router answers because it is the gateway. Other devices still had to inspect the broadcast first.",
+        caption:"This interruption count is the cost of one broadcast inside this local network.",
+        tone:"warn",
+        ip:()=>requestIpStage(c,"arpCheck"),
+        run:async()=>{
+          if(!c.same)dimOtherZones(c.sourceZone.id);
+          showBroadcastChecks(c.source,c.sourceZone.id,c.same?c.destination:null,false);
+          if(c.same){showCallout(destinationNode,"That address is mine","good");}
+          else{setNode("router","answering","gateway replies");showCallout("router","I am the gateway","good");}
+          updateMetrics(c.sourceChecks,0,areaName);
+        }
+      },
+      {
+        title:c.same?"The server replies directly.":"The packet reaches the router.",
+        text:c.same?"The reply is unicast: only the laptop receives it.":"The Ethernet frame is for the gateway, while the IP packet still names the learning server.",
+        caption:c.same?"Unicast follows one selected path instead of being copied everywhere.":"The router can now make the cross-subnet forwarding decision.",
+        ip:()=>requestIpStage(c,"firstHop"),
+        run:async()=>{
+          if(c.same){
+            setNode(destinationNode,"answering","replies");setNode(sourceNode,"target","receives reply");
+            await animatePath([destinationNode,switchId(c.sourceZone.id),sourceNode],{label:"ARP reply",colour:"var(--reply)",duration:930});
+          }else{
+            dimOtherZones(c.sourceZone.id);setNode(sourceNode,"source","sends packet");setNode("router","routing","reads destination");
+            await animatePath([sourceNode,switchId(c.sourceZone.id),"router"],{label:"DATA",colour:"var(--packet)",duration:980});
+            updateMetrics(c.sourceChecks,1,areaName);
+          }
+        }
+      }
+    ];
+
+    if(!c.same){
+      steps.push({
+        title:"The router asks inside the server's subnet.",
+        text:"Routers do not forward the first broadcast. Instead, the router starts a new local ARP question on the destination subnet.",
+        caption:`Only the ${c.destinationZone.deviceCount} devices in the server's subnet receive this second question.`,
+        tone:"warn",
+        ip:()=>requestIpStage(c,"routerArp"),
+        run:async()=>{
+          dimOtherZones(c.destinationZone.id);showZoneBanner(c.destinationZone.id,"A new local broadcast begins here","warn");
+          await broadcastFromRouter(c.destinationZone.id,"Who has server?");
+          updateMetrics(c.totalChecks,1,`${ZONE_NAMES[c.destinationZone.index]} subnet`);
+        }
+      });
+      steps.push({
+        title:`${c.destinationChecks} devices inspect the router's question.`,
+        text:"One server answers. The broadcast still does not escape this subnet.",
+        caption:"Two small broadcasts can still interrupt fewer devices than one campus-wide broadcast.",
+        tone:"warn",
+        ip:()=>requestIpStage(c,"routerArpCheck"),
+        run:async()=>{
+          dimOtherZones(c.destinationZone.id);showBroadcastChecks(null,c.destinationZone.id,c.destination,true);showCallout(destinationNode,"That address is mine","good");
+          updateMetrics(c.totalChecks,1,`${ZONE_NAMES[c.destinationZone.index]} subnet`);
+        }
+      });
+    }
+
+    steps.push({
+      title:c.same?"The data now follows one direct path.":"The router forwards the data to the server.",
+      text:"The useful packet is unicast. The broadcast was only used to discover the next local hardware address.",
+      caption:"Broadcast finds a local next hop; unicast carries the actual data.",
+      ip:()=>requestIpStage(c,"data"),
+      run:async()=>{
+        clearVisuals();setNode(sourceNode,"source","sending data");setNode(destinationNode,"target","receiving data");
+        const path=c.same?[sourceNode,switchId(c.sourceZone.id),destinationNode]:[sourceNode,switchId(c.sourceZone.id),"router",switchId(c.destinationZone.id),destinationNode];
+        if(!c.same)setNode("router","routing","forwards packet");
+        await animatePath(path,{label:"LESSON",colour:"var(--packet)",duration:930});
+        setNode(destinationNode,"answering","delivered");updateMetrics(c.totalChecks,c.same?0:1,areaName);
+      }
+    });
+
+    steps.push({
+      title:state.mode==="flat"?"One useful delivery interrupted 71 other devices.":`Your design interrupted ${c.totalChecks} devices.`,
+      text:state.mode==="flat"?"The network works, but its broadcast boundary is too large. Subnetting lets you redraw that boundary.":resultText(c.totalChecks),
+      caption:state.mode==="flat"?"Open the planner and decide which departments should share local broadcasts.":"Try regrouping departments, then replay the exact same story.",
+      tone:state.mode==="flat"?"warn":comparisonTone(c.totalChecks),
+      ip:()=>requestIpStage(c,"summary"),
+      run:async()=>{
+        const baseline=71,reduction=Math.round((1-c.totalChecks/baseline)*100);
+        updateMetrics(c.totalChecks,c.same?0:1,areaName);
+        showZoneBanner(c.sourceZone.id,state.mode==="flat"?"71 devices interrupted":`${c.totalChecks} devices interrupted`,state.mode==="flat"?"warn":"good");
+        if(state.mode==="flat"){
+          setTakeaway("The problem is the size of the broadcast domain.","A switch delivered the data correctly, but it also copied the ARP question to every device in the campus.","71 unnecessary checks");
+        }else{
+          setTakeaway(reduction>0?"Your boundary contained the broadcast.":"The boundary did not reduce the broadcast.",`Before subnetting: 71 interrupted devices. Your design: ${c.totalChecks}.`,`${Math.max(0,reduction)}% fewer checks`);
+        }
+      }
+    });
+    return steps;
+  }
+
+  function noiseSteps(){
+    const c=noiseContext(),sourceNode=nodeId(c.source),areaName=state.mode==="flat"?"Whole campus":`${ZONE_NAMES[c.zone.index]} subnet`;
+    return [
+      {
+        title:"One IoT sensor starts searching for a service.",
+        text:"Discovery messages are often local broadcasts because the sender does not yet know which device can answer.",
+        caption:"The sensor is useful. The size of its broadcast area is the design problem.",
+        ip:()=>noiseIpStage(c,"ready"),
+        run:async()=>{focusNode(sourceNode);setNode(sourceNode,"source","searching");showCallout(sourceNode,"Who offers this service?");updateMetrics(0,0,areaName);}
+      },
+      {
+        title:"The switch copies the discovery message everywhere local.",
+        text:"A broadcast is delivered to every switch port inside the subnet, even though most devices do not provide the service.",
+        caption:"Yellow copies stop at the dashed boundary. Routers do not repeat them into other subnets.",
+        tone:"warn",
+        ip:()=>noiseIpStage(c,"broadcast"),
+        run:async()=>{dimOtherZones(c.zone.id);showZoneBanner(c.zone.id,"One discovery broadcast","warn");await broadcastFromDepartment(c.source,c.zone.id,"DISCOVER");updateMetrics(c.perWave,0,areaName);}
+      },
+      {
+        title:`${c.perWave} other devices stop and check it.`,
+        text:"Every device must inspect enough of the broadcast to decide that it is irrelevant.",
+        caption:"A large broadcast domain turns one small fault into a campus-wide distraction.",
+        tone:"warn",
+        ip:()=>noiseIpStage(c,"checks"),
+        run:async()=>{dimOtherZones(c.zone.id);showBroadcastChecks(c.source,c.zone.id,null,false);showCallout("router","Broadcast stops here","good");updateMetrics(c.perWave,0,areaName);}
+      },
+      {
+        title:"The faulty sensor repeats the broadcast three times.",
+        text:`That creates ${c.total} device interruptions before any useful reply is considered.`,
+        caption:"Subnetting cannot stop the faulty sender, but it can reduce how many devices are affected.",
+        tone:"warn",
+        ip:()=>noiseIpStage(c,"repeat"),
+        run:async()=>{
+          dimOtherZones(c.zone.id);showBroadcastChecks(c.source,c.zone.id,null,false);
+          for(let round=1;round<=3;round++){
+            showZoneBanner(c.zone.id,`Broadcast ${round} of 3`,`warn`);
+            await animatePacket(sourceNode,switchId(c.zone.id),{label:`${round}/3`,colour:"var(--broadcast)",duration:760});
+            const targets=model.zones.find(z=>z.id===c.zone.id).departments.filter(id=>id!==c.source).map(nodeId);targets.push("router");
+            await Promise.all(targets.map(id=>animatePacket(switchId(c.zone.id),id,{colour:"var(--broadcast)",small:true,duration:760})));
+            if(round<3)await sleep(reduceMotion?30:420);
+          }
+          updateMetrics(c.total,0,areaName);
+        }
+      },
+      {
+        title:state.mode==="flat"?"Three small broadcasts interrupted 213 devices.":`Your subnet limited the damage to ${c.total} interruptions.`,
+        text:state.mode==="flat"?"The fault was in one sensor, but the broadcast boundary made it everybody's problem.":resultText(c.total),
+        caption:state.mode==="flat"?"Move IoT devices into a smaller subnet, then replay this same fault.":"Change the grouping and see how the interruption count responds.",
+        tone:state.mode==="flat"?"warn":comparisonTone(c.total),
+        ip:()=>noiseIpStage(c,"summary"),
+        run:async()=>{
+          const baseline=213,reduction=Math.round((1-c.total/baseline)*100);
+          dimOtherZones(c.zone.id);showBroadcastChecks(c.source,c.zone.id,null,false);showZoneBanner(c.zone.id,`${c.total} interruptions`,state.mode==="flat"?"warn":"good");updateMetrics(c.total,0,areaName);
+          if(state.mode==="flat")setTakeaway("A local fault became a campus-wide problem.","Every repeated broadcast reached all 72 devices because they shared one broadcast domain.","213 interruptions");
+          else setTakeaway(reduction>0?"The noisy sensor is now contained.":"The noisy sensor still reaches the whole campus.",`Before subnetting: 213 interruptions. Your design: ${c.total}.`,`${Math.max(0,reduction)}% fewer checks`);
+        }
+      }
+    ];
+  }
+
+  function resultText(value){
+    const baseline=baselineForScenario();
+    if(value<baseline)return `The same traffic still works, but the broadcasts now stop sooner: ${baseline} checks before, ${value} now.`;
+    if(value===baseline)return "The same traffic works, but this grouping has not reduced the broadcast reach yet.";
+    return "This design created more broadcast work. Try a different grouping.";
+  }
+  function comparisonTone(value){return value<baselineForScenario()?"good":"warn";}
+
+  function updateDecisionMath(c){
+    if(state.mode!=="design"||!state.appliedSubnets)return;
+    const sourceAllocation=model.allocations.get(c.sourceZone.id),destinationAllocation=model.allocations.get(c.destinationZone.id);
+    const sourceOffset=sourceAllocation.ranges.get(c.source).representative,destinationOffset=destinationAllocation.ranges.get(c.destination).representative;
+    const mask=sourceAllocation.prefix===24?0:prefixInfo(sourceAllocation.prefix).maskLast;
+    const sourceNetwork=sourceOffset&mask,destinationSeen=destinationOffset&mask;
+    state.lastDecision={sourceOffset,destinationOffset,mask,sourceNetwork,destinationSeen,local:sourceNetwork===destinationSeen,prefix:sourceAllocation.prefix};
+    renderDecisionMath();
+  }
+
+  function binary8(value){return Number(value).toString(2).padStart(8,"0");}
+  function maskText(prefix){return prefix===24?"255.255.255.0":`255.255.255.${prefixInfo(prefix).maskLast}`;}
+  function renderDecisionMath(){
+    if(!state.lastDecision){$("decisionMath").textContent="Run the server story with an applied design to see how a device decides ‘local or gateway’.";return;}
+    const d=state.lastDecision;
+    $("decisionMath").textContent=
+`source:      ${BASE}.${d.sourceOffset}   ${binary8(d.sourceOffset)}
+mask /${d.prefix}:   ${maskText(d.prefix)}   ${binary8(d.mask)}
+source AND:  ${BASE}.${d.sourceNetwork}
+destination: ${BASE}.${d.destinationOffset}   ${binary8(d.destinationOffset)}
+dest AND:    ${BASE}.${d.destinationSeen}
+result: ${d.local?"same subnet → send directly":"different subnet → use gateway"}`;
+  }
+
+  function setStoryCopy(step,index,total){
+    $("storyCard").className=`story-card${step.tone?` ${step.tone}`:""}`;
+    $("stepKicker").textContent=`${state.ipView?"IP ":""}Step ${index+1} of ${total}`;$("storyTitle").textContent=step.title;$("storyText").textContent=step.text;
+    setCaption("What to notice",step.caption,step.tone||"");renderProgress(total,index);
+    if(state.ipView)setIpStage(step.ipStage||initialIpWalkthroughStage());
+    else{$("ipStage").hidden=true;document.querySelector("main").classList.remove("ip-mode");}
+  }
+
+  function renderProgress(total=storySteps().length,index=state.storyIndex){
+    $("progressDots").innerHTML=Array.from({length:total},(_,i)=>`<span class="progress-dot${i<index?" done":i===index?" active":""}"></span>`).join("");
+  }
+
+  function initialStoryCopy(){
+    if(state.ipView){
+      const stage=initialIpWalkthroughStage();
+      $("storyCard").className="story-card";$("stepKicker").textContent="IP walkthrough";
+      $("storyTitle").textContent="Follow one packet from a classroom laptop to the learning server.";
+      $("storyText").textContent="The lab pauses whenever a device reads an IP value, makes a subnet decision, or rebuilds a local frame.";
+      setCaption("What to notice","First understand the device's mask calculation. Packet movement begins only after the next hop has been chosen.");
+      setIpStage(stage);renderProgress(storySteps().length,-1);
+      setTakeaway("IP answers two different questions.","The IP destination identifies the final server. The subnet mask decides which local next hop can reach it.","mask → next hop → route");
+      requestAnimationFrame(()=>focusNode(nodeId("classrooms"),"auto"));return;
+    }
+    $("ipStage").hidden=true;document.querySelector("main").classList.remove("ip-mode");
+    const title=state.scenario==="request"?"A classroom laptop needs the learning server.":"One IoT sensor starts searching for a service.";
+    const text="Start the story. The network pauses after every decision.";
+    $("storyCard").className="story-card";$("stepKicker").textContent="Ready";$("storyTitle").textContent=title;$("storyText").textContent=text;
+    setCaption("What to notice",state.mode==="flat"?"The dashed line is one large broadcast boundary. Local traffic does not pass through the router.":"Each dashed line is a separate broadcast boundary. The router joins them without forwarding broadcasts.");
+    renderProgress(storySteps().length,-1);updateMetrics(0,0,state.mode==="flat"?"Whole campus":"One subnet");
+    if(state.mode==="flat"){
+      setTakeaway("A broadcast is local, not private.","A switch copies a broadcast to every device inside the same broadcast domain. A router marks the boundary.","watch → divide → compare");
+    }else if(state.scenario==="noise"){
+      setTakeaway("Replay the same noisy broadcast.","The original network caused 213 interruptions. Watch how your new boundary changes the result.","before: 213 interruptions");
+    }else{
+      setTakeaway("Replay the same server request.","The original network interrupted 71 devices. Watch the source decide whether to send locally or through the gateway.","before: 71 checks");
+    }
+    requestAnimationFrame(()=>focusNode(state.scenario==="noise"?nodeId("iot"):nodeId("classrooms"),"auto"));
+  }
+
+  async function advanceStory(){
+    if(state.busy)return;
+    const steps=storySteps();
+    if(state.storyIndex>=steps.length-1){resetStory();return;}
+    state.busy=true;state.storyIndex++;
+    const step=steps[state.storyIndex];
+    clearVisuals();setStoryCopy(step,state.storyIndex,steps.length);updateControls();
+    const token=++state.animationToken;
+    try{await step.run(token);}catch(error){console.error(error);}
+    if(token===state.animationToken&&state.storyIndex===steps.length-1)finishStory();
+    state.busy=false;updateControls();
+    if(state.auto&&state.storyIndex<steps.length-1)scheduleAuto();
+    else if(state.auto&&state.storyIndex>=steps.length-1){state.auto=false;updateControls();}
+  }
+
+  function finishStory(){
+    if(state.mode==="flat"&&!state.baselineSeen){
+      state.baselineSeen=true;renderPlanner();
+      if(state.ipView){
+        $("lessonTitle").textContent="Now change the laptop's subnet decision.";
+        $("lessonDetail").textContent="Group departments, apply the design, then replay to see whether the mask chooses the server or the gateway.";
+      }else{
+        $("lessonTitle").textContent="Now redraw the broadcast boundary.";
+        $("lessonDetail").textContent="Group departments into smaller local networks, apply the design, then replay the same story.";
+      }
+    }
+  }
+
+  function scheduleAuto(){clearTimeout(state.autoTimer);state.autoTimer=setTimeout(()=>advanceStory(),reduceMotion?150:state.ipView?3300:2400);}
+
+  function resetStory(){
+    clearTimeout(state.autoTimer);state.auto=false;state.busy=false;state.storyIndex=-1;state.animationToken++;renderNetwork();initialStoryCopy();updateControls();
+  }
+
+  function updateControls(){
+    const steps=storySteps();
+    $("nextStory").disabled=state.busy;$("resetStory").disabled=state.busy&&reduceMotion;
+    $("nextStory").textContent=state.storyIndex<0?"Start story":state.storyIndex>=steps.length-1?"Restart story":"Next step";
+    $("autoStory").textContent=state.auto?"Pause":"Play slowly";$("autoStory").classList.toggle("active",state.auto);
+  }
+
+
+  function updateLessonHeader(){
+    if(state.ipView){
+      $("lessonTitle").textContent="Follow the IPv4 decision, then follow the packet.";
+      $("lessonDetail").textContent="The device applies its subnet mask, chooses a local next hop, and a router reads the IP destination only when networks differ.";
+      $("plannerTitle").textContent="Change the subnet decision";
+      $("plannerDetail").textContent="Group departments differently, apply the design, then replay the IP walkthrough to see whether the laptop chooses the server or its gateway.";
+    }else{
+      $("lessonTitle").textContent=state.mode==="flat"?"Start with one large broadcast domain.":"Your smaller local networks.";
+      $("lessonDetail").textContent=state.mode==="flat"?"Watch one noisy sensor force every device to inspect the same local message.":"Replay the same traffic and compare where broadcasts stop.";
+      $("plannerTitle").textContent="Redraw the boundary";
+      $("plannerDetail").textContent="Group departments into smaller local networks. Address details stay hidden unless opened.";
+    }
+  }
+  function setIpView(next){
+    if(state.busy)return;
+    if(next===state.ipView)return;
+    if(next){state.previousScenario=state.scenario;state.scenario="request";}
+    else state.scenario=state.previousScenario||"noise";
+    state.ipView=next;
+    $("ipToggle").setAttribute("aria-pressed",String(state.ipView));
+    document.querySelector("main").classList.toggle("ip-mode",state.ipView);
+    $("requestScenario").classList.toggle("active",state.scenario==="request");
+    $("noiseScenario").classList.toggle("active",state.scenario==="noise");
+    updateLessonHeader();resetStory();renderPlanner();
+  }
+
+  function setScenario(next){
+    if(state.busy||state.ipView)return;
+    state.scenario=next;$("requestScenario").classList.toggle("active",next==="request");$("noiseScenario").classList.toggle("active",next==="noise");
+    resetStory();
+  }
+
+  function setMode(next){
+    if(state.busy||next===state.mode)return;if(next==="design"&&!state.appliedSubnets)return;
+    state.mode=next;if(next==="design")state.editingPlan=false;$("flatTab").classList.toggle("active",next==="flat");$("designTab").classList.toggle("active",next==="design");
+    $("lessonTitle").textContent=next==="flat"?"One large local network.":"Your smaller local networks.";
+    $("lessonDetail").textContent=next==="flat"?"Watch the yellow broadcast copies cross the whole campus.":"Replay the same story and watch each broadcast stop at a subnet boundary.";
+    resetStory();renderPlanner();
+  }
+
+  function departmentPlanId(id){return state.draftSubnets.find(item=>item.departments.includes(id))?.id||null;}
+
+  function renderPlanner(){
+    const showSummary=Boolean(state.baselineSeen&&state.mode==="design"&&state.appliedSubnets&&!state.editingPlan);
+    $("lockedPlanner").hidden=state.baselineSeen;
+    $("builderSummary").hidden=!showSummary;
+    $("builder").hidden=!state.baselineSeen||showSummary;
+    if(!state.baselineSeen)return;
+    if(showSummary){renderAppliedSummary();return;}
+    const allocation=allocatePlan(state.draftSubnets);
+    const assigned=new Set(state.draftSubnets.flatMap(item=>item.departments));
+    const unassigned=Object.keys(departments).filter(id=>!assigned.has(id));
+    $("unassignedCount").textContent=unassigned.length;
+    $("departmentBank").innerHTML=unassigned.length?unassigned.map(id=>departmentCard(id,false)).join(""):'<div class="empty-drop">All departments assigned</div>';
+    $("subnetList").innerHTML=state.draftSubnets.map((subnet,index)=>{
+      const info=allocation.allocations.get(subnet.id);const count=totalDevices(subnet.departments);const capacity=info?.devicePlaces||0;const percent=capacity?Math.min(100,count/capacity*100):0;
+      const cards=subnet.departments.length?subnet.departments.map(id=>departmentCard(id,true)).join(""):'<div class="empty-drop">Drop departments here</div>';
+      const invalid=!subnet.departments.length;
+      return `<section class="subnet-card${invalid?" invalid":""}" data-subnet="${subnet.id}" style="--subnet-colour:${ZONE_COLOURS[index]}">
+        <div class="subnet-head"><div class="subnet-title"><strong>${ZONE_NAMES[index]} local network</strong><span>${subnet.departments.length?`${count} devices`:"empty"}</span></div><button class="remove-subnet" data-remove="${subnet.id}" ${state.draftSubnets.length<=2?"disabled":""} aria-label="Remove local network">×</button></div>
+        <div class="subnet-drop" data-drop="${subnet.id}">${cards}<button class="drop-action" data-place="${subnet.id}" ${state.selectedDepartment?"":"disabled"}>${state.selectedDepartment?`Move ${departments[state.selectedDepartment].short} here`:"Select a department"}</button></div>
+      </section>`;
+    }).join("");
+    attachPlannerEvents();renderPlanFeedback(allocation);renderAddressPlan(allocation);
+    $("addSubnet").disabled=state.draftSubnets.length>=4;$("applyDesign").disabled=!allocation.valid;
+  }
+
+  function renderAppliedSummary(){
+    const allocation=allocatePlan(state.appliedSubnets);
+    $("summaryZones").innerHTML=state.appliedSubnets.map((subnet,index)=>{
+      const info=allocation.allocations.get(subnet.id);
+      const names=subnet.departments.map(id=>departments[id].short).join(" · ");
+      return `<div class="summary-zone" style="--subnet-colour:${ZONE_COLOURS[index]}"><strong>${ZONE_NAMES[index]} subnet · ${info.deviceCount} devices</strong><span>${names}</span></div>`;
+    }).join("");
+  }
+
+  function departmentCard(id,assigned){
+    const d=departments[id];
+    return `<div class="department-card${state.selectedDepartment===id?" selected":""}" draggable="true" tabindex="0" data-department="${id}">
+      ${assigned?`<button class="card-return" data-return="${id}" aria-label="Return ${d.name}">×</button>`:""}
+      <strong>${d.name}</strong><span>${d.count} devices · ${d.role}</span>
+    </div>`;
+  }
+
+  function attachPlannerEvents(){
+    document.querySelectorAll(".department-card").forEach(card=>{
+      card.addEventListener("click",event=>{if(event.target.closest("button"))return;state.selectedDepartment=state.selectedDepartment===card.dataset.department?null:card.dataset.department;renderPlanner();});
+      card.addEventListener("keydown",event=>{if(event.key==="Enter"||event.key===" "){event.preventDefault();state.selectedDepartment=state.selectedDepartment===card.dataset.department?null:card.dataset.department;renderPlanner();}});
+      card.addEventListener("dragstart",event=>{event.dataTransfer.effectAllowed="move";event.dataTransfer.setData("text/plain",card.dataset.department);card.classList.add("dragging");});
+      card.addEventListener("dragend",()=>{card.classList.remove("dragging");document.querySelectorAll(".drop-ready").forEach(el=>el.classList.remove("drop-ready"));});
+    });
+    document.querySelectorAll("[data-drop]").forEach(zone=>{
+      zone.addEventListener("dragover",event=>{event.preventDefault();zone.classList.add("drop-ready");});
+      zone.addEventListener("dragleave",()=>zone.classList.remove("drop-ready"));
+      zone.addEventListener("drop",event=>{event.preventDefault();moveDepartment(event.dataTransfer.getData("text/plain"),zone.dataset.drop);});
+      zone.addEventListener("click",event=>{if(event.target.closest(".department-card")||event.target.closest("button"))return;if(state.selectedDepartment)moveDepartment(state.selectedDepartment,zone.dataset.drop);});
+    });
+    document.querySelectorAll("[data-place]").forEach(button=>button.addEventListener("click",event=>{event.stopPropagation();if(state.selectedDepartment)moveDepartment(state.selectedDepartment,button.dataset.place);}));
+    document.querySelectorAll("[data-return]").forEach(button=>button.addEventListener("click",event=>{event.stopPropagation();moveDepartment(button.dataset.return,"bank");}));
+    document.querySelectorAll("[data-remove]").forEach(button=>button.addEventListener("click",()=>removeSubnet(button.dataset.remove)));
+  }
+
+  function moveDepartment(id,target){
+    if(!id)return;state.draftSubnets.forEach(item=>item.departments=item.departments.filter(dept=>dept!==id));
+    if(target!=="bank")state.draftSubnets.find(item=>item.id===target)?.departments.push(id);
+    state.selectedDepartment=null;state.draftDirty=true;renderPlanner();
+  }
+
+  function removeSubnet(id){
+    if(state.draftSubnets.length<=2)return;state.draftSubnets=state.draftSubnets.filter(item=>item.id!==id);state.draftDirty=true;renderPlanner();
+  }
+
+  function addSubnet(){
+    if(state.draftSubnets.length>=4)return;state.draftSubnets.push({id:`s${state.nextSubnetNumber++}`,departments:[]});state.draftDirty=true;renderPlanner();
+  }
+
+  function resetPlan(){
+    state.draftSubnets=[{id:"s1",departments:[]},{id:"s2",departments:[]}];state.nextSubnetNumber=3;state.selectedDepartment=null;state.draftDirty=true;renderPlanner();
+  }
+
+  function renderPlanFeedback(allocation){
+    const el=$("planFeedback");
+    if(!allocation.valid){el.className="plan-feedback bad";el.innerHTML=`<strong>Design incomplete</strong>${allocation.errors[0]}`;return;}
+    const classroom=departmentPlanId("classrooms"),servers=departmentPlanId("servers"),iot=departmentPlanId("iot");
+    const iotZone=state.draftSubnets.find(item=>item.id===iot);const iotReach=totalDevices(iotZone.departments)-1;
+    const serverText=classroom===servers?"The classroom request will stay local.":"The classroom request will use the router.";
+    el.className=`plan-feedback${state.draftDirty&&state.appliedSubnets?" warn":" good"}`;
+    el.innerHTML=`<strong>${state.draftDirty&&state.appliedSubnets?"Changes not applied":"Ready to test"}</strong>${serverText} A noisy IoT broadcast will interrupt ${iotReach} other devices.`;
+  }
+
+  function renderAddressPlan(allocation){
+    const rows=state.draftSubnets.map((subnet,index)=>{
+      const info=allocation.allocations.get(subnet.id);if(!info)return"";
+      return `<div class="address-row" style="--subnet-colour:${ZONE_COLOURS[index]}"><strong>${ZONE_NAMES[index]} · ${BASE}.${info.networkOffset}/${info.prefix}</strong><span>mask ${maskText(info.prefix)} · gateway ${BASE}.${info.gatewayOffset} · ${info.devicePlaces} device places</span></div>`;
+    }).join("");
+    $("addressList").innerHTML=rows||'<div class="address-intro">Complete the grouping to generate address blocks.</div>';
+    const ruler=$("addressRuler");ruler.innerHTML="";
+    state.draftSubnets.forEach((subnet,index)=>{
+      const info=allocation.allocations.get(subnet.id);if(!info)return;
+      const seg=document.createElement("div");seg.className="address-segment";seg.style.left=`${info.networkOffset/256*100}%`;seg.style.width=`${info.block/256*100}%`;seg.style.background=ZONE_COLOURS[index];seg.textContent=`/${info.prefix}`;ruler.appendChild(seg);
+    });
+    renderDecisionMath();
+  }
+
+  function applyDesign(){
+    const allocation=allocatePlan(state.draftSubnets);if(!allocation.valid){renderPlanFeedback(allocation);return;}
+    state.appliedSubnets=deepPlan(state.draftSubnets);state.draftDirty=false;state.editingPlan=false;state.mode="design";state.lastDecision=null;
+    $("designTab").disabled=false;$("flatTab").classList.remove("active");$("designTab").classList.add("active");
+    updateLessonHeader();resetStory();renderPlanner();
+  }
+
+  $("nextStory").addEventListener("click",advanceStory);
+  $("resetStory").addEventListener("click",resetStory);
+  $("autoStory").addEventListener("click",()=>{
+    if(state.busy)return;state.auto=!state.auto;updateControls();
+    if(state.auto){if(state.storyIndex<0)advanceStory();else scheduleAuto();}else clearTimeout(state.autoTimer);
+  });
+  $("requestScenario").addEventListener("click",()=>setScenario("request"));
+  $("noiseScenario").addEventListener("click",()=>setScenario("noise"));
+  $("ipToggle").addEventListener("click",()=>setIpView(!state.ipView));
+  $("flatTab").addEventListener("click",()=>setMode("flat"));
+  $("designTab").addEventListener("click",()=>setMode("design"));
+  $("editPlan").addEventListener("click",()=>{state.editingPlan=true;renderPlanner();});
+  $("addSubnet").addEventListener("click",addSubnet);
+  $("resetPlan").addEventListener("click",resetPlan);
+  $("applyDesign").addEventListener("click",applyDesign);
+
+  updateLessonHeader();renderNetwork();renderPlanner();initialStoryCopy();updateControls();
+})();
+</script>
+</body>
+</html>
