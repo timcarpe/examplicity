@@ -117,6 +117,54 @@ function IconDrawing({ slug }: LabIconProps) {
           <circle cx="500" cy="278" r="7" />
         </>
       );
+    case 'encryption-in-data-transmission':
+      return (
+        <>
+          <rect height="92" rx="16" width="122" x="54" y="98" />
+          <rect height="92" rx="16" width="122" x="464" y="98" />
+          <path d="M176 144h288M320 144v92" />
+          {[214, 258, 302, 346, 390].map((x, index) => (
+            <rect className={index > 1 ? 'is-solid tone-one' : undefined} height="32" key={x} rx="7" width="32" x={x} y="128" />
+          ))}
+          <path className="secondary-line" d="M264 104h112l-18-24h-76z" />
+          <circle cx="320" cy="262" r="42" />
+          <path d="M300 262h40m-12 0v18m0-18 14-14" />
+          <circle className="is-solid tone-three" cx="300" cy="262" r="10" />
+        </>
+      );
+    case 'dns-web-page-retrieval':
+      return (
+        <>
+          <rect height="188" rx="18" width="214" x="48" y="82" />
+          <path className="secondary-line" d="M48 124h214M78 104h118" />
+          <rect className="is-solid tone-two" height="54" rx="9" width="150" x="80" y="158" />
+          <path d="M262 142h76m-20-18 20 18-20 18" />
+          <path d="M338 220h-76m20-18-20 18 20 18" />
+          <g className="thin-lines">
+            <rect height="76" rx="12" width="104" x="354" y="84" />
+            <rect height="76" rx="12" width="104" x="354" y="200" />
+          </g>
+          <path d="M458 122h74v116h-74" />
+          <circle className="is-solid" cx="406" cy="122" r="10" />
+          <circle className="is-solid tone-one" cx="406" cy="238" r="10" />
+        </>
+      );
+    case 'tcp-ip-encapsulation':
+      return (
+        <>
+          <rect height="194" rx="24" width="242" x="72" y="82" />
+          <rect className="tone-one" height="154" rx="20" width="202" x="92" y="102" />
+          <rect height="112" rx="16" width="160" x="113" y="123" />
+          <rect className="is-solid tone-three" height="68" rx="12" width="116" x="135" y="145" />
+          <path d="M330 180h78m-22-22 22 22-22 22" />
+          <g className="thin-lines">
+            <rect height="42" rx="9" width="122" x="438" y="92" />
+            <rect height="42" rx="9" width="122" x="438" y="144" />
+            <rect height="42" rx="9" width="122" x="438" y="196" />
+            <rect height="42" rx="9" width="122" x="438" y="248" />
+          </g>
+        </>
+      );
     case 'fetch-decode-execute':
       return (
         <>
@@ -168,6 +216,20 @@ function IconDrawing({ slug }: LabIconProps) {
           <circle cx="422" cy="78" r="9" />
           <circle className="is-solid" cx="458" cy="78" r="9" />
           <circle cx="494" cy="78" r="9" />
+        </>
+      );
+    case 'process-states-scheduling':
+      return (
+        <>
+          <rect height="190" rx="18" width="154" x="52" y="84" />
+          <rect className="tone-two" height="190" rx="18" width="154" x="244" y="84" />
+          <rect height="190" rx="18" width="154" x="436" y="84" />
+          <path d="M206 152h38m-16-16 16 16-16 16M398 208h38m-16-16 16 16-16 16" />
+          <rect className="is-solid" height="34" rx="8" width="104" x="76" y="118" />
+          <rect height="34" rx="8" width="104" x="76" y="168" />
+          <rect className="is-solid tone-one" height="72" rx="12" width="104" x="269" y="138" />
+          <rect height="34" rx="8" width="104" x="462" y="118" />
+          <path className="secondary-line" d="M488 184h52m-52 24h52m-52 24h34" />
         </>
       );
     case 'translator':
