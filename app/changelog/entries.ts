@@ -14,7 +14,7 @@ export const changelogEntries: readonly ChangelogEntry[] = [
       'Added a database normalisation experiment for Cambridge International AS Level Computer Science 9618.',
       'Added Data Transmission Methods, Packet Switching, IPv4 Subnetting, Python Programming Practice, Combinational Logic Circuit Design, and Dijkstra and A* Graph Search.',
       'Added persistent subject and qualification controls, with course-specific topic guidance and syllabus labels.',
-      'Made labs downloadable as standalone HTML files and added a guided AI remix workflow.',
+      'Made labs downloadable as standalone HTML files and added a guided AI remix workflow with the full starter prompt visible while editing.',
       'Added feedback reporting from both the catalogue and open labs, with clearer categories and privacy safeguards.',
       'Refined the Python workspace, clearer catalogue illustrations, the shared lab frame, and mobile viewing guidance across screen sizes.',
       'Added this changelog so visitors can review meaningful learner-facing improvements in one place.',
