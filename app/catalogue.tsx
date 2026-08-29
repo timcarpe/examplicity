@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState, type PointerEvent as ReactPointerEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
@@ -16,6 +16,7 @@ import {
 } from './labs';
 import { createStandaloneLabHtml } from './lab-download';
 import { LabIcon } from './lab-icon';
+import { BugReportDialog } from './bug-report-dialog';
 
 const movePreview = (event: ReactPointerEvent<HTMLDivElement>) => {
   if (event.pointerType === 'touch') return;
@@ -57,6 +58,7 @@ export default function Catalogue({ initialExam, initialSubjectId }: CataloguePr
   const [isLoading, setIsLoading] = useState(false);
   const [showMobileNotice, setShowMobileNotice] = useState(true);
   const [downloadStatus, setDownloadStatus] = useState<'idle' | 'preparing' | 'complete' | 'error'>('idle');
+  const labFrameRef = useRef<HTMLIFrameElement>(null);
   const subject = subjects.find((item) => item.id === subjectId) ?? subjects[0];
   const view = subject.qualificationViews[level];
   const exam = view.exam;
@@ -236,6 +238,7 @@ export default function Catalogue({ initialExam, initialSubjectId }: CataloguePr
           className={`lab-frame ${isLoading ? 'is-loading' : ''}`}
           key={activeLab.slug}
           onLoad={() => setIsLoading(false)}
+          ref={labFrameRef}
           src={activeLab.href}
           title={activeLab.title}
         />
@@ -243,7 +246,8 @@ export default function Catalogue({ initialExam, initialSubjectId }: CataloguePr
           <a href="https://github.com/timcarpe/examplicity">Examplicity™</a>
           <span>
             Make complex ideas click. ·{' '}
-            <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>
+            <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> ·{' '}
+            <BugReportDialog frameRef={labFrameRef} lab={activeLab} />
           </span>
         </footer>
       </main>
@@ -374,7 +378,8 @@ export default function Catalogue({ initialExam, initialSubjectId }: CataloguePr
         <a href="https://github.com/timcarpe/examplicity">Examplicity™</a>
         <span>
           GCSE, AS &amp; A Level exam practice and concept labs. ·{' '}
-          <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>
+          <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> ·{' '}
+          <BugReportDialog />
         </span>
       </footer>
     </main>
