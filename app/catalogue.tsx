@@ -75,6 +75,21 @@ export default function Catalogue({ initialExam, initialSubjectId }: CataloguePr
   }, [exam, level, subject.id]);
 
   useEffect(() => {
+    const frame = window.requestAnimationFrame(() => {
+      const initialSubject = subjects.find((item) => item.id === initialSubjectId) ?? subjects[0];
+      const savedLevel = readPreference(levelStorageKey(initialSubjectId)) as QualificationLevel | null;
+      if (
+        savedLevel
+        && qualificationLevels.includes(savedLevel)
+        && initialSubject.qualificationViews[savedLevel].exam === initialExam
+      ) {
+        setLevel(savedLevel);
+      }
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [initialExam, initialSubjectId]);
+
+  useEffect(() => {
     const syncLabFromUrl = () => {
       const slug = new URLSearchParams(window.location.search).get('lab');
       const lab = labs.find((item) => item.slug === slug) ?? null;
