@@ -35,9 +35,10 @@ Keep those responsibilities separate.
 - [ ] Keep lab-specific CSS and JavaScript inside that HTML. A static file in
   `public/labs` does not receive `app/globals.css` and must not depend on a
   React component or an undocumented host callback.
-- [ ] Link `/labs/lab-frame.css` after the document's inline `<style>` block.
-  It supplies the standard background, 1200px canvas cap, and safe space below
-  the host overlay. Do not duplicate or override those frame rules in a lab.
+- [ ] Include either the marked `LAB_FRAME_STYLES` block or the temporary
+  `/labs/lab-frame.css` link accepted by `npm run labs:sync`. The sync command
+  embeds the standard background, canvas and responsive frame so the downloaded
+  lab remains self-contained. Do not edit or duplicate the generated block.
 - [ ] Keep the lab's own `<main>` as the document boundary. Do not add a second
   Examplicity header or footer inside the iframe; the host renders that chrome
   once above every lab.
@@ -62,7 +63,7 @@ to the downloaded artifact; do not add it to the source document or its iframe.
 ## 3. Manifest registration
 
 Add one `Lab` object to `labs` in `app/labs.ts`. `Lab` is an `Activity` plus
-`topic`, `format`, and `exams`, so a catalogue entry must contain all of these
+`topic`, `format`, and `syllabuses`, so a catalogue entry must contain all of these
 fields:
 
 ```ts
@@ -73,7 +74,16 @@ fields:
   topic: 'Data representation',
   format: 'Visual experiment',
   kind: 'lab',
-  exams: ['0478', '9618'],
+  syllabuses: [
+    {
+      code: '0478',
+      qualification: 'GCSE',
+      sections: [
+        { id: '1.2', page: 13, primary: true },
+        { id: '1.3', page: 13 },
+      ],
+    },
+  ],
   href: '/labs/example-lab.html',
 }
 ```
@@ -82,9 +92,21 @@ fields:
   the file and the value used for transient shell state, so these three values
   must agree exactly: `example-lab`, `public/labs/example-lab.html`, and
   `/labs/example-lab.html`. Do not use spaces, uppercase, or a second spelling.
-- [ ] Use only the exam codes declared by `exams` in `app/labs.ts`: `'0478'`
-  and/or `'9618'`. The `exams` array controls whether the card appears when a
-  learner selects that syllabus; it is not decorative copy.
+- [ ] Add or reuse the exam in `syllabusRegistry` in `app/labs.ts`. The registry
+  owns the subject, official Cambridge qualification page, official syllabus
+  document, validity and chip palette. It is deliberately not limited to
+  Computer Science, 0478 or 9618.
+- [ ] Give every lab one `syllabuses` entry for each applicable syllabus. The
+  `code` controls catalogue visibility. `qualification` is the learner-facing
+  stage (`GCSE`, `AS`, `A` or a justified combined label), and `sections`
+  contains the exact syllabus `topic.subtopic` references and PDF pages.
+- [ ] Mark exactly one section per syllabus as `primary: true`. Add other
+  section references only when the interaction directly teaches them. Do not
+  turn contextual, extension or merely adjacent material into alignment.
+- [ ] Derive section IDs and PDF page numbers from the current official syllabus
+  and the lab's actual interaction, not its title. The generated qualification
+  label links to Cambridge's syllabus page; the primary and additional section
+  numbers each link to their corresponding official PDF page.
 - [ ] Reuse the current topic labels and capitalization when the content fits:
   `Data representation`, `Networks & communication`,
   `Processors & memory`, and `System software`. `app/catalogue.tsx` groups by the
@@ -146,21 +168,25 @@ the default drawing for an approved lab.
 
 ## 6. Validation before approval
 
+- [ ] Run `npm run labs:sync` to embed the shared frame and manifest-owned
+  syllabus chips. Never hand-edit either generated marker block.
 - [ ] Confirm the three-way path contract and changed-file scope:
   `public/labs/<slug>.html`, its `app/labs.ts` entry, and its
-  `app/lab-icon.tsx` case. Confirm the HTML links `/labs/lab-frame.css` once and
-  contains no duplicate Examplicity shell markup.
+  `app/lab-icon.tsx` case. Confirm the HTML contains one generated frame block,
+  one generated syllabus-chip block and no duplicate Examplicity shell markup.
 - [ ] From `cambridge-labs`, run:
 
   ```text
+  npm run labs:sync:check
   npm run lint
   npm run build
   git diff --check
   ```
 
 - [ ] With `npm run dev`, test the selected exam tabs and confirm the new card
-  appears only for its `exams`, under the exact `topic`, with the intended
-  `format` and SVG. Confirm the card links directly to `/labs/<slug>.html`, then
+  appears only for its manifest `syllabuses`, under the exact `topic`, with the
+  intended `format` and SVG. Confirm the card links directly to
+  `/labs/<slug>.html`, then
   open it from `/computer-science/<exam>?lab=<slug>` and verify the loading
   screen resolves and the iframe loads the intended HTML.
 - [ ] Exercise the lab's main controls, reset/empty/error paths, keyboard

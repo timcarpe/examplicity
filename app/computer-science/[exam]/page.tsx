@@ -59,7 +59,7 @@ export default async function ComputerScienceCatalogue({ params }: PageProps) {
     ? 'Cambridge IGCSE Computer Science 0478'
     : 'Cambridge International AS & A Level Computer Science 9618';
   const visibleLabs = labs.filter((lab) => (
-    lab.subject === subject.id && lab.exams.includes(exam)
+    lab.subject === subject.id && lab.syllabuses.some((syllabus) => syllabus.code === exam)
   ));
   const structuredData = {
     '@context': 'https://schema.org',

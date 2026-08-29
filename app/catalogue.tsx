@@ -45,7 +45,9 @@ export default function Catalogue({ initialExam, initialSubjectId }: CataloguePr
   const subject = subjects.find((item) => item.id === subjectId) ?? subjects[0];
   const view = subject.views[exam];
   const groupedLabs = useMemo(() => {
-    const visibleLabs = labs.filter((lab) => lab.subject === subject.id && lab.exams.includes(exam));
+    const visibleLabs = labs.filter((lab) => (
+      lab.subject === subject.id && lab.syllabuses.some((syllabus) => syllabus.code === exam)
+    ));
 
     return visibleLabs.reduce<Map<string, typeof labs>>((groups, lab) => {
       const topicLabs = groups.get(lab.topic) ?? [];
