@@ -140,13 +140,16 @@ fields:
   `Data representation`, `Networks & communication`,
   `Processors & memory`, `System software`, and `Programming`. These labels are
   defined by the typed `topics` manifest; do not create a second spelling.
-- [ ] Keep `format` short and card-sized, following existing examples such as
-  `Practice`, `Visual experiment`, `Signal lab`, `Protocol lab`,
-  `CPU simulator`, or `OS simulation`.
+- [ ] Keep `format` short and card-sized, but make it specific to the operated
+  learning experience. Name the learner's mode of work, such as a builder,
+  controller, proof, model or simulator; do not fall back to a generic
+  `<topic> experiment` label when the lab provides a more precise description.
 - [ ] Make `title` match the document's purpose and `description` concrete
   about what the learner can change, observe, or compare. `metaDescription` is
-  separate search/social copy. `subtitle` owns only the existing lead-text slot;
-  use `null` when the approved design has no such slot rather than adding one.
+  separate search/social copy. Write the `subtitle` around the authentic learner
+  action and the relationship it reveals, not a generic topic summary or repeated
+  exam label. `subtitle` owns only the existing lead-text slot; use `null` when
+  the approved design has no such slot rather than adding one.
 - [ ] Do not hand-edit the generated `LAB_MANIFEST_HEAD`,
   `data-lab-manifest="title"`, `data-lab-manifest="subtitle"`, or
   `LAB_SYLLABUS_CHIPS` regions. Run `npm run labs:sync` after changing the
@@ -176,8 +179,11 @@ that belongs in the catalogue, while retaining the same path and card contract.
 Add a new `case '<slug>'` to `IconDrawing` in `app/lab-icon.tsx`. Do not rely on
 the default drawing for an approved lab.
 
-- [ ] Inspect the actual lab first, then draw its real interaction mechanic:
-  input to output, moving data, changing state, or the learner's main action.
+- [ ] Inspect the actual lab first, then identify the single mathematical,
+  scientific or computational relationship at its centre. Abstract that idea
+  into the smallest useful set of shapes. Do not reproduce the interface,
+  challenge sequence or a mini flowchart merely because the lab contains them.
+  Add a flow or state transition only when it is itself the concept being taught.
   For example, the bitmap pilot's card shows a pixel grid, an arrow, and three
   encoding bars because the lab really paints a bitmap and switches between
   Normal, RLE, and Huffman modes. A generic “computer” symbol is not an
@@ -219,6 +225,11 @@ the default drawing for an approved lab.
   `--lab-accent` and `--lab-accent-soft`; do not retain a source lab's brighter
   one-off button colour. Preserve local colours only where they encode meaning
   in the instructional visualization, and keep those colours out of the chrome.
+- [ ] Restyle lab-generator side-callout boilerplate to match deployed panels.
+  Static goals, hints, explanations and supporting copy use the neutral panel
+  border and shared surface tokens, not a saturated coloured left rail. Retain
+  a coloured rail only when it is part of an operated visualization or conveys
+  a changing semantic state such as success, warning or error.
 - [ ] Give interactive visualizations an accessible name or role. Existing
   examples include the bitmap's `aria-label="Paintable bitmap"`, the CPU SVGs'
   `role="img"` plus `aria-label`, and the translator's labelled editors and

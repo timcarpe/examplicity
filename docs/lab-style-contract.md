@@ -77,6 +77,13 @@ only when it carries instructional meaning inside the operated model, such as a
 packet route, signal, bus, warning or diagram legend; that colour must not leak
 into surrounding interface chrome.
 
+Static goals, hints, explanations and supporting callouts belong to the shared
+panel language: a neutral full border, shared surface and ordinary text colour.
+Do not preserve generator boilerplate that uses a saturated coloured side rail
+as decoration. A coloured rail is appropriate only inside an operated visual or
+when its changing colour communicates a semantic state such as success, warning
+or error.
+
 Keep these local to each lab:
 
 - diagram, canvas, waveform, packet, signal, bus, syntax, and command colors;

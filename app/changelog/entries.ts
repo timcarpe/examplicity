@@ -21,7 +21,7 @@ export const changelogEntries: readonly ChangelogEntry[] = [
     ],
     internalChanges: [
       'Moved lab artifacts into subject folders and extended manifest-controlled subject routes, qualification views, exam mapping and exact syllabus section references to Mathematics.',
-      'Added deployment checks for native lab packaging and subject routes.',
+      'Added deployment checks for native lab packaging, subject routes, concept-focused card artwork, precise card copy, and shared panel styling.',
       'Added rate limiting, scheduled cleanup, and environment safeguards for feedback reports.',
     ],
   },
