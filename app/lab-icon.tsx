@@ -340,6 +340,77 @@ function IconDrawing({ slug }: LabIconProps) {
           <path className="secondary-line" d="M82 222v46h476v-46" />
         </>
       );
+    case 'database-normalisation':
+      return (
+        <>
+          <rect height="190" rx="20" width="218" x="54" y="84" />
+          <path className="thin-lines" d="M54 136h218M54 188h218M126 84v190M198 84v190" />
+          <path d="M292 180h46M338 180l34-62M338 180l34 62" />
+          <rect className="is-solid tone-one" height="96" rx="18" width="188" x="390" y="66" />
+          <rect height="96" rx="18" width="188" x="390" y="198" />
+          <path className="thin-lines" d="M390 114h188M452 66v96M390 246h188M452 198v96" />
+        </>
+      );
+    case 'ratio-concentration-flow-rate':
+      return (
+        <>
+          <rect className="is-solid tone-one" height="108" rx="22" width="124" x="64" y="62" />
+          <rect height="108" rx="22" width="124" x="64" y="214" />
+          <path d="M188 116h102v46M188 268h102v-46" />
+          <circle cx="324" cy="192" r="48" />
+          <path d="M372 192h82" />
+          <path className="secondary-line" d="M420 192v76" />
+          <path d="M454 192h48" />
+          <path d="M502 158h66v68c0 38-24 66-66 66z" />
+        </>
+      );
+    case 'recurring-decimals-fractions':
+      return (
+        <>
+          <g className="thin-lines">
+            <rect height="52" rx="13" width="52" x="72" y="92" />
+            <rect height="52" rx="13" width="52" x="136" y="92" />
+            <rect height="52" rx="13" width="52" x="200" y="92" />
+            <rect height="52" rx="13" width="52" x="264" y="92" />
+            <rect height="52" rx="13" width="52" x="328" y="92" />
+            <rect height="52" rx="13" width="52" x="392" y="92" />
+            <rect height="52" rx="13" width="52" x="456" y="92" />
+            <rect height="52" rx="13" width="52" x="136" y="216" />
+            <rect height="52" rx="13" width="52" x="200" y="216" />
+            <rect height="52" rx="13" width="52" x="264" y="216" />
+            <rect height="52" rx="13" width="52" x="328" y="216" />
+            <rect height="52" rx="13" width="52" x="392" y="216" />
+            <rect height="52" rx="13" width="52" x="456" y="216" />
+          </g>
+          <rect className="is-solid tone-one" height="52" rx="13" width="52" x="520" y="92" />
+          <path d="M82 180h476" />
+          <circle cx="112" cy="180" r="22" />
+        </>
+      );
+    case 'rounded-measurements-bounds':
+      return (
+        <>
+          <path d="M86 180h468M86 158v44M554 158v44" />
+          <path className="secondary-line" d="M180 166v28M274 166v28M368 166v28M462 166v28" />
+          <path d="M196 112v136M444 112v136" />
+          <circle className="is-solid tone-one" cx="320" cy="180" r="30" />
+          <path className="secondary-line" d="M196 272h248" />
+        </>
+      );
+    case 'set-membership-operations':
+      return (
+        <>
+          <circle cx="254" cy="180" r="112" />
+          <circle cx="386" cy="180" r="112" />
+          <path className="is-solid tone-one" d="M320 89a112 112 0 0 1 0 182 112 112 0 0 1 0-182z" />
+          <g className="thin-lines">
+            <rect height="34" rx="10" width="54" x="94" y="90" />
+            <rect height="34" rx="10" width="54" x="492" y="90" />
+            <rect height="34" rx="10" width="54" x="94" y="236" />
+            <rect height="34" rx="10" width="54" x="492" y="236" />
+          </g>
+        </>
+      );
     case 'python-programming-practice':
       return (
         <>
