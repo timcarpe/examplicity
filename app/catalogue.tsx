@@ -275,6 +275,7 @@ export default function Catalogue({ initialExam, initialSubjectId }: CataloguePr
         <footer className="lab-shell-footer">
           <div className="footer-left">
             <a href="https://github.com/timcarpe/examplicity">Examplicity™</a>
+            <Link href="/changelog">Changelog</Link>
             <BugReportDialog frameRef={labFrameRef} lab={activeLab} />
           </div>
           <span>
@@ -467,6 +468,7 @@ export default function Catalogue({ initialExam, initialSubjectId }: CataloguePr
       <footer>
         <div className="footer-left">
           <a href="https://github.com/timcarpe/examplicity">Examplicity™</a>
+          <Link href="/changelog">Changelog</Link>
           <BugReportDialog />
         </div>
         <span>

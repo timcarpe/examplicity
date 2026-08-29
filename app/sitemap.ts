@@ -8,5 +8,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
   ));
   const labPages = labs.map((lab) => ({ url: `${siteUrl}${lab.href}` }));
 
-  return [...syllabusViews, ...labPages];
+  return [{ url: `${siteUrl}/changelog` }, ...syllabusViews, ...labPages];
 }
