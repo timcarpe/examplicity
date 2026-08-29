@@ -154,7 +154,7 @@ const renderSyllabusChips = (lab: Lab) => {
     if (!primarySection) throw new Error(`${lab.slug} has no primary section for ${alignment.code}`);
     const hasMultipleSections = sections.length > 1;
     const sectionLinks = sections.map((section) => {
-      if (!/^\d+(?:\.\d+)?$/.test(section.id) || !Number.isInteger(section.page) || section.page < 1) {
+      if (!/^[A-Z]?\d+(?:\.\d+)?$/.test(section.id) || !Number.isInteger(section.page) || section.page < 1) {
         throw new Error(`${lab.slug} has an invalid ${alignment.code} section reference`);
       }
       if (seenSections.has(section.id)) throw new Error(`${lab.slug} repeats ${alignment.code} section ${section.id}`);

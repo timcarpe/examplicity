@@ -10,6 +10,7 @@ export const changelogEntries: readonly ChangelogEntry[] = [
     date: '2026-08-29',
     displayDate: '29 August 2026',
     publicChanges: [
+      'Added the first Mathematics lab, Prime Factors: HCF and LCM, with a new Cambridge IGCSE Mathematics 0580 catalogue view.',
       'Added Data Transmission Methods, Packet Switching, IPv4 Subnetting, Python Programming Practice, Combinational Logic Circuit Design, and Dijkstra and A* Graph Search.',
       'Added persistent subject and qualification controls, with course-specific topic guidance and syllabus labels.',
       'Made labs downloadable as standalone HTML files and added a guided AI remix workflow.',
@@ -18,7 +19,7 @@ export const changelogEntries: readonly ChangelogEntry[] = [
       'Added this changelog so visitors can review meaningful learner-facing improvements in one place.',
     ],
     internalChanges: [
-      'Moved lab artifacts into subject folders while retaining manifest-controlled exam mapping and exact syllabus section references.',
+      'Moved lab artifacts into subject folders and extended manifest-controlled subject routes, qualification views, exam mapping and exact syllabus section references to Mathematics.',
       'Added deployment checks for native lab packaging and subject routes.',
       'Added rate limiting, scheduled cleanup, and environment safeguards for feedback reports.',
     ],

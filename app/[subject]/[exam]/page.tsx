@@ -1,28 +1,34 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Catalogue from '../../catalogue';
-import { labs, subjects, type ExamCode } from '../../labs';
+import { labs, subjects, syllabusRegistry, type ExamCode, type SubjectDefinition, type SubjectId } from '../../labs';
 import { siteDescription, siteTitle, siteUrl } from '../../site';
 
-const subject = subjects[0];
-
-const isExamCode = (value: string): value is ExamCode => (
-  subject.exams.some((exam) => exam === value)
-);
-
 type PageProps = {
-  params: Promise<{ exam: string }>;
+  params: Promise<{ subject: string; exam: string }>;
+};
+
+const findSubjectView = (subjectId: string, examCode: string) => {
+  const subject = subjects.find((item) => item.id === subjectId);
+  if (!subject || !subject.exams.some((exam) => exam === examCode)) return null;
+  const exam = examCode as ExamCode;
+  const typedSubject: SubjectDefinition = subject;
+  const view = typedSubject.views[exam];
+  return view ? { subject: typedSubject, exam, view } : null;
 };
 
 export function generateStaticParams() {
-  return subject.exams.map((exam) => ({ exam }));
+  return subjects.flatMap((subject) => (
+    subject.exams.map((exam) => ({ subject: subject.id, exam }))
+  ));
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { exam } = await params;
-  if (!isExamCode(exam)) return {};
+  const { subject: subjectId, exam: examCode } = await params;
+  const match = findSubjectView(subjectId, examCode);
+  if (!match) return {};
 
-  const view = subject.views[exam];
+  const { view } = match;
   return {
     description: view.metaDescription,
     alternates: { canonical: view.href },
@@ -49,15 +55,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-export default async function ComputerScienceCatalogue({ params }: PageProps) {
-  const { exam } = await params;
-  if (!isExamCode(exam)) notFound();
+export default async function SubjectCatalogue({ params }: PageProps) {
+  const { subject: subjectId, exam: examCode } = await params;
+  const match = findSubjectView(subjectId, examCode);
+  if (!match) notFound();
 
-  const view = subject.views[exam];
+  const { subject, exam, view } = match;
   const pageUrl = `${siteUrl}${view.href}`;
-  const educationalLevel = exam === '0478'
-    ? 'Cambridge IGCSE Computer Science 0478'
-    : 'Cambridge International AS & A Level Computer Science 9618';
+  const educationalLevel = `${syllabusRegistry[exam].title} ${exam}`;
   const visibleLabs = labs.filter((lab) => (
     lab.subject === subject.id && lab.syllabuses.some((syllabus) => syllabus.code === exam)
   ));
@@ -111,7 +116,7 @@ export default async function ComputerScienceCatalogue({ params }: PageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, '\\u003c') }}
       />
-      <Catalogue initialExam={exam} initialSubjectId={subject.id} key={exam} />
+      <Catalogue initialExam={exam} initialSubjectId={subject.id as SubjectId} key={`${subject.id}-${exam}`} />
     </>
   );
 }

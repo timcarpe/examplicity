@@ -4,7 +4,7 @@ import { siteUrl } from './site';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const syllabusViews = subjects.flatMap((subject) => (
-    subject.exams.map((exam) => ({ url: `${siteUrl}${subject.views[exam].href}` }))
+    Object.values(subject.views).map((view) => ({ url: `${siteUrl}${view.href}` }))
   ));
   const labPages = labs.map((lab) => ({ url: `${siteUrl}${lab.href}` }));
 

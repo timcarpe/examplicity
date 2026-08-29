@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { labs, subjects } from '../labs';
+import { labs, subjects, type Lab, type SubjectDefinition } from '../labs';
 import RemixGuide from './remix-guide';
 
 type RemixPageProps = {
@@ -9,11 +9,13 @@ type RemixPageProps = {
 
 const findLab = (slug?: string) => labs.find((lab) => lab.slug === slug);
 
-const getReturnHref = (from: string | undefined, exam: string) => {
+const getReturnHref = (from: string | undefined, lab: Lab) => {
   const allowedHrefs = new Set<string>(
-    subjects.flatMap((subject) => subject.exams.map((code) => subject.views[code].href)),
+    subjects.flatMap((subject) => Object.values(subject.views).map((view) => view.href)),
   );
-  return from && allowedHrefs.has(from) ? from : `/computer-science/${exam}`;
+  const subject: SubjectDefinition | undefined = subjects.find((item) => item.id === lab.subject);
+  const fallbackHref = subject?.views[lab.syllabuses[0].code]?.href ?? '/';
+  return from && allowedHrefs.has(from) ? from : fallbackHref;
 };
 
 export async function generateMetadata({ searchParams }: RemixPageProps): Promise<Metadata> {
@@ -34,12 +36,10 @@ export default async function RemixPage({ searchParams }: RemixPageProps) {
 
   if (!lab) notFound();
 
-  const exam = lab.syllabuses[0].code;
-
   return (
     <RemixGuide
       lab={lab}
-      returnHref={getReturnHref(from, exam)}
+      returnHref={getReturnHref(from, lab)}
     />
   );
 }

@@ -39,6 +39,19 @@ export const syllabusRegistry = {
       hover: '#e8ddf6',
     },
   },
+  '0580': {
+    subject: 'mathematics',
+    title: 'Cambridge IGCSE Mathematics',
+    officialPage: 'https://www.cambridgeinternational.org/programmes-and-qualifications/cambridge-igcse-mathematics-0580/',
+    documentUrl: 'https://www.cambridgeinternational.org/Images/662466-2025-2027-syllabus.pdf',
+    validFor: '2025–2027',
+    palette: {
+      background: '#edf8f3',
+      border: '#91c4b0',
+      text: '#235f4e',
+      hover: '#dcf0e7',
+    },
+  },
 } as const satisfies Record<string, SyllabusDefinition>;
 
 export type ExamCode = keyof typeof syllabusRegistry;
@@ -61,10 +74,27 @@ export const topics = [
   'Logic circuits',
   'Artificial intelligence',
   'Programming',
+  'Numbers',
 ] as const;
 export type Topic = (typeof topics)[number];
 
-export const subjects = [
+export type SubjectDefinition = {
+  id: string;
+  name: string;
+  exams: readonly ExamCode[];
+  views: Partial<Record<ExamCode, {
+    href: string;
+    metaDescription: string;
+  }>>;
+  qualificationViews: Partial<Record<QualificationLevel, {
+    exam: ExamCode;
+    headerLabel: string;
+    intro: string;
+    topicBriefings: Partial<Record<Topic, string>>;
+  }>>;
+};
+
+const subjectDefinitions = [
   {
     id: 'computer-science',
     name: 'Computer Science',
@@ -93,7 +123,7 @@ export const subjects = [
           'Logic circuits': 'Build combinational logic circuits and connect gate functions, Boolean expressions and truth tables for Cambridge IGCSE Computer Science 0478.',
           'Artificial intelligence': 'Explore how computer systems use data and rules to model intelligent behaviour for Cambridge IGCSE Computer Science 0478.',
           Programming: 'Work through guided Python lessons, then write, run and trace Cambridge-style pseudocode alongside Python for Cambridge IGCSE Computer Science 0478 exam practice.',
-        } satisfies Record<Topic, string>,
+        } satisfies Partial<Record<Topic, string>>,
       },
       AS: {
         exam: '9618',
@@ -108,7 +138,7 @@ export const subjects = [
           'Logic circuits': 'Build combinational logic circuits and connect gate functions, Boolean expressions and truth tables for Cambridge International AS Level Computer Science 9618.',
           'Artificial intelligence': 'Review the graph and algorithm foundations used by Artificial Intelligence for Cambridge International AS Level Computer Science 9618.',
           Programming: 'Work through guided Python lessons, then write, translate, run and trace Cambridge-style pseudocode alongside Python for Cambridge International AS Level Computer Science 9618 exam practice.',
-        } satisfies Record<Topic, string>,
+        } satisfies Partial<Record<Topic, string>>,
       },
       A: {
         exam: '9618',
@@ -123,12 +153,34 @@ export const subjects = [
           'Logic circuits': 'Review logic-circuit foundations used in advanced digital circuit design for Cambridge International A Level Computer Science 9618.',
           'Artificial intelligence': 'Compare Dijkstra and A* searches on weighted graphs for Cambridge International A Level Computer Science 9618.',
           Programming: 'Write, translate, run and trace Cambridge-style pseudocode alongside Python for Cambridge International A Level Computer Science 9618 exam practice.',
-        } satisfies Record<Topic, string>,
+        } satisfies Partial<Record<Topic, string>>,
       },
     },
   },
-] as const;
-export type SubjectId = (typeof subjects)[number]['id'];
+  {
+    id: 'mathematics',
+    name: 'Mathematics',
+    exams: ['0580'],
+    views: {
+      '0580': {
+        href: '/mathematics/0580',
+        metaDescription: 'Interactive Cambridge IGCSE Mathematics 0580 labs for exam practice, revision and visual concept explanations.',
+      },
+    },
+    qualificationViews: {
+      IGCSE: {
+        exam: '0580',
+        headerLabel: 'Cambridge IGCSE Mathematics · 0580',
+        intro: 'Interactive Cambridge IGCSE Mathematics (0580) labs for exam practice and visual concept explanations you can see, change and understand.',
+        topicBriefings: {
+          Numbers: 'Explore number structure, prime factors, common factors and common multiples for Cambridge IGCSE Mathematics 0580.',
+        } satisfies Partial<Record<Topic, string>>,
+      },
+    },
+  },
+] as const satisfies readonly SubjectDefinition[];
+export const subjects = subjectDefinitions;
+export type SubjectId = (typeof subjectDefinitions)[number]['id'];
 
 export type Activity = {
   slug: string;
@@ -516,6 +568,29 @@ export const labs: Lab[] = [
       { code: '9618', qualification: 'A', sections: [{ id: '18.1', page: 36, primary: true }] },
     ],
     href: '/labs/computer-science/dijkstra-a-star-graph-search.html',
+  },
+  {
+    subject: 'mathematics',
+    slug: 'prime-factors-hcf-lcm',
+    title: 'Prime Factors: HCF and LCM',
+    description: 'Build prime-factor rows, pair common prime copies, and see how the same factors produce the HCF and LCM.',
+    metaDescription: 'Explore prime factorisation, common factors, HCF and LCM by building factor rows and comparing prime copy counts for Cambridge IGCSE Mathematics 0580.',
+    subtitle: 'For Cambridge IGCSE Mathematics 0580 Core and Extended, build prime-factor rows, pair common copies, and compare the smaller and larger copy counts that form the HCF and LCM.',
+    topic: 'Numbers',
+    format: 'Prime factorisation experiment',
+    kind: 'lab',
+    layout: 'compact',
+    syllabuses: [
+      {
+        code: '0580',
+        qualification: 'IGCSE',
+        sections: [
+          { id: 'C1.1', page: 12, primary: true },
+          { id: 'E1.1', page: 32 },
+        ],
+      },
+    ],
+    href: '/labs/mathematics/prime-factors-hcf-lcm.html',
   },
   {
     subject: 'computer-science',

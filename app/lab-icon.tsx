@@ -323,6 +323,23 @@ function IconDrawing({ slug }: LabIconProps) {
           <circle cx="562" cy="180" r="26" />
         </>
       );
+    case 'prime-factors-hcf-lcm':
+      return (
+        <>
+          <rect height="58" rx="15" width="110" x="86" y="62" />
+          <rect height="58" rx="15" width="110" x="444" y="62" />
+          <path className="secondary-line" d="M141 120v24M141 144 92 178M141 144l49 34M499 120v24M499 144l-49 34M499 144l49 34" />
+          <g className="thin-lines">
+            <circle cx="82" cy="200" r="22" />
+            <circle cx="190" cy="200" r="22" />
+            <circle cx="450" cy="200" r="22" />
+            <circle cx="558" cy="200" r="22" />
+          </g>
+          <path d="M212 200h64M428 200h-64" />
+          <circle className="is-solid tone-one" cx="320" cy="200" r="28" />
+          <path className="secondary-line" d="M82 222v46h476v-46" />
+        </>
+      );
     case 'python-programming-practice':
       return (
         <>

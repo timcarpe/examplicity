@@ -151,6 +151,11 @@ fields:
   `data-lab-manifest="title"`, `data-lab-manifest="subtitle"`, or
   `LAB_SYLLABUS_CHIPS` regions. Run `npm run labs:sync` after changing the
   manifest; catalogue cards and structured data read the same values directly.
+- [ ] Remove lab-authored syllabus, sources, alignment, audit or design-rationale
+  sections from the learner-facing HTML, together with CSS used only by those
+  sections. The manifest-generated chips, head metadata and structured data own
+  deployed syllabus alignment; research evidence remains in the intake record,
+  not inside the teaching experience.
 
 ### Subject views and topic briefings
 
