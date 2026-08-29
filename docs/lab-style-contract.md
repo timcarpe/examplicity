@@ -34,6 +34,11 @@ Do not edit an embedded `LAB_FRAME_STYLES`, `LAB_MANIFEST_HEAD`,
   spacing and typography to the 1200px rail. Do not satisfy the width contract
   by stacking a primary panel below the fold or leaving a conspicuous gap where
   content used to be.
+- Application-style labs must also fit the host's content row at `1280×720`.
+  The outer lab document must not scroll behind the persistent footer. Fold
+  progress, backup and resource controls into the application chrome, use the
+  remaining height for the teaching surface, and confine overflow to named
+  internal panes such as navigation, editors, consoles or long task briefs.
 - Base wide-layout transitions on the `lab-canvas` container. Viewport media
   queries do not detect when a capped 1200px rail is narrower than the viewport.
   Fixed instructional geometry may use an intentionally labelled internal
