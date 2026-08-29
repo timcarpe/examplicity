@@ -59,6 +59,9 @@ remains at `/computer-science/<exam>` with `?lab=<slug>` as transient UI state.
 The host's Download action packages a copy of the source document with inline
 standalone Examplicity header/footer chrome. That generated chrome belongs only
 to the downloaded artifact; do not add it to the source document or its iframe.
+Before adding that chrome, the packager reapplies the manifest transformer so
+the downloaded title, subtitle, metadata and syllabus alignment cannot drift
+from the live catalogue.
 
 ## 3. Manifest registration
 
@@ -71,6 +74,8 @@ fields:
   slug: 'example-lab',
   title: 'Example Lab',
   description: 'One short sentence describing the learner-visible experiment.',
+  metaDescription: 'A search description naming the concept, interaction and applicable syllabus.',
+  subtitle: 'Existing lead copy shown beneath the lab heading, or null when the design has no subtitle slot.',
   topic: 'Data representation',
   format: 'Visual experiment',
   kind: 'lab',
@@ -109,14 +114,27 @@ fields:
   numbers each link to their corresponding official PDF page.
 - [ ] Reuse the current topic labels and capitalization when the content fits:
   `Data representation`, `Networks & communication`,
-  `Processors & memory`, and `System software`. `app/catalogue.tsx` groups by the
-  exact `topic` string, so do not create accidental spelling/case variants.
+  `Processors & memory`, `System software`, and `Programming`. These labels are
+  defined by the typed `topics` manifest; do not create a second spelling.
 - [ ] Keep `format` short and card-sized, following existing examples such as
   `Practice`, `Visual experiment`, `Signal lab`, `Protocol lab`,
   `CPU simulator`, or `OS simulation`.
 - [ ] Make `title` match the document's purpose and `description` concrete
-  about what the learner can change, observe, or compare. The page renders
-  these values directly in the card, loading screen, and iframe title.
+  about what the learner can change, observe, or compare. `metaDescription` is
+  separate search/social copy. `subtitle` owns only the existing lead-text slot;
+  use `null` when the approved design has no such slot rather than adding one.
+- [ ] Do not hand-edit the generated `LAB_MANIFEST_HEAD`,
+  `data-lab-manifest="title"`, `data-lab-manifest="subtitle"`, or
+  `LAB_SYLLABUS_CHIPS` regions. Run `npm run labs:sync` after changing the
+  manifest; catalogue cards and structured data read the same values directly.
+
+### Subject views and topic briefings
+
+Each `subjects[].views[exam]` entry in `app/labs.ts` owns its canonical path,
+header label, page introduction, meta description and a typed briefing for each
+topic. The catalogue renders this copy directly. The content check fails when a
+topic visible for a syllabus has no briefing, when a lab uses an unknown topic,
+or when a syllabus alignment is not enabled by its subject.
 
 ### Tools in the catalogue
 
@@ -168,12 +186,14 @@ the default drawing for an approved lab.
 
 ## 6. Validation before approval
 
-- [ ] Run `npm run labs:sync` to embed the shared frame and manifest-owned
-  syllabus chips. Never hand-edit either generated marker block.
+- [ ] Run `npm run labs:sync` to embed the shared frame and generate the
+  manifest-owned head metadata, visible title, optional subtitle and syllabus
+  chips. Never hand-edit a generated marker or controlled attribute.
 - [ ] Confirm the three-way path contract and changed-file scope:
   `public/labs/<slug>.html`, its `app/labs.ts` entry, and its
   `app/lab-icon.tsx` case. Confirm the HTML contains one generated frame block,
-  one generated syllabus-chip block and no duplicate Examplicity shell markup.
+  one generated manifest head, title, optional subtitle, syllabus-chip block
+  and no duplicate Examplicity shell markup.
 - [ ] From `cambridge-labs`, run:
 
   ```text
@@ -182,6 +202,10 @@ the default drawing for an approved lab.
   npm run build
   git diff --check
   ```
+
+  The aggregate check also packages every lab in memory and verifies that its
+  manifest-controlled head, title, optional subtitle, syllabus chips and
+  standalone download chrome each occur exactly once.
 
 - [ ] With `npm run dev`, test the selected exam tabs and confirm the new card
   appears only for its manifest `syllabuses`, under the exact `topic`, with the

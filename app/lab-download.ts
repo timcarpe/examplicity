@@ -1,6 +1,9 @@
+import { applyLabManifestContent } from './lab-content.ts';
+import type { Lab } from './labs';
+
 type StandaloneLabOptions = {
   source: string;
-  title: string;
+  lab: Lab;
   siteHomeUrl: string;
   liveLabUrl: string;
 };
@@ -112,18 +115,19 @@ const standaloneChromeStyles = `
 
 export const createStandaloneLabHtml = ({
   source,
-  title,
+  lab,
   siteHomeUrl,
   liveLabUrl,
 }: StandaloneLabOptions) => {
   const homeHref = escapeHtml(siteHomeUrl);
   const labHref = escapeHtml(liveLabUrl);
-  const labTitle = escapeHtml(title);
-  const closingHead = source.toLowerCase().lastIndexOf('</head>');
+  const labTitle = escapeHtml(lab.title);
+  const manifestSource = applyLabManifestContent(source, lab);
+  const closingHead = manifestSource.toLowerCase().lastIndexOf('</head>');
 
   if (closingHead < 0) throw new Error('Lab document has no closing head tag.');
 
-  let packaged = `${source.slice(0, closingHead)}${standaloneChromeStyles}\n${source.slice(closingHead)}`;
+  let packaged = `${manifestSource.slice(0, closingHead)}${standaloneChromeStyles}\n${manifestSource.slice(closingHead)}`;
   const bodyMatch = /<body\b[^>]*>/i.exec(packaged);
 
   if (!bodyMatch || bodyMatch.index === undefined) throw new Error('Lab document has no body tag.');

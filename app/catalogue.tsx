@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState, type PointerEvent as ReactPointerEvent } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { labs, subjects, type Activity, type ExamCode, type SubjectId } from './labs';
+import { labs, subjects, type ExamCode, type Lab, type SubjectId, type Topic } from './labs';
 import { createStandaloneLabHtml } from './lab-download';
 import { LabIcon } from './lab-icon';
 
@@ -39,7 +39,7 @@ export default function Catalogue({ initialExam, initialSubjectId }: CataloguePr
   const router = useRouter();
   const [subjectId, setSubjectId] = useState<SubjectId>(initialSubjectId);
   const [exam, setExam] = useState<ExamCode>(initialExam);
-  const [activeLab, setActiveLab] = useState<Activity | null>(null);
+  const [activeLab, setActiveLab] = useState<Lab | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [downloadStatus, setDownloadStatus] = useState<'idle' | 'preparing' | 'complete' | 'error'>('idle');
   const subject = subjects.find((item) => item.id === subjectId) ?? subjects[0];
@@ -49,7 +49,7 @@ export default function Catalogue({ initialExam, initialSubjectId }: CataloguePr
       lab.subject === subject.id && lab.syllabuses.some((syllabus) => syllabus.code === exam)
     ));
 
-    return visibleLabs.reduce<Map<string, typeof labs>>((groups, lab) => {
+    return visibleLabs.reduce<Map<Topic, typeof labs>>((groups, lab) => {
       const topicLabs = groups.get(lab.topic) ?? [];
       groups.set(lab.topic, [...topicLabs, lab]);
       return groups;
@@ -90,7 +90,7 @@ export default function Catalogue({ initialExam, initialSubjectId }: CataloguePr
     router.push(nextSubject.views[nextExam].href);
   };
 
-  const openLab = (lab: Activity) => {
+  const openLab = (lab: Lab) => {
     setActiveLab(lab);
     setIsLoading(true);
     setDownloadStatus('idle');
@@ -122,7 +122,7 @@ export default function Catalogue({ initialExam, initialSubjectId }: CataloguePr
       liveLabUrl.searchParams.set('lab', activeLab.slug);
       const html = createStandaloneLabHtml({
         source,
-        title: activeLab.title,
+        lab: activeLab,
         siteHomeUrl: siteHomeUrl.href,
         liveLabUrl: liveLabUrl.href,
       });
@@ -268,7 +268,7 @@ export default function Catalogue({ initialExam, initialSubjectId }: CataloguePr
               <div className="topic-heading-copy">
                 <h2>{topic}</h2>
                 <p className="topic-briefing">
-                  {view.topicBriefings[topic as keyof typeof view.topicBriefings]}
+                  {view.topicBriefings[topic]}
                 </p>
               </div>
               <span>{topicLabs.length} {topicLabs.length === 1 ? 'lab' : 'labs'} · {exam}</span>

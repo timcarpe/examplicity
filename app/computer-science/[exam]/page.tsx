@@ -94,7 +94,7 @@ export default async function ComputerScienceCatalogue({ params }: PageProps) {
         hasPart: visibleLabs.map((lab) => ({
           '@type': 'LearningResource',
           name: lab.title,
-          description: lab.description,
+          description: lab.metaDescription,
           url: `${siteUrl}${lab.href}`,
           inLanguage: 'en-GB',
           isAccessibleForFree: true,
