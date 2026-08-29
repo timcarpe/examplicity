@@ -247,9 +247,14 @@ footer a:hover { text-decoration-color: currentColor; }
   text-underline-offset: 3px;
   transition: text-decoration-color .2s ease;
 }
-.bug-report-trigger svg { fill: none; height: 14px; stroke: #86868b; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.8; transition: stroke .2s ease; width: 14px; }
+.bug-report-icons { display: inline-block; height: 14px; position: relative; width: 14px; }
+.bug-report-trigger svg { fill: none; inset: 0; position: absolute; stroke: #86868b; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.8; width: 14px; }
+.bug-report-icon-info { opacity: 0; }
 .bug-report-trigger:hover { text-decoration-color: currentColor; }
-.bug-report-trigger:hover svg { stroke: #d92d20; }
+.bug-report-trigger:hover .bug-report-icon-bug { animation: bug-icon-cycle 1.4s infinite; stroke: #d92d20; }
+.bug-report-trigger:hover .bug-report-icon-info { animation: info-icon-cycle 1.4s infinite; stroke: #2474d2; }
+@keyframes bug-icon-cycle { 0%, 35% { opacity: 1; } 50%, 85% { opacity: 0; } 100% { opacity: 1; } }
+@keyframes info-icon-cycle { 0%, 35% { opacity: 0; } 50%, 85% { opacity: 1; } 100% { opacity: 0; } }
 .bug-report-trigger:focus-visible {
   border-radius: 2px;
   outline: 3px solid var(--ink);
@@ -299,6 +304,26 @@ footer a:hover { text-decoration-color: currentColor; }
   line-height: 1.5;
   margin: 0 0 24px;
 }
+.bug-report-type {
+  border: 0;
+  display: grid;
+  gap: 7px;
+  grid-template-columns: 1fr 1fr;
+  margin: 0 0 20px;
+  padding: 0;
+}
+.bug-report-type legend { font-size: 13px; font-weight: 650; margin-bottom: 7px; }
+.bug-report-type label {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 620;
+  padding: 11px 12px;
+}
+.bug-report-type label.is-selected { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+.bug-report-type input { margin: 0 7px 0 0; }
 .bug-report-dialog form > label:not(.bug-report-consent) {
   display: block;
   font-size: 13px;
@@ -307,6 +332,7 @@ footer a:hover { text-decoration-color: currentColor; }
 }
 .bug-report-dialog form > label span { color: var(--muted); font-weight: 450; }
 .bug-report-dialog textarea,
+.bug-report-dialog select,
 .bug-report-dialog input[type="email"] {
   background: #fff;
   border: 1px solid var(--line);
@@ -320,6 +346,7 @@ footer a:hover { text-decoration-color: currentColor; }
   width: 100%;
 }
 .bug-report-dialog textarea:focus,
+.bug-report-dialog select:focus,
 .bug-report-dialog input:focus { border-color: var(--ink); outline: 2px solid #1d1d1f1f; }
 .bug-report-close {
   align-items: center;
@@ -385,6 +412,11 @@ footer a:hover { text-decoration-color: currentColor; }
 .bug-report-success p { color: var(--muted); line-height: 1.5; }
 .bug-report-success strong { color: var(--ink); overflow-wrap: anywhere; }
 .bug-report-success .bug-report-primary { margin-top: 12px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .bug-report-trigger:hover .bug-report-icon-bug { animation: none; opacity: 1; }
+  .bug-report-trigger:hover .bug-report-icon-info { animation: none; opacity: 0; }
+}
 
 .lab-view {
   background: var(--paper);
@@ -638,6 +670,7 @@ footer a:hover { text-decoration-color: currentColor; }
   .footer-left { gap: 12px; }
   .bug-report-dialog { border-radius: 18px; padding: 28px 20px 22px; }
   .bug-report-dialog h2 { font-size: 23px; }
+  .bug-report-type { grid-template-columns: 1fr; }
   .lab-view { grid-template-rows: 60px minmax(0, 1fr) 76px; }
   .lab-shell-header { height: 60px; padding: 0 18px; }
   .lab-shell-actions { gap: 6px; }

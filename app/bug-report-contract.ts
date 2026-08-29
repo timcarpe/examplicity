@@ -15,7 +15,29 @@ export type JsonValue =
   | JsonValue[]
   | { [key: string]: JsonValue };
 
+export const REPORT_CATEGORIES = {
+  bug: [
+    { value: 'incorrect_content', label: 'Incorrect content' },
+    { value: 'broken_interaction', label: 'Broken interaction' },
+    { value: 'display_issue', label: 'Display or layout issue' },
+    { value: 'performance_issue', label: 'Performance issue' },
+    { value: 'other', label: 'Other' },
+  ],
+  feedback: [
+    { value: 'content_suggestion', label: 'Content suggestion' },
+    { value: 'feature_request', label: 'Feature request' },
+    { value: 'usability', label: 'Usability' },
+    { value: 'accessibility', label: 'Accessibility' },
+    { value: 'other', label: 'Other' },
+  ],
+} as const;
+
+export type ReportType = keyof typeof REPORT_CATEGORIES;
+export type ReportCategory = (typeof REPORT_CATEGORIES)[ReportType][number]['value'];
+
 export type BugReportPayload = {
+  reportType: ReportType;
+  reportCategory: ReportCategory;
   description: string;
   email?: string;
   labSlug?: string;
@@ -86,6 +108,19 @@ export function validateBugReportPayload(input: unknown): BugReportValidation {
     return { ok: false, error: 'description_too_long' };
   }
 
+  const reportType = input.reportType;
+  if (reportType !== 'bug' && reportType !== 'feedback') {
+    return { ok: false, error: 'report_type_invalid' };
+  }
+
+  const reportCategory = input.reportCategory;
+  if (
+    typeof reportCategory !== 'string'
+    || !REPORT_CATEGORIES[reportType].some(({ value }) => value === reportCategory)
+  ) {
+    return { ok: false, error: 'report_category_invalid' };
+  }
+
   const email = input.email;
   if (email !== undefined && (
     typeof email !== 'string' || utf8ByteLength(email) > MAX_EMAIL_BYTES
@@ -129,6 +164,8 @@ export function validateBugReportPayload(input: unknown): BugReportValidation {
   return {
     ok: true,
     value: {
+      reportType,
+      reportCategory: reportCategory as ReportCategory,
       description: description.trim(),
       ...(email !== undefined ? { email: email.trim() } : {}),
       ...(labSlug !== undefined ? { labSlug } : {}),

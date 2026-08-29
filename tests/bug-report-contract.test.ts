@@ -15,7 +15,12 @@ import {
 } from '../app/bug-report-contract.ts';
 
 function payload(overrides: Record<string, unknown> = {}) {
-  return { description: 'The control stopped responding.', ...overrides };
+  return {
+    reportType: 'bug',
+    reportCategory: 'broken_interaction',
+    description: 'The control stopped responding.',
+    ...overrides,
+  };
 }
 
 function jsonStringOfBytes(bytes: number): string {
@@ -41,7 +46,24 @@ test('accepts a valid report and trims the description and email', () => {
   if (result.ok) {
     assert.equal(result.value.description, 'A reproducible issue.');
     assert.equal(result.value.email, 'reporter@example.com');
+    assert.equal(result.value.reportType, 'bug');
+    assert.equal(result.value.reportCategory, 'broken_interaction');
   }
+});
+
+test('validates report types and their dependent categories', () => {
+  const feedback = validateBugReportPayload(payload({
+    reportType: 'feedback',
+    reportCategory: 'feature_request',
+  }));
+  assert.equal(feedback.ok, true);
+
+  assert.equal(validateBugReportPayload({ description: 'Missing selectors.' }).ok, false);
+  assert.equal(validateBugReportPayload(payload({ reportType: 'question' })).ok, false);
+  assert.equal(validateBugReportPayload(payload({
+    reportType: 'feedback',
+    reportCategory: 'broken_interaction',
+  })).ok, false);
 });
 
 test('requires a non-empty description and rejects a non-string description', () => {

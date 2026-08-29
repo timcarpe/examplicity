@@ -3,6 +3,20 @@ CREATE EXTENSION IF NOT EXISTS pgcrypto;
 CREATE TABLE IF NOT EXISTS bug_reports (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   created_at timestamptz NOT NULL DEFAULT now(),
+  report_type text NOT NULL DEFAULT 'bug'
+    CONSTRAINT bug_reports_report_type_check
+    CHECK (report_type IN ('bug', 'feedback')),
+  report_category text NOT NULL DEFAULT 'other'
+    CONSTRAINT bug_reports_report_category_check
+    CHECK (
+      (report_type = 'bug' AND report_category IN (
+        'incorrect_content', 'broken_interaction', 'display_issue', 'performance_issue', 'other'
+      ))
+      OR
+      (report_type = 'feedback' AND report_category IN (
+        'content_suggestion', 'feature_request', 'usability', 'accessibility', 'other'
+      ))
+    ),
   status text NOT NULL DEFAULT 'new'
     CONSTRAINT bug_reports_status_check
     CHECK (status IN ('new', 'triaged', 'confirmed', 'resolved', 'duplicate', 'rejected', 'spam')),
@@ -28,6 +42,26 @@ CREATE INDEX IF NOT EXISTS bug_reports_status_created_at_idx
 
 CREATE INDEX IF NOT EXISTS bug_reports_created_at_idx
   ON bug_reports (created_at DESC);
+
+ALTER TABLE bug_reports ADD COLUMN IF NOT EXISTS report_type text NOT NULL DEFAULT 'bug';
+ALTER TABLE bug_reports ADD COLUMN IF NOT EXISTS report_category text NOT NULL DEFAULT 'other';
+ALTER TABLE bug_reports DROP CONSTRAINT IF EXISTS bug_reports_report_type_check;
+ALTER TABLE bug_reports DROP CONSTRAINT IF EXISTS bug_reports_report_category_check;
+ALTER TABLE bug_reports ADD CONSTRAINT bug_reports_report_type_check
+  CHECK (report_type IN ('bug', 'feedback'));
+ALTER TABLE bug_reports ADD CONSTRAINT bug_reports_report_category_check
+  CHECK (
+    (report_type = 'bug' AND report_category IN (
+      'incorrect_content', 'broken_interaction', 'display_issue', 'performance_issue', 'other'
+    ))
+    OR
+    (report_type = 'feedback' AND report_category IN (
+      'content_suggestion', 'feature_request', 'usability', 'accessibility', 'other'
+    ))
+  );
+
+CREATE INDEX IF NOT EXISTS bug_reports_type_category_status_created_at_idx
+  ON bug_reports (report_type, report_category, status, created_at DESC);
 
 ALTER TABLE bug_reports DROP CONSTRAINT IF EXISTS bug_reports_status_check;
 ALTER TABLE bug_reports ADD CONSTRAINT bug_reports_status_check

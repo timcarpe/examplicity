@@ -12,7 +12,10 @@ import { createPortal } from 'react-dom';
 import {
   MAX_DESCRIPTION_BYTES,
   MAX_LAB_STATE_BYTES,
+  REPORT_CATEGORIES,
   utf8ByteLength,
+  type ReportCategory,
+  type ReportType,
 } from './bug-report-contract';
 
 const snapshotRequestType = 'examplicity:diagnostics:request';
@@ -118,6 +121,8 @@ export function BugReportDialog({ frameRef, lab = null }: BugReportDialogProps) 
   const successButtonRef = useRef<HTMLButtonElement>(null);
   const submissionRef = useRef<SubmissionState>({ kind: 'idle' });
   const [isOpen, setIsOpen] = useState(false);
+  const [reportType, setReportType] = useState<ReportType>('bug');
+  const [reportCategory, setReportCategory] = useState<ReportCategory>('incorrect_content');
   const [description, setDescription] = useState('');
   const [email, setEmail] = useState('');
   const [includeDiagnostics, setIncludeDiagnostics] = useState(true);
@@ -177,6 +182,11 @@ export function BugReportDialog({ frameRef, lab = null }: BugReportDialogProps) 
     if (submission.kind !== 'submitting') setIsOpen(false);
   };
 
+  const chooseReportType = (nextType: ReportType) => {
+    setReportType(nextType);
+    setReportCategory(REPORT_CATEGORIES[nextType][0].value);
+  };
+
   const submitReport = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setSubmission({ kind: 'submitting' });
@@ -206,6 +216,8 @@ export function BugReportDialog({ frameRef, lab = null }: BugReportDialogProps) 
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          reportType,
+          reportCategory,
           description: normalizedDescription,
           ...(email ? { email } : {}),
           website,
@@ -236,10 +248,16 @@ export function BugReportDialog({ frameRef, lab = null }: BugReportDialogProps) 
   return (
     <>
       <button className="bug-report-trigger" onClick={openDialog} ref={triggerRef} type="button">
-        Report a bug
-        <svg aria-hidden="true" viewBox="0 0 24 24">
-          <path d="M8 7.5h8M9.5 4.5 11 7.5m3.5-3L13 7.5M7 11H4m16 0h-3M7 15H4m16 0h-3M8 18.5l-2 2m10-2 2 2M7 10a5 5 0 0 1 10 0v5a5 5 0 0 1-10 0Z" />
-        </svg>
+        Report a bug or give feedback
+        <span aria-hidden="true" className="bug-report-icons">
+          <svg className="bug-report-icon-bug" viewBox="0 0 24 24">
+            <path d="M8 7.5h8M9.5 4.5 11 7.5m3.5-3L13 7.5M7 11H4m16 0h-3M7 15H4m16 0h-3M8 18.5l-2 2m10-2 2 2M7 10a5 5 0 0 1 10 0v5a5 5 0 0 1-10 0Z" />
+          </svg>
+          <svg className="bug-report-icon-info" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="9" />
+            <path d="M12 10.5v6M12 7.5h.01" />
+          </svg>
+        </span>
       </button>
       {isOpen && createPortal((
         <div
@@ -256,30 +274,74 @@ export function BugReportDialog({ frameRef, lab = null }: BugReportDialogProps) 
             ref={dialogRef}
             role="dialog"
           >
-            <button aria-label="Close bug report" className="bug-report-close" onClick={closeDialog} type="button">
+            <button aria-label="Close report form" className="bug-report-close" onClick={closeDialog} type="button">
               ×
             </button>
             {submission.kind === 'success' ? (
               <div className="bug-report-success" role="status">
-                <p className="bug-report-kicker">Report received</p>
+                <p className="bug-report-kicker">{reportType === 'bug' ? 'Bug report received' : 'Feedback received'}</p>
                 <h2 id={`${detailsId}-title`}>Thank you for helping improve Examplicity.</h2>
                 <p id={detailsId}>Your reference is <strong>{submission.reportId}</strong>.</p>
                 <button className="bug-report-primary" onClick={closeDialog} ref={successButtonRef} type="button">Done</button>
               </div>
             ) : (
               <form onSubmit={submitReport}>
-                <p className="bug-report-kicker">Bug report</p>
-                <h2 id={`${detailsId}-title`}>{lab ? `Tell us what happened in ${lab.title}` : 'Tell us what went wrong'}</h2>
+                <p className="bug-report-kicker">Help improve Examplicity</p>
+                <h2 id={`${detailsId}-title`}>
+                  {reportType === 'bug'
+                    ? (lab ? `Tell us what happened in ${lab.title}` : 'Tell us what went wrong')
+                    : (lab ? `Share feedback about ${lab.title}` : 'Share your feedback')}
+                </h2>
                 <p id={detailsId} className="bug-report-intro">
-                  Describe what you expected and what happened instead. Please do not include passwords or personal information.
+                  {reportType === 'bug'
+                    ? 'Describe what you expected and what happened instead.'
+                    : 'Tell us what is working well or what could be improved.'}
+                  {' '}Please do not include passwords or personal information.
                 </p>
+
+                <fieldset className="bug-report-type">
+                  <legend>What would you like to send?</legend>
+                  <label className={reportType === 'bug' ? 'is-selected' : undefined}>
+                    <input
+                      checked={reportType === 'bug'}
+                      name="report-type"
+                      onChange={() => chooseReportType('bug')}
+                      type="radio"
+                      value="bug"
+                    />
+                    Report a bug
+                  </label>
+                  <label className={reportType === 'feedback' ? 'is-selected' : undefined}>
+                    <input
+                      checked={reportType === 'feedback'}
+                      name="report-type"
+                      onChange={() => chooseReportType('feedback')}
+                      type="radio"
+                      value="feedback"
+                    />
+                    Give feedback
+                  </label>
+                </fieldset>
+
+                <label htmlFor={`${descriptionId}-category`}>Category</label>
+                <select
+                  id={`${descriptionId}-category`}
+                  onChange={(event) => setReportCategory(event.target.value as ReportCategory)}
+                  value={reportCategory}
+                >
+                  {REPORT_CATEGORIES[reportType].map((category) => (
+                    <option key={category.value} value={category.value}>{category.label}</option>
+                  ))}
+                </select>
 
                 <label htmlFor={descriptionId}>Description</label>
                 <textarea
                   id={descriptionId}
                   maxLength={MAX_DESCRIPTION_BYTES}
                   onChange={(event) => setDescription(event.target.value)}
-                  placeholder="What were you doing, and what went wrong?"
+                  placeholder={reportType === 'bug'
+                    ? 'What were you doing, and what went wrong?'
+                    : 'What would you like us to know?'}
                   ref={descriptionRef}
                   required
                   rows={6}
@@ -326,7 +388,9 @@ export function BugReportDialog({ frameRef, lab = null }: BugReportDialogProps) 
                     Cancel
                   </button>
                   <button className="bug-report-primary" disabled={submission.kind === 'submitting'} type="submit">
-                    {submission.kind === 'submitting' ? 'Sending…' : 'Send report'}
+                    {submission.kind === 'submitting'
+                      ? 'Sending…'
+                      : reportType === 'bug' ? 'Send bug report' : 'Send feedback'}
                   </button>
                 </div>
               </form>

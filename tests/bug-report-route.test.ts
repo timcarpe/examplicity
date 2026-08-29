@@ -48,6 +48,8 @@ test('silently accepts a filled honeypot without requiring a database', async ()
 
 test('rejects a report page URL from another origin', async () => {
   const response = await POST(request(JSON.stringify({
+    reportType: 'bug',
+    reportCategory: 'display_issue',
     description: 'A valid description',
     pageUrl: 'https://attacker.test/fake-page',
   })));
@@ -86,6 +88,8 @@ test('fails closed when Vercel does not provide a client IP', async () => {
   process.env.BUG_REPORT_IP_SALT = 'test-only-secret';
   try {
     const response = await POST(request(JSON.stringify({
+      reportType: 'bug',
+      reportCategory: 'broken_interaction',
       description: 'A valid description',
     })));
     assert.equal(response.status, 500);

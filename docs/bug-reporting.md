@@ -1,11 +1,11 @@
 # Bug reporting
 
-The catalogue and active-lab footers open an anonymous bug-report dialog. Reports
+The catalogue and active-lab footers open an anonymous bug or feedback dialog. Submissions
 are accepted by `POST /api/bug-reports` and stored in Neon Postgres. The endpoint
 accepts at most 100 KiB. Descriptions are capped at 8 KiB, diagnostics at 16 KiB,
 and lab-state snapshots at 64 KiB.
 
-Every report records its page, lab slug (when present), browser user agent, and
+Every submission records `report_type` and its constrained `report_category`, plus its page, lab slug (when present), browser user agent, and
 deployment commit. The optional diagnostics checkbox additionally controls
 viewport, screen, locale, timezone, connectivity, and safe iframe context.
 
@@ -17,8 +17,8 @@ viewport, screen, locale, timezone, connectivity, and safe iframe context.
 3. For local development, copy `.env.example` to `.env.local` and provide a
    development database connection string.
 4. In Vercel Firewall, add a rate-limit rule for `POST /api/bug-reports`. A
-   starting limit of five submissions per minute per source IP is intentionally
-   conservative and can be adjusted from observed traffic.
+   one-request-per-10-minute outer rule complements the authoritative rolling
+   24-hour database limit.
 
 `VERCEL_GIT_COMMIT_SHA` is recorded automatically when Vercel system environment
 variables are enabled. The database connection string is read only by the server
@@ -49,6 +49,6 @@ position, focused element identifier, and visibility state.
 
 ## Triage
 
-Use `status`, `severity`, `internal_notes`, `duplicate_of`, and
+Filter or sort by `report_type` and `report_category`, then use `status`, `severity`, `internal_notes`, `duplicate_of`, and
 `github_issue_number` in `bug_reports` to track reports. Keep raw diagnostics in
 Postgres; promote only reviewed and sanitized reports to GitHub Issues.

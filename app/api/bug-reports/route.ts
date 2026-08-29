@@ -232,11 +232,13 @@ export async function POST(request: Request) {
         RETURNING 1
       )
       INSERT INTO bug_reports (
-        id, description, contact_email, lab_slug, page_url, deployment_sha,
+        id, report_type, report_category, description, contact_email, lab_slug, page_url, deployment_sha,
         user_agent, diagnostics, lab_state
       )
       SELECT
         ${reportId},
+        ${payload.reportType},
+        ${payload.reportCategory},
         ${payload.description},
         ${payload.email ?? null},
         ${payload.labSlug ?? null},
@@ -255,7 +257,7 @@ export async function POST(request: Request) {
     const insertedId = (rows as unknown as Array<{ id?: unknown }>)[0]?.id;
     if (typeof insertedId !== 'string') {
       return Response.json(
-        { error: 'You can submit one bug report every 24 hours.' },
+        { error: 'You can submit one bug report or feedback message every 24 hours.' },
         { status: 429, headers: { 'Retry-After': '86400' } },
       );
     }
