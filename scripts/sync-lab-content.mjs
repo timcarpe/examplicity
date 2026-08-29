@@ -33,6 +33,9 @@ for (const lab of labs) {
   if (!lab.title.trim() || !lab.description.trim() || !lab.metaDescription.trim()) {
     throw new Error(`${lab.slug} has incomplete manifest text`);
   }
+  if (lab.layout !== undefined && lab.layout !== 'compact') {
+    throw new Error(`${lab.slug} has unknown layout ${lab.layout}`);
+  }
 
   const subject = subjects.find((entry) => entry.id === lab.subject);
   if (!subject) throw new Error(`${lab.slug} references unknown subject ${lab.subject}`);

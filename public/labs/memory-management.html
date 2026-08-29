@@ -794,6 +794,7 @@ select{
   --lab-control-height: 35px;
   --lab-panel-shadow: 0 1px 2px rgba(29, 29, 31, 0.04);
   --lab-page-gutter: max(28px, calc((100vw - 1200px) / 2));
+  --lab-compact-workspace-max: 820px;
 }
 
 html,
@@ -973,11 +974,19 @@ main {
   width: calc(100vw - var(--lab-page-gutter) - var(--lab-page-gutter)) !important;
 }
 
-body.binary-lab .topbar,
-body.binary-lab .card {
+body[data-lab-layout="compact"] main {
+  margin-top: 18px !important;
+}
+
+body[data-lab-layout="compact"] .lab-manifest-header {
+  margin-bottom: 17px;
+  padding-bottom: 13px;
+}
+
+body[data-lab-layout="compact"] [data-lab-workspace] {
   margin-left: auto;
   margin-right: auto;
-  width: min(820px, 100%);
+  width: min(var(--lab-compact-workspace-max), 100%);
 }
 
 :where(button, input, select, textarea, summary):focus-visible {
@@ -1002,6 +1011,11 @@ body.binary-lab .card {
     padding-bottom: 18px;
   }
 
+  body[data-lab-layout="compact"] .lab-manifest-header {
+    margin-bottom: 16px;
+    padding-bottom: 14px;
+  }
+
   .lab-manifest-header h1 {
     font-size: clamp(24px, 8vw, 34px);
   }
@@ -1016,6 +1030,10 @@ body.binary-lab .card {
     font-size: 10px;
     min-height: 27px;
     padding: 7px 8px;
+  }
+
+  body[data-lab-layout="compact"] main {
+    margin-top: 8px !important;
   }
 }
 
@@ -1032,7 +1050,7 @@ body.binary-lab .card {
 </style>
 <!-- LAB_FRAME_STYLES_END -->
 </head>
-<body>
+<body data-lab-layout="standard">
 <main>
 <!-- LAB_MANIFEST_HEADER_START -->
 <header class="lab-manifest-header">

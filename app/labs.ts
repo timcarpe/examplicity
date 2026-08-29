@@ -134,6 +134,7 @@ export type Lab = Activity & {
   subject: SubjectId;
   topic: Topic;
   format: string;
+  layout?: 'compact';
   metaDescription: string;
   subtitle: string | null;
   syllabuses: {
@@ -174,6 +175,7 @@ export const labs: Lab[] = [
     subtitle: 'Practise binary arithmetic and convert between binary, denary and hexadecimal for Cambridge IGCSE Computer Science 0478 and AS Level Computer Science 9618.',
     topic: 'Data representation',
     format: 'Practice',
+    layout: 'compact',
     kind: 'lab',
     syllabuses: [
       { code: '0478', qualification: 'GCSE', sections: [{ id: '1.1', page: 11, primary: true }] },

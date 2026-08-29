@@ -17,11 +17,16 @@ for (const lab of labs) {
   });
 
   const expectedSubtitleCount = lab.subtitle === null ? 0 : 1;
+  const expectedLayout = lab.layout ?? 'standard';
+  const bodyLayoutCount = [...packaged.matchAll(
+    new RegExp(`<body\\b[^>]*data-lab-layout="${expectedLayout}"[^>]*>`, 'g'),
+  )].length;
   if (
     count(packaged, '<!-- LAB_MANIFEST_HEAD_START -->') !== 1
     || count(packaged, '<!-- LAB_MANIFEST_HEADER_START -->') !== 1
     || count(packaged, 'data-lab-manifest="title"') !== 1
     || count(packaged, 'data-lab-manifest="subtitle"') !== expectedSubtitleCount
+    || bodyLayoutCount !== 1
     || count(packaged, '<!-- LAB_SYLLABUS_CHIPS_START -->') !== 1
     || count(packaged, '<style data-examplicity-download-chrome>') !== 1
     || count(packaged, '<header class="examplicity-download-header"') !== 1

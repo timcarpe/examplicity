@@ -42,9 +42,12 @@ Keep those responsibilities separate.
 - [ ] Keep the lab's own `<main>` as the document boundary. Do not add a second
   Examplicity header or footer inside the iframe; the host renders that chrome
   once above every lab.
-- [ ] Use `class="binary-lab"` on `<body>` only for a similarly compact lab
-  approved to use Binary's 820px canvas exception. New labs otherwise use the
-  shared standard width.
+- [ ] Set `layout: 'compact'` in the lab manifest only for an approved compact
+  lab, and mark its constrained teaching surfaces with `data-lab-workspace`.
+  The generator writes `data-lab-layout="compact"` on `<body>`; shared styles
+  then keep the header on the standard rail while constraining those surfaces
+  to the supported 820px workspace. Do not add a lab-specific body class for
+  page sizing.
 - [ ] Base wide multi-column layout transitions on the named `lab-canvas`
   container rather than the browser viewport, so they respond to the shared
   canvas cap as well as narrow screens.

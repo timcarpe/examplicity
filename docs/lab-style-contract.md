@@ -26,6 +26,11 @@ Do not edit an embedded `LAB_FRAME_STYLES`, `LAB_MANIFEST_HEAD`,
   `1200px`, with `28px` minimum desktop gutters and `18px` mobile gutters, to
   align with the host header controls. Dense teaching interfaces may constrain
   an inner workspace further, but must not increase the outer page width.
+- The manifest-controlled `compact` layout keeps the same outer rail and adds
+  the standard `18px` desktop (`8px` mobile) top offset. Elements marked with
+  `data-lab-workspace` use the supported `820px` compact workspace maximum.
+  Its reduced post-heading spacing preserves the teaching workspace's existing
+  above-fold position.
 - The visible `h1` and document `<title>` must match the lab name in
   `app/labs.ts`; do not append redundant “Lab” or version labels.
 - Use chips consistently: navigation chips identify destinations, status chips

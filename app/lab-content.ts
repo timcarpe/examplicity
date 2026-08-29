@@ -112,6 +112,18 @@ const renderManifestHeader = (lab: Lab) => {
 ${headerEnd}`;
 };
 
+const replaceBodyLayout = (source: string, lab: Lab) => {
+  const bodyPattern = /<body\b[^>]*>/gi;
+  const bodyCount = countMatches(source, bodyPattern);
+  if (bodyCount !== 1) throw new Error(`${lab.slug} must have exactly one body element`);
+
+  const layout = lab.layout ?? 'standard';
+  return source.replace(bodyPattern, (bodyTag) => {
+    const withoutLayout = bodyTag.replace(/\sdata-lab-layout=(?:"[^"]*"|'[^']*')/i, '');
+    return withoutLayout.replace(/>$/, ` data-lab-layout="${layout}">`);
+  });
+};
+
 const replaceHead = (source: string, lab: Lab) => {
   const markedPattern = new RegExp(`${escapeRegExp(headStart)}[\\s\\S]*?${escapeRegExp(headEnd)}`, 'g');
   const markedCount = countMatches(source, markedPattern);
@@ -165,6 +177,9 @@ const replaceManifestHeader = (source: string, lab: Lab) => {
 export const applyLabManifestContent = (source: string, lab: Lab) => {
   if (!lab.metaDescription.trim()) throw new Error(`${lab.slug} has no meta description`);
   if (lab.subtitle !== null && !lab.subtitle.trim()) throw new Error(`${lab.slug} has an empty subtitle`);
+  if (lab.layout === 'compact' && !source.includes('data-lab-workspace')) {
+    throw new Error(`${lab.slug} is compact but has no marked workspace`);
+  }
 
-  return replaceManifestHeader(replaceHead(source, lab), lab);
+  return replaceManifestHeader(replaceBodyLayout(replaceHead(source, lab), lab), lab);
 };
