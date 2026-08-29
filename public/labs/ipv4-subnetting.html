@@ -219,14 +219,14 @@ html[data-theme="dark"] body {
   background: var(--bg);
 }
 
-main {
+body > main {
   container-name: lab-canvas;
   container-type: inline-size;
-  margin-left: var(--lab-page-gutter) !important;
-  margin-right: auto !important;
-  margin-top: 18px !important;
+  margin-left: var(--lab-page-gutter);
+  margin-right: auto;
+  margin-top: 18px;
   max-width: 1200px;
-  width: calc(100vw - var(--lab-page-gutter) - var(--lab-page-gutter)) !important;
+  width: calc(100vw - var(--lab-page-gutter) - var(--lab-page-gutter));
 }
 
 body[data-lab-layout="compact"] .lab-manifest-header {
@@ -283,8 +283,8 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
     padding: 7px 8px;
   }
 
-  main {
-    margin-top: 8px !important;
+  body > main {
+    margin-top: 8px;
   }
 }
 
@@ -390,8 +390,8 @@ button.danger{color:var(--bad)}
 .lab-grid{
   margin-top:10px;
   display:grid;
-  grid-template-columns:minmax(0,1.9fr) minmax(300px,.68fr);
-  gap:10px;
+  grid-template-columns:minmax(0,1fr) 260px;
+  gap:8px;
   align-items:start;
 }
 .network-panel{padding:9px;min-width:0}
@@ -511,10 +511,13 @@ button.danger{color:var(--bad)}
 .ip-mode .step-kicker{color:var(--ip)}
 
 .canvas-shell{position:relative;margin-top:8px;overflow:auto;border-radius:11px;background:var(--network)}
+.canvas-shell.is-fitted{overflow:hidden}
+.network-stage{position:relative;width:980px;height:560px}
 .network-canvas{
   position:relative;
   width:980px;
   height:560px;
+  transform-origin:top left;
   overflow:hidden;
   border:1px solid #263645;
   border-radius:11px;
@@ -663,7 +666,7 @@ button.danger{color:var(--bad)}
 
 .takeaway{margin-top:10px;padding:10px 12px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center}.takeaway strong{display:block;font-size:12px}.takeaway span{display:block;margin-top:2px;color:var(--muted);font-size:9px;line-height:1.4}.takeaway-stat{min-width:170px;text-align:right;color:var(--accent);font:850 14px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
 
-@media(max-width:1050px){
+@container lab-canvas (max-width:1050px){
   .lesson-bar{grid-template-columns:1fr}.metrics{justify-content:flex-start}
   .lab-grid{grid-template-columns:1fr}.planner{position:static;max-height:none}.department-bank{grid-template-columns:repeat(3,1fr)}
 }
@@ -773,12 +776,14 @@ button.danger{color:var(--bad)}
       </section>
 
       <div class="canvas-shell">
-        <div id="networkCanvas" class="network-canvas" role="img" aria-label="Animated logical campus network">
-          <div id="zoneLayer" class="zone-layer"></div>
-          <svg id="networkSvg" class="network-svg" aria-hidden="true"></svg>
-          <div id="nodeLayer" class="node-layer"></div>
-          <div id="packetLayer" class="packet-layer"></div>
-          <div id="overlayLayer" class="overlay-layer" aria-live="polite"></div>
+        <div class="network-stage">
+          <div id="networkCanvas" class="network-canvas" role="img" aria-label="Animated logical campus network">
+            <div id="zoneLayer" class="zone-layer"></div>
+            <svg id="networkSvg" class="network-svg" aria-hidden="true"></svg>
+            <div id="nodeLayer" class="node-layer"></div>
+            <div id="packetLayer" class="packet-layer"></div>
+            <div id="overlayLayer" class="overlay-layer" aria-live="polite"></div>
+          </div>
         </div>
       </div>
 
@@ -1261,6 +1266,7 @@ button.danger{color:var(--bad)}
 
   function focusPoint(x,behavior="smooth"){
     const shell=document.querySelector(".canvas-shell");
+    if(shell?.classList.contains("is-fitted")){shell.scrollLeft=0;return;}
     if(!shell||shell.clientWidth>=shell.scrollWidth-8)return;
     const left=Math.max(0,Math.min(shell.scrollWidth-shell.clientWidth,x-shell.clientWidth/2));
     shell.scrollTo({left,behavior:reduceMotion?"auto":behavior});
@@ -2322,6 +2328,18 @@ result: ${d.local?"same subnet → send directly":"different subnet → use gate
   $("resetPlan").addEventListener("click",resetPlan);
   $("applyDesign").addEventListener("click",applyDesign);
 
+  const fitNetworkCanvas=()=>{
+    const shell=document.querySelector(".canvas-shell"),stage=document.querySelector(".network-stage"),canvas=$("networkCanvas");
+    if(!shell||!stage||!canvas)return;
+    const shouldFit=shell.clientWidth>=760,scale=shouldFit?Math.min(1,shell.clientWidth/980):1;
+    shell.classList.toggle("is-fitted",shouldFit);
+    stage.style.width=(shouldFit?shell.clientWidth:980)+"px";
+    stage.style.height=Math.ceil(560*scale)+"px";
+    canvas.style.transform=`scale(${scale})`;
+    if(shouldFit)shell.scrollLeft=0;
+  };
+  new ResizeObserver(fitNetworkCanvas).observe(document.querySelector(".canvas-shell"));
+  fitNetworkCanvas();
   updateLessonHeader();renderNetwork();renderPlanner();initialStoryCopy();updateControls();
 })();
 </script>
