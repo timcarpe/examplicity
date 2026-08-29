@@ -58,7 +58,11 @@ export default function Catalogue({ initialExam, initialSubjectId }: CataloguePr
   const [isLoading, setIsLoading] = useState(false);
   const [showMobileNotice, setShowMobileNotice] = useState(true);
   const [downloadStatus, setDownloadStatus] = useState<'idle' | 'preparing' | 'complete' | 'error'>('idle');
+  const [isSubjectMenuOpen, setIsSubjectMenuOpen] = useState(false);
   const labFrameRef = useRef<HTMLIFrameElement>(null);
+  const subjectPickerRef = useRef<HTMLDivElement>(null);
+  const subjectTriggerRef = useRef<HTMLButtonElement>(null);
+  const subjectMenuRef = useRef<HTMLDivElement>(null);
   const subject = subjects.find((item) => item.id === subjectId) ?? subjects[0];
   const view = subject.qualificationViews[level];
   const exam = view.exam;
@@ -109,6 +113,32 @@ export default function Catalogue({ initialExam, initialSubjectId }: CataloguePr
     document.body.style.overflow = activeLab ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
   }, [activeLab]);
+
+  useEffect(() => {
+    if (!isSubjectMenuOpen) return;
+
+    const frame = window.requestAnimationFrame(() => {
+      subjectMenuRef.current
+        ?.querySelector<HTMLButtonElement>('[aria-selected="true"]')
+        ?.focus();
+    });
+    const closeOnOutsidePointer = (event: PointerEvent) => {
+      if (!subjectPickerRef.current?.contains(event.target as Node)) setIsSubjectMenuOpen(false);
+    };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
+      setIsSubjectMenuOpen(false);
+      subjectTriggerRef.current?.focus();
+    };
+
+    document.addEventListener('pointerdown', closeOnOutsidePointer);
+    document.addEventListener('keydown', closeOnEscape);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      document.removeEventListener('pointerdown', closeOnOutsidePointer);
+      document.removeEventListener('keydown', closeOnEscape);
+    };
+  }, [isSubjectMenuOpen]);
 
   const chooseLevel = (nextLevel: QualificationLevel) => {
     const nextView = subject.qualificationViews[nextLevel];
@@ -298,23 +328,81 @@ export default function Catalogue({ initialExam, initialSubjectId }: CataloguePr
 
         <div className="learning-picker">
           <div className="subject-picker">
-            <label className="picker-label" htmlFor="subject-select">Choose subject</label>
-            <div className="subject-select-shell">
-              <select
+            <span className="picker-label" id="subject-picker-label">Choose a subject</span>
+            <div className="subject-select-shell" ref={subjectPickerRef}>
+              <button
+                aria-controls="subject-menu"
+                aria-expanded={isSubjectMenuOpen}
+                aria-haspopup="listbox"
+                aria-labelledby="subject-picker-label subject-select-value"
+                className="subject-select-trigger"
                 id="subject-select"
-                onChange={(event) => chooseSubject(event.target.value as SubjectId)}
-                value={subjectId}
+                onClick={() => setIsSubjectMenuOpen((isOpen) => !isOpen)}
+                onKeyDown={(event) => {
+                  if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return;
+                  event.preventDefault();
+                  setIsSubjectMenuOpen(true);
+                }}
+                ref={subjectTriggerRef}
+                type="button"
               >
-                {subjects.map((item) => (
-                  <option key={item.id} value={item.id}>{item.name}</option>
-                ))}
-                <option disabled>More subjects — Coming soon</option>
-              </select>
+                <span id="subject-select-value">{subject.name}</span>
+                <span className="subject-select-indicator" aria-hidden="true" />
+              </button>
+
+              {isSubjectMenuOpen && (
+                <div
+                  aria-labelledby="subject-picker-label"
+                  className="subject-menu"
+                  id="subject-menu"
+                  onKeyDown={(event) => {
+                    if (!['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) return;
+                    event.preventDefault();
+                    const options = [...(subjectMenuRef.current?.querySelectorAll<HTMLButtonElement>('[role="option"]') ?? [])];
+                    if (options.length === 0) return;
+                    const currentIndex = options.indexOf(document.activeElement as HTMLButtonElement);
+                    const nextIndex = event.key === 'Home'
+                      ? 0
+                      : event.key === 'End'
+                        ? options.length - 1
+                        : (currentIndex + (event.key === 'ArrowDown' ? 1 : -1) + options.length) % options.length;
+                    options[nextIndex]?.focus();
+                  }}
+                  ref={subjectMenuRef}
+                  role="listbox"
+                >
+                  <div className="subject-menu-heading">Subjects</div>
+                  {subjects.map((item) => {
+                    const isSelected = item.id === subjectId;
+                    return (
+                      <button
+                        aria-selected={isSelected}
+                        className={`subject-option${isSelected ? ' is-selected' : ''}`}
+                        key={item.id}
+                        onClick={() => {
+                          setIsSubjectMenuOpen(false);
+                          if (!isSelected) chooseSubject(item.id);
+                          subjectTriggerRef.current?.focus();
+                        }}
+                        role="option"
+                        type="button"
+                      >
+                        <span>{item.name}</span>
+                        {isSelected && <span className="subject-option-status">Current</span>}
+                      </button>
+                    );
+                  })}
+                  <div className="subject-menu-coming-soon" aria-disabled="true">
+                    <span>More subjects</span>
+                    <small>Coming soon</small>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
           <div className="exam-picker">
-            <span className="picker-label">Choose level</span>
+            <span className="picker-label">Choose a level</span>
             <div className="segmented-control" role="group" aria-label={`Choose a ${subject.name} qualification level`}>
               {qualificationLevels.map((item) => (
                 <button
