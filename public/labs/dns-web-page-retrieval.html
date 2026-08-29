@@ -1,0 +1,446 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DNS and Web Page Retrieval</title>
+<meta name="description" content="Trace how a browser uses a URL, DNS, an IP address, a web server and HTML to retrieve and display a page for Cambridge Computer Science 0478 and 9618.">
+<link rel="canonical" href="https://www.examplicity.org/labs/dns-web-page-retrieval.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Examplicity">
+<meta property="og:title" content="DNS and Web Page Retrieval">
+<meta property="og:description" content="Trace how a browser uses a URL, DNS, an IP address, a web server and HTML to retrieve and display a page for Cambridge Computer Science 0478 and 9618.">
+<meta property="og:url" content="https://www.examplicity.org/labs/dns-web-page-retrieval.html">
+<meta property="og:image" content="https://www.examplicity.org/opengraph-image">
+<meta property="og:image:alt" content="Examplicity — Make complex ideas click">
+<meta name="twitter:card" content="summary_large_image">
+<!-- LAB_FRAME_STYLES_START -->
+<style data-lab-frame>
+:root {
+  --lab-canvas: #f3f5f7;
+  --lab-paper: #fbfbfd;
+  --lab-surface: #ffffff;
+  --lab-control: #ffffff;
+  --lab-ink: #1d1d1f;
+  --lab-muted: #6e6e73;
+  --lab-line: #d2d2d7;
+  --lab-line-strong: #a7a7ad;
+  --lab-accent: #5277b8;
+  --lab-accent-soft: #eef2fa;
+  --lab-good: #18794e;
+  --lab-good-soft: #edf8f1;
+  --lab-warn: #946200;
+  --lab-warn-soft: #fff6e7;
+  --lab-bad: #b42318;
+  --lab-bad-soft: #fff0ee;
+  --lab-focus: #1d1d1f;
+  --lab-focus-soft: rgba(29, 29, 31, 0.18);
+  --lab-font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+  --lab-panel-radius: 12px;
+  --lab-control-radius: 8px;
+  --lab-pill-radius: 999px;
+  --lab-control-height: 35px;
+  --lab-panel-shadow: 0 1px 2px rgba(29, 29, 31, 0.04);
+}
+
+html,
+body {
+  background: var(--lab-canvas);
+}
+
+body {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-family: var(--lab-font-sans);
+  padding-bottom: 58px;
+  padding-top: 66px;
+  text-rendering: optimizeLegibility;
+}
+
+html[data-theme="dark"],
+html[data-theme="dark"] body {
+  background: var(--bg);
+}
+
+main {
+  container-name: lab-canvas;
+  container-type: inline-size;
+}
+
+body.binary-lab main {
+  width: min(820px, calc(100% - 24px));
+}
+
+:where(button, input, select, textarea, summary):focus-visible {
+  outline: 3px solid var(--lab-focus);
+  outline-offset: 4px;
+}
+
+@media (max-width: 620px) {
+  body {
+    padding-bottom: 76px;
+    padding-top: 60px;
+  }
+
+  body.binary-lab main {
+    width: min(100% - 12px, 820px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+</style>
+<!-- LAB_FRAME_STYLES_END -->
+<style>
+:root{
+  --bg:#f3f5f7;--panel:#fff;--paper:#fafbfc;--ink:#1d2730;--muted:#687681;--line:#d7dfe5;--line-strong:#9ba8b2;
+  --accent:#5277b8;--accent-soft:#eef2fa;--good:#247349;--good-soft:#edf8f1;--warn:#946200;--warn-soft:#fff6e7;--bad:#b44338;--bad-soft:#fff0ee;
+  --resolve:#b5791f;--resolve-soft:#fff5df;--request:#356aa0;--request-soft:#edf4fb;--html:#2e7a5b;--html-soft:#edf8f2;
+  --dns-dark:#10242f;--dns-card:#173440;--rack:#10202a;--track:#d3dbe0;
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{margin:0;padding:66px 0 54px;background:var(--bg);color:var(--ink);font-family:var(--font);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+main{width:min(1240px,calc(100% - 20px));margin:10px auto 28px}
+h1{margin:0;font-size:26px;font-weight:650;letter-spacing:-.025em;line-height:1.08}.sub{margin:4px 0 10px;color:var(--muted);font-size:12px;line-height:1.4}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:0 1px 2px rgba(29,29,31,.04)}
+button,input{font:inherit}button{min-height:34px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);padding:0 10px;cursor:pointer}button:hover:not(:disabled){border-color:var(--line-strong)}button:disabled{opacity:.44;cursor:not-allowed}
+:where(button,input):focus-visible{outline:3px solid #1d1d1f;outline-offset:3px}
+
+/* FDE-style status: broad phase plus exactly one next action. */
+.control-panel{overflow:hidden}.control-row{min-height:48px;padding:7px 10px;display:grid;grid-template-columns:auto minmax(260px,1fr) auto;gap:10px;align-items:center}.phase-strip{display:flex;gap:5px}.phase{padding:4px 8px;border:1px solid var(--line);border-radius:999px;color:var(--muted);font-size:9px;font-weight:850}.phase.active.resolve{color:#7b5316;background:var(--resolve-soft);border-color:#dfc28a}.phase.active.retrieve{color:var(--request);background:var(--request-soft);border-color:#bdd0e0}.phase.active.render{color:var(--html);background:var(--html-soft);border-color:#bdd9cb}.micro{min-width:0;color:var(--muted);font-size:10px;line-height:1.35}.micro strong{color:var(--ink)}#resetBtn{min-height:30px;height:30px;font-size:9px}
+.progress-row{min-height:34px;padding:5px 10px;border-top:1px solid var(--line);display:grid;grid-template-columns:auto minmax(70px,.38fr) minmax(160px,.8fr) minmax(290px,1.42fr);gap:8px;align-items:center;background:#fbfcfd}.step-count{font:850 9px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#5f6c75}.progress-track{height:5px;border-radius:999px;background:#e3e8ec;overflow:hidden}#progressFill{height:100%;width:0;border-radius:inherit;background:var(--accent);transition:width .18s ease}.current-transfer{min-width:0;color:#66737c;font-size:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.current-transfer b{color:#87939b;text-transform:uppercase;letter-spacing:.05em;font-size:6px}.current-transfer strong{color:#35444d;font:820 7.5px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.required{min-width:0;padding:5px 8px;border-radius:7px;border-left:3px solid var(--accent);background:var(--accent-soft);display:grid;grid-template-columns:auto minmax(0,1fr);gap:7px;align-items:center}.required span{color:#5575a5;font-size:6px;font-weight:900;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}.required strong{min-width:0;color:#2e5488;font-size:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.required.busy{border-left-color:var(--resolve);background:var(--resolve-soft)}.required.busy span,.required.busy strong{color:#76521b}.required.done{border-left-color:var(--good);background:var(--good-soft)}.required.done span,.required.done strong{color:var(--good)}.required.blocked{border-left-color:var(--bad);background:var(--bad-soft)}.required.blocked span,.required.blocked strong{color:var(--bad)}
+
+.arch-panel{margin-top:9px;padding:8px}.architecture{display:grid;grid-template-columns:minmax(510px,1.45fr) minmax(160px,.42fr) minmax(360px,.9fr);grid-template-rows:300px 250px;grid-template-areas:"browser dnsbus dns" "browser webbus servers";gap:10px 12px;align-items:stretch}.component{min-width:0}.component-head{min-height:26px;display:flex;align-items:flex-start;justify-content:space-between;gap:7px;padding:0 4px 5px}.component-head strong{display:block;font-size:13px}.component-head span{display:block;margin-top:1px;color:var(--muted);font-size:7px;line-height:1.25}.state-chip{flex:0 0 auto!important;margin:0!important;padding:2px 5px;border:1px solid var(--line);border-radius:999px;background:#fff;color:#78858d!important;font:850 6px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace!important;text-transform:uppercase;letter-spacing:.04em}.state-chip.active{border-color:#9db5df;background:var(--accent-soft);color:#365f9a!important}.state-chip.good{border-color:#a8d0b6;background:var(--good-soft);color:var(--good)!important}.state-chip.bad{border-color:#dfaaa5;background:var(--bad-soft);color:var(--bad)!important}.state-chip.warn{border-color:#dfc589;background:var(--warn-soft);color:#7a561f!important}
+
+/* Browser */
+.browser{grid-area:browser;min-width:0}.browser-frame{overflow:hidden;border:1px solid #97a7b1;border-radius:11px;background:#fff;box-shadow:0 6px 15px rgba(35,51,62,.10)}.browser-toolbar{height:43px;padding:5px 6px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:6px;align-items:center;background:#e9eef1}.browser-dots{display:flex;gap:4px}.browser-dots i{width:8px;height:8px;border-radius:50%;background:#91a2ad}.browser-dots i:nth-child(2){background:#b3bec5}.browser-dots i:nth-child(3){background:#78909e}.address-shell{position:relative;min-width:0}.address-shell .lock{position:absolute;left:8px;top:50%;width:10px;height:8px;transform:translateY(-40%);border:1.4px solid #6d7c86;border-radius:2px;z-index:2}.address-shell .lock::before{content:"";position:absolute;left:1.8px;top:-6px;width:5px;height:6px;border:1.4px solid #6d7c86;border-bottom:0;border-radius:4px 4px 0 0}.address-shell.http .lock{display:none}#urlInput{width:100%;height:31px;padding:0 8px 0 25px;border:1px solid #b5c2ca;border-radius:8px;background:#fff;color:#26343d;font:760 10px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}#urlInput:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);outline:none}#goBtn{height:31px;min-height:31px;min-width:102px;border-color:var(--accent);background:var(--accent);color:#fff;font-size:12px;font-weight:850;box-shadow:0 0 0 3px rgba(82,119,184,.10)}#goBtn.busy{background:#7187ad}#goBtn.done{background:var(--good);border-color:var(--good)}
+.bookmarks{min-height:45px;padding:5px 7px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:6px;align-items:center;border-top:1px solid #dbe2e6;background:#fff}.bookmark-label{color:#71808a;font-size:6px;font-weight:900;letter-spacing:.07em;text-transform:uppercase}.bookmark-list{min-width:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.bookmark{min-width:0;height:34px;padding:0 7px 0 5px;display:grid;grid-template-columns:22px minmax(0,1fr);gap:6px;align-items:center;border:0;border-radius:8px;background:#f2f5f7;box-shadow:inset 0 0 0 1px #d7dfe4;text-align:left}.bookmark:hover{background:#eaf0f4}.bookmark.selected{background:var(--accent-soft);box-shadow:inset 0 0 0 2px #88a8d6}.bookmark-icon{width:22px;height:22px;display:grid;place-items:center;border-radius:6px;font:900 10px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.bookmark[data-site="atlas"] .bookmark-icon{background:#dceef6;color:#245f80}.bookmark[data-site="orbit"] .bookmark-icon{background:#dfe5e8;color:#243d4e}.bookmark[data-site="fieldnotes"] .bookmark-icon{background:#e9ecd9;color:#626d32}.bookmark-copy{min-width:0}.bookmark-copy strong{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:8px}.bookmark-copy span{display:block;margin-top:1px;color:#7d8991;font-size:5.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.bookmark-hint{color:#687781;font-size:6px;font-weight:850;white-space:nowrap}
+.url-parts{min-height:29px;padding:4px 7px;display:flex;align-items:center;gap:5px;border-top:1px solid #e3e8eb;border-bottom:1px solid #e3e8eb;background:#fbfcfd;overflow:hidden}.url-map-label{flex:0 0 auto;color:#7a8790;font-size:5.5px;font-weight:900;letter-spacing:.055em;text-transform:uppercase}.url-part{min-width:0;padding:3px 6px;border-radius:6px;background:#eef2f4;display:flex;align-items:baseline;gap:4px}.url-part small{color:#81909a;font-size:5px;font-weight:850;text-transform:uppercase}.url-part strong{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font:850 7px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.url-part.protocol strong{color:#486da9}.url-part.domain strong{color:#875a18}.url-part.path strong{color:#31745a}.url-part.active{background:#fff1cf;box-shadow:inset 0 0 0 1px #dfb868}
+.viewport{height:315px;overflow:auto;background:#fff}.blank-page{height:100%;display:grid;place-items:center;padding:25px;background:linear-gradient(145deg,#fbfcfd,#edf2f5);text-align:center;color:#71808a}.blank-card{max-width:350px}.blank-glyph{width:64px;height:43px;margin:0 auto 10px;border:2px solid #b4c0c8;border-radius:8px;background:#fff}.blank-page strong{display:block;color:#44535d;font-size:15px}.blank-page span{display:block;margin-top:5px;font-size:8px;line-height:1.45}.browser-error{height:100%;display:grid;place-items:center;padding:24px;background:#f8fafb}.browser-error-card{width:min(390px,92%);padding:16px;border-left:4px solid var(--bad);border-radius:8px;background:#fff;box-shadow:0 4px 12px rgba(40,54,64,.07)}.browser-error-card strong{font-size:15px}.browser-error-card p{margin:6px 0 0;color:#687681;font-size:8px;line-height:1.45}.browser-error-card code{display:block;margin-top:9px;padding:6px;border-radius:6px;background:#f1f4f6;color:#5b6872;font:750 7px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.browser-engine{margin-top:6px;padding-top:5px;border-top:1px solid #dce3e7}.engine-head{display:flex;justify-content:space-between;gap:7px;margin-bottom:4px;padding:0 2px}.engine-head strong{font-size:8px}.engine-head span{color:#7a8790;font-size:6px}.engine-grid{display:grid;grid-template-columns:1fr 12px 1fr 12px 1fr 12px 1fr;gap:4px;align-items:center}.engine-block{min-width:0;min-height:45px;padding:6px;border-radius:7px;background:#eef2f4;transition:.15s}.engine-block small{display:block;color:#7b8992;font-size:5px;font-weight:850;text-transform:uppercase;letter-spacing:.04em}.engine-block strong{display:block;margin-top:3px;color:#33424b;font:820 7px/1.25 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;overflow-wrap:anywhere}.engine-block.active{background:var(--accent-soft);box-shadow:inset 0 0 0 1px rgba(82,119,184,.38)}.engine-block.good{background:var(--good-soft);box-shadow:inset 0 0 0 1px rgba(36,115,73,.26)}.engine-block.warn{background:var(--warn-soft);box-shadow:inset 0 0 0 1px rgba(148,98,0,.28)}.engine-arrow{text-align:center;color:#9ca8b0;font-size:12px;font-weight:900}.source-mini{margin-top:2px;color:#6e7b83;font:600 5px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* Browser ↔ infrastructure transfer lanes. */
+.dns-buses{grid-area:dnsbus}.web-buses{grid-area:webbus}.bus-cluster{min-width:0;align-self:stretch;display:grid;align-content:center;gap:18px}.bus-group-title{text-align:center;color:#7b8790;font-size:6px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}.bus-route{position:relative;min-height:72px;color:#97a4ac}.bus-header{display:flex;justify-content:space-between;gap:6px;color:#6f7d86;font-size:6px;font-weight:850}.bus-header .dir{font:760 5.5px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.bus-track{position:relative;height:24px;margin:5px -8px 0}.bus-line{position:absolute;left:0;right:0;top:50%;height:5px;transform:translateY(-50%);border-radius:999px;background:var(--track)}.bus-line::before,.bus-line::after{content:"";position:absolute;top:50%;width:10px;height:10px;transform:translateY(-50%);border-radius:50%;background:inherit}.bus-line::before{left:-1px}.bus-line::after{right:-1px}.bus-value{margin-top:3px;min-height:14px;text-align:center;color:#6f7d86;font:800 6.5px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;overflow-wrap:anywhere}.packet-train{position:absolute;inset:0;pointer-events:none;opacity:0;color:currentColor}.packet-train i{position:absolute;left:2%;top:50%;width:10px;height:10px;border:2px solid #fff;border-radius:50%;background:currentColor;transform:translate(-50%,-50%);opacity:0;box-shadow:0 0 0 3px color-mix(in srgb,currentColor 18%,transparent),0 0 8px color-mix(in srgb,currentColor 58%,transparent)}.bus-route.active .packet-train{opacity:1}.bus-route.to-right .packet-train i{animation:packetRight .72s linear forwards}.bus-route.to-left .packet-train i{animation:packetLeft .72s linear forwards}.packet-train i:nth-child(2){animation-delay:.12s!important}.packet-train i:nth-child(3){animation-delay:.24s!important}.bus-route.query.active{color:var(--resolve)}.bus-route.query.active .bus-line{background:var(--resolve);box-shadow:0 0 9px rgba(181,121,31,.28)}.bus-route.ip.active{color:var(--accent)}.bus-route.ip.active .bus-line{background:var(--accent);box-shadow:0 0 9px rgba(82,119,184,.28)}.bus-route.request.active{color:var(--request)}.bus-route.request.active .bus-line{background:var(--request);box-shadow:0 0 9px rgba(53,106,160,.28)}.bus-route.html.active{color:var(--html)}.bus-route.html.active .bus-line{background:var(--html);box-shadow:0 0 9px rgba(46,122,91,.28)}.bus-route.complete .bus-line{opacity:.62}@keyframes packetRight{0%{left:2%;opacity:0;transform:translate(-50%,-50%) scale(.72)}10%{opacity:1;transform:translate(-50%,-50%) scale(1)}88%{opacity:1}100%{left:98%;opacity:0;transform:translate(-50%,-50%) scale(.78)}}@keyframes packetLeft{0%{left:98%;opacity:0;transform:translate(-50%,-50%) scale(.72)}10%{opacity:1;transform:translate(-50%,-50%) scale(1)}88%{opacity:1}100%{left:2%;opacity:0;transform:translate(-50%,-50%) scale(.78)}}
+
+/* Two-DNS chain. */
+.dns{grid-area:dns;min-width:0}.dns-chain-shell{height:268px;padding:8px;border-radius:10px;background:linear-gradient(180deg,#0f2632,#0a1c25);color:#eef7fa;box-shadow:inset 0 0 0 1px #29434f}.dns-chain{height:100%;display:grid;grid-template-columns:minmax(0,1fr) 74px minmax(0,1fr);gap:7px;align-items:stretch}.dns-node{min-width:0;padding:8px;border-radius:8px;background:var(--dns-card);box-shadow:inset 0 0 0 1px #365562;transition:.15s}.dns-node.active{box-shadow:inset 0 0 0 2px #d7a44b,0 0 12px rgba(215,164,75,.12)}.dns-node.good{box-shadow:inset 0 0 0 2px #5dae79,0 0 12px rgba(93,174,121,.12)}.dns-node.warn{box-shadow:inset 0 0 0 2px #c86b62,0 0 12px rgba(200,107,98,.12)}.dns-node-head{display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:6px;align-items:center}.dns-badge{width:30px;height:30px;display:grid;place-items:center;border-radius:7px;background:#dce7eb;color:#29444f;font:900 8px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.dns-node-head strong{display:block;font-size:8.5px}.dns-node-head span{display:block;margin-top:1px;color:#91a9b4;font-size:5.5px;line-height:1.25}.dns-led{width:6px;height:6px;border-radius:50%;background:#5a707b}.dns-led.power{background:#56bc78;box-shadow:0 0 6px #56bc78}.dns-node.active .dns-led.activity{background:#e3ad45;box-shadow:0 0 6px #e3ad45}.dns-node.good .dns-led.activity{background:#56bc78;box-shadow:0 0 6px #56bc78}.dns-node.warn .dns-led.activity{background:#d56d63;box-shadow:0 0 6px #d56d63}.dns-console{margin-top:7px;display:grid;grid-template-columns:1fr 1fr;gap:5px}.console-cell{min-width:0;padding:5px;border-radius:6px;background:#071a24;box-shadow:inset 0 0 0 1px #36515d}.console-cell small{display:block;color:#7192a2;font-size:5px;font-weight:900;letter-spacing:.05em;text-transform:uppercase}.console-cell strong{display:block;margin-top:2px;color:#d9edf5;font:800 6.5px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.console-cell.active{background:#211b0e;box-shadow:inset 0 0 0 1px #d1a24c}.console-cell.good{background:#0d2418;box-shadow:inset 0 0 0 1px #5cad79}.console-cell.miss{background:#2a1514;box-shadow:inset 0 0 0 1px #c86b62}.dns-section-title{margin-top:7px;color:#91a9b4;font-size:5px;font-weight:900;letter-spacing:.07em;text-transform:uppercase}.cache-list,.directory-list{margin-top:4px;display:grid;gap:4px}.cache-row,.directory-row{min-width:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px;align-items:center;padding:5px 6px;border-radius:6px;background:#0b202a;box-shadow:inset 0 0 0 1px #2e4853}.cache-row strong,.directory-row strong{min-width:0;color:#e0edf2;font:800 6.2px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.cache-row span,.directory-row span{color:#9bb0b9;font:750 5.7px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.cache-row.learned{background:#0d291b;box-shadow:inset 0 0 0 1px #4b9c68}.cache-row.learned::after{content:"LEARNED";grid-column:1/-1;color:#6fc28c;font-size:4.7px;font-weight:900;letter-spacing:.06em}.directory-row{grid-template-columns:minmax(0,.9fr) minmax(0,1.08fr)}.dns-edit{width:100%;height:23px;padding:0 5px;border:1px solid #4c6570;border-radius:5px;background:#f7fafb;color:#27404c;font:800 6.2px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;outline:none}.dns-edit:focus{border-color:#e2ad45;box-shadow:0 0 0 2px rgba(226,173,69,.2)}.dns-edit.missing{background:#fff4f2;color:#9a433c}.dns-link-stack{display:grid;align-content:center;gap:19px}.mini-lane{position:relative;min-height:62px;color:#93a4ad}.mini-lane-head{text-align:center;color:#a6bbc4;font-size:5px;font-weight:850;line-height:1.2}.mini-track{position:relative;height:22px;margin-top:4px}.mini-line{position:absolute;left:0;right:0;top:50%;height:4px;transform:translateY(-50%);border-radius:999px;background:#435963}.mini-line::before,.mini-line::after{content:"";position:absolute;top:50%;width:8px;height:8px;transform:translateY(-50%);border-radius:50%;background:inherit}.mini-line::before{left:-1px}.mini-line::after{right:-1px}.mini-value{margin-top:2px;text-align:center;color:#9bb0b9;font:800 5.5px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mini-packets{position:absolute;inset:0;pointer-events:none;color:currentColor;opacity:0}.mini-packets i{position:absolute;top:50%;left:3%;width:8px;height:8px;border:1.5px solid #fff;border-radius:50%;background:currentColor;transform:translate(-50%,-50%);opacity:0;box-shadow:0 0 6px currentColor}.mini-lane.active .mini-packets{opacity:1}.mini-lane.to-right .mini-packets i{animation:miniRight .68s linear forwards}.mini-lane.to-left .mini-packets i{animation:miniLeft .68s linear forwards}.mini-packets i:nth-child(2){animation-delay:.12s!important}.mini-packets i:nth-child(3){animation-delay:.24s!important}.mini-lane.ask.active{color:#e0a94a}.mini-lane.ask.active .mini-line{background:#c99134}.mini-lane.answer.active{color:#73a0e1}.mini-lane.answer.active .mini-line{background:#668dca}@keyframes miniRight{0%{left:3%;opacity:0}12%{opacity:1}88%{opacity:1}100%{left:97%;opacity:0}}@keyframes miniLeft{0%{left:97%;opacity:0}12%{opacity:1}88%{opacity:1}100%{left:3%;opacity:0}}
+
+/* Web server rack */
+.servers{grid-area:servers;min-width:0}.rack-shell{height:218px;padding:7px;border-radius:10px;background:linear-gradient(180deg,#112630,#0b1c24);box-shadow:inset 0 0 0 1px #314953}.server-list{height:100%;display:grid;gap:5px}.server-card{min-width:0;padding:5px 6px;display:grid;grid-template-columns:54px minmax(0,1fr) auto;gap:7px;align-items:center;border-radius:7px;background:linear-gradient(145deg,#e9eef1,#c7d2d8);color:#283943;box-shadow:0 2px 6px rgba(0,0,0,.24);transition:.15s}.server-card.active{background:linear-gradient(145deg,#f2f8fb,#d5e8f3);box-shadow:0 0 0 2px #5590bd,0 2px 6px rgba(0,0,0,.24)}.server-card.good{background:linear-gradient(145deg,#f2faf5,#d8eee0);box-shadow:0 0 0 2px #58a875,0 2px 6px rgba(0,0,0,.24)}.server-card.warn{background:linear-gradient(145deg,#fff8ee,#eedfc5);box-shadow:0 0 0 2px #c88f39,0 2px 6px rgba(0,0,0,.24)}.server-face{position:relative;height:40px;padding:5px;border-radius:5px;background:#304854;box-shadow:inset 0 0 0 1px #657b87}.drive-bays{display:grid;grid-template-columns:repeat(3,1fr);gap:3px}.drive-bays i{height:13px;border:1px solid #182832;border-radius:3px;background:linear-gradient(#5f7580,#344b57)}.server-lights{position:absolute;left:5px;right:5px;bottom:3px;display:flex;gap:3px}.server-lights b{width:4px;height:4px;border-radius:50%;background:#7e9099}.server-lights b.power{background:#57bb79;box-shadow:0 0 4px #57bb79}.server-card.active .server-lights b.activity{background:#5aa6df;box-shadow:0 0 5px #5aa6df}.server-card.good .server-lights b.activity{background:#57bb79;box-shadow:0 0 5px #57bb79}.server-copy{min-width:0}.server-copy strong{display:block;font-size:7.5px}.server-copy span{display:block;margin-top:1px;color:#667680;font-size:5.5px}.server-meta{margin-top:4px;display:flex;gap:4px;flex-wrap:wrap}.server-meta i{font-style:normal;padding:2px 4px;border-radius:4px;background:#f8fafb;color:#356078;font:800 5.3px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.server-meta i.file{color:#5f6d75}.server-state{align-self:start;padding:2px 4px;border-radius:4px;background:#eef2f4;color:#687780;font:900 5px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;text-transform:uppercase}.server-note{padding:3px 3px 0;color:#7a8790;font-size:6px;line-height:1.3}
+
+/* Rendered sites */
+.site{min-height:100%;color:#20272d}.site-atlas{background:#f8fbfd}.atlas-nav{height:34px;padding:0 14px;display:flex;align-items:center;gap:13px;border-bottom:1px solid #dfe7eb;background:#fff;color:#60717c;font-size:7px}.atlas-brand{margin-right:auto;color:#176b91;font-size:15px;letter-spacing:-.03em}.pill{padding:4px 7px;border-radius:999px;background:#e5f3f9;color:#276982;font-weight:800}.atlas-hero{min-height:150px;padding:22px 20px;display:grid;grid-template-columns:1.3fr .7fr;gap:18px;background:linear-gradient(135deg,#d9f0f8,#f3fbfd 68%,#d5e7f1)}.atlas-kicker{font-size:6px;font-weight:900;text-transform:uppercase;letter-spacing:.12em;color:#2d718e}.atlas-hero h2{margin:7px 0 8px;max-width:330px;font-size:28px;line-height:1.04;letter-spacing:-.04em;color:#17394a}.atlas-hero p{max-width:340px;margin:0;color:#5c7684;font-size:8px;line-height:1.55}.atlas-art{position:relative}.atlas-cardfloat{position:absolute;padding:10px;border-radius:10px;background:#fff;box-shadow:0 10px 24px rgba(47,92,112,.16);color:#2a566a;font-weight:850}.atlas-cardfloat.one{right:20px;top:7px;width:115px;font-size:20px}.atlas-cardfloat.two{right:2px;bottom:3px;font-size:8px}.atlas-progress{height:5px;margin-top:6px;border-radius:99px;background:#e5edf1;overflow:hidden}.atlas-progress i{display:block;width:72%;height:100%;background:#3f91b7}.atlas-content{padding:13px 18px}.atlas-section-title{display:flex;justify-content:space-between;font-weight:850;font-size:9px}.atlas-section-title span{color:#829099;font-size:6px}.atlas-grid{margin-top:8px;display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.atlas-topic{padding:10px;border-radius:9px;background:#fff;box-shadow:inset 0 0 0 1px #e1e8ec}.atlas-topic i{display:block;width:22px;height:5px;border-radius:99px;background:#61a7c5}.atlas-topic strong{display:block;margin-top:7px;font-size:8px}.atlas-topic span{display:block;margin-top:3px;color:#71818b;font-size:6px;line-height:1.35}
+.site-orbit{background:#f8f8f7}.orbit-top{height:38px;padding:0 14px;display:flex;align-items:center;gap:13px;background:#14222b;color:#cdd7dc;font-size:6px;font-weight:850;letter-spacing:.07em}.orbit-logo{margin-right:auto;color:#fff;font-size:16px;letter-spacing:.12em}.orbit-top .live{padding:3px 5px;border-radius:4px;background:#a8332c;color:#fff}.orbit-hero{padding:15px;display:grid;grid-template-columns:1.35fr .65fr;gap:12px}.orbit-story{min-height:198px;padding:18px;display:flex;flex-direction:column;justify-content:flex-end;border-radius:8px;background:linear-gradient(180deg,rgba(13,28,37,.08),rgba(13,28,37,.88)),radial-gradient(circle at 70% 20%,#9db6c4,#456274 58%,#1d313c);color:#fff}.orbit-tag{font-size:6px;font-weight:900;letter-spacing:.12em}.orbit-story h2{margin:8px 0 6px;font:700 23px Georgia,serif;line-height:1.08}.orbit-story p{margin:0;color:#d7e0e5;font-size:7px;line-height:1.5}.orbit-side{display:grid;gap:6px}.orbit-mini{padding:10px;border-bottom:1px solid #d8dfe2;background:#fff}.orbit-mini b{display:block;font:700 9px Georgia,serif}.orbit-mini span{display:block;margin-top:3px;color:#71808a;font-size:6px;line-height:1.35}.orbit-ticker{height:29px;margin:0 15px 12px;display:flex;align-items:center;gap:10px;border-top:1px solid #1d303b;border-bottom:1px solid #1d303b;font-size:6px}.orbit-ticker strong{color:#9e2f29}
+.site-fieldnotes{background:#f5f5ea;color:#353a28}.field-head{height:38px;padding:0 14px;display:flex;align-items:center;border-bottom:1px solid #cfd2bc}.field-brand{font:700 15px Georgia,serif}.field-date{margin-left:auto;color:#7c8267;font-size:6px;text-transform:uppercase;letter-spacing:.08em}.field-paper{padding:18px 22px;background:linear-gradient(#f8f7ec,#f1f0e1)}.field-paper h2{margin:0;font:500 27px Georgia,serif}.field-paper>p{margin:5px 0 13px;color:#70765e;font-size:7px}.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.field-card{min-height:110px;padding:12px;border-radius:6px;background:#fbfaf0;box-shadow:inset 0 0 0 1px #dedfca}.field-card small{font-size:5px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:#7a805e}.field-card b{display:block;margin-top:8px;font:700 13px Georgia,serif}.field-card span{display:block;margin-top:5px;color:#70765e;font-size:6px;line-height:1.45}.field-lines{margin-top:9px;display:grid;gap:4px}.field-lines i{height:2px;border-radius:3px;background:#d6d7c1}.field-lines i:nth-child(2){width:78%}.field-lines i:nth-child(3){width:58%}
+
+@media(max-width:1050px){.architecture{grid-template-columns:minmax(470px,1.3fr) minmax(135px,.34fr) minmax(330px,.8fr);gap:8px}.bookmark-copy span{display:none}.dns-chain{grid-template-columns:minmax(0,1fr) 62px minmax(0,1fr)}}
+@media(max-width:820px){body{padding-top:60px}.control-row{grid-template-columns:1fr auto}.phase-strip{grid-column:1/-1}.progress-row{grid-template-columns:auto 1fr}.current-transfer,.required{grid-column:1/-1}.architecture{grid-template-columns:1fr;grid-template-rows:auto;grid-template-areas:"browser" "dnsbus" "dns" "webbus" "servers"}.viewport{height:330px}.bus-cluster{grid-template-columns:1fr 1fr;gap:10px}.bus-group-title{grid-column:1/-1}.bus-track{margin-inline:0}.dns-chain-shell,.rack-shell{height:auto;min-height:230px}}
+@media(max-width:560px){main{width:min(100% - 12px,1240px)}.browser-toolbar{grid-template-columns:auto 1fr}.browser-toolbar #goBtn{grid-column:1/-1;width:100%}.bookmarks{grid-template-columns:1fr}.bookmark-list{grid-template-columns:1fr}.bookmark-label,.bookmark-hint{display:none}.url-parts{display:grid;grid-template-columns:1fr}.url-map-label{display:none}.engine-grid{grid-template-columns:1fr 12px 1fr}.engine-block:nth-of-type(3),.engine-block:nth-of-type(4){margin-top:4px}.dns-chain{grid-template-columns:1fr}.dns-link-stack{grid-template-columns:1fr 1fr}.server-card{grid-template-columns:48px 1fr}.server-state{grid-column:2}.atlas-hero,.orbit-hero,.field-grid{grid-template-columns:1fr}.atlas-art{display:none}}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}}
+</style>
+</head>
+<body>
+<main>
+  <h1>DNS and Web Page Retrieval</h1>
+  <div class="sub">Use the browser, then follow each transfer as DNS turns a domain into an IP address and the browser retrieves the requested HTML page.</div>
+
+  <section class="panel control-panel" aria-label="Navigation status">
+    <div class="control-row">
+      <div class="phase-strip" aria-label="Navigation phases">
+        <span id="phaseResolve" class="phase resolve active">Resolve name</span>
+        <span id="phaseRetrieve" class="phase retrieve">Retrieve page</span>
+        <span id="phaseRender" class="phase render">Render HTML</span>
+      </div>
+      <div id="microStatus" class="micro" aria-live="polite"><strong>Ready.</strong> Choose one of the three browser bookmarks, then click Go.</div>
+      <button id="resetBtn" type="button">Reset lab</button>
+    </div>
+    <div class="progress-row">
+      <span id="stepCount" class="step-count">STEP 0</span>
+      <div class="progress-track" aria-hidden="true"><div id="progressFill"></div></div>
+      <span class="current-transfer"><b>Current</b> <strong id="operationTitle">URL waiting in browser</strong></span>
+      <div id="requiredAction" class="required"><span>Required next action</span><strong id="nextLabel">Choose a bookmark, then click Go</strong></div>
+    </div>
+  </section>
+
+  <section class="panel arch-panel">
+    <div class="architecture">
+      <section id="browser" class="component browser" aria-label="Web browser">
+        <div class="component-head"><div><strong>Web browser</strong><span>The URL, returned IP, page request and rendered result stay visible in one place.</span></div><span id="browserState" class="state-chip">ready</span></div>
+        <div class="browser-frame">
+          <div class="browser-toolbar">
+            <div class="browser-dots" aria-hidden="true"><i></i><i></i><i></i></div>
+            <div id="addressShell" class="address-shell"><span class="lock" aria-hidden="true"></span><input id="urlInput" type="text" spellcheck="false" autocomplete="off" value="https://atlas.school/study.html" aria-label="URL"></div>
+            <button id="goBtn" type="button">Go →</button>
+          </div>
+          <div class="bookmarks" aria-label="Browser bookmarks">
+            <span class="bookmark-label">Bookmarks</span>
+            <div id="bookmarkButtons" class="bookmark-list"></div>
+            <span id="bookmarkHint" class="bookmark-hint">choose → Go</span>
+          </div>
+          <div class="url-parts" aria-label="URL parts">
+            <span class="url-map-label">URL parts</span>
+            <div id="partProtocol" class="url-part protocol"><small>protocol</small><strong>https</strong></div>
+            <div id="partDomain" class="url-part domain"><small>domain</small><strong>atlas.school</strong></div>
+            <div id="partPath" class="url-part path"><small>page/file</small><strong>/study.html</strong></div>
+          </div>
+          <div id="viewport" class="viewport"></div>
+        </div>
+        <div class="browser-engine" aria-label="Browser internals">
+          <div class="engine-head"><strong>Inside the browser</strong><span>The request stays blocked until an IP returns.</span></div>
+          <div class="engine-grid">
+            <div id="destBlock" class="engine-block"><small>Destination IP</small><strong id="destValue">waiting for DNS</strong></div><div class="engine-arrow">→</div>
+            <div id="requestBlock" class="engine-block"><small>Request builder</small><strong id="requestValue">blocked · no IP</strong></div><div class="engine-arrow">→</div>
+            <div id="htmlBlock" class="engine-block"><small>HTML response</small><strong id="htmlValue">waiting for server</strong><div id="sourceMini" class="source-mini"></div></div><div class="engine-arrow">→</div>
+            <div id="rendererBlock" class="engine-block"><small>Renderer</small><strong id="rendererValue">HTML → page</strong></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="bus-cluster dns-buses" aria-label="Browser and DNS transfers">
+        <div class="bus-group-title">Browser ↔ DNS 1</div>
+        <div id="queryBus" class="bus-route query">
+          <div class="bus-header"><span>Domain query</span><span class="dir">BROWSER → DNS 1</span></div>
+          <div class="bus-track"><span class="bus-line"></span><span class="packet-train" aria-hidden="true"><i></i><i></i><i></i></span></div>
+          <div class="bus-value">idle</div>
+        </div>
+        <div id="ipBus" class="bus-route ip">
+          <div class="bus-header"><span>IP reply</span><span class="dir">DNS 1 → BROWSER</span></div>
+          <div class="bus-track"><span class="bus-line"></span><span class="packet-train" aria-hidden="true"><i></i><i></i><i></i></span></div>
+          <div class="bus-value">idle</div>
+        </div>
+      </section>
+
+      <section id="dns" class="component dns" aria-label="DNS lookup chain">
+        <div class="component-head"><div><strong>DNS lookup chain</strong><span>DNS 1 answers if it already knows the domain; otherwise it asks DNS 2 and learns the returned mapping.</span></div><span id="dnsState" class="state-chip">ready</span></div>
+        <div class="dns-chain-shell">
+          <div class="dns-chain">
+            <section id="dns1" class="dns-node" aria-label="DNS 1 resolver">
+              <div class="dns-node-head"><div class="dns-badge">DNS 1</div><div><strong>Resolver</strong><span>Closest DNS service to the browser.</span></div><div class="dns-leds"><i class="dns-led power"></i><i class="dns-led activity"></i></div></div>
+              <div class="dns-console"><div id="dns1QueryCell" class="console-cell"><small>Query</small><strong id="dns1QueryValue">waiting</strong></div><div id="dns1ResultCell" class="console-cell"><small>Result</small><strong id="dns1ResultValue">—</strong></div></div>
+              <div class="dns-section-title">DNS 1 local cache</div>
+              <div id="dns1Cache" class="cache-list"></div>
+            </section>
+
+            <div class="dns-link-stack" aria-label="DNS 1 and DNS 2 transfers">
+              <div id="dnsHopQuery" class="mini-lane ask">
+                <div class="mini-lane-head">DNS 1 asks DNS 2 →</div><div class="mini-track"><span class="mini-line"></span><span class="mini-packets" aria-hidden="true"><i></i><i></i><i></i></span></div><div class="mini-value">idle</div>
+              </div>
+              <div id="dnsHopReply" class="mini-lane answer">
+                <div class="mini-lane-head">← DNS 2 sends result back</div><div class="mini-track"><span class="mini-line"></span><span class="mini-packets" aria-hidden="true"><i></i><i></i><i></i></span></div><div class="mini-value">idle</div>
+              </div>
+            </div>
+
+            <section id="dns2" class="dns-node" aria-label="DNS 2 directory server">
+              <div class="dns-node-head"><div class="dns-badge">DNS 2</div><div><strong>Directory server</strong><span>Holds mappings DNS 1 may need to ask for.</span></div><div class="dns-leds"><i class="dns-led power"></i><i class="dns-led activity"></i></div></div>
+              <div class="dns-console"><div id="dns2QueryCell" class="console-cell"><small>Query</small><strong id="dns2QueryValue">waiting</strong></div><div id="dns2ResultCell" class="console-cell"><small>Result</small><strong id="dns2ResultValue">—</strong></div></div>
+              <div class="dns-section-title">DNS 2 directory · editable</div>
+              <div id="dns2Directory" class="directory-list"></div>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <section class="bus-cluster web-buses" aria-label="Page retrieval transfers">
+        <div class="bus-group-title">Browser ↔ web server</div>
+        <div id="requestBus" class="bus-route request">
+          <div class="bus-header"><span id="requestBusName">HTTP(S) request</span><span class="dir">BROWSER → SERVER</span></div>
+          <div class="bus-track"><span class="bus-line"></span><span class="packet-train" aria-hidden="true"><i></i><i></i><i></i></span></div>
+          <div class="bus-value">blocked · no destination IP</div>
+        </div>
+        <div id="htmlBus" class="bus-route html">
+          <div class="bus-header"><span>HTML response</span><span class="dir">SERVER → BROWSER</span></div>
+          <div class="bus-track"><span class="bus-line"></span><span class="packet-train" aria-hidden="true"><i></i><i></i><i></i></span></div>
+          <div class="bus-value">idle</div>
+        </div>
+      </section>
+
+      <section id="servers" class="component servers" aria-label="Web servers">
+        <div class="component-head"><div><strong>Web servers</strong><span>The IP chooses one server; the URL page/file chooses one resource on it.</span></div><span id="serverState" class="state-chip">waiting for IP</span></div>
+        <div class="rack-shell"><div id="serverList" class="server-list"></div></div>
+        <div class="server-note">Field Notes exists here even though DNS 2 initially has no mapping for it. A DNS miss therefore prevents a real server from ever being contacted.</div>
+      </section>
+    </div>
+  </section>
+</main>
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  const delay = ms => new Promise(resolve => setTimeout(resolve, reduceMotion ? Math.min(ms,35) : ms));
+
+  const BOOKMARKS = [
+    {id:"atlas",site:"atlas",icon:"A",label:"Atlas Study",sub:"learning site",url:"https://atlas.school/study.html"},
+    {id:"orbit",site:"orbit",icon:"O",label:"Orbit News",sub:"news desk",url:"https://orbit.news/headlines.html"},
+    {id:"fieldnotes",site:"fieldnotes",icon:"F",label:"Field Notes",sub:"field archive",url:"https://fieldnotes.test/today.html"}
+  ];
+
+  const SITES = [
+    {id:"atlas",name:"Atlas learning site",domain:"atlas.school",ip:"203.0.113.10",pages:{
+      "/study.html":{title:"Atlas Study",source:'<main><h1>Build a clearer model of computing</h1><section class="topics">…</section></main>',render:()=>`<div class="site site-atlas"><div class="atlas-nav"><strong class="atlas-brand">Atlas</strong><span>Study</span><span>Courses</span><span>Progress</span><span class="pill">Student portal</span></div><div class="atlas-hero"><div><span class="atlas-kicker">Study workspace</span><h2>Build a clearer model of computing</h2><p>Short explanations, visual systems and focused practice for computer science.</p></div><div class="atlas-art"><div class="atlas-cardfloat one">72%<div class="atlas-progress"><i></i></div></div><div class="atlas-cardfloat two">Next: DNS</div></div></div><div class="atlas-content"><div class="atlas-section-title">Continue studying <span>3 active topics</span></div><div class="atlas-grid"><div class="atlas-topic"><i></i><strong>Networks</strong><span>Follow data from one system to another.</span></div><div class="atlas-topic"><i></i><strong>Algorithms</strong><span>Trace, test and improve solutions.</span></div><div class="atlas-topic"><i></i><strong>Data</strong><span>See how information is represented.</span></div></div></div></div>`}
+    }},
+    {id:"orbit",name:"Orbit news desk",domain:"orbit.news",ip:"203.0.113.24",pages:{
+      "/headlines.html":{title:"Orbit Headlines",source:'<main><article><h1>Research satellite enters final orbit</h1></article></main>',render:()=>`<div class="site site-orbit"><div class="orbit-top"><strong class="orbit-logo">ORBIT</strong><span>WORLD</span><span>SCIENCE</span><span>TECH</span><span class="live">LIVE</span></div><div class="orbit-hero"><article class="orbit-story"><span class="orbit-tag">SPACE</span><h2>Research satellite enters final orbit</h2><p>Engineers confirm stable telemetry after the final orbital manoeuvre.</p></article><div class="orbit-side"><article class="orbit-mini"><b>New telescope releases first survey</b><span>A wide-field image maps thousands of distant galaxies.</span></article><article class="orbit-mini"><b>Undersea cable repair completed</b><span>Traffic returns to normal after scheduled maintenance.</span></article><article class="orbit-mini"><b>Weather service upgrades forecast model</b><span>Higher-resolution data will be introduced this week.</span></article></div></div><div class="orbit-ticker"><strong>BREAKING</strong><span>Mission control reports all systems nominal.</span></div></div>`}
+    }},
+    {id:"fieldnotes",name:"Field Notes archive",domain:"fieldnotes.test",ip:"203.0.113.77",pages:{
+      "/today.html":{title:"Field Notes Today",source:'<main><h1>Notes from the field</h1><article>Signal survey</article></main>',render:()=>`<div class="site site-fieldnotes"><div class="field-head"><strong class="field-brand">Field Notes</strong><span class="field-date">today · survey archive</span></div><div class="field-paper"><h2>Notes from the field</h2><p>Small observations collected during a communications survey.</p><div class="field-grid"><article class="field-card"><small>Signal survey</small><b>A line of sight changed everything</b><span>Moving the receiver by a few metres separated obstruction from weak signal.</span><div class="field-lines"><i></i><i></i><i></i></div></article><article class="field-card"><small>Weather log</small><b>Cloud built from the west</b><span>The radio pass remained usable until the final low-elevation section.</span><div class="field-lines"><i></i><i></i><i></i></div></article></div></div></div>`}
+    }}
+  ];
+
+  const DNS1_DEFAULT = {"orbit.news":"203.0.113.24"};
+  const DNS2_DEFAULT = {"atlas.school":"203.0.113.10","fieldnotes.test":""};
+  let dns1Cache = {...DNS1_DEFAULT};
+  let learnedDomains = new Set();
+  let dns2Records = {...DNS2_DEFAULT};
+  let tokenCounter = 0;
+  let state = freshState();
+
+  function freshState(){return {parsed:null,queue:[],index:0,busy:false,failed:false,ip:"",server:null,page:null,token:++tokenCounter};}
+  function parseURL(raw){
+    try{const u=new URL(raw.trim());if(!["http:","https:"].includes(u.protocol))return null;return {protocol:u.protocol.slice(0,-1),domain:u.hostname.toLowerCase(),path:u.pathname||"/"};}catch{return null;}
+  }
+  function siteByIp(ip){return SITES.find(site=>site.ip===ip)||null;}
+  function setPhase(phase){["resolve","retrieve","render"].forEach(p=>$("phase"+p[0].toUpperCase()+p.slice(1)).classList.toggle("active",p===phase));}
+  function setChip(id,text,kind=""){const el=$(id);el.textContent=text;el.className="state-chip"+(kind?` ${kind}`:"");}
+  function setMicro(title,detail){$("microStatus").innerHTML=`<strong>${title}</strong> ${detail}`;}
+  function setOperation(text){$("operationTitle").textContent=text;}
+  function setGoLabel(){
+    const btn=$("goBtn");btn.className="";
+    if(state.busy){btn.textContent="Transferring…";btn.classList.add("busy");btn.disabled=true;return;}
+    if(state.failed){btn.textContent="Choose another site";btn.disabled=true;return;}
+    if(!state.queue.length){btn.textContent="Go →";btn.disabled=false;return;}
+    if(state.index>=state.queue.length){btn.textContent="Done";btn.classList.add("done");btn.disabled=true;return;}
+    const next=state.queue[state.index];btn.textContent=next.id==="render"?"Render page →":"Next transfer →";btn.disabled=false;
+  }
+  function nextActionText(){
+    const parsed=parseURL($("urlInput").value);
+    if(state.failed)return "Choose another bookmark or change the URL, then click Go";
+    if(!state.queue.length)return parsed?`Click Go to send ${parsed.domain} to DNS 1`:"Enter a valid HTTP(S) URL";
+    if(state.index>=state.queue.length)return "Choose another bookmark to compare a different route";
+    return state.queue[state.index].action;
+  }
+  function setProgress(){
+    const total=state.queue.length||0,done=Math.min(state.index,total);
+    $("stepCount").textContent=total?`STEP ${done} / ${total}`:"STEP 0";
+    $("progressFill").style.width=total?`${done/total*100}%`:"0%";
+    const req=$("requiredAction");req.className="required"+(state.busy?" busy":state.failed?" blocked":(total&&done>=total)?" done":"");
+    $("nextLabel").textContent=nextActionText();setGoLabel();
+  }
+  function renderURLParts(){
+    const p=parseURL($("urlInput").value);const values=p||{protocol:"?",domain:"invalid URL",path:"?"};
+    $("partProtocol").querySelector("strong").textContent=values.protocol;$("partDomain").querySelector("strong").textContent=values.domain;$("partPath").querySelector("strong").textContent=values.path;
+    $("addressShell").classList.toggle("http",values.protocol==="http");
+  }
+  function renderBookmarks(){
+    const root=$("bookmarkButtons");root.replaceChildren();
+    BOOKMARKS.forEach(item=>{const b=document.createElement("button");b.type="button";b.className="bookmark";b.dataset.site=item.site;b.dataset.url=item.url;b.innerHTML=`<span class="bookmark-icon">${item.icon}</span><span class="bookmark-copy"><strong>${item.label}</strong><span>${item.sub}</span></span>`;b.addEventListener("click",()=>selectBookmark(item));root.appendChild(b);});syncBookmarkSelection();
+  }
+  function syncBookmarkSelection(){document.querySelectorAll(".bookmark").forEach(b=>b.classList.toggle("selected",b.dataset.url===$("urlInput").value.trim()));}
+  function selectBookmark(item){$("urlInput").value=item.url;renderURLParts();syncBookmarkSelection();resetNavigationVisuals(false);blankPage(`${item.label} selected. Click Go to start the lookup.`);setMicro("Bookmark selected.","The URL is in the address bar. No DNS query has been sent yet.");setOperation("URL waiting in browser");$("bookmarkHint").textContent="selected → Go";setProgress();}
+
+  function renderDNS1Cache(){
+    const root=$("dns1Cache");root.replaceChildren();
+    const entries=Object.entries(dns1Cache);
+    if(!entries.length){const row=document.createElement("div");row.className="cache-row";row.innerHTML="<strong>cache empty</strong><span>—</span>";root.appendChild(row);return;}
+    entries.forEach(([domain,ip])=>{const row=document.createElement("div");row.className="cache-row"+(learnedDomains.has(domain)?" learned":"");row.dataset.domain=domain;row.innerHTML=`<strong>${domain}</strong><span>${ip}</span>`;root.appendChild(row);});
+  }
+  function renderDNS2(){
+    const root=$("dns2Directory");root.replaceChildren();
+    ["atlas.school","fieldnotes.test"].forEach(domain=>{const row=document.createElement("div");row.className="directory-row";const input=document.createElement("input");input.className="dns-edit"+(!dns2Records[domain]?" missing":"");input.value=dns2Records[domain]||"";input.placeholder="no IP mapping";input.setAttribute("aria-label",`${domain} IP mapping`);input.addEventListener("input",()=>{dns2Records[domain]=input.value.trim();input.classList.toggle("missing",!dns2Records[domain]);resetNavigationVisuals(false);blankPage("DNS 2 changed. Click Go to test the current URL again.");setMicro("DNS 2 edited.","Start a new navigation to see whether the changed mapping can be learned by DNS 1.");setOperation("DNS directory changed");setProgress();});row.innerHTML=`<strong>${domain}</strong>`;row.appendChild(input);root.appendChild(row);});
+  }
+  function renderServers(){
+    const root=$("serverList");root.replaceChildren();
+    SITES.forEach(site=>{const el=document.createElement("div");el.id=`server-${site.id}`;el.className="server-card";el.innerHTML=`<div class="server-face"><div class="drive-bays"><i></i><i></i><i></i></div><div class="server-lights"><b class="power"></b><b class="activity"></b><b></b></div></div><div class="server-copy"><strong>${site.name}</strong><span>${site.domain}</span><div class="server-meta"><i>${site.ip}</i>${Object.keys(site.pages).map(path=>`<i class="file">${path}</i>`).join("")}</div></div><span class="server-state">standby</span>`;root.appendChild(el);});
+  }
+  function setServer(site,kind,text){document.querySelectorAll(".server-card").forEach(el=>{el.classList.remove("active","good","warn");el.querySelector(".server-state").textContent="standby";});if(!site)return;const el=$(`server-${site.id}`);el.classList.add(kind);el.querySelector(".server-state").textContent=text;}
+
+  function blankPage(message="Choose a bookmark, then click Go. The browser cannot request a page until DNS returns an IP address."){$("viewport").innerHTML=`<div class="blank-page"><div class="blank-card"><div class="blank-glyph"></div><strong>Blank browser tab</strong><span>${message}</span></div></div>`;}
+  function browserError(title,detail,code){$("viewport").innerHTML=`<div class="browser-error"><div class="browser-error-card"><strong>${title}</strong><p>${detail}</p><code>${code}</code></div></div>`;}
+  function resetEngine(){["destBlock","requestBlock","htmlBlock","rendererBlock"].forEach(id=>$(id).className="engine-block");$("destValue").textContent="waiting for DNS";$("requestValue").textContent="blocked · no IP";$("htmlValue").textContent="waiting for server";$("rendererValue").textContent="HTML → page";$("sourceMini").textContent="";}
+  function setEngine(id,kind){$(id).className="engine-block"+(kind?` ${kind}`:"");}
+  function clearConsoleCell(id){$(id).className="console-cell";}
+  function clearTransferVisuals(){document.querySelectorAll(".bus-route,.mini-lane").forEach(el=>{el.classList.remove("active","to-right","to-left","complete");el.querySelector(".bus-value,.mini-value")?.replaceChildren(document.createTextNode("idle"));});$("requestBus").querySelector(".bus-value").textContent="blocked · no destination IP";}
+  function resetNavigationVisuals(keepViewport=true){
+    state=freshState();setPhase("resolve");setChip("browserState","ready");setChip("dnsState","ready");setChip("serverState","waiting for IP");
+    ["dns1","dns2"].forEach(id=>$(id).className="dns-node");["dns1QueryCell","dns1ResultCell","dns2QueryCell","dns2ResultCell"].forEach(clearConsoleCell);
+    $("dns1QueryValue").textContent="waiting";$("dns1ResultValue").textContent="—";$("dns2QueryValue").textContent="waiting";$("dns2ResultValue").textContent="—";document.querySelectorAll(".url-part").forEach(el=>el.classList.remove("active"));clearTransferVisuals();resetEngine();setServer(null);if(!keepViewport)blankPage();$("bookmarkHint").textContent="choose → Go";setProgress();
+  }
+
+  function buildQueue(p){
+    const local=dns1Cache[p.domain]||"";const remote=dns2Records[p.domain]||"";const route=[];
+    route.push({id:"browser-dns1",phase:"resolve",action:`Send ${p.domain} from the browser to DNS 1`});
+    if(local){
+      route.push({id:"dns1-browser",phase:"resolve",action:`Return ${local} from DNS 1 to the browser`,predictedIp:local});
+      route.push({id:"browser-server",phase:"retrieve",action:`Send ${p.protocol.toUpperCase()} ${p.path} to web server ${local}`,predictedIp:local});
+      route.push({id:"server-browser",phase:"retrieve",action:"Return the requested HTML to the browser",predictedIp:local});
+      route.push({id:"render",phase:"render",action:"Render the returned HTML inside the browser",predictedIp:local});
+    }else{
+      route.push({id:"dns1-dns2",phase:"resolve",action:`DNS 1 does not know ${p.domain}: send the query to DNS 2`});
+      route.push({id:"dns2-dns1",phase:"resolve",action:remote?`Return ${remote} from DNS 2 to DNS 1 so DNS 1 can learn it`:`Return “no IP mapping” from DNS 2 to DNS 1`,predictedIp:remote});
+      route.push({id:"dns1-browser",phase:"resolve",action:remote?`DNS 1 now returns ${remote} to the browser`:`DNS 1 returns “no IP” to the browser`,predictedIp:remote});
+      if(remote){route.push({id:"browser-server",phase:"retrieve",action:`Send ${p.protocol.toUpperCase()} ${p.path} to web server ${remote}`,predictedIp:remote});route.push({id:"server-browser",phase:"retrieve",action:"Return the requested HTML to the browser",predictedIp:remote});route.push({id:"render",phase:"render",action:"Render the returned HTML inside the browser",predictedIp:remote});}
+    }
+    return route;
+  }
+
+  async function animateBus(id,value,direction){const el=$(id);el.classList.remove("active","to-right","to-left","complete");void el.offsetWidth;el.querySelector(".bus-value").textContent=value;el.classList.add("active",direction);await delay(760);el.classList.remove("active",direction);el.classList.add("complete");}
+  async function animateMini(id,value,direction){const el=$(id);el.classList.remove("active","to-right","to-left");void el.offsetWidth;el.querySelector(".mini-value").textContent=value;el.classList.add("active",direction);await delay(720);el.classList.remove("active",direction);}
+
+  async function runStep(step){
+    const p=state.parsed;setPhase(step.phase);document.querySelectorAll(".url-part").forEach(el=>el.classList.remove("active"));
+    if(step.id==="browser-dns1"){
+      $("partDomain").classList.add("active");setChip("browserState","sending domain","active");$("dns1").className="dns-node active";$("dns1QueryCell").className="console-cell active";$("dns1QueryValue").textContent=p.domain;$("dns1ResultValue").textContent="checking cache…";setChip("dnsState","DNS 1 lookup","active");setOperation(`BROWSER → DNS 1 · ${p.domain}`);setMicro("Send the domain to DNS 1.","Only the domain name leaves the browser. The page request is still blocked because no destination IP is known.");
+      await animateBus("queryBus",p.domain,"to-right");
+      const local=dns1Cache[p.domain]||"";
+      if(local){$("dns1ResultCell").className="console-cell good";$("dns1ResultValue").textContent=local;$("dns1").className="dns-node good";setChip("dnsState","DNS 1 hit","good");setMicro("DNS 1 already knows this domain.",`${p.domain} is in DNS 1's local cache, so no second DNS server is needed.`);}else{$("dns1ResultCell").className="console-cell miss";$("dns1ResultValue").textContent="MISS · ask DNS 2";$("dns1").className="dns-node warn";setChip("dnsState","DNS 1 miss","warn");setMicro("DNS 1 does not know this domain.","The lookup cannot return to the browser yet. DNS 1 must ask DNS 2.");}
+      return;
+    }
+    if(step.id==="dns1-dns2"){
+      $("dns1").className="dns-node active";$("dns2").className="dns-node active";$("dns2QueryCell").className="console-cell active";$("dns2QueryValue").textContent=p.domain;$("dns2ResultValue").textContent="searching…";setChip("dnsState","DNS 1 → DNS 2","active");setOperation(`DNS 1 → DNS 2 · ${p.domain}`);setMicro("DNS 1 forwards the lookup to DNS 2.","The browser still has no IP. This is a DNS-to-DNS hop, not a web-page request.");await animateMini("dnsHopQuery",p.domain,"to-right");const remote=dns2Records[p.domain]||"";if(remote){$("dns2ResultCell").className="console-cell good";$("dns2ResultValue").textContent=remote;$("dns2").className="dns-node good";}else{$("dns2ResultCell").className="console-cell miss";$("dns2ResultValue").textContent="NO IP MAPPING";$("dns2").className="dns-node warn";}return;
+    }
+    if(step.id==="dns2-dns1"){
+      const remote=step.predictedIp||"";$("dns2").className=remote?"dns-node good":"dns-node warn";$("dns1").className="dns-node active";setChip("dnsState","DNS 2 → DNS 1","active");setOperation(remote?`DNS 2 → DNS 1 · ${remote}`:"DNS 2 → DNS 1 · NO IP");setMicro(remote?"DNS 2 sends the IP back to DNS 1.":"DNS 2 reports that it has no mapping.",remote?`When ${remote} arrives, DNS 1 stores ${p.domain} → ${remote} in its own cache before replying to the browser.`:"DNS 1 now knows the lookup failed, but it still has to return that result to the browser.");await animateMini("dnsHopReply",remote||"NO IP","to-left");if(remote){dns1Cache[p.domain]=remote;learnedDomains.add(p.domain);renderDNS1Cache();$("dns1ResultCell").className="console-cell good";$("dns1ResultValue").textContent=`learned ${remote}`;$("dns1").className="dns-node good";state.ip=remote;setChip("dnsState","DNS 1 learned IP","good");}else{$("dns1ResultCell").className="console-cell miss";$("dns1ResultValue").textContent="NO IP";$("dns1").className="dns-node warn";state.ip="";setChip("dnsState","no mapping","bad");}return;
+    }
+    if(step.id==="dns1-browser"){
+      const ip=step.predictedIp||state.ip||dns1Cache[p.domain]||"";state.ip=ip;$("dns1").className=ip?"dns-node good":"dns-node warn";setChip("browserState","receiving DNS result","active");setOperation(ip?`DNS 1 → BROWSER · ${ip}`:"DNS 1 → BROWSER · NO IP");setMicro(ip?"DNS 1 returns the destination IP.":"DNS 1 returns no destination IP.",ip?`${p.domain} is now resolved. Only now can the browser build a page request to ${ip}.`:"Without an IP address, the browser has no server destination and cannot request the page.");await animateBus("ipBus",ip||"NO IP","to-left");if(ip){$("destValue").textContent=ip;setEngine("destBlock","good");$("requestValue").textContent=`${p.protocol.toUpperCase()} ${p.path} → ${ip}`;setEngine("requestBlock","active");setChip("browserState","destination ready","good");$("requestBus").querySelector(".bus-value").textContent="destination ready";}else{$("destValue").textContent="no IP returned";setEngine("destBlock","warn");$("requestValue").textContent="blocked · no destination IP";setEngine("requestBlock","warn");setChip("browserState","DNS miss","bad");setChip("serverState","not contacted");browserError("Site cannot be located",`${p.domain} did not return an IP address. The browser therefore never contacted any web server.`,"DNS lookup completed · no destination IP");state.failed=true;setMicro("Navigation stops after DNS.","The Field Notes server can exist and still be unreachable by its domain when DNS has no mapping.");}return;
+    }
+    if(step.id==="browser-server"){
+      const ip=step.predictedIp||state.ip;state.server=siteByIp(ip);setPhase("retrieve");setChip("browserState","sending request","active");$("requestBusName").textContent=p.protocol==="https"?"HTTPS request · encrypted":"HTTP request";setEngine("requestBlock","active");setOperation(`${p.protocol.toUpperCase()} ${p.path} → ${ip}`);setMicro("The browser can finally request the page.",`The resolved IP ${ip} selects the web server. The page/file ${p.path} selects a resource stored on that server.`);if(state.server){setServer(state.server,"active",`request ${p.path}`);setChip("serverState",state.server.name,"active");}await animateBus("requestBus",`${p.protocol.toUpperCase()} ${p.path}`,"to-right");if(!state.server){browserError("Web server cannot be reached",`DNS returned ${ip}, but no server in this teaching network uses that address.`,"IP resolved · no server at destination");setChip("serverState","no server at IP","bad");setEngine("requestBlock","warn");state.failed=true;return;}state.page=state.server.pages[p.path]||null;if(!state.page){setServer(state.server,"warn","file missing");setChip("serverState","file not found","bad");setEngine("requestBlock","good");browserError("Page file not found",`The browser reached ${state.server.name} at ${ip}, but that server does not store ${p.path}.`,"DNS worked · server reached · file missing");state.failed=true;return;}setServer(state.server,"good","HTML ready");setChip("serverState","HTML ready","good");setEngine("requestBlock","good");return;
+    }
+    if(step.id==="server-browser"){
+      setPhase("retrieve");setChip("browserState","receiving HTML","active");setEngine("htmlBlock","active");setOperation(`SERVER → BROWSER · ${state.page.title} HTML`);setMicro("The server returns the requested HTML.","The page source travels back to the browser. The visible page still does not exist until the browser renders this HTML.");await animateBus("htmlBus",`${state.page.title} HTML`,`to-left`);$("htmlValue").textContent=`${state.page.title} HTML received`;$("sourceMini").textContent=state.page.source;setEngine("htmlBlock","good");setEngine("rendererBlock","active");return;
+    }
+    if(step.id==="render"){
+      setPhase("render");setChip("browserState","rendering HTML","active");setEngine("rendererBlock","active");setOperation("LOCAL · HTML → visible page");setMicro("The browser renders the returned HTML.","This final step happens on the device. No DNS or web-server transfer is needed now.");await delay(420);$("viewport").innerHTML=state.page.render();setEngine("rendererBlock","good");setChip("browserState","page displayed","good");setServer(state.server,"good","used for page");setChip("serverState",state.server.name,"good");setMicro("Page displayed.",`${p.domain} became ${state.ip}; only then could the browser request ${p.path}, receive HTML and render the page.`);return;
+    }
+  }
+
+  function startQueue(){
+    const p=parseURL($("urlInput").value);if(!p){browserError("Invalid URL","Use a complete URL beginning with http:// or https://.","URL could not be parsed");setMicro("The browser cannot use this URL.","Correct the address before starting the lookup.");state.failed=true;setProgress();return false;}
+    state.parsed=p;state.queue=buildQueue(p);state.index=0;state.failed=false;$("bookmarkHint").textContent="Go now steps through";document.querySelectorAll(".url-part").forEach(el=>el.classList.remove("active"));return true;
+  }
+
+  async function primaryStep(){
+    if(state.busy||state.failed)return;if(!state.queue.length&&!startQueue())return;if(state.index>=state.queue.length)return;
+    const step=state.queue[state.index];state.busy=true;setProgress();const token=state.token;try{await runStep(step);if(token!==state.token)return;state.index++;}finally{state.busy=false;setProgress();}
+  }
+
+  $("goBtn").addEventListener("click",primaryStep);
+  $("urlInput").addEventListener("keydown",e=>{if(e.key==="Enter")primaryStep();});
+  $("urlInput").addEventListener("input",()=>{renderURLParts();syncBookmarkSelection();resetNavigationVisuals(false);blankPage("URL changed. Click Go to start a new lookup.");setMicro("URL changed.","No DNS query or page request has been sent yet.");setOperation("URL waiting in browser");setProgress();});
+  $("resetBtn").addEventListener("click",()=>{dns1Cache={...DNS1_DEFAULT};learnedDomains=new Set();dns2Records={...DNS2_DEFAULT};$("urlInput").value=BOOKMARKS[0].url;renderURLParts();renderDNS1Cache();renderDNS2();renderServers();renderBookmarks();resetNavigationVisuals(false);blankPage();setMicro("Ready.","Choose one of the three browser bookmarks, then click Go.");setOperation("URL waiting in browser");setProgress();});
+
+  renderURLParts();renderDNS1Cache();renderDNS2();renderServers();renderBookmarks();resetNavigationVisuals(false);blankPage();setProgress();
+})();
+</script>
+</body>
+</html>

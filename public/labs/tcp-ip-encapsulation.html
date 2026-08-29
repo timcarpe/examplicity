@@ -1,0 +1,606 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TCP/IP Protocol Stack</title>
+<meta name="description" content="Build and unpack the four-layer TCP/IP protocol stack to see how ports, IP addresses and MAC addresses support communication for Cambridge 9618.">
+<link rel="canonical" href="https://www.examplicity.org/labs/tcp-ip-encapsulation.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Examplicity">
+<meta property="og:title" content="TCP/IP Protocol Stack">
+<meta property="og:description" content="Build and unpack the four-layer TCP/IP protocol stack to see how ports, IP addresses and MAC addresses support communication for Cambridge 9618.">
+<meta property="og:url" content="https://www.examplicity.org/labs/tcp-ip-encapsulation.html">
+<meta property="og:image" content="https://www.examplicity.org/opengraph-image">
+<meta property="og:image:alt" content="Examplicity — Make complex ideas click">
+<meta name="twitter:card" content="summary_large_image">
+<!-- LAB_FRAME_STYLES_START -->
+<style data-lab-frame>
+:root {
+  --lab-canvas: #f3f5f7;
+  --lab-paper: #fbfbfd;
+  --lab-surface: #ffffff;
+  --lab-control: #ffffff;
+  --lab-ink: #1d1d1f;
+  --lab-muted: #6e6e73;
+  --lab-line: #d2d2d7;
+  --lab-line-strong: #a7a7ad;
+  --lab-accent: #5277b8;
+  --lab-accent-soft: #eef2fa;
+  --lab-good: #18794e;
+  --lab-good-soft: #edf8f1;
+  --lab-warn: #946200;
+  --lab-warn-soft: #fff6e7;
+  --lab-bad: #b42318;
+  --lab-bad-soft: #fff0ee;
+  --lab-focus: #1d1d1f;
+  --lab-focus-soft: rgba(29, 29, 31, 0.18);
+  --lab-font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+  --lab-panel-radius: 12px;
+  --lab-control-radius: 8px;
+  --lab-pill-radius: 999px;
+  --lab-control-height: 35px;
+  --lab-panel-shadow: 0 1px 2px rgba(29, 29, 31, 0.04);
+}
+
+html,
+body {
+  background: var(--lab-canvas);
+}
+
+body {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-family: var(--lab-font-sans);
+  padding-bottom: 58px;
+  padding-top: 66px;
+  text-rendering: optimizeLegibility;
+}
+
+html[data-theme="dark"],
+html[data-theme="dark"] body {
+  background: var(--bg);
+}
+
+main {
+  container-name: lab-canvas;
+  container-type: inline-size;
+}
+
+body.binary-lab main {
+  width: min(820px, calc(100% - 24px));
+}
+
+:where(button, input, select, textarea, summary):focus-visible {
+  outline: 3px solid var(--lab-focus);
+  outline-offset: 4px;
+}
+
+@media (max-width: 620px) {
+  body {
+    padding-bottom: 76px;
+    padding-top: 60px;
+  }
+
+  body.binary-lab main {
+    width: min(100% - 12px, 820px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+</style>
+<!-- LAB_FRAME_STYLES_END -->
+<style>
+:root{
+  --lab-canvas:#f3f5f7;--lab-paper:#fbfbfd;--lab-surface:#fff;--lab-control:#fff;
+  --lab-ink:#1d1d1f;--lab-muted:#6e6e73;--lab-line:#d2d2d7;--lab-line-strong:#a7a7ad;
+  --lab-accent:#5277b8;--lab-accent-soft:#eef2fa;--lab-good:#18794e;--lab-good-soft:#edf8f1;
+  --lab-warn:#946200;--lab-warn-soft:#fff6e7;--lab-bad:#b42318;--lab-bad-soft:#fff0ee;
+  --lab-focus:#e59b2f;--lab-font-sans:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif;
+  --lab-panel-radius:12px;--lab-control-radius:8px;--lab-pill-radius:999px;--lab-panel-shadow:0 1px 2px rgba(29,29,31,.04);
+  --app:#9a69c1;--app-soft:#f7effd;--tcp:#de9143;--tcp-dark:#8f551e;--tcp-soft:#fff4e8;
+  --ip:#49a1a4;--ip-dark:#246d70;--ip-soft:#ebf9f8;--eth:#5b80c4;--eth-dark:#345a9a;--eth-soft:#eef3fb;
+  --board:#101b25;--board2:#142430;--grid:rgba(176,211,228,.065);--grid2:rgba(176,211,228,.12);
+}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{margin:0;background:var(--lab-canvas);color:var(--lab-ink);font-family:var(--lab-font-sans);padding:64px 0 56px;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased}
+button{font:inherit;cursor:pointer;min-height:34px;padding:0 10px;border:1px solid var(--lab-line);border-radius:var(--lab-control-radius);background:var(--lab-control);color:var(--lab-ink)}
+button:hover:not(:disabled){border-color:var(--lab-line-strong)}button:disabled{opacity:.43;cursor:not-allowed}
+button.primary{background:var(--lab-accent);border-color:var(--lab-accent);color:#fff;font-weight:760}
+:where(button,[role="button"]):focus-visible{outline:3px solid var(--lab-focus);outline-offset:3px}
+main{width:min(1380px,calc(100% - 20px));margin:auto}
+h1{margin:0;font-size:28px;font-weight:640;letter-spacing:-.03em;line-height:1.1}
+.sub{margin:5px 0 12px;color:var(--lab-muted);font-size:13px;line-height:1.4}
+.panel{background:var(--lab-surface);border:1px solid var(--lab-line);border-radius:var(--lab-panel-radius);box-shadow:var(--lab-panel-shadow)}
+
+.challenge-bar{min-height:62px;padding:10px 11px;display:grid;grid-template-columns:minmax(280px,1fr) auto;gap:12px;align-items:center}
+.challenge-copy strong{display:block;font-size:15px}.challenge-copy span{display:block;margin-top:3px;color:var(--lab-muted);font-size:10px;line-height:1.35}
+.challenge-actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.challenge-tabs{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}
+.challenge-tab{min-height:31px;padding:0 9px;font-size:9px;font-weight:820}
+.challenge-tab.active{background:var(--lab-accent);border-color:var(--lab-accent);color:#fff}
+.challenge-tab.complete:not(.active){background:var(--lab-good-soft);border-color:var(--lab-good);color:var(--lab-good)}
+.challenge-tab:disabled{opacity:.34}
+
+.lab-board{position:relative;margin-top:10px;overflow:hidden;border-color:#243746;background:var(--board);color:#edf5f8;box-shadow:0 8px 28px rgba(24,43,56,.12)}
+.lab-board::before{content:"";position:absolute;inset:0;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px),linear-gradient(var(--grid2) 1px,transparent 1px),linear-gradient(90deg,var(--grid2) 1px,transparent 1px);background-size:24px 24px,24px 24px,120px 120px,120px 120px;pointer-events:none}
+.board-head{position:relative;z-index:3;min-height:55px;padding:9px 12px;display:flex;justify-content:space-between;gap:12px;align-items:center;border-bottom:1px solid rgba(198,224,236,.13);background:rgba(6,16,23,.74)}
+.endpoint{display:flex;align-items:center;gap:9px;min-width:0}
+.device-icon{width:42px;height:34px;flex:0 0 auto;display:grid;place-items:center;border:1px solid #8196a4;border-radius:7px;background:linear-gradient(#edf3f6,#bdcad2);color:#304552;box-shadow:0 4px 9px rgba(0,0,0,.22)}
+.device-icon svg{width:29px;height:23px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.endpoint strong{display:block;font-size:11px}.endpoint span{display:block;margin-top:2px;color:#9fb2bd;font:760 8px/1.35 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.endpoint.right{text-align:right;flex-direction:row-reverse}
+.board-centre-note{padding:4px 8px;border:1px solid rgba(177,208,223,.18);border-radius:999px;background:rgba(12,32,43,.78);color:#b9cbd4;font-size:8px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap}
+
+.board-stage{position:relative;z-index:2;min-height:640px;padding:14px;display:grid;grid-template-columns:196px minmax(390px,1fr) 128px minmax(310px,.83fr);gap:12px;align-items:stretch}
+.station{position:relative;min-width:0;border:1px solid rgba(184,214,227,.16);border-radius:12px;background:rgba(18,38,50,.72);box-shadow:inset 0 0 28px rgba(106,174,202,.025)}
+.station-title{padding:9px 10px 8px;border-bottom:1px solid rgba(184,214,227,.12)}
+.station-title strong{display:block;font-size:12px}.station-title span{display:block;margin-top:2px;color:#9bb0bb;font-size:8px;line-height:1.35}
+
+.rack{padding:9px;display:grid;gap:8px}
+.wrapper-tool{position:relative;width:100%;min-height:88px;padding:8px;display:grid;grid-template-columns:48px 1fr;gap:8px;align-items:center;text-align:left;color:#f5fbfd;border-color:rgba(184,214,227,.25);background:rgba(6,20,28,.72);touch-action:none;user-select:none}
+.wrapper-tool:hover:not(:disabled){border-color:var(--tone);background:color-mix(in srgb,var(--tone) 15%,#071923)}
+.wrapper-tool.used{opacity:.34}
+.wrapper-tool.dragging-source{opacity:.4}
+.tool-shell{width:48px;height:48px;display:grid;place-items:center;border:3px solid var(--tone);border-radius:10px;background:var(--soft);color:var(--dark);font-size:9px;font-weight:900;box-shadow:inset 0 0 0 4px #fff}
+.wrapper-tool strong{display:block;font-size:10px}.wrapper-tool small{display:block;margin-top:3px;color:#aabdc7;font-size:8px;line-height:1.3}
+.wrapper-tool.tcp{--tone:var(--tcp);--soft:var(--tcp-soft);--dark:var(--tcp-dark)}
+.wrapper-tool.ip{--tone:var(--ip);--soft:var(--ip-soft);--dark:var(--ip-dark)}
+.wrapper-tool.link{--tone:var(--eth);--soft:var(--eth-soft);--dark:var(--eth-dark)}
+.rack-note{margin:1px 2px 0;color:#8fa4af;font-size:8px;line-height:1.4}
+
+.packing-mat{position:relative;min-height:552px;margin:10px;padding:14px;border:1px dashed rgba(187,215,228,.28);border-radius:11px;background:radial-gradient(circle at 50% 45%,rgba(82,128,157,.13),transparent 19rem),rgba(4,15,22,.34);display:grid;place-items:center;overflow:hidden}
+.packing-mat.drop-ready{box-shadow:inset 0 0 0 3px rgba(111,187,230,.38);background:radial-gradient(circle at 50% 45%,rgba(83,152,190,.20),transparent 19rem),rgba(4,15,22,.34)}
+.mat-label{position:absolute;left:10px;top:9px;color:#82a0af;font-size:8px;font-weight:850;letter-spacing:.08em;text-transform:uppercase}
+.packet-host{width:min(430px,94%);max-height:505px;overflow:auto;padding:8px;display:grid;place-items:center}
+.packet-visual{width:100%;min-width:0;transition:filter .15s,transform .15s}
+.packet-visual.busy{filter:saturate(.5);pointer-events:none}
+.http-core{position:relative;padding:12px 13px;border:3px solid var(--app);border-radius:11px;background:var(--app-soft);color:#33253e;box-shadow:0 7px 15px rgba(0,0,0,.18)}
+.http-core::before{content:attr(data-label);display:block;margin-bottom:7px;color:#704793;font-size:9px;font-weight:900;letter-spacing:.04em;text-transform:uppercase}
+.http-code{padding:8px 9px;border-radius:8px;background:#fff;color:#36313a;font:780 10px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre-line}
+.packet-shell{position:relative;padding:8px;border:3px solid var(--tone);border-radius:13px;background:var(--soft);color:#29343a;box-shadow:0 7px 16px rgba(0,0,0,.18);animation:shellIn .2s ease-out}
+.packet-shell + *{margin:0}
+.packet-shell.tcp{--tone:var(--tcp);--soft:var(--tcp-soft);--dark:var(--tcp-dark)}
+.packet-shell.ip{--tone:var(--ip);--soft:var(--ip-soft);--dark:var(--ip-dark)}
+.packet-shell.link{--tone:var(--eth);--soft:var(--eth-soft);--dark:var(--eth-dark)}
+.packet-shell.flash-bad{animation:badShake .26s linear 2;box-shadow:0 0 0 4px rgba(207,77,69,.18),0 7px 16px rgba(0,0,0,.18)}
+@keyframes shellIn{from{opacity:.2;transform:scale(.965)}to{opacity:1;transform:scale(1)}}
+@keyframes badShake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.shell-header{display:grid;grid-template-columns:minmax(96px,.78fr) 1fr 1fr auto;gap:6px;align-items:stretch;margin-bottom:7px}
+.shell-name{min-width:0;padding:6px 7px;border:1px solid color-mix(in srgb,var(--tone) 54%,#fff);border-radius:7px;background:color-mix(in srgb,var(--tone) 13%,#fff);color:var(--dark)}
+.shell-name span{display:block;font-size:7px;font-weight:850;letter-spacing:.05em;text-transform:uppercase}.shell-name strong{display:block;margin-top:2px;font-size:10px}
+.header-field{min-width:0;padding:5px 6px;border:1px solid color-mix(in srgb,var(--tone) 35%,#d2d2d7);border-radius:7px;background:#fff}
+.header-field span{display:block;color:#75818a;font-size:6.5px;font-weight:850;text-transform:uppercase;letter-spacing:.045em}.header-field strong{display:block;margin-top:2px;font:800 8px/1.25 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ .header-field.pending{border-style:dashed;background:color-mix(in srgb,var(--tone) 8%,#fff);animation:fieldWait .6s ease-in-out infinite alternate}
+@keyframes fieldWait{to{background:color-mix(in srgb,var(--tone) 18%,#fff)}}
+.peel-tab{width:34px;min-height:100%;padding:0;border-color:color-mix(in srgb,var(--tone) 52%,#d2d2d7);background:color-mix(in srgb,var(--tone) 16%,#fff);color:var(--dark);font-size:13px;font-weight:900}
+.payload-mark{position:absolute;right:10px;bottom:4px;color:var(--dark);font-size:6px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;opacity:.68}
+.empty-hint{position:absolute;bottom:10px;left:10px;right:10px;color:#819aa8;text-align:center;font-size:8px;line-height:1.35}
+
+.wire-station{display:grid;align-content:center;gap:9px;padding:8px}
+.wire-label{color:#9db2bd;text-align:center;font-size:8px;font-weight:850;letter-spacing:.06em;text-transform:uppercase}
+.wire-track{position:relative;height:330px}
+.wire-line{position:absolute;left:50%;top:12px;bottom:12px;width:5px;transform:translateX(-50%);border-radius:99px;background:#314957;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
+.wire-line::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(180deg,transparent 0 11px,rgba(115,201,248,.75) 11px 18px,transparent 18px 28px);opacity:.2}
+.flight-packet{position:absolute;left:50%;top:8px;width:68px;height:54px;transform:translate(-50%,0);opacity:0;transition:top .78s cubic-bezier(.32,.72,.2,1),opacity .18s}
+.flight-packet.visible{opacity:1}.flight-packet.arrive{top:266px}
+.mini-shell{position:absolute;border:4px solid;border-radius:10px;background:#fff}.mini-shell.link{inset:0;border-color:var(--eth);background:var(--eth-soft)}.mini-shell.ip{inset:7px;border-color:var(--ip);background:var(--ip-soft)}.mini-shell.tcp{inset:14px;border-color:var(--tcp);background:var(--tcp-soft)}.mini-core{position:absolute;inset:21px;border:3px solid var(--app);border-radius:5px;background:var(--app-soft)}
+.send-button{width:100%;font-size:10px}
+
+.receiver-station{padding-bottom:10px;overflow:hidden}
+.receiver-map{position:relative;min-height:548px;margin:10px;border:1px solid rgba(184,214,227,.16);border-radius:11px;background:linear-gradient(180deg,rgba(12,31,42,.74),rgba(5,19,27,.78));overflow:hidden}
+.receiver-spine{position:absolute;left:40px;top:30px;bottom:30px;width:5px;border-radius:99px;background:#2a4351}
+.gate{position:absolute;left:19px;right:10px;height:92px;display:grid;grid-template-columns:44px minmax(0,1fr);gap:8px;align-items:center;padding:7px 8px;border:1px solid rgba(185,214,228,.16);border-left:5px solid var(--tone);border-radius:10px;background:rgba(13,34,46,.94);transition:.18s}
+.gate.application{--tone:var(--app);top:24px}.gate.transport{--tone:var(--tcp);top:137px}.gate.internet{--tone:var(--ip);top:250px}.gate.link{--tone:var(--eth);top:363px}
+.gate.active{box-shadow:0 0 0 3px color-mix(in srgb,var(--tone) 28%,transparent),0 0 20px color-mix(in srgb,var(--tone) 28%,transparent)}
+.gate.pass{background:color-mix(in srgb,var(--lab-good) 14%,#0d222e);border-color:var(--lab-good)}
+.gate.fail{background:color-mix(in srgb,var(--lab-bad) 17%,#0d222e);border-color:#dc6a61;box-shadow:0 0 0 3px rgba(220,106,97,.12)}
+.gate-icon{width:40px;height:40px;display:grid;place-items:center;border:2px solid var(--tone);border-radius:9px;background:#f7fbfd;color:#2f4856;font-weight:900;font-size:9px}
+.gate-copy strong{display:block;font-size:10px}.gate-copy span{display:block;margin-top:2px;color:#9eb2bc;font-size:7.5px;line-height:1.3}
+.gate-read{min-height:19px;margin-top:5px;padding:3px 5px;border:1px solid rgba(190,218,231,.12);border-radius:5px;background:rgba(5,17,24,.7);color:#d6e5eb;font:760 7px/1.35 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.receiver-packet{position:absolute;left:50%;bottom:12px;width:250px;transform:translateX(-50%) scale(.63);transform-origin:50% 100%;transition:bottom .38s cubic-bezier(.2,.75,.2,1),opacity .2s;z-index:5;opacity:0;pointer-events:none}
+.receiver-packet.visible{opacity:1}
+.server-window{position:absolute;left:88px;right:14px;top:29px;height:82px;border:1px solid rgba(199,218,229,.28);border-radius:8px;background:#edf3f6;color:#32424b;overflow:hidden;opacity:.24;transition:.18s}
+.server-window.ready{opacity:1;box-shadow:0 0 0 3px rgba(154,105,193,.18)}
+.server-title{height:22px;padding:5px 7px;background:#dfe7ec;font-size:8px;font-weight:900}.server-body{padding:7px;font:760 7px/1.45 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre-line}
+
+.status-strip{position:relative;z-index:3;min-height:58px;padding:9px 12px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;border-top:1px solid rgba(190,218,231,.14);background:rgba(5,16,23,.87)}
+.status-light{width:12px;height:12px;border:2px solid #718997;border-radius:50%;background:#243d4a}.status-strip.good .status-light{border-color:#56b67b;background:#56b67b}.status-strip.bad .status-light{border-color:#de6b61;background:#de6b61}.status-strip.warn .status-light{border-color:#d5a14c;background:#d5a14c}
+.status-copy strong{display:block;font-size:10px}.status-copy span{display:block;margin-top:2px;color:#9fb2bd;font-size:8px;line-height:1.35}
+.status-key{color:#8299a6;font:760 7px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:nowrap}
+
+
+.compare-panel{position:relative;z-index:3;margin:0 14px 12px;padding:10px 11px;border:1px solid rgba(190,218,231,.16);border-radius:10px;background:rgba(7,22,30,.78);color:#edf5f8}
+.compare-panel[hidden]{display:none}
+.compare-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:8px}
+.compare-head strong{display:block;font-size:11px}.compare-head span{display:block;margin-top:2px;color:#9fb2bd;font-size:8px;line-height:1.35}
+.compare-grid{display:grid;grid-template-columns:110px 1fr 1fr;gap:4px;font-size:8px}
+.compare-grid>span{min-width:0;padding:5px 6px;border:1px solid rgba(190,218,231,.10);border-radius:6px;background:rgba(5,17,24,.52);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.compare-grid .head{color:#9fb2bd;font-weight:850;text-transform:uppercase;letter-spacing:.04em}
+.compare-grid .changed{border-color:rgba(222,145,67,.46);background:rgba(222,145,67,.11);color:#ffd9b1}
+.compare-grid .same{border-color:rgba(73,161,164,.34);background:rgba(73,161,164,.08);color:#c5efed}
+.compare-summary{margin-top:8px;color:#c4d4dc;font-size:9px;line-height:1.4}
+.compare-summary strong{color:#fff}
+
+.footer{margin-top:8px;color:var(--lab-muted);font-size:9px;line-height:1.4}
+.drag-ghost{position:fixed;z-index:1000;pointer-events:none;width:118px;padding:8px;border:2px solid var(--tone);border-radius:10px;background:var(--soft);color:var(--dark);box-shadow:0 12px 26px rgba(0,0,0,.25);transform:translate(-50%,-50%);font-size:9px;font-weight:900}
+.drag-ghost.tcp{--tone:var(--tcp);--soft:var(--tcp-soft);--dark:var(--tcp-dark)}.drag-ghost.ip{--tone:var(--ip);--soft:var(--ip-soft);--dark:var(--ip-dark)}.drag-ghost.link{--tone:var(--eth);--soft:var(--eth-soft);--dark:var(--eth-dark)}
+
+@media(max-width:1080px){.board-stage{grid-template-columns:185px minmax(370px,1fr) 112px}.receiver-station{grid-column:1/-1}.receiver-map{min-height:500px}.gate.application{top:18px}.gate.transport{top:119px}.gate.internet{top:220px}.gate.link{top:321px}}
+@media(max-width:760px){body{padding-top:58px}.challenge-bar{grid-template-columns:1fr}.challenge-actions,.challenge-tabs{justify-content:flex-start}.board-head{align-items:flex-start;flex-direction:column}.board-centre-note{display:none}.endpoint.right{text-align:left;flex-direction:row}.board-stage{grid-template-columns:1fr}.rack{grid-template-columns:repeat(3,minmax(0,1fr))}.wrapper-tool{grid-template-columns:1fr;justify-items:center;text-align:center}.wire-station{min-height:160px}.wire-track{height:78px}.wire-line{left:12px;right:12px;top:50%;bottom:auto;width:auto;height:5px;transform:translateY(-50%)}.flight-packet{left:8px;top:50%;transform:translate(0,-50%)}.flight-packet.arrive{left:calc(100% - 76px);top:50%}.receiver-packet{width:230px}.status-strip{grid-template-columns:auto 1fr}.status-key{grid-column:2}}
+@media(max-width:480px){main{width:min(100% - 10px,1380px)}.rack{grid-template-columns:1fr}.shell-header{grid-template-columns:1fr 1fr}.shell-name{grid-column:1/-1}.peel-tab{position:absolute;right:7px;top:7px;width:31px;height:31px;min-height:31px}.header-field{padding-right:5px}.packing-mat{margin:7px;padding:8px}.packet-host{width:100%;padding:4px}.gate{left:10px;grid-template-columns:37px 1fr}.server-window{left:73px}.receiver-packet{width:205px}}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;transition-duration:.001ms!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<main>
+  <h1>TCP/IP Protocol Stack</h1>
+  <div class="sub">Build one transmitted object. Each lower layer adds its own header around everything the layer above already produced.</div>
+
+  <section class="panel challenge-bar">
+    <div class="challenge-copy">
+      <strong id="challengeTitle">Get the browser request to the web-server process</strong>
+      <span id="challengeHint">Click a protocol shell to wrap the complete object on the mat. Send at any point; the receiver will show what it can interpret.</span>
+    </div>
+    <div class="challenge-actions">
+      <button id="compareProcess" type="button" hidden>Compare another process</button>
+      <button id="resetPacket" type="button">Restart lab</button>
+    </div>
+  </section>
+
+  <section class="panel lab-board" aria-label="Interactive TCP IP encapsulation workshop">
+    <div class="board-head">
+      <div class="endpoint">
+        <div class="device-icon" aria-hidden="true"><svg viewBox="0 0 40 30"><rect x="4" y="3" width="32" height="21" rx="3"/><path d="M20 24v4M13 28h14"/></svg></div>
+        <div><strong>Client browser</strong><span>IP 192.0.2.10 · MAC A0:B1:C2:10:00:10 · source port 49152</span></div>
+      </div>
+      <div class="board-centre-note">one direct Ethernet link · no routing</div>
+      <div class="endpoint right">
+        <div class="device-icon" aria-hidden="true"><svg viewBox="0 0 40 30"><rect x="6" y="3" width="28" height="24" rx="4"/><path d="M11 9h18M11 15h18M11 21h18"/><circle cx="29" cy="9" r="1"/><circle cx="29" cy="15" r="1"/></svg></div>
+        <div><strong>Server computer</strong><span id="targetEndpointMeta">IP 192.0.2.20 · MAC D4:3A:2F:20:00:20 · Web process TCP 80</span></div>
+      </div>
+    </div>
+
+    <div class="board-stage">
+      <section class="station">
+        <div class="station-title"><strong>Protocol shells</strong><span>Click a shell to wrap the whole current object. The rack is deliberately not ordered.</span></div>
+        <div id="rack" class="rack">
+          <button class="wrapper-tool ip" data-wrapper="ip" type="button"><span class="tool-shell">IP</span><span><strong>Internet layer</strong><small>host → host<br>adds IP addresses</small></span></button>
+          <button class="wrapper-tool tcp" data-wrapper="tcp" type="button"><span class="tool-shell">TCP</span><span><strong>Transport layer</strong><small>process → process<br>adds port numbers</small></span></button>
+          <button class="wrapper-tool link" data-wrapper="link" type="button"><span class="tool-shell">ETH</span><span><strong>Link layer</strong><small>NIC → NIC<br>adds MAC addresses</small></span></button>
+          <div class="rack-note">A shell always goes around everything already on the mat. You can peel only the outside shell.</div>
+        </div>
+      </section>
+
+      <section class="station">
+        <div class="station-title"><strong>Sender packing mat</strong><span id="packingSubtitle">The purple HTTP request is the Application-layer message. Build outward from it.</span></div>
+        <div id="packingMat" class="packing-mat">
+          <span class="mat-label">current transmitted object</span>
+          <div id="packetHost" class="packet-host"></div>
+          <div id="matHint" class="empty-hint">When a shell is added, watch its empty header fields fill. The entire previous object becomes payload.</div>
+        </div>
+      </section>
+
+      <section class="station wire-station">
+        <div class="wire-label">local link</div>
+        <div class="wire-track" aria-hidden="true">
+          <div class="wire-line"></div>
+          <div id="flightPacket" class="flight-packet"><i class="mini-shell link"></i><i class="mini-shell ip"></i><i class="mini-shell tcp"></i><i class="mini-core"></i></div>
+        </div>
+        <button id="sendButton" class="primary send-button" type="button">Send what I built</button>
+      </section>
+
+      <section class="station receiver-station">
+        <div class="station-title"><strong>Receiver unpacking tunnel</strong><span>The outside is inspected first. A successful layer removes only its own header and exposes the payload.</span></div>
+        <div id="receiverMap" class="receiver-map">
+          <div class="receiver-spine"></div>
+          <div class="gate application" data-gate="application"><div class="gate-icon" id="appGateIcon">HTTP</div><div class="gate-copy"><strong id="appGateTitle">Web process</strong><span id="appGateCopy">receives the original HTTP request after lower headers are gone</span><div class="gate-read">waiting</div></div></div>
+          <div class="gate transport" data-gate="transport"><div class="gate-icon">TCP</div><div class="gate-copy"><strong>Transport</strong><span>destination port selects a process on this computer</span><div class="gate-read">waiting</div></div></div>
+          <div class="gate internet" data-gate="internet"><div class="gate-icon">IP</div><div class="gate-copy"><strong>Internet</strong><span>destination IP identifies this computer</span><div class="gate-read">waiting</div></div></div>
+          <div class="gate link" data-gate="link"><div class="gate-icon">ETH</div><div class="gate-copy"><strong>Link</strong><span>destination MAC identifies this network interface</span><div class="gate-read">waiting</div></div></div>
+          <div id="receiverPacket" class="receiver-packet"></div>
+        </div>
+      </section>
+    </div>
+
+    <section id="comparisonPanel" class="compare-panel" hidden aria-live="polite">
+      <div class="compare-head"><div><strong>What changed when the destination process changed?</strong><span>Both messages went to the same server computer and the same network interface.</span></div><span>successful packet comparison</span></div>
+      <div class="compare-grid">
+        <span class="head">Layer</span><span class="head">Web request</span><span class="head">Mail message</span>
+        <span>Application</span><span class="changed">HTTP request</span><span class="changed">SMTP message</span>
+        <span>Transport</span><span class="changed">destination port 80</span><span class="changed">destination port 25</span>
+        <span>Internet</span><span class="same">destination IP 192.0.2.20</span><span class="same">destination IP 192.0.2.20</span>
+        <span>Link</span><span class="same">destination MAC D4:3A:2F:20:00:20</span><span class="same">destination MAC D4:3A:2F:20:00:20</span>
+      </div>
+      <div class="compare-summary"><strong>Discovery:</strong> changing the receiving process changed the Application message and Transport destination, while the host and NIC addresses stayed the same. Each layer adds information for a different scope.</div>
+    </section>
+
+    <div id="statusStrip" class="status-strip">
+      <span class="status-light"></span>
+      <div class="status-copy"><strong id="statusTitle">Bare HTTP request</strong><span id="statusDetail">The browser has produced application data. Add shells around it and watch what each layer contributes.</span></div>
+      <span id="statusKey" class="status-key">HTTP message only</span>
+    </div>
+  </section>
+
+  <div class="footer">Teaching model: one application message that fits in one TCP packet and crosses one direct Ethernet link. DNS, routing, TCP handshakes, segmentation, checksums and retransmission are intentionally excluded so encapsulation, decapsulation and layer-specific addressing remain visible.</div>
+</main>
+
+<script>
+(() => {
+  'use strict';
+  const $=id=>document.getElementById(id);
+  const reduceMotion=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  const sleep=ms=>new Promise(resolve=>setTimeout(resolve,reduceMotion?Math.min(ms,45):ms));
+
+  const services={
+    web:{name:'Web',protocol:'HTTP',port:'80',gate:'Web process',message:'GET /status HTTP/1.1\nHost: web.example.edu'},
+    mail:{name:'Mail',protocol:'SMTP',port:'25',gate:'Mail process',message:'MAIL FROM:<student@example.edu>\nRCPT TO:<teacher@example.edu>'}
+  };
+  const base={
+    tcp:{src:'49152'},
+    ip:{src:'192.0.2.10',dst:'192.0.2.20'},
+    link:{src:'A0:B1:C2:10:00:10',dst:'D4:3A:2F:20:00:20'}
+  };
+  const defs={
+    tcp:{layer:'Transport',protocol:'TCP',srcLabel:'source port',dstLabel:'destination port',short:'TCP'},
+    ip:{layer:'Internet',protocol:'IP',srcLabel:'source IP',dstLabel:'destination IP',short:'IP'},
+    link:{layer:'Link',protocol:'Ethernet',srcLabel:'source MAC',dstLabel:'destination MAC',short:'ETH'}
+  };
+
+  let state={wrappers:[],service:'web',busy:false,filling:null,lastOutcome:null,successful:new Set(),receiverWrappers:[]};
+  let drag=null,runToken=0;
+
+  function currentService(){return services[state.service];}
+  function valuesFor(type){
+    if(type==='tcp')return {src:base.tcp.src,dst:currentService().port};
+    return base[type];
+  }
+  function escapeHtml(value){return String(value).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':'&quot;',"'":'&#39;'}[c]));}
+  function coreMarkup(){
+    const service=currentService();
+    return `<div class="http-core" data-label="Application · ${service.protocol}"><div class="http-code">${escapeHtml(service.message)}</div></div>`;
+  }
+  function shellMarkup(type,inner,{interactive=false,outer=false}={}){
+    const d=defs[type],v=valuesFor(type),pending=state.filling===type;
+    const src=pending?'…':v.src,dst=pending?'…':v.dst;
+    return `<div class="packet-shell ${type}" data-shell="${type}">
+      <div class="shell-header">
+        <div class="shell-name"><span>${d.layer} layer</span><strong>${d.protocol} header</strong></div>
+        <div class="header-field ${pending?'pending':''}"><span>${d.srcLabel}</span><strong>${escapeHtml(src)}</strong></div>
+        <div class="header-field ${pending?'pending':''}"><span>${d.dstLabel}</span><strong>${escapeHtml(dst)}</strong></div>
+        ${outer&&interactive?`<button class="peel-tab" type="button" data-peel="1" aria-label="Remove outer ${d.protocol} shell" title="Remove outer shell">×</button>`:''}
+      </div>
+      ${inner}<span class="payload-mark">payload</span>
+    </div>`;
+  }
+  function packetMarkup(wrappers,{interactive=false}={}){
+    let html=coreMarkup();
+    wrappers.forEach((type,index)=>{html=shellMarkup(type,html,{interactive,outer:index===wrappers.length-1});});
+    return `<div class="packet-visual ${state.busy?'busy':''}">${html}</div>`;
+  }
+  function renderPacket(){
+    $('packetHost').innerHTML=packetMarkup(state.wrappers,{interactive:true});
+    $('packetHost').querySelector('[data-peel]')?.addEventListener('click',peelOuter);
+    document.querySelectorAll('.wrapper-tool').forEach(btn=>{
+      const used=state.wrappers.includes(btn.dataset.wrapper);
+      btn.classList.toggle('used',used);
+      btn.disabled=state.busy||!!state.filling||used;
+    });
+    $('sendButton').disabled=state.busy||!!state.filling;
+  }
+  function renderTarget(){
+    const service=currentService();
+    $('targetEndpointMeta').textContent=`IP 192.0.2.20 · MAC D4:3A:2F:20:00:20 · ${service.name} process TCP ${service.port}`;
+    $('appGateIcon').textContent=service.protocol;
+    $('appGateTitle').textContent=`${service.name} process`;
+    $('appGateCopy').textContent=`receives the original ${service.protocol} message after lower headers are gone`;
+    $('packingSubtitle').textContent=`The purple ${service.protocol} message is the Application-layer data. Build outward from it.`;
+  }
+  function setStatus(tone,title,detail,key=''){
+    const strip=$('statusStrip');
+    strip.className='status-strip'+(tone?` ${tone}`:'');
+    $('statusTitle').textContent=title;
+    $('statusDetail').textContent=detail;
+    $('statusKey').textContent=key||structureText();
+  }
+  function structureText(wrappers=state.wrappers){
+    const core=currentService().protocol;
+    return wrappers.length?wrappers.slice().reverse().map(t=>defs[t].short).concat(core).join(' [ ')+' ]'.repeat(wrappers.length):`${core} message only`;
+  }
+  async function addWrapper(type){
+    if(state.busy||state.filling||state.wrappers.includes(type))return false;
+    state.wrappers.push(type);
+    state.filling=type;
+    renderPacket();
+    const d=defs[type];
+    setStatus('',`${d.layer} creates a ${d.protocol} header`,`The complete object already on the mat is placed inside as payload. Now this layer fills only its own header fields.`);
+    await sleep(360);
+    state.filling=null;
+    renderPacket();
+    setStatus('good',`${d.protocol} header filled`,`${d.layer} added ${d.srcLabel} and ${d.dstLabel}. The inner object was not rewritten.`,structureText());
+    return true;
+  }
+  function peelOuter(){
+    if(state.busy||state.filling||!state.wrappers.length)return;
+    const type=state.wrappers.pop();
+    renderPacket();
+    setStatus('',`${defs[type].protocol} shell removed`,`Only the outside shell was removed; the payload inside stayed intact.`);
+  }
+  function clearReceiver(){
+    document.querySelectorAll('.gate').forEach(g=>{
+      g.classList.remove('active','pass','fail');
+      g.querySelector('.gate-read').textContent='waiting';
+    });
+    $('receiverPacket').className='receiver-packet';
+    $('receiverPacket').innerHTML='';
+    $('receiverPacket').style.bottom='12px';
+    $('flightPacket').className='flight-packet';
+  }
+  function setGate(layer,stateClass,read){
+    const gate=document.querySelector(`.gate[data-gate="${layer}"]`);
+    gate.classList.remove('active','pass','fail');
+    if(stateClass)gate.classList.add(stateClass);
+    if(read!==undefined)gate.querySelector('.gate-read').textContent=read;
+  }
+  function showReceiverPacket(wrappers,step=0){
+    const host=$('receiverPacket');
+    host.innerHTML=packetMarkup(wrappers,{interactive:false});
+    host.classList.add('visible');
+    const bottoms=[18,80,145,210];
+    host.style.bottom=`${bottoms[Math.min(step,bottoms.length-1)]}px`;
+  }
+  function structuralFailure(expected,actual){
+    const expectedName=defs[expected].protocol,actualName=actual?defs[actual].protocol:currentService().protocol;
+    return {layer:expected,kind:'structure',title:`${defs[expected].layer} cannot interpret the outside`,detail:`This receiver layer follows the agreed ${expectedName} format, but the outside of the received object is ${actualName}. The inner payload cannot be reached until the expected outer format is present.`};
+  }
+  function layerReadCopy(type){
+    const v=valuesFor(type);
+    if(type==='link')return `destination MAC ${v.dst} read · Ethernet header removed`;
+    if(type==='ip')return `destination IP ${v.dst} read · IP header removed`;
+    return `destination port ${v.dst} read · TCP header removed`;
+  }
+  function finishSuccessfulRun(){
+    state.successful.add(state.service);
+    if(state.service==='web'&&!state.successful.has('mail')){
+      $('compareProcess').hidden=false;
+      $('challengeTitle').textContent='Web request delivered';
+      $('challengeHint').textContent='The same computer also runs a mail process. Compare what the stack adds when the destination process changes.';
+      $('matHint').textContent='Optional next experiment: compare a different process on the same server. Which shell values should change?';
+    }
+    if(state.successful.has('web')&&state.successful.has('mail')){
+      $('comparisonPanel').hidden=false;
+      $('compareProcess').hidden=true;
+      $('challengeTitle').textContent='Two messages delivered to two processes on the same computer';
+      $('challengeHint').textContent='Use the packet comparison below to identify which information belongs to process, host and network-interface scope.';
+    }
+  }
+  async function sendPacket(){
+    if(state.busy||state.filling)return;
+    state.busy=true;runToken++;const token=runToken;
+    clearReceiver();renderPacket();
+    const flight=$('flightPacket');
+    flight.className='flight-packet visible';
+    await sleep(50);flight.classList.add('arrive');
+    setStatus('','Object placed on the link',`The receiver gets exactly the nested object you built: ${structureText()}.`);
+    await sleep(820);if(token!==runToken)return;
+    flight.className='flight-packet';
+
+    const temp=[...state.wrappers];
+    state.receiverWrappers=temp;
+    showReceiverPacket(temp,0);
+    const sequence=['link','ip','tcp'];
+    for(let i=0;i<sequence.length;i++){
+      const expected=sequence[i],gateLayer=expected==='ip'?'internet':expected==='tcp'?'transport':'link';
+      setGate(gateLayer,'active',`expects ${defs[expected].protocol} outside`);
+      showReceiverPacket(temp,i);
+      await sleep(420);if(token!==runToken)return;
+      const actual=temp[temp.length-1];
+      if(actual!==expected){
+        const fail=structuralFailure(expected,actual);
+        setGate(gateLayer,'fail',`${defs[expected].protocol} expected · ${actual?defs[actual].protocol:currentService().protocol} found`);
+        state.lastOutcome=fail;
+        setStatus('bad',fail.title,fail.detail,`stopped at ${defs[expected].layer}`);
+        state.busy=false;renderPacket();return fail;
+      }
+      setGate(gateLayer,'pass',layerReadCopy(expected));
+      temp.pop();showReceiverPacket(temp,i+1);
+      setStatus('good',`${defs[expected].layer} consumed only its own header`,`${layerReadCopy(expected)}. The unchanged payload is now exposed to the next layer.`,`remaining: ${structureText(temp)}`);
+      await sleep(520);if(token!==runToken)return;
+    }
+    if(temp.length){
+      const actual=temp[temp.length-1];
+      const fail={layer:'application',kind:'structure',title:'Application still sees a lower-layer shell',detail:`Transport finished, but ${defs[actual].protocol} is still outside the ${currentService().protocol} message.`};
+      setGate('application','fail',`${defs[actual].protocol} still outside message`);
+      state.lastOutcome=fail;setStatus('bad',fail.title,fail.detail,'stopped at Application');
+      state.busy=false;renderPacket();return fail;
+    }
+    const service=currentService();
+    setGate('application','active',`${service.protocol} message exposed`);
+    await sleep(340);
+    setGate('application','pass',`${service.protocol} delivered unchanged to ${service.name.toLowerCase()} process`);
+    const outcome={layer:'application',kind:'success',title:`${service.name} message delivered`,detail:`The receiver removed Link, Internet and Transport headers in reverse order. The ${service.name} process received the same ${service.protocol} message that left the client application.`};
+    state.lastOutcome=outcome;
+    setStatus('good',outcome.title,outcome.detail,`${service.protocol} message recovered`);
+    finishSuccessfulRun();
+    state.busy=false;renderPacket();return outcome;
+  }
+  function switchToMail(){
+    if(state.busy||state.filling)return;
+    state.service='mail';state.wrappers=[];state.lastOutcome=null;
+    clearReceiver();renderTarget();renderPacket();
+    $('compareProcess').hidden=true;
+    $('challengeTitle').textContent='Now deliver a mail message to another process on the same server';
+    $('challengeHint').textContent='The host and network interface have not changed. Rebuild the packet and watch which header information is different.';
+    $('matHint').textContent='Same server computer, different receiving process. Build outward from the SMTP message and compare the header values.';
+    setStatus('','Bare SMTP message','The application protocol and destination process changed, but the destination computer did not. Rebuild the same stack around this message.');
+  }
+  function resetLab(){
+    if(state.busy)return;
+    runToken++;
+    state={wrappers:[],service:'web',busy:false,filling:null,lastOutcome:null,successful:new Set(),receiverWrappers:[]};
+    clearReceiver();renderTarget();renderPacket();
+    $('compareProcess').hidden=true;$('comparisonPanel').hidden=true;
+    $('challengeTitle').textContent='Get the browser request to the web-server process';
+    $('challengeHint').textContent='Click a protocol shell to wrap the complete object on the mat. Send at any point; the receiver will show what it can interpret.';
+    $('matHint').textContent='When a shell is added, watch its empty header fields fill. The entire previous object becomes payload.';
+    setStatus('','Bare HTTP request','The browser has produced application data. Add shells around it and watch what each layer contributes.');
+  }
+
+  function beginToolDrag(e){
+    const button=e.currentTarget,type=button.dataset.wrapper;
+    if(button.disabled||e.button>0)return;
+    e.preventDefault();
+    drag={pointerId:e.pointerId,type,button,moved:false,startX:e.clientX,startY:e.clientY,ghost:null};
+    button.setPointerCapture?.(e.pointerId);
+  }
+  function moveToolDrag(e){
+    if(!drag||drag.pointerId!==e.pointerId)return;
+    if(!drag.moved&&Math.hypot(e.clientX-drag.startX,e.clientY-drag.startY)>5){
+      drag.moved=true;drag.button.classList.add('dragging-source');
+      const g=document.createElement('div');g.className=`drag-ghost ${drag.type}`;g.textContent=`${defs[drag.type].protocol} shell`;document.body.appendChild(g);drag.ghost=g;
+    }
+    if(drag.ghost){drag.ghost.style.left=`${e.clientX}px`;drag.ghost.style.top=`${e.clientY}px`;}
+    const r=$('packingMat').getBoundingClientRect();
+    const inside=e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom;
+    $('packingMat').classList.toggle('drop-ready',inside);
+  }
+  function endToolDrag(e){
+    if(!drag||drag.pointerId!==e.pointerId)return;
+    const {type,button,moved,ghost}=drag;
+    button.classList.remove('dragging-source');ghost?.remove();$('packingMat').classList.remove('drop-ready');
+    if(moved){
+      const r=$('packingMat').getBoundingClientRect();
+      if(e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom)addWrapper(type);
+      button.dataset.suppress='1';setTimeout(()=>delete button.dataset.suppress,0);
+    }
+    drag=null;
+  }
+
+  document.querySelectorAll('.wrapper-tool').forEach(btn=>{
+    btn.addEventListener('pointerdown',beginToolDrag);
+    btn.addEventListener('click',()=>{if(btn.dataset.suppress)return;addWrapper(btn.dataset.wrapper);});
+  });
+  window.addEventListener('pointermove',moveToolDrag,{passive:false});
+  window.addEventListener('pointerup',endToolDrag);
+  window.addEventListener('pointercancel',endToolDrag);
+  $('sendButton').addEventListener('click',sendPacket);
+  $('resetPacket').addEventListener('click',resetLab);
+  $('compareProcess').addEventListener('click',switchToMail);
+
+  window.__WRAP_LAB__={addWrapper,peelOuter,sendPacket,switchToMail,resetLab,getState:()=>({wrappers:[...state.wrappers],service:state.service,successful:[...state.successful],lastOutcome:state.lastOutcome?{...state.lastOutcome}:null,busy:state.busy,filling:state.filling})};
+  renderTarget();renderPacket();clearReceiver();
+  setStatus('','Bare HTTP request','The browser has produced application data. Add shells around it and watch what each layer contributes.');
+})();
+</script>
+</body>
+</html>
