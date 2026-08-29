@@ -1,11 +1,53 @@
-export const exams = ['0478', '9618'] as const;
-export type ExamCode = (typeof exams)[number];
+type SyllabusDefinition = {
+  subject: string;
+  title: string;
+  officialPage: string;
+  documentUrl: string;
+  validFor: string;
+  palette: {
+    background: string;
+    border: string;
+    text: string;
+    hover: string;
+  };
+};
+
+export const syllabusRegistry = {
+  '0478': {
+    subject: 'computer-science',
+    title: 'Cambridge IGCSE Computer Science',
+    officialPage: 'https://www.cambridgeinternational.org/programmes-and-qualifications/cambridge-igcse-computer-science-0478/',
+    documentUrl: 'https://www.cambridgeinternational.org/Images/697167-2026-2028-syllabus.pdf',
+    validFor: '2026–2028',
+    palette: {
+      background: '#edf4ff',
+      border: '#9ab6e6',
+      text: '#173d78',
+      hover: '#dce9fc',
+    },
+  },
+  '9618': {
+    subject: 'computer-science',
+    title: 'Cambridge International AS & A Level Computer Science',
+    officialPage: 'https://www.cambridgeinternational.org/programmes-and-qualifications/cambridge-international-as-and-a-level-computer-science-9618/',
+    documentUrl: 'https://www.cambridgeinternational.org/Images/697372-2026-syllabus.pdf',
+    validFor: '2026',
+    palette: {
+      background: '#f4effb',
+      border: '#b9a2dc',
+      text: '#4f2b77',
+      hover: '#e8ddf6',
+    },
+  },
+} as const satisfies Record<string, SyllabusDefinition>;
+
+export type ExamCode = keyof typeof syllabusRegistry;
 
 export const subjects = [
   {
     id: 'computer-science',
     name: 'Computer Science',
-    exams,
+    exams: ['0478', '9618'],
     views: {
       '0478': {
         href: '/computer-science/0478',
@@ -50,7 +92,15 @@ export type Lab = Activity & {
   subject: SubjectId;
   topic: string;
   format: string;
-  exams: ExamCode[];
+  syllabuses: {
+    code: ExamCode;
+    qualification: string;
+    sections: {
+      id: string;
+      page: number;
+      primary?: boolean;
+    }[];
+  }[];
 };
 
 export const translator: Lab = {
@@ -61,7 +111,10 @@ export const translator: Lab = {
   topic: 'Programming',
   format: 'Code translator',
   kind: 'tool',
-  exams: ['0478', '9618'],
+  syllabuses: [
+    { code: '0478', qualification: 'GCSE', sections: [{ id: '4.2', page: 20, primary: true }] },
+    { code: '9618', qualification: 'AS', sections: [{ id: '5.2', page: 23, primary: true }] },
+  ],
   href: '/labs/translator.html',
 };
 
@@ -74,7 +127,10 @@ export const labs: Lab[] = [
     topic: 'Data representation',
     format: 'Practice',
     kind: 'lab',
-    exams: ['0478', '9618'],
+    syllabuses: [
+      { code: '0478', qualification: 'GCSE', sections: [{ id: '1.1', page: 11, primary: true }] },
+      { code: '9618', qualification: 'AS/A', sections: [{ id: '1.1', page: 14, primary: true }, { id: '4.3', page: 22 }] },
+    ],
     href: '/labs/binary-numbers.html',
   },
   {
@@ -85,7 +141,10 @@ export const labs: Lab[] = [
     topic: 'Data representation',
     format: 'Visual experiment',
     kind: 'lab',
-    exams: ['0478', '9618'],
+    syllabuses: [
+      { code: '0478', qualification: 'GCSE', sections: [{ id: '1.3', page: 13, primary: true }, { id: '1.2', page: 13 }] },
+      { code: '9618', qualification: 'AS', sections: [{ id: '1.3', page: 15, primary: true }, { id: '1.2', page: 15 }] },
+    ],
     href: '/labs/bitmap-compression.html',
   },
   {
@@ -96,7 +155,10 @@ export const labs: Lab[] = [
     topic: 'Data representation',
     format: 'Signal lab',
     kind: 'lab',
-    exams: ['0478', '9618'],
+    syllabuses: [
+      { code: '0478', qualification: 'GCSE', sections: [{ id: '1.2', page: 12, primary: true }] },
+      { code: '9618', qualification: 'AS', sections: [{ id: '1.2', page: 15, primary: true }] },
+    ],
     href: '/labs/sound-sampling.html',
   },
   {
@@ -107,7 +169,9 @@ export const labs: Lab[] = [
     topic: 'Data representation',
     format: 'Coding challenge',
     kind: 'lab',
-    exams: ['9618'],
+    syllabuses: [
+      { code: '9618', qualification: 'AS', sections: [{ id: '1.3', page: 15, primary: true }] },
+    ],
     href: '/labs/huffman-rover.html',
   },
   {
@@ -118,7 +182,10 @@ export const labs: Lab[] = [
     topic: 'Networks & communication',
     format: 'Protocol lab',
     kind: 'lab',
-    exams: ['0478', '9618'],
+    syllabuses: [
+      { code: '0478', qualification: 'GCSE', sections: [{ id: '2.2', page: 15, primary: true }] },
+      { code: '9618', qualification: 'AS', sections: [{ id: '6.2', page: 24, primary: true }] },
+    ],
     href: '/labs/parity-arq.html',
   },
   {
@@ -129,7 +196,9 @@ export const labs: Lab[] = [
     topic: 'Networks & communication',
     format: 'Network builder',
     kind: 'lab',
-    exams: ['9618'],
+    syllabuses: [
+      { code: '9618', qualification: 'AS', sections: [{ id: '2.1', page: 16, primary: true }] },
+    ],
     href: '/labs/network-topology.html',
   },
   {
@@ -140,7 +209,9 @@ export const labs: Lab[] = [
     topic: 'Networks & communication',
     format: 'Network simulation',
     kind: 'lab',
-    exams: ['9618'],
+    syllabuses: [
+      { code: '9618', qualification: 'AS', sections: [{ id: '2.1', page: 16, primary: true }] },
+    ],
     href: '/labs/csma-cd.html',
   },
   {
@@ -151,7 +222,10 @@ export const labs: Lab[] = [
     topic: 'Networks & communication',
     format: 'Security experiment',
     kind: 'lab',
-    exams: ['0478', '9618'],
+    syllabuses: [
+      { code: '0478', qualification: 'GCSE', sections: [{ id: '2.3', page: 15, primary: true }] },
+      { code: '9618', qualification: 'A', sections: [{ id: '17.1', page: 36, primary: true }] },
+    ],
     href: '/labs/encryption-in-data-transmission.html',
   },
   {
@@ -162,7 +236,10 @@ export const labs: Lab[] = [
     topic: 'Networks & communication',
     format: 'Browser simulation',
     kind: 'lab',
-    exams: ['0478', '9618'],
+    syllabuses: [
+      { code: '0478', qualification: 'GCSE', sections: [{ id: '5.1', page: 22, primary: true }] },
+      { code: '9618', qualification: 'AS/A', sections: [{ id: '2.1', page: 17, primary: true }, { id: '14.1', page: 33 }] },
+    ],
     href: '/labs/dns-web-page-retrieval.html',
   },
   {
@@ -173,7 +250,9 @@ export const labs: Lab[] = [
     topic: 'Networks & communication',
     format: 'Protocol lab',
     kind: 'lab',
-    exams: ['9618'],
+    syllabuses: [
+      { code: '9618', qualification: 'A', sections: [{ id: '14.1', page: 33, primary: true }] },
+    ],
     href: '/labs/tcp-ip-encapsulation.html',
   },
   {
@@ -184,7 +263,10 @@ export const labs: Lab[] = [
     topic: 'Processors & memory',
     format: 'CPU simulator',
     kind: 'lab',
-    exams: ['0478', '9618'],
+    syllabuses: [
+      { code: '0478', qualification: 'GCSE', sections: [{ id: '3.1', page: 16, primary: true }] },
+      { code: '9618', qualification: 'AS', sections: [{ id: '4.1', page: 19, primary: true }] },
+    ],
     href: '/labs/fetch-decode-execute.html',
   },
   {
@@ -195,7 +277,9 @@ export const labs: Lab[] = [
     topic: 'Processors & memory',
     format: 'Code tracer',
     kind: 'lab',
-    exams: ['9618'],
+    syllabuses: [
+      { code: '9618', qualification: 'AS/A', sections: [{ id: '4.2', page: 20, primary: true }, { id: '4.3', page: 22 }] },
+    ],
     href: '/labs/assembly.html',
   },
   {
@@ -206,7 +290,10 @@ export const labs: Lab[] = [
     topic: 'System software',
     format: 'Systems model',
     kind: 'lab',
-    exams: ['0478', '9618'],
+    syllabuses: [
+      { code: '0478', qualification: 'GCSE', sections: [{ id: '4.1', page: 20, primary: true }] },
+      { code: '9618', qualification: 'AS', sections: [{ id: '5.1', page: 23, primary: true }] },
+    ],
     href: '/labs/software-stack.html',
   },
   {
@@ -217,7 +304,10 @@ export const labs: Lab[] = [
     topic: 'System software',
     format: 'OS simulation',
     kind: 'lab',
-    exams: ['0478', '9618'],
+    syllabuses: [
+      { code: '0478', qualification: 'GCSE', sections: [{ id: '3.3', page: 18, primary: true }, { id: '3.1', page: 16 }] },
+      { code: '9618', qualification: 'A', sections: [{ id: '16.1', page: 35, primary: true }] },
+    ],
     href: '/labs/memory-management.html',
   },
   {
@@ -228,7 +318,9 @@ export const labs: Lab[] = [
     topic: 'System software',
     format: 'OS simulation',
     kind: 'lab',
-    exams: ['9618'],
+    syllabuses: [
+      { code: '9618', qualification: 'A', sections: [{ id: '16.1', page: 35, primary: true }] },
+    ],
     href: '/labs/process-states-scheduling.html',
   },
   translator,

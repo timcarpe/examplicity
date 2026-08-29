@@ -11,12 +11,14 @@ homepage-aligned design tokens, typography, focus treatment, responsive frame,
 and reduced-motion defaults. Its custom properties are namespaced with
 `--lab-` so they cannot silently replace instructional variables.
 
-Run `npm run labs:styles` after changing the contract. The command copies the
-stylesheet into the marked `LAB_FRAME_STYLES` block in every lab HTML file.
-`npm run labs:styles:check` verifies that all embedded copies are current, and
-the production build runs that check automatically.
+Run `npm run labs:sync` after changing the contract. It copies the stylesheet
+into every marked `LAB_FRAME_STYLES` block and renders the manifest-owned
+syllabus chips into every `LAB_SYLLABUS_CHIPS` block. `npm run labs:sync:check`
+verifies both generated surfaces, and the production build runs that check
+automatically.
 
-Do not edit an embedded `LAB_FRAME_STYLES` block directly.
+Do not edit an embedded `LAB_FRAME_STYLES` or `LAB_SYLLABUS_CHIPS` block
+directly.
 
 ## Homogenization rules
 
@@ -25,6 +27,10 @@ Do not edit an embedded `LAB_FRAME_STYLES` block directly.
 - Use chips consistently: navigation chips identify destinations, status chips
   describe current state, access chips describe editability, and legend chips
   explain diagram or simulation meaning. Do not use a chip for decorative copy.
+- The top-right syllabus chips are generated navigation. Their qualification
+  label opens Cambridge's official syllabus page; each numbered section opens
+  the corresponding page in the official syllabus document. Colour supports
+  the visible qualification and exam-code label but never replaces it.
 - Surrounding interactive chrome should generally be at least `10px`; diagram
   labels and other geometry-constrained instructional text are exempt.
 - Keep lab-specific spacing and geometry local when it carries instructional
@@ -51,8 +57,8 @@ scrolling behavior.
 ## Change checklist
 
 1. Edit the canonical stylesheet or the smallest relevant local selector.
-2. Run `npm run labs:styles`.
-3. Run `npm run labs:styles:check`, lint, and the production build.
+2. Run `npm run labs:sync`.
+3. Run `npm run labs:sync:check`, lint, and the production build.
 4. Check keyboard focus and reduced motion.
 5. Resize at 1600, 1200, 900, and 390 pixels; also check lab-specific
    breakpoints and Binary at 820, 640, and 390 pixels.
