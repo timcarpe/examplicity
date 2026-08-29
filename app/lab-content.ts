@@ -1,4 +1,4 @@
-import { syllabusRegistry, type Lab } from './labs.ts';
+import { subjects, syllabusRegistry, type Lab } from './labs.ts';
 import { productionSiteUrl, siteTitle } from './site.ts';
 
 const headStart = '<!-- LAB_MANIFEST_HEAD_START -->';
@@ -20,6 +20,7 @@ const countMatches = (source: string, pattern: RegExp) => [...source.matchAll(pa
 
 const stripManagedHeadTags = (source: string) => source
   .replace(/<title\b[^>]*>[\s\S]*?<\/title>\s*/gi, '')
+  .replace(/<script\b[^>]*data-lab-manifest=["']structured-data["'][^>]*>[\s\S]*?<\/script>\s*/gi, '')
   .replace(/<(?:meta|link)\b[^>]*>\s*/gi, (tag) => {
     const managesDescription = /\bname=["']description["']/i.test(tag);
     const managesCanonical = /\brel=["']canonical["']/i.test(tag);
@@ -43,6 +44,67 @@ const normalizeManagedHead = (source: string) => {
   return `${stripManagedHeadTags(source.slice(0, startIndex))}${source.slice(startIndex, blockEnd)}${stripManagedHeadTags(source.slice(blockEnd, headCloseIndex))}${source.slice(headCloseIndex)}`;
 };
 
+const qualificationLevels = {
+  GCSE: ['GCSE'],
+  AS: ['AS Level'],
+  A: ['A Level'],
+  'AS/A': ['AS Level', 'A Level'],
+} as const;
+
+const renderStructuredData = (lab: Lab, canonicalUrl: string) => {
+  const subject = subjects.find((entry) => entry.id === lab.subject);
+  if (!subject) throw new Error(`${lab.slug} references unknown subject ${lab.subject}`);
+
+  const educationalLevel = [...new Set(lab.syllabuses.flatMap((alignment) => (
+    qualificationLevels[alignment.qualification]
+  )))];
+  const educationalAlignment = lab.syllabuses.map((alignment) => {
+    const syllabus = syllabusRegistry[alignment.code];
+    const primarySection = alignment.sections.find((section) => section.primary);
+    if (!syllabus || !primarySection) {
+      throw new Error(`${lab.slug} has incomplete syllabus data for ${alignment.code}`);
+    }
+
+    return {
+      '@type': 'AlignmentObject',
+      alignmentType: 'educationalSubject',
+      educationalFramework: syllabus.title,
+      targetName: `${alignment.qualification} ${alignment.code} section ${alignment.sections.map((section) => section.id).join(', ')}`,
+      targetUrl: `${syllabus.documentUrl}#page=${primarySection.page}`,
+    };
+  });
+  const structuredData = {
+    '@context': 'https://schema.org',
+    '@type': 'LearningResource',
+    '@id': `${canonicalUrl}#learning-resource`,
+    url: canonicalUrl,
+    name: lab.title,
+    description: lab.metaDescription,
+    inLanguage: 'en-GB',
+    isAccessibleForFree: true,
+    interactivityType: 'active',
+    learningResourceType: lab.format,
+    teaches: lab.topic,
+    educationalLevel,
+    educationalAlignment,
+    about: { '@type': 'Thing', name: subject.name },
+    audience: { '@type': 'EducationalAudience', educationalRole: 'student' },
+    provider: {
+      '@type': 'Organization',
+      name: 'Examplicity',
+      url: productionSiteUrl,
+    },
+    isPartOf: {
+      '@type': 'WebSite',
+      '@id': `${productionSiteUrl}/#website`,
+      name: 'Examplicity',
+      url: productionSiteUrl,
+    },
+  };
+
+  return `<script type="application/ld+json" data-lab-manifest="structured-data">${JSON.stringify(structuredData).replace(/</g, '\\u003c')}</script>`;
+};
+
 const renderHead = (lab: Lab) => {
   const canonicalUrl = `${productionSiteUrl}${lab.href}`;
   const socialImage = `${productionSiteUrl}/opengraph-image`;
@@ -64,6 +126,7 @@ const renderHead = (lab: Lab) => {
 <meta name="twitter:title" content="${title}">
 <meta name="twitter:description" content="${description}">
 <meta name="twitter:image" content="${socialImage}">
+${renderStructuredData(lab, canonicalUrl)}
 ${headEnd}`;
 };
 

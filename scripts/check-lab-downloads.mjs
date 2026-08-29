@@ -18,6 +18,12 @@ for (const lab of labs) {
 
   const expectedSubtitleCount = lab.subtitle === null ? 0 : 1;
   const expectedLayout = lab.layout ?? 'standard';
+  const structuredDataMatches = [...packaged.matchAll(
+    /<script\b[^>]*data-lab-manifest="structured-data"[^>]*>([\s\S]*?)<\/script>/g,
+  )];
+  const structuredData = structuredDataMatches.length === 1
+    ? JSON.parse(structuredDataMatches[0][1])
+    : null;
   const bodyLayoutCount = [...packaged.matchAll(
     new RegExp(`<body\\b[^>]*data-lab-layout="${expectedLayout}"[^>]*>`, 'g'),
   )].length;
@@ -28,6 +34,12 @@ for (const lab of labs) {
     || count(packaged, 'data-lab-manifest="subtitle"') !== expectedSubtitleCount
     || bodyLayoutCount !== 1
     || count(packaged, '<!-- LAB_SYLLABUS_CHIPS_START -->') !== 1
+    || structuredDataMatches.length !== 1
+    || structuredData?.['@type'] !== 'LearningResource'
+    || structuredData?.url !== `https://www.examplicity.org${lab.href}`
+    || structuredData?.name !== lab.title
+    || structuredData?.description !== lab.metaDescription
+    || structuredData?.educationalAlignment?.length !== lab.syllabuses.length
     || count(packaged, '<style data-examplicity-download-chrome>') !== 1
     || count(packaged, '<header class="examplicity-download-header"') !== 1
     || count(packaged, '<footer class="examplicity-download-footer"') !== 1
