@@ -25,6 +25,24 @@ function IconDrawing({ slug }: LabIconProps) {
           <path d="M82 153h24m-12-12v24M104 194h432" />
         </>
       );
+    case 'binary-floating-point':
+      return (
+        <>
+          <g className="thin-lines">
+            {[0, 1, 2, 3, 4].map((cell) => (
+              <rect className={cell === 0 ? 'is-solid' : ''} height="46" key={`m-${cell}`} rx="7" width="48" x={54 + cell * 52} y="82" />
+            ))}
+            {[0, 1, 2].map((cell) => (
+              <rect className={cell === 2 ? 'is-solid tone-three' : 'tone-three'} height="46" key={`e-${cell}`} rx="7" width="48" x={326 + cell * 52} y="82" />
+            ))}
+          </g>
+          <path d="M314 64v84m-12-12 12 12 12-12" />
+          <path className="secondary-line" d="M64 238h236m40 0h236" />
+          {[110, 146, 182, 218, 254].map((x) => <circle className="is-solid" cx={x} cy="238" key={x} r="7" />)}
+          {[372, 460, 548].map((x, index) => <circle className={index === 1 ? 'is-solid tone-three' : 'tone-three'} cx={x} cy="238" key={x} r="9" />)}
+          <path d="M84 282h196m-14-10 14 10-14 10M556 282H360m14-10-14 10 14 10" />
+        </>
+      );
     case 'bitmap-compression':
       return (
         <>
