@@ -166,6 +166,19 @@ export const labs: Lab[] = [
   },
   {
     subject: 'computer-science',
+    slug: 'binary-floating-point',
+    title: 'Binary Floating-Point Precision and Range',
+    description: 'Allocate bits between the mantissa and exponent, test authentic datasets, and observe precision, range, rounding, overflow and underflow.',
+    topic: 'Data representation',
+    format: 'Representation experiment',
+    kind: 'lab',
+    syllabuses: [
+      { code: '9618', qualification: 'A', sections: [{ id: '13.3', page: 33, primary: true }] },
+    ],
+    href: '/labs/binary-floating-point.html',
+  },
+  {
+    subject: 'computer-science',
     slug: 'sound-sampling',
     title: 'Digital Sound Sampling',
     description: 'Change sample rate and resolution, then compare the reconstructed signal visually and by listening.',

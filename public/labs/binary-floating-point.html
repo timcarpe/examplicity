@@ -1,0 +1,633 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Binary Floating-Point Precision and Range</title>
+<meta name="description" content="Allocate bits between the mantissa and exponent, test authentic datasets, and observe precision, range, rounding, overflow and underflow.">
+<link rel="canonical" href="https://cambridge-labs.com/labs/binary-floating-point.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Cambridge Labs">
+<meta property="og:title" content="Binary Floating-Point Precision and Range">
+<meta property="og:description" content="Allocate bits between the mantissa and exponent, test authentic datasets, and observe precision, range, rounding, overflow and underflow.">
+<meta property="og:url" content="https://cambridge-labs.com/labs/binary-floating-point.html">
+<meta property="og:image" content="https://cambridge-labs.com/opengraph-image">
+<meta property="og:image:alt" content="Cambridge Labs binary floating-point precision and range experiment">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Binary Floating-Point Precision and Range">
+<meta name="twitter:description" content="Allocate bits between the mantissa and exponent, test authentic datasets, and observe precision, range, rounding, overflow and underflow.">
+<meta name="twitter:image" content="https://cambridge-labs.com/opengraph-image">
+<style>
+:root{
+  --bg:var(--lab-canvas,#f3f5f7);--panel:var(--lab-surface,#fff);--paper:var(--lab-paper,#fbfbfd);
+  --ink:var(--lab-ink,#1d1d1f);--muted:var(--lab-muted,#6e6e73);--line:var(--lab-line,#d2d2d7);
+  --line-strong:var(--lab-line-strong,#a7a7ad);--accent:var(--lab-accent,#5277b8);--accent-soft:var(--lab-accent-soft,#eef2fa);
+  --good:var(--lab-good,#18794e);--good-soft:var(--lab-good-soft,#edf8f1);--warn:var(--lab-warn,#946200);--warn-soft:var(--lab-warn-soft,#fff6e7);
+  --bad:var(--lab-bad,#b42318);--bad-soft:var(--lab-bad-soft,#fff0ee);
+  --mantissa:#3f78b9;--mantissa-soft:#edf4fb;--exponent:#8169b3;--exponent-soft:#f4f0fb;--target:#d18426;
+}
+*{box-sizing:border-box}html,body{min-height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--lab-font-sans,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif)}
+button{font:inherit;cursor:pointer;min-height:34px;padding:0 10px;border:1px solid var(--line);border-radius:var(--lab-control-radius,8px);background:var(--lab-control,#fff);color:var(--ink)}
+button:hover:not(:disabled){border-color:var(--line-strong)}button:disabled{opacity:.45;cursor:not-allowed}
+main{width:min(1240px,calc(100% - 18px));margin:8px auto 30px}
+h1{margin:0;font-size:25px;font-weight:630;letter-spacing:-.025em;line-height:1.05}
+.sub{margin:3px 0 7px;color:var(--muted);font-size:12px;line-height:1.35}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--lab-panel-radius,12px);box-shadow:var(--lab-panel-shadow,0 1px 2px rgba(29,29,31,.04))}
+.mission{padding:7px 8px;display:grid;gap:6px;transition:border-color .18s,background-color .18s,box-shadow .18s}.mission.goal-met{border-color:#9ac9aa;background:linear-gradient(180deg,#fff,#f7fcf8);box-shadow:inset 4px 0 0 var(--good)}
+.mission-top{display:grid;grid-template-columns:minmax(280px,1fr) auto;gap:8px;align-items:start}.mission-copy strong{display:block;font-size:14px}.mission-copy span{display:block;margin-top:2px;color:var(--muted);font-size:9px;line-height:1.35}
+.tabs{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}.tab{min-height:28px;padding:0 8px;font-size:9px;font-weight:800}.tab.active{background:var(--accent);border-color:var(--accent);color:#fff}.tab.explored:not(.active){background:#f7f9fa;border-color:#b8c2c9;color:#53616a}.tab.complete:not(.active){border-color:#93c4a4;background:var(--good-soft);color:var(--good)}.tab.active.complete{box-shadow:inset 0 -3px 0 rgba(255,255,255,.52)}
+.experiment{margin-top:6px;padding:7px;transition:border-color .18s,box-shadow .18s}.experiment.goal-met{border-color:#9ac9aa;box-shadow:inset 0 0 0 1px rgba(24,121,78,.08)}
+.wordbar{display:grid;grid-template-columns:82px minmax(0,1fr) 82px;gap:8px;align-items:center;max-width:860px;margin:0 auto 3px}
+.endlabel{color:var(--muted);font-size:9px;font-weight:800}.endlabel:last-child{text-align:right}
+.word-shell{position:relative;padding-bottom:14px;touch-action:none;user-select:none}.word{display:grid;grid-template-columns:repeat(8,1fr);gap:4px}
+.word-bit{height:35px;display:grid;place-items:center;border:1px solid var(--line);border-radius:8px;font:850 13px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;transition:.12s}
+.word-bit.m{background:var(--mantissa-soft);border-color:#a9c7e3;color:#315f8f}.word-bit.e{background:var(--exponent-soft);border-color:#c8bae5;color:#654f94}.word-bit.sign{box-shadow:inset 0 -3px 0 rgba(29,29,31,.12)}
+.divider{position:absolute;top:-4px;width:24px;height:47px;transform:translateX(-12px);border:0;background:transparent;padding:0;cursor:ew-resize;touch-action:none;z-index:4}
+.divider::before{content:"";position:absolute;left:10px;top:0;bottom:0;width:4px;border-radius:5px;background:var(--ink);box-shadow:0 0 0 3px rgba(255,255,255,.92)}
+.divider::after{content:"";position:absolute;left:7px;bottom:-13px;width:10px;height:10px;border:2px solid var(--ink);border-top:0;border-left:0;transform:rotate(45deg)}
+.word-count{position:absolute;left:0;right:0;bottom:-1px;text-align:center;color:var(--muted);font:800 9px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.instrument{position:relative;overflow:hidden;border:1px solid var(--line);border-radius:10px;background:#fff}#rulerSvg{display:block;width:100%;height:320px;min-height:0;touch-action:none;user-select:none}.instrument-hint{position:absolute;left:9px;top:7px;padding:3px 5px;border-radius:6px;background:rgba(255,255,255,.91);color:var(--muted);font-size:9px;pointer-events:none}
+.bottom-row{margin-top:5px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center}.selection{min-height:34px;padding:5px 8px;border:1px solid var(--line);border-radius:8px;background:var(--paper);display:flex;align-items:center;gap:9px;flex-wrap:wrap}.selection strong{font:850 13px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.selection span{color:var(--muted);font-size:9px}.selection .bad{color:var(--bad)}.selection .good{color:var(--good)}
+.fit{min-width:220px;max-width:360px;padding:5px 7px;border:1px solid var(--line);border-radius:8px;background:#fff;display:flex;align-items:center;gap:6px;flex-wrap:wrap;color:#59656d;font:800 8px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;line-height:1.25}.fit strong{flex:0 0 auto;padding:3px 6px;border-radius:999px;background:#f1f4f6;color:#52606a;font:900 7px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:.04em}.fit span{min-width:0;flex:1}.fit.good{border-color:#acd3ba;background:var(--good-soft);color:#3c6650}.fit.good strong{background:#18794e;color:#fff}.fit.warn{border-color:#e1c78f;background:var(--warn-soft);color:#76520b}.fit.warn strong{background:#946200;color:#fff}.fit.bad{border-color:#e5b6b0;background:var(--bad-soft);color:#7b3933}.fit.bad strong{background:#b42318;color:#fff}
+.insight{display:none;margin-top:5px;padding:6px 8px;border-left:4px solid var(--warn);border-radius:7px;background:var(--warn-soft);color:#76520b;font-size:10px;line-height:1.35}.insight.show{display:block}
+.auth-panel{margin-top:0;padding:0;border:0;border-radius:0;background:transparent;display:grid;grid-template-columns:minmax(360px,400px) minmax(0,1fr);gap:14px;align-items:center;transition:background-color .18s}.auth-panel.goal-met{background:transparent;animation:none}.auth-panel.engineering-find{background:transparent}.auth-visual{min-width:0;display:flex;align-items:center;justify-content:center;overflow:hidden;background:transparent}.auth-visual svg{display:block;width:100%;height:auto;aspect-ratio:332/116;overflow:hidden}.auth-copy{min-width:0}.auth-head{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap}.auth-head strong{font-size:12px}.auth-tag{padding:3px 7px;border:1px solid var(--line);border-radius:999px;background:#fff;color:#5f6c75;font-size:8px;font-weight:850;letter-spacing:.04em;text-transform:uppercase}.auth-desc{margin-top:3px;color:var(--ink);font-size:9.5px;line-height:1.4}.auth-tradeoff{margin-top:5px;display:grid;grid-template-columns:1fr 1fr;gap:6px}.trade-card{padding:5px 7px;border:1px solid var(--line);border-radius:7px;background:#fff}.trade-card strong{display:block;font-size:8px;letter-spacing:.04em;text-transform:uppercase}.trade-card p{margin:2px 0 0;color:#59656d;font-size:8.5px;line-height:1.34}.trade-card.precision strong{color:#315f8f}.trade-card.range strong{color:#654f94}.auth-impact{margin-top:5px;padding:6px 8px;border:1px solid var(--line);border-radius:7px;background:#fff;transition:background-color .16s,border-color .16s}.auth-impact.good{border-color:#acd3ba;background:var(--good-soft)}.auth-impact.warn{border-color:#e1c78f;background:var(--warn-soft)}.auth-impact.bad{border-color:#e5b6b0;background:var(--bad-soft)}.auth-impact p{margin:3px 0 0;font-size:9px;line-height:1.4;color:#3f4a51}.auth-impact strong{display:inline;font-size:9px}.impact-chip{display:flex;width:max-content;max-width:100%;align-items:center;min-height:19px;padding:0 7px;border:1px solid var(--line);border-radius:999px;background:#f7f9fa;color:#59656d;font-size:8px;font-weight:900;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap}.impact-chip.good{border-color:#acd3ba;background:var(--good-soft);color:var(--good)}.impact-chip.warn{border-color:#e1c78f;background:var(--warn-soft);color:#825b11}.impact-chip.bad{border-color:#e5b6b0;background:var(--bad-soft);color:var(--bad)}
+.auth-visual .outcome-badge{font-size:6.5px;font-weight:900;letter-spacing:.03em}.auth-visual .scope-grid{stroke:#e3e8eb;stroke-width:.8}.auth-visual .scope-real{fill:none;stroke:#d18426;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}.auth-visual .scope-stored{fill:none;stroke:#5277b8;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}.auth-visual .scope-stored.good{stroke:#18794e}.auth-visual .scope-stored.bad{stroke:#b42318}.auth-visual .scope-limit{stroke:#b42318;stroke-width:1.1;stroke-dasharray:3 3}.auth-visual .scope-sample{fill:#fff;stroke-width:1.6}.auth-visual .scope-label{font-size:6.2px;font-weight:850;fill:#687681}.auth-visual .scope-status{font-size:6.6px;font-weight:900}.auth-visual .scan-line{stroke:#26343d;stroke-width:1;opacity:.22}.auth-visual .spool-turn{transform-box:fill-box;transform-origin:center;animation:spoolTurn 3.1s linear infinite}.auth-visual .filament-flow{stroke-dasharray:8 5;animation:filamentFlow .72s linear infinite}.auth-visual .gauge-beam{animation:gaugeScan .8s ease-in-out infinite alternate}.auth-visual .print-head{animation:printHead 1.25s ease-in-out infinite alternate}.auth-visual .bead-good{animation:goodBead 1.2s ease-in-out infinite}.auth-visual .bead-bad{animation:badBead .55s ease-in-out infinite alternate}.auth-visual .bar-grow{transform-box:fill-box;transform-origin:center bottom;animation:barGrow .42s ease-out}.auth-visual .trace-draw{stroke-dasharray:260;stroke-dashoffset:260;animation:traceDraw .8s ease-out forwards}.auth-visual .trace-draw.delay{animation-delay:.18s}.auth-visual .machine-shake{transform-box:fill-box;transform-origin:center;animation:machineShake .28s linear 2}.auth-visual .shock-draw{stroke-dasharray:180;stroke-dashoffset:180;animation:traceDraw .65s ease-out forwards}.auth-visual .motor-rotor{transform-box:fill-box;transform-origin:center;animation:motorSpin 1.15s linear infinite}.auth-visual .current-flow{stroke-dasharray:7 5;animation:currentFlow .62s linear infinite}.auth-visual .clamp-pulse{animation:clampPulse .8s ease-in-out infinite alternate}.auth-visual .surge-flash{animation:surgeFlash .38s ease-in-out infinite alternate}.auth-visual .needle-sweep{transform-box:fill-box;transform-origin:0 100%;animation:needleSweep .55s ease-out}.auth-visual .model-cell{animation:modelCell 1.8s ease-in-out infinite}.auth-visual .model-cell.d2{animation-delay:.22s}.auth-visual .model-cell.d3{animation-delay:.44s}.auth-visual .model-cell.d4{animation-delay:.66s}.auth-visual .cloud-drift{animation:cloudDrift 3.4s ease-in-out infinite alternate}.auth-visual .rain-drop{animation:rainDrop .95s linear infinite}.auth-visual .rain-drop.d2{animation-delay:.26s}.auth-visual .rain-drop.d3{animation-delay:.52s}.auth-visual .forecast-pulse{animation:forecastPulse 1.15s ease-in-out infinite}.auth-visual .bearing-rotor{transform-box:fill-box;transform-origin:center;animation:motorSpin 1.45s linear infinite}.auth-visual .sensor-pulse{animation:sensorPulse .72s ease-out infinite}.auth-visual .vibration-line{stroke-dasharray:5 4;animation:vibrationFlow .46s linear infinite}.auth-visual .clip-flash{animation:clipFlash .42s ease-in-out infinite alternate}.auth-visual .success-check{transform-box:fill-box;transform-origin:center;animation:successCheck .72s ease-out}
+.auth-visual .drain-flow{stroke-dasharray:5 4;animation:currentFlow .72s linear infinite}.auth-visual .battery-drop{animation:batteryDrop 1.2s ease-in-out infinite alternate}.auth-visual .heat-pulse{animation:heatPulse .55s ease-in-out infinite alternate}.auth-visual .spray-arc{stroke-dasharray:7 5;animation:sprayFlow .75s linear infinite}.auth-visual .frost-crystal{transform-box:fill-box;transform-origin:center;animation:frostTwinkle 1.1s ease-in-out infinite alternate}.auth-visual .plant-shiver{transform-box:fill-box;transform-origin:center bottom;animation:plantShiver .36s linear infinite alternate}.auth-visual .bearing-hot{animation:heatPulse .55s ease-in-out infinite alternate}.auth-visual .wrench-miss{animation:wrenchMiss .8s ease-in-out infinite alternate}.auth-visual .impact-strike{transform-box:fill-box;transform-origin:center bottom;animation:impactStrike .7s ease-in-out infinite}.auth-visual .puddle-grow{transform-box:fill-box;transform-origin:center;animation:puddleGrow 1.4s ease-in-out infinite alternate}
+@keyframes batteryDrop{from{opacity:.45}to{opacity:1}}@keyframes heatPulse{from{opacity:.45}to{opacity:1}}@keyframes sprayFlow{to{stroke-dashoffset:-24}}@keyframes frostTwinkle{from{opacity:.35;transform:scale(.8) rotate(0)}to{opacity:1;transform:scale(1.15) rotate(18deg)}}@keyframes plantShiver{from{transform:rotate(-1.5deg)}to{transform:rotate(1.5deg)}}@keyframes wrenchMiss{from{opacity:.45;transform:translateY(1px)}to{opacity:1;transform:translateY(-1px)}}@keyframes impactStrike{0%,100%{transform:translateY(-3px)}55%{transform:translateY(5px)}}@keyframes puddleGrow{from{transform:scaleX(.72);opacity:.45}to{transform:scaleX(1.08);opacity:.8}}@keyframes successPulse{0%{box-shadow:inset 0 0 0 1px rgba(24,121,78,.08),0 0 0 0 rgba(24,121,78,.24)}100%{box-shadow:inset 0 0 0 1px rgba(24,121,78,.08),0 0 0 8px rgba(24,121,78,0)}}@keyframes spoolTurn{to{transform:rotate(360deg)}}@keyframes filamentFlow{to{stroke-dashoffset:-26}}@keyframes gaugeScan{from{opacity:.25}to{opacity:1}}@keyframes printHead{from{transform:translateX(-3px)}to{transform:translateX(3px)}}@keyframes goodBead{50%{opacity:.72}}@keyframes badBead{from{transform:scaleY(.9);opacity:.78}to{transform:scaleY(1.12);opacity:1}}@keyframes barGrow{from{transform:scaleY(.12)}to{transform:scaleY(1)}}@keyframes traceDraw{to{stroke-dashoffset:0}}@keyframes machineShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-2px)}75%{transform:translateX(2px)}}@keyframes motorSpin{to{transform:rotate(360deg)}}@keyframes currentFlow{to{stroke-dashoffset:-24}}@keyframes clampPulse{from{opacity:.45;stroke-width:2}to{opacity:1;stroke-width:3.5}}@keyframes surgeFlash{from{opacity:.35}to{opacity:1}}@keyframes needleSweep{from{transform:rotate(-60deg)}}@keyframes modelCell{0%,100%{opacity:.34}45%,60%{opacity:1}}@keyframes cloudDrift{from{transform:translateX(-3px)}to{transform:translateX(5px)}}@keyframes rainDrop{from{transform:translateY(-4px);opacity:.2}to{transform:translateY(12px);opacity:0}}@keyframes forecastPulse{50%{opacity:.58}}@keyframes sensorPulse{from{r:3;opacity:.8}to{r:11;opacity:0}}@keyframes vibrationFlow{to{stroke-dashoffset:-18}}@keyframes clipFlash{from{opacity:.38}to{opacity:1}}@keyframes successCheck{0%{transform:scale(.2);opacity:0}70%{transform:scale(1.18);opacity:1}100%{transform:scale(1)}}
+.normalizer{margin-top:7px;padding:8px 9px;border:1px solid var(--line);border-radius:10px;background:#fbfcfd}.normalizer-head{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:7px}.normalizer-head strong{display:block;font-size:13px}.normalizer-head span{display:block;margin-top:2px;color:var(--muted);font-size:9px;line-height:1.35}.reset-form{min-height:28px;font-size:9px;padding:0 8px}.storage-row{display:grid;grid-template-columns:minmax(150px,.62fr) auto minmax(330px,1.4fr) minmax(170px,.72fr);gap:9px;align-items:center}.storage-source{min-width:0;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#fff}.storage-source span{display:block;color:var(--muted);font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.04em}.storage-source strong{display:block;margin-top:2px;font:850 12px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;overflow-wrap:anywhere}.storage-arrow{color:#89949c;font-size:18px;font-weight:800;text-align:center}.rep-track{min-width:0;min-height:55px;padding:5px 7px;border:1px solid var(--line);border-radius:9px;background:#fff;display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,.72fr);gap:7px;align-items:center;overflow:hidden}.storage-part{min-width:0}.storage-label{display:block;margin-bottom:4px;color:var(--muted);font-size:8px;font-weight:850;letter-spacing:.04em;text-transform:uppercase;text-align:center}.mantissa-drag,.exponent-bits{display:flex;align-items:center;justify-content:center;gap:3px;min-width:0}.mantissa-drag{cursor:ew-resize;touch-action:none;user-select:none;transition:transform .12s}.mantissa-drag.locked{cursor:default}.bit{width:29px;height:32px;flex:0 0 auto;display:grid;place-items:center;border:1px solid #a9c7e3;border-radius:6px;background:var(--mantissa-soft);color:#315f8f;font:850 14px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.bit.exp{border-color:#c8bae5;background:var(--exponent-soft);color:#654f94}.bit.placeholder{border-style:dashed;color:#9aa5ac;background:#f5f7f8}.point{width:8px;flex:0 0 auto;text-align:center;font:900 18px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.sep{height:32px;border-left:2px solid var(--line);margin:0 1px}.rep-side{min-width:0;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#fff}.rep-side strong{display:block;font:850 11px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.rep-side span{display:block;margin-top:2px;color:var(--muted);font-size:8px;line-height:1.4}.rep-side.good{border-color:#acd3ba;background:var(--good-soft)}.rep-side.good strong{color:var(--good)}.rep-side.warn{border-color:#e5d0a3;background:var(--warn-soft)}.rep-side.bad{border-color:#e5b6b0;background:var(--bad-soft)}.rep-side.bad strong{color:var(--bad)}
+.source-note{margin-top:7px;color:var(--muted);font-size:8px;line-height:1.35}
+@media(max-width:760px){.mission-top{grid-template-columns:1fr}.tabs{justify-content:flex-start}.wordbar{grid-template-columns:55px minmax(0,1fr) 55px}.word-bit{height:38px}.bottom-row{grid-template-columns:1fr}.fit{justify-self:start}.auth-panel{grid-template-columns:minmax(270px,310px) minmax(0,1fr);gap:10px}.auth-tradeoff{grid-template-columns:1fr 1fr}.storage-row{grid-template-columns:minmax(130px,.55fr) auto minmax(285px,1.35fr) minmax(150px,.7fr)}.rep-side{min-width:0}.bit{width:27px;height:33px;font-size:13px}}
+@media(max-width:900px){.storage-row{grid-template-columns:minmax(130px,.55fr) auto minmax(0,1.45fr)}.rep-side{grid-column:1/-1}.normalizer-head{align-items:flex-start}}
+@media(max-width:620px){.storage-row{grid-template-columns:1fr}.storage-arrow{transform:rotate(90deg);font-size:15px}.rep-track{grid-template-columns:minmax(0,1fr) auto minmax(0,.8fr)}.normalizer-head{display:grid;grid-template-columns:1fr auto}.bit{width:27px;height:31px;font-size:13px}.instrument{overflow-x:auto;overscroll-behavior-x:contain}.instrument #rulerSvg{width:720px;height:212px;max-width:none}.instrument-hint{position:sticky;left:8px;display:inline-block;z-index:3}}
+@media(max-width:480px){main{width:min(100% - 12px,1240px);margin-top:8px}.experiment{padding:8px}.endlabel{font-size:8px}.instrument-hint{display:none}.bit{width:24px}.rep-track{padding-inline:4px}.fit{min-width:0;max-width:100%}.auth-panel{grid-template-columns:1fr;gap:6px}.auth-tradeoff{grid-template-columns:1fr}.auth-desc{font-size:9px}.trade-card p,.auth-impact p{font-size:8.5px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important;scroll-behavior:auto!important}}
+</style>
+<!-- LAB_FRAME_STYLES_START -->
+<style data-lab-frame>
+:root {
+  --lab-canvas: #f3f5f7;
+  --lab-paper: #fbfbfd;
+  --lab-surface: #ffffff;
+  --lab-control: #ffffff;
+  --lab-ink: #1d1d1f;
+  --lab-muted: #6e6e73;
+  --lab-line: #d2d2d7;
+  --lab-line-strong: #a7a7ad;
+  --lab-accent: #5277b8;
+  --lab-accent-soft: #eef2fa;
+  --lab-good: #18794e;
+  --lab-good-soft: #edf8f1;
+  --lab-warn: #946200;
+  --lab-warn-soft: #fff6e7;
+  --lab-bad: #b42318;
+  --lab-bad-soft: #fff0ee;
+  --lab-focus: #1d1d1f;
+  --lab-focus-soft: rgba(29, 29, 31, 0.18);
+  --lab-font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+  --lab-panel-radius: 12px;
+  --lab-control-radius: 8px;
+  --lab-pill-radius: 999px;
+  --lab-control-height: 35px;
+  --lab-panel-shadow: 0 1px 2px rgba(29, 29, 31, 0.04);
+}
+
+html,
+body {
+  background: var(--lab-canvas);
+}
+
+body {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-family: var(--lab-font-sans);
+  padding-bottom: 58px;
+  padding-top: 66px;
+  text-rendering: optimizeLegibility;
+}
+
+.lab-syllabus-chips {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+  margin: 0 0 12px auto;
+  max-width: 100%;
+}
+
+.lab-syllabus-chip {
+  align-items: center;
+  background: var(--syllabus-chip-bg);
+  border: 1px solid var(--syllabus-chip-border);
+  border-radius: var(--lab-pill-radius);
+  box-shadow: 0 1px 2px rgba(29, 29, 31, 0.08);
+  color: var(--syllabus-chip-text);
+  display: inline-flex;
+  font-size: 11px;
+  font-weight: 650;
+  gap: 4px;
+  line-height: 1;
+  min-height: 30px;
+  padding: 3px 5px;
+  white-space: nowrap;
+}
+
+.lab-syllabus-chip a {
+  border-radius: var(--lab-pill-radius);
+  color: inherit;
+  padding: 5px 6px;
+  text-decoration: none;
+}
+
+.lab-syllabus-chip a:hover {
+  background: var(--syllabus-chip-hover);
+}
+
+.lab-syllabus-chip a:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 1px;
+}
+
+.lab-syllabus-name strong,
+.lab-syllabus-section.is-primary {
+  font-weight: 800;
+}
+
+.lab-syllabus-prefix {
+  opacity: 0.72;
+  padding-left: 5px;
+}
+
+.lab-syllabus-sections {
+  align-items: center;
+  display: inline-flex;
+}
+
+.lab-syllabus-separator {
+  margin-inline: 0 2px;
+}
+
+html[data-theme="dark"],
+html[data-theme="dark"] body {
+  background: var(--bg);
+}
+
+main {
+  container-name: lab-canvas;
+  container-type: inline-size;
+}
+
+body.binary-lab main {
+  width: min(820px, calc(100% - 24px));
+}
+
+:where(button, input, select, textarea, summary):focus-visible {
+  outline: 3px solid var(--lab-focus);
+  outline-offset: 4px;
+}
+
+@media (max-width: 620px) {
+  body {
+    padding-bottom: 76px;
+    padding-top: 60px;
+  }
+
+  body.binary-lab main {
+    width: min(100% - 12px, 820px);
+  }
+
+  .lab-syllabus-chips {
+    gap: 4px;
+    justify-content: flex-end;
+  }
+
+  .lab-syllabus-chip {
+    font-size: 10px;
+    min-height: 27px;
+    padding: 2px 4px;
+  }
+
+  .lab-syllabus-chip a {
+    padding: 4px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+</style>
+<!-- LAB_FRAME_STYLES_END -->
+</head>
+<body>
+<main>
+<!-- LAB_SYLLABUS_CHIPS_START -->
+<nav class="lab-syllabus-chips" aria-label="Syllabus alignment">
+  <section class="lab-syllabus-chip" style="--syllabus-chip-bg:#f4effb;--syllabus-chip-border:#b9a2dc;--syllabus-chip-text:#4f2b77;--syllabus-chip-hover:#e8ddf6" aria-label="A 9618 syllabus alignment">
+    <span class="lab-syllabus-prefix">Aligns to</span>
+    <a class="lab-syllabus-name" href="https://www.cambridgeinternational.org/programmes-and-qualifications/cambridge-international-as-and-a-level-computer-science-9618/" target="_blank" rel="noopener noreferrer" aria-label="Open the official Cambridge A 9618 syllabus page">A <strong>9618</strong></a>
+    <span class="lab-syllabus-divider" aria-hidden="true">·</span>
+    <span class="lab-syllabus-sections"><a class="lab-syllabus-section is-primary" href="https://www.cambridgeinternational.org/Images/697372-2026-syllabus.pdf#page=33" target="_blank" rel="noopener noreferrer" aria-label="Open primary A 9618 syllabus section 13.3">13.3</a></span>
+  </section>
+</nav>
+<!-- LAB_SYLLABUS_CHIPS_END -->
+  <h1>Binary Floating-Point Precision and Range</h1>
+  <div class="sub">Choose one 8-bit floating-point format for a real job. Move the bit boundary; the measurements change immediately.</div>
+
+  <section id="missionPanel" class="panel mission">
+    <div class="mission-top">
+      <div class="mission-copy"><strong id="missionTitle"></strong><span id="missionHint"></span></div>
+      <div id="tabs" class="tabs" aria-label="Measurement challenges"></div>
+    </div>
+    <section id="authPanel" class="auth-panel" aria-label="Authentic context">
+      <div id="authVisual" class="auth-visual"></div>
+      <div class="auth-copy">
+        <div class="auth-head"><strong id="authTitle"></strong><span id="authTag" class="auth-tag"></span></div>
+        <div id="authDesc" class="auth-desc"></div>
+        <div id="authTradeoff" class="auth-tradeoff"></div>
+        <div id="authImpact" class="auth-impact"></div>
+      </div>
+    </section>
+  </section>
+
+  <section id="experimentPanel" class="panel experiment">
+    <div class="wordbar">
+      <span class="endlabel">more precision</span>
+      <div id="wordShell" class="word-shell">
+        <div id="word" class="word" aria-label="Eight-bit floating-point allocation"></div>
+        <button id="divider" class="divider" type="button" aria-label="Move bits between mantissa and exponent"></button>
+        <div id="wordCount" class="word-count"></div>
+      </div>
+      <span class="endlabel">more range</span>
+    </div>
+
+    <div id="instrument" class="instrument">
+      <svg id="rulerSvg" viewBox="0 0 1120 330" role="img" aria-label="Floating-point ruler showing real measurements and their stored approximations"></svg>
+      <div id="instrumentHint" class="instrument-hint"></div>
+    </div>
+
+    <div class="bottom-row">
+      <div id="selection" class="selection"></div>
+      <div id="fit" class="fit"></div>
+    </div>
+    <div id="insight" class="insight"></div>
+
+    <section id="normalizer" class="normalizer" aria-labelledby="storageTitle">
+      <div class="normalizer-head">
+        <div><strong id="storageTitle">Binary storage representation</strong><span id="storageHint">Selected real value → stored floating-point word. Non-zero values are best stored in normalised form.</span></div>
+        <button id="resetForm" class="reset-form" type="button">Reset form</button>
+      </div>
+      <div class="storage-row">
+        <div id="storageSource" class="storage-source"><span>Selected value</span><strong>—</strong></div>
+        <div class="storage-arrow" aria-hidden="true">→</div>
+        <div class="rep-track">
+          <div class="storage-part"><span class="storage-label">Mantissa</span><div id="mantissaDrag" class="mantissa-drag"></div></div>
+          <div class="sep" aria-hidden="true"></div>
+          <div class="storage-part"><span class="storage-label">Exponent</span><div id="exponentBits" class="exponent-bits"></div></div>
+        </div>
+        <div id="repSide" class="rep-side"></div>
+      </div>
+    </section>
+    <div class="source-note">Teaching datasets are scaled to expose the 8-bit trade-off. Contexts are authentic; the weather challenge follows the coursebook example of repeated floating-point calculations accumulating rounding error.</div>
+  </section>
+</main>
+<script>
+(() => {
+  const TOTAL_BITS=8,MIN_M=2,MAX_M=6,$=id=>document.getElementById(id),svgNS="http://www.w3.org/2000/svg";
+  const experiments=[
+    {id:"filament",name:"Filament",kind:"dataset",title:"3D-printer filament inspection",hint:"Keep all five diameters distinct and each stored reading within ±0.025 mm.",unit:"mm",requireDistinct:true,targets:[1.62,1.69,1.75,1.82,1.88].map((value,i)=>({label:String.fromCharCode(65+i),value,tol:{kind:"abs",value:.025}}))},
+    {id:"current",name:"Current",kind:"dataset",title:"Industrial current logger",hint:"Record 5 mA to 1.2 kA in one format, with every reading within 20% of the real current.",unit:"A",targets:[.005,.05,.5,5,50,500,1200].map((value,i)=>({label:String(i+1),value,tol:{kind:"pct",value:.20}}))},
+    {id:"forecast",name:"Forecast",kind:"loop",title:"Weather-model rounding",hint:"Twenty forecast updates reuse the stored result. Minimise final drift without running out of range.",unit:"°C",loop:{start:.4,mult:1.01,add:.15,cycles:20}},
+    {id:"impact",name:"Impact",kind:"dataset",title:"Impact recorder",hint:"Preserve tiny 0.008–0.012 g vibrations and shocks up to 1200 g in the same 8-bit format.",unit:"g",requireDistinct:true,discover:true,targets:[
+      {label:"v1",value:.008,tol:{kind:"abs",value:.001}},{label:"v2",value:.009,tol:{kind:"abs",value:.001}},{label:"v3",value:.010,tol:{kind:"abs",value:.001}},{label:"v4",value:.011,tol:{kind:"abs",value:.001}},{label:"v5",value:.012,tol:{kind:"abs",value:.001}},
+      {label:"2g",value:2,tol:{kind:"pct",value:.10}},{label:"20g",value:20,tol:{kind:"pct",value:.10}},{label:"200g",value:200,tol:{kind:"pct",value:.10}},{label:"1200g",value:1200,tol:{kind:"pct",value:.10}}
+    ]}
+  ];
+  const state={experimentIndex:0,mBits:4,selectedIndex:0,visited:new Map(),manualRep:null,manualOriginal:null,dividerDrag:null,mantissaDrag:null,markerHits:[],best:new Map(),completed:new Set()};
+  experiments.forEach(e=>state.visited.set(e.id,new Set([state.mBits])));
+
+  const signedFromRaw=(raw,bits)=>raw>=(1<<(bits-1))?raw-(1<<bits):raw;
+  const rawFromSigned=(value,bits)=>value&((1<<bits)-1);
+  const bitsFor=(value,bits)=>rawFromSigned(value,bits).toString(2).padStart(bits,"0");
+  const exponentBounds=e=>({min:-(1<<(e-1)),max:(1<<(e-1))-1});
+  const mantissaValue=(M,m)=>M/(2**(m-1));
+  const repValue=(M,E,m)=>mantissaValue(M,m)*(2**E);
+  const isNormalized=(M,m)=>M!==0&&bitsFor(M,m)[0]!==bitsFor(M,m)[1];
+  const almostEqual=(a,b)=>Math.abs(a-b)<=Math.max(1e-12,Math.max(Math.abs(a),Math.abs(b))*1e-12);
+
+  function system(){
+    const m=state.mBits,e=TOTAL_BITS-m,eb=exponentBounds(e),reps=[],valueMap=new Map();
+    for(let M=-(1<<(m-1));M<(1<<(m-1));M++)for(let E=eb.min;E<=eb.max;E++){
+      const value=repValue(M,E,m),rep={value,M,E,normalized:isNormalized(M,m)};reps.push(rep);const key=Object.is(value,-0)?"0":String(value);if(!valueMap.has(key))valueMap.set(key,value);
+    }
+    const values=[...valueMap.values()].sort((a,b)=>a-b),nonzero=values.filter(v=>v!==0);
+    return {m,e,eb,reps,values,min:values[0],max:values.at(-1),minNonzero:Math.min(...nonzero.map(v=>Math.abs(v)))};
+  }
+
+  function nearest(target,sys=system()){
+    if(target<sys.min||target>sys.max)return {status:"overflow",target,stored:null,rep:null,error:null};
+    if(target!==0&&Math.abs(target)<sys.minNonzero)return {status:"underflow",target,stored:0,rep:{value:0,M:0,E:0,normalized:false},error:-target};
+    let distance=Infinity,candidates=[];
+    for(const rep of sys.reps){const d=Math.abs(rep.value-target);if(d<distance-1e-14){distance=d;candidates=[rep]}else if(Math.abs(d-distance)<=1e-14)candidates.push(rep)}
+    candidates.sort((a,b)=>Number(b.normalized)-Number(a.normalized)||Math.abs(a.E)-Math.abs(b.E)||Math.abs(b.M)-Math.abs(a.M));
+    const rep=candidates[0];return {status:almostEqual(rep.value,target)?"exact":"rounded",target,stored:rep.value,rep,error:rep.value-target};
+  }
+
+  function currentExperiment(){return experiments[state.experimentIndex]}
+  function currentTarget(){const e=currentExperiment();return e.kind==="dataset"?(e.targets[state.selectedIndex]||e.targets[0]):null}
+  function formatNumber(v){if(v===null||v===undefined||Number.isNaN(v))return "—";if(v===0)return "0";const a=Math.abs(v);if(a>=100000||a<.001)return v.toExponential(3).replace("e+","e");if(a>=100)return Number(v.toFixed(2)).toString();return Number(v.toPrecision(6)).toString()}
+  function toleranceValue(target){if(!target?.tol)return null;return target.tol.kind==="abs"?target.tol.value:Math.abs(target.value)*target.tol.value}
+  function toleranceBounds(target){const d=toleranceValue(target);return d===null?null:[target.value-d,target.value+d]}
+  function passes(target,result){if(!target?.tol||result.status==="overflow"||result.status==="underflow")return false;return Math.abs(result.error)<=toleranceValue(target)+1e-12}
+  function unitText(value,unit){return `${formatNumber(value)} ${unit}`}
+  function miniSeriesPath(values,x,y,w,h,minV,maxV){const span=Math.max(1e-9,maxV-minV);let d="",started=false;values.forEach((v,i)=>{if(v===null||v===undefined||Number.isNaN(v)){started=false;return}const px=x+(values.length===1?0:i/(values.length-1)*w),py=y+h-((v-minV)/span)*h;d+=`${started?"L":"M"}${px.toFixed(1)} ${py.toFixed(1)} `;started=true});return d}
+  function scopePath(values,x,y,w,h,minV,maxV,scale="linear",step=false){
+    const clean=v=>Math.max(minV,Math.min(maxV,Number(v)));
+    const norm=v=>{const c=clean(v);if(scale==="log"){const lo=Math.log10(Math.max(minV,1e-9)),hi=Math.log10(Math.max(maxV,minV*1.0001));return (Math.log10(Math.max(c,1e-9))-lo)/(hi-lo)}return (c-minV)/(maxV-minV||1)};
+    let d="",started=false,prevY=null;values.forEach((value,i)=>{if(value===null||value===undefined||Number.isNaN(value)){started=false;prevY=null;return}const px=x+(values.length===1?0:i/(values.length-1)*w),py=y+h-norm(value)*h;if(!started){d+=`M${px.toFixed(1)} ${py.toFixed(1)} `;started=true}else if(step){d+=`H${px.toFixed(1)} V${py.toFixed(1)} `}else d+=`L${px.toFixed(1)} ${py.toFixed(1)} `;prevY=py});return d
+  }
+  function scopeY(value,y,h,minV,maxV,scale="linear"){const c=Math.max(minV,Math.min(maxV,Number(value)));if(scale==="log"){const lo=Math.log10(Math.max(minV,1e-9)),hi=Math.log10(Math.max(maxV,minV*1.0001));return y+h-((Math.log10(Math.max(c,1e-9))-lo)/(hi-lo))*h}return y+h-((c-minV)/(maxV-minV||1))*h}
+  function scanLineSvg(x,y,h,w,dur="3.8s"){return `<line class="scan-line" x1="${x}" x2="${x}" y1="${y}" y2="${y+h}"><animate attributeName="x1" from="${x}" to="${x+w}" dur="${dur}" repeatCount="indefinite"/><animate attributeName="x2" from="${x}" to="${x+w}" dur="${dur}" repeatCount="indefinite"/></line>`}
+
+  function datasetMetrics(exp,sys=system()){
+    const rows=exp.targets.map(target=>({target,result:nearest(target.value,sys)}));
+    const within=rows.filter(row=>passes(row.target,row.result)).length,overflow=rows.filter(row=>row.result.status==="overflow").length,underflow=rows.filter(row=>row.result.status==="underflow").length;
+    const stored=rows.filter(row=>row.result.stored!==null).map(row=>row.result.stored),distinct=new Set(stored.map(v=>String(v))).size,collisions=Math.max(0,stored.length-distinct);
+    let worstRatio=0,worstError=0;
+    rows.forEach(row=>{if(row.result.error===null)return;const err=Math.abs(row.result.error),tol=toleranceValue(row.target);worstError=Math.max(worstError,err);if(tol)worstRatio=Math.max(worstRatio,err/tol)});
+    const score=within*12+distinct*(exp.requireDistinct?4:1)-overflow*18-underflow*14-collisions*(exp.requireDistinct?6:1)-worstRatio;
+    const goalMet=within===rows.length&&overflow===0&&underflow===0&&(!exp.requireDistinct||distinct===rows.length);
+    return {rows,within,overflow,underflow,distinct,collisions,worstRatio,worstError,score,goalMet};
+  }
+
+  function loopSimulation(exp,sys=system()){
+    const cfg=exp.loop,ideal=[cfg.start],stored=[],initial=nearest(cfg.start,sys);let current=initial.stored,overflowAt=null,underflowCount=initial.status==="underflow"?1:0;
+    stored.push(current);
+    for(let i=1;i<=cfg.cycles;i++){
+      ideal.push(ideal.at(-1)*cfg.mult+cfg.add);
+      if(current===null){stored.push(null);continue}
+      const candidate=current*cfg.mult+cfg.add,result=nearest(candidate,sys);if(result.status==="overflow"){overflowAt=i;current=null;stored.push(null)}else{if(result.status==="underflow")underflowCount++;current=result.stored;stored.push(current)}
+    }
+    const finalIdeal=ideal.at(-1),finalStored=stored.at(-1),drift=finalStored===null?null:finalStored-finalIdeal;
+    const score=overflowAt?(-200-overflowAt):(-Math.abs(drift)-underflowCount*2);
+    return {ideal,stored,overflowAt,underflowCount,finalIdeal,finalStored,drift,score,goalMet:!overflowAt&&Math.abs(drift)<=.25};
+  }
+
+  function resultScore(){const e=currentExperiment();return e.kind==="dataset"?datasetMetrics(e).score:loopSimulation(e).score}
+  function updateBest(){const e=currentExperiment(),score=resultScore(),best=state.best.get(e.id);if(best===undefined||score>best)state.best.set(e.id,score);return almostEqual(score,state.best.get(e.id))}
+
+  function storageSample(exp=currentExperiment(),sys=system()){
+    if(exp.kind==="dataset"){
+      const target=currentTarget(),result=nearest(target.value,sys);
+      return {interactive:true,label:`${target.label} · real`,source:target.value,result,cycle:null,ideal:null,overflowAt:null};
+    }
+    const sim=loopSimulation(exp,sys);let cycle=sim.stored.length-1;
+    while(cycle>0&&sim.stored[cycle]===null)cycle--;
+    const stored=sim.stored[cycle],result=stored===null?{status:"overflow",target:sim.ideal[cycle],stored:null,rep:null,error:null}:nearest(stored,sys);
+    return {interactive:false,label:sim.overflowAt?`cycle ${cycle} · last stored`:`cycle ${cycle} · stored`,source:stored,result,cycle,ideal:sim.ideal[cycle],overflowAt:sim.overflowAt};
+  }
+
+  function resetManual(){
+    const sys=system(),sample=storageSample(currentExperiment(),sys),result=sample.result;
+    if(!result?.rep){state.manualRep=null;state.manualOriginal=null;return}
+    if(!sample.interactive){state.manualRep={...result.rep};state.manualOriginal={...result.rep};return}
+    const same=sys.reps.filter(r=>almostEqual(r.value,result.stored));same.sort((a,b)=>b.E-a.E||Math.abs(a.M)-Math.abs(b.M));const start=same[0]||result.rep;state.manualRep={...start};state.manualOriginal={...start};
+  }
+
+  function dividerLeft(){const word=$("word"),gap=4,width=word.clientWidth,cell=(width-gap*7)/8;return state.mBits*cell+(state.mBits-.5)*gap}
+  function renderWord(){
+    const root=$("word");root.replaceChildren();for(let i=0;i<TOTAL_BITS;i++){const d=document.createElement("div"),mant=i<state.mBits;d.className=`word-bit ${mant?"m":"e"}`;d.classList.toggle("sign",i===0||i===state.mBits);d.textContent=mant?"M":"E";root.append(d)}
+    requestAnimationFrame(()=>{$("divider").style.left=`${dividerLeft()}px`});const tried=state.visited.get(currentExperiment().id).size;$("wordCount").textContent=`${state.mBits} mantissa · ${TOTAL_BITS-state.mBits} exponent · tried ${tried}/5`;
+  }
+
+  function renderTabs(){const root=$("tabs");root.replaceChildren();experiments.forEach((item,index)=>{const b=document.createElement("button");b.type="button";b.className=`tab${index===state.experimentIndex?" active":""}`;if(state.visited.get(item.id).size===5)b.classList.add("explored");if(state.completed.has(item.id))b.classList.add("complete");b.textContent=state.completed.has(item.id)?`${item.name} ✓`:item.name;b.addEventListener("click",()=>{if(index===state.experimentIndex)return;state.experimentIndex=index;state.selectedIndex=0;state.visited.get(item.id).add(state.mBits);resetManual();renderAll()});root.append(b)})}
+  function renderMission(){
+    const e=currentExperiment();
+    const intro={
+      filament:"Five filament diameters are close together. Choose an 8-bit split that keeps them distinct and within tolerance. This is mainly a precision problem.",
+      current:"The logger must store currents from 0.005 A to 1200 A. It needs enough range for both extremes and enough precision to keep every reading useful.",
+      forecast:"Each forecast step reuses the stored result. The format needs enough precision to limit repeated rounding error and enough range to avoid overflow.",
+      impact:"Tiny vibrations and very large shocks must share eight bits. Test the allocations to discover whether one format can provide both precision and range."
+    };
+    let hint=intro[e.id]||e.hint;
+    if(e.kind==="dataset"){
+      const m=datasetMetrics(e);
+      if(m.goalMet&&state.visited.get(e.id).size>1) hint="Goal met. The chosen split gives enough mantissa precision and enough exponent range for this dataset.";
+      else if(e.discover&&state.visited.get(e.id).size===5&&!m.goalMet) hint="Goal met. No 8-bit split works: more mantissa improves precision but reduces exponent range, and more exponent range makes the small values too coarse.";
+    }else{
+      const r=loopSimulation(e);
+      if(r.goalMet&&state.visited.get(e.id).size>1) hint="Goal met. The split keeps rounding error small enough while still keeping every forecast value in range.";
+    }
+    $("missionTitle").textContent=e.title;$("missionHint").textContent=hint;$("instrumentHint").textContent=e.kind==="dataset"?"Tap an orange reading to inspect it.":"Move the bit boundary; the 20-cycle trace updates immediately.";
+  }
+
+  function el(name,attrs={}){const node=document.createElementNS(svgNS,name);Object.entries(attrs).forEach(([k,v])=>node.setAttribute(k,String(v)));return node}
+  function addText(svg,text,x,y,attrs={}){const t=el("text",{x,y,"font-family":"-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif",...attrs});t.textContent=text;svg.append(t);return t}
+  function symlog(value,scale,maxAbs){if(value===0)return 0;const den=Math.log2(1+maxAbs/scale);return Math.sign(value)*Math.log2(1+Math.abs(value)/scale)/den}
+
+  function drawRangeBase(svg,sys){
+    const W=1120,left=62,right=1058,center=(left+right)/2,rangeY=78,maxAbs=Math.max(Math.abs(sys.min),Math.abs(sys.max)),scale=sys.minNonzero,mapX=value=>center+symlog(value,scale,maxAbs)*(right-left)/2;
+    svg.append(el("rect",{x:0,y:0,width:W,height:330,fill:"#fff"}));addText(svg,`whole range · ${formatNumber(sys.min)} to ${formatNumber(sys.max)}`,left,31,{fill:"#40464b","font-size":11,"font-weight":800});svg.append(el("line",{x1:left,y1:rangeY,x2:right,y2:rangeY,stroke:"#b9c2c9","stroke-width":2}));
+    const ux1=mapX(-sys.minNonzero),ux2=mapX(sys.minNonzero);svg.append(el("rect",{x:Math.min(ux1,ux2)-3,y:rangeY-31,width:Math.abs(ux2-ux1)+6,height:62,rx:8,fill:"rgba(180,35,24,.075)"}));addText(svg,"underflow",center,rangeY+39,{fill:"#a2544c","font-size":9,"font-weight":800,"text-anchor":"middle"});
+    const step=Math.max(1,Math.ceil(sys.values.length/260));sys.values.forEach((v,i)=>{if(i%step)return;const x=mapX(v);svg.append(el("line",{x1:x,y1:rangeY-8,x2:x,y2:rangeY+8,stroke:"#89a7c5","stroke-width":1,"stroke-opacity":.64}))});svg.append(el("line",{x1:center,y1:rangeY-16,x2:center,y2:rangeY+16,stroke:"#6f7d86","stroke-width":1.5}));addText(svg,"0",center,rangeY+28,{fill:"#6e6e73","font-size":8,"font-weight":700,"text-anchor":"middle"});
+    return {left,right,center,rangeY,mapX};
+  }
+
+  function renderDatasetRuler(svg,exp,sys,base){
+    const {left,right,rangeY,mapX}=base,m=datasetMetrics(exp,sys),overflowLeft=m.rows.filter(r=>r.result.status==="overflow"&&r.target.value<sys.min).length,overflowRight=m.rows.filter(r=>r.result.status==="overflow"&&r.target.value>sys.max).length;
+    const groups=new Map();m.rows.forEach((row,index)=>{if(row.result.stored===null)return;const key=String(row.result.stored);if(!groups.has(key))groups.set(key,[]);groups.get(key).push(index)});
+    m.rows.forEach((row,index)=>{
+      const {target,result}=row,selected=index===state.selectedIndex,within=passes(target,result),x=mapX(Math.max(sys.min,Math.min(sys.max,target.value))),bounds=toleranceBounds(target);
+      if(bounds){const a=mapX(Math.max(sys.min,Math.min(sys.max,bounds[0]))),b=mapX(Math.max(sys.min,Math.min(sys.max,bounds[1])));svg.append(el("rect",{x:Math.min(a,b),y:rangeY-29,width:Math.max(4,Math.abs(b-a)),height:15,rx:8,fill:within?"rgba(24,121,78,.11)":"rgba(209,132,38,.13)",stroke:within?"#8bc39f":"#d8a15d","stroke-width":1}))}
+      if(result.stored!==null){const sx=mapX(result.stored);svg.append(el("line",{x1:x,y1:rangeY-17,x2:sx,y2:rangeY+17,stroke:within?"#6da982":"#d18426","stroke-width":selected?2.6:1.35,"stroke-dasharray":almostEqual(target.value,result.stored)?"0":"5 4",opacity:selected?1:.72}));svg.append(el("circle",{cx:sx,cy:rangeY+18,r:selected?7:5,fill:within?"#18794e":"#5277b8",stroke:"#fff","stroke-width":2}))}
+      const overflow=result.status==="overflow",marker=overflow?el("path",{d:`M${x} ${rangeY-31} l${target.value<sys.min?12:-12} -9 v18 z`,fill:"#b42318",stroke:"#fff","stroke-width":2}):el("circle",{cx:x,cy:rangeY-20,r:selected?8:6,fill:"#d18426",stroke:"#fff","stroke-width":2});marker.style.cursor="pointer";svg.append(marker);state.markerHits.push({index,x,y:rangeY-20,r:18});if(selected){svg.append(el("circle",{cx:x,cy:rangeY-20,r:13,fill:"none",stroke:"#d18426","stroke-width":2,"stroke-opacity":.35}));const labelX=overflow?(target.value>sys.max?right-22:left+22):x,labelY=overflow?rangeY-31:rangeY-49,labelAnchor=overflow?(target.value>sys.max?"end":"start"):"middle";addText(svg,unitText(target.value,exp.unit),labelX,labelY,{fill:overflow?"#b42318":"#9a5a16","font-size":10,"font-weight":850,"text-anchor":labelAnchor})}
+    });
+    const groupLabels=[];groups.forEach((indices,key)=>{if(indices.length<2)return;const x=mapX(Number(key));let y=rangeY+42;if(groupLabels.some(item=>Math.abs(item.x-x)<28&&Math.abs(item.y-y)<14))y=rangeY+30;groupLabels.push({x,y});addText(svg,`×${indices.length}`,x,y,{fill:"#4e6f91","font-size":9,"font-weight":900,"text-anchor":"middle"})});
+
+    const lensTop=128,lensBottom=295,lensY=218;svg.append(el("rect",{x:left,y:lensTop,width:right-left,height:lensBottom-lensTop,rx:13,fill:"#fbfcfd",stroke:"#d9dfe4"}));addText(svg,"local spacing",left+15,lensTop+23,{fill:"#59636a","font-size":10,"font-weight":800});
+    const selected=currentTarget(),selectedResult=nearest(selected.value,sys);let anchor=selectedResult.stored??(selected.value>0?sys.max:sys.min);if(selectedResult.status==="underflow")anchor=0;let idx=sys.values.reduce((best,v,i)=>Math.abs(v-anchor)<Math.abs(sys.values[best]-anchor)?i:best,0),start=Math.max(0,idx-7),end=Math.min(sys.values.length-1,idx+7);if(end-start<12){start=Math.max(0,end-12);end=Math.min(sys.values.length-1,start+12)}
+    const local=sys.values.slice(start,end+1);let minL=local[0],maxL=local.at(-1);if(almostEqual(minL,maxL)){minL-=1;maxL+=1}const lx=v=>left+28+(v-minL)/(maxL-minL)*(right-left-56);svg.append(el("line",{x1:left+28,y1:lensY,x2:right-28,y2:lensY,stroke:"#b9c2c9","stroke-width":2}));
+    let lastLocalLabelX=-Infinity;local.forEach((v,i)=>{const x=lx(v);svg.append(el("line",{x1:x,y1:lensY-12,x2:x,y2:lensY+12,stroke:"#6f91b2","stroke-width":2}));svg.append(el("circle",{cx:x,cy:lensY,r:3.6,fill:"#5277b8"}));const edge=i===0||i===local.length-1;if(edge||x-lastLocalLabelX>=58){addText(svg,formatNumber(v),x,lensY+31,{fill:"#6e6e73","font-size":8,"font-weight":700,"text-anchor":i===0?"start":(i===local.length-1?"end":"middle")});lastLocalLabelX=x}});
+    const selectedBounds=toleranceBounds(selected);if(selectedBounds){const a=lx(Math.max(minL,Math.min(maxL,selectedBounds[0]))),b=lx(Math.max(minL,Math.min(maxL,selectedBounds[1])));svg.append(el("rect",{x:Math.min(a,b),y:lensY-24,width:Math.max(5,Math.abs(b-a)),height:48,rx:10,fill:"rgba(209,132,38,.10)",stroke:"#d7a15e","stroke-width":1}))}
+    m.rows.forEach((row,index)=>{if(row.target.value<minL||row.target.value>maxL)return;const tx=lx(row.target.value),selectedHere=index===state.selectedIndex;svg.append(el("circle",{cx:tx,cy:lensY-43,r:selectedHere?8:4.5,fill:"#d18426",opacity:selectedHere?1:.48,stroke:"#fff","stroke-width":2}));if(row.result.stored!==null&&row.result.stored>=minL&&row.result.stored<=maxL){const sx=lx(row.result.stored);svg.append(el("line",{x1:tx,y1:lensY-34,x2:sx,y2:lensY-9,stroke:"#d18426","stroke-width":selectedHere?2:1,"stroke-dasharray":"4 4",opacity:selectedHere?.9:.25}))}});
+    if(selectedResult.stored!==null&&selectedResult.stored>=minL&&selectedResult.stored<=maxL){const sx=lx(selectedResult.stored);svg.append(el("circle",{cx:sx,cy:lensY,r:8,fill:passes(selected,selectedResult)?"#18794e":"#5277b8",stroke:"#fff","stroke-width":2}));if(!almostEqual(selected.value,selectedResult.stored))addText(svg,`error ${formatNumber(Math.abs(selectedResult.error))} ${exp.unit}`,(lx(selected.value)+sx)/2,lensY-19,{fill:"#9a5a16","font-size":8,"font-weight":800,"text-anchor":"middle"})}
+  }
+
+  function renderLoopRuler(svg,exp,sys,base){
+    const {left,right,rangeY,mapX}=base,r=loopSimulation(exp,sys),finalX=mapX(Math.max(sys.min,Math.min(sys.max,r.finalIdeal)));svg.append(el("circle",{cx:finalX,cy:rangeY-20,r:8,fill:"#d18426",stroke:"#fff","stroke-width":2}));addText(svg,"ideal final",finalX,rangeY-45,{fill:"#9a5a16","font-size":9,"font-weight":850,"text-anchor":"middle"});
+    if(r.finalStored!==null){const sx=mapX(r.finalStored);svg.append(el("line",{x1:finalX,y1:rangeY-13,x2:sx,y2:rangeY+12,stroke:"#d18426","stroke-width":2,"stroke-dasharray":"5 4"}));svg.append(el("circle",{cx:sx,cy:rangeY+18,r:7,fill:"#5277b8",stroke:"#fff","stroke-width":2}));addText(svg,"stored",sx,rangeY+43,{fill:"#4f6e90","font-size":8,"font-weight":850,"text-anchor":"middle"})}else{addText(svg,`stored overflow · cycle ${r.overflowAt}`,right-4,rangeY+39,{fill:"#b42318","font-size":9,"font-weight":850,"text-anchor":"end"})}
+    const top=128,bottom=295,plotL=left+38,plotR=right-28,plotT=top+32,plotB=bottom-22;svg.append(el("rect",{x:left,y:top,width:right-left,height:bottom-top,rx:13,fill:"#fbfcfd",stroke:"#d9dfe4"}));addText(svg,"20 forecast cycles",left+15,top+23,{fill:"#59636a","font-size":10,"font-weight":800});addText(svg,"xₙ₊₁ = 1.01xₙ + 0.15",right-15,top+23,{fill:"#6e6e73","font-size":9,"font-weight":800,"text-anchor":"end"});
+    const finiteStored=r.stored.filter(v=>v!==null),minY=Math.min(...r.ideal,...finiteStored),maxY=Math.max(...r.ideal,...finiteStored),pad=Math.max(.1,(maxY-minY)*.08),yMin=minY-pad,yMax=maxY+pad,xFor=i=>plotL+i/exp.loop.cycles*(plotR-plotL),yFor=v=>plotB-(v-yMin)/(yMax-yMin)*(plotB-plotT);
+    [0,5,10,15,20].forEach(i=>{const x=xFor(i);svg.append(el("line",{x1:x,y1:plotT,x2:x,y2:plotB,stroke:"#e4e8eb","stroke-width":1}));addText(svg,String(i),x,plotB+19,{fill:"#7b858c","font-size":8,"font-weight":700,"text-anchor":"middle"})});[yMin,(yMin+yMax)/2,yMax].forEach(v=>{const y=yFor(v);svg.append(el("line",{x1:plotL,y1:y,x2:plotR,y2:y,stroke:"#eef1f3","stroke-width":1}));addText(svg,formatNumber(v),plotL-7,y+3,{fill:"#7b858c","font-size":8,"font-weight":700,"text-anchor":"end"})});
+    const path=(arr,stopNull=false)=>{let d="",started=false;for(let i=0;i<arr.length;i++){const v=arr[i];if(v===null){if(stopNull)break;continue}d+=`${started?"L":"M"}${xFor(i)} ${yFor(v)} `;started=true}return d};svg.append(el("path",{d:path(r.ideal),fill:"none",stroke:"#d18426","stroke-width":2.4,"stroke-linecap":"round"}));svg.append(el("path",{d:path(r.stored,true),fill:"none",stroke:"#5277b8","stroke-width":3,"stroke-linecap":"round","stroke-linejoin":"round"}));
+    addText(svg,"ideal",plotR-70,plotT+14,{fill:"#9a5a16","font-size":8,"font-weight":850});addText(svg,"stored",plotR-70,plotT+29,{fill:"#4f6e90","font-size":8,"font-weight":850});if(r.overflowAt){const i=r.overflowAt,x=xFor(i),previous=r.stored[i-1];if(previous!==null){const y=yFor(previous);svg.append(el("path",{d:`M${x-7} ${y-7}L${x+7} ${y+7}M${x+7} ${y-7}L${x-7} ${y+7}`,stroke:"#b42318","stroke-width":3}));addText(svg,"overflow",x+12,y-10,{fill:"#b42318","font-size":8,"font-weight":850})}}
+  }
+
+  function renderRuler(){const svg=$("rulerSvg");svg.replaceChildren();state.markerHits=[];const sys=system(),exp=currentExperiment(),base=drawRangeBase(svg,sys);if(exp.kind==="dataset")renderDatasetRuler(svg,exp,sys,base);else renderLoopRuler(svg,exp,sys,base)}
+
+  function renderSelection(){
+    const exp=currentExperiment(),box=$("selection");box.replaceChildren();if(exp.kind==="loop"){const r=loopSimulation(exp);const main=document.createElement("strong");main.textContent=r.finalStored===null?`cycle ${r.overflowAt} → overflow`:`${unitText(r.finalIdeal,exp.unit)} → ${unitText(r.finalStored,exp.unit)}`;box.append(main);const meta=document.createElement("span");meta.textContent=r.finalStored===null?"stored trace stops when range is exceeded":`final drift ${r.drift>=0?"+":""}${formatNumber(r.drift)} ${exp.unit}`;meta.className=r.finalStored===null?"bad":"";box.append(meta);return}
+    const t=currentTarget(),r=nearest(t.value),main=document.createElement("strong");main.textContent=r.stored===null?`${unitText(t.value,exp.unit)} → overflow`:`${unitText(t.value,exp.unit)} → ${unitText(r.stored,exp.unit)}`;box.append(main);const meta=document.createElement("span");if(r.status==="exact"){meta.textContent="exact";meta.className="good"}else if(r.status==="rounded")meta.textContent=`error ${formatNumber(Math.abs(r.error))} ${exp.unit}`;else if(r.status==="underflow"){meta.textContent="underflow → 0";meta.className="bad"}else{meta.textContent="outside range";meta.className="bad"}box.append(meta)
+  }
+
+  function renderFit(){
+    const exp=currentExperiment(),fit=$("fit"),isBest=updateBest();fit.className="fit";
+    const show=(label,detail,kind="")=>{fit.className=`fit${kind?` ${kind}`:""}`;fit.innerHTML=`<strong>${label}</strong><span>${detail}${isBest&&!label.startsWith("GOAL")?" · best so far":""}</span>`};
+    if(exp.kind==="loop"){
+      const r=loopSimulation(exp);
+      if(r.overflowAt) show("NEED RANGE",`overflow at cycle ${r.overflowAt}`,"bad");
+      else if(r.goalMet) show("GOAL MET",`final drift ${formatNumber(Math.abs(r.drift))} ${exp.unit}`,"good");
+      else show("NEED PRECISION",`final drift ${formatNumber(Math.abs(r.drift))} ${exp.unit}`,"warn");
+      return;
+    }
+    const m=datasetMetrics(exp),discoveryComplete=exp.discover&&state.visited.get(exp.id).size===5&&!m.goalMet;
+    if(exp.id==="filament"){
+      if(m.goalMet) show("GOAL MET",`${m.distinct}/${exp.targets.length} distinct · ${m.within}/${exp.targets.length} in tolerance`,"good");
+      else if(m.overflow||m.underflow) show("NEED RANGE",`${m.overflow+m.underflow} outside representable range`,"bad");
+      else show("NEED PRECISION",`${m.distinct}/${exp.targets.length} distinct · ${m.within}/${exp.targets.length} in tolerance`,"warn");
+    }else if(exp.id==="current"){
+      if(m.goalMet) show("GOAL MET",`${m.within}/${exp.targets.length} within 20% · no overflow/underflow`,"good");
+      else if(m.overflow||m.underflow) show("NEED RANGE",`${m.overflow} overflow · ${m.underflow} underflow`,"bad");
+      else show("NEED PRECISION",`${m.within}/${exp.targets.length} within 20%`,"warn");
+    }else if(discoveryComplete){
+      show("GOAL MET","no 8-bit allocation fits · use more bits","good");
+    }else if(m.overflow||m.underflow){
+      show("NEED RANGE",`${m.overflow} overflow · ${m.underflow} underflow`,"bad");
+    }else{
+      show("NEED PRECISION",`${m.distinct}/${exp.targets.length} distinct · ${m.within}/${exp.targets.length} in tolerance`,"warn");
+    }
+  }
+  function renderInsight(){const exp=currentExperiment(),box=$("insight");box.className="insight";box.textContent="";if(exp.discover&&state.visited.get(exp.id).size===5&&!datasetMetrics(exp).goalMet){box.className="insight show complete";box.textContent="Goal met: no 8-bit allocation provides both the precision needed for tiny vibrations and the range needed for large shocks. A wider format is required."}}
+
+  function authMessage(chipClass,chipLabel,title,text){return {cls:chipClass,html:`<span class="impact-chip ${chipClass}">${chipLabel}</span><p><strong>${title}</strong>${text?` ${text}`:""}</p>`}}
+  function tradeHtml(a,b){return `<div class="trade-card precision"><strong>precision</strong><p>${a}</p></div><div class="trade-card range"><strong>range</strong><p>${b}</p></div>`}
+  function applyImpact(box,msg){box.className=`auth-impact ${msg.cls}`;box.innerHTML=msg.html}
+  function renderAuthentic(){
+    const exp=currentExperiment(),visual=$("authVisual"),title=$("authTitle"),tag=$("authTag"),desc=$("authDesc"),trade=$("authTradeoff"),impact=$("authImpact"),sys=system();
+    if(exp.id==="filament"){
+      const t=currentTarget(),r=nearest(t.value),m=datasetMetrics(exp),same=r.stored===null?[]:m.rows.filter(row=>row.result.stored!==null&&almostEqual(row.result.stored,r.stored));
+      title.textContent="Filament inspection";tag.textContent="3D printing";
+      desc.textContent="A laser gauge samples filament as it feeds. The stored diameter controls extrusion compensation, so close values must remain distinguishable.";
+      trade.innerHTML=tradeHtml("More mantissa bits make the stored diameter steps smaller, so nearby filament sizes stay distinct.","The filament only varies over a narrow range, so extra exponent bits add range that this job does not need.");
+      const flowRatio=r.stored===null?null:(t.value*t.value)/(r.stored*r.stored),flowError=flowRatio===null?null:(flowRatio-1)*100;
+      if(r.stored===null) applyImpact(impact,authMessage("bad","need range","The sample cannot be stored.","A gauge reading outside the representable range is lost completely."));
+      else if(!passes(t,r)) applyImpact(impact,authMessage("warn","need precision","The stored diameter is too inaccurate.",`The real ${formatNumber(t.value)} mm sample becomes ${formatNumber(r.stored)} mm, so extrusion compensation is based on the wrong diameter.`));
+      else if(same.length>1) applyImpact(impact,authMessage("warn","need precision","Different diameters collapse to one value.",`${same.length} real filament sizes become ${formatNumber(r.stored)} mm, so quality control cannot distinguish them.`));
+      else if(m.goalMet) applyImpact(impact,authMessage("good","goal met","The format matches this job.","All five diameters stay distinct and within tolerance: enough mantissa precision, while the exponent still covers the required range."));
+      else applyImpact(impact,authMessage("warn","need precision","Stored values are too widely spaced.","Nearby diameters merge or round outside tolerance. More mantissa bits would reduce that spacing."));
+      const N=42,real=[];for(let i=0;i<N;i++){const q=i/(N-1),v=1.75+0.095*Math.sin(q*Math.PI*2)+0.035*Math.sin(q*Math.PI*6+.4);real.push(Math.max(1.62,Math.min(1.88,v)))}
+      const stored=real.map(v=>nearest(v).stored),realPath=scopePath(real,10,22,176,42,1.60,1.90),storedPath=scopePath(stored,10,22,176,42,1.60,1.90,"linear",true),selectedRealY=scopeY(t.value,22,42,1.60,1.90),selectedStoredY=r.stored===null?null:scopeY(r.stored,22,42,1.60,1.90);
+      const beadW=flowRatio===null?28:Math.max(17,Math.min(43,28*flowRatio));
+      visual.innerHTML=`<svg viewBox="0 0 332 116" aria-hidden="true"><rect width="300" height="116" fill="#f7fafc"/>
+        <text x="98" y="10" text-anchor="middle" class="scope-label">diameter along moving filament</text><rect x="6" y="14" width="186" height="58" rx="7" fill="#fff" stroke="#bcc7cd"/><line class="scope-grid" x1="10" y1="43" x2="186" y2="43"/><path class="scope-real" d="${realPath}"/><path class="scope-stored ${m.goalMet?'good':''}" d="${storedPath}"/>${scanLineSvg(10,18,50,176,"3.3s")}<circle class="scope-sample" cx="183" cy="${selectedRealY.toFixed(1)}" r="3.3" stroke="#d18426"/><circle class="scope-sample" cx="183" cy="${selectedStoredY===null?68:selectedStoredY.toFixed(1)}" r="3.3" stroke="${m.goalMet?'#18794e':'#5277b8'}"/><text x="12" y="22" fill="#d18426" font-size="6.3" font-weight="900">real</text><text x="38" y="22" fill="${m.goalMet?'#18794e':'#5277b8'}" font-size="6.3" font-weight="900">stored</text><text x="98" y="82" text-anchor="middle" class="scope-status" fill="${m.goalMet?'#18794e':'#8b5f14'}">${m.goalMet?'diameter variation preserved':'quantised steps distort diameter'}</text>
+        <g transform="translate(198 13)"><g class="spool-turn"><circle cx="20" cy="29" r="15" fill="#3f4a51"/><path d="M20 16V42M7 29H33" stroke="#93a1a9" stroke-width="1.5"/></g><circle cx="20" cy="29" r="6" fill="#eef2f4"/><path class="filament-flow" d="M36 29H60" stroke="#d18426" stroke-width="4" fill="none"/><rect x="60" y="18" width="19" height="22" rx="4" fill="#dce6ec" stroke="#91a4af"/><line class="gauge-beam" x1="61" y1="29" x2="78" y2="29" stroke="#d94a49" stroke-width="1.6" stroke-dasharray="3 2"/><path class="filament-flow" d="M80 29H93" stroke="#d18426" stroke-width="4" fill="none"/><path class="print-head" d="M91 21h14l-3 13h-8z" fill="#9daab2"/><rect x="86" y="51" width="40" height="18" rx="5" fill="#d7e6ef" stroke="#90a4af"/><rect x="106" y="55" width="${beadW.toFixed(1)}" height="9" rx="4.5" fill="${m.goalMet?'#18794e':'#d18426'}" transform="translate(${-beadW/2} 0)"/><text x="106" y="78" text-anchor="middle" class="scope-label">printed bead</text><text x="106" y="91" text-anchor="middle" class="scope-status" fill="${m.goalMet?'#18794e':'#8b5f14'}">${m.goalMet?'correct width':(flowError===null?'no reading':Math.abs(flowError)>5?'visible print error':'small print error')}</text></g>
+      </svg>`;return;
+    }
+    if(exp.id==="current"){
+      const m=datasetMetrics(exp),goal=m.goalMet;
+      title.textContent="Wide-range current logger";tag.textContent="current monitoring";
+      desc.textContent="One sensor records a continuously changing current: tiny leakage most of the time, then a large fault surge. The same 8-bit format must preserve both parts of the signal.";
+      trade.innerHTML=tradeHtml("More mantissa bits reduce the step size, so small changes in leakage current remain visible.","More exponent bits extend the measurable range, so large current spikes do not overflow and clip.");
+      if(goal) applyImpact(impact,authMessage("good","goal met","Both ends of the signal are usable.","The low-current variation is still resolved and the 1200 A surge fits without overflow: a workable balance of precision and range."));
+      else if(m.overflow||m.underflow) applyImpact(impact,authMessage("bad","need range","Part of the real signal falls outside the format.",m.overflow?"The fault spike is clipped, so the logger cannot record its true severity. More exponent bits are needed.":"The smallest current underflows toward zero, so leakage disappears from the record. More exponent bits are needed."));
+      else applyImpact(impact,authMessage("warn","need precision","The signal fits, but small changes are rounded away.","The stored low-current trace becomes a coarse staircase. More mantissa bits would reduce the spacing between representable values."));
+      const N=64,real=[];for(let i=0;i<N;i++){const q=i/(N-1);const low=.018+.012*Math.sin(q*Math.PI*8)+.006*Math.sin(q*Math.PI*20+.7);const spike=1199.98*Math.exp(-Math.pow((q-.63)/.055,2));real.push(Math.max(.005,low+spike))}
+      const mapped=real.map(v=>nearest(v)),stored=mapped.map((r,i)=>r.stored===null?Math.min(real[i],Math.max(sys.max,.005)):Math.max(r.stored,.0005));const overflow=mapped.some(r=>r.status==="overflow"),under=mapped.some(r=>r.status==="underflow");
+      const maxY=Math.max(1200,sys.max>0?sys.max:1200),realPath=scopePath(real,10,18,202,55,.001,maxY,"log"),storedPath=scopePath(stored,10,18,202,55,.001,maxY,"log",true),limitY=sys.max>0&&sys.max<maxY?scopeY(sys.max,18,55,.001,maxY,"log"):null;
+      const lowReal=[.005,.012,.02,.008,.05,.015,.03],lowStored=lowReal.map(v=>nearest(v).stored),lowDistinct=new Set(lowStored.map(v=>String(v))).size,lowResolved=lowDistinct>=6&&!under;
+      visual.innerHTML=`<svg viewBox="0 0 332 116" aria-hidden="true"><rect width="300" height="116" fill="#f7fafc"/><text x="111" y="10" text-anchor="middle" class="scope-label">continuous current signal · logarithmic amplitude</text><rect x="6" y="14" width="212" height="66" rx="7" fill="#fff" stroke="#bcc7cd"/><line class="scope-grid" x1="10" y1="45" x2="212" y2="45"/><path class="scope-real" d="${realPath}"/><path class="scope-stored ${goal?'good':(overflow?'bad':'')}" d="${storedPath}"/>${limitY!==null?`<line class="scope-limit" x1="10" y1="${limitY.toFixed(1)}" x2="212" y2="${limitY.toFixed(1)}"/><text x="210" y="${(limitY-2).toFixed(1)}" text-anchor="end" fill="#b42318" font-size="6.1" font-weight="900">representable max</text>`:''}${scanLineSvg(10,16,62,202,"4s")}<text x="12" y="23" fill="#d18426" font-size="6.3" font-weight="900">real</text><text x="38" y="23" fill="${goal?'#18794e':(overflow?'#b42318':'#5277b8')}" font-size="6.3" font-weight="900">stored</text><text x="111" y="89" text-anchor="middle" class="scope-label">small oscillations → sudden high-current spike</text>
+        <g transform="translate(224 14)"><rect width="70" height="29" rx="7" fill="${lowResolved?'#edf8f1':'#fff6e7'}" stroke="${lowResolved?'#acd3ba':'#e1c78f'}"/><text x="35" y="11" text-anchor="middle" class="scope-label">low-current detail</text><text x="35" y="22" text-anchor="middle" class="scope-status" fill="${lowResolved?'#18794e':'#8b5f14'}">${lowResolved?'resolved':'merged'}</text><rect y="36" width="70" height="29" rx="7" fill="${overflow?'#fff0ee':(goal?'#edf8f1':'#eef2fa')}" stroke="${overflow?'#e5b6b0':(goal?'#acd3ba':'#c8d5e8')}"/><text x="35" y="47" text-anchor="middle" class="scope-label">fault spike</text><text x="35" y="58" text-anchor="middle" class="scope-status" fill="${overflow?'#b42318':(goal?'#18794e':'#5277b8')}">${overflow?'clipped':(goal?'captured':'stored')}</text><path class="current-flow" d="M2 80H68" stroke="#d18426" stroke-width="2.2" fill="none"/><circle class="clamp-pulse" cx="35" cy="80" r="8" fill="none" stroke="#677983" stroke-width="2"/><text x="35" y="99" text-anchor="middle" class="scope-label">sensor → logger</text></g>
+      </svg>`;return;
+    }
+    if(exp.id==="forecast"){
+      const r=loopSimulation(exp),goal=r.goalMet,overflow=!!r.overflowAt,ideal=r.ideal,stored=r.stored,threshold=3,finalIdeal=r.finalIdeal,finalStored=r.finalStored,idealProtect=finalIdeal<threshold,storedProtect=finalStored!==null&&finalStored<threshold,falseProtect=!overflow&&!idealProtect&&storedProtect,missedProtect=!overflow&&idealProtect&&!storedProtect;
+      title.textContent="Weather-model rounding";tag.textContent="temperature forecast";
+      desc.textContent="Each model update is stored and then reused in the next update. Watch the stored temperature trace diverge from the ideal trace as rounding accumulates.";
+      trade.innerHTML=tradeHtml("More mantissa bits make each stored temperature closer to the calculated value, reducing accumulated rounding error.","More exponent bits extend the range so later model values do not overflow.");
+      if(overflow) applyImpact(impact,authMessage("bad","need range","The stored forecast runs out of range.",`Overflow occurs at cycle ${r.overflowAt}; later model values cannot be represented.`));
+      else if(falseProtect||missedProtect) applyImpact(impact,authMessage("warn","need precision","Rounding changes the decision.",`The ideal and stored traces end on different sides of the illustrative 3 °C action line, so the stored forecast would trigger a different frost-protection action.`));
+      else if(goal) applyImpact(impact,authMessage("good","goal met","The stored trace stays close enough.",`All 20 updates fit in range and final drift is only ${formatNumber(Math.abs(r.drift))} °C: enough mantissa precision and enough exponent range.`));
+      else applyImpact(impact,authMessage("warn","need precision","Repeated rounding creates too much drift.",`The values fit, but the stored trace ends ${formatNumber(Math.abs(r.drift))} °C from the ideal. More mantissa bits would reduce that accumulated error.`));
+      const finite=stored.filter(v=>v!==null),minV=Math.min(...ideal,...finite,threshold)-.2,maxV=Math.max(...ideal,...finite,threshold)+.2,idealPath=scopePath(ideal,10,18,202,55,minV,maxV),storedPlot=stored.map(v=>v===null?maxV:v),storedPath=scopePath(storedPlot,10,18,202,55,minV,maxV,"linear",true),thY=scopeY(threshold,18,55,minV,maxV),finalDiff=finalStored===null?null:Math.abs(finalStored-finalIdeal);
+      visual.innerHTML=`<svg viewBox="0 0 332 116" aria-hidden="true"><rect width="300" height="116" fill="#f7fafc"/><text x="111" y="10" text-anchor="middle" class="scope-label">temperature through repeated model updates</text><rect x="6" y="14" width="212" height="66" rx="7" fill="#fff" stroke="#bcc7cd"/><line class="scope-grid" x1="10" y1="45" x2="212" y2="45"/><line x1="10" y1="${thY.toFixed(1)}" x2="212" y2="${thY.toFixed(1)}" stroke="#83a9c9" stroke-width="1.1" stroke-dasharray="4 3"/><text x="210" y="${(thY-2).toFixed(1)}" text-anchor="end" fill="#6a90af" font-size="6.1" font-weight="900">3 °C action line</text><path class="scope-real" d="${idealPath}"/><path class="scope-stored ${goal?'good':(overflow?'bad':'')}" d="${storedPath}"/>${scanLineSvg(10,16,62,202,"4.2s")}<g fill="#d18426">${ideal.map((v,i)=>`<circle cx="${(10+i/(ideal.length-1)*202).toFixed(1)}" cy="${scopeY(v,18,55,minV,maxV).toFixed(1)}" r="1.6"/>`).join('')}</g><g fill="${goal?'#18794e':(overflow?'#b42318':'#5277b8')}">${stored.map((v,i)=>v===null?'':`<circle cx="${(10+i/(stored.length-1)*202).toFixed(1)}" cy="${scopeY(v,18,55,minV,maxV).toFixed(1)}" r="1.8"/>`).join('')}</g><text x="12" y="23" fill="#d18426" font-size="6.3" font-weight="900">ideal</text><text x="37" y="23" fill="${goal?'#18794e':(overflow?'#b42318':'#5277b8')}" font-size="6.3" font-weight="900">stored</text><text x="111" y="89" text-anchor="middle" class="scope-label">each stored point feeds the next calculation</text>
+        <g transform="translate(224 14)"><rect width="70" height="29" rx="7" fill="${overflow?'#fff0ee':(goal?'#edf8f1':'#fff6e7')}" stroke="${overflow?'#e5b6b0':(goal?'#acd3ba':'#e1c78f')}"/><text x="35" y="11" text-anchor="middle" class="scope-label">final drift</text><text x="35" y="22" text-anchor="middle" class="scope-status" fill="${overflow?'#b42318':(goal?'#18794e':'#8b5f14')}">${overflow?'no final value':formatNumber(finalDiff)+' °C'}</text><rect y="36" width="70" height="29" rx="7" fill="${(falseProtect||missedProtect)?'#fff0ee':(goal?'#edf8f1':'#eef2fa')}" stroke="${(falseProtect||missedProtect)?'#e5b6b0':(goal?'#acd3ba':'#c8d5e8')}"/><text x="35" y="47" text-anchor="middle" class="scope-label">frost action</text><text x="35" y="58" text-anchor="middle" class="scope-status" fill="${(falseProtect||missedProtect)?'#b42318':(goal?'#18794e':'#5277b8')}">${overflow?'no forecast':((falseProtect||missedProtect)?'decision changed':(goal?'decision preserved':'same side'))}</text><g transform="translate(3 73)"><path d="M7 16V5M7 9c-5-4-6-7-4-9M7 10c5-4 6-7 4-9" stroke="#5b7e43" stroke-width="2" stroke-linecap="round"/><path d="M30 16V5M30 9c-5-4-6-7-4-9M30 10c5-4 6-7 4-9" stroke="#5b7e43" stroke-width="2" stroke-linecap="round"/>${storedProtect&&!overflow?'<path class="spray-arc" d="M43 16Q55 0 67 16" fill="none" stroke="#4e9bd1" stroke-width="2"/>':''}<text x="35" y="27" text-anchor="middle" class="scope-label">stored forecast drives action</text></g></g>
+      </svg>`;return;
+    }
+    if(exp.id==="impact"){
+      const m=datasetMetrics(exp),tinyRows=m.rows.filter(row=>row.target.value<.02),tinyStored=tinyRows.map(row=>row.result.stored),tinyDistinct=new Set(tinyStored.filter(v=>v!==null).map(v=>String(v))).size,tinyGood=tinyDistinct===tinyRows.length&&tinyRows.every(row=>passes(row.target,row.result)),largeRows=m.rows.filter(row=>row.target.value>=2),largeOverflow=largeRows.some(row=>row.result.status==="overflow"),largeGood=largeRows.every(row=>row.result.status!=="overflow"&&passes(row.target,row.result)),allTried=state.visited.get(exp.id).size===5;
+      title.textContent="Impact recorder";tag.textContent="vibration + shock";
+      desc.textContent="A continuous accelerometer signal contains tiny bearing vibration and occasional large impacts. One 8-bit format must preserve both parts of the same waveform.";
+      trade.innerHTML=tradeHtml("More mantissa bits reveal small changes in the vibration baseline instead of flattening them into the same stored level.","More exponent bits extend the range so the large impact peak is not clipped by overflow.");
+      if(allTried&&!m.goalMet) applyImpact(impact,authMessage("good","goal met","The correct conclusion is that eight bits are not enough.","Every allocation either loses the tiny vibration detail or clips the large impact. A wider format is required to increase precision and range together."));
+      else if(largeOverflow||m.overflow||m.underflow) applyImpact(impact,authMessage("bad","need range","The impact peak cannot be represented.","The stored waveform clips the real shock, so the event record understates its severity. More exponent bits are needed."));
+      else if(!tinyGood) applyImpact(impact,authMessage("warn","need precision","The vibration baseline is quantised too coarsely.","Different small vibrations become the same stored value, so an early wear trend disappears. More mantissa bits are needed."));
+      else applyImpact(impact,authMessage("warn","keep testing","This allocation improves one end of the waveform.","Check whether the same split also preserves the large shock peak. The challenge is the balance between precision and range."));
+      const N=64,real=[];for(let i=0;i<N;i++){const q=i/(N-1),base=.010+.0017*Math.sin(q*Math.PI*16)+.0007*Math.sin(q*Math.PI*38+.4),spike=1199.99*Math.exp(-Math.pow((q-.67)/.035,2));real.push(Math.max(.0075,base+spike))}
+      const mapped=real.map(v=>nearest(v)),stored=mapped.map((r,i)=>r.stored===null?Math.min(real[i],Math.max(sys.max,.008)):Math.max(r.stored,.0005)),maxY=Math.max(1200,sys.max>0?sys.max:1200),realPath=scopePath(real,10,18,202,55,.001,maxY,"log"),storedPath=scopePath(stored,10,18,202,55,.001,maxY,"log",true),limitY=sys.max>0&&sys.max<maxY?scopeY(sys.max,18,55,.001,maxY,"log"):null;
+      visual.innerHTML=`<svg viewBox="0 0 332 116" aria-hidden="true"><rect width="300" height="116" fill="#f7fafc"/><text x="111" y="10" text-anchor="middle" class="scope-label">continuous accelerometer signal · logarithmic amplitude</text><rect x="6" y="14" width="212" height="66" rx="7" fill="#fff" stroke="#bcc7cd"/><line class="scope-grid" x1="10" y1="45" x2="212" y2="45"/><path class="scope-real" d="${realPath}"/><path class="scope-stored ${largeOverflow?'bad':(allTried&&!m.goalMet?'':'')}" d="${storedPath}"/>${limitY!==null?`<line class="scope-limit" x1="10" y1="${limitY.toFixed(1)}" x2="212" y2="${limitY.toFixed(1)}"/><text x="210" y="${(limitY-2).toFixed(1)}" text-anchor="end" fill="#b42318" font-size="6.1" font-weight="900">representable max</text>`:''}${scanLineSvg(10,16,62,202,"3.5s")}<text x="12" y="23" fill="#d18426" font-size="6.3" font-weight="900">real</text><text x="38" y="23" fill="${largeOverflow?'#b42318':'#5277b8'}" font-size="6.3" font-weight="900">stored</text><text x="111" y="89" text-anchor="middle" class="scope-label">tiny vibration baseline → large impact event</text>
+        <g transform="translate(224 14)"><rect width="70" height="29" rx="7" fill="${tinyGood?'#edf8f1':'#fff6e7'}" stroke="${tinyGood?'#acd3ba':'#e1c78f'}"/><text x="35" y="11" text-anchor="middle" class="scope-label">vibration detail</text><text x="35" y="22" text-anchor="middle" class="scope-status" fill="${tinyGood?'#18794e':'#8b5f14'}">${tinyGood?'visible':'flattened'}</text><rect y="36" width="70" height="29" rx="7" fill="${largeOverflow?'#fff0ee':(largeGood?'#edf8f1':'#eef2fa')}" stroke="${largeOverflow?'#e5b6b0':(largeGood?'#acd3ba':'#c8d5e8')}"/><text x="35" y="47" text-anchor="middle" class="scope-label">impact peak</text><text x="35" y="58" text-anchor="middle" class="scope-status" fill="${largeOverflow?'#b42318':(largeGood?'#18794e':'#5277b8')}">${largeOverflow?'clipped':(largeGood?'preserved':'distorted')}</text><g transform="translate(3 73)"><circle class="bearing-rotor" cx="15" cy="8" r="7" fill="#b9c7ce" stroke="#6d808a" stroke-width="2"/><circle cx="15" cy="8" r="2" fill="#536773"/><path class="impact-strike" d="M49 2h10v10H49z" fill="#596b75"/><text x="35" y="27" text-anchor="middle" class="scope-label">one sensor, both signal scales</text></g></g>
+      </svg>`;
+    }
+  }
+
+  function shiftManual(direction){const sys=system(),rep=state.manualRep;if(!rep)return {changed:false};const before=repValue(rep.M,rep.E,sys.m),mask=(1<<sys.m)-1;if(direction<0){if(rep.E<=sys.eb.min)return {changed:false,bound:true};rep.M=signedFromRaw((rawFromSigned(rep.M,sys.m)<<1)&mask,sys.m);rep.E-=1}else{if(rep.E>=sys.eb.max)return {changed:false,bound:true};rep.M=rep.M>>1;rep.E+=1}rep.value=repValue(rep.M,rep.E,sys.m);rep.normalized=isNormalized(rep.M,sys.m);return {changed:!almostEqual(before,rep.value),before,after:rep.value}}
+  function renderNormalizer(){
+    const exp=currentExperiment(),root=$("normalizer"),sys=system(),sample=storageSample(exp,sys),result=sample.result,row=$("mantissaDrag"),expBits=$("exponentBits"),side=$("repSide"),source=$("storageSource"),hint=$("storageHint"),reset=$("resetForm");
+    row.replaceChildren();expBits.replaceChildren();root.style.display="block";
+    row.classList.toggle("locked",!sample.interactive);reset.hidden=!sample.interactive;
+    if(exp.kind==="dataset"){
+      source.innerHTML=`<span>${sample.label}</span><strong>${unitText(sample.source,exp.unit)}</strong>`;
+      hint.textContent="Selected real value → stored floating-point word. Drag the mantissa to explore equivalent forms and normalise it.";
+    }else{
+      source.innerHTML=`<span>${sample.label}</span><strong>${sample.source===null?"—":unitText(sample.source,exp.unit)}</strong>`;
+      hint.textContent=sample.overflowAt?`The model overflows at cycle ${sample.overflowAt}. This shows the last binary word that could still be stored.`:"The final stored forecast is shown as its mantissa and exponent binary word.";
+    }
+    if(!result?.rep){
+      for(let i=0;i<sys.m;i++){const d=document.createElement("div");d.className="bit placeholder";d.textContent="—";row.append(d);if(i===0){const point=document.createElement("div");point.className="point";point.textContent=".";row.append(point)}}
+      for(let i=0;i<sys.e;i++){const d=document.createElement("div");d.className="bit exp placeholder";d.textContent="—";expBits.append(d)}
+      side.className="rep-side bad";side.innerHTML=`<strong>no stored word</strong><span>${result?.status==="underflow"?"The value is smaller than the smallest non-zero value.":"The value is outside the representable range, so no 8-bit floating-point word can store it."}</span>`;return
+    }
+    if(!state.manualRep)resetManual();const rep=state.manualRep||result.rep,bits=bitsFor(rep.M,sys.m),eBits=bitsFor(rep.E,sys.e);
+    bits.split("").forEach((b,i)=>{const d=document.createElement("div");d.className="bit";d.textContent=b;row.append(d);if(i===0){const point=document.createElement("div");point.className="point";point.textContent=".";row.append(point)}});
+    eBits.split("").forEach(b=>{const d=document.createElement("div");d.className="bit exp";d.textContent=b;expBits.append(d)});
+    const value=repValue(rep.M,rep.E,sys.m);side.className="rep-side";
+    if(rep.M===0){side.classList.add("warn");side.innerHTML=`<strong>stored 0</strong><span>Zero is stored directly. Non-zero floating-point values should be normalised.</span>`}
+    else if(rep.normalized){side.classList.add("good");side.innerHTML=`<strong>${bits.slice(0,2)} · normalised</strong><span>${formatNumber(mantissaValue(rep.M,sys.m))} × 2^${rep.E} = ${formatNumber(value)} ${exp.unit}</span>`}
+    else{side.classList.add("warn");side.innerHTML=`<strong>${bits.slice(0,2)} · not normalised</strong><span>${formatNumber(mantissaValue(rep.M,sys.m))} × 2^${rep.E} = ${formatNumber(value)} ${exp.unit}. Shift while compensating with the exponent.</span>`}
+  }
+
+  function renderSolutionState(){
+    const exp=currentExperiment(),mission=$("missionPanel"),experiment=$("experimentPanel"),auth=$("authPanel");
+    mission.classList.remove("goal-met");experiment.classList.remove("goal-met");auth.classList.remove("goal-met","engineering-find");
+    let goal=false,engineering=false;
+    if(exp.kind==="dataset"){const m=datasetMetrics(exp);goal=m.goalMet;engineering=exp.discover&&state.visited.get(exp.id).size===5&&!m.goalMet}else goal=loopSimulation(exp).goalMet;
+    if(goal||engineering){mission.classList.add("goal-met");experiment.classList.add("goal-met");auth.classList.add("goal-met");state.completed.add(exp.id)}
+    if(engineering)auth.classList.add("engineering-find");
+  }
+  function renderAll(){renderMission();renderWord();renderRuler();renderSelection();renderFit();renderInsight();renderAuthentic();renderSolutionState();renderTabs();renderNormalizer()}
+  function setSplit(next){next=Math.max(MIN_M,Math.min(MAX_M,next));if(next===state.mBits)return;state.mBits=next;state.visited.get(currentExperiment().id).add(next);resetManual();renderAll()}
+
+  $("divider").addEventListener("keydown",e=>{if(e.key==="ArrowLeft"||e.key==="ArrowDown"){e.preventDefault();setSplit(state.mBits-1)}if(e.key==="ArrowRight"||e.key==="ArrowUp"){e.preventDefault();setSplit(state.mBits+1)}});
+  $("divider").addEventListener("pointerdown",e=>{if(e.button>0)return;e.preventDefault();state.dividerDrag={id:e.pointerId};e.currentTarget.setPointerCapture?.(e.pointerId)});
+  $("divider").addEventListener("pointermove",e=>{if(!state.dividerDrag||state.dividerDrag.id!==e.pointerId)return;const rect=$("word").getBoundingClientRect(),x=Math.max(0,Math.min(rect.width,e.clientX-rect.left)),next=Math.max(MIN_M,Math.min(MAX_M,Math.round(x/rect.width*8)));setSplit(next)});
+  const endDivider=e=>{if(state.dividerDrag?.id===e.pointerId)state.dividerDrag=null};$("divider").addEventListener("pointerup",endDivider);$("divider").addEventListener("pointercancel",endDivider);
+
+  $("rulerSvg").addEventListener("pointerdown",e=>{if(currentExperiment().kind!=="dataset")return;const rect=e.currentTarget.getBoundingClientRect(),x=(e.clientX-rect.left)/rect.width*1120,y=(e.clientY-rect.top)/rect.height*330,hit=state.markerHits.find(h=>Math.hypot(x-h.x,y-h.y)<=h.r);if(!hit)return;state.selectedIndex=hit.index;resetManual();renderAll()});
+
+  $("mantissaDrag").addEventListener("pointerdown",e=>{if(e.button>0||currentExperiment().kind!=="dataset"||!state.manualRep)return;e.preventDefault();state.mantissaDrag={id:e.pointerId,startX:e.clientX};e.currentTarget.setPointerCapture?.(e.pointerId)});
+  $("mantissaDrag").addEventListener("pointermove",e=>{if(!state.mantissaDrag||state.mantissaDrag.id!==e.pointerId)return;const dx=Math.max(-110,Math.min(110,e.clientX-state.mantissaDrag.startX));e.currentTarget.style.transform=`translateX(${dx}px)`});
+  function finishMantissa(e){if(!state.mantissaDrag||state.mantissaDrag.id!==e.pointerId)return;const dx=e.clientX-state.mantissaDrag.startX;$("mantissaDrag").style.transform="";state.mantissaDrag=null;const steps=Math.min(3,Math.max(0,Math.round(Math.abs(dx)/34)));if(!steps)return;const direction=dx<0?-1:1;let changed=false,bound=false;for(let i=0;i<steps;i++){const outcome=shiftManual(direction);changed||=outcome.changed;bound||=outcome.bound;if(outcome.bound)break}renderNormalizer();if(changed){const side=$("repSide");side.className="rep-side bad";side.innerHTML="<strong>information lost</strong><span>the shift changed the represented value</span>"}else if(bound){const side=$("repSide");side.className="rep-side bad";side.innerHTML="<strong>exponent limit</strong><span>the compensating exponent cannot move further</span>"}}
+  $("mantissaDrag").addEventListener("pointerup",finishMantissa);$("mantissaDrag").addEventListener("pointercancel",finishMantissa);$("resetForm").addEventListener("click",()=>{if(currentExperiment().kind!=="dataset")return;resetManual();renderNormalizer()});window.addEventListener("resize",renderWord);
+
+  resetManual();renderAll();
+})();
+</script>
+</body>
+</html>
