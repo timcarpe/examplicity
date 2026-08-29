@@ -162,7 +162,7 @@ export const translator: Lab = {
     { code: '0478', qualification: 'GCSE', sections: [{ id: '4.2', page: 20, primary: true }] },
     { code: '9618', qualification: 'AS', sections: [{ id: '5.2', page: 23, primary: true }] },
   ],
-  href: '/labs/translator.html',
+  href: '/labs/computer-science/translator.html',
 };
 
 export const labs: Lab[] = [
@@ -181,7 +181,7 @@ export const labs: Lab[] = [
       { code: '0478', qualification: 'GCSE', sections: [{ id: '1.1', page: 11, primary: true }] },
       { code: '9618', qualification: 'AS/A', sections: [{ id: '1.1', page: 14, primary: true }, { id: '4.3', page: 22 }] },
     ],
-    href: '/labs/binary-numbers.html',
+    href: '/labs/computer-science/binary-numbers.html',
   },
   {
     subject: 'computer-science',
@@ -197,7 +197,7 @@ export const labs: Lab[] = [
       { code: '0478', qualification: 'GCSE', sections: [{ id: '1.3', page: 13, primary: true }, { id: '1.2', page: 13 }] },
       { code: '9618', qualification: 'AS', sections: [{ id: '1.3', page: 15, primary: true }, { id: '1.2', page: 15 }] },
     ],
-    href: '/labs/bitmap-compression.html',
+    href: '/labs/computer-science/bitmap-compression.html',
   },
   {
     subject: 'computer-science',
@@ -212,7 +212,7 @@ export const labs: Lab[] = [
     syllabuses: [
       { code: '9618', qualification: 'A', sections: [{ id: '13.3', page: 33, primary: true }] },
     ],
-    href: '/labs/binary-floating-point.html',
+    href: '/labs/computer-science/binary-floating-point.html',
   },
   {
     subject: 'computer-science',
@@ -228,7 +228,7 @@ export const labs: Lab[] = [
       { code: '0478', qualification: 'GCSE', sections: [{ id: '1.2', page: 12, primary: true }] },
       { code: '9618', qualification: 'AS', sections: [{ id: '1.2', page: 15, primary: true }] },
     ],
-    href: '/labs/sound-sampling.html',
+    href: '/labs/computer-science/sound-sampling.html',
   },
   {
     subject: 'computer-science',
@@ -243,7 +243,7 @@ export const labs: Lab[] = [
     syllabuses: [
       { code: '9618', qualification: 'AS', sections: [{ id: '1.3', page: 15, primary: true }] },
     ],
-    href: '/labs/huffman-rover.html',
+    href: '/labs/computer-science/huffman-rover.html',
   },
   {
     subject: 'computer-science',
@@ -259,7 +259,7 @@ export const labs: Lab[] = [
       { code: '0478', qualification: 'GCSE', sections: [{ id: '2.2', page: 15, primary: true }] },
       { code: '9618', qualification: 'AS', sections: [{ id: '6.2', page: 24, primary: true }] },
     ],
-    href: '/labs/parity-arq.html',
+    href: '/labs/computer-science/parity-arq.html',
   },
   {
     subject: 'computer-science',
@@ -274,7 +274,7 @@ export const labs: Lab[] = [
     syllabuses: [
       { code: '0478', qualification: 'GCSE', sections: [{ id: '2.1', page: 14, primary: true }, { id: '2.2', page: 15 }] },
     ],
-    href: '/labs/data-transmission-methods.html',
+    href: '/labs/computer-science/data-transmission-methods.html',
   },
   {
     subject: 'computer-science',
@@ -289,7 +289,7 @@ export const labs: Lab[] = [
     syllabuses: [
       { code: '9618', qualification: 'AS', sections: [{ id: '2.1', page: 16, primary: true }] },
     ],
-    href: '/labs/network-topology.html',
+    href: '/labs/computer-science/network-topology.html',
   },
   {
     subject: 'computer-science',
@@ -305,7 +305,7 @@ export const labs: Lab[] = [
       { code: '0478', qualification: 'GCSE', sections: [{ id: '2.1', page: 14, primary: true }] },
       { code: '9618', qualification: 'A', sections: [{ id: '14.2', page: 33, primary: true }] },
     ],
-    href: '/labs/packet-switching.html',
+    href: '/labs/computer-science/packet-switching.html',
   },
   {
     subject: 'computer-science',
@@ -320,7 +320,7 @@ export const labs: Lab[] = [
     syllabuses: [
       { code: '9618', qualification: 'AS', sections: [{ id: '2.1', page: 17, primary: true }] },
     ],
-    href: '/labs/ipv4-subnetting.html',
+    href: '/labs/computer-science/ipv4-subnetting.html',
   },
   {
     subject: 'computer-science',
@@ -335,7 +335,7 @@ export const labs: Lab[] = [
     syllabuses: [
       { code: '9618', qualification: 'AS', sections: [{ id: '2.1', page: 16, primary: true }] },
     ],
-    href: '/labs/csma-cd.html',
+    href: '/labs/computer-science/csma-cd.html',
   },
   {
     subject: 'computer-science',
@@ -351,7 +351,7 @@ export const labs: Lab[] = [
       { code: '0478', qualification: 'GCSE', sections: [{ id: '2.3', page: 15, primary: true }] },
       { code: '9618', qualification: 'A', sections: [{ id: '17.1', page: 36, primary: true }] },
     ],
-    href: '/labs/encryption-in-data-transmission.html',
+    href: '/labs/computer-science/encryption-in-data-transmission.html',
   },
   {
     subject: 'computer-science',
@@ -367,7 +367,7 @@ export const labs: Lab[] = [
       { code: '0478', qualification: 'GCSE', sections: [{ id: '5.1', page: 22, primary: true }] },
       { code: '9618', qualification: 'AS/A', sections: [{ id: '2.1', page: 17, primary: true }, { id: '14.1', page: 33 }] },
     ],
-    href: '/labs/dns-web-page-retrieval.html',
+    href: '/labs/computer-science/dns-web-page-retrieval.html',
   },
   {
     subject: 'computer-science',
@@ -382,7 +382,7 @@ export const labs: Lab[] = [
     syllabuses: [
       { code: '9618', qualification: 'A', sections: [{ id: '14.1', page: 33, primary: true }] },
     ],
-    href: '/labs/tcp-ip-encapsulation.html',
+    href: '/labs/computer-science/tcp-ip-encapsulation.html',
   },
   {
     subject: 'computer-science',
@@ -398,7 +398,7 @@ export const labs: Lab[] = [
       { code: '0478', qualification: 'GCSE', sections: [{ id: '3.1', page: 16, primary: true }] },
       { code: '9618', qualification: 'AS', sections: [{ id: '4.1', page: 19, primary: true }] },
     ],
-    href: '/labs/fetch-decode-execute.html',
+    href: '/labs/computer-science/fetch-decode-execute.html',
   },
   {
     subject: 'computer-science',
@@ -413,7 +413,7 @@ export const labs: Lab[] = [
     syllabuses: [
       { code: '9618', qualification: 'AS/A', sections: [{ id: '4.2', page: 20, primary: true }, { id: '4.3', page: 22 }] },
     ],
-    href: '/labs/assembly.html',
+    href: '/labs/computer-science/assembly.html',
   },
   {
     subject: 'computer-science',
@@ -429,7 +429,7 @@ export const labs: Lab[] = [
       { code: '0478', qualification: 'GCSE', sections: [{ id: '4.1', page: 20, primary: true }] },
       { code: '9618', qualification: 'AS', sections: [{ id: '5.1', page: 23, primary: true }] },
     ],
-    href: '/labs/software-stack.html',
+    href: '/labs/computer-science/software-stack.html',
   },
   {
     subject: 'computer-science',
@@ -445,7 +445,7 @@ export const labs: Lab[] = [
       { code: '0478', qualification: 'GCSE', sections: [{ id: '3.3', page: 18, primary: true }, { id: '3.1', page: 16 }] },
       { code: '9618', qualification: 'A', sections: [{ id: '16.1', page: 35, primary: true }] },
     ],
-    href: '/labs/memory-management.html',
+    href: '/labs/computer-science/memory-management.html',
   },
   {
     subject: 'computer-science',
@@ -460,7 +460,7 @@ export const labs: Lab[] = [
     syllabuses: [
       { code: '9618', qualification: 'A', sections: [{ id: '16.1', page: 35, primary: true }] },
     ],
-    href: '/labs/process-states-scheduling.html',
+    href: '/labs/computer-science/process-states-scheduling.html',
   },
   {
     subject: 'computer-science',
@@ -476,7 +476,7 @@ export const labs: Lab[] = [
       { code: '0478', qualification: 'GCSE', sections: [{ id: '6.1', page: 23, primary: true }, { id: '3.2', page: 17 }] },
       { code: '9618', qualification: 'AS', sections: [{ id: '3.1', page: 17, primary: true }, { id: '9.2', page: 27 }] },
     ],
-    href: '/labs/automated-system-control-flowcharts.html',
+    href: '/labs/computer-science/automated-system-control-flowcharts.html',
   },
   {
     subject: 'computer-science',
@@ -492,7 +492,7 @@ export const labs: Lab[] = [
       { code: '0478', qualification: 'GCSE', sections: [{ id: '8.1', page: 27, primary: true }, { id: '8.2', page: 29 }] },
       { code: '9618', qualification: 'AS', sections: [{ id: '11.1', page: 29, primary: true }, { id: '11.2', page: 29 }, { id: '11.3', page: 30 }, { id: '10.2', page: 28 }] },
     ],
-    href: '/labs/python-programming-practice.html',
+    href: '/labs/computer-science/python-programming-practice.html',
   },
   translator,
 ];

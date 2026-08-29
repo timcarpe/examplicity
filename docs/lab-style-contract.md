@@ -1,8 +1,9 @@
 # Lab style contract
 
-Each file in `public/labs` remains a complete, monolithic HTML lab. A downloaded
-lab must work and retain its presentation without the website or a network
-connection.
+Each file in `public/labs/<subject>` remains a complete, monolithic HTML lab.
+Subject directories use the manifest subject ID; exam-code alignment remains
+manifest metadata and does not determine the file path. A downloaded lab must
+work and retain its presentation without the website or a network connection.
 
 ## Shared chrome
 

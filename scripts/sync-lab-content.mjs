@@ -8,12 +8,26 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const labsDirectory = path.join(root, 'public', 'labs');
 const checkOnly = process.argv.includes('--check');
 
-const entries = await readdir(labsDirectory, { withFileTypes: true });
-const labFiles = entries
-  .filter((entry) => entry.isFile() && entry.name.endsWith('.html'))
-  .map((entry) => entry.name)
+const findLabFiles = async (directory, relativeDirectory = '') => {
+  const entries = await readdir(directory, { withFileTypes: true });
+  const files = [];
+
+  for (const entry of entries) {
+    const relativePath = path.join(relativeDirectory, entry.name);
+    if (entry.isDirectory()) {
+      files.push(...await findLabFiles(path.join(directory, entry.name), relativePath));
+    } else if (entry.isFile() && entry.name.endsWith('.html')) {
+      files.push(relativePath);
+    }
+  }
+
+  return files;
+};
+
+const labFiles = (await findLabFiles(labsDirectory)).sort();
+const manifestFiles = labs
+  .map((lab) => path.join(lab.subject, `${lab.slug}.html`))
   .sort();
-const manifestFiles = labs.map((lab) => `${lab.slug}.html`).sort();
 
 if (labFiles.join('\n') !== manifestFiles.join('\n')) {
   throw new Error('Every standalone lab HTML file must have exactly one manifest entry');
@@ -28,7 +42,9 @@ for (const lab of labs) {
   seenSlugs.add(lab.slug);
   seenHrefs.add(lab.href);
 
-  if (lab.href !== `/labs/${lab.slug}.html`) throw new Error(`${lab.slug} does not match its manifest href`);
+  if (lab.href !== `/labs/${lab.subject}/${lab.slug}.html`) {
+    throw new Error(`${lab.slug} does not match its subject-scoped manifest href`);
+  }
   if (!topics.includes(lab.topic)) throw new Error(`${lab.slug} has unknown topic ${lab.topic}`);
   if (!lab.title.trim() || !lab.description.trim() || !lab.metaDescription.trim()) {
     throw new Error(`${lab.slug} has incomplete manifest text`);
@@ -80,7 +96,7 @@ for (const subject of subjects) {
 
 const staleFiles = [];
 for (const lab of labs) {
-  const fileName = `${lab.slug}.html`;
+  const fileName = path.join(lab.subject, `${lab.slug}.html`);
   const filePath = path.join(labsDirectory, fileName);
   const source = await readFile(filePath, 'utf8');
   const nextSource = applyLabManifestContent(source, lab);

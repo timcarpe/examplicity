@@ -1,6 +1,7 @@
-import { readFile, readdir, writeFile } from 'node:fs/promises';
+import { readFile, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+import { labs } from '../app/labs.ts';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const labsDirectory = path.join(root, 'public', 'labs');
@@ -12,10 +13,8 @@ const checkOnly = process.argv.includes('--check');
 
 const sharedStyles = (await readFile(sharedStylesPath, 'utf8')).trim();
 const embeddedStyles = `${startMarker}\n<style data-lab-frame>\n${sharedStyles}\n</style>\n${endMarker}`;
-const entries = await readdir(labsDirectory, { withFileTypes: true });
-const labFiles = entries
-  .filter((entry) => entry.isFile() && entry.name.endsWith('.html'))
-  .map((entry) => entry.name)
+const labFiles = labs
+  .map((lab) => path.join(lab.subject, `${lab.slug}.html`))
   .sort();
 
 const staleFiles = [];

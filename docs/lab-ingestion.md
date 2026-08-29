@@ -1,7 +1,7 @@
 # Future-lab ingestion checklist
 
-This is the operating contract for adding an approved Cambridge Computer Science
-lab to Examplicity. Keep the change small: a lab is a self-contained static HTML
+This is the operating contract for adding an approved Cambridge lab to
+Examplicity. Keep the change small: a lab is a self-contained static HTML
 document, one manifest entry, and one card drawing. Do not use this checklist to
 redesign existing labs or introduce a new runtime architecture.
 
@@ -11,11 +11,12 @@ redesign existing labs or introduce a new runtime architecture.
   belongs in the catalogue. Record its syllabus coverage, topic, short card
   description, and the interaction the card should depict.
 - [ ] Preserve the source as one document at
-  `public/labs/<slug>.html`. Current labs such as
-  `public/labs/binary-numbers.html`, `public/labs/fetch-decode-execute.html`,
-  and `public/labs/memory-management.html` contain their own inline `<style>`
-  and `<script>` blocks. Do not split a lab into React components, a route, or
-  shared assets as part of ingestion.
+  `public/labs/<subject>/<slug>.html`. The subject directory is the manifest
+  `subject` ID, such as `computer-science`; it is not an exam-code directory.
+  Current labs such as `public/labs/computer-science/binary-numbers.html` and
+  `public/labs/computer-science/memory-management.html` contain their own inline
+  `<style>` and `<script>` blocks. Do not split a lab into React components, a
+  route, or shared assets as part of ingestion.
 - [ ] Inspect the actual HTML and run the lab before writing catalogue copy or
   an icon. The title and topic are not enough to infer its mechanics; identify
   the controls, state changes, feedback, and main visual model in the document.
@@ -63,7 +64,7 @@ Keep those responsibilities separate.
   only the manifest `href` plus the iframe in `app/catalogue.tsx`.
 
 The host owns the brand, “Back to labs”, GitHub, and license links. Catalogue
-cards link to the canonical `/labs/<slug>.html` document, while an ordinary click
+cards link to the canonical `/labs/<subject>/<slug>.html` document, while an ordinary click
 opens the same document in the existing iframe shell. The selected syllabus view
 remains at `/computer-science/<exam>` with `?lab=<slug>` as transient UI state.
 The host's Download action packages a copy of the source document with inline
@@ -73,6 +74,10 @@ Before adding that chrome, the packager reapplies the manifest transformer so
 the downloaded title, subtitle, metadata and syllabus alignment cannot drift
 from the live catalogue.
 
+The legacy flat Computer Science URLs are permanent redirects generated from the
+manifest in `next.config.ts`. New labs publish only at their subject-scoped path;
+do not add a second flat copy of the HTML document.
+
 ## 3. Manifest registration
 
 Add one `Lab` object to `labs` in `app/labs.ts`. `Lab` is an `Activity` plus
@@ -81,6 +86,7 @@ fields:
 
 ```ts
 {
+  subject: 'computer-science',
   slug: 'example-lab',
   title: 'Example Lab',
   description: 'One short sentence describing the learner-visible experiment.',
@@ -99,14 +105,16 @@ fields:
       ],
     },
   ],
-  href: '/labs/example-lab.html',
+  href: '/labs/computer-science/example-lab.html',
 }
 ```
 
 - [ ] `slug` is unique, lowercase ASCII, and kebab-case. It is the basename of
-  the file and the value used for transient shell state, so these three values
-  must agree exactly: `example-lab`, `public/labs/example-lab.html`, and
-  `/labs/example-lab.html`. Do not use spaces, uppercase, or a second spelling.
+  the file and the value used for transient shell state. `subject` is the stable
+  subject directory ID. These values must agree exactly across the manifest,
+  `public/labs/<subject>/<slug>.html`, and `/labs/<subject>/<slug>.html`. Do not
+  use spaces, uppercase, exam codes, or a second spelling in the subject folder
+  or slug.
 - [ ] Add or reuse the exam in `syllabusRegistry` in `app/labs.ts`. The registry
   owns the subject, official Cambridge qualification page, official syllabus
   document, validity and chip palette. It is deliberately not limited to
@@ -205,7 +213,7 @@ the default drawing for an approved lab.
   manifest-owned head metadata, visible title, optional subtitle and syllabus
   chips. Never hand-edit a generated marker or controlled attribute.
 - [ ] Confirm the three-way path contract and changed-file scope:
-  `public/labs/<slug>.html`, its `app/labs.ts` entry, and its
+  `public/labs/<subject>/<slug>.html`, its `app/labs.ts` entry, and its
   `app/lab-icon.tsx` case. Confirm the HTML contains one generated frame block,
   one generated manifest head, title, optional subtitle, syllabus-chip block
   and no duplicate Examplicity shell markup.
@@ -225,7 +233,7 @@ the default drawing for an approved lab.
 - [ ] With `npm run dev`, test the selected exam tabs and confirm the new card
   appears only for its manifest `syllabuses`, under the exact `topic`, with the
   intended `format` and SVG. Confirm the card links directly to
-  `/labs/<slug>.html`, then
+  `/labs/<subject>/<slug>.html`, then
   open it from `/computer-science/<exam>?lab=<slug>` and verify the loading
   screen resolves and the iframe loads the intended HTML.
 - [ ] Exercise the lab's main controls, reset/empty/error paths, keyboard

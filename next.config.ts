@@ -1,8 +1,14 @@
 import type { NextConfig } from 'next';
+import { labs } from './app/labs';
 
 const nextConfig: NextConfig = {
   async redirects() {
     return [
+      ...labs.map((lab) => ({
+        source: `/labs/${lab.slug}.html`,
+        destination: lab.href,
+        permanent: true,
+      })),
       {
         source: '/favicon.ico',
         destination: '/icon.svg',

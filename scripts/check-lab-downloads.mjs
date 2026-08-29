@@ -8,7 +8,10 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const count = (source, value) => source.split(value).length - 1;
 
 for (const lab of labs) {
-  const source = await readFile(path.join(root, 'public', 'labs', `${lab.slug}.html`), 'utf8');
+  const source = await readFile(
+    path.join(root, 'public', 'labs', lab.subject, `${lab.slug}.html`),
+    'utf8',
+  );
   const packaged = createStandaloneLabHtml({
     source,
     lab,
