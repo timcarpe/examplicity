@@ -427,6 +427,44 @@ function IconDrawing({ slug }: LabIconProps) {
           <circle className="is-solid tone-one" cx="320" cy="180" r="28" />
         </>
       );
+    case 'circle-theorem-constraint-network':
+      return (
+        <>
+          <circle cx="320" cy="180" r="118" />
+          <path d="M222 246 418 246M236 106 410 232M202 62v236" />
+          <path className="tone-one" d="M202 114a48 48 0 0 1 38 20" />
+        </>
+      );
+    case 'solid-surface-volume-tradeoffs':
+      return (
+        <>
+          <path d="m160 116 226-42 94 66-226 42zm0 0v146l94 58V182m226-42v146l-226 34" />
+          <path className="is-solid tone-one" d="m160 116 94 66v138l-94-58z" />
+        </>
+      );
+    case 'right-triangle-ratio-invariance':
+      return (
+        <>
+          <path d="M122 286h396L122 80z" />
+          <path d="M122 252h34v34" />
+          <path className="tone-one" d="M454 286a64 64 0 0 0-8-31" />
+        </>
+      );
+    case 'trigonometric-function-periodicity-solutions':
+      return (
+        <>
+          <circle cx="174" cy="180" r="92" />
+          <path className="secondary-line" d="M82 180h184M174 88v184M306 180h260" />
+          <path className="tone-one" d="M306 180c42-112 86-112 130 0s86 112 130 0" />
+        </>
+      );
+    case 'non-right-triangle-solution-constraints':
+      return (
+        <>
+          <path d="M110 282 292 78l238 204zM110 282 390 136l140 146" />
+          <path className="tone-one" d="M167 218a76 76 0 0 0 43 28" />
+        </>
+      );
     case 'python-programming-practice':
       return (
         <>

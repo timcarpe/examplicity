@@ -1,0 +1,610 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- LAB_FRAME_STYLES_START -->
+<style data-lab-frame>
+:root {
+  --lab-canvas: #f3f5f7;
+  --lab-paper: #fbfbfd;
+  --lab-surface: #ffffff;
+  --lab-control: #ffffff;
+  --lab-ink: #1d1d1f;
+  --lab-muted: #6e6e73;
+  --lab-line: #d2d2d7;
+  --lab-line-strong: #a7a7ad;
+  --lab-accent: #5277b8;
+  --lab-accent-soft: #eef2fa;
+  --lab-good: #18794e;
+  --lab-good-soft: #edf8f1;
+  --lab-warn: #946200;
+  --lab-warn-soft: #fff6e7;
+  --lab-bad: #b42318;
+  --lab-bad-soft: #fff0ee;
+  --lab-focus: #1d1d1f;
+  --lab-focus-soft: rgba(29, 29, 31, 0.18);
+  --lab-font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+  --lab-panel-radius: 12px;
+  --lab-control-radius: 8px;
+  --lab-pill-radius: 999px;
+  --lab-control-height: 35px;
+  --lab-panel-shadow: 0 1px 2px rgba(29, 29, 31, 0.04);
+  --lab-page-gutter: max(28px, calc((100vw - 1200px) / 2));
+  --lab-compact-workspace-max: 820px;
+}
+
+html,
+body {
+  background: var(--lab-canvas);
+}
+
+body {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  align-content: start !important;
+  font-family: var(--lab-font-sans);
+  padding-bottom: 0;
+  padding-top: 0 !important;
+  text-rendering: optimizeLegibility;
+}
+
+.lab-manifest-header {
+  align-items: start;
+  border-bottom: 1px solid var(--line, var(--lab-line));
+  display: grid;
+  gap: 18px 28px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  margin-bottom: 26px;
+  padding-bottom: 22px;
+}
+
+.lab-manifest-heading {
+  min-width: 0;
+}
+
+.lab-manifest-header h1 {
+  color: var(--ink, var(--lab-ink));
+  font-family: var(--lab-font-sans);
+  font-size: clamp(25px, 3.2vw, 40px);
+  font-weight: 650;
+  letter-spacing: -0.045em;
+  line-height: 1.02;
+  margin: 0;
+  max-width: 24ch;
+  padding: 0;
+  text-align: left;
+}
+
+.lab-manifest-subtitle {
+  color: var(--muted, var(--lab-muted));
+  font-family: var(--lab-font-sans);
+  font-size: 13px;
+  letter-spacing: 0;
+  line-height: 1.5;
+  margin: 10px 0 0;
+  max-width: 72ch;
+  padding: 0;
+  text-align: left;
+}
+
+.lab-authored-title-slot {
+  min-width: 0;
+}
+
+.lab-syllabus-chips {
+  align-items: center;
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+  margin: 0 0 0 auto;
+  max-width: 100%;
+}
+
+.lab-syllabus-chip {
+  align-items: center;
+  background: var(--syllabus-chip-bg) !important;
+  border: 1px solid var(--syllabus-chip-border) !important;
+  border-radius: var(--lab-pill-radius);
+  color: var(--syllabus-chip-text) !important;
+  display: inline-flex;
+  font-size: 11px;
+  font-weight: 650;
+  gap: 4px;
+  line-height: 1;
+  min-height: 29px;
+  padding: 8px 10px;
+  position: relative;
+  transition: background-color 140ms ease, border-color 140ms ease;
+  white-space: nowrap;
+}
+
+.lab-syllabus-chip:hover {
+  background: var(--syllabus-chip-hover) !important;
+}
+
+.lab-syllabus-primary-link {
+  border-radius: inherit;
+  inset: 0;
+  position: absolute;
+  z-index: 0;
+}
+
+.lab-syllabus-primary-link:focus-visible {
+  outline: 2px solid var(--syllabus-chip-text);
+  outline-offset: 2px;
+}
+
+.lab-syllabus-name,
+.lab-syllabus-divider,
+.lab-syllabus-sections {
+  pointer-events: none;
+  position: relative;
+  z-index: 1;
+}
+
+.lab-syllabus-section {
+  border-radius: 4px;
+  color: inherit;
+  padding: 2px;
+  text-decoration: none;
+}
+
+a.lab-syllabus-section {
+  pointer-events: auto;
+}
+
+a.lab-syllabus-section:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+a.lab-syllabus-section:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 1px;
+}
+
+.lab-syllabus-name {
+  color: var(--syllabus-chip-text) !important;
+}
+
+.lab-syllabus-divider,
+.lab-syllabus-separator {
+  color: var(--muted, var(--lab-muted));
+}
+
+.lab-syllabus-prefix {
+  opacity: 0.72;
+  padding-left: 5px;
+}
+
+.lab-syllabus-sections {
+  align-items: center;
+  display: inline-flex;
+}
+
+.lab-syllabus-separator {
+  margin-inline: 0 2px;
+}
+
+html[data-theme="dark"] .lab-syllabus-name {
+  color: var(--syllabus-chip-border) !important;
+}
+
+html[data-theme="dark"] .lab-syllabus-chip:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+html[data-theme="dark"],
+html[data-theme="dark"] body {
+  background: var(--bg);
+}
+
+body > main {
+  container-name: lab-canvas;
+  container-type: inline-size;
+  margin-left: var(--lab-page-gutter);
+  margin-right: auto;
+  margin-top: 18px;
+  max-width: 1200px;
+  width: calc(100vw - var(--lab-page-gutter) - var(--lab-page-gutter));
+}
+
+body[data-lab-layout="compact"] .lab-manifest-header {
+  margin-bottom: 17px;
+  padding-bottom: 13px;
+}
+
+body[data-lab-layout="compact"] [data-lab-workspace] {
+  margin-left: auto;
+  margin-right: auto;
+  width: min(var(--lab-compact-workspace-max), 100%);
+}
+
+:where(button, input, select, textarea, summary):focus-visible {
+  outline: 3px solid var(--lab-focus);
+  outline-offset: 4px;
+}
+
+@media (max-width: 620px) {
+  :root {
+    --lab-page-gutter: 18px;
+  }
+
+  body {
+    padding-bottom: 0;
+    padding-top: 0 !important;
+  }
+
+  .lab-manifest-header {
+    gap: 14px;
+    grid-template-columns: minmax(0, 1fr) !important;
+    margin-bottom: 20px;
+    padding-bottom: 18px;
+  }
+
+  body[data-lab-layout="compact"] .lab-manifest-header {
+    margin-bottom: 16px;
+    padding-bottom: 14px;
+  }
+
+  .lab-manifest-header h1 {
+    font-size: clamp(24px, 8vw, 34px);
+  }
+
+  .lab-syllabus-chips {
+    gap: 4px;
+    justify-content: flex-start !important;
+    margin: 0 !important;
+  }
+
+  .lab-syllabus-chip {
+    font-size: 10px;
+    max-width: 100%;
+    min-height: 27px;
+    padding: 7px 8px;
+    white-space: normal;
+  }
+
+  .lab-syllabus-sections {
+    flex-wrap: wrap;
+  }
+
+  body > main {
+    margin-top: 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+</style>
+<!-- LAB_FRAME_STYLES_END -->
+<link rel="icon" href="data:,">
+<!-- LAB_MANIFEST_HEAD_START -->
+<title>Non-Right Triangle Solutions</title>
+<meta name="description" content="Explore the sine rule and ambiguous SSA case by testing zero, one and two non-right triangle solutions for Cambridge IGCSE Mathematics 0580 Extended.">
+<link rel="canonical" href="https://www.examplicity.org/labs/mathematics/non-right-triangle-solution-constraints.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Examplicity">
+<meta property="og:title" content="Non-Right Triangle Solutions">
+<meta property="og:description" content="Explore the sine rule and ambiguous SSA case by testing zero, one and two non-right triangle solutions for Cambridge IGCSE Mathematics 0580 Extended.">
+<meta property="og:url" content="https://www.examplicity.org/labs/mathematics/non-right-triangle-solution-constraints.html">
+<meta property="og:image" content="https://www.examplicity.org/opengraph-image">
+<meta property="og:image:alt" content="Examplicity — Make complex ideas click">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Non-Right Triangle Solutions">
+<meta name="twitter:description" content="Explore the sine rule and ambiguous SSA case by testing zero, one and two non-right triangle solutions for Cambridge IGCSE Mathematics 0580 Extended.">
+<meta name="twitter:image" content="https://www.examplicity.org/opengraph-image">
+<script type="application/ld+json" data-lab-manifest="structured-data">{"@context":"https://schema.org","@type":"LearningResource","@id":"https://www.examplicity.org/labs/mathematics/non-right-triangle-solution-constraints.html#learning-resource","url":"https://www.examplicity.org/labs/mathematics/non-right-triangle-solution-constraints.html","name":"Non-Right Triangle Solutions","description":"Explore the sine rule and ambiguous SSA case by testing zero, one and two non-right triangle solutions for Cambridge IGCSE Mathematics 0580 Extended.","inLanguage":"en-GB","isAccessibleForFree":true,"interactivityType":"active","learningResourceType":"Ambiguous-case triangle solver","teaches":"Trigonometry","educationalLevel":["IGCSE"],"educationalAlignment":[{"@type":"AlignmentObject","alignmentType":"educationalSubject","educationalFramework":"Cambridge IGCSE Mathematics","targetName":"IGCSE 0580 section E6.5","targetUrl":"https://www.cambridgeinternational.org/Images/662466-2025-2027-syllabus.pdf#page=52"}],"about":{"@type":"Thing","name":"Mathematics"},"audience":{"@type":"EducationalAudience","educationalRole":"student"},"provider":{"@type":"Organization","name":"Examplicity","url":"https://www.examplicity.org"},"isPartOf":{"@type":"WebSite","@id":"https://www.examplicity.org/#website","name":"Examplicity","url":"https://www.examplicity.org"}}</script>
+<!-- LAB_MANIFEST_HEAD_END -->
+<style>
+:root{
+  --lab-canvas:#f3f5f7;--lab-paper:#fbfbfd;--lab-surface:#fff;--lab-control:#fff;--lab-ink:#1d1d1f;--lab-muted:#6e6e73;
+  --lab-line:#d2d2d7;--lab-line-strong:#a7a7ad;--lab-accent:#5277b8;--lab-accent-soft:#eef2fa;
+  --lab-good:#18794e;--lab-good-soft:#edf8f1;--lab-warn:#946200;--lab-warn-soft:#fff6e7;--lab-bad:#b42318;--lab-bad-soft:#fff0ee;
+  --lab-focus:#1d1d1f;--lab-font-sans:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif;
+  --lab-panel-radius:12px;--lab-control-radius:8px;--lab-pill-radius:999px;--lab-panel-shadow:0 1px 2px rgba(29,29,31,.04);
+  --pair-a:#b75d4c;--pair-a-soft:#fff1ee;--pair-b:#7165ad;--pair-b-soft:#f2effa;--height:#2f7b62;--height-soft:#edf8f3;
+  --principal:#5277b8;--supp:#c1852d;--probe:#5c6870;--grid:#edf1f3;
+}
+*{box-sizing:border-box}
+html,body{min-height:100%;background:var(--lab-canvas)}
+body{margin:0;color:var(--lab-ink);font-family:var(--lab-font-sans);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+body>main{container-name:lab-canvas;container-type:inline-size;margin:12px auto 38px;width:min(1200px,calc(100% - 22px))}
+.lab-manifest-header{align-items:start;border-bottom:1px solid var(--lab-line);display:grid;gap:12px 24px;grid-template-columns:minmax(0,1fr) auto;margin-bottom:12px;padding-bottom:12px}
+.lab-manifest-heading{min-width:0}.lab-manifest-header h1{margin:0;font-size:clamp(25px,3vw,38px);font-weight:650;letter-spacing:-.045em;line-height:1.02;max-width:31ch}
+.lab-manifest-subtitle{color:var(--lab-muted);font-size:12px;line-height:1.45;margin:6px 0 0;max-width:82ch}
+.lab-authored-title-slot{min-width:0}.lab-syllabus-chips{align-items:center;display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end;margin:0 0 0 auto;max-width:100%}
+.lab-syllabus-chip{align-items:center;background:#edf8f3;border:1px solid #91c4b0;border-radius:var(--lab-pill-radius);color:#235f4e;display:inline-flex;font-size:11px;font-weight:650;gap:4px;line-height:1;min-height:29px;padding:8px 10px;position:relative;white-space:nowrap}
+.lab-syllabus-primary-link{border-radius:inherit;inset:0;position:absolute;z-index:0}.lab-syllabus-name,.lab-syllabus-divider,.lab-syllabus-sections{pointer-events:none;position:relative;z-index:1}.lab-syllabus-section{border-radius:4px;color:inherit;padding:2px;text-decoration:none}.lab-syllabus-sections{align-items:center;display:inline-flex}a.lab-syllabus-section{pointer-events:auto}a.lab-syllabus-section:hover{text-decoration:underline;text-underline-offset:2px}
+button,input{font:inherit}.panel{background:var(--lab-surface);border:1px solid var(--lab-line);border-radius:var(--lab-panel-radius);box-shadow:var(--lab-panel-shadow)}
+button{min-height:34px;padding:0 10px;border:1px solid var(--lab-line);border-radius:var(--lab-control-radius);background:var(--lab-control);color:var(--lab-ink);cursor:pointer}button:hover:not(:disabled){border-color:var(--lab-line-strong)}button:disabled{opacity:.45;cursor:not-allowed}:where(button,input,[tabindex]):focus-visible{outline:3px solid var(--lab-focus);outline-offset:3px}
+.mission{padding:10px 12px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px;align-items:center}.goal-kicker{display:block;margin-bottom:2px;color:var(--lab-accent);font-size:8px;font-weight:900;letter-spacing:.07em;text-transform:uppercase}.mission-copy strong{display:block;font-size:15px;line-height:1.32}.mission-copy span:not(.goal-kicker){display:block;margin-top:3px;color:var(--lab-muted);font-size:10px;line-height:1.4;max-width:80ch}
+.mission-tools{display:flex;align-items:center;gap:8px}.complexity{display:grid;grid-template-columns:auto auto;gap:4px 7px;align-items:center;justify-items:end}.complexity-copy{text-align:right}.complexity-copy strong{display:block;color:#52606a;font-size:8px;font-weight:900;letter-spacing:.05em;text-transform:uppercase}.complexity-copy span{display:block;margin-top:1px;color:var(--lab-muted);font-size:8px;line-height:1.25;max-width:28ch}.complexity-switch{display:inline-flex;padding:3px;border:1px solid var(--lab-line);border-radius:9px;background:#f6f8f9}.complexity-switch button{min-height:27px;border:0;border-radius:6px;background:transparent;padding:0 8px;color:#66737b;font-size:8px;font-weight:850}.complexity-switch button.active{background:#fff;color:var(--lab-ink);box-shadow:0 1px 4px rgba(29,29,31,.14)}
+.lab{position:relative;margin-top:9px;overflow:hidden}.workspace{display:grid;grid-template-columns:minmax(0,1.48fr) minmax(390px,.92fr);align-items:stretch;min-height:660px}.diagram-shell{position:relative;min-width:0;padding:10px;border-right:1px solid var(--lab-line);background:#fbfcfd;overflow:hidden}.diagram-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:7px}.diagram-title strong{display:block;font-size:14px}.diagram-title span{display:block;margin-top:2px;color:var(--lab-muted);font-size:9px;line-height:1.35}.given-strip{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}.given-chip{padding:5px 7px;border:1px solid var(--lab-line);border-radius:7px;background:#fff;color:#59666e;font:800 9px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.given-chip.a{border-color:#e1b3aa;background:var(--pair-a-soft);color:#914738}.given-chip.b{border-color:#c7bfe0;background:var(--pair-b-soft);color:#584b94}
+.diagram-scroll{overflow:hidden;border:1px solid #e0e6e9;border-radius:10px;background:#fff}.diagram-frame{min-width:0;position:relative}.diagram-frame svg{display:block;width:100%;height:auto;aspect-ratio:980/610;touch-action:none;user-select:none}
+.working{min-width:0;padding:11px 12px 12px;background:#fff;display:flex;flex-direction:column}.working-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding-bottom:8px;border-bottom:1px solid var(--lab-line)}.working-head strong{display:block;font-size:14px}.working-head span{display:block;margin-top:2px;color:var(--lab-muted);font-size:9px;line-height:1.35}.working-badge{flex:0 0 auto;margin-top:0!important;padding:4px 7px;border:1px solid #b7c8df;border-radius:999px;background:#f3f7fc!important;color:#365b88!important;font-size:8px!important;font-weight:850;white-space:nowrap}
+.working-body{display:grid;gap:8px;margin-top:8px}.working-step{padding:8px 9px;border:1px solid var(--lab-line);border-radius:9px;background:#fbfcfd}.step-head{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.step-num{width:19px;height:19px;border-radius:50%;display:grid;place-items:center;background:#edf1f4;color:#53616b;font-size:8px;font-weight:900}.step-head strong{font-size:10px}.scope-chip{margin-left:auto;padding:3px 6px;border-radius:999px;font-size:7px;font-weight:850;white-space:nowrap}.scope-chip.general{background:#eef3f8;color:#45627b}.scope-chip.angle{background:#f4effb;color:#62458b}.scope-chip.ssa{background:#fff3e5;color:#8a5d20}.scope-chip.check{background:#edf8f1;color:#2f6b4c}.step-note{margin:4px 0 0;color:#67737b;font-size:8.5px;line-height:1.38}.pair-line{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px}.pair-box{padding:6px 7px;border:1px solid var(--lab-line);border-radius:7px;background:#fff}.pair-box strong{display:block;font-size:10px}.pair-box span{display:block;margin-top:1px;color:#69737a;font-size:7.5px}.pair-box.a{border-color:#e1b3aa;background:var(--pair-a-soft)}.pair-box.a strong{color:#914738}.pair-box.b{border-color:#c7bfe0;background:var(--pair-b-soft)}.pair-box.b strong{color:#584b94}
+.equation{margin-top:6px;padding:7px 8px;border:1px solid #dfe4e8;border-radius:7px;background:#fff;font:800 10px/1.45 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#39464f}.equation .a{color:var(--pair-a)}.equation .b{color:var(--pair-b)}.equation.good{border-color:#a9d0b7;background:var(--lab-good-soft);color:#315f47}.equation.warn{border-color:#e0c68e;background:var(--lab-warn-soft);color:#76520b}.equation.bad{border-color:#e3b1aa;background:var(--lab-bad-soft);color:#7a3933}
+.calc-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(94px,118px);gap:7px;align-items:end;margin-top:6px}.calc-label{color:#65717a;font-size:8px;line-height:1.3}.calc-label strong{display:block;color:#34424b;font-size:9px}.calc-value{min-height:34px;display:flex;align-items:center;justify-content:center;padding:0 8px;border:1px solid var(--lab-line);border-radius:7px;background:#fff;font:850 11px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.calc-field{position:relative}.calc-field input{width:100%;height:34px;padding:0 25px 0 8px;border:1px solid var(--lab-line);border-radius:7px;background:#fff;color:var(--lab-ink);font:850 11px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.calc-field input.good{border-color:#82b99a;background:var(--lab-good-soft)}.calc-field input.bad{border-color:#d89991;background:var(--lab-bad-soft)}.field-mark{position:absolute;right:8px;bottom:9px;font-size:10px;font-weight:900}.calc-field.good .field-mark{color:var(--lab-good)}.calc-field.bad .field-mark{color:var(--lab-bad)}
+.candidate-table{margin-top:6px;border:1px solid var(--lab-line);border-radius:7px;overflow:hidden;background:#fff}.candidate-row{display:grid;grid-template-columns:56px 1fr 1fr 68px;align-items:center;min-height:31px;border-top:1px solid #edf0f2;font-size:8px}.candidate-row:first-child{border-top:0}.candidate-row>span,.candidate-row>strong{padding:5px 6px}.candidate-row .head{color:#7a858c;font-size:7px;font-weight:850;text-transform:uppercase;letter-spacing:.04em}.candidate-row .valid{color:var(--lab-good);font-weight:850}.candidate-row .invalid{color:var(--lab-bad);font-weight:850}.mini-input{width:70px;height:28px;border:1px solid var(--lab-line);border-radius:6px;padding:0 7px;background:#fff;font:800 9px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.mini-input.good{border-color:#82b99a;background:var(--lab-good-soft)}.mini-input.bad{border-color:#d89991;background:var(--lab-bad-soft)}
+.final-row{display:block;margin-top:7px}.construction-status{margin-top:7px;padding:6px 8px;border-radius:7px;background:#f4f6f7;color:#5d6971;font-size:8.5px;line-height:1.35}.construction-status.good{background:var(--lab-good-soft);color:#35674e}.construction-status.warn{background:var(--lab-warn-soft);color:#75540f}.feedback{min-height:42px;margin-top:7px;padding:7px 8px;border:1px solid var(--lab-line);border-radius:8px;background:#fbfcfd;color:#5d6870;font-size:8.5px;line-height:1.42}.feedback.good{border-color:#9cc7aa;background:var(--lab-good-soft);color:#315f47}.feedback.bad{border-color:#e0aaa2;background:var(--lab-bad-soft);color:#7a3933}.feedback.warn{border-color:#e2ca97;background:var(--lab-warn-soft);color:#75540f}.feedback strong{display:block;margin-bottom:2px;font-size:9px}.realisation{margin-top:7px;padding-top:7px;border-top:1px solid rgba(49,95,71,.18);font-weight:700}
+.interaction-guide{position:absolute;z-index:45;inset:0;pointer-events:none}.interaction-guide[hidden]{display:none}.guide-arrow{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}.guide-arrow-path{fill:none;stroke:#9aa4aa;stroke-width:1;stroke-linecap:round;stroke-linejoin:round}.guide-card{position:absolute;width:min(176px,calc(100% - 18px));padding:6px 8px;border:1px solid #c7ced3;border-radius:8px;background:rgba(253,253,253,.975);box-shadow:0 3px 9px rgba(29,29,31,.09);pointer-events:none}.guide-card strong{display:block;color:#46545d;font-size:9px;line-height:1.25}.guide-copy{display:block;margin-top:1px;color:#727d84;font-size:7.5px;line-height:1.28}.guide-kicker,.guide-why{display:none}.guide-focus{filter:none}
+.next-card{position:absolute;z-index:20;left:50%;top:14px;transform:translateX(-50%);width:min(370px,calc(100% - 28px));padding:11px 12px;border:1px solid #9cc7aa;border-radius:12px;background:rgba(247,252,248,.985);box-shadow:0 12px 30px rgba(29,29,31,.16);text-align:center;animation:nextCardIn .2s ease-out}.next-card[hidden]{display:none}.next-card>strong{display:block;color:#2e6d4b;font-size:11px}.next-card>span{display:block;margin:3px auto 0;max-width:42ch;color:#52705f;font-size:8.5px;line-height:1.35}.next-actions{display:grid;gap:6px;margin-top:8px}.next-card button{width:100%;min-height:32px;font-size:9px;font-weight:900}.next-card #nextProblem{background:var(--lab-good);border-color:var(--lab-good);color:#fff}.next-card.has-upgrade #nextProblem{background:#fff;border-color:#9cc7aa;color:#2e6d4b}.next-upgrade{margin-top:9px;padding:9px;border:1px solid #b7c8df;border-radius:9px;background:#f3f7fc;text-align:left}.next-upgrade[hidden]{display:none}.next-upgrade strong{display:block;color:#365b88;font-size:10px}.next-upgrade span{display:block;margin-top:3px;color:#607184;font-size:8.5px;line-height:1.38}.next-upgrade button{margin-top:7px;background:var(--lab-accent);border-color:var(--lab-accent);color:#fff}@keyframes nextCardIn{from{opacity:0;transform:translate(-50%,-6px)}to{opacity:1;transform:translate(-50%,0)}}
+.grid-line{stroke:var(--grid);stroke-width:1}.ray{stroke:#4e5c65;stroke-width:4;stroke-linecap:round}.ray-hit{stroke:transparent;stroke-width:28;cursor:ew-resize}.ray-arrow{fill:#4e5c65}.ray-label{fill:#5f6c74;font-size:10px;font-weight:750}.base-b{stroke:var(--pair-b);stroke-width:5;stroke-linecap:round}.side-a{stroke:var(--pair-a);stroke-width:4;stroke-linecap:round}.height-line{stroke:var(--height);stroke-width:2.5;stroke-dasharray:7 6}.right-angle{fill:none;stroke:var(--height);stroke-width:2}.measure-circle{fill:none;stroke:#d89081;stroke-width:3;stroke-dasharray:9 7}.triangle-principal{fill:rgba(82,119,184,.10);stroke:none}.triangle-supp{fill:rgba(193,133,45,.10);stroke:none}.point-a{fill:#34444f}.point-c{fill:#fff;stroke:var(--pair-b);stroke-width:4}.point-b1{fill:#fff;stroke:var(--principal);stroke-width:4}.point-b2{fill:#fff;stroke:var(--supp);stroke-width:4}.point-label{font-size:12px;font-weight:900}.point-label.a{fill:#34444f}.point-label.c{fill:#574d91}.point-label.b1{fill:#315f92}.point-label.b2{fill:#9a681f}.side-label{font-size:10px;font-weight:850}.side-label.a{fill:#9f4f3f}.side-label.b{fill:#584b94}.height-label{fill:#28705a;font-size:9px;font-weight:800}.angle-a{fill:none;stroke:var(--pair-a);stroke-width:3}.angle-b1{fill:none;stroke:var(--principal);stroke-width:3}.angle-b2{fill:none;stroke:var(--supp);stroke-width:3}.angle-label-a{fill:#9f4f3f;font-size:10px;font-weight:850}.angle-label-b{font-size:9px;font-weight:850}.angle-label-b.b1{fill:#315f92}.angle-label-b.b2{fill:#98661e}.probe-line{stroke:#6c7880;stroke-width:2;stroke-dasharray:5 5}.probe-line.match{stroke:var(--lab-good);stroke-width:3}.probe-halo{fill:rgba(82,119,184,.11);stroke:none}.probe{fill:#fff;stroke:var(--probe);stroke-width:4;cursor:ew-resize}.probe.match{stroke:var(--lab-good);fill:#f6fcf8}.probe-label{fill:#55626a;font-size:9px;font-weight:850}.probe-label.match{fill:var(--lab-good)}.probe-cue{fill:#6a757c;font-size:8px;font-weight:750}.claim-ring{fill:none;stroke:#90a0aa;stroke-width:1.5;stroke-dasharray:3 3;opacity:.7}.state-banner{fill:rgba(255,255,255,.96);stroke:#cbd4da;stroke-width:1.2}.state-title{fill:#35444d;font-size:10px;font-weight:900}.state-sub{fill:#6c7880;font-size:8px;font-weight:700}.snap-label{fill:var(--lab-good);font-size:8px;font-weight:900}.foot-label{fill:#2d7059;font-size:8px;font-weight:800}
+@media(max-width:900px){.workspace{grid-template-columns:minmax(0,1fr)}.diagram-shell{border-right:0;border-bottom:1px solid var(--lab-line)}.working{min-height:0}.mission{grid-template-columns:1fr}.mission-tools{justify-content:space-between}.complexity{justify-items:start}.complexity-copy{text-align:left}.working-body{grid-template-columns:1fr 1fr}.working-step:last-child{grid-column:1/-1}}
+@media(max-width:620px){body>main{width:min(100% - 12px,1200px);margin-top:8px}.lab-manifest-header{grid-template-columns:minmax(0,1fr) auto;gap:8px}.lab-manifest-header h1{font-size:25px}.lab-manifest-subtitle{font-size:11px}.mission{padding:9px}.mission-tools{align-items:flex-start;flex-wrap:wrap}.given-strip{display:none}.diagram-shell{padding:6px}.diagram-frame{min-width:0}.working{padding:9px}.working-body{grid-template-columns:1fr}.working-step:last-child{grid-column:auto}.candidate-row{grid-template-columns:48px 1fr 1fr 58px}.scope-chip{margin-left:0}.next-card{top:9px;width:min(330px,calc(100% - 20px))}}
+
+/* compact calculation ownership + no scrolling inside the geometry */
+.diagram-scroll{overflow:hidden}
+.diagram-frame{min-width:0;width:100%}
+.diagram-frame svg{width:100%;aspect-ratio:850/500}
+.workspace{grid-template-columns:minmax(0,1.64fr) minmax(350px,.86fr);min-height:620px}
+.working{padding:10px 11px 11px}
+.working-head{padding-bottom:7px}
+.working-head span{line-height:1.28}
+.working-body{gap:6px;margin-top:7px}
+.working-step{padding:7px 8px;border-radius:8px}
+.step-head{gap:5px}.step-num{width:17px;height:17px;font-size:7px}.step-head strong{font-size:9.5px}
+.scope-chip{display:none}
+.working-step .step-head strong{font-size:11px}.working-step .step-note{font-size:9.5px}.pair-box span{font-size:9px}
+.pair-line{gap:5px;margin-top:5px}.pair-box{padding:5px 6px}.pair-box strong{font-size:9px}.pair-box span{font-size:7px}
+.compact-equation{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-top:5px;padding:6px 7px;font-size:9px;line-height:1.3}
+.compact-equation .eq-arrow{color:#89949c;font-weight:900}.compact-equation .formula-result{color:#34424b;font-weight:900}
+.work-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:5px}.work-grid.one{grid-template-columns:1fr}
+.working-step.done{border-color:#a7d2b5;background:#f7fcf8;box-shadow:inset 3px 0 0 var(--lab-good)}.working-step.pending{border-color:#e0cd78;background:#fffdf5;box-shadow:inset 3px 0 0 #d0ad35}
+.work-box{min-width:0;min-height:42px;padding:5px 6px;border:1px solid var(--lab-line);border-radius:7px;display:grid;gap:2px;align-content:center;transition:border-color .14s,background-color .14s}
+.work-box>span{color:#68747c;font-size:6.8px;font-weight:850;letter-spacing:.02em}.work-box>strong,.auto-value-line strong{font:900 10px/1.2 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;overflow-wrap:anywhere}
+.work-box.auto{border-color:#a9d4b9;background:var(--lab-good-soft);box-shadow:inset 3px 0 0 var(--lab-good)}.work-box.auto strong{color:var(--lab-good)}
+.work-box.entry{border-width:2px}.work-box.entry.pending{border-color:#d8c36a;background:#fffdf5;box-shadow:inset 3px 0 0 #d0ad35}.work-box.entry.good{border-color:var(--lab-good);background:var(--lab-good-soft);box-shadow:inset 3px 0 0 var(--lab-good)}.work-box.entry.bad{border-color:var(--lab-bad);background:var(--lab-bad-soft);box-shadow:inset 3px 0 0 var(--lab-bad)}
+.work-entry-line,.auto-value-line{display:grid;grid-template-columns:minmax(0,1fr) 19px;gap:5px;align-items:center}.work-entry-line input{width:100%;height:25px;padding:0;border:0;background:transparent;color:#25313a;font:900 10px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;outline:0}.work-entry-line input::placeholder{color:#9a8b50}.work-box.entry.good input{color:var(--lab-good)}.work-box.entry.bad input{color:var(--lab-bad)}
+.work-status{width:19px;height:19px;display:grid;place-items:center;border:1px solid #d8c36a;border-radius:50%;background:#fffdf5;color:#8a741f;font:950 11px/1 var(--lab-font-sans)}.work-box.good .work-status,.work-box.auto .work-status{border-color:var(--lab-good);background:var(--lab-good);color:#fff}.work-box.bad .work-status{border-color:var(--lab-bad);background:var(--lab-bad);color:#fff}
+.work-box.entry:focus-within{outline:3px solid rgba(29,29,31,.18);outline-offset:1px;border-color:var(--lab-accent);background:#fff}
+.candidate-table{margin-top:5px}.candidate-row{grid-template-columns:46px .72fr 1fr 52px;min-height:28px;font-size:7.5px}.candidate-row>span,.candidate-row>strong{padding:4px 5px}.candidate-row .head{font-size:6.4px}
+.mini-work{position:relative;min-height:25px;display:flex;align-items:center;padding:3px 22px 3px 6px;border:1px solid #a9d4b9;border-radius:6px;background:var(--lab-good-soft);color:var(--lab-good);box-shadow:inset 3px 0 0 var(--lab-good);font:900 8.5px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.mini-work.entry{border-width:2px;border-color:#d8c36a;background:#fffdf5;box-shadow:inset 3px 0 0 #d0ad35;color:#25313a}.mini-work.entry.good{border-color:var(--lab-good);background:var(--lab-good-soft);box-shadow:inset 3px 0 0 var(--lab-good)}.mini-work.entry.bad{border-color:var(--lab-bad);background:var(--lab-bad-soft);box-shadow:inset 3px 0 0 var(--lab-bad)}.mini-work input{width:100%;height:18px;border:0;padding:0;background:transparent;color:#25313a;font:900 8.5px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;outline:0}.mini-work.good input{color:var(--lab-good)}.mini-work.bad input{color:var(--lab-bad)}
+.mini-status{position:absolute;right:4px;top:50%;transform:translateY(-50%);width:15px;height:15px;display:grid;place-items:center;border:1px solid var(--lab-good);border-radius:50%;background:var(--lab-good);color:#fff;font:950 8px/1 var(--lab-font-sans)}.mini-work.entry.pending .mini-status{border-color:#d8c36a;background:#fffdf5;color:#8a741f}.mini-work.entry.bad .mini-status{border-color:var(--lab-bad);background:var(--lab-bad);color:#fff}
+.final-row{display:block;margin-top:6px}.final-row .work-box{min-height:38px}
+.construction-status{margin-top:6px;padding:5px 7px}.feedback{min-height:36px;margin-top:6px;padding:6px 7px}
+@media(max-width:900px){.workspace{grid-template-columns:minmax(0,1fr)}.working-body{grid-template-columns:1fr 1fr}.working-step:last-child{grid-column:1/-1}.diagram-frame svg{aspect-ratio:850/500}}
+@media(max-width:620px){.diagram-frame{min-width:0}.diagram-scroll{overflow:hidden}.diagram-frame svg{aspect-ratio:850/500}.working-body{grid-template-columns:1fr}.working-step:last-child{grid-column:auto}.work-grid{grid-template-columns:1fr 1fr}.scope-chip{margin-left:auto}.point-label{font-size:17px}.side-label{font-size:14px}.height-label{font-size:12px}.angle-label-a{font-size:14px}.angle-label-b{font-size:13px}.ray-label{font-size:12px}.probe-label{font-size:12px}.probe-cue{font-size:10px}.state-title{font-size:13px}.state-sub{font-size:10px}.snap-label,.foot-label{font-size:10px}}
+
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.001ms!important}}
+</style>
+</head>
+<body data-lab-layout="standard">
+<main>
+<!-- LAB_MANIFEST_HEADER_START -->
+<header class="lab-manifest-header">
+  <div class="lab-manifest-heading">
+    <h1 data-lab-manifest="title">Non-Right Triangle Solutions</h1>
+  <p class="lab-manifest-subtitle" data-lab-manifest="subtitle">Construct the triangle candidates, follow the sine-rule calculation, and test which angles produce a valid completed triangle.</p>
+  </div>
+  <!-- LAB_SYLLABUS_CHIPS_START -->
+<nav class="lab-syllabus-chips" aria-label="Syllabus alignment">
+  <section class="lab-syllabus-chip" style="--syllabus-chip-bg:#edf8f3;--syllabus-chip-border:#91c4b0;--syllabus-chip-text:#235f4e;--syllabus-chip-hover:#dcf0e7" aria-label="IGCSE 0580 syllabus alignment">
+    <a class="lab-syllabus-primary-link" href="https://www.cambridgeinternational.org/Images/662466-2025-2027-syllabus.pdf#page=52" target="_blank" rel="noopener noreferrer" aria-label="Open IGCSE 0580 syllabus section E6.5"></a>
+    <span class="lab-syllabus-name">IGCSE 0580</span>
+    <span class="lab-syllabus-divider" aria-hidden="true">·</span>
+    <span class="lab-syllabus-sections"><span class="lab-syllabus-section is-primary">E6.5</span></span>
+  </section>
+</nav>
+<!-- LAB_SYLLABUS_CHIPS_END -->
+</header>
+<!-- LAB_MANIFEST_HEADER_END -->
+<span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span>
+<span data-lab-authored-subtitle-slot hidden></span>
+
+<section class="panel mission">
+  <div class="mission-copy">
+    <span id="goalKicker" class="goal-kicker">Problem 1 · worked calculation</span>
+    <strong id="missionTitle"></strong>
+    <span id="missionHint"></span>
+  </div>
+  <div class="mission-tools">
+    <div class="complexity">
+      <div class="complexity-copy"><strong>Working required</strong><span id="complexityHelp"></span></div>
+      <div class="complexity-switch" role="group" aria-label="Working required">
+        <button type="button" data-work-level="0" class="active" aria-pressed="true">Off</button>
+        <button type="button" data-work-level="1" aria-pressed="false">Some</button>
+        <button type="button" data-work-level="2" aria-pressed="false">All</button>
+      </div>
+    </div>
+    <button id="resetProblem" type="button">Reset</button>
+  </div>
+</section>
+
+<section class="panel lab" data-lab-workspace>
+  <div id="nextCard" class="next-card" hidden aria-live="polite">
+    <strong>Problem complete</strong><span id="nextCardText"></span>
+    <div id="nextUpgrade" class="next-upgrade" hidden><strong id="nextUpgradeTitle"></strong><span id="nextUpgradeText"></span><button id="upgradeLevel" type="button"></button></div>
+    <div class="next-actions"><button id="nextProblem" type="button">Next problem</button></div>
+  </div>
+  <div class="workspace">
+    <div class="diagram-shell">
+      <div class="diagram-head">
+        <div class="diagram-title"><strong>Survey construction</strong><span>Drag peg B along the fixed ray. A position is valid only when the measured distance BC equals the supplied side a.</span></div>
+        <div class="given-strip"><span id="givenA" class="given-chip a"></span><span id="givena" class="given-chip a"></span><span id="givenb" class="given-chip b"></span></div>
+      </div>
+      <div id="interactionGuide" class="interaction-guide" hidden aria-live="polite">
+        <svg id="guideArrow" class="guide-arrow" aria-hidden="true"><defs><marker id="guideArrowHead" markerWidth="6" markerHeight="6" refX="5.2" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0.6 0.8 L5 3 L0.6 5.2" fill="none" stroke="#9aa4aa" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"></path></marker></defs><path id="guideArrowPath" class="guide-arrow-path" marker-end="url(#guideArrowHead)"></path></svg>
+        <div id="guideCard" class="guide-card">
+          <strong id="guideTitle"></strong>
+          <span id="guideCopy" class="guide-copy"></span>
+        </div>
+      </div>
+      <div class="diagram-scroll">
+        <div class="diagram-frame">
+          <svg id="stage" viewBox="197 183 614 382" role="img" aria-labelledby="stageTitle stageDesc">
+            <title id="stageTitle">Interactive sine-rule survey construction</title>
+            <desc id="stageDesc">A fixed angle at A and fixed side AC define point C. A circle centred at C represents the supplied length BC. Drag a survey peg B along the ray from A and peg every position where BC matches the supplied length.</desc>
+            <defs><marker id="rayArrow" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><path d="M0,0 L9,3.5 L0,7 z" class="ray-arrow"/></marker></defs>
+            <g id="gridLayer"></g>
+            <g id="fillLayer"></g>
+            <g id="baseLayer">
+              <line id="ray" class="ray" marker-end="url(#rayArrow)"/><line id="rayHit" class="ray-hit"/>
+              <text id="rayLabel" class="ray-label">permitted ray from A</text>
+              <line id="baseB" class="base-b"/><line id="heightLine" class="height-line"/><path id="rightAngle" class="right-angle"/>
+              <circle id="measureCircle" class="measure-circle"/>
+            </g>
+            <g id="claimedFill"></g><g id="claimedLines"></g><g id="angleLayer"></g><g id="pointLayer"></g><g id="labelLayer"></g>
+            <g id="probeLayer"><line id="probeLine" class="probe-line"/><circle id="probeHalo" class="probe-halo" r="25"/><circle id="probe" class="probe" r="10" tabindex="0" role="slider" aria-label="Survey peg B position" aria-valuemin="0.5" aria-valuemax="22" aria-valuenow="8"/><text id="probeLabel" class="probe-label"></text><text id="probeCue" class="probe-cue">drag B along the ray</text></g>
+            <g id="bannerLayer"></g>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <aside class="working" aria-live="polite">
+      <div class="working-head"><div><strong>Sine-rule working</strong><span id="workingIntro"></span></div><span id="workingBadge" class="working-badge"></span></div>
+      <div id="workingBody" class="working-body"></div>
+      <div id="constructionStatus" class="construction-status"></div>
+      <div id="feedback" class="feedback">The diagram and working update automatically as you work.</div>
+    </aside>
+  </div>
+</section>
+</main>
+<script>
+(()=>{
+'use strict';
+const $=id=>document.getElementById(id),NS='http://www.w3.org/2000/svg';
+const cfg={A:{x:245,y:520},scale:24,bMin:7,bMax:14,rayMax:22,epsilon:.03,probeSnap:.34};
+const rad=d=>d*Math.PI/180,deg=r=>r*180/Math.PI,clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const fmt=(v,n=2)=>Number(v).toFixed(n).replace(/\.00$/,'').replace(/(\.\d)0$/,'$1');
+const round1=v=>Math.round(v*10)/10,close=(a,b,t=.08)=>Number.isFinite(a)&&Math.abs(a-b)<=t;
+const parse=v=>{const raw=String(v??'').trim();if(!raw)return NaN;const n=Number(raw);return Number.isFinite(n)?n:NaN};
+const sx=x=>cfg.A.x+x*cfg.scale,sy=y=>cfg.A.y-y*cfg.scale;
+const svg=(tag,attrs={},text='')=>{const n=document.createElementNS(NS,tag);for(const[k,v]of Object.entries(attrs))n.setAttribute(k,String(v));if(text)n.textContent=text;return n};
+const line=(x1,y1,x2,y2,cls,attrs={})=>svg('line',{x1,y1,x2,y2,class:cls,...attrs});
+const text=(x,y,cls,content,attrs={})=>svg('text',{x,y,class:cls,...attrs},content);
+function rng(seed){let value=(seed>>>0)||1;return()=>{value=(Math.imul(value,1664525)+1013904223)>>>0;return value/4294967296}}
+function rawGeometry(p){
+  const t=rad(p.A),c={x:p.b*Math.cos(t),y:p.b*Math.sin(t)},h=c.y,disc=p.a*p.a-h*h,roots=[];
+  if(disc>=-1e-8){const d=Math.sqrt(Math.max(0,disc));if(d<1e-7)roots.push(c.x);else roots.push(c.x-d,c.x+d)}
+  const valid=[];for(const x of roots.sort((a,b)=>a-b)){if(x<=cfg.epsilon)continue;const ba={x:-x,y:0},bc={x:c.x-x,y:c.y},den=Math.hypot(ba.x,ba.y)*Math.hypot(bc.x,bc.y);const B=deg(Math.acos(clamp((ba.x*bc.x+ba.y*bc.y)/den,-1,1))),C=180-p.A-B;if(C>1e-7)valid.push({x,B,C})}
+  const ratio=p.b*Math.sin(t)/p.a,principal=ratio<=1+1e-9?deg(Math.asin(clamp(ratio,-1,1))):null,supp=principal==null?null:180-principal;
+  const candidates=[];if(principal!=null){candidates.push({key:'principal',B:principal,C:180-p.A-principal,valid:180-p.A-principal>1e-7});if(Math.abs(supp-principal)>.08)candidates.push({key:'supplementary',B:supp,C:180-p.A-supp,valid:180-p.A-supp>1e-7})}
+  for(const q of valid){const best=candidates.slice().sort((u,v)=>Math.abs(u.B-q.B)-Math.abs(v.B-q.B))[0];q.key=best?.key||'principal'}
+  const tangent=Math.abs(disc)<.025||principal!=null&&Math.abs(principal-90)<.08;
+  return{c,h,disc,ratio,principal,supp,candidates,valid,count:valid.length,tangent};
+}
+function makeProblem(seed=1){
+  if(seed===1)return{seed,family:'two',A:34,a:7,b:10};
+  const families=['noReach','oneLong','two','obtuseOne','noRay','two','tangent'],family=families[(seed-2)%families.length],random=rng(seed*92821+17);
+  for(let tries=0;tries<80;tries++){
+    let A,b,a;if(family==='tangent'){A=30;b=[8,10,12,14][Math.floor(random()*4)];a=b/2}else if(family==='obtuseOne'||family==='noRay'){A=Math.round(102+random()*16);b=Math.round(8+random()*6);a=family==='obtuseOne'?round1(b*(1.14+random()*.24)):round1(b*(.976+random()*.012))}else{A=Math.round(28+random()*28);b=Math.round(8+random()*6);const h=b*Math.sin(rad(A));if(family==='two')a=round1(h+(b-h)*(.34+random()*.34));else if(family==='noReach')a=round1(h*(.68+random()*.16));else a=round1(b*(1.12+random()*.22))}
+    const p={seed,family,A,a,b},g=rawGeometry(p),ok=family==='two'?g.count===2:family==='noReach'?g.count===0&&g.ratio>1:family==='oneLong'?g.count===1:family==='obtuseOne'?g.count===1&&A>90:family==='noRay'?g.count===0&&g.ratio<=1:family==='tangent'?g.count===1&&g.tangent:false;if(ok)return p;
+  }
+  return{seed,family:'two',A:38,a:7.5,b:10};
+}
+function freshSession(){return{answers:{ratio:'',principal:'',supplementary:'',cPrincipal:'',cSupplementary:'',count:''},success:false,message:''}}
+let guideSeen=false,contextGuideSeen=false,contextGuideOpen=false;
+const state={problemNumber:1,workingLevel:0,solvedAtLevel:[0,0,0],problem:makeProblem(1),session:freshSession(),claimed:new Set(),probeX:7.8,probeMatch:null,drag:null,visitedMin:7.8,visitedMax:7.8};
+function current(){return state.problem}function geometry(){return rawGeometry(current())}
+function expected(key){const g=geometry();if(key==='ratio')return g.ratio;if(key==='principal')return g.principal;if(key==='supplementary')return g.supp;if(key==='cPrincipal')return g.principal==null?null:180-current().A-g.principal;if(key==='cSupplementary')return g.supp==null?null:180-current().A-g.supp;if(key==='count')return g.count;return null}
+function answerCorrect(key){const target=expected(key),value=parse(state.session.answers[key]);if(target==null)return false;return key==='count'?Number.isInteger(value)&&value===target:close(value,target,key==='ratio'?.004:.16)}
+function requiredKeys(){
+  const g=geometry(),level=state.workingLevel;if(level===0)return[];const keys=['count'];
+  if(level===1){if(g.principal==null)keys.unshift('ratio');else{keys.unshift('principal');if(g.supp!=null&&Math.abs(g.supp-g.principal)>.08)keys.push('supplementary')}}
+  else{keys.unshift('ratio');if(g.principal!=null){keys.push('principal');if(g.supp!=null&&Math.abs(g.supp-g.principal)>.08)keys.push('supplementary');keys.push('cPrincipal');if(g.supp!=null&&Math.abs(g.supp-g.principal)>.08)keys.push('cSupplementary')}}
+  return [...new Set(keys)]
+}
+function workingReady(){return requiredKeys().every(answerCorrect)}
+function constructionReady(){const g=geometry();return g.count===0?(state.visitedMax-state.visitedMin>=3.5):state.claimed.size===g.count}
+function solved(){return workingReady()&&constructionReady()}
+function initialProbe(){const g=geometry();let x=clamp(g.c.x+current().a*1.05,.9,cfg.rayMax-1);if(g.valid.some(v=>Math.abs(v.x-x)<.65))x=clamp(x+1.35,.9,cfg.rayMax-1);return x}
+function resetSession(){state.session=freshSession();state.claimed=new Set();state.probeMatch=null;state.probeX=initialProbe();state.visitedMin=state.probeX;state.visitedMax=state.probeX;state.drag=null;contextGuideOpen=false;$('interactionGuide').hidden=true;clearGuideFocus();renderAll()}
+function setProblem(seed=1,level=state.workingLevel){state.problemNumber=1;state.workingLevel=clamp(Number(level)||0,0,2);state.problem=makeProblem(seed>>>0||1);state.solvedAtLevel=[0,0,0];resetSession()}
+function setWorkingLevel(level){level=clamp(Number(level)||0,0,2);if(level===state.workingLevel)return;state.workingLevel=level;resetSession()}
+function arcPath(cx,cy,r,startDeg,endDeg){const s=rad(startDeg),e=rad(endDeg),x1=cx+r*Math.cos(s),y1=cy-r*Math.sin(s),x2=cx+r*Math.cos(e),y2=cy-r*Math.sin(e),large=Math.abs(endDeg-startDeg)>180?1:0,sweep=endDeg>startDeg?0:1;return`M ${x1} ${y1} A ${r} ${r} 0 ${large} ${sweep} ${x2} ${y2}`}
+function trianglePath(c,b){return`M ${sx(0)} ${sy(0)} L ${sx(c.x)} ${sy(c.y)} L ${sx(b.x)} ${sy(0)} Z`}
+function activeRayMax(g=geometry()){let max=22;for(const q of g.valid)max=Math.max(max,q.x+1.3);return Math.ceil(max*2)/2}
+function fitStageView(g=geometry()){
+  const p=current(),A=cfg.A,r=p.a*cfg.scale,cx=sx(g.c.x),cy=sy(g.c.y),cameraRadius=Math.min(r,220),rayMax=activeRayMax(g),ratio=980/610;
+  let xMin=Math.min(A.x-30,cx-cameraRadius-30),xMax=Math.max(sx(rayMax)+20,cx+cameraRadius+30),yMin=cy-cameraRadius-35,yMax=A.y+45;
+  for(const q of g.valid){const x=sx(q.x);xMin=Math.min(xMin,x-34);xMax=Math.max(xMax,x+34)}
+  let w=xMax-xMin,h=yMax-yMin;
+  if(w/h<ratio){const add=(h*ratio-w)/2;xMin-=add;xMax+=add}else{const add=w/ratio-h;yMin-=add*.72;yMax+=add*.28}
+  const camera={x:xMin,y:yMin,w:xMax-xMin,h:yMax-yMin,xMax,yMax,rayMax};$('stage').setAttribute('viewBox',`${camera.x.toFixed(1)} ${camera.y.toFixed(1)} ${camera.w.toFixed(1)} ${camera.h.toFixed(1)}`);$('probe').setAttribute('aria-valuemax',String(rayMax));return camera
+}
+function renderGrid(){const g=$('gridLayer');g.replaceChildren();for(let x=-320;x<=1320;x+=48)g.appendChild(line(x,-420,x,640,'grid-line'));for(let y=-420;y<=640;y+=48)g.appendChild(line(-320,y,1320,y,'grid-line'))}
+function revealAngle(key){if(state.workingLevel===0||state.session.success)return true;return answerCorrect(key==='principal'?'principal':'supplementary')}
+function renderStage(){
+  const p=current(),g=geometry(),A=cfg.A,c=g.c,camera=fitStageView(g),rayEnd=sx(camera.rayMax);$('ray').setAttribute('x1',A.x);$('ray').setAttribute('y1',A.y);$('ray').setAttribute('x2',rayEnd);$('ray').setAttribute('y2',A.y);$('rayHit').setAttribute('x1',A.x);$('rayHit').setAttribute('y1',A.y);$('rayHit').setAttribute('x2',rayEnd);$('rayHit').setAttribute('y2',A.y);$('rayLabel').setAttribute('x',Math.min(camera.xMax-14,rayEnd-12));$('rayLabel').setAttribute('y',A.y-10);$('rayLabel').setAttribute('text-anchor','end');
+  $('baseB').setAttribute('x1',A.x);$('baseB').setAttribute('y1',A.y);$('baseB').setAttribute('x2',sx(c.x));$('baseB').setAttribute('y2',sy(c.y));$('heightLine').setAttribute('x1',sx(c.x));$('heightLine').setAttribute('y1',sy(c.y));$('heightLine').setAttribute('x2',sx(c.x));$('heightLine').setAttribute('y2',A.y);$('rightAngle').setAttribute('d',`M ${sx(c.x)-13} ${A.y} L ${sx(c.x)-13} ${A.y-13} L ${sx(c.x)} ${A.y-13}`);$('measureCircle').setAttribute('cx',sx(c.x));$('measureCircle').setAttribute('cy',sy(c.y));$('measureCircle').setAttribute('r',p.a*cfg.scale);
+  const fills=$('claimedFill'),lines=$('claimedLines'),angles=$('angleLayer'),points=$('pointLayer'),labels=$('labelLayer'),banner=$('bannerLayer');[fills,lines,angles,points,labels,banner].forEach(n=>n.replaceChildren());
+  points.append(svg('circle',{cx:A.x,cy:A.y,r:7,class:'point-a'}),svg('circle',{cx:sx(c.x),cy:sy(c.y),r:8,class:'point-c'}));labels.append(text(A.x-16,A.y+24,'point-label a','A'),text(sx(c.x)+12,sy(c.y)-10,'point-label c','C'));
+  const bdx=sx(c.x)-A.x,bdy=sy(c.y)-A.y,bl=Math.hypot(bdx,bdy)||1,bnx=-bdy/bl,bny=bdx/bl,bmx=A.x+bdx*.68,bmy=A.y+bdy*.68;labels.append(text(bmx+bnx*18,bmy+bny*18,'side-label b',`b = ${fmt(p.b,1)} m`,{'text-anchor':'middle'}));labels.append(text(sx(c.x)+9,(sy(c.y)+A.y)/2,'height-label',state.workingLevel===0?`h = b sin A = ${fmt(g.h,2)} m`:'h = b sin A'));
+  angles.append(svg('path',{d:arcPath(A.x,A.y,48,0,p.A),class:'angle-a'}));labels.append(text(A.x+55*Math.cos(rad(p.A/2)),A.y-55*Math.sin(rad(p.A/2)),'angle-label-a',`A = ${fmt(p.A,1)}°`));
+  for(const q of g.valid){const claimed=state.claimed.has(q.key);if(!claimed){points.append(svg('circle',{cx:sx(q.x),cy:A.y,r:7,class:'claim-ring'}));continue}const isP=q.key==='principal',fillCls=isP?'triangle-principal':'triangle-supp',bCls=isP?'point-b1':'point-b2',angCls=isP?'angle-b1':'angle-b2',labelCls=isP?'b1':'b2';fills.append(svg('path',{d:trianglePath(c,q),class:fillCls}));lines.append(line(sx(c.x),sy(c.y),sx(q.x),A.y,'side-a'));points.append(svg('circle',{cx:sx(q.x),cy:A.y,r:8,class:bCls}));labels.append(text(sx(q.x)+(isP?10:-10),A.y+24,`point-label ${labelCls}`,isP?'B₁':'B₂',{'text-anchor':isP?'start':'end'}));const dStart=180-q.B,dEnd=180;angles.append(svg('path',{d:arcPath(sx(q.x),A.y,34,dStart,dEnd),class:angCls}));const show=revealAngle(q.key),bx=sx(q.x)+(isP?12:-12);labels.append(text(bx,A.y-48,`angle-label-b ${labelCls}`,show?`B = ${fmt(q.B,1)}°`:`${isP?'B₁':'B₂'}`,{'text-anchor':isP?'start':'end'}));}
+  const probeDone=g.count>0&&state.claimed.size===g.count;$('probeLayer').setAttribute('visibility',probeDone?'hidden':'visible');
+  const px=sx(state.probeX),py=A.y,dist=Math.hypot(state.probeX-c.x,c.y),match=Boolean(state.probeMatch);$('probeLine').setAttribute('x1',sx(c.x));$('probeLine').setAttribute('y1',sy(c.y));$('probeLine').setAttribute('x2',px);$('probeLine').setAttribute('y2',py);$('probeLine').setAttribute('class',`probe-line${match?' match':''}`);$('probeHalo').setAttribute('cx',px);$('probeHalo').setAttribute('cy',py);$('probe').setAttribute('cx',px);$('probe').setAttribute('cy',py);$('probe').setAttribute('class',`probe${match?' match':''}`);$('probe').setAttribute('aria-valuenow',fmt(state.probeX,2));const probeRight=state.probeX>=c.x,probeTextX=px+(probeRight?-14:14),probeAnchor=probeRight?'end':'start';$('probeLabel').setAttribute('x',probeTextX);$('probeLabel').setAttribute('y',py-18);$('probeLabel').setAttribute('text-anchor',probeAnchor);$('probeLabel').setAttribute('class',`probe-label${match?' match':''}`);$('probeLabel').textContent=match?`BC = a = ${fmt(p.a,1)} m`:`BC = ${fmt(dist,2)} m · target ${fmt(p.a,1)}`;$('probeCue').setAttribute('x',probeTextX);$('probeCue').setAttribute('y',py+32);$('probeCue').setAttribute('text-anchor',probeAnchor);$('probeCue').textContent=match?'release to peg this position':'drag B along the ray';
+  const title=state.claimed.size?`${state.claimed.size} survey position${state.claimed.size===1?'':'s'} pegged`:'No survey positions pegged yet',sub=match?'This position satisfies BC = a.':'Move B until the live distance matches side a.',bannerW=218,bannerX=camera.xMax-bannerW-12,bannerY=camera.y+12;banner.append(svg('rect',{x:bannerX,y:bannerY,width:bannerW,height:51,rx:8,class:'state-banner'}),text(bannerX+11,bannerY+21,'state-title',title),text(bannerX+11,bannerY+38,'state-sub',sub));
+}
+function isRequired(key){return requiredKeys().includes(key)}
+function autoWork(label,value){return`<div class="work-box auto good"><span>${label}</span><div class="auto-value-line"><strong>${value}</strong><i class="work-status" aria-hidden="true">✓</i></div></div>`}
+function workBox(key,label,autoValue,inputMode='decimal'){
+  if(!isRequired(key))return autoWork(label,autoValue);
+  const v=state.session.answers[key]??'',filled=String(v).trim()!=='',good=filled&&answerCorrect(key),cls=good?'good':filled?'bad':'pending',mark=good?'✓':filled?'×':'';
+  return`<label class="work-box entry ${cls}"><span>${label}</span><div class="work-entry-line"><input data-field="${key}" inputmode="${inputMode}" value="${v}" placeholder="?" aria-label="${label}"><i class="work-status" aria-hidden="true">${mark}</i></div></label>`
+}
+function miniWork(key,autoValue){
+  if(!isRequired(key))return`<div class="mini-work auto">${autoValue}<i class="mini-status" aria-hidden="true">✓</i></div>`;
+  const v=state.session.answers[key]??'',filled=String(v).trim()!=='',good=filled&&answerCorrect(key),cls=good?'good':filled?'bad':'pending',mark=good?'✓':filled?'×':'';
+  return`<div class="mini-work entry ${cls}"><input data-field="${key}" inputmode="decimal" value="${v}" placeholder="?" aria-label="${key}"><i class="mini-status" aria-hidden="true">${mark}</i></div>`
+}
+function stepState(keys=[]){const owned=keys.filter(isRequired);return !owned.length||owned.every(answerCorrect)?'done':'pending'}
+function renderWorking(){
+  const p=current(),g=geometry(),level=state.workingLevel;
+  $('workingBadge').textContent=['working shown','some working','all working'][level];
+  $('workingIntro').textContent=level===0?'Every shown result is completed and verified for you.':'Yellow boxes are yours; they validate as you type.';
+  const ratioShown=fmt(g.ratio,4),pShown=g.principal==null?'no real angle':`${fmt(g.principal,1)}°`,sameAngle=g.principal!=null&&Math.abs(g.supp-g.principal)<=.08,sShown=g.supp==null?'—':sameAngle?`${fmt(g.supp,1)}° · same angle`:`${fmt(g.supp,1)}°`;
+  let html='';
+  html+=`<section class="working-step done"><div class="step-head"><span class="step-num">1</span><strong>Pair opposites</strong><span class="scope-chip general">sine rule</span></div><div class="pair-line"><div class="pair-box a"><strong>A ↔ a</strong><span>${fmt(p.A,1)}° ↔ ${fmt(p.a,1)} m</span></div><div class="pair-box b"><strong>B ↔ b</strong><span>B ↔ ${fmt(p.b,1)} m</span></div></div></section>`;
+  const step2Keys=g.principal==null?['ratio']:['ratio','principal'];
+  html+=`<section class="working-step ${stepState(step2Keys)}"><div class="step-head"><span class="step-num">2</span><strong>Find the first angle</strong><span class="scope-chip angle">finding angle</span></div><div class="equation compact-equation"><span class="a">sin ${fmt(p.A,1)}° / ${fmt(p.a,1)}</span><span>=</span><span class="b">sin B / ${fmt(p.b,1)}</span><span class="eq-arrow">→</span><span>sin B = b sin A / a</span></div><div class="work-grid">${workBox('ratio','sin B',ratioShown)}${g.principal==null?autoWork('B₁ = sin⁻¹(sin B)','no real angle'):workBox('principal','B₁ = sin⁻¹(sin B)',pShown)}</div></section>`;
+  if(g.principal!=null){const step3Keys=sameAngle?[]:['supplementary'];html+=`<section class="working-step ${stepState(step3Keys)}"><div class="step-head"><span class="step-num">3</span><strong>Test the second angle</strong><span class="scope-chip ssa">SSA only</span></div><div class="equation compact-equation"><span>B₂ = 180° − B₁</span>${sameAngle?'<span class="formula-result">same 90° angle</span>':''}</div><div class="work-grid one">${sameAngle?autoWork('B₂',sShown):workBox('supplementary','B₂',sShown)}</div></section>`}
+  let rows='<div class="candidate-row"><span class="head">candidate</span><span class="head">B</span><span class="head">C = 180 − A − B</span><span class="head">valid?</span></div>',candidateKeys=[];
+  if(!g.candidates.length){rows+=`<div class="candidate-row"><strong>—</strong><span>no real B</span><span>—</span><span class="invalid">no</span></div>`}else g.candidates.forEach(q=>{const isP=q.key==='principal',bKey=isP?'principal':'supplementary',cKey=isP?'cPrincipal':'cSupplementary';candidateKeys.push(cKey);const bDisplay=answerCorrect(bKey)||!isRequired(bKey)?`${fmt(q.B,1)}°`:'?',cAuto=`${fmt(q.C,1)}°`,cCell=miniWork(cKey,cAuto),statusKnown=!isRequired(cKey)||answerCorrect(cKey),status=statusKnown?(q.valid?'yes':'no'):'—',statusClass=statusKnown?(q.valid?'valid':'invalid'):'';rows+=`<div class="candidate-row"><strong>${isP?'B₁':'B₂'}</strong><span>${bDisplay}</span><span>${cCell}</span><span class="${statusClass}">${status}</span></div>`});
+  const countBox=workBox('count','Number of valid triangles',String(g.count),'numeric'),finalKeys=[...candidateKeys,'count'];
+  html+=`<section class="working-step ${stepState(finalKeys)}"><div class="step-head"><span class="step-num">${g.principal==null?'3':'4'}</span><strong>Check each candidate</strong><span class="scope-chip check">C &gt; 0</span></div><div class="candidate-table">${rows}</div><div class="final-row">${countBox}</div></section>`;
+  $('workingBody').innerHTML=html;bindWorkingInputs();renderConstructionStatus();
+}
+function bindWorkingInputs(){document.querySelectorAll('[data-field]').forEach(input=>input.addEventListener('input',e=>{state.session.answers[e.target.dataset.field]=e.target.value;renderWorking();renderStage();renderFeedback();renderNextCard();requestAnimationFrame(()=>{const same=document.querySelector(`[data-field="${e.target.dataset.field}"]`);if(same&&!same.disabled){same.focus();same.setSelectionRange?.(same.value.length,same.value.length)}})}))}
+function renderConstructionStatus(){const el=$('constructionStatus'),g=geometry(),n=state.claimed.size;if(g.count===0){if(constructionReady()){el.className='construction-status good';el.textContent='Ray search complete: no position satisfies BC = a.'}else{el.className='construction-status warn';el.textContent='Search evidence: drag B along the ray and watch whether BC ever equals a.'}return}if(n===g.count){el.className='construction-status good';el.textContent=`Construction evidence: ${n} distinct valid survey position${n===1?' is':'s are'} pegged.`}else{el.className='construction-status warn';el.textContent=n?`Construction evidence: ${n} valid position pegged. Keep testing the ray.`:'Construction evidence: drag B until BC equals a, then release to peg the position.'}}
+function realisation(){const p=current();if(p.family==='two')return'Inverse sine gives one angle, but its supplement also leaves C > 0. The same SSA measurements therefore define two triangles.';if(p.family==='noReach')return'Here sin B would have to exceed 1. The calculation and the missing circle–ray intersection both say no triangle exists.';if(p.family==='noRay')return'Both sine angles exist numerically, but neither leaves C > 0. Calculator outputs are candidates, not automatic triangles.';if(p.family==='oneLong')return'The supplementary angle exists, but it makes A + B too large. Only the principal angle forms a triangle.';if(p.family==='obtuseOne')return'With A obtuse, the supplementary candidate cannot leave a positive C, so only one triangle survives.';if(p.family==='tangent')return'At the boundary B = 90°. The two sine candidates coincide, so the two physical positions merge into one.';return'The sine rule generates candidate angles; geometry decides which candidates form triangles.'}
+function renderFeedback(){const el=$('feedback'),w=workingReady(),c=constructionReady();state.session.success=w&&c;if(state.session.success){state.session.message=geometry().count===0?'The numerical chain and the completed ray search agree.':`The numerical chain and the ${geometry().count} physical survey position${geometry().count===1?'':'s'} agree.`;el.className='feedback good';el.innerHTML=`<strong>Problem verified automatically.</strong>${state.session.message}<div class="realisation">${realisation()}</div>`;return}if(!w&&c){el.className='feedback warn';el.textContent='Construction complete. Finish the yellow working; each box validates as you type.';return}if(w&&!c){el.className='feedback warn';el.textContent=geometry().count===0?'Working complete. Now sweep B along the ray to test the physical constraint.':'Working complete. Now peg every physical position where BC = a.';return}el.className='feedback';el.textContent=state.workingLevel===0?'The example working is already verified. Use the survey construction to test the geometry.':'Use the diagram and yellow working together; each box validates as you type.'}
+function renderMission(){const p=current();$('goalKicker').textContent='Survey construction';$('missionTitle').textContent=`A surveyor knows A = ${fmt(p.A,1)}°, a = BC = ${fmt(p.a,1)} m and b = AC = ${fmt(p.b,1)} m. Find every possible angle B and the number of triangles.`;const hints=['Read the completed green working, then test the same result physically on the ray.','Calculate the key angle results and final number of triangles; the remaining steps stay completed.','Complete the whole sine-rule and candidate-validity chain, then confirm it with the construction.'];$('missionHint').textContent=hints[state.workingLevel];$('complexityHelp').textContent=['Off · completed example','Some · key results','All · full chain'][state.workingLevel];document.querySelectorAll('[data-work-level]').forEach(b=>{const on=Number(b.dataset.workLevel)===state.workingLevel;b.classList.toggle('active',on);b.setAttribute('aria-pressed',String(on))});$('givenA').textContent=`A ${fmt(p.A,1)}°`;$('givena').textContent=`a ${fmt(p.a,1)} m`;$('givenb').textContent=`b ${fmt(p.b,1)} m`}
+function suggestedWorkLevel(){return solved()&&state.workingLevel<2&&state.solvedAtLevel[state.workingLevel]+1>=2?state.workingLevel+1:-1}
+function renderNextCard(){const card=$('nextCard');if(!solved()){card.hidden=true;return}const next=suggestedWorkLevel();card.hidden=false;$('nextCardText').textContent=`The survey construction and calculation agree for A = ${fmt(current().A,1)}°, a = ${fmt(current().a,1)} m and b = ${fmt(current().b,1)} m.`;card.classList.toggle('has-upgrade',next>0);$('nextUpgrade').hidden=next<0;if(next>0){$('nextUpgradeTitle').textContent=next===1?'Ready to calculate the angle results?':'Ready to complete the whole numerical check?';$('nextUpgradeText').textContent=next===1?'On the next generated problem, the opposite-pair structure and sin B value stay visible, but you supply both possible B angles and the final count.':'On the next generated problem, you also calculate sin B and the remaining angle for each candidate before the survey can be signed off.';$('upgradeLevel').textContent=next===1?'Require some working next':'Require all working next';$('upgradeLevel').dataset.level=String(next)}}
+function renderAll(){renderMission();renderStage();renderWorking();renderFeedback();renderNextCard()}
+function advanceProblem(nextLevel=null){if(!solved())return;state.solvedAtLevel[state.workingLevel]++;if(nextLevel!=null)state.workingLevel=clamp(Number(nextLevel)||0,0,2);state.problemNumber++;state.problem=makeProblem(current().seed+1);state.session=freshSession();state.claimed=new Set();state.probeMatch=null;state.probeX=initialProbe();state.visitedMin=state.probeX;state.visitedMax=state.probeX;state.drag=null;contextGuideOpen=false;$('interactionGuide').hidden=true;clearGuideFocus();renderAll()}
+function eventModel(ev){const stage=$('stage'),pt=stage.createSVGPoint();pt.x=ev.clientX;pt.y=ev.clientY;const ctm=stage.getScreenCTM();if(!ctm)return{x:cfg.A.x+state.probeX*cfg.scale,y:cfg.A.y};return pt.matrixTransform(ctm.inverse())}
+function updateProbeFromX(x){const g=geometry(),rayMax=activeRayMax(g),model=clamp(x,.5,rayMax);let match=null;for(const q of g.valid){if(Math.abs(model-q.x)<=cfg.probeSnap){match=q.key;break}}state.probeX=model;state.visitedMin=Math.min(state.visitedMin,model);state.visitedMax=Math.max(state.visitedMax,model);state.probeMatch=match;renderStage();renderConstructionStatus();renderFeedback();renderNextCard()}
+function beginProbe(ev){ev.preventDefault();if(!$('interactionGuide').hidden)dismissInteractionGuide();$('stage').setPointerCapture?.(ev.pointerId);state.drag={id:ev.pointerId};const p=eventModel(ev);updateProbeFromX((p.x-cfg.A.x)/cfg.scale)}
+function moveProbe(ev){if(!state.drag||state.drag.id!==ev.pointerId)return;const p=eventModel(ev);updateProbeFromX((p.x-cfg.A.x)/cfg.scale);ev.preventDefault()}
+function endProbe(ev){if(!state.drag)return;try{$('stage').releasePointerCapture?.(state.drag.id)}catch{}const matched=state.probeMatch;if(matched){const exact=geometry().valid.find(v=>v.key===matched);if(exact)state.probeX=exact.x;state.claimed.add(matched)}state.drag=null;state.probeMatch=null;renderAll();if(matched&&geometry().count===2&&state.claimed.size===1&&!contextGuideSeen){contextGuideSeen=true;contextGuideOpen=true;renderInteractionGuide()}}
+function keyProbe(ev){if(!['ArrowLeft','ArrowRight'].includes(ev.key))return;ev.preventDefault();if(!$('interactionGuide').hidden)dismissInteractionGuide();const dir=ev.key==='ArrowRight'?1:-1,step=ev.shiftKey?.5:.1;updateProbeFromX(state.probeX+dir*step);if(state.probeMatch){const matched=state.probeMatch;state.claimed.add(matched);state.probeMatch=null;renderAll();if(geometry().count===2&&state.claimed.size===1&&!contextGuideSeen){contextGuideSeen=true;contextGuideOpen=true;renderInteractionGuide()}}}
+function rayDown(ev){if(ev.target===$('probe'))return;beginProbe(ev)}
+function clearGuideFocus(){document.querySelectorAll('.guide-focus').forEach(n=>n.classList.remove('guide-focus'))}
+function dismissInteractionGuide({remember=true}={}){const guide=$('interactionGuide');if(guide)guide.hidden=true;if(contextGuideOpen){contextGuideOpen=false}else if(remember){guideSeen=true}clearGuideFocus()}
+function positionGuide(){const guide=$('interactionGuide'),card=$('guideCard'),host=document.querySelector('.diagram-shell'),path=$('guideArrowPath'),target=$('probe');if(!guide||guide.hidden||!card||!host||!path||!target)return;const hr=host.getBoundingClientRect(),tr=target.getBoundingClientRect(),targetX=tr.left-hr.left+tr.width/2,targetY=tr.top-hr.top+tr.height/2,cw=Math.min(176,Math.max(136,hr.width*.235)),gap=24,roomRight=hr.width-targetX-gap;card.style.width=`${cw}px`;const putRight=roomRight>=cw+8;let left=putRight?targetX+gap:Math.max(8,targetX-gap-cw),top=Math.max(48,Math.min(targetY-72,hr.height-66));card.style.left=`${left}px`;card.style.top=`${top}px`;const ch=card.offsetHeight||43,cardX=putRight?left:left+cw,cardY=top+ch*.62,stopX=targetX+(putRight?9:-9),stopY=targetY-5,midX=cardX+(stopX-cardX)*.48;path.setAttribute('d',`M ${cardX} ${cardY} L ${midX} ${cardY} Q ${stopX} ${cardY} ${stopX} ${stopY}`)}
+function renderInteractionGuide(){const guide=$('interactionGuide');if(!guide)return;if(contextGuideOpen){guide.hidden=false;$('guideTitle').textContent='Continue moving B';$('guideCopy').textContent='SSA can give another BC = a position.';requestAnimationFrame(positionGuide);return}if(guideSeen){guide.hidden=true;clearGuideFocus();return}guide.hidden=false;$('guideTitle').textContent='Move peg B along the ray';$('guideCopy').textContent='Release when BC = a.';requestAnimationFrame(positionGuide)}
+function showInteractionGuide(){if(!guideSeen&&!contextGuideOpen)renderInteractionGuide()}
+$('probe').addEventListener('pointerdown',beginProbe);$('rayHit').addEventListener('pointerdown',rayDown);$('stage').addEventListener('pointermove',moveProbe);$('stage').addEventListener('pointerup',endProbe);$('stage').addEventListener('pointercancel',endProbe);$('probe').addEventListener('keydown',keyProbe);$('resetProblem').addEventListener('click',resetSession);$('nextProblem').addEventListener('click',()=>advanceProblem());$('upgradeLevel').addEventListener('click',()=>advanceProblem(Number($('upgradeLevel').dataset.level)));window.addEventListener('resize',()=>{if(!$('interactionGuide').hidden)positionGuide()});document.querySelectorAll('[data-work-level]').forEach(b=>b.addEventListener('click',()=>setWorkingLevel(b.dataset.workLevel)));
+renderGrid();state.probeX=initialProbe();state.visitedMin=state.probeX;state.visitedMax=state.probeX;renderAll();setTimeout(showInteractionGuide,220);
+window.__triangleConstraintLab={getState:()=>{const g=geometry();return{problemNumber:state.problemNumber,workingLevel:state.workingLevel,solvedAtLevel:[...state.solvedAtLevel],problem:{...current()},geometry:{ratio:g.ratio,principal:g.principal,supp:g.supp,count:g.count,h:g.h,valid:g.valid.map(v=>({...v}))},answers:{...state.session.answers},claimed:[...state.claimed],success:solved(),complete:solved(),required:requiredKeys(),visited:[state.visitedMin,state.visitedMax],guide:{seen:guideSeen,contextOpen:contextGuideOpen,hidden:$('interactionGuide').hidden}};},setProblem,setWorkingLevel,setAnswers:o=>{Object.assign(state.session.answers,Object.fromEntries(Object.entries(o).map(([k,v])=>[k,String(v)])));renderAll()},claimAll:()=>{geometry().valid.forEach(v=>state.claimed.add(v.key));renderAll()},exploreRay:()=>{state.visitedMin=.5;state.visitedMax=cfg.rayMax;renderAll()},dismissGuide:()=>dismissInteractionGuide(),next:(level=null)=>advanceProblem(level),reset:resetSession,makeProblem};
+})();
+</script>
+<!-- v7 keeps the automatic worked-example/live-validation flow and content-fitted geometry, while mapping pointer positions through the SVG screen transform so peg B tracks the cursor continuously; solution proximity is detected without snapping during drag. -->
+</body>
+</html>

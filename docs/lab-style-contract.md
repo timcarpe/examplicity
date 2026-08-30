@@ -23,6 +23,11 @@ Do not edit an embedded `LAB_FRAME_STYLES`, `LAB_MANIFEST_HEAD`,
 
 ## Homogenization rules
 
+- Homogenize the design language of shared elements—not the instructional
+  experience. Headers, syllabus chips, working controls, ordinary buttons,
+  status treatment and supporting panels should read as one site, while each
+  lab keeps the visual model, layout and interaction pattern that best exposes
+  its concept. Do not template away an authentic lab-specific experience.
 - Use the generated lab page rail for the outer layout: it is capped at
   `1200px`, with `28px` minimum desktop gutters and `18px` mobile gutters, to
   align with the host header controls. Every standard lab must compose natively

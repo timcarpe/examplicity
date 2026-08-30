@@ -1,0 +1,652 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- LAB_FRAME_STYLES_START -->
+<style data-lab-frame>
+:root {
+  --lab-canvas: #f3f5f7;
+  --lab-paper: #fbfbfd;
+  --lab-surface: #ffffff;
+  --lab-control: #ffffff;
+  --lab-ink: #1d1d1f;
+  --lab-muted: #6e6e73;
+  --lab-line: #d2d2d7;
+  --lab-line-strong: #a7a7ad;
+  --lab-accent: #5277b8;
+  --lab-accent-soft: #eef2fa;
+  --lab-good: #18794e;
+  --lab-good-soft: #edf8f1;
+  --lab-warn: #946200;
+  --lab-warn-soft: #fff6e7;
+  --lab-bad: #b42318;
+  --lab-bad-soft: #fff0ee;
+  --lab-focus: #1d1d1f;
+  --lab-focus-soft: rgba(29, 29, 31, 0.18);
+  --lab-font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+  --lab-panel-radius: 12px;
+  --lab-control-radius: 8px;
+  --lab-pill-radius: 999px;
+  --lab-control-height: 35px;
+  --lab-panel-shadow: 0 1px 2px rgba(29, 29, 31, 0.04);
+  --lab-page-gutter: max(28px, calc((100vw - 1200px) / 2));
+  --lab-compact-workspace-max: 820px;
+}
+
+html,
+body {
+  background: var(--lab-canvas);
+}
+
+body {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  align-content: start !important;
+  font-family: var(--lab-font-sans);
+  padding-bottom: 0;
+  padding-top: 0 !important;
+  text-rendering: optimizeLegibility;
+}
+
+.lab-manifest-header {
+  align-items: start;
+  border-bottom: 1px solid var(--line, var(--lab-line));
+  display: grid;
+  gap: 18px 28px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  margin-bottom: 26px;
+  padding-bottom: 22px;
+}
+
+.lab-manifest-heading {
+  min-width: 0;
+}
+
+.lab-manifest-header h1 {
+  color: var(--ink, var(--lab-ink));
+  font-family: var(--lab-font-sans);
+  font-size: clamp(25px, 3.2vw, 40px);
+  font-weight: 650;
+  letter-spacing: -0.045em;
+  line-height: 1.02;
+  margin: 0;
+  max-width: 24ch;
+  padding: 0;
+  text-align: left;
+}
+
+.lab-manifest-subtitle {
+  color: var(--muted, var(--lab-muted));
+  font-family: var(--lab-font-sans);
+  font-size: 13px;
+  letter-spacing: 0;
+  line-height: 1.5;
+  margin: 10px 0 0;
+  max-width: 72ch;
+  padding: 0;
+  text-align: left;
+}
+
+.lab-authored-title-slot {
+  min-width: 0;
+}
+
+.lab-syllabus-chips {
+  align-items: center;
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+  margin: 0 0 0 auto;
+  max-width: 100%;
+}
+
+.lab-syllabus-chip {
+  align-items: center;
+  background: var(--syllabus-chip-bg) !important;
+  border: 1px solid var(--syllabus-chip-border) !important;
+  border-radius: var(--lab-pill-radius);
+  color: var(--syllabus-chip-text) !important;
+  display: inline-flex;
+  font-size: 11px;
+  font-weight: 650;
+  gap: 4px;
+  line-height: 1;
+  min-height: 29px;
+  padding: 8px 10px;
+  position: relative;
+  transition: background-color 140ms ease, border-color 140ms ease;
+  white-space: nowrap;
+}
+
+.lab-syllabus-chip:hover {
+  background: var(--syllabus-chip-hover) !important;
+}
+
+.lab-syllabus-primary-link {
+  border-radius: inherit;
+  inset: 0;
+  position: absolute;
+  z-index: 0;
+}
+
+.lab-syllabus-primary-link:focus-visible {
+  outline: 2px solid var(--syllabus-chip-text);
+  outline-offset: 2px;
+}
+
+.lab-syllabus-name,
+.lab-syllabus-divider,
+.lab-syllabus-sections {
+  pointer-events: none;
+  position: relative;
+  z-index: 1;
+}
+
+.lab-syllabus-section {
+  border-radius: 4px;
+  color: inherit;
+  padding: 2px;
+  text-decoration: none;
+}
+
+a.lab-syllabus-section {
+  pointer-events: auto;
+}
+
+a.lab-syllabus-section:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+a.lab-syllabus-section:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 1px;
+}
+
+.lab-syllabus-name {
+  color: var(--syllabus-chip-text) !important;
+}
+
+.lab-syllabus-divider,
+.lab-syllabus-separator {
+  color: var(--muted, var(--lab-muted));
+}
+
+.lab-syllabus-prefix {
+  opacity: 0.72;
+  padding-left: 5px;
+}
+
+.lab-syllabus-sections {
+  align-items: center;
+  display: inline-flex;
+}
+
+.lab-syllabus-separator {
+  margin-inline: 0 2px;
+}
+
+html[data-theme="dark"] .lab-syllabus-name {
+  color: var(--syllabus-chip-border) !important;
+}
+
+html[data-theme="dark"] .lab-syllabus-chip:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+html[data-theme="dark"],
+html[data-theme="dark"] body {
+  background: var(--bg);
+}
+
+body > main {
+  container-name: lab-canvas;
+  container-type: inline-size;
+  margin-left: var(--lab-page-gutter);
+  margin-right: auto;
+  margin-top: 18px;
+  max-width: 1200px;
+  width: calc(100vw - var(--lab-page-gutter) - var(--lab-page-gutter));
+}
+
+body[data-lab-layout="compact"] .lab-manifest-header {
+  margin-bottom: 17px;
+  padding-bottom: 13px;
+}
+
+body[data-lab-layout="compact"] [data-lab-workspace] {
+  margin-left: auto;
+  margin-right: auto;
+  width: min(var(--lab-compact-workspace-max), 100%);
+}
+
+:where(button, input, select, textarea, summary):focus-visible {
+  outline: 3px solid var(--lab-focus);
+  outline-offset: 4px;
+}
+
+@media (max-width: 620px) {
+  :root {
+    --lab-page-gutter: 18px;
+  }
+
+  body {
+    padding-bottom: 0;
+    padding-top: 0 !important;
+  }
+
+  .lab-manifest-header {
+    gap: 14px;
+    grid-template-columns: minmax(0, 1fr) !important;
+    margin-bottom: 20px;
+    padding-bottom: 18px;
+  }
+
+  body[data-lab-layout="compact"] .lab-manifest-header {
+    margin-bottom: 16px;
+    padding-bottom: 14px;
+  }
+
+  .lab-manifest-header h1 {
+    font-size: clamp(24px, 8vw, 34px);
+  }
+
+  .lab-syllabus-chips {
+    gap: 4px;
+    justify-content: flex-start !important;
+    margin: 0 !important;
+  }
+
+  .lab-syllabus-chip {
+    font-size: 10px;
+    max-width: 100%;
+    min-height: 27px;
+    padding: 7px 8px;
+    white-space: normal;
+  }
+
+  .lab-syllabus-sections {
+    flex-wrap: wrap;
+  }
+
+  body > main {
+    margin-top: 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+</style>
+<!-- LAB_FRAME_STYLES_END -->
+<!-- LAB_MANIFEST_HEAD_START -->
+<title>Trigonometric Graphs and Solutions</title>
+<meta name="description" content="Explore sine, cosine and tangent graphs, periodicity and interval solutions for Cambridge IGCSE Mathematics 0580 Extended.">
+<link rel="canonical" href="https://www.examplicity.org/labs/mathematics/trigonometric-function-periodicity-solutions.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Examplicity">
+<meta property="og:title" content="Trigonometric Graphs and Solutions">
+<meta property="og:description" content="Explore sine, cosine and tangent graphs, periodicity and interval solutions for Cambridge IGCSE Mathematics 0580 Extended.">
+<meta property="og:url" content="https://www.examplicity.org/labs/mathematics/trigonometric-function-periodicity-solutions.html">
+<meta property="og:image" content="https://www.examplicity.org/opengraph-image">
+<meta property="og:image:alt" content="Examplicity — Make complex ideas click">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Trigonometric Graphs and Solutions">
+<meta name="twitter:description" content="Explore sine, cosine and tangent graphs, periodicity and interval solutions for Cambridge IGCSE Mathematics 0580 Extended.">
+<meta name="twitter:image" content="https://www.examplicity.org/opengraph-image">
+<script type="application/ld+json" data-lab-manifest="structured-data">{"@context":"https://schema.org","@type":"LearningResource","@id":"https://www.examplicity.org/labs/mathematics/trigonometric-function-periodicity-solutions.html#learning-resource","url":"https://www.examplicity.org/labs/mathematics/trigonometric-function-periodicity-solutions.html","name":"Trigonometric Graphs and Solutions","description":"Explore sine, cosine and tangent graphs, periodicity and interval solutions for Cambridge IGCSE Mathematics 0580 Extended.","inLanguage":"en-GB","isAccessibleForFree":true,"interactivityType":"active","learningResourceType":"Trigonometric graph tracer","teaches":"Trigonometry","educationalLevel":["IGCSE"],"educationalAlignment":[{"@type":"AlignmentObject","alignmentType":"educationalSubject","educationalFramework":"Cambridge IGCSE Mathematics","targetName":"IGCSE 0580 section E6.4","targetUrl":"https://www.cambridgeinternational.org/Images/662466-2025-2027-syllabus.pdf#page=51"}],"about":{"@type":"Thing","name":"Mathematics"},"audience":{"@type":"EducationalAudience","educationalRole":"student"},"provider":{"@type":"Organization","name":"Examplicity","url":"https://www.examplicity.org"},"isPartOf":{"@type":"WebSite","@id":"https://www.examplicity.org/#website","name":"Examplicity","url":"https://www.examplicity.org"}}</script>
+<!-- LAB_MANIFEST_HEAD_END -->
+<style>
+:root{
+  --lab-canvas:#f3f5f7;--lab-paper:#fbfbfd;--lab-surface:#fff;--lab-control:#fff;
+  --lab-ink:#1d1d1f;--lab-muted:#6e6e73;--lab-line:#d2d2d7;--lab-line-strong:#a7a7ad;
+  --lab-accent:#5277b8;--lab-accent-soft:#eef2fa;--lab-good:#18794e;--lab-good-soft:#edf8f1;
+  --lab-warn:#946200;--lab-warn-soft:#fff6e7;--lab-bad:#b42318;--lab-bad-soft:#fff0ee;
+  --lab-focus:#1d1d1f;--lab-font-sans:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif;
+  --lab-panel-radius:12px;--lab-control-radius:8px;--lab-pill-radius:999px;--lab-page-gutter:max(28px,calc((100vw - 1200px)/2));
+  --trace:#5277b8;--target:#c47722;--axis:#66727a;--rotor:#33434d;--solution:#18794e;--sweep:#8169b3;
+}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{margin:0;background:var(--lab-canvas);color:var(--lab-ink);font-family:var(--lab-font-sans);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+button{font:inherit;cursor:pointer;min-height:35px;padding:0 11px;border:1px solid var(--lab-line);border-radius:var(--lab-control-radius);background:var(--lab-control);color:var(--lab-ink)}
+button:hover:not(:disabled){border-color:var(--lab-line-strong)}button:disabled{opacity:.45;cursor:not-allowed}
+button.primary{background:var(--lab-accent);border-color:var(--lab-accent);color:#fff;font-weight:750}
+:where(button,svg[tabindex]):focus-visible{outline:3px solid var(--lab-focus);outline-offset:4px}
+main{container-name:lab-canvas;container-type:inline-size;width:calc(100vw - var(--lab-page-gutter) - var(--lab-page-gutter));max-width:1200px;margin:10px var(--lab-page-gutter) 32px}
+.lab-manifest-header{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px 28px;align-items:start;border-bottom:1px solid var(--lab-line);padding-bottom:14px;margin-bottom:10px}
+.lab-manifest-heading h1{margin:0;font-size:clamp(25px,3.2vw,40px);font-weight:650;line-height:1.02;letter-spacing:-.045em;max-width:24ch}
+.lab-manifest-subtitle{margin:7px 0 0;color:var(--lab-muted);font-size:13px;line-height:1.5;max-width:76ch}
+.lab-syllabus-chips{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:6px}
+.lab-syllabus-chip{position:relative;display:inline-flex;align-items:center;gap:4px;min-height:29px;padding:8px 10px;border:1px solid #91c4b0;border-radius:var(--lab-pill-radius);background:#edf8f3;color:#235f4e;font-size:11px;font-weight:650;white-space:nowrap}
+.lab-syllabus-primary-link{position:absolute;inset:0;border-radius:inherit}.lab-syllabus-primary-link:focus-visible{outline:2px solid currentColor;outline-offset:2px}.lab-syllabus-name,.lab-syllabus-sections{pointer-events:none;position:relative;z-index:1}
+.panel{background:var(--lab-surface);border:1px solid var(--lab-line);border-radius:var(--lab-panel-radius);box-shadow:0 1px 2px rgba(29,29,31,.04)}
+.mission{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;padding:8px 10px}
+.case-meta{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin-bottom:4px;color:var(--lab-muted);font-size:9px;font-weight:800;letter-spacing:.045em;text-transform:uppercase}
+.case-tag{padding:3px 6px;border-radius:999px;background:var(--lab-accent-soft);color:var(--lab-accent)}
+#missionTitle{display:block;font-size:16px;line-height:1.35}.mission-hint{display:block;margin-top:3px;color:var(--lab-muted);font-size:10px;line-height:1.35}
+.mission-actions{display:flex;gap:7px;align-items:center;justify-content:flex-end}
+.workspace{position:relative;margin-top:6px;overflow:hidden}
+.visual-system{position:relative;display:grid;grid-template-columns:minmax(300px,.72fr) minmax(0,1.42fr);min-height:310px}
+.rotor-side{position:relative;min-width:0;padding:10px 10px 8px;border-right:1px solid var(--lab-line);background:linear-gradient(180deg,#fcfdfe,#f7f9fa)}
+.graph-side{position:relative;min-width:0;padding:10px 10px 8px;background:#fff}
+.visual-head{min-height:38px;display:flex;justify-content:space-between;gap:10px;align-items:flex-start;padding:0 2px 7px}
+.visual-head strong{display:block;font-size:14px}.visual-head span{display:block;margin-top:2px;color:var(--lab-muted);font-size:9px;line-height:1.35}
+.live-pill{flex:0 0 auto;display:grid;justify-items:end;gap:2px;padding:5px 8px;border:1px solid var(--lab-line);border-radius:9px;background:#fff;font:800 10px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.live-pill small{color:var(--lab-muted);font:700 8px var(--lab-font-sans)}
+svg{display:block;width:100%}
+#rotorSvg{height:260px;touch-action:none;user-select:none;border-radius:10px}
+#graphSvg{height:260px;user-select:none;border-radius:10px;background:#fff}
+.stage-note{position:absolute;left:16px;bottom:15px;padding:4px 7px;border:1px solid rgba(82,119,184,.22);border-radius:7px;background:rgba(255,255,255,.93);color:var(--lab-muted);font-size:9px;pointer-events:none}
+.evidence{display:grid;grid-template-columns:minmax(230px,1fr) minmax(180px,.58fr) minmax(260px,.9fr);gap:8px;padding:9px;border-top:1px solid var(--lab-line);background:var(--lab-paper)}
+.evidence-box{min-width:0;padding:8px 9px;border:1px solid var(--lab-line);border-radius:9px;background:#fff}
+.evidence-label{display:block;margin-bottom:5px;color:var(--lab-muted);font-size:8px;font-weight:850;letter-spacing:.05em;text-transform:uppercase}
+.solution-list{min-height:27px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.solution-chip{display:inline-flex;align-items:center;min-height:25px;padding:3px 7px;border:1px solid #abd2b9;border-radius:999px;background:var(--lab-good-soft);color:var(--lab-good);font:850 11px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.solution-empty{color:var(--lab-muted);font-size:11px}
+.current-readout{display:grid;grid-template-columns:auto 1fr;gap:2px 8px;align-items:baseline;font-size:10px}.current-readout span{color:var(--lab-muted)}.current-readout strong{font:850 12px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.inverse-copy{font-size:10px;line-height:1.42;color:var(--lab-muted)}.inverse-copy strong{color:var(--lab-ink)}
+.sweep-status{display:flex;align-items:center;gap:7px;margin-top:5px;color:var(--lab-muted);font-size:9px}.sweep-key{width:30px;height:4px;border-radius:4px;background:linear-gradient(90deg,var(--sweep),#c9c1df)}
+
+/* Completion / next-step card — same compact green pattern used by the reference maths labs. */
+.next-card[hidden]{display:none}
+.next-card{position:absolute;z-index:14;left:50%;top:12px;transform:translateX(-50%);width:min(350px,calc(100% - 28px));padding:11px 12px;border:1px solid #9cc7aa;border-radius:12px;background:rgba(247,252,248,.985);box-shadow:0 12px 30px rgba(29,29,31,.16);text-align:center;animation:nextCardIn .2s ease-out}
+.next-card>strong{display:block;color:#2e6d4b;font-size:11px}.next-card>span{display:block;margin:3px auto 0;max-width:38ch;color:#52705f;font-size:8.5px;line-height:1.3}
+.next-upgrade{margin-top:9px;padding:9px;border:1px solid #b7c8df;border-radius:9px;background:#f3f7fc;text-align:left}.next-upgrade[hidden]{display:none}.next-upgrade strong{display:block;color:#365b88;font-size:11px}.next-upgrade span{display:block;margin-top:3px;color:#607184;font-size:9px;line-height:1.38}.next-upgrade button{width:100%;min-height:32px;margin-top:7px;background:var(--lab-accent);border-color:var(--lab-accent);color:#fff;font-size:9px;font-weight:900}
+.next-actions{display:grid;grid-template-columns:1fr;gap:6px;margin-top:8px}.next-card button{width:100%;min-height:32px;font-size:9px;font-weight:900}.next-card #nextCase{background:var(--lab-good);border-color:var(--lab-good);color:#fff}.next-card.has-upgrade #nextCase{background:#fff;border-color:#9cc7aa;color:#2e6d4b}.next-card #nextCase::after{content:"  →"}@keyframes nextCardIn{from{opacity:0;transform:translate(-50%,-6px)}to{opacity:1;transform:translate(-50%,0)}}
+
+/* Progressive working */
+.working-panel{border-top:1px solid var(--lab-line);background:#fff;padding:8px 9px 9px}
+.working-head{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center}.working-kicker,.case-tag{display:none}.working-head strong{display:block;font-size:12px}.work-control{display:grid;gap:3px;justify-items:end}.work-control>span{color:var(--lab-muted);font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.05em}.work-toggle{display:flex;gap:3px;padding:3px;border:1px solid var(--lab-line);border-radius:9px;background:var(--lab-paper)}.work-toggle button{min-height:27px;padding:0 8px;border:0;background:transparent;color:var(--lab-muted);font-size:8px;font-weight:800}.work-toggle button.active{background:#fff;color:var(--lab-ink);box-shadow:0 1px 3px rgba(22,31,39,.11)}
+.calc-flow{margin-top:6px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;align-items:stretch}.calc-step{position:relative;min-width:0;padding:7px 8px;border:1px solid var(--lab-line);border-radius:9px;background:#fbfcfd;transition:border-color .15s,background-color .15s}.calc-step.locked{opacity:.55;background:#f2f4f5}.calc-step.work-done{border-color:#9ac9aa;background:var(--lab-good-soft)}.calc-step.work-pending{border-color:#dfc68e;background:var(--lab-warn-soft)}.calc-step.work-bad{border-color:#dda8a1;background:var(--lab-bad-soft)}.calc-step.work-done::after,.calc-step.work-bad::after{position:absolute;right:7px;top:7px;display:grid;place-items:center;width:17px;height:17px;border-radius:50%;color:#fff;font-size:10px;font-weight:900}.calc-step.work-done::after{content:'✓';background:var(--lab-good)}.calc-step.work-bad::after{content:'×';background:var(--lab-bad)}
+.step-head{display:flex;align-items:center;gap:4px;flex-wrap:wrap;margin-bottom:4px;padding-right:18px}.step-num{display:grid;place-items:center;width:18px;height:18px;border-radius:50%;background:#eef2f5;color:#4d5d68;font-size:7px;font-weight:900}.step-title{font-size:9px;font-weight:850;line-height:1.2}.step-equation{min-height:34px;display:flex;align-items:center;gap:4px;flex-wrap:wrap;color:#28353d;font:800 10px/1.3 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.step-note{margin-top:3px;color:var(--lab-muted);font-size:7px;line-height:1.2}.step-note strong{color:var(--lab-ink)}
+.work-entry-wrap{position:relative;display:inline-flex;align-items:center;gap:3px}.calc-input{width:72px;height:29px;padding:0 21px 0 6px;border:1px solid var(--lab-line);border-radius:7px;background:#fff;color:var(--lab-ink);font:800 10px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;text-align:center}.calc-input.wide{width:min(100%,165px);text-align:left}.calc-input:focus{outline:2px solid var(--lab-accent);outline-offset:1px}.calc-input.pending{border-color:#d9b85f;background:#fff8dc}.calc-input.good{border-color:#78b690;background:var(--lab-good-soft)}.calc-input.bad{border-color:#d38a81;background:var(--lab-bad-soft)}.calc-input:disabled{background:#f1f3f4;color:#8c959b}.work-mark{position:absolute;right:5px;top:50%;transform:translateY(-50%);width:14px;height:14px;display:grid;place-items:center;border-radius:50%;color:#fff;font-size:9px;font-weight:900;pointer-events:none}.work-entry-wrap.good .work-mark{background:var(--lab-good)}.work-entry-wrap.bad .work-mark{background:var(--lab-bad)}.work-entry-wrap.pending .work-mark{display:none}
+.inverse-button{min-height:29px;padding:0 8px;border-color:#d9b85f;background:#fff8dc;font-size:8px;font-weight:850}.inverse-readout{display:inline-flex;align-items:center;gap:5px;padding:5px 7px;border:1px solid #85bd99;border-radius:7px;background:var(--lab-good-soft);color:#2d6648;font:800 9px/1.3 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.inverse-readout::after{content:'✓';display:grid;place-items:center;width:14px;height:14px;border-radius:50%;background:var(--lab-good);color:#fff;font-size:9px}.lock-copy{color:var(--lab-muted);font-size:7px;line-height:1.3;font-family:var(--lab-font-sans);font-weight:650}.answer-set{font:850 9px/1.3 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#265f44}
+.working-foot{margin-top:6px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:7px;align-items:center}.working-status{min-height:30px;padding:6px 8px;border:1px solid var(--lab-line);border-radius:8px;background:var(--lab-paper);color:var(--lab-muted);font-size:8px;line-height:1.3}.working-status strong{color:var(--lab-ink)}.working-status.good{border-color:#abd2b9;background:var(--lab-good-soft);color:#356047}.working-status.warn{border-color:#dfc68e;background:var(--lab-warn-soft);color:#74530f}.working-status.bad{border-color:#e2b4ae;background:var(--lab-bad-soft);color:#7b3d36}#checkWork{min-width:100px;min-height:31px;font-size:8px;font-weight:850}.realisation{display:none}
+@container lab-canvas (max-width:980px){.calc-flow{grid-template-columns:1fr 1fr}}
+@container lab-canvas (max-width:760px){.visual-system{grid-template-columns:1fr}.rotor-side{border-right:0;border-bottom:1px solid var(--lab-line)}#rotorSvg,#graphSvg{height:250px}.evidence{grid-template-columns:1fr 1fr}.evidence-box:last-child{grid-column:1/-1}.calc-flow{grid-template-columns:1fr 1fr}}
+@container lab-canvas (max-width:620px){.working-head{grid-template-columns:1fr}.work-control{justify-items:start}.calc-flow{grid-template-columns:1fr 1fr}.working-foot{grid-template-columns:1fr auto}.next-card{top:10px;width:min(310px,calc(100% - 20px))}}
+
+/* SVG */
+.svg-grid{stroke:#edf0f2;stroke-width:1}.svg-axis{stroke:#6d7880;stroke-width:1.4}.svg-tick{fill:#748089;font-size:10px;font-weight:650}.svg-axis-label{fill:#5b6770;font-size:10px;font-weight:800}.svg-title{fill:#24313a;font-size:12px;font-weight:850}.svg-sub{fill:#7a858d;font-size:9px;font-weight:650}.svg-target{stroke:var(--target);stroke-width:2.3;stroke-dasharray:8 5}.svg-target-label{fill:#9a601b;font-size:10px;font-weight:850}.svg-range{fill:#f5f7f9}.svg-range-edge{stroke:#b9c2c8;stroke-width:1;stroke-dasharray:4 4}.svg-asymptote{stroke:#b35f54;stroke-width:1.8;stroke-dasharray:5 5}.svg-asymptote-label{fill:#a34c43;font-size:9px;font-weight:800}.svg-trace-under{fill:none;stroke:#fff;stroke-width:6;stroke-linecap:round;stroke-linejoin:round}.svg-trace{fill:none;stroke:var(--trace);stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round}.svg-cursor{stroke:#7f8b93;stroke-width:1.2;stroke-dasharray:4 4}.svg-live-dot{fill:#fff;stroke:var(--trace);stroke-width:3}.svg-solution-dot{fill:var(--solution);stroke:#fff;stroke-width:2.5}.svg-solution-label{fill:#11653f;font-size:10px;font-weight:850}.rotor-ring{fill:#fff;stroke:#c6ced4;stroke-width:2}.rotor-axis{stroke:#9aa5ac;stroke-width:1.2}.rotor-radius{stroke:var(--rotor);stroke-width:4;stroke-linecap:round}.rotor-point{fill:var(--rotor);stroke:#fff;stroke-width:3}.rotor-projection{stroke:var(--trace);stroke-width:2.5;stroke-dasharray:5 4}.rotor-sensor-line{stroke:#9b6b2f;stroke-width:2}.rotor-sensor-dot{fill:var(--target);stroke:#fff;stroke-width:2.5}.rotor-angle-arc{fill:none;stroke:#aab4bb;stroke-width:2}.rotor-angle-label{fill:#59656d;font-size:10px;font-weight:850}.rotor-degree{fill:#78838b;font-size:9px;font-weight:750}.rotor-sweep-base{fill:none;stroke:#e1e5e8;stroke-width:8;stroke-linecap:round}.rotor-sweep{fill:none;stroke:var(--sweep);stroke-width:8;stroke-linecap:round}.rotor-solution-tick{stroke:var(--solution);stroke-width:3}.rotor-solution-label{fill:var(--solution);font-size:9px;font-weight:850}.rotor-handle-ring{fill:none;stroke:var(--lab-accent);stroke-width:2.5;stroke-dasharray:4 3}.rotor-drag-label{fill:var(--lab-accent);font-size:9px;font-weight:850}.rotor-value{fill:#25343d;font:850 18px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.rotor-value-sub{fill:#7a858d;font-size:9px;font-weight:750}.rotor-offscale{fill:#a34c43;font-size:9px;font-weight:850}
+
+@container lab-canvas (max-width:620px){.mission{grid-template-columns:1fr}.mission-actions{justify-content:flex-start}.visual-head{display:grid;grid-template-columns:1fr auto}.evidence{grid-template-columns:1fr}.evidence-box:last-child{grid-column:auto}#rotorSvg,#graphSvg{height:235px}.stage-note{position:static;margin:0 2px 4px;display:inline-block}.lab-syllabus-chips{justify-content:flex-start}.lab-manifest-header{grid-template-columns:1fr;gap:12px;padding-bottom:18px}.lab-manifest-subtitle{margin-top:7px}.calc-flow{grid-template-columns:1fr}.work-toggle{flex-wrap:wrap}}
+@media(max-width:620px){:root{--lab-page-gutter:18px}main{margin-top:8px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+</head>
+<body data-lab-layout="standard">
+<main>
+<!-- LAB_MANIFEST_HEADER_START -->
+<header class="lab-manifest-header">
+  <div class="lab-manifest-heading">
+    <h1 data-lab-manifest="title">Trigonometric Graphs and Solutions</h1>
+  <p class="lab-manifest-subtitle" data-lab-manifest="subtitle">Rotate one angle through 0°–360°, watch the function draw its graph, and use every target crossing to complete the solution set.</p>
+  </div>
+  <!-- LAB_SYLLABUS_CHIPS_START -->
+<nav class="lab-syllabus-chips" aria-label="Syllabus alignment">
+  <section class="lab-syllabus-chip" style="--syllabus-chip-bg:#edf8f3;--syllabus-chip-border:#91c4b0;--syllabus-chip-text:#235f4e;--syllabus-chip-hover:#dcf0e7" aria-label="IGCSE 0580 syllabus alignment">
+    <a class="lab-syllabus-primary-link" href="https://www.cambridgeinternational.org/Images/662466-2025-2027-syllabus.pdf#page=51" target="_blank" rel="noopener noreferrer" aria-label="Open IGCSE 0580 syllabus section E6.4"></a>
+    <span class="lab-syllabus-name">IGCSE 0580</span>
+    <span class="lab-syllabus-divider" aria-hidden="true">·</span>
+    <span class="lab-syllabus-sections"><span class="lab-syllabus-section is-primary">E6.4</span></span>
+  </section>
+</nav>
+<!-- LAB_SYLLABUS_CHIPS_END -->
+</header>
+<!-- LAB_MANIFEST_HEADER_END -->
+<span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span>
+  <span data-lab-authored-subtitle-slot hidden></span>
+
+  <section class="panel mission" aria-live="polite">
+    <div>
+      <div class="case-meta"><span id="caseIndex">Case 1 of 5</span><span id="caseTag" class="case-tag">Sine symmetry</span></div>
+      <strong id="missionTitle"></strong>
+      <span id="missionHint" class="mission-hint">Drag the angle through one complete turn. The grey sweep ring shows any region you have not traced yet.</span>
+    </div>
+    <div class="mission-actions"><button id="resetSweep" type="button">Clear trace</button></div>
+  </section>
+
+  <section class="panel workspace" aria-label="Trigonometric periodicity and solutions">
+    <div class="visual-system">
+      <section class="rotor-side" aria-label="Angle model">
+        <div class="visual-head">
+          <div><strong id="rotorTitle">Sine on the circle</strong><span id="rotorSub">Vertical coordinate of the point.</span></div>
+          <div class="live-pill"><small>angle x</small><span id="anglePill">0.0°</span></div>
+        </div>
+        <svg id="rotorSvg" tabindex="0" role="slider" aria-label="Angle x. Drag around the circle or use left and right arrow keys." aria-valuemin="0" aria-valuemax="360" aria-valuenow="20"></svg>
+        <span class="stage-note">Drag the point around the circle</span>
+      </section>
+
+      <section class="graph-side" aria-label="Trigonometric graph">
+        <div class="visual-head">
+          <div><strong id="graphTitle">y = sin x</strong><span id="graphSub">The trace exists only where you have rotated the angle.</span></div>
+          <div class="live-pill"><small>function value</small><span id="valuePill">0.000</span></div>
+        </div>
+        <svg id="graphSvg" role="img" aria-label="Live trigonometric graph from zero to 360 degrees"></svg>
+      </section>
+      <div id="nextCard" class="next-card" hidden>
+        <strong id="nextTitle">Solutions verified</strong>
+        <span id="nextText"></span>
+        <div id="nextUpgrade" class="next-upgrade" hidden><strong id="nextUpgradeTitle"></strong><span id="nextUpgradeText"></span><button id="upgradeNext" type="button"></button></div>
+        <div class="next-actions"><button id="nextCase" type="button">Next case</button></div>
+      </div>
+    </div>
+
+    <section class="working-panel" aria-label="Trigonometric solution working">
+      <div class="working-head"><div><strong>Complete the yellow boxes.</strong></div><div class="work-control" aria-label="Working required"><span>Working required</span><div class="work-toggle" role="group" aria-label="Choose how much working to complete"><button type="button" data-work-level="0" class="active" aria-pressed="true">Off</button><button type="button" data-work-level="1" aria-pressed="false">Some</button><button type="button" data-work-level="2" aria-pressed="false">All</button></div></div></div>
+      <div id="workContent" class="calc-flow"></div><div class="working-foot"><div id="workingStatus" class="working-status" aria-live="polite"></div><button id="checkWork" type="button">Check working</button></div><div id="realisation" class="realisation"></div>
+    </section>
+
+    <div class="evidence" aria-live="polite">
+      <section class="evidence-box">
+        <span class="evidence-label">Angles exposed by the trace</span>
+        <div id="solutionList" class="solution-list"><span class="solution-empty">No target crossing traced yet.</span></div>
+        <div class="sweep-status"><span class="sweep-key"></span><span id="sweepStatus">Grey arc remains: keep rotating.</span></div>
+      </section>
+      <section class="evidence-box">
+        <span class="evidence-label">Live point</span>
+        <div class="current-readout"><span>x</span><strong id="liveAngle">0.0°</strong><span id="fnLabel">sin x</span><strong id="liveValue">0.000</strong></div>
+      </section>
+      <section class="evidence-box">
+        <span class="evidence-label">Calculator comparison</span>
+        <div id="inverseCopy" class="inverse-copy">Complete the sweep first. Then compare the graph intersections with the calculator's single inverse value.</div>
+      </section>
+    </div>
+  </section>
+
+</main>
+
+<script>
+(()=>{
+'use strict';
+const $=id=>document.getElementById(id);
+const DEG=Math.PI/180;
+const cases=[
+  {id:'sine',tag:'Sine symmetry',fn:'sin',kind:'solve',target:Math.sqrt(3)/2,targetText:'√3/2',equation:'sin x = √3/2',mission:'Find every angle from 0° to 360° where sin x = √3/2.',relation:'180° − α',partner:120,completion:'The graph and working give x = 60° and 120°.'},
+  {id:'cosine',tag:'Cosine symmetry',fn:'cos',kind:'solve',target:-.5,targetText:'−1/2',equation:'2 cos x + 1 = 0',mission:'Solve 2 cos x + 1 = 0 for 0° ≤ x ≤ 360°.',relation:'360° − α',partner:240,isolateExpected:-.5,completion:'The graph and working give x = 120° and 240°.'},
+  {id:'tangent',tag:'Tangent period',fn:'tan',kind:'solve',target:3,targetText:'3',equation:'tan x = 3',mission:'Find every angle from 0° to 360° where tan x = 3.',relation:'α + 180°',partner:251.565051,completion:'The graph and working give x ≈ 71.6° and 251.6°.'},
+  {id:'range',tag:'Sine range',fn:'sin',kind:'range',target:1.2,targetText:'1.2',equation:'sin x = 1.2',mission:'Decide whether sin x = 1.2 has a solution for 0° ≤ x ≤ 360°.',completion:'The target line does not intersect the sine graph, so there are no solutions.'},
+  {id:'endpoint',tag:'Closed interval',fn:'sin',kind:'endpoint',target:0,targetText:'0',equation:'sin x = 0',mission:'Find every solution of sin x = 0 for 0° ≤ x ≤ 360°.',relation:'180° − α',partner:180,completion:'The graph and working give x = 0°, 180° and 360°.'}
+];
+function freshWork(){return{target:'',partner:'',lower:'',upper:'',count:'',endpoint:'',final:''}}
+const state={caseIndex:0,angle:20,unwrapped:20,lastUnwrapped:20,dragging:false,pointerId:null,visited:new Uint8Array(360),discovered:new Set(),complete:false,fullTurns:0,workLevel:0,work:freshWork(),workChecked:false,inverseRun:false,solved:0,solvedAtLevel:[0,0,0]};
+let rotorSize={w:340,h:420},graphSize={w:620,h:420};
+
+function mod(n,m){return((n%m)+m)%m}
+function normAngle(a){let n=mod(a,360);if(Math.abs(n-360)<1e-9)n=0;return n}
+function signedDelta(a,b){let d=mod(a-b+180,360)-180;if(d===-180)d=180;return d}
+function trig(fn,a){const r=a*DEG;if(fn==='sin')return Math.sin(r);if(fn==='cos')return Math.cos(r);const c=Math.cos(r);if(Math.abs(c)<1e-9)return NaN;return Math.tan(r)}
+function fmt(n,d=1){if(!Number.isFinite(n))return'undefined';const z=Math.abs(n)<.0000001?0:n;return z.toFixed(d).replace(/\.0$/,'')}
+function fmtValue(n){if(!Number.isFinite(n))return'undefined';if(Math.abs(n)>=100)return fmt(n,1);return fmt(n,3)}
+function currentCase(){return cases[state.caseIndex]}
+function principalText(c){
+  if(c.fn==='sin'){
+    if(Math.abs(c.target)>1)return `sin⁻¹(${c.targetText}) is not a real angle.`;
+    return `sin⁻¹(${c.targetText}) = ${fmt(Math.asin(c.target)/DEG,1)}°`;
+  }
+  if(c.fn==='cos'){
+    if(Math.abs(c.target)>1)return `cos⁻¹(${c.targetText}) is not a real angle.`;
+    return `cos⁻¹(${c.targetText}) = ${fmt(Math.acos(c.target)/DEG,1)}°`;
+  }
+  return `tan⁻¹(${c.targetText}) = ${fmt(Math.atan(c.target)/DEG,1)}°`;
+}
+function dedupeSolutions(arr){
+  const out=[];for(const x of arr.sort((a,b)=>a-b)){if(!out.some(y=>Math.abs(y-x)<1e-6))out.push(x)}return out;
+}
+function solutions(c){
+  const k=c.target,eps=1e-9,out=[];
+  if(c.fn==='sin'){
+    if(Math.abs(k)>1+eps)return[];
+    if(Math.abs(k-1)<eps)return[90];if(Math.abs(k+1)<eps)return[270];
+    if(Math.abs(k)<eps)return[0,180,360];
+    const a=Math.asin(k)/DEG;out.push(mod(a,360),mod(180-a,360));
+  }else if(c.fn==='cos'){
+    if(Math.abs(k)>1+eps)return[];
+    if(Math.abs(k-1)<eps)return[0,360];if(Math.abs(k+1)<eps)return[180];
+    const a=Math.acos(k)/DEG;out.push(a,360-a);
+  }else{
+    const a=Math.atan(k)/DEG;for(let n=-3;n<=3;n++){const x=a+180*n;if(x>=-eps&&x<=360+eps)out.push(Math.abs(x)<eps?0:Math.abs(x-360)<eps?360:x)}
+  }
+  return dedupeSolutions(out);
+}
+function isVisitedNear(angle,tol=2){
+  if(angle===360)return state.visited[0]&&state.complete;
+  const a=normAngle(angle);for(let d=-tol;d<=tol;d++){if(state.visited[mod(Math.round(a)+d,360)])return true}return false;
+}
+function updateDiscoveries(){for(const s of solutions(currentCase()))if(isVisitedNear(s))state.discovered.add(String(s))}
+function markUnwrappedSegment(a,b){
+  const delta=b-a,steps=Math.max(1,Math.ceil(Math.abs(delta)*2));
+  for(let i=0;i<=steps;i++){
+    const u=a+delta*i/steps,n=normAngle(u),bin=mod(Math.round(n),360);state.visited[bin]=1;
+  }
+  const beforeTurn=Math.floor(a/360),afterTurn=Math.floor(b/360);if(beforeTurn!==afterTurn)state.fullTurns+=Math.abs(afterTurn-beforeTurn);
+  const visitedCount=state.visited.reduce((s,v)=>s+v,0);if(visitedCount>=354){state.complete=true;for(let i=0;i<360;i++)state.visited[i]=1}
+  updateDiscoveries();
+}
+function resetWork(){state.work=freshWork();state.workChecked=false;state.inverseRun=false}
+function clearTrace(){state.visited.fill(0);state.discovered.clear();state.complete=false;state.fullTurns=0;state.unwrapped=state.angle;state.lastUnwrapped=state.angle;renderAll()}
+function loadCase(i){state.caseIndex=i;state.angle=20;state.unwrapped=20;state.lastUnwrapped=20;state.dragging=false;state.pointerId=null;state.visited.fill(0);state.discovered.clear();state.complete=false;state.fullTurns=0;resetWork();renderAll()}
+
+
+function principalAngle(c){if(c.fn==='sin'){if(Math.abs(c.target)>1)return NaN;return Math.asin(c.target)/DEG}if(c.fn==='cos'){if(Math.abs(c.target)>1)return NaN;return Math.acos(c.target)/DEG}return Math.atan(c.target)/DEG}
+function expectedSetText(c){const s=solutions(c);return s.length?s.map(x=>`${fmt(x,1)}°`).join(', '):'no solutions'}
+function parseMathNumber(raw){let s=String(raw??'').trim().replace(/[−–—]/g,'-').replace(/°/g,'').replace(/√/g,'sqrt');if(!s)return NaN;if(/^[-+]?\d*\.?\d+\s*\/\s*[-+]?\d*\.?\d+$/.test(s)){const[a,b]=s.split('/').map(Number);return b?a/b:NaN}const sq=s.match(/^([-+]?)sqrt\(([-+]?\d*\.?\d+)\)\s*\/\s*([-+]?\d*\.?\d+)$/i);if(sq){const sign=sq[1]==='-'?-1:1,d=Number(sq[2]),q=Number(sq[3]);return q?sign*Math.sqrt(d)/q:NaN}return Number(s)}
+function parseAngleList(raw){const parts=String(raw??'').replace(/[−–—]/g,'-').match(/[-+]?\d*\.?\d+/g)||[];return parts.map(Number).filter(Number.isFinite).sort((a,b)=>a-b)}
+function closeNum(a,b,t=.08){return Number.isFinite(a)&&Math.abs(a-b)<=t}
+function requiredKeys(c=currentCase(),level=state.workLevel){if(level===0)return[];if(c.kind==='range')return level===1?['upper']:['lower','upper','count'];const keys=['inverse','partner'];if(c.isolateExpected!=null&&level>=1)keys.unshift('target');if(c.kind==='endpoint')keys.push('endpoint');if(level===2)keys.push('final');return keys}
+function isCorrect(key,c=currentCase()){if(key==='inverse')return state.inverseRun;if(key==='target')return closeNum(parseMathNumber(state.work.target),c.isolateExpected,.015);if(key==='partner')return closeNum(parseMathNumber(state.work.partner),c.partner,c.fn==='tan'?.12:.06);if(key==='lower')return closeNum(parseMathNumber(state.work.lower),-1,.01);if(key==='upper')return closeNum(parseMathNumber(state.work.upper),1,.01);if(key==='count')return closeNum(parseMathNumber(state.work.count),0,.01);if(key==='endpoint')return closeNum(parseMathNumber(state.work.endpoint),360,.01);if(key==='final'){const got=parseAngleList(state.work.final),exp=solutions(c);if(got.length!==exp.length)return false;return got.every((v,i)=>Math.abs(v-exp[i])<.16)}return true}
+function workReady(){const req=requiredKeys();return req.length===0||state.workChecked&&req.every(k=>isCorrect(k))}
+function caseComplete(){return state.complete&&workReady()}
+function inputMarkup(key,opts={}){const value=String(state.work[key]??''),empty=!value.trim(),checked=state.workChecked,correct=isCorrect(key),visual=empty?'pending':checked?(correct?'good':'bad'):'pending',disabled=opts.disabled?' disabled':'',wide=opts.wide?' wide':'';const mark=visual==='good'?'✓':visual==='bad'?'×':'';return `<span class="work-entry-wrap ${visual}"><input class="calc-input${wide} ${visual}" data-work-key="${key}" inputmode="${opts.text?'text':'decimal'}" autocomplete="off" spellcheck="false" placeholder="${opts.placeholder||'?'}" value="${value.replace(/&/g,'&amp;').replace(/"/g,'&quot;')}"${disabled}><span class="work-mark" aria-hidden="true">${mark}</span></span>${opts.suffix||''}`}
+function stepCard(num,scope,title,body,note,extra=''){return `<section class="calc-step ${scope} ${extra}"><div class="step-head"><span class="step-num">${num}</span><span class="step-title">${title}</span></div><div class="step-equation">${body}</div>${note?`<div class="step-note">${note}</div>`:''}</section>`}
+function revealOrInput(key,reveal,opts={}){return requiredKeys().includes(key)?inputMarkup(key,opts):`<span>${reveal}</span>`}
+function renderSolveWorking(c){const targetRequired=requiredKeys(c).includes('target');const targetBody=c.isolateExpected!=null?(targetRequired?`cos x = ${inputMarkup('target',{placeholder:'k'})}`:`<span>2 cos x + 1 = 0 → cos x = −1/2</span>`):`<span>${c.equation}</span>`;let alphaBody;const inverseLocked=targetRequired&&!isCorrect('target',c);if(state.workLevel===0)alphaBody=`<span>α = ${principalText(c)}</span>`;else if(inverseLocked)alphaBody='<span class="lock-copy">Isolate the trig function first.</span>';else if(state.inverseRun)alphaBody=`<span class="inverse-readout">${principalText(c)}</span>`;else alphaBody='<button type="button" id="runInverse" class="inverse-button">Calculate inverse</button>';let relationBody,relationClass='';if(!state.complete){relationBody='<span class="lock-copy">Complete the graph trace first.</span>';relationClass='locked'}else if(state.workLevel>0&&!state.inverseRun){relationBody='<span class="lock-copy">Calculate α first.</span>';relationClass='locked'}else relationBody=`<span>${c.relation} =</span> ${revealOrInput('partner',`${fmt(c.partner,1)}°`,{suffix:'°',placeholder:'angle'})}`;const partnerReady=!requiredKeys(c).includes('partner')||isCorrect('partner',c);let finalBody,finalClass='';if(!state.complete){finalBody='<span class="lock-copy">Complete the interval first.</span>';finalClass='locked'}else if(state.workLevel>0&&!partnerReady){finalBody='<span class="lock-copy">Finish the previous step.</span>';finalClass='locked'}else if(requiredKeys(c).includes('final'))finalBody=`<span>x =</span> ${inputMarkup('final',{wide:true,text:true,placeholder:'angles'})}`;else finalBody=`<span class="answer-set">x = ${expectedSetText(c)}</span>`;return stepCard(1,'common','Isolate',targetBody,c.isolateExpected!=null?'Isolate before using an inverse.':'')+stepCard(2,'common','One inverse angle',alphaBody,'')+stepCard(3,'specific',c.fn==='sin'?'Sine symmetry':c.fn==='cos'?'Cosine symmetry':'Tangent period',relationBody,'',relationClass)+stepCard(4,'common','Solutions in the interval',finalBody,'Check 0° ≤ x ≤ 360°.',finalClass)}
+function renderRangeWorking(c){const rangeReq=requiredKeys(c),needLower=rangeReq.includes('lower'),needUpper=rangeReq.includes('upper');const step1=stepCard(1,'common','Identify k',`<span>${c.equation}</span>`,'');let rangeBody,rangeClass='';if(!state.complete){rangeBody='<span class="lock-copy">Complete the sine graph first.</span>';rangeClass='locked'}else{const lo=needLower?inputMarkup('lower',{placeholder:'min'}):'<span>−1</span>',hi=needUpper?inputMarkup('upper',{placeholder:'max'}):'<span>1</span>';rangeBody=`${lo}<span>≤ sin x ≤</span>${hi}`}const boundsReady=(!needLower||isCorrect('lower',c))&&(!needUpper||isCorrect('upper',c));const step3Body=!state.complete?'<span class="lock-copy">Use the graph range first.</span>':state.workLevel>0&&!boundsReady?'<span class="lock-copy">Finish the range first.</span>':'<span>1.2 &gt; 1 → no real inverse angle</span>';const step3=stepCard(3,'common','Can inverse run?',step3Body,'',!state.complete||state.workLevel>0&&!boundsReady?'locked':'');let finalBody,finalClass='';if(!state.complete||state.workLevel>0&&!boundsReady){finalBody='<span class="lock-copy">No conclusion yet.</span>';finalClass='locked'}else if(rangeReq.includes('count'))finalBody=`<span>solutions =</span> ${inputMarkup('count',{placeholder:'0'})}`;else finalBody='<span class="answer-set">no solutions</span>';return step1+stepCard(2,'specific','Sine range',rangeBody,'',rangeClass)+step3+stepCard(4,'common','Solutions in the interval',finalBody,'',finalClass)}
+function renderEndpointWorking(c){const step1=stepCard(1,'common','Isolate',`<span>${c.equation}</span>`,'');let alphaBody;if(state.workLevel===0)alphaBody=`<span>α = ${principalText(c)}</span>`;else if(state.inverseRun)alphaBody=`<span class="inverse-readout">${principalText(c)}</span>`;else alphaBody='<button type="button" id="runInverse" class="inverse-button">Calculate inverse</button>';const step2=stepCard(2,'common','One inverse angle',alphaBody,'');let relationBody,relationClass='';if(!state.complete){relationBody='<span class="lock-copy">Complete the graph trace first.</span>';relationClass='locked'}else if(state.workLevel>0&&!state.inverseRun){relationBody='<span class="lock-copy">Calculate α first.</span>';relationClass='locked'}else relationBody=`<span>${c.relation} =</span> ${revealOrInput('partner','180°',{suffix:'°',placeholder:'angle'})}`;const step3=stepCard(3,'specific','Sine symmetry',relationBody,'',relationClass);const partnerReady=!requiredKeys(c).includes('partner')||isCorrect('partner',c);let body4,cls4='';if(!state.complete||state.workLevel>0&&!partnerReady){body4='<span class="lock-copy">Finish the previous step.</span>';cls4='locked'}else{const ep=requiredKeys(c).includes('endpoint')?inputMarkup('endpoint',{placeholder:'endpoint',suffix:'°'}):'<span>360°</span>';const endpointReady=!requiredKeys(c).includes('endpoint')||isCorrect('endpoint',c);let final;if(requiredKeys(c).includes('final'))final=endpointReady?`<span>x =</span> ${inputMarkup('final',{wide:true,text:true,placeholder:'angles'})}`:'<span class="lock-copy">Check the endpoint first.</span>';else final=endpointReady?'<span class="answer-set">x = 0°, 180°, 360°</span>':'<span class="lock-copy">Check the endpoint first.</span>';body4=`<span>endpoint:</span> ${ep}<br>${final}`}return step1+step2+step3+stepCard(4,'edge','Closed interval',body4,'Check both endpoints.',cls4)}
+function updateWorkBoxStates(){document.querySelectorAll('#workContent .calc-step').forEach(step=>{step.classList.remove('work-done','work-pending','work-bad');if(step.classList.contains('locked'))return;const inputs=[...step.querySelectorAll('[data-work-key]')];const inverseButton=step.querySelector('#runInverse');if(inverseButton){step.classList.add('work-pending');return}if(inputs.length){let pending=false,bad=false;for(const input of inputs){const key=input.dataset.workKey,raw=String(state.work[key]??'').trim();if(!raw||!state.workChecked)pending=true;else if(!isCorrect(key))bad=true}step.classList.add(bad?'work-bad':pending?'work-pending':'work-done');return}step.classList.add('work-done')})}
+function renderWorking(){const c=currentCase();document.querySelectorAll('[data-work-level]').forEach(b=>{const active=Number(b.dataset.workLevel)===state.workLevel;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active))});$('workContent').innerHTML=c.kind==='range'?renderRangeWorking(c):c.kind==='endpoint'?renderEndpointWorking(c):renderSolveWorking(c);updateWorkBoxStates();const check=$('checkWork');check.hidden=state.workLevel===0;check.disabled=false;const st=$('workingStatus');st.className='working-status';if(!state.complete){st.innerHTML=state.workLevel===0?'<strong>Trace first.</strong> The function step unlocks from the complete graph.':'<strong>Trace + calculate.</strong> Yellow boxes are yours; the function step still needs the full graph.'}else if(state.workLevel===0){st.classList.add('good');st.innerHTML='<strong>Done for you.</strong> The completed working agrees with the graph.'}else if(workReady()){st.classList.add('good');st.innerHTML='<strong>Graph and working agree.</strong>'}else if(state.workChecked){st.classList.add('bad');st.innerHTML='<strong>Revise red boxes.</strong> Empty boxes stay yellow.'}else{st.classList.add('warn');st.innerHTML='<strong>Full trace captured.</strong> Check the yellow boxes.'}}
+function checkWork(){if(state.workLevel===0)return;state.workChecked=true;renderWorking();renderText();if(!workReady()){const first=[...document.querySelectorAll('.calc-input.bad')].find(x=>!x.disabled);first?.focus()}}
+function setWorkLevel(level){level=Math.max(0,Math.min(2,Number(level)||0));if(level===state.workLevel)return;state.workLevel=level;resetWork();renderAll()}
+function recommendedNextLevel(){if(state.caseIndex>=cases.length-1)return-1;if(state.workLevel===0&&state.solvedAtLevel[0]+1>=2)return 1;if(state.workLevel===1&&state.solvedAtLevel[1]+1>=2)return 2;return-1}
+function advanceCase(upgrade=false){if(!caseComplete())return;const completedLevel=state.workLevel;state.solved++;state.solvedAtLevel[completedLevel]++;if(state.caseIndex===cases.length-1){state.workLevel=0;state.solved=0;state.solvedAtLevel=[0,0,0];loadCase(0);return}if(upgrade){const next=completedLevel===0?1:completedLevel===1?2:-1;if(next>state.workLevel)state.workLevel=next}loadCase(state.caseIndex+1)}
+
+function svgEl(name,attrs={},text=''){const a=Object.entries(attrs).map(([k,v])=>`${k}="${String(v).replace(/&/g,'&amp;').replace(/"/g,'&quot;')}"`).join(' ');return `<${name}${a?' '+a:''}>${text}</${name}>`}
+function polar(cx,cy,r,a){const t=a*DEG;return{x:cx+r*Math.cos(t),y:cy-r*Math.sin(t)}}
+function arcPath(cx,cy,r,a0,a1){const p0=polar(cx,cy,r,a0),p1=polar(cx,cy,r,a1),span=Math.abs(a1-a0),large=span>180?1:0,sweep=a1>=a0?0:1;return`M ${p0.x.toFixed(2)} ${p0.y.toFixed(2)} A ${r} ${r} 0 ${large} ${sweep} ${p1.x.toFixed(2)} ${p1.y.toFixed(2)}`}
+function sweepPath(cx,cy,r){let d='';for(let i=0;i<360;i++)if(state.visited[i])d+=arcPath(cx,cy,r,i,i+1)+' ';return d}
+function fnName(fn){return fn==='sin'?'Sine':fn==='cos'?'Cosine':'Tangent'}
+function fnSymbol(fn){return fn==='sin'?'sin x':fn==='cos'?'cos x':'tan x'}
+
+function renderRotor(){
+  const svg=$('rotorSvg'),w=Math.max(280,svg.clientWidth||rotorSize.w),h=Math.max(230,svg.clientHeight||rotorSize.h);rotorSize={w,h};
+  const c=currentCase(),cx=w/2+4,cy=h/2,R=Math.min(w*.35,h*.36,135),sweepR=R+16,p=polar(cx,cy,R,state.angle),value=trig(c.fn,state.angle);
+  let s='';
+  s+=svgEl('circle',{cx,cy,r:sweepR,class:'rotor-sweep-base'});const sp=sweepPath(cx,cy,sweepR);if(sp)s+=svgEl('path',{d:sp,class:'rotor-sweep'});
+  s+=svgEl('circle',{cx,cy,r:R,class:'rotor-ring'});
+  s+=svgEl('line',{x1:cx-R-18,y1:cy,x2:cx+R+18,y2:cy,class:'rotor-axis'});s+=svgEl('line',{x1:cx,y1:cy-R-18,x2:cx,y2:cy+R+18,class:'rotor-axis'});
+  for(const a of [0,90,180,270]){const q=polar(cx,cy,R+26,a),label=a===0?'0° / 360°':`${a}°`;s+=svgEl('text',{x:q.x,y:q.y+3,'text-anchor':'middle',class:'rotor-degree'},label)}
+  if(c.fn==='sin'){
+    s+=svgEl('line',{x1:p.x,y1:p.y,x2:cx,y2:p.y,class:'rotor-projection'});
+    s+=svgEl('line',{x1:cx-R-30,y1:cy-R,x2:cx-R-30,y2:cy+R,class:'rotor-sensor-line'});
+    const gy=cy-R*value;s+=svgEl('circle',{cx:cx-R-30,cy:gy,r:6,class:'rotor-sensor-dot'});s+=svgEl('line',{x1:cx-R-30,y1:gy,x2:cx-4,y2:gy,class:'rotor-projection'});
+  }else if(c.fn==='cos'){
+    s+=svgEl('line',{x1:p.x,y1:p.y,x2:p.x,y2:cy,class:'rotor-projection'});
+    s+=svgEl('line',{x1:cx-R,y1:cy+R+20,x2:cx+R,y2:cy+R+20,class:'rotor-sensor-line'});
+    const gx=cx+R*value;s+=svgEl('circle',{cx:gx,cy:cy+R+20,r:6,class:'rotor-sensor-dot'});s+=svgEl('line',{x1:gx,y1:cy+R+20,x2:gx,y2:cy+4,class:'rotor-projection'});
+  }else{
+    const tx=cx+R;s+=svgEl('line',{x1:tx,y1:cy-R-32,x2:tx,y2:cy+R+32,class:'rotor-sensor-line'});
+    const tan=value,iy=Number.isFinite(tan)?cy-R*tan:NaN;
+    const dir={x:Math.cos(state.angle*DEG),y:-Math.sin(state.angle*DEG)},L=R*2.15;
+    s+=svgEl('line',{x1:cx-dir.x*L,y1:cy-dir.y*L,x2:cx+dir.x*L,y2:cy+dir.y*L,class:'rotor-projection'});
+    if(Number.isFinite(iy)&&iy>cy-R-32&&iy<cy+R+32)s+=svgEl('circle',{cx:tx,cy:iy,r:6,class:'rotor-sensor-dot'});else s+=svgEl('text',{x:tx+8,y:cy-R-20,class:'rotor-offscale'},Math.abs(Math.cos(state.angle*DEG))<.015?'undefined':'off-scale');
+  }
+  const arcEnd=state.angle===0?0:state.angle;s+=svgEl('path',{d:arcPath(cx,cy,R*.42,0,arcEnd),class:'rotor-angle-arc'});const aq=polar(cx,cy,R*.54,Math.max(7,state.angle/2));s+=svgEl('text',{x:aq.x,y:aq.y,class:'rotor-angle-label'},`x = ${fmt(state.angle,1)}°`);
+  s+=svgEl('line',{x1:cx,y1:cy,x2:p.x,y2:p.y,class:'rotor-radius'});s+=svgEl('circle',{cx:p.x,cy:p.y,r:8,class:'rotor-point'});s+=svgEl('circle',{cx:p.x,cy:p.y,r:16,class:'rotor-handle-ring'});const dl=polar(cx,cy,R+19,state.angle);s+=svgEl('text',{x:dl.x,y:dl.y+3,'text-anchor':'middle',class:'rotor-drag-label'},'drag');
+  const allSols=solutions(c),physical=[];for(const sol of allSols){if(!(state.discovered.has(String(sol))||state.complete))continue;const a=sol===360?0:sol;if(physical.some(o=>Math.abs(o.a-a)<1e-6))continue;const pairedEndpoint=a===0&&allSols.includes(0)&&allSols.includes(360);physical.push({a,lab:pairedEndpoint?'0° / 360°':`${fmt(sol,1)}°`})}for(const item of physical){const a=item.a,q1=polar(cx,cy,R+7,a),q2=polar(cx,cy,R+20,a);let lx,ly,anchor;if(Math.abs(a)<1e-6){lx=q2.x-4;ly=q2.y-12;anchor='end'}else if(Math.abs(a-180)<1e-6){lx=q2.x+4;ly=q2.y-12;anchor='start'}else{const qt=polar(cx,cy,R+34,a);lx=qt.x;ly=qt.y+3;anchor='middle'}s+=svgEl('line',{x1:q1.x,y1:q1.y,x2:q2.x,y2:q2.y,class:'rotor-solution-tick'});s+=svgEl('text',{x:lx,y:ly,'text-anchor':anchor,class:'rotor-solution-label'},item.lab)}
+  const displayValue=Number.isFinite(value)?fmtValue(value):'undefined';
+  svg.setAttribute('viewBox',`0 0 ${w} ${h}`);svg.innerHTML=s;svg.setAttribute('aria-valuenow',fmt(state.angle,1));svg.setAttribute('aria-valuetext',`${fmt(state.angle,1)} degrees, ${fnSymbol(c.fn)} is ${displayValue}`);
+}
+
+function graphYRange(c){return c.fn==='tan'?[-4.6,4.6]:[-1.4,1.4]}
+function graphMap(w,h,c){const L=40,R=8,T=9,B=29,[yMin,yMax]=graphYRange(c);return{L,R,T,B,W:w-L-R,H:h-T-B,yMin,yMax,x:x=>L+(x/360)*(w-L-R),y:y=>T+(yMax-y)/(yMax-yMin)*(h-T-B)}}
+function tracePaths(map,c){
+  let segs=[],current=[];const flush=()=>{if(current.length>1)segs.push(current);current=[]};
+  for(let i=0;i<=360;i++){
+    const seen=i===360?state.visited[0]:state.visited[i];if(!seen){flush();continue}
+    const v=trig(c.fn,i);if(!Number.isFinite(v)){flush();continue}
+    if(c.fn==='tan'&&Math.abs(v)>map.yMax*1.08){flush();continue}
+    current.push([map.x(i),map.y(v)]);
+  }flush();return segs.map(points=>'M '+points.map(p=>`${p[0].toFixed(2)} ${p[1].toFixed(2)}`).join(' L '));
+}
+function renderGraph(){
+  const svg=$('graphSvg'),w=Math.max(300,svg.clientWidth||graphSize.w),h=Math.max(230,svg.clientHeight||graphSize.h);graphSize={w,h};const c=currentCase(),m=graphMap(w,h,c);let s='';
+  s+=svgEl('rect',{x:m.L,y:m.T,width:m.W,height:m.H,rx:8,fill:'#fff',stroke:'#d8dde1'});
+  if(c.fn!=='tan'){
+    const y1=m.y(1),ym1=m.y(-1);s+=svgEl('rect',{x:m.L,y:y1,width:m.W,height:ym1-y1,class:'svg-range'});s+=svgEl('line',{x1:m.L,y1:y1,x2:m.L+m.W,y2:y1,class:'svg-range-edge'});s+=svgEl('line',{x1:m.L,y1:ym1,x2:m.L+m.W,y2:ym1,class:'svg-range-edge'});
+  }
+  for(const x of [0,90,180,270,360]){const X=m.x(x);s+=svgEl('line',{x1:X,y1:m.T,x2:X,y2:m.T+m.H,class:x===0?'svg-axis':'svg-grid'});s+=svgEl('text',{x:X,y:m.T+m.H+17,'text-anchor':'middle',class:'svg-tick'},`${x}°`)}
+  const yTicks=c.fn==='tan'?[-4,-2,0,2,4]:[-1,-.5,0,.5,1];for(const y of yTicks){const Y=m.y(y),axis=Math.abs(y)<1e-9;s+=svgEl('line',{x1:m.L,y1:Y,x2:m.L+m.W,y2:Y,class:axis?'svg-axis':'svg-grid'});s+=svgEl('text',{x:m.L-8,y:Y+3,'text-anchor':'end',class:'svg-tick'},String(y))}
+  if(c.fn==='tan')for(const a of [90,270]){const X=m.x(a);s+=svgEl('line',{x1:X,y1:m.T,x2:X,y2:m.T+m.H,class:'svg-asymptote'});s+=svgEl('text',{x:X+4,y:m.T+13,class:'svg-asymptote-label'},'asymptote')}
+  const targetY=m.y(c.target),sols=solutions(c),rightSolution=sols.some(v=>v>330);if(targetY>=m.T-1&&targetY<=m.T+m.H+1){s+=svgEl('line',{x1:m.L,y1:targetY,x2:m.L+m.W,y2:targetY,class:'svg-target'});s+=svgEl('text',{x:m.L+m.W-6,y:targetY+(rightSolution?16:-7),'text-anchor':'end',class:'svg-target-label'},`target y = ${c.targetText}`)}
+  for(const d of tracePaths(m,c)){s+=svgEl('path',{d,class:'svg-trace-under'});s+=svgEl('path',{d,class:'svg-trace'})}
+  const currentV=trig(c.fn,state.angle),cursorX=m.x(state.angle);s+=svgEl('line',{x1:cursorX,y1:m.T,x2:cursorX,y2:m.T+m.H,class:'svg-cursor'});if(Number.isFinite(currentV)&&currentV>=m.yMin&&currentV<=m.yMax)s+=svgEl('circle',{cx:cursorX,cy:m.y(currentV),r:6,class:'svg-live-dot'});
+  for(const sol of sols){if(!(state.discovered.has(String(sol))||state.complete))continue;const X=m.x(sol),Y=m.y(c.target);if(Y<m.T-1||Y>m.T+m.H+1)continue;s+=svgEl('circle',{cx:X,cy:Y,r:6,class:'svg-solution-dot'});const anchor=sol>320?'end':sol<35?'start':'middle',dx=sol>320?-7:sol<35?7:0;s+=svgEl('text',{x:X+dx,y:Y-11,'text-anchor':anchor,class:'svg-solution-label'},`${fmt(sol,1)}°`)}
+  s+=svgEl('text',{x:m.L+8,y:m.T+17,class:'svg-title'},`y = ${c.fn} x`);s+=svgEl('text',{x:m.L+8,y:m.T+29,class:'svg-sub'},c.fn==='tan'?'two 180° branches in this interval':'one 360° cycle in this interval');s+=svgEl('text',{x:m.L+m.W/2,y:h-4,'text-anchor':'middle',class:'svg-axis-label'},'x / degrees');
+  svg.setAttribute('viewBox',`0 0 ${w} ${h}`);svg.innerHTML=s;
+}
+
+function renderCompletionCard(done,c,sols){const card=$('nextCard');if(!done){card.hidden=true;return}card.hidden=false;const final=state.caseIndex===cases.length-1;$('nextTitle').textContent=final?'Interval work complete':sols.length?'Solutions verified':'No solution verified';$('nextText').textContent=final?'The graph evidence and working are complete for all five cases.':c.completion;$('nextCase').textContent=final?'Restart lab':'Next case';const next=recommendedNextLevel(),upgrade=$('nextUpgrade'),hasUpgrade=!final&&next>=0;card.classList.toggle('has-upgrade',hasUpgrade);upgrade.hidden=!hasUpgrade;if(hasUpgrade){$('nextUpgradeTitle').textContent=next===1?'Ready to show some working?':'Ready to complete the full working?';$('nextUpgradeText').textContent=next===1?'In the next case, most steps stay completed while you supply the key results.':'In the next case, you complete every required result yourself.';$('upgradeNext').textContent=next===1?'Try some working':'Try full working'}}
+function renderText(){const c=currentCase(),value=trig(c.fn,state.angle),sols=solutions(c),found=sols.filter(s=>state.discovered.has(String(s))||state.complete),done=caseComplete();$('caseIndex').textContent=`Case ${state.caseIndex+1} of ${cases.length}`;$('caseTag').textContent=c.tag;$('missionTitle').textContent=c.mission;$('missionHint').textContent=state.workLevel===0?'Rotate through one complete turn and compare the completed working with the graph.':'Rotate through the full interval and complete the yellow working boxes.';$('rotorTitle').textContent=c.fn==='sin'?'Sine on the circle':c.fn==='cos'?'Cosine on the circle':'Tangent from the rotating angle';$('rotorSub').textContent=c.fn==='sin'?'Vertical coordinate of the point.':c.fn==='cos'?'Horizontal coordinate of the point.':'The tangent value is undefined when cos x = 0.';$('graphTitle').textContent=`y = ${c.fn} x`;$('graphSub').textContent=c.fn==='tan'?'The trace breaks at 90° and 270° rather than crossing the asymptotes.':'The target line shows every matching angle in the interval.';$('anglePill').textContent=`${fmt(state.angle,1)}°`;$('valuePill').textContent=fmtValue(value);$('liveAngle').textContent=`${fmt(state.angle,1)}°`;$('fnLabel').textContent=fnSymbol(c.fn);$('liveValue').textContent=fmtValue(value);const list=$('solutionList');if(found.length)list.innerHTML=found.map(s=>`<span class="solution-chip">${fmt(s,1)}°</span>`).join('');else if(state.complete&&sols.length===0)list.innerHTML='<span class="solution-empty">No intersections in 0°–360°.</span>';else list.innerHTML='<span class="solution-empty">No target crossing traced yet.</span>';$('sweepStatus').textContent=state.complete?'Full 0°–360° trace captured.':'Grey arc remains: keep rotating.';if(c.kind==='range')$('inverseCopy').innerHTML=state.complete?'<strong>Inverse blocked:</strong> 1.2 is outside the sine range.':'Check the graph range before using inverse sine.';else if(state.workLevel===0||state.inverseRun){const all=state.complete?(sols.length?sols.map(s=>`${fmt(s,1)}°`).join(', '):'no interval solutions'):'complete the interval first';$('inverseCopy').innerHTML=`<strong>${principalText(c)}</strong><br>Full graph: ${all}.`}else $('inverseCopy').textContent='The inverse step gives one starting angle α.';renderCompletionCard(done,c,sols)}
+function renderAll(){renderText();renderRotor();renderGraph();renderWorking()}
+
+function setAngleFromPointer(e){
+  const svg=$('rotorSvg'),r=svg.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top,w=rotorSize.w,h=rotorSize.h,cx=w/2,cy=h/2+6;
+  const sx=x/r.width*w,sy=y/r.height*h,newNorm=normAngle(Math.atan2(cy-sy,sx-cx)/DEG),oldNorm=normAngle(state.unwrapped),delta=signedDelta(newNorm,oldNorm),prev=state.unwrapped;state.unwrapped+=delta;state.angle=normAngle(state.unwrapped);markUnwrappedSegment(prev,state.unwrapped);renderAll();
+}
+const rotor=$('rotorSvg');
+rotor.addEventListener('pointerdown',e=>{state.dragging=true;state.pointerId=e.pointerId;rotor.setPointerCapture?.(e.pointerId);setAngleFromPointer(e);e.preventDefault()});
+rotor.addEventListener('pointermove',e=>{if(!state.dragging||e.pointerId!==state.pointerId)return;setAngleFromPointer(e);e.preventDefault()});
+function endPointer(e){if(e.pointerId!==state.pointerId)return;state.dragging=false;state.pointerId=null;try{rotor.releasePointerCapture?.(e.pointerId)}catch{}renderAll()}
+rotor.addEventListener('pointerup',endPointer);rotor.addEventListener('pointercancel',endPointer);
+rotor.addEventListener('keydown',e=>{if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;e.preventDefault();let next=state.unwrapped;if(e.key==='ArrowRight')next+=1;if(e.key==='ArrowLeft')next-=1;if(e.key==='Home')next=Math.floor(state.unwrapped/360)*360;if(e.key==='End')next=Math.floor(state.unwrapped/360)*360+359;const prev=state.unwrapped;state.unwrapped=next;state.angle=normAngle(next);markUnwrappedSegment(prev,next);renderAll()});
+$('resetSweep').addEventListener('click',clearTrace);document.querySelectorAll('[data-work-level]').forEach(b=>b.addEventListener('click',()=>setWorkLevel(Number(b.dataset.workLevel))));$('workContent').addEventListener('input',e=>{const input=e.target.closest('[data-work-key]');if(!input)return;state.work[input.dataset.workKey]=input.value;state.workChecked=false;input.classList.remove('good','bad');input.classList.add('pending');const wrap=input.closest('.work-entry-wrap');if(wrap){wrap.classList.remove('good','bad');wrap.classList.add('pending');const mark=wrap.querySelector('.work-mark');if(mark)mark.textContent=''}updateWorkBoxStates();renderText()});$('workContent').addEventListener('click',e=>{if(e.target.id==='runInverse'){state.inverseRun=true;state.workChecked=false;renderWorking();renderText()}});$('workContent').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.closest('[data-work-key]')){e.preventDefault();checkWork()}});$('checkWork').addEventListener('click',checkWork);$('nextCase').addEventListener('click',()=>advanceCase(false));$('upgradeNext').addEventListener('click',()=>advanceCase(true));
+
+const ro=new ResizeObserver(()=>{renderRotor();renderGraph()});ro.observe($('rotorSvg'));ro.observe($('graphSvg'));
+renderAll();
+
+// Deterministic hooks for browser regression tests.
+window.__labTest={state:()=>({caseIndex:state.caseIndex,angle:state.angle,complete:state.complete,caseComplete:caseComplete(),visited:state.visited.reduce((s,v)=>s+v,0),solutions:solutions(currentCase()),found:[...state.discovered].map(Number).sort((a,b)=>a-b),workLevel:state.workLevel,workReady:workReady(),inverseRun:state.inverseRun,solved:state.solved,solvedAtLevel:[...state.solvedAtLevel],work:{...state.work}}),setCase:i=>loadCase(Math.max(0,Math.min(cases.length-1,Number(i)||0))),setWorkLevel,sweep:()=>{for(let i=0;i<360;i++)state.visited[i]=1;state.complete=true;updateDiscoveries();renderAll()},setAngle:a=>{const prev=state.unwrapped;state.unwrapped=Number(a)||0;state.angle=normAngle(state.unwrapped);markUnwrappedSegment(prev,state.unwrapped);renderAll()},fillExpected:()=>{const c=currentCase();if(c.isolateExpected!=null)state.work.target=String(c.isolateExpected);state.inverseRun=c.kind!=='range';if(c.partner!=null)state.work.partner=fmt(c.partner,1);state.work.lower='-1';state.work.upper='1';state.work.count='0';state.work.endpoint='360';state.work.final=solutions(c).map(x=>fmt(x,1)).join(', ');state.workChecked=true;renderAll()},check:checkWork,advance:advanceCase,clear:clearTrace};
+})();
+</script>
+</body>
+</html>

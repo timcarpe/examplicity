@@ -11,9 +11,11 @@ export const changelogEntries: readonly ChangelogEntry[] = [
     displayDate: '30 August 2026',
     publicChanges: [
       'Added five Cambridge IGCSE Mathematics 0580 labs covering time-zone scheduling, sequence patterns, motion graphs, straight-line equations, and perpendicular-bisector construction.',
+      'Added five Cambridge IGCSE Mathematics 0580 labs for circle theorems, surface area and volume, right-triangle trigonometry, trigonometric graphs, and non-right triangle solutions.',
     ],
     internalChanges: [
       'Extended Mathematics topic views and manifest-controlled syllabus alignment to Algebra and graphs and Coordinate geometry.',
+      'Extended the Mathematics catalogue to Geometry, Mensuration and Trigonometry while preserving each lab’s distinct interaction model and shared control language.',
     ],
   },
   {

@@ -1,0 +1,726 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- LAB_FRAME_STYLES_START -->
+<style data-lab-frame>
+:root {
+  --lab-canvas: #f3f5f7;
+  --lab-paper: #fbfbfd;
+  --lab-surface: #ffffff;
+  --lab-control: #ffffff;
+  --lab-ink: #1d1d1f;
+  --lab-muted: #6e6e73;
+  --lab-line: #d2d2d7;
+  --lab-line-strong: #a7a7ad;
+  --lab-accent: #5277b8;
+  --lab-accent-soft: #eef2fa;
+  --lab-good: #18794e;
+  --lab-good-soft: #edf8f1;
+  --lab-warn: #946200;
+  --lab-warn-soft: #fff6e7;
+  --lab-bad: #b42318;
+  --lab-bad-soft: #fff0ee;
+  --lab-focus: #1d1d1f;
+  --lab-focus-soft: rgba(29, 29, 31, 0.18);
+  --lab-font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+  --lab-panel-radius: 12px;
+  --lab-control-radius: 8px;
+  --lab-pill-radius: 999px;
+  --lab-control-height: 35px;
+  --lab-panel-shadow: 0 1px 2px rgba(29, 29, 31, 0.04);
+  --lab-page-gutter: max(28px, calc((100vw - 1200px) / 2));
+  --lab-compact-workspace-max: 820px;
+}
+
+html,
+body {
+  background: var(--lab-canvas);
+}
+
+body {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  align-content: start !important;
+  font-family: var(--lab-font-sans);
+  padding-bottom: 0;
+  padding-top: 0 !important;
+  text-rendering: optimizeLegibility;
+}
+
+.lab-manifest-header {
+  align-items: start;
+  border-bottom: 1px solid var(--line, var(--lab-line));
+  display: grid;
+  gap: 18px 28px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  margin-bottom: 26px;
+  padding-bottom: 22px;
+}
+
+.lab-manifest-heading {
+  min-width: 0;
+}
+
+.lab-manifest-header h1 {
+  color: var(--ink, var(--lab-ink));
+  font-family: var(--lab-font-sans);
+  font-size: clamp(25px, 3.2vw, 40px);
+  font-weight: 650;
+  letter-spacing: -0.045em;
+  line-height: 1.02;
+  margin: 0;
+  max-width: 24ch;
+  padding: 0;
+  text-align: left;
+}
+
+.lab-manifest-subtitle {
+  color: var(--muted, var(--lab-muted));
+  font-family: var(--lab-font-sans);
+  font-size: 13px;
+  letter-spacing: 0;
+  line-height: 1.5;
+  margin: 10px 0 0;
+  max-width: 72ch;
+  padding: 0;
+  text-align: left;
+}
+
+.lab-authored-title-slot {
+  min-width: 0;
+}
+
+.lab-syllabus-chips {
+  align-items: center;
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+  margin: 0 0 0 auto;
+  max-width: 100%;
+}
+
+.lab-syllabus-chip {
+  align-items: center;
+  background: var(--syllabus-chip-bg) !important;
+  border: 1px solid var(--syllabus-chip-border) !important;
+  border-radius: var(--lab-pill-radius);
+  color: var(--syllabus-chip-text) !important;
+  display: inline-flex;
+  font-size: 11px;
+  font-weight: 650;
+  gap: 4px;
+  line-height: 1;
+  min-height: 29px;
+  padding: 8px 10px;
+  position: relative;
+  transition: background-color 140ms ease, border-color 140ms ease;
+  white-space: nowrap;
+}
+
+.lab-syllabus-chip:hover {
+  background: var(--syllabus-chip-hover) !important;
+}
+
+.lab-syllabus-primary-link {
+  border-radius: inherit;
+  inset: 0;
+  position: absolute;
+  z-index: 0;
+}
+
+.lab-syllabus-primary-link:focus-visible {
+  outline: 2px solid var(--syllabus-chip-text);
+  outline-offset: 2px;
+}
+
+.lab-syllabus-name,
+.lab-syllabus-divider,
+.lab-syllabus-sections {
+  pointer-events: none;
+  position: relative;
+  z-index: 1;
+}
+
+.lab-syllabus-section {
+  border-radius: 4px;
+  color: inherit;
+  padding: 2px;
+  text-decoration: none;
+}
+
+a.lab-syllabus-section {
+  pointer-events: auto;
+}
+
+a.lab-syllabus-section:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+a.lab-syllabus-section:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 1px;
+}
+
+.lab-syllabus-name {
+  color: var(--syllabus-chip-text) !important;
+}
+
+.lab-syllabus-divider,
+.lab-syllabus-separator {
+  color: var(--muted, var(--lab-muted));
+}
+
+.lab-syllabus-prefix {
+  opacity: 0.72;
+  padding-left: 5px;
+}
+
+.lab-syllabus-sections {
+  align-items: center;
+  display: inline-flex;
+}
+
+.lab-syllabus-separator {
+  margin-inline: 0 2px;
+}
+
+html[data-theme="dark"] .lab-syllabus-name {
+  color: var(--syllabus-chip-border) !important;
+}
+
+html[data-theme="dark"] .lab-syllabus-chip:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+html[data-theme="dark"],
+html[data-theme="dark"] body {
+  background: var(--bg);
+}
+
+body > main {
+  container-name: lab-canvas;
+  container-type: inline-size;
+  margin-left: var(--lab-page-gutter);
+  margin-right: auto;
+  margin-top: 18px;
+  max-width: 1200px;
+  width: calc(100vw - var(--lab-page-gutter) - var(--lab-page-gutter));
+}
+
+body[data-lab-layout="compact"] .lab-manifest-header {
+  margin-bottom: 17px;
+  padding-bottom: 13px;
+}
+
+body[data-lab-layout="compact"] [data-lab-workspace] {
+  margin-left: auto;
+  margin-right: auto;
+  width: min(var(--lab-compact-workspace-max), 100%);
+}
+
+:where(button, input, select, textarea, summary):focus-visible {
+  outline: 3px solid var(--lab-focus);
+  outline-offset: 4px;
+}
+
+@media (max-width: 620px) {
+  :root {
+    --lab-page-gutter: 18px;
+  }
+
+  body {
+    padding-bottom: 0;
+    padding-top: 0 !important;
+  }
+
+  .lab-manifest-header {
+    gap: 14px;
+    grid-template-columns: minmax(0, 1fr) !important;
+    margin-bottom: 20px;
+    padding-bottom: 18px;
+  }
+
+  body[data-lab-layout="compact"] .lab-manifest-header {
+    margin-bottom: 16px;
+    padding-bottom: 14px;
+  }
+
+  .lab-manifest-header h1 {
+    font-size: clamp(24px, 8vw, 34px);
+  }
+
+  .lab-syllabus-chips {
+    gap: 4px;
+    justify-content: flex-start !important;
+    margin: 0 !important;
+  }
+
+  .lab-syllabus-chip {
+    font-size: 10px;
+    max-width: 100%;
+    min-height: 27px;
+    padding: 7px 8px;
+    white-space: normal;
+  }
+
+  .lab-syllabus-sections {
+    flex-wrap: wrap;
+  }
+
+  body > main {
+    margin-top: 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+</style>
+<!-- LAB_FRAME_STYLES_END -->
+<!-- LAB_MANIFEST_HEAD_START -->
+<title>Surface Area and Volume of Solids</title>
+<meta name="description" content="Explore surface area and volume of solids by changing dimensions and comparing material and capacity for Cambridge IGCSE Mathematics 0580.">
+<link rel="canonical" href="https://www.examplicity.org/labs/mathematics/solid-surface-volume-tradeoffs.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Examplicity">
+<meta property="og:title" content="Surface Area and Volume of Solids">
+<meta property="og:description" content="Explore surface area and volume of solids by changing dimensions and comparing material and capacity for Cambridge IGCSE Mathematics 0580.">
+<meta property="og:url" content="https://www.examplicity.org/labs/mathematics/solid-surface-volume-tradeoffs.html">
+<meta property="og:image" content="https://www.examplicity.org/opengraph-image">
+<meta property="og:image:alt" content="Examplicity — Make complex ideas click">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Surface Area and Volume of Solids">
+<meta name="twitter:description" content="Explore surface area and volume of solids by changing dimensions and comparing material and capacity for Cambridge IGCSE Mathematics 0580.">
+<meta name="twitter:image" content="https://www.examplicity.org/opengraph-image">
+<script type="application/ld+json" data-lab-manifest="structured-data">{"@context":"https://schema.org","@type":"LearningResource","@id":"https://www.examplicity.org/labs/mathematics/solid-surface-volume-tradeoffs.html#learning-resource","url":"https://www.examplicity.org/labs/mathematics/solid-surface-volume-tradeoffs.html","name":"Surface Area and Volume of Solids","description":"Explore surface area and volume of solids by changing dimensions and comparing material and capacity for Cambridge IGCSE Mathematics 0580.","inLanguage":"en-GB","isAccessibleForFree":true,"interactivityType":"active","learningResourceType":"Solid dimension workbench","teaches":"Mensuration","educationalLevel":["IGCSE"],"educationalAlignment":[{"@type":"AlignmentObject","alignmentType":"educationalSubject","educationalFramework":"Cambridge IGCSE Mathematics","targetName":"IGCSE 0580 section C5.4, E5.4","targetUrl":"https://www.cambridgeinternational.org/Images/662466-2025-2027-syllabus.pdf#page=25"}],"about":{"@type":"Thing","name":"Mathematics"},"audience":{"@type":"EducationalAudience","educationalRole":"student"},"provider":{"@type":"Organization","name":"Examplicity","url":"https://www.examplicity.org"},"isPartOf":{"@type":"WebSite","@id":"https://www.examplicity.org/#website","name":"Examplicity","url":"https://www.examplicity.org"}}</script>
+<!-- LAB_MANIFEST_HEAD_END -->
+<style>
+:root{
+  --lab-canvas:#f3f5f7;--lab-paper:#fbfbfd;--lab-surface:#fff;--lab-control:#fff;--lab-ink:#1d1d1f;--lab-muted:#6e6e73;
+  --lab-line:#d2d2d7;--lab-line-strong:#a7a7ad;--lab-accent:#5277b8;--lab-accent-soft:#eef2fa;
+  --lab-good:#18794e;--lab-good-soft:#edf8f1;--lab-warn:#946200;--lab-warn-soft:#fff6e7;--lab-bad:#b42318;--lab-bad-soft:#fff0ee;
+  --lab-focus:#1d1d1f;--lab-panel-radius:12px;--lab-control-radius:8px;--lab-pill-radius:999px;
+  --cap:#5277b8;--side:#d18426;--volume:#4b8a72;--specific:#8169b3;--specific-soft:#f4f0fb;--general:#287970;--general-soft:#e9f7f4;
+}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{margin:0;background:var(--lab-canvas);color:var(--lab-ink);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif;text-rendering:optimizeLegibility}
+button,input{font:inherit}button{cursor:pointer}button:disabled{opacity:.45;cursor:not-allowed}
+main{position:relative;width:min(1200px,calc(100% - 28px));margin:18px auto 42px}
+.lab-manifest-header{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px 28px;align-items:start;margin-bottom:18px;padding-bottom:18px;border-bottom:1px solid var(--lab-line)}
+h1{margin:0;font-size:clamp(26px,3vw,40px);font-weight:650;letter-spacing:-.045em;line-height:1.03;max-width:24ch}
+.lab-manifest-subtitle{margin:9px 0 0;color:var(--lab-muted);font-size:13px;line-height:1.5;max-width:78ch}
+.panel{background:var(--lab-surface);border:1px solid var(--lab-line);border-radius:var(--lab-panel-radius);box-shadow:0 1px 2px rgba(29,29,31,.04)}
+.mission{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;padding:11px 12px}.mission-kicker{display:block;margin-bottom:3px;color:var(--lab-accent);font-size:9px;font-weight:900;letter-spacing:.06em;text-transform:uppercase}.mission-copy strong{display:block;font-size:15px;line-height:1.35}.mission-copy>span:last-child{display:block;margin-top:3px;color:var(--lab-muted);font-size:10px;line-height:1.4}.mission-tools{display:flex;align-items:center;gap:8px}.complexity{display:grid;grid-template-columns:auto auto;gap:4px 7px;align-items:center;justify-items:end}.complexity-copy{text-align:right}.complexity-copy strong{display:block;color:#52606a;font-size:8px;font-weight:900;letter-spacing:.05em;text-transform:uppercase}.complexity-copy span{display:block;margin-top:1px;color:var(--lab-muted);font-size:8px;line-height:1.25}.complexity-switch{display:inline-flex;padding:3px;border:1px solid var(--lab-line);border-radius:9px;background:#f6f8f9}.complexity-switch button{min-height:27px;border:0;border-radius:6px;background:transparent;padding:0 8px;color:#66737b;font-size:8px;font-weight:850}.complexity-switch button.active{background:#fff;color:var(--lab-ink);box-shadow:0 1px 4px rgba(29,29,31,.14)}
+.workspace{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(360px,.92fr);gap:12px;margin-top:12px;align-items:start}.visual-panel{padding:10px;min-width:0}.visual-head,.skin-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:6px}.visual-head strong,.skin-head strong{font-size:14px}.visual-head span,.skin-head span{color:var(--lab-muted);font-size:9px;line-height:1.35;text-align:right}.solid-shell,.skin-shell{position:relative;overflow:hidden;border:1px solid var(--lab-line);border-radius:11px;background:#fbfcfd}#solidSvg{display:block;width:100%;height:auto;aspect-ratio:760/470;touch-action:none;user-select:none}#skinSvg{display:block;width:100%;height:auto;aspect-ratio:560/430;touch-action:none;user-select:none}
+.goal-bands{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:8px}.goal-band{min-width:0;padding:7px 8px;border:1px solid var(--lab-line);border-radius:8px;background:var(--lab-paper)}.goal-band span{display:block;color:var(--lab-muted);font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.04em}.goal-band strong{display:block;margin-top:2px;font:850 12px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.goal-band.good{border-color:#acd3ba;background:var(--lab-good-soft)}.goal-band.bad{border-color:#e5b6b0;background:var(--lab-bad-soft)}.goal-band.warn{border-color:#e1c78f;background:var(--lab-warn-soft)}
+.evidence{margin-top:8px;padding:8px 9px;border:1px solid var(--lab-line);border-radius:8px;background:#f8f9fa;font-size:10px;line-height:1.4}.evidence strong{font-weight:850}.evidence.good{border-color:var(--lab-good);background:var(--lab-good-soft)}
+.working-dock{margin-top:12px;padding:9px 10px;background:#fff}.working-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}.working-head strong{font-size:12px}.calc-chain{display:grid;grid-template-columns:minmax(0,.9fr) 34px minmax(0,1fr) 34px minmax(0,1.18fr);gap:6px;align-items:stretch}.calc-arrow{display:grid;place-items:center;color:#8b979f;font-size:20px;font-weight:900}.calc-card{min-width:0;padding:8px;border:1px solid var(--lab-line);border-radius:9px;background:#fbfcfd}.calc-card-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}.calc-card-head strong{font-size:9px;text-transform:uppercase;letter-spacing:.045em;color:#64717a}.method-tag{flex:0 0 auto;display:inline-flex;align-items:center;min-height:18px;padding:0 5px;border:1px solid var(--lab-line);border-radius:999px;font-size:7px;font-weight:900;letter-spacing:.04em;text-transform:uppercase}.method-tag.specific{border-color:#c8bae5;background:var(--specific-soft);color:#654f94}.method-tag.general{border-color:#9dcfc7;background:var(--general-soft);color:#276c65}.mini-cross{height:46px;display:grid;place-items:center;position:relative;margin-bottom:6px}.mini-rect{width:72px;height:34px;border:2px solid var(--specific);background:rgba(129,105,179,.08);border-radius:4px}.mini-w,.mini-h{position:absolute;color:#654f94;font:850 8px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.mini-w{bottom:0}.mini-h{left:calc(50% - 47px);top:18px;transform:rotate(-90deg)}.surface-parts{height:46px;display:grid;grid-template-columns:34px 34px minmax(64px,1fr);gap:5px;align-items:center;margin-bottom:6px}.part-cap{height:30px;border:2px solid var(--cap);background:rgba(82,119,184,.18);border-radius:4px}.part-plus{color:#8a949b;font-weight:900;text-align:center}.part-strip{height:30px;border:2px solid var(--side);background:rgba(209,132,38,.18);border-radius:4px;position:relative}.part-strip::after{content:'P × L';position:absolute;inset:0;display:grid;place-items:center;color:#875411;font:850 8px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.calc-row{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:5px;align-items:center;margin-top:5px}.calc-row.compact{grid-template-columns:minmax(0,1fr);}.calc-pair{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:5px}.calc-op{color:#77838b;font:900 12px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;text-align:center;white-space:nowrap}.calc-value{position:relative;min-width:0;min-height:48px;display:grid;align-content:center;gap:2px;padding:6px 8px;border:1px solid var(--lab-line);border-radius:7px;background:#fff}.calc-value>span:first-child{color:var(--lab-muted);font-size:7.5px;font-weight:850;text-transform:uppercase;letter-spacing:.035em}.calc-value strong{font:900 11px/1.25 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;overflow-wrap:anywhere}.calc-value small{font-size:8px;color:var(--lab-muted)}.calc-value.locked{background:#f6f8f9}.calc-value.fixed{border-color:#c8bae5;background:var(--specific-soft)}.calc-value.action{border:2px solid #d4a12c;background:var(--lab-warn-soft);padding:5px 7px}.calc-value.action.good{border-color:var(--lab-good);background:var(--lab-good-soft)}.calc-value.action.bad{border-color:var(--lab-bad);background:var(--lab-bad-soft)}.calc-value.action.disabled{border:1px dashed #bcc5cb;background:#f6f8f9;opacity:.72}.calc-value input{width:100%;height:24px;padding:0 22px 0 0;border:0;background:transparent;color:var(--lab-ink);font:900 12px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;outline:0}.calc-value.action.good input{color:var(--lab-good)}.calc-value.action.bad input{color:var(--lab-bad)}.calc-value input:disabled{cursor:not-allowed}.field-status{position:absolute;right:7px;bottom:8px;font-size:15px;font-weight:950;line-height:1}.calc-value.good .field-status{color:var(--lab-good)}.calc-value.bad .field-status{color:var(--lab-bad)}.calc-formula{display:flex;align-items:center;justify-content:center;gap:5px;min-height:25px;margin-top:5px;padding:4px 6px;border:1px solid #b9d9d3;border-radius:7px;background:var(--general-soft);color:#275d58;font:850 9px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;text-align:center}.calc-card.pending{min-height:126px;border-style:dashed;background:#fafbfc;color:#7a858c;opacity:.72}.calc-card.pending .mini-rect{border-color:#9ca8b1;background:#f1f4f6}.calc-card.pending .mini-w,.calc-card.pending .mini-h{color:#7b878f}.surface-parts.ghost{opacity:.55}.ghost-symbol{text-align:center;color:#738089;font:900 14px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.ghost-volume{height:65px;display:grid;grid-template-columns:1fr 1fr 1.15fr;gap:6px;align-items:center}.ghost-volume span,.ghost-volume strong{display:grid;place-items:center;height:42px;border:1px solid #c7cfd4;border-radius:7px;background:#f6f8f9;color:#758189;font:900 13px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.ghost-volume strong{border-color:#9fc8ba;background:#eef6f2}.discovery-progress{display:flex;align-items:center;justify-content:center;gap:8px;margin:-1px 0 7px;color:#5e6970}.discovery-dots{display:flex;gap:6px}.discovery-dots i{width:10px;height:10px;border:1px solid #aeb8bf;border-radius:50%;background:#fff}.discovery-dots i.on{border-color:var(--lab-accent);background:var(--lab-accent)}.discovery-progress strong{font-size:8px;font-weight:850}.calc-complete{margin-top:7px;min-height:22px;display:flex;align-items:center;gap:6px;color:var(--lab-good);font-size:8px;font-weight:850}.calc-complete[hidden]{display:none}.calc-complete::before{content:'✓';display:grid;place-items:center;width:17px;height:17px;border-radius:50%;background:var(--lab-good-soft);border:1px solid #acd3ba;font-weight:950}.next-card{position:absolute;z-index:20;left:50%;top:14px;transform:translateX(-50%);width:min(355px,calc(100% - 28px));padding:11px 12px;border:1px solid #9cc7aa;border-radius:12px;background:rgba(247,252,248,.985);box-shadow:0 12px 30px rgba(29,29,31,.16);text-align:center;animation:nextCardIn .2s ease-out}.next-card[hidden]{display:none}.next-copy strong{display:block;color:#2e6d4b;font-size:11px}.next-copy span{display:block;margin:3px auto 0;max-width:40ch;color:#52705f;font-size:8.5px;line-height:1.32}.next-actions{display:grid;gap:6px;margin-top:8px}.next-card button{width:100%;min-height:32px;border:1px solid var(--lab-good);border-radius:var(--lab-control-radius);background:var(--lab-good);color:#fff;font-size:9px;font-weight:900}.next-card.has-upgrade #nextProblem{background:#fff;color:#2e6d4b}.next-upgrade{margin-top:9px;padding:9px;border:1px solid #b7c8df;border-radius:9px;background:#f3f7fc;text-align:left}.next-upgrade[hidden]{display:none}.next-upgrade strong{display:block;color:#365b88;font-size:10px}.next-upgrade span{display:block;margin-top:3px;color:#607184;font-size:8.5px;line-height:1.34}.next-upgrade button{margin-top:7px;border-color:var(--lab-accent);background:var(--lab-accent);color:#fff}.next-card button:focus-visible{outline:3px solid var(--lab-focus);outline-offset:3px}@keyframes nextCardIn{from{opacity:0;transform:translate(-50%,-6px)}to{opacity:1;transform:translate(-50%,0)}}.source-note{margin:9px 2px 0;color:var(--lab-muted);font-size:8px;line-height:1.35}
+/* SVG */
+.svg-kicker{font:850 9px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#6f7980;letter-spacing:.05em}.svg-label{font:780 10px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#3d474e}.svg-value{font:850 12px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;fill:#263139}.svg-small{font:760 8px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#6f7980}.svg-axis{stroke:#aeb8bf;stroke-width:1.4}.svg-dim{stroke:#63727c;stroke-width:1.4;stroke-dasharray:4 3}.svg-target{stroke:var(--lab-good);stroke-width:2}.svg-budget{stroke:var(--lab-bad);stroke-width:2}.front-cap{fill:rgba(82,119,184,.20);stroke:var(--cap);stroke-width:2.2}.back-cap{fill:rgba(82,119,184,.09);stroke:#7594ca;stroke-width:1.6;stroke-dasharray:5 4}.side-top{fill:rgba(209,132,38,.18);stroke:#c57a1f;stroke-width:1.6}.side-right{fill:rgba(209,132,38,.27);stroke:#c57a1f;stroke-width:1.6}.side-bottom{fill:rgba(209,132,38,.10);stroke:#c57a1f;stroke-width:1.2}.slice{fill:none;stroke:#4b8a72;stroke-width:1.2;stroke-dasharray:4 4;opacity:.6}.volume-beam{stroke:var(--volume);stroke-width:5;stroke-linecap:round;opacity:.22}.handle{fill:#fff;stroke:var(--lab-accent);stroke-width:3;cursor:grab}.handle.active{fill:var(--lab-accent-soft)}.handle:focus{outline:none}.handle-hit{fill:transparent;cursor:grab}.handle.locked,.handle-hit.locked{cursor:not-allowed}.handle-arrow{stroke:var(--lab-accent);stroke-width:2.4;stroke-linecap:round}.fixed-chip{fill:#f4f0fb;stroke:#c8bae5}.success-zone{fill:rgba(24,121,78,.08);stroke:#9ac9aa;stroke-width:1}.skin-cap{fill:rgba(82,119,184,.20);stroke:var(--cap);stroke-width:1.7}.band-a{fill:rgba(209,132,38,.18)}.band-b{fill:rgba(209,132,38,.32)}.strip-border{fill:none;stroke:#b96f17;stroke-width:1.8}.budget-line{stroke:var(--lab-bad);stroke-width:2;stroke-dasharray:5 4}.area-lock{fill:#f4f0fb;stroke:#c8bae5}.meter-bg{fill:#eef1f3}.meter-good{fill:#8cc6a0}.meter-bad{fill:#db8d84}
+@media(max-width:900px){.workspace{grid-template-columns:1fr}.skin-shell{max-width:720px}.mission{grid-template-columns:1fr}.mission-status{justify-content:flex-start}.lab-manifest-header{grid-template-columns:1fr}.lab-syllabus-chips{justify-content:flex-start}}
+@media(max-width:620px){main{width:min(100% - 12px,1200px);margin-top:8px}.visual-panel{padding:7px}.goal-bands{grid-template-columns:1fr}.calc-chain{grid-template-columns:1fr}.calc-arrow{height:18px;transform:rotate(90deg)}.next-card{top:8px}.visual-head span,.skin-head span{display:none}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important;scroll-behavior:auto!important}}
+
+/* v4 polish: readable labels, compact evidence, subtle target snap and interaction-first onboarding. */
+.working-dock{padding:10px 11px}.working-head strong{font-size:13px}
+.calc-chain{align-items:start}.calc-arrow{align-self:center}.calc-card{padding:9px;align-self:start}.calc-card-head strong{font-size:10px}.method-tag{font-size:7.5px}.mini-w,.mini-h{font-size:9px}.part-strip::after{font-size:9px}.calc-value>span:first-child{font-size:8.5px}.calc-value strong{font-size:12px}.calc-value small{font-size:8.5px}.calc-formula{font-size:10px}.discovery-progress strong,.calc-complete{font-size:9px}.source-note{font-size:9px;line-height:1.4}
+#solidSvg{aspect-ratio:760/430}#skinSvg{aspect-ratio:560/350}.visual-head span,.skin-head span{font-size:9.5px}.evidence{font-size:10.5px}
+.svg-kicker{font-size:10px}.svg-label{font-size:11px}.svg-value{font-size:13px}.svg-small{font-size:9px}
+.interaction-guide{position:absolute;z-index:28;inset:0;pointer-events:none}.interaction-guide[hidden]{display:none}.guide-arrow{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}.guide-arrow-path{fill:none;stroke:#9aa4aa;stroke-width:1.2;stroke-linecap:round;stroke-linejoin:round}.guide-card{position:absolute;width:min(210px,calc(100% - 18px));padding:7px 8px;border:1px solid #8faed1;border-radius:9px;background:rgba(251,253,255,.98);box-shadow:0 8px 20px rgba(39,57,70,.13)}.guide-kicker{display:block;color:var(--lab-accent);font-size:7px;font-weight:900;letter-spacing:.075em;text-transform:uppercase}.guide-card strong{display:block;margin-top:2px;color:#2f557f;font-size:10px;line-height:1.28}.guide-copy{display:block;margin-top:2px;color:#5f7184;font-size:7.8px;line-height:1.34}.guide-target{filter:drop-shadow(0 0 5px rgba(82,119,184,.9)) drop-shadow(0 0 9px rgba(82,119,184,.35));animation:guidePulse .8s ease-in-out infinite alternate}.guide-work-target{box-shadow:0 0 0 3px rgba(82,119,184,.28),0 0 0 6px rgba(82,119,184,.08)!important;animation:guideWorkPulse .8s ease-in-out infinite alternate}@keyframes guidePulse{to{filter:drop-shadow(0 0 7px rgba(82,119,184,1)) drop-shadow(0 0 13px rgba(82,119,184,.5))}}@keyframes guideWorkPulse{to{box-shadow:0 0 0 3px rgba(82,119,184,.42),0 0 0 8px rgba(82,119,184,.10)!important}}
+.next-card{transform:none!important;animation:nextCardV4 .18s ease-out!important;text-align:left}.next-copy strong{font-size:12px}.next-copy span{margin-left:0;margin-right:0;max-width:none;font-size:9px}.next-card[hidden]{display:none}@keyframes nextCardV4{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:620px){.guide-card{width:min(170px,calc(100% - 16px));padding:6px 7px}.guide-kicker{display:none}.guide-card strong{font-size:9.5px}.guide-copy{font-size:7.5px}.next-card{max-height:calc(100% - 16px);overflow:auto}.svg-kicker{font-size:15px}.svg-label{font-size:18px}.svg-value{font-size:20px}.svg-small{font-size:14px}.calc-card-head strong{font-size:11px}.method-tag{font-size:8px}.calc-value>span:first-child{font-size:9px}.calc-value strong{font-size:13px}.calc-formula{font-size:11px}}
+
+
+/* v6: calculation ownership follows the supplied maths-lab pattern exactly:
+   completed values are green with ✓; learner-owned empty values are yellow;
+   incorrect values are red with ×; dependent steps stay visibly locked. */
+.working-dock{padding:11px 12px 12px;overflow:hidden}
+.working-head{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:start;margin:0 0 9px;padding-bottom:8px;border-bottom:1px solid var(--lab-line)}
+.working-kicker{display:block;color:var(--lab-accent);font-size:8px;font-weight:900;letter-spacing:.065em;text-transform:uppercase}
+.working-head strong{display:block;margin-top:2px;font-size:13px;line-height:1.25}
+.working-intro{display:block;margin-top:3px;color:var(--lab-muted);font-size:9px;line-height:1.35;max-width:82ch}
+.work-count{align-self:center;color:#6b7780;font-size:8px;font-weight:850;white-space:nowrap}
+.work-flow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;align-items:stretch}
+.work-step{position:relative;min-width:0;padding:9px 9px 8px;border:1px solid var(--lab-line);border-radius:9px;background:#fbfcfd;transition:border-color .14s,background-color .14s,box-shadow .14s}
+.work-step.work-done{border-color:#a7d2b5;background:#f7fcf8;box-shadow:inset 3px 0 0 var(--lab-good)}
+.work-step.work-pending{border-color:#e0cd78;background:#fffdf5;box-shadow:inset 3px 0 0 #d0ad35}
+.work-step.work-bad{border-color:#dfa9a2;background:var(--lab-bad-soft);box-shadow:inset 3px 0 0 var(--lab-bad)}
+.work-step.locked{border-style:dashed;background:#f5f7f8;opacity:.68;box-shadow:none}
+.work-step-head{display:flex;align-items:center;gap:6px;margin-bottom:5px;min-width:0}
+.step-num{width:19px;height:19px;flex:0 0 auto;display:grid;place-items:center;border-radius:50%;background:#edf1f4;color:#53616b;font-size:8px;font-weight:900}
+.work-step.work-done .step-num{background:var(--lab-good);color:#fff}.work-step.work-pending .step-num{background:#d0ad35;color:#fff}.work-step.work-bad .step-num{background:var(--lab-bad);color:#fff}
+.work-step-head strong{min-width:0;font-size:10px;line-height:1.2}.work-scope{margin-left:auto;color:#748088;font-size:7px;font-weight:850;letter-spacing:.045em;text-transform:uppercase;white-space:nowrap}
+.work-explain{min-height:31px;color:#5d6971;font-size:8.5px;line-height:1.35}.work-explain strong{color:#34434c}
+.work-formula{margin-top:6px;padding:6px 7px;border:1px solid #d8e2e7;border-radius:7px;background:#fff;color:#34434c;font:850 10px/1.3 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;overflow-wrap:anywhere;text-align:center}
+.work-formula.general{border-color:#b9d9d3;background:var(--general-soft);color:#275d58}.work-formula.specific{border-color:#c8bae5;background:var(--specific-soft);color:#604c8c}
+.work-values{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:6px}.work-values.one{grid-template-columns:1fr}.work-values.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.work-box{position:relative;min-width:0;min-height:48px;padding:5px 6px;border:1px solid var(--lab-line);border-radius:7px;display:grid;gap:2px;align-content:center;background:#fff;transition:border-color .14s,background-color .14s,box-shadow .14s}
+.work-box>span:first-child{color:#68747c;font-size:7.2px;font-weight:850;letter-spacing:.02em;text-transform:uppercase}.work-box strong{font:900 10.5px/1.2 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;overflow-wrap:anywhere}.work-box small{color:inherit;font-size:8px;font-weight:800}
+.work-box.auto{border-color:#a9d4b9;background:var(--lab-good-soft);box-shadow:inset 3px 0 0 var(--lab-good)}.work-box.auto strong{color:var(--lab-good)}
+.work-box.fixed{border-color:#c8bae5;background:var(--specific-soft);box-shadow:inset 3px 0 0 #8169b3}.work-box.fixed strong{color:#5f4b8e}
+.work-box.entry{border-width:2px}.work-box.entry.pending{border-color:#d8c36a;background:#fffdf5;box-shadow:inset 3px 0 0 #d0ad35}.work-box.entry.good{border-color:var(--lab-good);background:var(--lab-good-soft);box-shadow:inset 3px 0 0 var(--lab-good)}.work-box.entry.bad{border-color:var(--lab-bad);background:var(--lab-bad-soft);box-shadow:inset 3px 0 0 var(--lab-bad)}.work-box.entry.disabled{border:1px dashed #c5cdd2;background:#f5f7f8;box-shadow:none;opacity:.75}
+.work-entry-line,.auto-value-line{display:grid;grid-template-columns:minmax(0,1fr) 19px;gap:5px;align-items:center}.work-entry-line input{width:100%;height:26px;padding:0;border:0;background:transparent;color:#25313a;font:900 11px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;outline:0;min-width:0}.work-entry-line input::placeholder{color:#9a8b50}.work-box.entry.good input{color:var(--lab-good)}.work-box.entry.bad input{color:var(--lab-bad)}.work-box.entry.disabled input{color:#9aa4aa}
+.work-status{width:19px;height:19px;display:grid;place-items:center;border:1px solid #d8c36a;border-radius:50%;background:#fffdf5;color:#8a741f;font:950 11px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.work-box.auto .work-status,.work-box.entry.good .work-status{border-color:var(--lab-good);background:var(--lab-good);color:#fff}.work-box.entry.bad .work-status{border-color:var(--lab-bad);background:var(--lab-bad);color:#fff}.work-box.fixed .work-status{border-color:#8169b3;background:#8169b3;color:#fff}.work-box.entry.disabled .work-status{border-color:#c5cdd2;background:#f5f7f8;color:#9aa4aa}
+.work-box.entry:focus-within{outline:3px solid rgba(82,119,184,.18);outline-offset:1px;border-color:var(--lab-accent);background:#fff}
+.work-note{margin-top:6px;color:#738088;font-size:7.8px;line-height:1.3}.work-note strong{color:#3e4b53}.work-note.change{color:#8a5c19}.work-note.invariant{color:#367056}
+.working-summary{margin-top:8px;min-height:32px;padding:7px 9px;border:1px solid var(--lab-line);border-radius:8px;background:var(--lab-paper);color:#627078;font-size:8.5px;line-height:1.35}.working-summary.good{border-color:#a9cfb6;background:var(--lab-good-soft);color:#35634b}.working-summary.warn{border-color:#dfc68e;background:var(--lab-warn-soft);color:#75540f}.working-summary strong{color:inherit}
+.source-note{max-width:92ch;font-size:8.5px;line-height:1.4}
+.work-scope{font-size:8px}.work-explain{font-size:9.5px;line-height:1.4}.work-note{font-size:8.5px}.working-summary{font-size:9.5px}
+@media(max-width:980px){.work-flow{grid-template-columns:1fr 1fr}.work-values.three{grid-template-columns:1fr 1fr 1fr}}
+@media(max-width:620px){.working-head{grid-template-columns:1fr}.work-count{display:none}.work-flow{grid-template-columns:1fr}.work-values.three{grid-template-columns:repeat(3,minmax(0,1fr))}.work-explain{min-height:0}.work-step-head strong{font-size:11px}.work-explain{font-size:9.5px}.work-formula{font-size:11px}.work-box>span:first-child{font-size:8.5px}.work-box strong{font-size:12px}.source-note{font-size:9px}}
+
+</style>
+
+<style data-v6-narrow-fix>
+@media(max-width:620px){
+  .svg-kicker{font-size:10px!important}.svg-label{font-size:11px!important}.svg-value{font-size:13px!important}.svg-small{font-size:9px!important}
+  .work-explain{font-size:9px}.work-box>span:first-child{font-size:8px}.work-note{font-size:8px}
+}
+</style>
+</head>
+<body data-lab-layout="standard">
+<main>
+<!-- LAB_MANIFEST_HEADER_START -->
+<header class="lab-manifest-header">
+  <div class="lab-manifest-heading">
+    <h1 data-lab-manifest="title">Surface Area and Volume of Solids</h1>
+  <p class="lab-manifest-subtitle" data-lab-manifest="subtitle">Change the solid, inspect the material and capacity consequences, then account for every surface and volume term.</p>
+  </div>
+  <!-- LAB_SYLLABUS_CHIPS_START -->
+<nav class="lab-syllabus-chips" aria-label="Syllabus alignment">
+  <section class="lab-syllabus-chip" style="--syllabus-chip-bg:#edf8f3;--syllabus-chip-border:#91c4b0;--syllabus-chip-text:#235f4e;--syllabus-chip-hover:#dcf0e7" aria-label="IGCSE 0580 syllabus alignment">
+    <a class="lab-syllabus-primary-link" href="https://www.cambridgeinternational.org/Images/662466-2025-2027-syllabus.pdf#page=25" target="_blank" rel="noopener noreferrer" aria-label="Open IGCSE 0580 syllabus section C5.4"></a>
+    <span class="lab-syllabus-name">IGCSE 0580</span>
+    <span class="lab-syllabus-divider" aria-hidden="true">·</span>
+    <span class="lab-syllabus-sections"><a class="lab-syllabus-section is-primary" href="https://www.cambridgeinternational.org/Images/662466-2025-2027-syllabus.pdf#page=25" target="_blank" rel="noopener noreferrer" aria-label="Open primary IGCSE 0580 syllabus section C5.4">C5.4</a><span class="lab-syllabus-separator" aria-hidden="true">,</span><a class="lab-syllabus-section" href="https://www.cambridgeinternational.org/Images/662466-2025-2027-syllabus.pdf#page=49" target="_blank" rel="noopener noreferrer" aria-label="Open IGCSE 0580 syllabus section E5.4">E5.4</a></span>
+  </section>
+</nav>
+<!-- LAB_SYLLABUS_CHIPS_END -->
+</header>
+<!-- LAB_MANIFEST_HEADER_END -->
+<span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span>
+<span data-lab-authored-subtitle-slot hidden></span>
+
+<section class="panel mission">
+  <div class="mission-copy">
+    <span id="problemKicker" class="mission-kicker"></span>
+    <strong id="missionTitle"></strong>
+    <span id="missionHint"></span>
+  </div>
+  <div class="mission-tools"><div class="complexity"><div class="complexity-copy"><strong>Working required</strong><span id="complexityHelp"></span></div><div class="complexity-switch" role="group" aria-label="Working required"><button type="button" data-work-level="0" class="active" aria-pressed="true">Off</button><button type="button" data-work-level="1" aria-pressed="false">Some</button><button type="button" data-work-level="2" aria-pressed="false">All</button></div></div><button id="resetProblem" type="button">Reset</button></div>
+</section>
+
+<div id="interactionGuide" class="interaction-guide" hidden aria-live="polite">
+  <svg id="guideArrow" class="guide-arrow" aria-hidden="true">
+    <defs><marker id="guideArrowHead" markerWidth="6" markerHeight="6" refX="5.2" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0.6 0.8 L5 3 L0.6 5.2" fill="none" stroke="#9aa4aa" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"></path></marker></defs>
+    <path id="guideArrowPath" class="guide-arrow-path" marker-end="url(#guideArrowHead)"></path>
+  </svg>
+  <div id="guideCard" class="guide-card">
+    <span class="guide-kicker">Start here</span>
+    <strong id="guideTitle"></strong>
+    <span id="guideCopy" class="guide-copy"></span>
+  </div>
+</div>
+
+<section class="workspace">
+  <section class="panel visual-panel">
+    <div class="visual-head"><strong>Uniform cross-section → solid</strong><span id="solidHeadNote"></span></div>
+    <div class="solid-shell">
+      <svg id="solidSvg" viewBox="0 0 760 430" role="img" aria-labelledby="solidTitle solidDesc">
+        <title id="solidTitle">Interactive rectangular prism</title>
+        <desc id="solidDesc">The learner changes the prism length or reshapes its rectangular cross-section while the linked volume and surface representations update.</desc>
+        <g id="solidLayer"></g>
+      </svg>
+      <section id="nextCard" class="next-card" hidden aria-live="polite">
+        <div class="next-copy"><strong>Problem complete</strong><span id="nextCardText"></span></div>
+        <div id="nextUpgrade" class="next-upgrade" hidden><strong id="nextUpgradeTitle"></strong><span id="nextUpgradeText"></span><button id="upgradeWorking" type="button"></button></div>
+        <div class="next-actions"><button id="nextProblem" type="button">Next problem</button></div>
+      </section>
+    </div>
+    <div class="goal-bands">
+      <div id="volumeBand" class="goal-band"><span>internal volume</span><strong id="volumeReadout"></strong></div>
+      <div id="surfaceBand" class="goal-band"><span>exposed surface</span><strong id="surfaceReadout"></strong></div>
+    </div>
+    <div id="evidence" class="evidence" role="status" aria-live="polite"></div>
+  </section>
+
+  <section class="panel visual-panel">
+    <div class="skin-head"><strong>Same solid → outer material laid flat</strong><span>two end caps + the lengthwise strip</span></div>
+    <div class="skin-shell">
+      <svg id="skinSvg" viewBox="0 0 560 350" role="img" aria-labelledby="skinTitle skinDesc">
+        <title id="skinTitle">Unwrapped prism surface</title>
+        <desc id="skinDesc">The two end faces contribute two cross-section areas while the side strip has length times cross-section perimeter.</desc>
+        <g id="skinLayer"></g>
+      </svg>
+    </div>
+  </section>
+</section>
+
+<section id="workingDock" class="panel working-dock" aria-label="Calculation working"></section>
+
+
+</main>
+<script>
+(()=>{
+'use strict';
+const $=id=>document.getElementById(id),svgNS='http://www.w3.org/2000/svg';
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),snap=(v,step=.1)=>Math.round(v/step)*step;
+const fmt=(v,d=1)=>Number(v).toFixed(d).replace(/\.0$/,'');
+const close=(a,b,t=.01)=>Number.isFinite(a)&&Math.abs(a-b)<=t;
+const valueOf=k=>{const n=Number(state.answers[k]);return state.answers[k]!==''&&Number.isFinite(n)?n:NaN};
+function rng(seed){let value=seed>>>0;value=Math.imul(value^(value>>>16),0x7feb352d);value=Math.imul(value^(value>>>15),0x846ca68b);value=(value^(value>>>16))>>>0;return()=>{value=(Math.imul(value,1664525)+1013904223)>>>0;return value/4294967296}}
+const EXTRUDE_RECTS=[[8,6],[10,6],[12,5],[12,7],[14,6],[10,8],[12,8]],TARGET_LENGTHS=[8,9,10,11,12,14,15];
+const RESHAPE_RECTS=[[12,6],[15,5],[14,6],[16,6],[15,8],[16,5],[14,8]],RESHAPE_LENGTHS=[8,9,10,11,12,13,14];
+function makeProblem(seed,type){
+  const random=rng(seed),kind=type||((state?.problemNumber||1)%2?'extrude':'reshape');
+  if(kind==='extrude'){
+    const [w,h]=EXTRUDE_RECTS[Math.floor(random()*EXTRUDE_RECTS.length)],A=w*h,P=2*(w+h),targetL=TARGET_LENGTHS[Math.floor(random()*TARGET_LENGTHS.length)];
+    const targetV=A*targetL,targetSA=2*A+P*targetL,extra=[1,1.5,2][Math.floor(random()*3)],budgetSA=Math.round(targetSA+P*extra),startL=clamp(targetL-(2+Math.floor(random()*4)),4,20);
+    return{seed,type:'extrude',w,h,startL,targetL,targetV,targetSA,budgetSA};
+  }
+  const [startW,startH]=RESHAPE_RECTS[Math.floor(random()*RESHAPE_RECTS.length)],A=startW*startH,L=RESHAPE_LENGTHS[Math.floor(random()*RESHAPE_LENGTHS.length)],P0=2*(startW+startH),startSA=2*A+P0*L,minSA=2*A+4*Math.sqrt(A)*L;
+  let budgetSA=Math.round((minSA+(startSA-minSA)*(.34+random()*.14))/5)*5;budgetSA=Math.min(budgetSA,Math.floor(startSA-10));
+  const minW=Math.max(4.5,A/18),maxW=Math.min(18,A/4.5);
+  return{seed,type:'reshape',A,L,startW,startH,targetV:A*L,budgetSA,minW,maxW};
+}
+const guideSeen={extrude:false,reshape:false,some:false,all:false};
+const state={problemNumber:1,workingLevel:0,solvedAtLevel:[0,0,0],problem:null,w:0,h:0,L:0,moves:0,lengthDrag:null,widthDrag:null,lastChange:null,answers:{A:'',P:'',L:'',V:'',side:'',SA:''},checked:false,bad:[],workingOK:false,workMessage:'',solved:false,counted:false,solvedSnapshot:null,startGuideOpen:true,seedBase:((Date.now()/1000)>>>0)||1};
+function current(){return state.problem}
+function metrics(){const A=state.w*state.h,P=2*(state.w+state.h),V=A*state.L,side=P*state.L,ends=2*A,SA=ends+side;return{A,P,V,side,ends,SA}}
+function freshProblem(problem){state.problem=problem;state.w=problem.type==='extrude'?problem.w:problem.startW;state.h=problem.type==='extrude'?problem.h:problem.A/problem.startW;state.L=problem.type==='extrude'?problem.startL:problem.L;state.moves=0;state.lengthDrag=null;state.widthDrag=null;state.lastChange=null;state.answers={A:'',P:'',L:'',V:'',side:'',SA:''};state.checked=false;state.bad=[];state.workingOK=false;state.workMessage='';state.solved=false;state.counted=false;state.solvedSnapshot=null;state.startGuideOpen=state.workingLevel===0&&!guideSeen[problem.type];renderAll()}
+function startProblem(seed=((state.seedBase+state.problemNumber*7919)>>>0)||1,type){freshProblem(makeProblem(seed,type))}
+function visualSuccess(){const p=current(),m=metrics();if(p.type==='extrude')return Math.abs(m.V-p.targetV)<=.05&&m.SA<=p.budgetSA+.05;return m.SA<=p.budgetSA+.05}
+function currentComplete(){if(state.workingLevel===0)return state.moves>=2&&visualSuccess();return visualSuccess()&&state.workingOK}
+function markSolved(){const done=currentComplete();if(!done){state.solved=false;return}if(!state.solved)state.solvedSnapshot={...metrics(),w:state.w,h:state.h,L:state.L};state.solved=true;if(!state.counted){state.counted=true;state.solvedAtLevel[state.workingLevel]++}}
+function suggestedWorkLevel(){if(!state.solved||state.workingLevel>=2)return-1;return state.solvedAtLevel[state.workingLevel]>=3?state.workingLevel+1:-1}
+function statusToneExact(value,target){if(Math.abs(value-target)<=.05)return'good';return value<target?'warn':'bad'}
+function add(name,attrs={},content){const n=document.createElementNS(svgNS,name);Object.entries(attrs).forEach(([k,v])=>n.setAttribute(k,String(v)));if(content!==undefined)n.textContent=content;return n}
+function poly(points,cls){return add('polygon',{points:points.map(p=>p.join(',')).join(' '),class:cls})}
+function line(x1,y1,x2,y2,cls,extra={}){return add('line',{x1,y1,x2,y2,class:cls,...extra})}
+function text(x,y,str,cls,extra={}){return add('text',{x,y,class:cls,...extra},str)}
+function svgPoint(svg,e){const pt=svg.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;return pt.matrixTransform(svg.getScreenCTM().inverse())}
+function solidGeometry(){const scale=13,cx=225,cy=245,wpx=state.w*scale,hpx=state.h*scale,dx=state.L*8,dy=-state.L*3.2;const f=[[cx-wpx/2,cy-hpx/2],[cx+wpx/2,cy-hpx/2],[cx+wpx/2,cy+hpx/2],[cx-wpx/2,cy+hpx/2]],b=f.map(([x,y])=>[x+dx,y+dy]);return{scale,cx,cy,wpx,hpx,dx,dy,f,b,frontC:[cx,cy],backC:[cx+dx,cy+dy]}}
+function renderSolid(){
+  const g=$('solidLayer');g.replaceChildren();const geo=solidGeometry(),{f,b,frontC,backC}=geo,m=metrics(),p=current();
+  g.append(add('rect',{x:0,y:0,width:760,height:430,fill:'#fbfcfd'}),text(24,29,'UNIFORM CROSS-SECTION PRISM','svg-kicker'));
+  g.append(line(frontC[0],frontC[1],backC[0],backC[1],'volume-beam'));
+  g.append(poly([f[0],f[1],b[1],b[0]],'side-top'),poly([f[1],f[2],b[2],b[1]],'side-right'),poly([f[2],f[3],b[3],b[2]],'side-bottom'));
+  [0.25,0.5,0.75].forEach(t=>g.append(poly(f.map((q,i)=>[q[0]+geo.dx*t,q[1]+geo.dy*t]),'slice')));g.append(poly(b,'back-cap'),poly(f,'front-cap'));
+  g.append(line(f[3][0],f[3][1]+15,f[2][0],f[2][1]+15,'svg-dim'),text((f[2][0]+f[3][0])/2,f[2][1]+33,`w = ${fmt(state.w)} cm`,'svg-value',{'text-anchor':'middle'}));
+  g.append(line(f[0][0]-15,f[0][1],f[3][0]-15,f[3][1],'svg-dim'),text(f[0][0]-22,(f[0][1]+f[3][1])/2,`h = ${fmt(state.h,current().type==='reshape'?2:1)} cm`,'svg-value',{'text-anchor':'middle',transform:`rotate(-90 ${f[0][0]-22} ${(f[0][1]+f[3][1])/2})`}));
+  const chipX=28,chipY=56;g.append(add('rect',{x:chipX,y:chipY,width:194,height:65,rx:9,fill:'#fff',stroke:'#d7dde1'}),text(chipX+10,chipY+18,'CROSS-SECTION','svg-kicker'),text(chipX+10,chipY+38,`A = ${fmt(m.A)} cm²`,'svg-value'),text(chipX+102,chipY+38,`P = ${fmt(m.P,current().type==='reshape'?2:1)} cm`,'svg-value'),text(chipX+10,chipY+54,p.type==='extrude'?'A and P repeat unchanged along L':'A is locked; changing w and h changes P','svg-small'));
+  if(p.type==='extrude'){
+    const axisY=386,axisX=82,pxPerCm=24,minL=4,maxL=22,ax=v=>axisX+(v-minL)*pxPerCm;
+    g.append(line(ax(minL),axisY,ax(maxL),axisY,'svg-axis'));
+    for(let v=minL;v<=maxL;v+=2){g.append(line(ax(v),axisY-5,ax(v),axisY+5,'svg-axis'),text(ax(v),axisY+19,String(v),'svg-small',{'text-anchor':'middle'}))}
+    g.append(text(ax(state.L),axisY-10,`L ${fmt(state.L)} cm`,'svg-value',{'text-anchor':'middle'}));
+    const locked=state.workingLevel>0,[hx,hy]=backC;g.append(line(frontC[0],frontC[1],hx,hy,'handle-arrow'));const hit=add('circle',{id:'lengthHandleHit',cx:hx,cy:hy,r:22,class:`handle-hit${locked?' locked':''}`}),handle=add('circle',{id:'lengthHandle',cx:hx,cy:hy,r:9,class:`handle${locked?' locked':' active'}`,tabindex:locked?-1:0,role:'slider','aria-label':'Prism length','aria-valuemin':4,'aria-valuemax':22,'aria-valuenow':fmt(state.L,1)});g.append(hit,handle,text(hx+16,hy-12,locked?'length set by working':'drag length','svg-small'));
+  }else{
+    const boxY=342;g.append(add('rect',{x:82,y:boxY,width:430,height:64,rx:9,class:'fixed-chip'}),text(96,boxY+17,'LOCKED IN THIS DESIGN','svg-kicker'),text(96,boxY+40,`A = ${fmt(p.A)} cm²   ·   L = ${fmt(p.L)} cm`,'svg-value'),text(96,boxY+57,`V = ${fmt(p.targetV,0)} cm³ fixed while the shape changes`,'svg-label'));
+    const x=f[1][0],y=(f[1][1]+f[2][1])/2;g.append(line(x-26,y,x+26,y,'handle-arrow'));const wh=add('circle',{id:'widthHandleHit',cx:x,cy:y,r:22,class:'handle-hit'}),wc=add('circle',{id:'widthHandle',cx:x,cy:y,r:9,class:'handle active',tabindex:0,role:'slider','aria-label':'Cross-section width with area locked','aria-valuemin':fmt(p.minW,1),'aria-valuemax':fmt(p.maxW,1),'aria-valuenow':fmt(state.w,1)});g.append(wh,wc,text(x+18,y+34,'drag','svg-small'));
+  }
+}
+function renderSkin(){
+  const g=$('skinLayer');g.replaceChildren();const m=metrics(),p=current();g.append(add('rect',{x:0,y:0,width:560,height:350,fill:'#fbfcfd'}),text(20,28,'OUTER SURFACE','svg-kicker'));
+  const capScale=5.8,cw=state.w*capScale,ch=state.h*capScale,capY=72,c1x=25;g.append(text(25,48,'two end caps','svg-label'),add('rect',{x:c1x,y:capY,width:cw,height:ch,rx:4,class:'skin-cap'}),add('rect',{x:c1x+cw+14,y:capY,width:cw,height:ch,rx:4,class:'skin-cap'}),text(25,capY+ch+22,`2A = ${fmt(m.ends,0)} cm²`,'svg-value'),text(25,capY+ch+38,p.type==='extrude'?'unchanged when only L changes':'unchanged because A is locked','svg-small'));
+  const stripX=250,stripY=72,stripW=state.L*13,bandScale=3.1,segs=[state.w,state.h,state.w,state.h],classes=['band-a','band-b','band-a','band-b'];let yy=stripY;g.append(text(stripX,48,'lengthwise faces → one strip','svg-label'),text(stripX+stripW/2,64,`P × L = ${fmt(m.side,current().type==='reshape'?1:0)} cm²`,'svg-value',{'text-anchor':'middle'}));segs.forEach((s,i)=>{const bh=s*bandScale;g.append(add('rect',{x:stripX,y:yy,width:stripW,height:bh,class:classes[i]}),text(stripX+5,yy+Math.max(11,bh/2+3),`${i%2===0?'w':'h'} × L`,'svg-small'));yy+=bh});g.append(add('rect',{x:stripX,y:stripY,width:stripW,height:yy-stripY,class:'strip-border'}),line(stripX,yy+12,stripX+stripW,yy+12,'svg-dim'),text(stripX+stripW/2,yy+28,`length ${fmt(state.L)} cm`,'svg-small',{'text-anchor':'middle'}));
+  if(p.type==='reshape')g.append(add('rect',{x:20,y:222,width:222,height:46,rx:9,class:'area-lock'}),text(31,239,'INVARIANTS','svg-kicker'),text(31,258,`A = ${fmt(m.A)} cm²   ·   L = ${fmt(state.L)} cm   ·   V fixed`,'svg-value'));
+  const mx=20,my=294,mw=520,mh=18,ratio=clamp(m.SA/p.budgetSA,0,1.28);g.append(text(mx,my-10,`surface = 2A + P×L = ${fmt(m.SA,current().type==='reshape'?1:0)} cm²`,'svg-value'),add('rect',{x:mx,y:my,width:mw,height:mh,rx:9,class:'meter-bg'}),add('rect',{x:mx,y:my,width:Math.min(mw,mw*ratio),height:mh,rx:9,class:m.SA<=p.budgetSA?'meter-good':'meter-bad'}));const bx=mx+mw;g.append(line(bx,my-5,bx,my+mh+5,'budget-line'),text(bx,my+34,`${fmt(p.budgetSA,0)} cm² allowance`,'svg-small',{'text-anchor':'end',fill:'#b42318'}));if(ratio>1)g.append(text(mx+mw-4,my+13,`${fmt(m.SA-p.budgetSA,0)} over`,'svg-small',{'text-anchor':'end',fill:'#7a2f28'}));
+}
+
+function reshapeSuccessInterval(p=current()){
+  if(!p||p.type!=='reshape')return null;
+  const c=(p.budgetSA-2*p.A)/(2*p.L),disc=c*c-4*p.A;
+  if(disc<0)return null;
+  const root=Math.sqrt(disc);return{lo:clamp((c-root)/2,p.minW,p.maxW),hi:clamp((c+root)/2,p.minW,p.maxW)};
+}
+function snapInteractionValue(value,kind){
+  const p=current();
+  if(kind==='length'&&p.type==='extrude'&&Math.abs(value-p.targetL)<=.31)return p.targetL;
+  if(kind==='width'&&p.type==='reshape'){
+    const band=reshapeSuccessInterval(p);if(!band)return value;
+    if(value<band.lo&&band.lo-value<=.21)return band.lo;
+    if(value>band.hi&&value-band.hi<=.21)return band.hi;
+  }
+  return value;
+}
+function clearGuideTargets(){
+  document.querySelectorAll('.guide-target').forEach(n=>n.classList.remove('guide-target'));
+  document.querySelectorAll('.guide-work-target').forEach(n=>n.classList.remove('guide-work-target'));
+}
+function dismissStartGuide(){
+  if(!state.startGuideOpen)return;state.startGuideOpen=false;if(state.workingLevel===0&&current())guideSeen[current().type]=true;
+  const guide=$('interactionGuide');if(guide)guide.hidden=true;clearGuideTargets();
+}
+function startGuideInfo(){
+  const p=current();if(!p||state.workingLevel>0)return null;
+  if(p.type==='extrude')return{title:'Drag the end handle',copy:'So that you can compare how changing only length affects the space inside and the material outside.',target:'length'};
+  return{title:'Drag the width handle',copy:'So that you can compare equal-volume shapes and see perimeter change the lengthwise surface.',target:'width'};
+}
+function guideTarget(info=startGuideInfo()){
+  if(!info)return null;
+  if(info.target==='length')return $('lengthHandle');
+  if(info.target==='width')return $('widthHandle');
+  if(info.target==='work')return document.querySelector(`[data-answer="${info.key}"]`)?.closest('.calc-value')||document.querySelector(`[data-answer="${info.key}"]`);
+  return null;
+}
+function positionInteractionGuide(){
+  const guide=$('interactionGuide'),card=$('guideCard'),path=$('guideArrowPath'),host=document.querySelector('main');
+  if(!guide||guide.hidden||!card||!path||!host)return;
+  const target=guideTarget();if(!target)return;
+  const hr=host.getBoundingClientRect(),tr=target.getBoundingClientRect();
+  const targetX=tr.left-hr.left+tr.width/2,targetY=tr.top-hr.top+tr.height/2;
+  const cw=matchMedia('(max-width:620px)').matches?Math.min(170,Math.max(150,hr.width*.44)):Math.min(210,Math.max(176,hr.width*.18));card.style.width=`${cw}px`;
+  const ch=card.offsetHeight||64,gap=22,margin=8;
+  const roomRight=hr.width-targetX-gap,roomLeft=targetX-gap;
+  let left,side;
+  if(roomRight>=cw+margin){left=targetX+gap;side='right'}
+  else if(roomLeft>=cw+margin){left=targetX-gap-cw;side='left'}
+  else{left=Math.max(margin,Math.min(hr.width-cw-margin,targetX-cw/2));side='centre'}
+  let top=targetY-ch*.55;
+  if(side==='centre')top=targetY+gap;
+  top=Math.max(margin,Math.min(top,Math.max(margin,hr.height-ch-margin)));
+  card.style.left=`${left}px`;card.style.top=`${top}px`;
+  const cardX=side==='right'?left:side==='left'?left+cw:left+cw/2;
+  const cardY=side==='centre'?(top<targetY?top+ch:top):top+ch*.58;
+  const stopX=targetX+(side==='right'?8:side==='left'?-8:0),stopY=targetY+(side==='centre'?(top<targetY?-8:8):-3);
+  if(side==='centre')path.setAttribute('d',`M ${cardX} ${cardY} Q ${cardX} ${(cardY+stopY)/2} ${stopX} ${stopY}`);
+  else{const midX=cardX+(stopX-cardX)*.48;path.setAttribute('d',`M ${cardX} ${cardY} L ${midX} ${cardY} Q ${stopX} ${cardY} ${stopX} ${stopY}`)}
+}
+function renderStartGuide(){
+  const guide=$('interactionGuide');if(!guide)return;clearGuideTargets();
+  if(!state.startGuideOpen||state.solved){guide.hidden=true;return}
+  const info=startGuideInfo(),target=guideTarget(info);if(!target){guide.hidden=true;return}
+  $('guideTitle').textContent=info.title;$('guideCopy').textContent=info.copy;guide.hidden=false;
+  if(info.target==='work')target.classList.add('guide-work-target');else target.classList.add('guide-target');
+  requestAnimationFrame(positionInteractionGuide);
+}
+function overlapArea(a,b){const x=Math.max(0,Math.min(a.right,b.right)-Math.max(a.left,b.left)),y=Math.max(0,Math.min(a.bottom,b.bottom)-Math.max(a.top,b.top));return x*y}
+function positionCompletionModal(){
+  const shell=document.querySelector('.solid-shell'),card=$('nextCard');if(!shell||card.hidden)return;
+  if(matchMedia('(max-width:620px)').matches){card.style.left='8px';card.style.right='8px';card.style.top='8px';card.style.bottom='auto';card.style.width='auto';return}
+  const lr=shell.getBoundingClientRect(),cr=card.getBoundingClientRect(),m=10,w=cr.width,h=cr.height,cl=(v,a,b)=>Math.max(a,Math.min(b,v));
+  const pts=[{x:m,y:m},{x:lr.width-w-m,y:m},{x:m,y:lr.height-h-m},{x:lr.width-w-m,y:lr.height-h-m},{x:lr.width-w-m,y:(lr.height-h)/2}].map(c=>({x:cl(c.x,m,Math.max(m,lr.width-w-m)),y:cl(c.y,m,Math.max(m,lr.height-h-m))}));
+  const busy=[...$('solidSvg').querySelectorAll('text,#lengthHandle,#widthHandle,.front-cap,.back-cap')].map(el=>{const r=el.getBoundingClientRect();return{left:r.left-lr.left-9,right:r.right-lr.left+9,top:r.top-lr.top-9,bottom:r.bottom-lr.top+9}}).filter(r=>r.right>0&&r.left<lr.width&&r.bottom>0&&r.top<lr.height);
+  let best=pts[0],scoreBest=Infinity;for(const c of pts){const box={left:c.x,right:c.x+w,top:c.y,bottom:c.y+h};let score=busy.reduce((sum,r)=>sum+overlapArea(box,r),0);if(c.x<lr.width/2)score+=60;for(const r of busy){const d=Math.hypot(c.x+w/2-(r.left+r.right)/2,c.y+h/2-(r.top+r.bottom)/2);if(d<90)score+=(90-d)*3}if(score<scoreBest){scoreBest=score;best=c}}
+  card.style.left=`${best.x}px`;card.style.right='auto';card.style.top=`${best.y}px`;card.style.bottom='auto';card.style.width=`${w}px`;
+}
+function renderBands(){const p=current(),m=metrics(),vb=$('volumeBand'),sb=$('surfaceBand');if(p.type==='extrude'){$('volumeReadout').textContent=`${fmt(m.V,0)} / ${fmt(p.targetV,0)} cm³` ;vb.className='goal-band '+statusToneExact(m.V,p.targetV)}else{$('volumeReadout').textContent=`${fmt(m.V,0)} cm³ · fixed`;vb.className='goal-band good'}$('surfaceReadout').textContent=`${fmt(m.SA,p.type==='reshape'?1:0)} / ${fmt(p.budgetSA,0)} cm²`;sb.className='goal-band '+(m.SA<=p.budgetSA?'good':'bad')}
+function renderEvidence(){const p=current(),m=metrics(),e=$('evidence');e.className='evidence';if(state.solved){const s=state.solvedSnapshot;e.classList.add('good');e.innerHTML=p.type==='extrude'?`A valid design was signed off at <strong>L = ${fmt(s.L)} cm</strong>. Keep changing the state to test what breaks: the signed-off result remains available below.`:`A valid shape was signed off with <strong>P = ${fmt(s.P,2)} cm</strong>. Keep reshaping: volume remains fixed, while surface area follows the changing perimeter.`;return}
+  if(p.type==='extrude'){
+    if(state.workingLevel>0){e.innerHTML=`Direct length dragging is now locked. The same extrusion is controlled by your <strong>L</strong> calculation. The cross-section still contributes <strong>${fmt(m.A)} cm² volume per extra cm</strong> and <strong>${fmt(m.P)} cm² side area per extra cm</strong>.`;return}
+    if(state.moves===0)e.innerHTML='Drag the length handle to at least two different positions. Compare the repeated cross-section with the side strip and the two end caps.';
+    else if(state.moves===1)e.innerHTML=`The cross-section stayed <strong>A = ${fmt(m.A)} cm²</strong> and <strong>P = ${fmt(m.P)} cm</strong>. The two end caps are still <strong>${fmt(m.ends,0)} cm²</strong>.`;
+    else e.innerHTML=`General relationship exposed: each extra <strong>1 cm</strong> of length adds <strong>${fmt(m.A)} cm³</strong> of volume but <strong>${fmt(m.P)} cm²</strong> of side area. The end-cap term <strong>2A</strong> adds nothing extra as L changes.`;
+  }else{
+    if(state.moves===0)e.innerHTML='Drag the width handle. Height compensates so cross-section area A and length L stay fixed. Watch volume, perimeter and the laid-flat side strip.';
+    else if(state.lastChange){const c=state.lastChange;e.innerHTML=`A stayed <strong>${fmt(m.A)} cm²</strong> and V stayed <strong>${fmt(m.V,0)} cm³</strong>. Perimeter changed <strong>${fmt(c.beforeP,1)} → ${fmt(c.afterP,1)} cm</strong>, so surface changed <strong>${fmt(c.beforeSA,0)} → ${fmt(c.afterSA,0)} cm²</strong>.`}
+    else e.innerHTML=`With A and L fixed, <strong>volume cannot change</strong>. Reshaping matters only because it changes perimeter P, so it changes the side term P×L.`;
+  }
+}
+function isCorrect(key){return close(valueOf(key),expectedFor(key),toleranceFor(key))}
+function answerState(key){if(state.answers[key]==='')return'pending';return isCorrect(key)?'good':'bad'}
+function autoWork(label,value,unit=''){return`<div class="work-box auto"><span>${label}</span><div class="auto-value-line"><strong>${value}${unit?` <small>${unit}</small>`:''}</strong><i class="work-status" aria-hidden="true">✓</i></div></div>`}
+function fixedWork(label,value,unit=''){return`<div class="work-box fixed"><span>${label}</span><div class="auto-value-line"><strong>${value}${unit?` <small>${unit}</small>`:''}</strong><i class="work-status" aria-hidden="true">✓</i></div></div>`}
+function entryWork(key,label,unit='',enabled=true){const st=enabled?answerState(key):'disabled',mark=st==='good'?'✓':st==='bad'?'×':'';return`<label class="work-box entry ${st}"><span>${label}</span><div class="work-entry-line"><input data-answer="${key}" inputmode="decimal" autocomplete="off" value="${state.answers[key]}" placeholder="?" aria-label="${label} ${unit}" ${enabled?'':'disabled'}><i class="work-status" aria-hidden="true">${mark}</i></div></label>`}
+function stepState(keys=[],locked=false){if(locked)return'locked';const owned=keys.filter(k=>requiredKeys().includes(k));if(!owned.length)return'work-done';if(owned.some(k=>state.answers[k]!==''&&!isCorrect(k)))return'work-bad';if(owned.every(isCorrect))return'work-done';return'work-pending'}
+function step(title,num,scope,explain,formula,boxes,note,stateClass){return`<section class="work-step ${stateClass}"><div class="work-step-head"><span class="step-num">${num}</span><strong>${title}</strong><span class="work-scope">${scope}</span></div><div class="work-explain">${explain}</div><div class="work-formula ${scope==='rectangle'?'specific':'general'}">${formula}</div><div class="work-values ${boxes.length===1?'one':boxes.length===3?'three':''}">${boxes.join('')}</div>${note?`<div class="work-note ${note.includes('stays')||note.includes('fixed')?'invariant':'change'}">${note}</div>`:''}</section>`}
+function renderWorking(){
+  const p=current(),m=metrics(),dock=$('workingDock'),level=state.workingLevel,req=requiredKeys();
+  const heading=level===0?'Watch the calculation chain update':level===1?'Complete the yellow key result':'Complete the yellow chain';
+  const intro=level===0?'Nothing to enter. Change the solid and use the green worked values to notice what changes and what stays fixed.':level===1?(p.type==='extrude'?'Enter the yellow length. A correct value moves the prism; the later worked values then update.':'Choose a shape, then calculate its surface area in the yellow box. Correct turns green ✓; incorrect turns red ×.'):'Work left to right. Yellow boxes are yours; correct turns green ✓, incorrect turns red ×, and dependent boxes unlock only when their inputs are ready.';
+  const pending=req.filter(k=>state.answers[k]==='').length,badNow=req.filter(k=>state.answers[k]!==''&&!isCorrect(k)).length;const count=level===0?'':badNow?`${badNow} red ${badNow===1?'box needs':'boxes need'} revision`:pending?`${pending} yellow ${pending===1?'box':'boxes'} to complete`:'working complete';
+
+  let b1=[],b2=[],b3=[],b4=[],s1keys=[],s2keys=[],s3keys=[],s4keys=[];
+  if(level===2){b1=[entryWork('A','area A','cm²'),entryWork('P','perimeter P','cm')];s1keys=['A','P'];}
+  else{b1=[autoWork('area A',fmt(m.A),'cm²'),autoWork('perimeter P',fmt(m.P,p.type==='reshape'?2:1),'cm')];}
+  const s1=stepState(s1keys);
+
+  if(p.type==='extrude'){
+    if(level===0){b2=[autoWork('A',fmt(m.A),'cm²'),fixedWork('current L',fmt(state.L),'cm'),autoWork('current V',fmt(m.V,0),'cm³')];}
+    else{
+      const aReady=level===1||isCorrect('A');
+      b2=[fixedWork('target V',fmt(p.targetV,0),'cm³'),level===1?autoWork('A',fmt(m.A),'cm²'):(isCorrect('A')?autoWork('A',fmt(m.A),'cm²'):fixedWork('A','?','')),entryWork('L','length L','cm',aReady)];s2keys=['L'];
+    }
+  }else{
+    if(level===2){const aReady=isCorrect('A');b2=[isCorrect('A')?autoWork('A',fmt(m.A),'cm²'):fixedWork('A','?',''),fixedWork('L',fmt(p.L),'cm'),entryWork('V','volume V','cm³',aReady)];s2keys=['V'];}
+    else b2=[fixedWork('A',fmt(p.A),'cm²'),fixedWork('L',fmt(p.L),'cm'),autoWork('V',fmt(m.V,0),'cm³')];
+  }
+  const s2locked=(p.type==='extrude'&&level===2&&!isCorrect('A'))||(p.type==='reshape'&&level===2&&!isCorrect('A'));
+  const s2=stepState(s2keys,s2locked);
+
+  const sideReady=level===0||(p.type==='extrude'?(level===1?isCorrect('L'):(isCorrect('P')&&isCorrect('L'))):(level===1?true:isCorrect('P')));
+  if(level===2){b3=[isCorrect('P')?autoWork('P',fmt(m.P,p.type==='reshape'?2:1),'cm'):fixedWork('P','?',''),fixedWork('L',fmt(state.L),'cm'),entryWork('side','side strip','cm²',sideReady)];s3keys=['side'];}
+  else if(level===1&&p.type==='extrude'&&!sideReady)b3=[fixedWork('P',fmt(m.P),'cm'),fixedWork('L','?','cm'),fixedWork('side strip','locked','')];
+  else b3=[autoWork('P',fmt(m.P,p.type==='reshape'?2:1),'cm'),fixedWork('L',fmt(state.L),'cm'),autoWork('side strip',fmt(m.side,p.type==='reshape'?1:0),'cm²')];
+  const s3=stepState(s3keys,!sideReady);
+
+  const saReady=level===0||(p.type==='extrude'?(level===1?isCorrect('L'):(isCorrect('A')&&isCorrect('side'))):(level===1?true:(isCorrect('A')&&isCorrect('side'))));
+  if(level===0)b4=[autoWork('two ends 2A',fmt(m.ends,0),'cm²'),autoWork('side strip',fmt(m.side,p.type==='reshape'?1:0),'cm²'),autoWork('surface SA',fmt(m.SA,p.type==='reshape'?1:0),'cm²')];
+  else if(level===1&&p.type==='extrude')b4=saReady?[autoWork('two ends 2A',fmt(m.ends,0),'cm²'),autoWork('side strip',fmt(m.side,0),'cm²'),autoWork('surface SA',fmt(m.SA,0),'cm²')]:[autoWork('two ends 2A',fmt(m.ends,0),'cm²'),fixedWork('side strip','locked',''),fixedWork('surface SA','locked','')];
+  else if(level===1)b4=[autoWork('two ends 2A',fmt(m.ends,0),'cm²'),autoWork('side strip',fmt(m.side,1),'cm²'),entryWork('SA','surface area SA','cm²',true)],s4keys=['SA'];
+  else b4=[isCorrect('A')?autoWork('two ends 2A',fmt(m.ends,0),'cm²'):fixedWork('two ends 2A','?',''),isCorrect('side')?autoWork('side strip',fmt(m.side,p.type==='reshape'?1:0),'cm²'):fixedWork('side strip','?',''),entryWork('SA','surface area SA','cm²',saReady)],s4keys=['SA'];
+  const s4=stepState(s4keys,!saReady);
+
+  const note1=p.type==='extrude'?'<strong>A and P stay fixed</strong> when only L changes.':'<strong>A stays fixed</strong> while reshaping; P changes with w and h.';
+  const note2=p.type==='extrude'?'Changing L changes V because each extra centimetre adds one more cross-section.':'A and L are fixed, so <strong>V stays fixed</strong> for every allowed shape.';
+  const note3=p.type==='extrude'?'P is fixed, so the side strip grows only when L grows.':'L is fixed, so changing P changes the lengthwise material P×L.';
+  const note4='The two end caps contribute 2A; the rest of the surface is the one lengthwise strip.';
+  const step1=step('Cross-section',1,'rectangle','The rectangle creates two different quantities: <strong>area A</strong> fills each slice; <strong>perimeter P</strong> becomes the strip around the side.','A = w × h &nbsp; · &nbsp; P = 2(w + h)',b1,note1,s1);
+  const step2=step(p.type==='extrude'?'Capacity → length':'Volume invariant',2,'any prism',p.type==='extrude'?'For a uniform prism, capacity is cross-section area repeated along the length. Rearrange the general rule when V is the target.':'For every uniform prism, volume is cross-section area multiplied by length.','V = A × L'+(p.type==='extrude'&&level>0?' &nbsp; → &nbsp; L = V ÷ A':''),b2,note2,s2);
+  const step3=step('Lengthwise strip',3,'any prism','Unwrap the long faces. Their widths add to the cross-section perimeter, so the whole side material is one rectangle.','side = P × L',b3,note3,s3);
+  const step4=step('Closed surface',4,'any closed prism','Add the two cross-section ends to the lengthwise strip.','SA = 2A + side',b4,note4,s4);
+  const complete=level>0&&req.every(isCorrect);
+  let summary='';
+  if(level===0)summary=state.moves<2?`<strong>Keep comparing.</strong> Make at least two changes before signing off a design.`:`<strong>Relationship exposed.</strong> Use the goal bands above to find a valid design; there is nothing to type at this level.`;
+  else if(complete)summary='<strong>All required working is correct.</strong> The calculation chain and the visual design agree.';
+  else if(state.bad.length)summary='<strong>Revise the red box.</strong> Empty learner boxes stay yellow; correct boxes turn green ✓.';
+  else summary='<strong>Your working is active.</strong> Complete the yellow box'+(req.length===1?'':'es')+'; dependent steps unlock when their inputs are ready.';
+  dock.innerHTML=`<div class="working-head"><div><strong>${heading}</strong><span class="working-intro">${intro}</span></div><span class="work-count">${count}</span></div><div class="work-flow">${step1}${step2}${step3}${step4}</div><div class="working-summary ${complete?'good':level>0?'warn':''}">${summary}</div>`;
+}
+function expectedFor(key){const p=current(),m=metrics();if(key==='A')return m.A;if(key==='P')return m.P;if(key==='side')return m.side;if(key==='SA')return m.SA;if(key==='V')return p.type==='extrude'?p.targetV:p.targetV;if(key==='L')return p.type==='extrude'?p.targetL:p.L;return NaN}
+function requiredKeys(){const p=current();if(state.workingLevel===0)return[];if(p.type==='extrude')return state.workingLevel===1?['L']:['A','P','L','side','SA'];return state.workingLevel===1?['SA']:['A','P','V','side','SA']}
+function toleranceFor(key){return key==='P'?.11:key==='side'?.55:key==='SA'?.55:key==='V'?.11:.03}
+function refreshWorkingState(){const keys=requiredKeys();state.bad=keys.filter(k=>state.answers[k]!==''&&!isCorrect(k));state.checked=keys.some(k=>state.answers[k]!=='');state.workingOK=keys.length>0&&keys.every(isCorrect)}
+function renderMission(){const p=current(),level=state.workingLevel;$('problemKicker').textContent=p.type==='extrude'?'Extrusion':'Reshape';$('complexityHelp').textContent=['Off · calculations revealed','Some · key result','All · full chain'][level];document.querySelectorAll('[data-work-level]').forEach(b=>{const active=Number(b.dataset.workLevel)===level;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active))});if(p.type==='extrude'){$('missionTitle').textContent=`Build a ${fmt(p.targetV,0)} cm³ case from a ${fmt(p.w)} cm × ${fmt(p.h)} cm cross-section without using more than ${fmt(p.budgetSA,0)} cm² of material.`;if(level===0)$('missionHint').textContent='Drag the length. Watch the green calculation chain show which terms change and which stay fixed.';else if(level===1)$('missionHint').textContent='Complete the yellow L box so your calculation controls the extrusion; the later worked steps will update from it.';else $('missionHint').textContent='Complete the yellow boxes left to right. Correct cross-section results unlock length, side strip and surface-area working.';$('solidHeadNote').textContent=level===0?'length is learner-controlled':'length is controlled by the calculation'}else{$('missionTitle').textContent=`Keep the ${fmt(p.targetV,0)} cm³ capacity fixed while reshaping the rectangular cross-section to use no more than ${fmt(p.budgetSA,0)} cm² of material.`;if(level===0)$('missionHint').textContent='Drag the width. Height compensates automatically; use the green working to compare A, P, V, side strip and total surface.';else if(level===1)$('missionHint').textContent='Choose a shape, then complete its yellow surface-area box. Change the shape again to test the relationship.';else $('missionHint').textContent='Choose a shape, then complete the yellow chain. Change shape again: correct A and V should stay valid while P, side strip and SA need updating.';$('solidHeadNote').textContent='A and L are invariant; perimeter changes'}}
+function renderNextCard(){const card=$('nextCard');if(!state.solved){card.hidden=true;card.classList.remove('has-upgrade');return}card.hidden=false;const s=state.solvedSnapshot,p=current();$('nextCardText').textContent=p.type==='extrude'?`The same length gives ${fmt(s.V,0)} cm³ inside and ${fmt(s.SA,0)} cm² outside.`:`A and L stayed fixed, so V stayed ${fmt(s.V,0)} cm³ while lower P reduced the surface to ${fmt(s.SA,1)} cm².`;const next=suggestedWorkLevel(),up=$('nextUpgrade');card.classList.toggle('has-upgrade',next>0);up.hidden=next<0;if(next===1){$('nextUpgradeTitle').textContent='Ready to write some working?';$('nextUpgradeText').textContent=p.type==='extrude'?'Next problems will hand you the length calculation.':'Next problems will hand you the final surface-area calculation.';$('upgradeWorking').textContent='Next + some working'}else if(next===2){$('nextUpgradeTitle').textContent='Ready to write the full chain?';$('nextUpgradeText').textContent='Rectangle quantities and prism calculations become yours in sequence.';$('upgradeWorking').textContent='Next + all working'}if(next>=0)$('upgradeWorking').dataset.level=String(next);requestAnimationFrame(positionCompletionModal)}
+function renderAll(){refreshWorkingState();markSolved();renderMission();renderSolid();renderSkin();renderBands();renderEvidence();renderWorking();renderNextCard();renderStartGuide()}
+function invalidateAfterGeometry(kind){state.checked=false;state.bad=[];state.workingOK=false;state.workMessage='';if(current().type==='reshape'){if(state.workingLevel===1)state.answers.SA='';if(state.workingLevel===2){state.answers.P='';state.answers.side='';state.answers.SA='';/* A and V remain valid because A and L are invariant. */}}else if(kind==='length'&&state.workingLevel===2){state.answers.side='';state.answers.SA=''}}
+function setLength(v,source='direct',doRender=true){if(current().type!=='extrude')return;const before=state.L;let next=snap(v,.1);if(source==='drag'||source==='key')next=snapInteractionValue(next,'length');state.L=clamp(next,4,22);if(Math.abs(state.L-before)<.001)return;if(source==='drag'||source==='key')state.moves++;if(source!=='entry')invalidateAfterGeometry('length');else{state.checked=false;state.bad=[];state.workingOK=false;state.workMessage='';if(state.workingLevel===2){state.answers.side='';state.answers.SA=''}}if(doRender)renderAll()}
+function setWidth(v,source='direct'){const p=current();if(p.type!=='reshape')return;const oldW=state.w,before=metrics();let next=snap(v,.1);if(source==='drag'||source==='key')next=snapInteractionValue(next,'width');state.w=clamp(next,p.minW,p.maxW);state.h=p.A/state.w;if(Math.abs(state.w-oldW)<.00001)return;const after=metrics();if(source==='drag'||source==='key')state.moves++;state.lastChange={beforeP:before.P,beforeSA:before.SA,afterP:after.P,afterSA:after.SA};invalidateAfterGeometry('shape');if(state.workingLevel===2&&state.answers.V&&close(valueOf('V'),p.targetV,.11))state.workMessage='Volume working remains valid because A and L did not change. Recalculate P and SA for the new shape.';renderAll()}
+function startPointer(e){if(e.target.id==='lengthHandle'||e.target.id==='lengthHandleHit'){if(current().type!=='extrude'||state.workingLevel>0)return;dismissStartGuide();e.preventDefault();state.lengthDrag={id:e.pointerId};e.target.setPointerCapture?.(e.pointerId);return}if(e.target.id==='widthHandle'||e.target.id==='widthHandleHit'){if(current().type!=='reshape')return;dismissStartGuide();e.preventDefault();state.widthDrag={id:e.pointerId};e.target.setPointerCapture?.(e.pointerId)}}
+function movePointer(e){const solid=$('solidSvg');if(state.lengthDrag?.id===e.pointerId){e.preventDefault();const p=svgPoint(solid,e),geo=solidGeometry(),vx=8,vy=-3.2,mag=Math.hypot(vx,vy),ux=vx/mag,uy=vy/mag,dx=p.x-geo.frontC[0],dy=p.y-geo.frontC[1],proj=(dx*ux+dy*uy)/mag;setLength(proj,'drag')}else if(state.widthDrag?.id===e.pointerId){e.preventDefault();const p=svgPoint(solid,e),geo=solidGeometry(),w=2*(p.x-geo.cx)/geo.scale;setWidth(w,'drag')}}
+function endPointer(e){if(state.lengthDrag?.id===e.pointerId)state.lengthDrag=null;if(state.widthDrag?.id===e.pointerId)state.widthDrag=null}
+function advanceProblem(level=state.workingLevel){state.workingLevel=clamp(Number(level)||0,0,2);state.problemNumber++;startProblem()}
+$('solidSvg').addEventListener('pointerdown',startPointer);$('solidSvg').addEventListener('pointermove',movePointer);$('solidSvg').addEventListener('pointerup',endPointer);$('solidSvg').addEventListener('pointercancel',endPointer);
+$('solidSvg').addEventListener('keydown',e=>{if(e.target.id==='lengthHandle'&&state.workingLevel===0&&(e.key==='ArrowRight'||e.key==='ArrowUp'||e.key==='ArrowLeft'||e.key==='ArrowDown')){dismissStartGuide();e.preventDefault();setLength(state.L+((e.key==='ArrowRight'||e.key==='ArrowUp')?.2:-.2),'key');requestAnimationFrame(()=>$('lengthHandle')?.focus())}if(e.target.id==='widthHandle'&&(e.key==='ArrowRight'||e.key==='ArrowUp'||e.key==='ArrowLeft'||e.key==='ArrowDown')){dismissStartGuide();e.preventDefault();setWidth(state.w+((e.key==='ArrowRight'||e.key==='ArrowUp')?.2:-.2),'key');requestAnimationFrame(()=>$('widthHandle')?.focus())}});
+$('workingDock').addEventListener('input',e=>{const key=e.target.dataset.answer;if(!key)return;dismissStartGuide();const caret=e.target.selectionStart??e.target.value.length;state.answers[key]=e.target.value;state.workMessage='';if(key==='L'&&current().type==='extrude'){const n=Number(e.target.value);if(Number.isFinite(n)&&e.target.value.trim()!=='')setLength(n,'entry',false)}renderAll();const fresh=document.querySelector(`[data-answer="${key}"]`);if(fresh&&!fresh.disabled){fresh.focus({preventScroll:true});const at=Math.min(caret,fresh.value.length);fresh.setSelectionRange(at,at)}});
+$('resetProblem').addEventListener('click',()=>freshProblem(current()));document.querySelectorAll('[data-work-level]').forEach(button=>button.addEventListener('click',()=>{state.workingLevel=clamp(Number(button.dataset.workLevel)||0,0,2);freshProblem(current())}));$('nextProblem').addEventListener('click',()=>advanceProblem(state.workingLevel));$('upgradeWorking').addEventListener('click',()=>advanceProblem(Number($('upgradeWorking').dataset.level)));window.addEventListener('resize',()=>requestAnimationFrame(()=>{renderStartGuide();positionInteractionGuide();positionCompletionModal()}));
+startProblem();
+window.__surfaceVolumeLab={
+ getState:()=>({problemNumber:state.problemNumber,workingLevel:state.workingLevel,solvedAtLevel:[...state.solvedAtLevel],problem:{...current()},w:state.w,h:state.h,L:state.L,moves:state.moves,answers:{...state.answers},checked:state.checked,bad:[...state.bad],workingOK:state.workingOK,solved:state.solved,metrics:metrics(),visualSuccess:visualSuccess(),suggested:suggestedWorkLevel(),startGuideOpen:state.startGuideOpen,guideSeen:{...guideSeen},guideHidden:$('interactionGuide')?.hidden??true,reshapeSuccessInterval:reshapeSuccessInterval()}),
+ metrics,makeProblem,
+ setProblem:(seed=1,type='extrude',level=state.workingLevel)=>{state.problemNumber=1;state.workingLevel=clamp(Number(level)||0,0,2);state.solvedAtLevel=[0,0,0];freshProblem(makeProblem(seed,type))},
+ setWorkingLevel:level=>{state.workingLevel=clamp(Number(level)||0,0,2);freshProblem(current())},
+ setLength:v=>setLength(Number(v),'direct'),setWidth:v=>setWidth(Number(v),'direct'),dismissGuide:dismissStartGuide,
+ simulateLengthMoves:values=>values.forEach(v=>setLength(Number(v),'drag')),simulateShapeMoves:values=>values.forEach(v=>setWidth(Number(v),'drag')),
+ answer:(key,value)=>{state.answers[key]=String(value);if(key==='L'&&current().type==='extrude')setLength(Number(value),'entry');else renderAll()},check:()=>{renderAll();return state.workingOK},
+ next:(level=state.workingLevel)=>advanceProblem(level),renderAll
+};
+})();
+</script>
+<!-- v6: working now mirrors the supplied maths labs: green auto-completed boxes with checkmarks, yellow learner-owned boxes, red incorrect boxes, dependency-aware unlocking, and a non-blocking coach that introduces both direct manipulation and the first new working interaction. -->
+</body>
+</html>
