@@ -1,0 +1,1218 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- LAB_MANIFEST_HEAD_START -->
+<title>Time Zones and Timetable Constraints</title>
+<meta name="description" content="Explore time zones, local times, dates and timetable constraints with an interactive scheduling system for Cambridge IGCSE Mathematics 0580.">
+<link rel="canonical" href="https://www.examplicity.org/labs/mathematics/time-zone-timetable-constraints.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Examplicity">
+<meta property="og:title" content="Time Zones and Timetable Constraints">
+<meta property="og:description" content="Explore time zones, local times, dates and timetable constraints with an interactive scheduling system for Cambridge IGCSE Mathematics 0580.">
+<meta property="og:url" content="https://www.examplicity.org/labs/mathematics/time-zone-timetable-constraints.html">
+<meta property="og:image" content="https://www.examplicity.org/opengraph-image">
+<meta property="og:image:alt" content="Examplicity — Make complex ideas click">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Time Zones and Timetable Constraints">
+<meta name="twitter:description" content="Explore time zones, local times, dates and timetable constraints with an interactive scheduling system for Cambridge IGCSE Mathematics 0580.">
+<meta name="twitter:image" content="https://www.examplicity.org/opengraph-image">
+<script type="application/ld+json" data-lab-manifest="structured-data">{"@context":"https://schema.org","@type":"LearningResource","@id":"https://www.examplicity.org/labs/mathematics/time-zone-timetable-constraints.html#learning-resource","url":"https://www.examplicity.org/labs/mathematics/time-zone-timetable-constraints.html","name":"Time Zones and Timetable Constraints","description":"Explore time zones, local times, dates and timetable constraints with an interactive scheduling system for Cambridge IGCSE Mathematics 0580.","inLanguage":"en-GB","isAccessibleForFree":true,"interactivityType":"active","learningResourceType":"Multi-zone scheduler","teaches":"Numbers","educationalLevel":["IGCSE"],"educationalAlignment":[{"@type":"AlignmentObject","alignmentType":"educationalSubject","educationalFramework":"Cambridge IGCSE Mathematics","targetName":"IGCSE 0580 section C1.15, E1.15","targetUrl":"https://www.cambridgeinternational.org/Images/662466-2025-2027-syllabus.pdf#page=16"}],"about":{"@type":"Thing","name":"Mathematics"},"audience":{"@type":"EducationalAudience","educationalRole":"student"},"provider":{"@type":"Organization","name":"Examplicity","url":"https://www.examplicity.org"},"isPartOf":{"@type":"WebSite","@id":"https://www.examplicity.org/#website","name":"Examplicity","url":"https://www.examplicity.org"}}</script>
+<!-- LAB_MANIFEST_HEAD_END -->
+<!-- LAB_FRAME_STYLES_START -->
+<style data-lab-frame>
+:root {
+  --lab-canvas: #f3f5f7;
+  --lab-paper: #fbfbfd;
+  --lab-surface: #ffffff;
+  --lab-control: #ffffff;
+  --lab-ink: #1d1d1f;
+  --lab-muted: #6e6e73;
+  --lab-line: #d2d2d7;
+  --lab-line-strong: #a7a7ad;
+  --lab-accent: #5277b8;
+  --lab-accent-soft: #eef2fa;
+  --lab-good: #18794e;
+  --lab-good-soft: #edf8f1;
+  --lab-warn: #946200;
+  --lab-warn-soft: #fff6e7;
+  --lab-bad: #b42318;
+  --lab-bad-soft: #fff0ee;
+  --lab-focus: #1d1d1f;
+  --lab-focus-soft: rgba(29, 29, 31, 0.18);
+  --lab-font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+  --lab-panel-radius: 12px;
+  --lab-control-radius: 8px;
+  --lab-pill-radius: 999px;
+  --lab-control-height: 35px;
+  --lab-panel-shadow: 0 1px 2px rgba(29, 29, 31, 0.04);
+  --lab-page-gutter: max(28px, calc((100vw - 1200px) / 2));
+  --lab-compact-workspace-max: 820px;
+}
+
+html,
+body {
+  background: var(--lab-canvas);
+}
+
+body {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  align-content: start !important;
+  font-family: var(--lab-font-sans);
+  padding-bottom: 0;
+  padding-top: 0 !important;
+  text-rendering: optimizeLegibility;
+}
+
+.lab-manifest-header {
+  align-items: start;
+  border-bottom: 1px solid var(--line, var(--lab-line));
+  display: grid;
+  gap: 18px 28px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  margin-bottom: 26px;
+  padding-bottom: 22px;
+}
+
+.lab-manifest-heading {
+  min-width: 0;
+}
+
+.lab-manifest-header h1 {
+  color: var(--ink, var(--lab-ink));
+  font-family: var(--lab-font-sans);
+  font-size: clamp(25px, 3.2vw, 40px);
+  font-weight: 650;
+  letter-spacing: -0.045em;
+  line-height: 1.02;
+  margin: 0;
+  max-width: 24ch;
+  padding: 0;
+  text-align: left;
+}
+
+.lab-manifest-subtitle {
+  color: var(--muted, var(--lab-muted));
+  font-family: var(--lab-font-sans);
+  font-size: 13px;
+  letter-spacing: 0;
+  line-height: 1.5;
+  margin: 10px 0 0;
+  max-width: 72ch;
+  padding: 0;
+  text-align: left;
+}
+
+.lab-authored-title-slot {
+  min-width: 0;
+}
+
+.lab-syllabus-chips {
+  align-items: center;
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+  margin: 0 0 0 auto;
+  max-width: 100%;
+}
+
+.lab-syllabus-chip {
+  align-items: center;
+  background: var(--syllabus-chip-bg) !important;
+  border: 1px solid var(--syllabus-chip-border) !important;
+  border-radius: var(--lab-pill-radius);
+  color: var(--syllabus-chip-text) !important;
+  display: inline-flex;
+  font-size: 11px;
+  font-weight: 650;
+  gap: 4px;
+  line-height: 1;
+  min-height: 29px;
+  padding: 8px 10px;
+  position: relative;
+  transition: background-color 140ms ease, border-color 140ms ease;
+  white-space: nowrap;
+}
+
+.lab-syllabus-chip:hover {
+  background: var(--syllabus-chip-hover) !important;
+}
+
+.lab-syllabus-primary-link {
+  border-radius: inherit;
+  inset: 0;
+  position: absolute;
+  z-index: 0;
+}
+
+.lab-syllabus-primary-link:focus-visible {
+  outline: 2px solid var(--syllabus-chip-text);
+  outline-offset: 2px;
+}
+
+.lab-syllabus-name,
+.lab-syllabus-divider,
+.lab-syllabus-sections {
+  pointer-events: none;
+  position: relative;
+  z-index: 1;
+}
+
+.lab-syllabus-section {
+  border-radius: 4px;
+  color: inherit;
+  padding: 2px;
+  text-decoration: none;
+}
+
+a.lab-syllabus-section {
+  pointer-events: auto;
+}
+
+a.lab-syllabus-section:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+a.lab-syllabus-section:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 1px;
+}
+
+.lab-syllabus-name {
+  color: var(--syllabus-chip-text) !important;
+}
+
+.lab-syllabus-divider,
+.lab-syllabus-separator {
+  color: var(--muted, var(--lab-muted));
+}
+
+.lab-syllabus-prefix {
+  opacity: 0.72;
+  padding-left: 5px;
+}
+
+.lab-syllabus-sections {
+  align-items: center;
+  display: inline-flex;
+}
+
+.lab-syllabus-separator {
+  margin-inline: 0 2px;
+}
+
+html[data-theme="dark"] .lab-syllabus-name {
+  color: var(--syllabus-chip-border) !important;
+}
+
+html[data-theme="dark"] .lab-syllabus-chip:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+html[data-theme="dark"],
+html[data-theme="dark"] body {
+  background: var(--bg);
+}
+
+body > main {
+  container-name: lab-canvas;
+  container-type: inline-size;
+  margin-left: var(--lab-page-gutter);
+  margin-right: auto;
+  margin-top: 18px;
+  max-width: 1200px;
+  width: calc(100vw - var(--lab-page-gutter) - var(--lab-page-gutter));
+}
+
+body[data-lab-layout="compact"] .lab-manifest-header {
+  margin-bottom: 17px;
+  padding-bottom: 13px;
+}
+
+body[data-lab-layout="compact"] [data-lab-workspace] {
+  margin-left: auto;
+  margin-right: auto;
+  width: min(var(--lab-compact-workspace-max), 100%);
+}
+
+:where(button, input, select, textarea, summary):focus-visible {
+  outline: 3px solid var(--lab-focus);
+  outline-offset: 4px;
+}
+
+@media (max-width: 620px) {
+  :root {
+    --lab-page-gutter: 18px;
+  }
+
+  body {
+    padding-bottom: 0;
+    padding-top: 0 !important;
+  }
+
+  .lab-manifest-header {
+    gap: 14px;
+    grid-template-columns: minmax(0, 1fr) !important;
+    margin-bottom: 20px;
+    padding-bottom: 18px;
+  }
+
+  body[data-lab-layout="compact"] .lab-manifest-header {
+    margin-bottom: 16px;
+    padding-bottom: 14px;
+  }
+
+  .lab-manifest-header h1 {
+    font-size: clamp(24px, 8vw, 34px);
+  }
+
+  .lab-syllabus-chips {
+    gap: 4px;
+    justify-content: flex-start !important;
+    margin: 0 !important;
+  }
+
+  .lab-syllabus-chip {
+    font-size: 10px;
+    max-width: 100%;
+    min-height: 27px;
+    padding: 7px 8px;
+    white-space: normal;
+  }
+
+  .lab-syllabus-sections {
+    flex-wrap: wrap;
+  }
+
+  body > main {
+    margin-top: 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+</style>
+<!-- LAB_FRAME_STYLES_END -->
+<style data-lab-frame>
+:root {
+  --lab-canvas: #f3f5f7;
+  --lab-paper: #fbfbfd;
+  --lab-surface: #ffffff;
+  --lab-control: #ffffff;
+  --lab-ink: #1d1d1f;
+  --lab-muted: #6e6e73;
+  --lab-line: #d2d2d7;
+  --lab-line-strong: #a7a7ad;
+  --lab-accent: #5277b8;
+  --lab-accent-soft: #eef2fa;
+  --lab-good: #18794e;
+  --lab-good-soft: #edf8f1;
+  --lab-warn: #946200;
+  --lab-warn-soft: #fff6e7;
+  --lab-bad: #b42318;
+  --lab-bad-soft: #fff0ee;
+  --lab-focus: #1d1d1f;
+  --lab-focus-soft: rgba(29, 29, 31, 0.18);
+  --lab-font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+  --lab-panel-radius: 12px;
+  --lab-control-radius: 8px;
+  --lab-pill-radius: 999px;
+  --lab-control-height: 35px;
+  --lab-panel-shadow: 0 1px 2px rgba(29, 29, 31, 0.04);
+  --lab-page-gutter: max(28px, calc((100vw - 1200px) / 2));
+}
+html, body { background: var(--lab-canvas); }
+body {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  align-content: start !important;
+  font-family: var(--lab-font-sans);
+  padding: 0 0 34px !important;
+  text-rendering: optimizeLegibility;
+}
+.lab-manifest-header {
+  align-items: start;
+  border-bottom: 1px solid var(--line, var(--lab-line));
+  display: grid;
+  gap: 18px 28px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  margin-bottom: 20px;
+  padding-bottom: 19px;
+}
+.lab-manifest-heading { min-width: 0; }
+.lab-manifest-header h1 {
+  color: var(--ink, var(--lab-ink));
+  font-family: var(--lab-font-sans);
+  font-size: clamp(25px, 3.2vw, 40px);
+  font-weight: 650;
+  letter-spacing: -0.045em;
+  line-height: 1.02;
+  margin: 0;
+  max-width: 24ch;
+}
+.lab-manifest-subtitle {
+  color: var(--muted, var(--lab-muted));
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 9px 0 0;
+  max-width: 78ch;
+}
+.lab-authored-title-slot { min-width: 0; }
+.lab-syllabus-chips { align-items: center; display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-end; margin: 0 0 0 auto; }
+.lab-syllabus-chip { align-items: center; background: var(--lab-surface); border: 1px solid var(--lab-line); border-radius: var(--lab-pill-radius); color: var(--lab-ink); display: inline-flex; font-size: 11px; font-weight: 650; gap: 4px; line-height: 1; min-height: 29px; padding: 8px 10px; position: relative; white-space: nowrap; }
+.lab-syllabus-chip:hover { background: var(--syllabus-chip-hover); border-color: var(--syllabus-chip-border); }
+.lab-syllabus-primary-link { border-radius: inherit; inset: 0; position: absolute; z-index: 0; }
+.lab-syllabus-primary-link:focus-visible { outline: 2px solid var(--syllabus-chip-text); outline-offset: 2px; }
+.lab-syllabus-name,.lab-syllabus-divider,.lab-syllabus-sections { pointer-events: none; position: relative; z-index: 1; }
+.lab-syllabus-name { color: var(--syllabus-chip-text) !important; }
+.lab-syllabus-section { border-radius: 4px; color: inherit; padding: 2px; text-decoration: none; }
+a.lab-syllabus-section { pointer-events: auto; }
+a.lab-syllabus-section:hover { text-decoration: underline; text-underline-offset: 2px; }
+.lab-syllabus-separator,.lab-syllabus-divider { color: var(--lab-muted); }
+body > main { container-name: lab-canvas; container-type: inline-size; margin-left: var(--lab-page-gutter); margin-right: auto; margin-top: 18px; max-width: 1200px; width: calc(100vw - var(--lab-page-gutter) - var(--lab-page-gutter)); }
+:where(button, input, select, textarea, summary):focus-visible { outline: 3px solid var(--lab-focus); outline-offset: 3px; }
+@media (max-width: 620px) {
+  :root { --lab-page-gutter: 14px; }
+  .lab-manifest-header { gap: 12px; grid-template-columns: 1fr; margin-bottom: 15px; padding-bottom: 14px; }
+  .lab-manifest-header h1 { font-size: clamp(24px, 8vw, 34px); }
+  .lab-syllabus-chips { justify-content: flex-start; margin: 0; }
+  .lab-syllabus-chip { font-size: 10px; min-height: 27px; padding: 7px 8px; }
+  body > main { margin-top: 8px; }
+}
+@media (prefers-reduced-motion: reduce) { *,*::before,*::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; scroll-behavior: auto !important; } }
+</style>
+<style data-lab-source>
+:root{
+  --calendar:#f8fafb;--calendar-strong:#eef2f4;--grid:#dde4e8;--grid-major:#c7d1d7;
+  --available:#e7f3eb;--available-border:#78aa8b;--meeting:#416f9f;--meeting-dark:#315a82;
+  --sent:#55616a;--sent-soft:#eff2f4;--conflict:#c44d43;--conflict-soft:#fff0ee;
+  --accept:#27764c;--accept-soft:#edf8f1;--date-a:#f5f7f8;--date-b:#edf1f3;
+}
+*{box-sizing:border-box}
+button{font:inherit;cursor:pointer;min-height:35px;padding:0 11px;border:1px solid var(--lab-line);border-radius:var(--lab-control-radius);background:var(--lab-control);color:var(--lab-ink)}
+button:hover:not(:disabled){border-color:var(--lab-line-strong)}button:disabled{opacity:.42;cursor:not-allowed}
+button.primary{background:var(--lab-accent);border-color:var(--lab-accent);color:#fff;font-weight:800}
+.panel{background:var(--lab-surface);border:1px solid var(--lab-line);border-radius:var(--lab-panel-radius);box-shadow:var(--lab-panel-shadow)}
+.request-panel{padding:11px 12px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px;align-items:center}
+.request-kicker{display:block;color:var(--lab-muted);font-size:9px;font-weight:850;letter-spacing:.07em;text-transform:uppercase}
+.request-copy strong{display:block;margin-top:3px;font-size:16px;line-height:1.3;letter-spacing:-.01em}.request-copy span{display:block;margin-top:3px;color:var(--lab-muted);font-size:10px;line-height:1.4}
+.meeting-token{min-width:154px;padding:8px 10px;border:1px solid #a9bdd2;border-radius:10px;background:#f0f5fa;text-align:left;touch-action:none;user-select:none}
+.meeting-token.can-drag{cursor:grab}.meeting-token.can-drag:active{cursor:grabbing}.meeting-token.dragging{border-color:var(--lab-accent);box-shadow:0 0 0 3px var(--lab-accent-soft)}
+.meeting-token span{display:block;color:#5f7181;font-size:8px;font-weight:850;letter-spacing:.06em;text-transform:uppercase}.meeting-token strong{display:block;margin-top:2px;color:#315a82;font-size:14px}.meeting-token small{display:block;margin-top:2px;color:#6c7881;font-size:9px}
+.workspace{margin-top:10px;padding:10px}
+.workspace-head{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;margin-bottom:9px}
+.workspace-head strong{display:block;font-size:13px}.workspace-head span{display:block;margin-top:2px;color:var(--lab-muted);font-size:9px;line-height:1.35}
+.workspace-actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;align-items:center}.workspace-actions button{font-size:10px}.workspace-actions .primary{min-width:118px}
+.mode-toggle{display:inline-flex;align-items:center;padding:3px;border:1px solid var(--lab-line);border-radius:9px;background:var(--lab-paper)}.mode-toggle button{min-height:29px;border:0;background:transparent;color:var(--lab-muted);font-size:9px;font-weight:800;padding:0 8px}.mode-toggle button.active{background:#fff;color:var(--lab-ink);box-shadow:0 1px 3px rgba(29,29,31,.12)}
+.cal-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;align-items:stretch}
+.calendar-card{min-width:0;border:1px solid var(--lab-line);border-radius:11px;background:#fff;overflow:hidden}
+.calendar-card.organizer{border-color:#a9bdd2;box-shadow:inset 0 3px 0 #6e8eae}
+.calendar-card-head{min-height:66px;padding:9px 10px 8px;border-bottom:1px solid var(--lab-line);background:#fbfcfd;display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.person-role{display:block;color:var(--lab-muted);font-size:8px;font-weight:850;letter-spacing:.06em;text-transform:uppercase}.person-city{display:block;margin-top:2px;font-size:15px;line-height:1.15}.person-meta{display:block;margin-top:3px;color:var(--lab-muted);font:750 9px/1.3 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.person-state{max-width:112px;text-align:right;color:var(--lab-muted);font-size:8px;line-height:1.3}.person-state strong{display:block;color:var(--lab-ink);font-size:9px}
+.date-strip{position:relative;height:25px;border-bottom:1px solid var(--lab-line);background:var(--date-a);overflow:hidden}
+.date-segment{position:absolute;top:0;bottom:0;display:flex;align-items:center;padding:0 6px;border-right:1px solid #d6dde1;color:#53616a;font-size:8px;font-weight:850;white-space:nowrap;overflow:hidden}
+.date-segment:nth-child(even){background:var(--date-b)}
+.timeline-shell{padding:9px 9px 7px}
+.timeline{position:relative;height:88px;border:1px solid #ccd6dc;border-radius:9px;background:repeating-linear-gradient(to right,transparent 0 calc(11.111% - 1px),var(--grid) calc(11.111% - 1px) 11.111%),linear-gradient(#fbfcfd,#f6f8f9);overflow:visible;touch-action:none;user-select:none}
+.timeline.organizer-timeline{cursor:crosshair}
+.timeline.organizer-timeline.has-proposal{cursor:default}
+.workspace.calculate-mode .timeline.organizer-timeline{cursor:not-allowed}.workspace.calculate-mode .meeting-block.current{cursor:default}.workspace.calculate-mode .timeline.organizer-timeline.calculate-empty::after{content:"enter the start in Step 5";position:absolute;inset:0;display:grid;place-items:start center;padding-top:10px;background:rgba(248,250,251,.44);color:#66757f;font-size:8px;font-weight:850;letter-spacing:.02em;z-index:4;pointer-events:none}
+.timeline.drop-active{box-shadow:inset 0 0 0 3px rgba(82,119,184,.28);background-color:#f3f7fb}.timeline.drop-valid{box-shadow:inset 0 0 0 3px rgba(39,118,76,.32)}
+.availability{position:absolute;top:39px;height:35px;border:1px solid var(--available-border);border-radius:7px;background:repeating-linear-gradient(135deg,rgba(255,255,255,.0) 0 7px,rgba(255,255,255,.34) 7px 12px),var(--available);z-index:2;overflow:hidden}
+.availability::before{content:"available";position:absolute;left:5px;top:3px;color:#427158;font-size:7px;font-weight:900;letter-spacing:.04em;text-transform:uppercase}.availability-label{position:absolute;left:5px;right:4px;bottom:3px;color:#35634b;font:800 8px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.place-cue{position:absolute;left:8px;right:8px;top:8px;height:24px;border:1px dashed #9cb1c3;border-radius:7px;background:rgba(238,244,250,.72);display:grid;place-items:center;color:#57738b;font-size:8px;font-weight:850;z-index:2;pointer-events:none}
+.meeting-block{position:absolute;top:8px;height:27px;border:2px solid var(--meeting-dark);border-radius:7px;background:var(--meeting);color:#fff;z-index:5;box-shadow:0 2px 5px rgba(42,65,84,.16);overflow:visible;touch-action:none}
+.meeting-block.current{cursor:grab}.meeting-block.current:active{cursor:grabbing}.meeting-block.current.dragging{box-shadow:0 0 0 4px rgba(82,119,184,.22),0 7px 16px rgba(42,65,84,.2);transform:translateY(-1px)}.meeting-block.dirty{box-shadow:0 0 0 3px rgba(82,119,184,.18),0 2px 5px rgba(42,65,84,.16)}
+.drag-preview{position:absolute;top:8px;height:27px;border:2px dashed var(--meeting-dark);border-radius:7px;background:rgba(65,111,159,.16);color:#315a82;z-index:6;pointer-events:none}.drag-preview span{position:absolute;left:5px;right:5px;top:6px;font:850 8px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.meeting-block.sent{border-color:#39464e;background:var(--sent);cursor:default;animation:inviteIn .2s ease-out both}
+.meeting-block.ghost{top:8px;border:1px dashed #7d8990;background:rgba(238,242,244,.72);color:#56626a;box-shadow:none;z-index:3;pointer-events:none}
+.meeting-block.accepted{border-color:#2f7750;background:#3d8a60}.meeting-block.declined{border-color:#9f4038;background:#6b7880}
+@keyframes inviteIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+.meeting-name{position:absolute;left:5px;right:5px;top:3px;font-size:8px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.meeting-time{position:absolute;left:5px;right:5px;bottom:3px;font:800 7px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.meeting-hit{position:absolute;inset:-9px -5px;border-radius:11px}
+.conflict-overlay{position:absolute;top:0;bottom:0;background:repeating-linear-gradient(135deg,rgba(196,77,67,.92) 0 5px,rgba(151,50,44,.92) 5px 9px);z-index:1;pointer-events:none}.meeting-name,.meeting-time{z-index:2}
+.axis{position:relative;height:28px;margin-top:3px;color:#69767f;font-size:7px}.axis-tick{position:absolute;top:0;transform:translateX(-50%);white-space:nowrap;font:750 7px/1.25 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;text-align:center}.axis-tick::before{content:"";display:block;width:1px;height:5px;margin:0 auto 2px;background:#aeb9c0}.axis-tick.edge-start{transform:none}.axis-tick.edge-end{transform:translateX(-100%)}
+.response{min-height:53px;padding:8px 10px;border-top:1px solid var(--lab-line);background:#fafbfc;color:#64717a;font-size:9px;line-height:1.35}.response strong{display:block;color:#394750;font-size:10px}.response.accept{background:var(--accept-soft);color:#3b6851}.response.accept strong{color:var(--accept)}.response.decline{background:var(--conflict-soft);color:#7d4540}.response.decline strong{color:#a33f37}
+.adjust-row{display:none;margin-top:7px;gap:6px;align-items:center;flex-wrap:wrap}.calendar-card.organizer .adjust-row{display:flex}.workspace.calculate-mode .adjust-row button{display:none}.adjust-row button{min-height:30px;padding:0 8px;font-size:9px}.proposal-readout{margin-left:auto;color:#566671;font:800 8px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:nowrap}
+.typed-panel{display:none;margin:0 0 9px;padding:9px 10px;border:1px solid #c9d5de;border-radius:10px;background:linear-gradient(180deg,#fbfcfd,#f5f8fa);grid-template-columns:minmax(190px,.8fr) minmax(300px,1.3fr) auto;gap:10px;align-items:end}.workspace.calculate-mode .typed-panel{display:grid}.typed-copy strong{display:block;font-size:11px}.typed-copy span{display:block;margin-top:3px;color:var(--lab-muted);font-size:9px;line-height:1.35}.clock-console{min-width:0}.clock-date{display:flex;gap:5px;align-items:center;margin-bottom:5px}.clock-date label{color:var(--lab-muted);font-size:8px;font-weight:800}.clock-date select{height:28px;min-width:132px;border:1px solid var(--lab-line);border-radius:7px;background:#fff;color:var(--lab-ink);padding:0 7px;font:750 10px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.digital-clock{display:flex;align-items:center;gap:5px;padding:6px 8px;border:1px solid #283944;border-radius:9px;background:#111820;color:#eef5f8;box-shadow:inset 0 0 0 1px rgba(255,255,255,.04)}.digital-clock input{width:52px;height:38px;border:0;border-radius:5px;background:#1d2a33;color:#f4f8fa;text-align:center;font:850 21px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:.04em}.digital-clock input:focus{outline:2px solid #8fb8db;outline-offset:1px}.clock-colon{font:900 22px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#9fc0d8}.period-toggle{display:flex;gap:3px;margin-left:3px}.period-toggle button{min-height:32px;padding:0 7px;border-color:#41525e;background:#1d2a33;color:#aebcc5;font-size:8px}.period-toggle button.active{background:#eaf2f8;color:#1c2c37;border-color:#eaf2f8}.typed-actions{display:grid;gap:5px}.typed-actions button{min-width:100px}.typed-status{min-height:15px;color:#6b7780;font-size:8px;line-height:1.3}.typed-status.bad{color:var(--lab-bad)}
+.summary{margin-top:9px;min-height:58px;padding:9px 10px;border:1px solid var(--lab-line);border-radius:9px;background:#fbfcfd;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;color:#5e6c75;font-size:10px;line-height:1.4}.summary strong{display:block;color:var(--lab-ink);font-size:11px}.summary.good{border-color:#afd3ba;background:var(--lab-good-soft);color:#456c55}.summary.bad{border-color:#e2b8b3;background:var(--lab-bad-soft);color:#7b4641}.summary .next{display:none}.summary.solved .next{display:inline-flex}
+.difficulty-nudge{display:none;margin-top:7px;padding:7px 8px;border:1px solid #b6c8d9;border-radius:8px;background:#f2f6fa;color:#4f6476;font-size:9px}.difficulty-nudge.show{display:flex;gap:8px;align-items:center;justify-content:space-between}.difficulty-nudge button{min-height:30px;font-size:9px;font-weight:800}
+.method-panel{display:none;margin-top:9px;border:1px solid #b8d2c2;border-radius:10px;background:#fbfefc;overflow:hidden}.method-panel.show{display:block}.method-head{padding:9px 10px;border-bottom:1px solid #d6e6db;background:#f3faf5}.method-head strong{display:block;font-size:11px;color:#285d40}.method-head span{display:block;margin-top:2px;color:#5d7466;font-size:9px;line-height:1.35}.method-grid{display:grid;grid-template-columns:1.05fr .9fr 1fr}.method-cell{min-width:0;padding:8px 9px;border-right:1px solid #e0ebe4;border-bottom:1px solid #e0ebe4;font-size:8.5px;line-height:1.35;color:#4c5e53}.method-cell:nth-child(3n){border-right:0}.method-cell.head{background:#f8fbf9;color:#68786e;font-size:7.5px;font-weight:900;letter-spacing:.05em;text-transform:uppercase}.method-cell strong{display:block;color:#2d4637;font-size:9px}.method-cell code{font:800 8.5px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#345c45}.method-result{padding:9px 10px;color:#3d5f4b;font-size:9px;line-height:1.4}.method-result strong{color:#235b3d}.method-invariant{margin-top:5px;color:#66756b}
+.source-note{margin-top:7px;color:var(--lab-muted);font-size:8px;line-height:1.35}
+@media(max-width:980px){.cal-grid{grid-template-columns:1fr 1fr}.calendar-card.organizer{grid-column:1/-1}.request-panel{grid-template-columns:1fr}.meeting-token{width:100%;min-width:0}.workspace-head{grid-template-columns:1fr}.workspace-actions{justify-content:flex-start}.typed-panel{grid-template-columns:1fr 1fr}.typed-actions{grid-column:1/-1;grid-template-columns:auto 1fr;align-items:center}}
+@media(max-width:650px){.cal-grid{grid-template-columns:1fr}.calendar-card.organizer{grid-column:auto}.workspace{padding:7px}.calendar-card-head{min-height:61px}.request-copy strong{font-size:15px}.summary{grid-template-columns:1fr}.summary .next{justify-self:start}.workspace-actions{width:100%}.workspace-actions>button{flex:1 1 auto}.mode-toggle{order:-1;width:100%}.mode-toggle button{flex:1}.proposal-readout{flex-basis:100%;margin-left:0}.timeline{height:94px}.availability{top:43px}.typed-panel{grid-template-columns:1fr}.typed-actions{grid-column:auto;grid-template-columns:1fr}.digital-clock{justify-content:center}.clock-date{justify-content:center}.method-grid{grid-template-columns:1fr}.method-cell,.method-cell:nth-child(3n){border-right:0}.method-cell.head{display:none}.method-cell:nth-child(3n+1):not(.head){border-top:2px solid #d6e6db}.difficulty-nudge.show{align-items:flex-start;flex-direction:column}}
+
+/* v8 workspace: calculation stays beside the calendars and carries the learning method. */
+.request-tools{display:flex;align-items:center;justify-content:flex-end;gap:10px;flex-wrap:wrap}.mode-control{display:grid;gap:4px;justify-items:end}.mode-control>span{color:var(--lab-muted);font-size:8px;font-weight:850;letter-spacing:.05em;text-transform:uppercase}
+.workspace{position:relative;margin-top:10px;padding:0;overflow:hidden}.lab-layout{display:grid;grid-template-columns:minmax(620px,1.62fr) minmax(300px,.72fr);min-height:590px}.calendar-stage{position:relative;min-width:0;padding:10px;background:#fbfcfd}.calc-panel{min-width:0;padding:12px 12px 11px;border-left:1px solid var(--lab-line);background:#fff}
+.calc-head{padding-bottom:9px;border-bottom:1px solid var(--lab-line)}.calc-head-top{display:flex;align-items:center;justify-content:space-between;gap:8px}.calc-head strong{font-size:14px}.calc-badge{padding:4px 7px;border:1px solid var(--lab-line);border-radius:999px;background:#f7f9fa;color:#64717a;font-size:7.5px;font-weight:900;letter-spacing:.05em;text-transform:uppercase;white-space:nowrap}.calc-reference{margin-top:7px;padding:7px 8px;border:1px solid #bfd0df;border-radius:8px;background:#f1f6fa;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}.calc-reference strong{color:#315a82;font-size:10px}.calc-reference span{color:#647581;font:800 8px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.calc-flow{position:relative;display:grid;gap:7px;margin-top:9px}.calc-flow::before{content:"";position:absolute;left:14px;top:21px;bottom:20px;width:2px;background:#e0e6ea}.calc-step{position:relative;padding:8px 8px 8px 33px;border:1px solid #d9e0e4;border-radius:9px;background:#fbfcfd}.calc-step::before{content:"";position:absolute;z-index:2;left:9px;top:12px;width:11px;height:11px;border:3px solid #fff;border-radius:50%;background:#768691;box-shadow:0 0 0 1px #c8d2d8}.calc-step.revealed{border-color:#bdd5c5;background:#f7fcf8}.calc-step.revealed::before{background:var(--lab-good)}.calc-step.pending{border-color:#dfc963;background:#fffdf3;box-shadow:inset 3px 0 0 #d0ad35}.calc-step.pending::before{background:#d0ad35}.calc-step.bad{border-color:#e1aaa3;background:#fff8f7;box-shadow:inset 3px 0 0 var(--lab-bad)}.calc-step.bad::before{background:var(--lab-bad)}.calc-step.good{border-color:#a7d2b5;background:#f7fcf8;box-shadow:inset 3px 0 0 var(--lab-good)}.calc-step.good::before{background:var(--lab-good)}
+.step-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px}.step-head span{color:#71808a;font-size:7.5px;font-weight:900;letter-spacing:.065em;text-transform:uppercase}.step-head strong{color:#31414a;font-size:10px}.step-note{margin-top:2px;color:#77858d;font-size:7.5px;line-height:1.25}
+.calc-people{display:grid;gap:5px;margin-top:6px}.calc-person{display:grid;grid-template-columns:58px minmax(0,1fr);gap:5px;align-items:center}.calc-person-name{min-width:0}.calc-person-name strong{display:block;font-size:8.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.calc-person-name span{display:block;margin-top:1px;color:#7b878e;font:750 7px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.transform-row{min-width:0;display:grid;grid-template-columns:minmax(0,1fr) 38px minmax(0,1fr);gap:4px;align-items:center}.time-chip{min-width:0;padding:5px 5px;border:1px solid #d5dde2;border-radius:6px;background:#fff;color:#485760;font:800 7.5px/1.25 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;text-align:center;overflow:hidden}.time-chip.source{background:#f7f9fa}.time-chip.converted{border-color:#b8cedd;background:#eef5fa;color:#315a82}.time-chip.allowed{border-color:#b8d4c2;background:#eff8f2;color:#2f6c49}.transform-arrow{text-align:center;color:#71808a;font-size:8px;line-height:1.05}.transform-arrow b{display:block;color:#496273;font:900 7px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.calc-blank{min-height:29px;padding:5px;border:1px dashed #aab6bd;border-radius:6px;background:#fff;color:#88939a;display:grid;place-items:center;font-size:7.5px;font-weight:850;text-align:center}
+.latest-grid{display:grid;grid-template-columns:1fr;gap:4px;margin-top:6px}.latest-row{display:grid;grid-template-columns:58px minmax(0,1fr);gap:5px;align-items:center}.latest-row>strong{font-size:8px;overflow:hidden;text-overflow:ellipsis}.latest-eq{padding:5px 6px;border:1px solid #d8e0e4;border-radius:6px;background:#fff;color:#4b5a62;font:800 7.5px/1.25 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.latest-eq b{color:#2f6c49}
+.overlap-board{margin-top:6px;padding:6px;border:1px solid #d8e0e4;border-radius:7px;background:#fff}.overlap-axis{display:flex;justify-content:space-between;gap:8px;margin:0 0 4px 54px;color:#7a878e;font:750 6.8px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.overlap-row{display:grid;grid-template-columns:49px minmax(0,1fr);gap:5px;align-items:center;margin-top:4px}.overlap-row>span{font-size:7.5px;font-weight:850;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.overlap-track{position:relative;height:13px;border-radius:999px;background:#eef2f4;overflow:visible}.overlap-fill{position:absolute;top:2px;height:9px;border-radius:999px;background:#8ea9c0}.overlap-row.common .overlap-fill{background:#65a47d}.selected-marker{position:absolute;top:-3px;width:2px;height:19px;background:#b85e2c;box-shadow:0 0 0 2px #fff}.selected-marker::after{content:"your start";position:absolute;left:3px;top:-8px;color:#9b4f1f;font-size:6.5px;font-weight:900;white-space:nowrap}
+.duration-invariant{margin-top:6px;display:grid;gap:3px}.duration-row{display:grid;grid-template-columns:49px minmax(0,1fr);gap:5px;align-items:center}.duration-row>span{font-size:7px;font-weight:850}.duration-block{height:16px;padding:3px 5px;border:1px solid #b7c8d5;border-radius:5px;background:#eef4f8;color:#496273;font:800 7px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.duration-caption{color:#61727d;font-size:7.5px;font-weight:850}
+.calc-answer{margin-top:6px;display:grid;gap:6px}.answer-label{color:#66757e;font-size:7.5px;font-weight:900;letter-spacing:.05em;text-transform:uppercase}.clock-date{margin-bottom:0}.clock-date select{width:100%;min-width:0}.digital-clock{justify-content:center;padding:5px 6px}.digital-clock input{width:49px;height:36px;font-size:19px}.typed-actions{display:grid;grid-template-columns:auto minmax(0,1fr);gap:5px;align-items:center}.typed-actions button{min-width:78px;min-height:31px;font-size:8px;font-weight:850}.typed-status{min-height:0}.answer-preview{padding:5px 6px;border:1px solid #c9d5de;border-radius:6px;background:#fff;color:#52616b;font:800 7.5px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.summary{grid-template-columns:1fr;min-height:48px;padding:8px 9px}.summary .next{display:none!important}.source-note{margin-top:6px}
+.next-card{position:absolute;z-index:30;left:50%;top:12px;transform:translateX(-50%);width:min(350px,calc(100% - 24px));padding:11px 12px;border:1px solid #9cc7aa;border-radius:12px;background:#f7fcf8;box-shadow:0 12px 30px rgba(29,29,31,.16);text-align:center;animation:nextCardIn .2s ease-out}.next-card[hidden]{display:none}.next-card>strong{display:block;color:#2e6d4b;font-size:11px}.next-card>span{display:block;margin:3px auto 0;max-width:38ch;color:#52705f;font-size:8.5px;line-height:1.3}.next-upgrade{margin-top:9px;padding:8px;border:1px solid #b7c8df;border-radius:9px;background:#f3f7fc;text-align:left}.next-upgrade[hidden]{display:none}.next-upgrade strong{display:block;color:#365b88;font-size:10px}.next-upgrade span{display:block;margin-top:2px;color:#607184;font-size:8.5px;line-height:1.35}.next-upgrade button{width:100%;margin-top:6px;background:var(--lab-accent);border-color:var(--lab-accent);color:#fff;font-size:8.5px;font-weight:900}.next-actions{display:grid;grid-template-columns:1fr;gap:6px;margin-top:7px}.next-actions button{width:100%;min-height:31px;background:var(--lab-good);border-color:var(--lab-good);color:#fff;font-size:8.5px;font-weight:900}.next-card.has-upgrade .next-actions button{background:#fff;border-color:#9cc7aa;color:#2e6d4b}@keyframes nextCardIn{from{opacity:0;transform:translate(-50%,-6px)}to{opacity:1;transform:translate(-50%,0)}}
+@media(max-width:1080px){.lab-layout{grid-template-columns:minmax(580px,1.5fr) minmax(285px,.72fr)}.calendar-card-head{padding-inline:8px}.person-city{font-size:14px}.person-state{max-width:96px}.meeting-token{min-width:144px}}
+@media(max-width:900px){.lab-layout{grid-template-columns:1fr}.calc-panel{order:-1;border-left:0;border-top:0;border-bottom:1px solid var(--lab-line)}.calendar-stage{order:0}.request-panel{grid-template-columns:1fr}.request-tools{justify-content:space-between}.mode-control{justify-items:start}.calc-flow{grid-template-columns:repeat(3,1fr);align-items:start}.calc-flow::before{display:none}.calc-step{padding:8px}.calc-step::before{display:none}}
+@media(max-width:650px){.request-tools{display:grid;grid-template-columns:1fr}.meeting-token{width:100%;min-width:0}.mode-control{justify-items:stretch}.mode-control>span{text-align:left}.mode-toggle{width:100%}.mode-toggle button{flex:1}.calendar-stage{padding:7px}.cal-grid{grid-template-columns:1fr}.calendar-card.organizer{grid-column:auto}.workspace-actions{width:100%}.workspace-actions button{flex:1}.calc-flow{grid-template-columns:1fr}.transform-row{grid-template-columns:minmax(0,1fr) 34px minmax(0,1fr)}.next-card{top:9px;width:min(320px,calc(100% - 18px))}}
+
+
+/* v9 exam-method calculation panel: show the arithmetic learners need when calendars are absent. */
+.exam-flow{gap:8px}.exam-flow::before{left:14px;top:22px;bottom:22px}.exam-step{padding-bottom:9px}.method-route{margin-top:6px;display:grid;grid-template-columns:minmax(0,1fr) auto 18px minmax(0,1fr) auto;gap:4px;align-items:center;padding:5px 6px;border:1px solid #d8e0e4;border-radius:7px;background:#fff;color:#52616a;font-size:7.5px}.method-route span{font-weight:900;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.method-route b{color:#315a82;font:850 7px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.method-route i{color:#7c8991;font-style:normal;text-align:center;font-weight:900}.method-eq{margin-top:5px;padding:5px 6px;border:1px solid #dce3e7;border-radius:7px;background:#fff}.method-eq-label{display:block;margin-bottom:3px;color:#7a878f;font-size:6.8px;font-weight:900;letter-spacing:.045em;text-transform:uppercase}.method-eq-line{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr) auto minmax(0,1fr);gap:4px;align-items:center;color:#52616a;font:800 7.7px/1.15 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.method-eq-line b{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.method-eq-line i{font-style:normal;color:#8a969d;text-align:center}.method-eq-line strong{min-width:0;padding:3px 4px;border-radius:5px;background:#f2f6f9;color:#315a82;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.exam-step.revealed .method-eq-line strong{background:var(--lab-good-soft);color:#2f6c49}.method-rule{margin-top:6px;display:flex;align-items:center;gap:5px;flex-wrap:wrap;color:#57666f;font-size:7.5px;font-weight:850}.method-rule span{padding:3px 5px;border:1px solid #d8e0e4;border-radius:5px;background:#fff}.method-rule b{color:#89959c}.combine-skeleton{margin-top:6px;display:grid;gap:5px}.combine-skeleton>div:not(.inequality){display:grid;gap:2px;padding:5px 6px;border:1px solid #d8e0e4;border-radius:6px;background:#fff}.combine-skeleton span{color:#77848c;font-size:6.8px;font-weight:900;text-transform:uppercase;letter-spacing:.035em}.combine-skeleton strong{color:#3f515e;font:850 7.8px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.inequality{display:flex!important;align-items:center;justify-content:center;gap:5px;padding:6px!important;border:1px dashed #b7c7d2!important;background:#f8fafb!important;color:#315a82}.inequality b{font:900 7.4px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.inequality i{font-style:normal;color:#768691;font-weight:900}.combine-grid{margin-top:6px;display:grid;gap:5px}.combine-row{display:grid;grid-template-columns:1fr;gap:2px;padding:5px 6px;border:1px solid #d8e0e4;border-radius:6px;background:#fff}.combine-row span{color:#77848c;font-size:6.8px;font-weight:900;text-transform:uppercase;letter-spacing:.035em}.combine-row code{color:#52616a;font:800 7.2px/1.25 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;overflow-wrap:anywhere}.combine-row strong{color:#2f6c49;font:900 8.6px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.valid-window{padding:6px 7px;border:1px solid #9fc8ae;border-radius:7px;background:var(--lab-good-soft)}.valid-window span{display:block;color:#4f755d;font-size:6.8px;font-weight:900;text-transform:uppercase;letter-spacing:.035em}.valid-window strong{display:block;margin-top:3px;color:#246b45;font:900 8.5px/1.25 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.final-method.pending{animation:methodNudge 1.8s ease-in-out infinite}.final-method.pending .calc-answer{border-top:1px solid #eadb91;padding-top:6px}@keyframes methodNudge{0%,100%{box-shadow:inset 3px 0 0 #d0ad35,0 0 0 0 rgba(208,173,53,0)}50%{box-shadow:inset 3px 0 0 #d0ad35,0 0 0 3px rgba(208,173,53,.14)}}
+@media(max-width:900px){.exam-flow{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.exam-step{padding:7px}.method-eq-line{grid-template-columns:1fr auto 1fr auto 1fr;font-size:7px}.method-route{grid-template-columns:1fr auto 14px 1fr auto}.calc-reference{justify-content:flex-start}.calc-reference span{flex-basis:100%}}
+@media(max-width:650px){.exam-flow{grid-template-columns:1fr}.method-eq-line{font-size:7.6px}.method-route{font-size:7.5px}.final-method.pending{animation:none}}
+
+/* v10 — stable exam-method chain. Same five steps in both modes; only the result slots change. */
+.calc-head{padding-bottom:8px}
+.calc-head-top strong{font-size:15px}
+.calc-reference{justify-content:flex-start;gap:6px;margin-top:7px;padding:6px 8px;border-color:#c7d4dd;background:#f6f9fb}
+.calc-reference strong{font-size:9px;color:#425766}
+.calc-reference span{font:800 8px/1.25 var(--lab-font-sans);color:#71808a}
+.calc-reference strong::before{content:"24h";display:inline-grid;place-items:center;width:28px;height:20px;margin-right:6px;border-radius:6px;background:#263944;color:#fff;font:900 8px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.exam-flow.v10-flow{gap:6px;margin-top:8px}
+.exam-flow.v10-flow::before{left:13px;top:19px;bottom:19px}
+.v10-step{padding:7px 7px 7px 31px;min-width:0}
+.v10-step::before{left:8px;top:11px;width:10px;height:10px}
+.v10-step .step-head{align-items:center}
+.v10-step .step-head span{font-size:7px}
+.v10-step .step-head strong{font-size:9.5px}
+.method-ruleline{margin-top:4px;color:#66757e;font:800 7.2px/1.25 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.method-ruleline b{color:#334b5b;font-weight:900}
+.method-rows{display:grid;gap:4px;margin-top:5px}
+.method-row{min-width:0;display:grid;grid-template-columns:minmax(68px,.7fr) minmax(0,1.3fr);gap:5px;align-items:center;padding:4px 5px;border:1px solid #dce3e7;border-radius:7px;background:#fff}
+.method-row.compact{grid-template-columns:minmax(68px,.85fr) minmax(0,1.15fr)}
+.method-city{min-width:0;color:#50606a;font-size:7.5px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.method-city small{display:block;margin-top:1px;color:#89949b;font-size:6.6px;font-weight:800}
+.method-output{min-width:0;display:flex;align-items:center;justify-content:flex-end;gap:4px;flex-wrap:wrap}
+.method-value{display:inline-flex;align-items:center;justify-content:center;min-height:25px;min-width:68px;padding:3px 6px;border:1px solid #ccd7dd;border-radius:6px;background:#f5f8fa;color:#345164;font:900 8px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:nowrap}
+.method-value.hidden-value{border-style:dashed;background:#fafbfc;color:#9aa5ab}
+.method-value.good{border-color:#a9d1b6;background:var(--lab-good-soft);color:#2f6c49}
+.method-arrow{color:#93a0a7;font-size:8px;font-weight:900}
+.work-shift{width:78px;height:29px;padding:0 6px;border:2px solid #d0ad35;border-radius:6px;background:#fffbea;color:#20303a;text-align:center;font:900 9px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.work-time{min-width:0;display:grid;grid-template-columns:52px minmax(58px,1fr);gap:4px;align-items:center}
+.work-time select{width:100%;height:29px;border:2px solid #d0ad35;border-radius:6px;background:#fffbea;color:#283943;padding:0 4px;font:850 7.5px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.work-time input{width:100%;height:29px;border:2px solid #d0ad35;border-radius:6px;background:#fffbea;color:#1e2d35;padding:0 5px;text-align:center;font:900 9px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.work-shift:focus,.work-time select:focus,.work-time input:focus{border-color:var(--lab-accent);outline:3px solid var(--lab-focus-soft);outline-offset:1px;background:#fff}
+.work-shift.good,.work-time.good select,.work-time.good input{border-color:var(--lab-good);background:var(--lab-good-soft)}
+.work-shift.bad,.work-time.bad select,.work-time.bad input{border-color:var(--lab-bad);background:var(--lab-bad-soft)}
+.work-status-dot{width:17px;height:17px;display:inline-grid;place-items:center;flex:0 0 17px;border:1px solid #d0ad35;border-radius:50%;background:#fffdf5;color:#8a741f;font:950 10px/1 var(--lab-font-sans)}
+.work-status-dot.good{border-color:var(--lab-good);background:var(--lab-good);color:#fff}
+.work-status-dot.bad{border-color:var(--lab-bad);background:var(--lab-bad);color:#fff}
+.v10-step.needs-working{border-color:#dfc963;background:#fffdf3;box-shadow:inset 3px 0 0 #d0ad35}
+.v10-step.needs-working::before{background:#d0ad35}
+.v10-step.work-good{border-color:#a7d2b5;background:#f7fcf8;box-shadow:inset 3px 0 0 var(--lab-good)}
+.v10-step.work-good::before{background:var(--lab-good)}
+.v10-step.work-bad{border-color:#e1aaa3;background:#fff8f7;box-shadow:inset 3px 0 0 var(--lab-bad)}
+.v10-step.work-bad::before{background:var(--lab-bad)}
+.v10-step.needs-working .work-shift:not(.good):not(.bad),.v10-step.needs-working .work-time:not(.good):not(.bad) select,.v10-step.needs-working .work-time:not(.good):not(.bad) input{animation:workingNudge 1.6s ease-in-out infinite}
+@keyframes workingNudge{0%,100%{box-shadow:0 0 0 0 rgba(208,173,53,.06)}50%{box-shadow:0 0 0 3px rgba(208,173,53,.18)}}
+.window-equation{margin-top:5px;display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr) auto minmax(0,1fr);gap:4px;align-items:center;color:#466070;font:900 7.6px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.window-equation i{font-style:normal;color:#8a979e;text-align:center}
+.window-equation .method-value{min-width:0;width:100%}
+.final-time-wrap{margin-top:5px;padding:5px;border:1px solid #d6e0e5;border-radius:7px;background:#fff}
+.final-time-wrap .method-ruleline{margin:0 0 4px}
+.final-time-wrap .work-time{grid-template-columns:58px minmax(64px,1fr)}
+.final-time-wrap .work-time select,.final-time-wrap .work-time input{height:32px}
+.method-completion{margin-top:6px;padding:5px 6px;border:1px solid #d8e0e4;border-radius:7px;background:#f8fafb;color:#697780;font-size:7.4px;line-height:1.3}
+.method-completion.good{border-color:#acd2ba;background:var(--lab-good-soft);color:#35694d}
+.method-completion.action{border-color:#ddc868;background:#fffdf3;color:#75601e}
+
+.method-row.window-row{grid-template-columns:1fr;gap:3px}
+.method-row.window-row .method-city{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.method-row.window-row .method-city small{display:inline;margin:0}
+.method-window-output{display:grid;grid-template-columns:minmax(0,1fr) 12px minmax(0,1fr);gap:4px;align-items:center;width:100%}
+.method-window-output>.method-output{min-width:0;display:grid;grid-template-columns:minmax(0,1fr) 17px;gap:3px;align-items:center}
+.method-window-output .work-time{grid-template-columns:48px minmax(50px,1fr)}
+.method-window-output .work-time select{font-size:7px}
+@media(max-width:900px){.exam-flow.v10-flow{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.v10-step{padding:7px}.v10-step::before{display:none}}
+@media(max-width:650px){.exam-flow.v10-flow{grid-template-columns:1fr}.method-row,.method-row.compact{grid-template-columns:minmax(74px,.72fr) minmax(0,1.28fr)}.v10-step.needs-working .work-shift:not(.good):not(.bad),.v10-step.needs-working .work-time:not(.good):not(.bad) select,.v10-step.needs-working .work-time:not(.good):not(.bad) input{animation:none}}
+
+</style>
+
+<style>
+/* v11 — progressive exam-working scaffold. Five steps never move; only result slots change. */
+body{margin:0}
+.lab-layout{grid-template-columns:minmax(590px,1.45fr) minmax(390px,.92fr)}
+.calc-panel{padding:13px 14px 12px}
+.calc-head-top strong{font-size:17px}.calc-badge{font-size:8.5px;padding:5px 8px}
+.calc-reference{margin-top:8px;padding:8px 9px}.calc-reference strong{font-size:11px}.calc-reference span{font-size:10px;line-height:1.35}
+.work-level-control{margin-top:8px;padding-top:8px;border-top:1px solid var(--lab-line);display:grid;grid-template-columns:minmax(110px,.65fr) minmax(0,1.35fr);gap:8px;align-items:center}
+.work-level-copy strong{display:block;color:#4a5962;font-size:10px}.work-level-copy span{display:block;margin-top:2px;color:#79858d;font-size:9px;line-height:1.25}
+.work-level-toggle{display:grid;grid-template-columns:repeat(4,1fr);padding:3px;border:1px solid var(--lab-line);border-radius:9px;background:#f5f7f8}
+.work-level-toggle button{min-height:30px;padding:0 5px;border:0;border-radius:7px;background:transparent;color:#6b7880;font-size:9px;font-weight:850}
+.work-level-toggle button.active{background:#fff;color:#24343e;box-shadow:0 1px 4px rgba(29,29,31,.13)}
+.exam-flow.v10-flow{display:block}.v11-step{margin-top:7px;padding:8px 8px 8px 34px}.v11-step::before{left:9px;top:12px;width:11px;height:11px}
+.v11-step .step-head span{font-size:8.5px}.v11-step .step-head strong{font-size:12px;letter-spacing:-.01em}.v11-step.scaffolded{border-color:#d5dfe5;background:#fbfcfd}.v11-step.scaffolded::before{background:#8d9aa2}
+.v11-step.needs-working{border-color:#d8bf55;background:#fffdf4;box-shadow:inset 3px 0 0 #d0ad35}.v11-step.needs-working::before{background:#d0ad35}
+.step-rule{margin-top:3px;color:#66757e;font-size:9.5px;line-height:1.25}.formula-list{display:grid;gap:4px;margin-top:6px}
+.formula-row{display:grid;grid-template-columns:88px minmax(0,1fr);gap:7px;align-items:center;min-height:31px;padding:4px 6px;border:1px solid #dce3e7;border-radius:7px;background:#fff}
+.formula-row.example-row{background:#f7faf8;border-color:#d1e2d6}.formula-label{min-width:0;color:#54646e;font-size:9.5px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.formula-expression{min-width:0;display:flex;align-items:center;justify-content:flex-end;gap:4px;flex-wrap:wrap;color:#40515c;font:850 10.5px/1.2 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.formula-operand{min-width:0;padding:3px 5px;border-radius:5px;background:#f2f5f7;color:#3c4e5a;white-space:nowrap}.formula-op,.formula-eq{color:#87939a;font-weight:950}
+.method-value{position:relative;min-height:28px;min-width:78px;padding:4px 7px;font-size:10px}.method-value.example{padding-top:12px;background:#eef7f1;border-color:#bfd9c7;color:#2f6c49}.method-value.example small{position:absolute;left:5px;top:2px;color:#668a73;font:900 6.5px/1 var(--lab-font-sans);letter-spacing:.04em;text-transform:uppercase}
+.work-shift{width:86px;height:32px;font-size:10.5px}.work-time{grid-template-columns:64px minmax(64px,1fr)}.work-time select{height:32px;font-size:8.5px}.work-time input{height:32px;font-size:10.5px}.work-status-dot{width:19px;height:19px;flex-basis:19px;font-size:11px}
+.final-inequality{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;margin-top:7px;padding:6px;border:1px dashed #b9c7cf;border-radius:8px;background:#f8fafb}.final-inequality .formula-op{font-size:13px;color:#647681}
+.method-completion{margin-top:8px;padding:8px 9px;font-size:10px;line-height:1.35}
+.next-card>strong{font-size:12px}.next-card>span{font-size:9.5px}.next-upgrade strong{font-size:11px}.next-upgrade span{font-size:9.5px}.next-upgrade button,.next-actions button{font-size:9.5px}
+@media(max-width:1100px){.lab-layout{grid-template-columns:minmax(560px,1.4fr) minmax(360px,.95fr)}}
+@media(max-width:900px){.lab-layout{grid-template-columns:1fr}.calc-panel{order:-1}.work-level-control{grid-template-columns:150px minmax(0,1fr)}.v11-step{padding:8px 8px 8px 34px}.v11-step::before{display:block}.formula-row{grid-template-columns:105px minmax(0,1fr)}}
+@media(max-width:650px){body>main{width:calc(100% - var(--lab-page-gutter) - var(--lab-page-gutter))}.calc-panel{padding:11px}.work-level-control{grid-template-columns:1fr}.work-level-toggle button{min-height:34px;font-size:9.5px}.v11-step{padding:8px 8px 8px 31px}.formula-row{grid-template-columns:86px minmax(0,1fr)}.formula-expression{font-size:10px}.work-time{grid-template-columns:58px minmax(60px,1fr)}}
+@media(max-width:390px){.formula-row{grid-template-columns:1fr;gap:3px}.formula-expression{justify-content:flex-start}.method-value{min-width:74px}.work-level-toggle{grid-template-columns:1fr 1fr}.calc-reference strong{font-size:10.5px}}
+</style>
+</head>
+<body data-lab-layout="standard">
+<main>
+<!-- LAB_MANIFEST_HEADER_START -->
+<header class="lab-manifest-header">
+  <div class="lab-manifest-heading">
+    <h1 data-lab-manifest="title">Time Zones and Timetable Constraints</h1>
+  <p class="lab-manifest-subtitle" data-lab-manifest="subtitle">Choose one local meeting time, send the proposal, then determine whether that same event fits every participant’s local calendar.</p>
+  </div>
+  <!-- LAB_SYLLABUS_CHIPS_START -->
+<nav class="lab-syllabus-chips" aria-label="Syllabus alignment">
+  <section class="lab-syllabus-chip" style="--syllabus-chip-bg:#edf8f3;--syllabus-chip-border:#91c4b0;--syllabus-chip-text:#235f4e;--syllabus-chip-hover:#dcf0e7" aria-label="IGCSE 0580 syllabus alignment">
+    <a class="lab-syllabus-primary-link" href="https://www.cambridgeinternational.org/Images/662466-2025-2027-syllabus.pdf#page=16" target="_blank" rel="noopener noreferrer" aria-label="Open IGCSE 0580 syllabus section C1.15"></a>
+    <span class="lab-syllabus-name">IGCSE 0580</span>
+    <span class="lab-syllabus-divider" aria-hidden="true">·</span>
+    <span class="lab-syllabus-sections"><a class="lab-syllabus-section is-primary" href="https://www.cambridgeinternational.org/Images/662466-2025-2027-syllabus.pdf#page=16" target="_blank" rel="noopener noreferrer" aria-label="Open primary IGCSE 0580 syllabus section C1.15">C1.15</a><span class="lab-syllabus-separator" aria-hidden="true">,</span><a class="lab-syllabus-section" href="https://www.cambridgeinternational.org/Images/662466-2025-2027-syllabus.pdf#page=36" target="_blank" rel="noopener noreferrer" aria-label="Open IGCSE 0580 syllabus section E1.15">E1.15</a></span>
+  </section>
+</nav>
+<!-- LAB_SYLLABUS_CHIPS_END -->
+</header>
+<!-- LAB_MANIFEST_HEADER_END -->
+<span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span>
+<span data-lab-authored-subtitle-slot hidden></span>
+
+<section class="panel request-panel" aria-labelledby="requestTitle">
+  <div class="request-copy">
+    <span id="requestKicker" class="request-kicker">Scheduling request</span>
+    <strong id="requestTitle"></strong>
+    <span id="requestRule">Everyone must be available for the entire meeting. The UTC offsets on the calendars are fixed for this request.</span>
+  </div>
+  <div class="request-tools">
+    <div class="mode-control">
+      <span>Answer mode</span>
+      <div class="mode-toggle" role="group" aria-label="Answer input mode">
+        <button id="guidedMode" type="button" class="active">Place on calendar</button>
+        <button id="calculateMode" type="button">Calculate start</button>
+      </div>
+    </div>
+    <div id="meetingToken" class="meeting-token" aria-label="Meeting duration">
+      <span>Meeting to schedule</span>
+      <strong id="meetingDuration"></strong>
+      <small id="meetingOwner"></small>
+    </div>
+  </div>
+</section>
+
+<section class="panel workspace" data-lab-workspace>
+  <div class="lab-layout">
+    <div class="calendar-stage">
+      <div class="workspace-head">
+        <div><strong>Local calendars</strong><span id="workspaceHint">Independent local-time views. Participant conversions stay hidden until you send.</span></div>
+        <div class="workspace-actions">
+          <button id="resetButton" type="button">Reset proposal</button>
+          <button id="sendButton" type="button" class="primary" disabled>Send proposal</button>
+        </div>
+      </div>
+      <div id="calendarGrid" class="cal-grid"></div>
+      <div id="summary" class="summary" role="status" aria-live="polite">
+        <div><strong>Choose a start time.</strong><span>Place the fixed-duration meeting on the organiser's calendar.</span></div>
+      </div>
+      <div class="source-note">Offsets are supplied by the scheduling request. Daylight-saving rules and geographic time-zone lookup are outside this lab.</div>
+    </div>
+    <aside class="calc-panel" aria-live="polite">
+      <div class="calc-head">
+        <div class="calc-head-top"><strong>Exam method</strong><span id="calcBadge" class="calc-badge">method</span></div>
+        <div id="calcReference" class="calc-reference"></div>
+        <div class="work-level-control" aria-label="Calculation working difficulty">
+          <div class="work-level-copy"><strong>Working difficulty</strong><span id="workLevelHelp">Starter · one calculation</span></div>
+          <div class="work-level-toggle" role="group" aria-label="Choose calculation working difficulty">
+            <button type="button" data-work-level="1">Starter</button>
+            <button type="button" data-work-level="2">Paired</button>
+            <button type="button" data-work-level="3">Most</button>
+            <button type="button" data-work-level="4">Full</button>
+          </div>
+        </div>
+      </div>
+      <div id="calcContent"></div>
+    </aside>
+  </div>
+  <div id="nextCard" class="next-card" hidden>
+    <strong>Meeting confirmed</strong>
+    <span id="nextCardText">Everyone can attend the complete meeting.</span>
+    <div id="nextUpgrade" class="next-upgrade" hidden>
+      <strong>Ready to calculate the start?</strong>
+      <span>Use the same five exam steps, but enter each result yourself before sending.</span>
+      <button id="nextUpgradeButton" type="button">Calculate next request</button>
+    </div>
+    <div class="next-actions"><button id="nextButton" type="button">Next request</button></div>
+  </div>
+</section>
+</main>
+<script>
+(() => {
+  const $=id=>document.getElementById(id);
+  const MIN=60000, HOUR=60*MIN, DAY=24*HOUR;
+  const reduceMotion=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  const DAYS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const WINDOW_MIN=9*60;
+  const LOC={
+    Nairobi:{city:'Nairobi',offset:180}, Accra:{city:'Accra',offset:0}, Bangkok:{city:'Bangkok',offset:420},
+    BuenosAires:{city:'Buenos Aires',offset:-180}, Tokyo:{city:'Tokyo',offset:540}, Manila:{city:'Manila',offset:480},
+    Delhi:{city:'Delhi',offset:330}, Kathmandu:{city:'Kathmandu',offset:345}, Apia:{city:'Apia',offset:780}, Honolulu:{city:'Honolulu',offset:-600}
+  };
+  const TITLES=['release review','incident handover','design review','moderation call','deployment check','project handoff'];
+  const state={requestNo:0,request:null,proposalStart:null,lastSentStart:null,successStart:null,dirty:false,solved:false,drag:null,tokenDrag:null,mode:'guided',correctCount:0,awarded:false,typedDraft:null,typedError:'',work:{},workState:{},workLevel:1,workSolved:[0,0,0,0,0]};
+  const pad=n=>String(n).padStart(2,'0');
+  const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+  const snap15=ms=>Math.round(ms/(15*MIN))*15*MIN;
+  const localMs=(utcMs,offset)=>utcMs+offset*MIN;
+  const utcFromLocalMs=(local,offset)=>local-offset*MIN;
+  const rngFor=n=>{let a=(0x9e3779b9 ^ (n+1)*0x85ebca6b)>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=a;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296}};
+  const pick=(r,a)=>a[Math.floor(r()*a.length)];
+  const offsetLabel=min=>{const sign=min>=0?'+':'−',v=Math.abs(min);return `UTC${sign}${Math.floor(v/60)}${v%60?':'+pad(v%60):''}`};
+  function dateParts(ms){const d=new Date(ms);return {y:d.getUTCFullYear(),m:d.getUTCMonth(),day:d.getUTCDate(),dow:d.getUTCDay(),h:d.getUTCHours(),min:d.getUTCMinutes()}}
+  function dateLabel(ms){const p=dateParts(ms);return `${DAYS[p.dow]} ${p.day} ${MONTHS[p.m]}`}
+  function timeLabel(ms,notation){const p=dateParts(ms);if(notation==='24')return `${pad(p.h)}:${pad(p.min)}`;const ap=p.h<12?'am':'pm',h=p.h%12||12;return `${h}:${pad(p.min)} ${ap}`}
+  function rangeLabel(startUtc,endUtc,person){const s=localMs(startUtc,person.offset),e=localMs(endUtc,person.offset);const sd=dateParts(s),ed=dateParts(e);const dateChange=sd.y!==ed.y||sd.m!==ed.m||sd.day!==ed.day;return `${timeLabel(s,person.notation)}–${timeLabel(e,person.notation)}${dateChange?` · ${dateLabel(e)}`:''}`}
+  function fullLocalLabel(utc,person){const local=localMs(utc,person.offset);return `${dateLabel(local)} · ${timeLabel(local,person.notation)}`}
+  function shortLocalLabel(utc,person){const local=localMs(utc,person.offset),p=dateParts(local);return `${DAYS[p.dow]} ${timeLabel(local,person.notation)}`}
+  function signedGap(minutes){if(minutes===0)return 'same';return `${minutes>0?'+':'−'}${offsetGapLabel(minutes)}`}
+  function durationLabel(minutes){const h=Math.floor(minutes/60),m=minutes%60;return h&&m?`${h} h ${m} min`:h?`${h} h`:`${m} min`}
+  function offsetGapLabel(minutes){const v=Math.abs(minutes),h=Math.floor(v/60),m=v%60;return h&&m?`${h} h ${m} min`:h?`${h} h`:`${m} min`}
+  function dateKey(ms){const p=dateParts(ms);return `${p.y}-${pad(p.m+1)}-${pad(p.day)}`}
+  function dateKeyLabel(key){const [y,m,d]=key.split('-').map(Number);return dateLabel(Date.UTC(y,m-1,d,0,0))}
+  function localDateOptions(person){
+    const start=localMs(person.availStart,person.offset),end=localMs(person.availEnd-1,person.offset),keys=[];
+    let p=dateParts(start),cursor=Date.UTC(p.y,p.m,p.day,0,0);const last=dateKey(end);
+    while(true){const key=dateKey(cursor);keys.push(key);if(key===last)break;cursor+=DAY;if(keys.length>3)break}
+    return keys;
+  }
+  function makePerson(base,notation,before,after,H,duration,role){return {...base,notation,before,after,role,availStart:H-before*MIN,availEnd:H+(duration+after)*MIN}}
+  function generateRequest(n){
+    const r=rngFor(n),level=Math.min(n,2),title=pick(r,TITLES);
+    let organizer,others,notation,duration,startMinute;
+    const base=Date.UTC(2026,5,16+n*3,0,0);
+    if(level===0){
+      organizer={...pick(r,[LOC.Nairobi,LOC.Bangkok,LOC.Manila])};
+      const whole=[LOC.Accra,LOC.BuenosAires,LOC.Tokyo].filter(x=>x.city!==organizer.city);
+      const firstIndex=Math.floor(r()*whole.length),first=whole[firstIndex],remaining=whole.filter((_,i)=>i!==firstIndex);
+      others=[{...first},{...pick(r,remaining)}];
+      duration=pick(r,[60,75]);
+      startMinute=pick(r,[22*60+45,23*60,23*60+15]);
+      if(startMinute+duration<=24*60)startMinute=23*60+15;
+      notation=['24','12','24'];
+    }else if(level===1){
+      organizer={...pick(r,[LOC.Bangkok,LOC.Nairobi])};
+      if(organizer.city==='Bangkok') others=[{...LOC.Delhi},{...LOC.Accra}];
+      else others=[{...LOC.Kathmandu},{...LOC.Bangkok}];
+      duration=pick(r,[75,90]);startMinute=pick(r,[18*60+15,19*60+30,20*60+45]);notation=['12','24','12'];
+    }else{
+      const apiaFirst=n%2===0;organizer={...(apiaFirst?LOC.Apia:LOC.Honolulu)};others=[{...(apiaFirst?LOC.Honolulu:LOC.Apia)},{...pick(r,[LOC.Delhi,LOC.Kathmandu])}];
+      duration=pick(r,[60,75,90]);startMinute=pick(r,[9*60+30,10*60+15,11*60+45,13*60]);notation=apiaFirst?['24','12','24']:['12','24','24'];
+    }
+    const bp=dateParts(base);const H=Date.UTC(bp.y,bp.m,bp.day,0,0)+startMinute*MIN-organizer.offset*MIN;
+    let people;
+    if(level===0){people=[makePerson(organizer,notation[0],120,120,H,duration,'Organiser'),makePerson(others[0],notation[1],15,60,H,duration,'Participant'),makePerson(others[1],notation[2],60,15,H,duration,'Participant')];}
+    else if(level===1){people=[makePerson(organizer,notation[0],120,120,H,duration,'Organiser'),makePerson(others[0],notation[1],0,45,H,duration,'Participant'),makePerson(others[1],notation[2],45,15,H,duration,'Participant')];}
+    else{people=[makePerson(organizer,notation[0],120,120,H,duration,'Organiser'),makePerson(others[0],notation[1],0,45,H,duration,'Participant'),makePerson(others[1],notation[2],45,0,H,duration,'Participant')];}
+    people.forEach((p,i)=>{p.id=`p${i}`;computeWindow(p)});
+    return {level,title,duration,H,people};
+  }
+  function computeWindow(person){
+    const availStartLocal=localMs(person.availStart,person.offset),availEndLocal=localMs(person.availEnd,person.offset);
+    let start=Math.floor((availStartLocal-120*MIN)/HOUR)*HOUR;
+    const endNeeded=availEndLocal+90*MIN;
+    if(endNeeded-start>WINDOW_MIN*MIN) start=Math.ceil((endNeeded-WINDOW_MIN*MIN)/HOUR)*HOUR;
+    person.windowLocalStart=start;person.windowLocalEnd=start+WINDOW_MIN*MIN;
+  }
+  function posForUtc(utc,person){return (localMs(utc,person.offset)-person.windowLocalStart)/(WINDOW_MIN*MIN)*100}
+  function fits(person,start){const end=start+state.request.duration*MIN;return start>=person.availStart-1&&end<=person.availEnd+1}
+  function overlapMinutes(person,start){const end=start+state.request.duration*MIN,lo=Math.max(start,person.availStart),hi=Math.min(end,person.availEnd);return Math.max(0,Math.round((hi-lo)/MIN))}
+  function dateSegments(person){
+    const segs=[];let cursor=person.windowLocalStart,end=person.windowLocalEnd;
+    while(cursor<end-1){const p=dateParts(cursor),next=Date.UTC(p.y,p.m,p.day+1,0,0),stop=Math.min(end,next);segs.push({start:cursor,end:stop,label:dateLabel(cursor)});cursor=stop}
+    return segs;
+  }
+  function ticks(person){
+    const arr=[];let t=Math.ceil(person.windowLocalStart/HOUR)*HOUR;
+    while(t<=person.windowLocalEnd+1){const pct=(t-person.windowLocalStart)/(WINDOW_MIN*MIN)*100;if(pct>=-0.1&&pct<=100.1)arr.push({t,pct});t+=2*HOUR}
+    return arr;
+  }
+  function conflictMarkup(person,start){
+    if(start==null)return '';
+    const duration=state.request.duration,end=start+duration*MIN,parts=[];
+    if(start<person.availStart){const w=Math.min(1,(person.availStart-start)/(duration*MIN));if(w>0)parts.push(`<span class="conflict-overlay" style="left:0;width:${w*100}%"></span>`) }
+    if(end>person.availEnd){const left=Math.max(0,(person.availEnd-start)/(duration*MIN));if(left<1)parts.push(`<span class="conflict-overlay" style="left:${left*100}%;width:${(1-left)*100}%"></span>`) }
+    if(end<=person.availStart||start>=person.availEnd)return `<span class="conflict-overlay" style="left:0;width:100%"></span>`;
+    return parts.join('');
+  }
+  function eventBlock(person,start,classes,label,interactive=false){
+    if(start==null)return '';
+    const left=posForUtc(start,person),right=posForUtc(start+state.request.duration*MIN,person),width=right-left;
+    if(right<0||left>100)return '';
+    const l=clamp(left,0,100),r=clamp(right,0,100),w=Math.max(1,r-l);
+    const localStart=localMs(start,person.offset),localEnd=localMs(start+state.request.duration*MIN,person.offset);
+    return `<div class="meeting-block ${classes}" data-meeting="${interactive?'current':'sent'}" style="left:${l}%;width:${w}%" title="${dateLabel(localStart)} ${timeLabel(localStart,person.notation)} to ${dateLabel(localEnd)} ${timeLabel(localEnd,person.notation)}">
+      ${classes.includes('declined')?conflictMarkup(person,start):''}
+      ${interactive?'<span class="meeting-hit" aria-hidden="true"></span>':''}
+      <span class="meeting-name">${label}</span><span class="meeting-time">${rangeLabel(start,start+state.request.duration*MIN,person)}</span>
+    </div>`;
+  }
+  function responseFor(person){
+    if(state.lastSentStart==null)return {cls:'',title:person.role==='Organiser'?'Your local calendar':'Waiting for proposal',detail:person.role==='Organiser'?(state.mode==='guided'?'Place the meeting inside your available band.':'Enter the start time above; calendar placement is disabled.'):'No converted meeting time is shown yet.'};
+    const ok=fits(person,state.lastSentStart),overlap=overlapMinutes(person,state.lastSentStart),d=state.request.duration;
+    if(ok)return {cls:'accept',title:'Accepts the proposal',detail:`All ${d} minutes fit this local availability window.`};
+    if(overlap===0){const end=state.lastSentStart+d*MIN;if(end<=person.availStart)return {cls:'decline',title:'Declines the proposal',detail:'The meeting finishes before this person becomes available.'};return {cls:'decline',title:'Declines the proposal',detail:'The meeting starts after this person is no longer available.'}}
+    return {cls:'decline',title:'Declines the proposal',detail:`${d-overlap} of the ${d} minutes fall outside this availability window.`};
+  }
+  function renderPerson(person,index){
+    const organizer=index===0,segments=dateSegments(person),axis=ticks(person),resp=responseFor(person);
+    const availLeft=clamp(posForUtc(person.availStart,person),0,100),availRight=clamp(posForUtc(person.availEnd,person),0,100);
+    let meetings='';
+    if(organizer){
+      if(state.lastSentStart!=null&&state.proposalStart!=null&&state.lastSentStart!==state.proposalStart)meetings+=eventBlock(person,state.lastSentStart,'ghost','last sent',false);
+      if(state.proposalStart!=null)meetings+=eventBlock(person,state.proposalStart,`current${state.dirty?' dirty':''}`,'meeting',state.mode==='guided');
+    }else if(state.lastSentStart!=null){
+      const ok=fits(person,state.lastSentStart);meetings+=eventBlock(person,state.lastSentStart,`sent ${ok?'accepted':'declined'}`,'same meeting',false);
+    }
+    const localAvailStart=localMs(person.availStart,person.offset),localAvailEnd=localMs(person.availEnd,person.offset);
+    return `<article class="calendar-card ${organizer?'organizer':''}" data-person="${index}">
+      <div class="calendar-card-head"><div><span class="person-role">${person.role}</span><strong class="person-city">${person.city}</strong><span class="person-meta">${offsetLabel(person.offset)} · ${person.notation==='24'?'24-hour':'12-hour'} calendar</span></div><div class="person-state"><strong>${dateLabel(localAvailStart)}</strong>${rangeLabel(person.availStart,person.availEnd,person)}</div></div>
+      <div class="date-strip">${segments.map(s=>{const l=(s.start-person.windowLocalStart)/(WINDOW_MIN*MIN)*100,w=(s.end-s.start)/(WINDOW_MIN*MIN)*100;return `<div class="date-segment" style="left:${l}%;width:${w}%">${s.label}</div>`}).join('')}</div>
+      <div class="timeline-shell">
+        <div class="timeline ${organizer?'organizer-timeline':''} ${state.proposalStart!=null?'has-proposal':''} ${organizer&&state.mode==='calculate'&&state.proposalStart==null?'calculate-empty':''}" data-timeline="${index}" aria-label="${person.city} local calendar">
+          <div class="availability" style="left:${availLeft}%;width:${Math.max(1,availRight-availLeft)}%"><span class="availability-label">${timeLabel(localAvailStart,person.notation)}–${timeLabel(localAvailEnd,person.notation)}</span></div>
+          ${organizer&&state.proposalStart==null&&state.mode==='guided'?'<div class="place-cue">drag the meeting here or tap a start time</div>':''}
+          ${meetings}
+        </div>
+        <div class="axis">${axis.map(t=>`<span class="axis-tick ${t.pct<1?'edge-start':t.pct>99?'edge-end':''}" style="left:${clamp(t.pct,0,100)}%">${timeLabel(t.t,person.notation)}</span>`).join('')}</div>
+        ${organizer?`<div class="adjust-row"><button type="button" data-shift="-15" ${state.proposalStart==null||state.mode!=='guided'?'disabled':''}>15 min earlier</button><button type="button" data-shift="15" ${state.proposalStart==null||state.mode!=='guided'?'disabled':''}>15 min later</button><span class="proposal-readout">${state.proposalStart==null?'no proposal placed':rangeLabel(state.proposalStart,state.proposalStart+state.request.duration*MIN,person)}</span></div>`:''}
+      </div>
+      <div class="response ${resp.cls}"><strong>${resp.title}</strong>${resp.detail}</div>
+    </article>`;
+  }
+  function ensureTypedDraft(){
+    const org=state.request.people[0],dates=localDateOptions(org);
+    if(!state.typedDraft)state.typedDraft={date:dates[0],hour:'',minute:'',period:'am'};
+    if(!dates.includes(state.typedDraft.date))state.typedDraft.date=dates[0];
+    return dates;
+  }
+  function typedClockMarkup(org){
+    const dates=ensureTypedDraft(),twelve=org.notation==='12',d=state.typedDraft;
+    return `<div class="calc-answer">
+      <span class="answer-label">Your ${org.city} start</span>
+      <div class="clock-date"><select id="typedDate" aria-label="Meeting date">${dates.map(k=>`<option value="${k}" ${d.date===k?'selected':''}>${dateKeyLabel(k)}</option>`).join('')}</select></div>
+      <div class="digital-clock"><input id="typedHour" inputmode="numeric" autocomplete="off" maxlength="2" placeholder="${twelve?'hh':'00'}" aria-label="Start hour" value="${d.hour}"><span class="clock-colon">:</span><input id="typedMinute" inputmode="numeric" autocomplete="off" maxlength="2" placeholder="00" aria-label="Start minute" value="${d.minute}">${twelve?`<div class="period-toggle" role="group" aria-label="AM or PM"><button type="button" data-period="am" class="${d.period==='am'?'active':''}">am</button><button type="button" data-period="pm" class="${d.period==='pm'?'active':''}">pm</button></div>`:''}</div>
+      <div class="typed-actions"><button id="setTypedButton" type="button">Set start</button><div id="typedStatus" class="typed-status ${state.typedError?'bad':''}">${state.typedError||`${org.notation==='24'?'24-hour':'12-hour'} local time`}</div></div>
+      ${state.proposalStart!=null?`<div class="answer-preview">${fullLocalLabel(state.proposalStart,org)} · ${durationLabel(state.request.duration)}</div>`:''}
+    </div>`;
+  }
+  function bindTypedClock(){
+    if(state.mode!=='calculate'||state.successStart!=null)return;
+    const date=$('typedDate'),hour=$('typedHour'),minute=$('typedMinute');if(!date||!hour||!minute)return;
+    date.addEventListener('change',()=>{state.typedDraft.date=date.value;state.typedError=''});
+    hour.addEventListener('input',()=>{state.typedDraft.hour=hour.value.replace(/\D/g,'').slice(0,2);hour.value=state.typedDraft.hour;state.typedError=''});
+    minute.addEventListener('input',()=>{state.typedDraft.minute=minute.value.replace(/\D/g,'').slice(0,2);minute.value=state.typedDraft.minute;state.typedError=''});
+    document.querySelectorAll('[data-period]').forEach(btn=>btn.addEventListener('click',()=>{state.typedDraft.period=btn.dataset.period;document.querySelectorAll('[data-period]').forEach(b=>b.classList.toggle('active',b===btn));state.typedError=''}));
+    $('setTypedButton')?.addEventListener('click',commitTypedStart);
+    [hour,minute].forEach(input=>input.addEventListener('keydown',e=>{if(e.key==='Enter')commitTypedStart()}));
+  }
+  function commitTypedStart(){
+    if(state.mode!=='calculate')return;
+    const org=state.request.people[0],draft=state.typedDraft||{},rawH=Number(draft.hour),rawM=Number(draft.minute);
+    if(!draft.date||draft.hour===''||draft.minute===''||!Number.isInteger(rawH)||!Number.isInteger(rawM)){state.typedError='Enter hour and minute.';renderCalcPanel();return}
+    let hour=rawH;
+    if(org.notation==='24'){if(hour<0||hour>23){state.typedError='Use 00–23.';renderCalcPanel();return}}
+    else{if(hour<1||hour>12){state.typedError='Use 1–12.';renderCalcPanel();return}hour%=12;if(draft.period==='pm')hour+=12}
+    if(rawM<0||rawM>59){state.typedError='Use 00–59 minutes.';renderCalcPanel();return}
+    const [y,m,d]=draft.date.split('-').map(Number),local=Date.UTC(y,m-1,d,hour,rawM),utc=utcFromLocalMs(local,org.offset),duration=state.request.duration*MIN;
+    if(utc<org.availStart-1||utc+duration>org.availEnd+1){state.typedError=`Outside ${org.city}'s own availability.`;renderCalcPanel();return}
+    state.proposalStart=utc;state.dirty=state.lastSentStart!=null&&state.proposalStart!==state.lastSentStart;state.typedError='';render();
+  }
+  function guideParticipant(org){
+    return state.request.people.slice(1).sort((a,b)=>{
+      const da=Math.abs(org.offset-a.offset),db=Math.abs(org.offset-b.offset);
+      if(db!==da)return db-da;
+      return (Math.abs(org.offset-b.offset)%60?1:0)-(Math.abs(org.offset-a.offset)%60?1:0);
+    })[0];
+  }
+  function shiftMath(delta){
+    if(delta===0)return {op:'+',amount:'0 min'};
+    return {op:delta>0?'+':'−',amount:offsetGapLabel(delta)};
+  }
+  function formulaClock(utc,person){return shortLocalLabel(utc,person)}
+  function methodEquation(label,left,op,right,result='? ',tone=''){
+    return `<div class="method-eq ${tone}"><span class="method-eq-label">${label}</span><div class="method-eq-line"><b>${left}</b><i>${op}</i><b>${right}</b><i>=</i><strong>${result}</strong></div></div>`;
+  }
+  function methodReveal(){
+    return state.mode==='guided' && state.successStart!=null;
+  }
+  function methodExpected(){
+    const org=state.request.people[0],duration=state.request.duration*MIN;
+    const others=state.request.people.slice(1);
+    const shifts=others.map(p=>org.offset-p.offset);
+    const converted=others.map(p=>({start:p.availStart,end:p.availEnd}));
+    const latest=state.request.people.map(p=>p.availEnd-duration);
+    const commonLo=Math.max(...state.request.people.map(p=>p.availStart));
+    const commonHi=Math.min(...latest);
+    return {org,others,shifts,converted,latest,commonLo,commonHi};
+  }
+  function methodDates(org){
+    const e=methodExpected(),times=[
+      ...state.request.people.flatMap(p=>[p.availStart,p.availEnd]),
+      ...e.latest,e.commonLo,e.commonHi,state.proposalStart??e.commonLo
+    ].filter(Number.isFinite);
+    const keys=[...new Set(times.map(t=>dateKey(localMs(t,org.offset))))].sort();
+    return keys.length?keys:localDateOptions(org);
+  }
+  function format24Utc(utc,org){
+    const local=localMs(utc,org.offset),p=dateParts(local);
+    return `${DAYS[p.dow]} ${pad(p.h)}:${pad(p.min)}`;
+  }
+  function workTimeInit(key,expectedUtc,org){
+    if(state.work[key])return state.work[key];
+    state.work[key]={date:'',time:''};
+    return state.work[key];
+  }
+  function parseWorkTime(value,org){
+    if(!value||!value.date||!String(value.time||'').trim())return null;
+    const m=String(value.time).trim().match(/^(\d{1,2}):(\d{2})$/);
+    if(!m)return NaN;
+    const h=Number(m[1]),min=Number(m[2]);if(h<0||h>23||min<0||min>59)return NaN;
+    const [y,mo,d]=value.date.split('-').map(Number);
+    const local=Date.UTC(y,mo-1,d,h,min);
+    return utcFromLocalMs(local,org.offset);
+  }
+  function parseShift(raw){
+    const s=String(raw??'').trim().replace(/[−–—]/g,'-').replace(/\s+/g,'');
+    if(!s)return null;
+    const m=s.match(/^([+-]?)(\d{1,2})(?::(\d{1,2}))?$/);if(!m)return NaN;
+    const sign=m[1]==='-'?-1:1,h=Number(m[2]),min=Number(m[3]||0);if(min>59)return NaN;
+    return sign*(h*60+min);
+  }
+  function shiftText(minutes){
+    const sign=minutes<0?'−':'+',v=Math.abs(minutes),h=Math.floor(v/60),m=v%60;
+    return `${sign}${pad(h)}:${pad(m)}`;
+  }
+  function timeWorkState(key,expectedUtc,org){
+    const v=parseWorkTime(state.work[key],org);
+    if(v===null)return 'idle';if(!Number.isFinite(v))return 'bad';
+    return Math.abs(v-expectedUtc)<MIN/2?'good':'bad';
+  }
+  function shiftWorkState(key,expected){
+    const v=parseShift(state.work[key]);if(v===null)return 'idle';if(!Number.isFinite(v))return 'bad';return v===expected?'good':'bad';
+  }
+  const WORK_LEVELS={
+    1:{name:'Starter',help:'one calculation',keys:['shift2']},
+    2:{name:'Paired',help:'worked example + your matching item',keys:['shift2','conv2s','latest2','commonHi']},
+    3:{name:'Most',help:'only a few worked examples remain',keys:['shift1','shift2','conv1s','conv1e','conv2s','conv2e','latest1','latest2','commonLo','commonHi']},
+    4:{name:'Full',help:'complete the whole method',keys:['shift1','shift2','conv1s','conv1e','conv2s','conv2e','latest0','latest1','latest2','commonLo','commonHi']}
+  };
+  function allWork(){
+    const e=methodExpected();
+    return [
+      ['shift1','shift',e.shifts[0]],['shift2','shift',e.shifts[1]],
+      ['conv1s','time',e.converted[0].start],['conv1e','time',e.converted[0].end],
+      ['conv2s','time',e.converted[1].start],['conv2e','time',e.converted[1].end],
+      ['latest0','time',e.latest[0]],['latest1','time',e.latest[1]],['latest2','time',e.latest[2]],
+      ['commonLo','time',e.commonLo],['commonHi','time',e.commonHi],
+      ['finalStart','final',null]
+    ];
+  }
+  function requiredKeys(){return state.mode==='calculate'?[...WORK_LEVELS[state.workLevel].keys,'finalStart']:[]}
+  function requiredWork(){const keys=new Set(requiredKeys());return allWork().filter(([k])=>keys.has(k))}
+  function isRequired(key){return state.mode==='calculate'&&requiredKeys().includes(key)}
+  function workKeyState(key,type,expected){
+    const e=methodExpected(),org=e.org;
+    if(type==='shift')return shiftWorkState(key,expected);
+    if(type==='time')return timeWorkState(key,expected,org);
+    if(type==='final'){
+      const v=parseWorkTime(state.work[key],org);
+      if(v===null)return 'idle';if(!Number.isFinite(v))return 'bad';
+      return v>=e.commonLo-1&&v<=e.commonHi+1?'good':'bad';
+    }
+    return 'idle';
+  }
+  function refreshWorkStates(){
+    state.workState={};
+    allWork().forEach(([k,t,x])=>state.workState[k]=workKeyState(k,t,x));
+  }
+  function workingReady(){
+    if(state.mode!=='calculate')return true;
+    refreshWorkStates();
+    return requiredWork().every(([k])=>state.workState[k]==='good');
+  }
+  const STEP_KEYS=[['shift1','shift2'],['conv1s','conv1e','conv2s','conv2e'],['latest0','latest1','latest2'],['commonLo','commonHi'],['finalStart']];
+  function stepState(stepIndex){
+    if(state.mode!=='calculate')return '';
+    refreshWorkStates();
+    const req=STEP_KEYS[stepIndex].filter(isRequired);
+    if(!req.length)return 'scaffolded';
+    const vals=req.map(k=>state.workState[k]);
+    if(vals.some(v=>v==='bad'))return 'work-bad';
+    if(vals.every(v=>v==='good'))return 'work-good';
+    return 'pending';
+  }
+  function firstIncompleteStep(){
+    if(state.mode!=='calculate')return -1;
+    refreshWorkStates();
+    return STEP_KEYS.findIndex(keys=>keys.filter(isRequired).some(k=>state.workState[k]!=='good'));
+  }
+  function resultValue(text,show,example=false){
+    const cls=show?'good':'hidden-value';
+    return `<span class="method-value ${cls}${example?' example':''}">${example?'<small>example</small>':''}${show?text:'?'}</span>`;
+  }
+  function shiftSlot(key,expected,show){
+    const editable=isRequired(key);
+    if(!editable)return resultValue(shiftText(expected),state.mode==='calculate'||show,state.mode==='calculate');
+    if(state.work[key]==null)state.work[key]='';
+    const st=shiftWorkState(key,expected);
+    return `<span class="method-output"><input class="work-shift ${st==='good'?'good':st==='bad'?'bad':''}" data-work-shift="${key}" value="${String(state.work[key]).replace(/"/g,'&quot;')}" placeholder="±HH:MM" inputmode="text" autocomplete="off" aria-label="Clock shift"><span class="work-status-dot ${st}">${st==='good'?'✓':st==='bad'?'×':''}</span></span>`;
+  }
+  function timeSlot(key,expectedUtc,show,final=false){
+    const e=methodExpected(),org=e.org,editable=isRequired(key);
+    if(!editable)return resultValue(format24Utc(expectedUtc,org),state.mode==='calculate'||show,state.mode==='calculate');
+    const value=workTimeInit(key,expectedUtc,org),dates=methodDates(org),st=final?workKeyState(key,'final'):timeWorkState(key,expectedUtc,org);
+    return `<span class="method-output"><span class="work-time ${st==='good'?'good':st==='bad'?'bad':''}" data-work-time="${key}">
+      <select data-work-date="${key}" aria-label="${key} date"><option value="" ${value.date?'':'selected'}>day</option>${dates.map(k=>`<option value="${k}" ${value.date===k?'selected':''}>${dateKeyLabel(k).replace(/ 2026$/,'')}</option>`).join('')}</select>
+      <input data-work-clock="${key}" value="${String(value.time||'').replace(/"/g,'&quot;')}" placeholder="HH:MM" inputmode="numeric" maxlength="5" autocomplete="off" aria-label="${key} time">
+    </span><span class="work-status-dot ${st}">${st==='good'?'✓':st==='bad'?'×':''}</span></span>`;
+  }
+  function formulaRow(label,terms,result,example=false){
+    return `<div class="formula-row${example?' example-row':''}"><span class="formula-label">${label}</span><div class="formula-expression">${terms}${result}</div></div>`;
+  }
+  function operand(text){return `<span class="formula-operand">${text}</span>`}
+  function op(text){return `<span class="formula-op">${text}</span>`}
+  function eq(){return '<span class="formula-eq">=</span>'}
+  function calcStep(index,title,body){
+    const st=stepState(index),focus=firstIncompleteStep()===index;
+    return `<section class="calc-step exam-step v11-step ${st}${focus?' needs-working':''}"><div class="step-head"><span>${index+1}</span><strong>${title}</strong></div>${body}</section>`;
+  }
+  function bindMethodWork(){
+    if(state.mode!=='calculate')return;
+    const commit=key=>{
+      const e=methodExpected(),org=e.org;
+      if(key==='finalStart'){
+        const utc=parseWorkTime(state.work[key],org);
+        if(Number.isFinite(utc)&&utc>=e.commonLo-1&&utc<=e.commonHi+1){state.proposalStart=utc;state.dirty=state.lastSentStart!=null&&utc!==state.lastSentStart}
+        else if(state.lastSentStart==null)state.proposalStart=null;
+        render();
+      }else renderCalcPanel();
+    };
+    document.querySelectorAll('[data-work-shift]').forEach(input=>{
+      const key=input.dataset.workShift;
+      input.addEventListener('input',()=>{state.work[key]=input.value});
+      input.addEventListener('change',()=>commit(key));
+      input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();input.blur()}});
+    });
+    document.querySelectorAll('[data-work-date]').forEach(sel=>{
+      const key=sel.dataset.workDate;
+      sel.addEventListener('change',()=>{state.work[key]??={date:'',time:''};state.work[key].date=sel.value;commit(key)});
+    });
+    document.querySelectorAll('[data-work-clock]').forEach(input=>{
+      const key=input.dataset.workClock;
+      input.addEventListener('input',()=>{
+        const digits=input.value.replace(/\D/g,'').slice(0,4),v=digits.length===4?`${digits.slice(0,2)}:${digits.slice(2)}`:digits;
+        state.work[key]??={date:'',time:''};state.work[key].time=v;input.value=v;
+      });
+      input.addEventListener('change',()=>commit(key));
+      input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();input.blur()}});
+    });
+  }
+  function renderWorkLevelControl(){
+    const cfg=WORK_LEVELS[state.workLevel];
+    $('workLevelHelp').textContent=`${cfg.name} · ${cfg.help}`;
+    document.querySelectorAll('[data-work-level]').forEach(b=>{
+      const on=Number(b.dataset.workLevel)===state.workLevel;b.classList.toggle('active',on);b.setAttribute('aria-pressed',String(on));
+    });
+  }
+  function renderCalcPanel(){
+    const panel=$('calcContent'),e=methodExpected(),org=e.org,show=methodReveal();
+    $('calcBadge').textContent=state.mode==='calculate'?WORK_LEVELS[state.workLevel].name.toLowerCase():show?'worked method':'method';
+    $('calcReference').innerHTML=`<strong>Keep every line in ${org.city} 24-hour time.</strong><span>Carry the day when midnight is crossed.</span>`;
+    renderWorkLevelControl();
+    const rows=[];
+
+    // 1. Offset arithmetic: visible operands, result scaffolded or editable.
+    const shiftRows=e.others.map((p,i)=>formulaRow(p.city,
+      `${operand(offsetLabel(org.offset))}${op('−')}${operand(offsetLabel(p.offset))}${eq()}`,
+      shiftSlot(`shift${i+1}`,e.shifts[i],show), state.mode==='calculate'&&!isRequired(`shift${i+1}`))).join('');
+    rows.push(calcStep(0,'Find the clock shifts',`<div class="step-rule">organiser UTC offset − participant UTC offset</div><div class="formula-list">${shiftRows}</div>`));
+
+    // 2. Convert each participant window into organiser time using the shift from step 1.
+    let convRows='';
+    e.others.forEach((p,i)=>{
+      const sh=shiftMath(e.shifts[i]),n=i+1;
+      convRows+=formulaRow(`${p.city} start`,`${operand(shortLocalLabel(p.availStart,p))}${op(sh.op)}${operand(sh.amount)}${eq()}`,timeSlot(`conv${n}s`,p.availStart,show),state.mode==='calculate'&&!isRequired(`conv${n}s`));
+      convRows+=formulaRow(`${p.city} end`,`${operand(shortLocalLabel(p.availEnd,p))}${op(sh.op)}${operand(sh.amount)}${eq()}`,timeSlot(`conv${n}e`,p.availEnd,show),state.mode==='calculate'&&!isRequired(`conv${n}e`));
+    });
+    rows.push(calcStep(1,'Convert to one clock',`<div class="step-rule">local time ± clock shift = ${org.city} time</div><div class="formula-list">${convRows}</div>`));
+
+    // 3. Latest start arithmetic.
+    const latestRows=state.request.people.map((p,i)=>formulaRow(p.city,
+      `${operand(format24Utc(p.availEnd,org))}${op('−')}${operand(durationLabel(state.request.duration))}${eq()}`,
+      timeSlot(`latest${i}`,e.latest[i],show),state.mode==='calculate'&&!isRequired(`latest${i}`))).join('');
+    rows.push(calcStep(2,'Find each latest start',`<div class="step-rule">availability end − meeting duration</div><div class="formula-list">${latestRows}</div>`));
+
+    // 4. Intersection numerically: learners can reproduce this without a calendar graphic.
+    const startOperands=state.request.people.map(p=>format24Utc(p.availStart,org)).join(', ');
+    const latestOperands=e.latest.map(t=>format24Utc(t,org)).join(', ');
+    const combineRows=formulaRow('Earliest',`${operand(`MAX(${startOperands})`)}${eq()}`,timeSlot('commonLo',e.commonLo,show),state.mode==='calculate'&&!isRequired('commonLo'))+
+      formulaRow('Latest',`${operand(`MIN(${latestOperands})`)}${eq()}`,timeSlot('commonHi',e.commonHi,show),state.mode==='calculate'&&!isRequired('commonHi'));
+    rows.push(calcStep(3,'Intersect the start windows',`<div class="step-rule">MAX of starts gives earliest · MIN of latest starts gives latest</div><div class="formula-list">${combineRows}</div>`));
+
+    // 5. Final answer is always learner-entered in calculate mode; it is the exam answer, not extra working.
+    const chosen=state.successStart??state.proposalStart;
+    const finalSlot=state.mode==='calculate'?timeSlot('finalStart',e.commonLo,show,true):resultValue(chosen!=null?format24Utc(chosen,org):'start',chosen!=null,false);
+    const lower=resultValue(format24Utc(e.commonLo,org),state.mode==='calculate'||show,false);
+    const upper=resultValue(format24Utc(e.commonHi,org),state.mode==='calculate'||show,false);
+    rows.push(calcStep(4,'Choose the meeting start',`<div class="step-rule">any organiser start inside the interval works</div><div class="final-inequality">${lower}${op('≤')}${finalSlot}${op('≤')}${upper}</div>`));
+
+    const completion=document.createElement('div');
+    if(state.mode==='calculate'){
+      const ready=workingReady(),sentOk=state.lastSentStart!=null&&state.request.people.every(p=>fits(p,state.lastSentStart));
+      completion.className=`method-completion ${ready&&sentOk?'good':'action'}`;
+      completion.textContent=ready?(sentOk?'Working and timetable agree.':'Working complete. Send the calculated proposal.'):`Complete the highlighted ${WORK_LEVELS[state.workLevel].name.toLowerCase()} working. Worked examples stay visible as scaffolds.`;
+    }else{
+      completion.className=`method-completion ${show?'good':''}`;
+      completion.textContent=show?'The complete five-step paper method is shown.':'Solve the calendar problem first; then this same method reveals its numbers.';
+    }
+    panel.innerHTML=rows.join('');panel.appendChild(completion);bindMethodWork();
+  }
+  function render(){
+    const r=state.request,org=r.people[0],workspace=document.querySelector('[data-lab-workspace]');
+    workspace.classList.toggle('calculate-mode',state.mode==='calculate');
+    $('guidedMode').classList.toggle('active',state.mode==='guided');$('calculateMode').classList.toggle('active',state.mode==='calculate');
+    $('requestKicker').textContent=`Scheduling request ${state.requestNo+1}`;
+    $('requestTitle').textContent=`Schedule a ${r.duration}-minute ${r.title} so all three people can attend.`;
+    $('meetingDuration').textContent=`${r.duration} minutes`;
+    $('meetingOwner').textContent=state.mode==='guided'?`Drag into ${org.city}'s calendar`:`Calculate ${org.city} start`;
+    $('meetingToken').classList.toggle('can-drag',state.mode==='guided'&&state.proposalStart==null);
+    $('workspaceHint').textContent=state.mode==='guided'?`Place the meeting only in ${org.city}. Other local times appear only after you send.`:`Calendar placement is locked. Work through the same five exam steps, then send your calculated ${org.city} start.`;
+    $('calendarGrid').innerHTML=r.people.map(renderPerson).join('');
+    const changed=state.proposalStart!=null&&(state.lastSentStart==null||state.proposalStart!==state.lastSentStart);
+    $('sendButton').disabled=state.proposalStart==null||!changed;
+    $('sendButton').textContent=state.lastSentStart==null?'Send proposal':'Send revised proposal';
+    bindInteractive();renderSummary();renderCalcPanel();renderNextCard();
+  }
+  function renderSummary(){
+    const box=$('summary'),latestSuccess=state.lastSentStart!=null&&state.request.people.every(p=>fits(p,state.lastSentStart)),copy=box.querySelector('div');
+    box.className='summary'+(state.lastSentStart==null?'':latestSuccess?' good':' bad');
+    if(state.lastSentStart==null){
+      if(state.proposalStart==null)copy.innerHTML=state.mode==='guided'?'<strong>Choose a start.</strong><span>Place the fixed meeting in the organiser calendar.</span>':'<strong>Calculate the organiser start.</strong><span>The highlighted calculation step is waiting for your time.</span>';
+      else copy.innerHTML='<strong>Proposal ready.</strong><span>Predict the other local times, then send.</span>';
+    }else if(latestSuccess){
+      if(state.mode==='calculate'&&!workingReady())copy.innerHTML=`<strong>Everyone accepts.</strong><span>Now complete the highlighted exam working to finish this request.</span>`;
+      else copy.innerHTML=`<strong>Everyone accepts.</strong><span>${state.mode==='guided'?'The exam method now fills in beside the calendars.':'Your working and the timetable agree.'}</span>`;
+    }else{const declines=state.request.people.filter(p=>!fits(p,state.lastSentStart)).map(p=>p.city).join(' and ');copy.innerHTML=`<strong>${declines} ${declines.includes(' and ')?'decline':'declines'}.</strong><span>Revise the organiser start and send again.</span>`}
+  }
+  function nextWorkLevelSuggestion(){
+    if(state.mode==='guided')return state.correctCount>=2?1:0;
+    if(state.workLevel===1&&state.workSolved[1]>=1)return 2;
+    if(state.workLevel===2&&state.workSolved[2]>=2)return 3;
+    if(state.workLevel===3&&state.workSolved[3]>=2)return 4;
+    return 0;
+  }
+  function renderNextCard(){
+    const card=$('nextCard'),upgrade=$('nextUpgrade');
+    const timetableSuccess=state.lastSentStart!=null&&state.request.people.every(p=>fits(p,state.lastSentStart));
+    const success=timetableSuccess&&workingReady();
+    card.hidden=!success;if(!success)return;
+    if(!state.awarded){
+      state.correctCount++;
+      if(state.mode==='calculate')state.workSolved[state.workLevel]++;
+      state.awarded=true;
+    }
+    $('nextCardText').textContent=`All three calendars contain the complete ${durationLabel(state.request.duration)} meeting${state.mode==='calculate'?' and the required working is complete':''}.`;
+    const target=nextWorkLevelSuggestion(),showUpgrade=target>0;
+    upgrade.hidden=!showUpgrade;card.classList.toggle('has-upgrade',showUpgrade);
+    if(showUpgrade){
+      const title=target===1?'Ready to calculate one result?':target===2?'Ready for paired working?':target===3?'Ready for less scaffolding?':'Ready for full exam working?';
+      const text=target===1?'Start with one clock-shift calculation; every later step remains worked for you.':target===2?'Each stage keeps a worked example beside the item you calculate.':target===3?'Most results are now yours; only a few examples remain.':'No worked results remain: complete the whole five-step method yourself.';
+      $('nextUpgrade').querySelector('strong').textContent=title;
+      $('nextUpgrade').querySelector('span').textContent=text;
+      $('nextUpgradeButton').textContent=target===1?'Start calculation working':target===2?'Use paired working':target===3?'Use most working':'Use full working';
+      $('nextUpgradeButton').dataset.level=String(target);
+    }
+  }
+  function bindInteractive(){
+    const org=state.request.people[0],timeline=document.querySelector('[data-timeline="0"]');
+    if(state.mode==='guided'&&timeline){
+      timeline.addEventListener('pointerdown',e=>{if(e.target.closest('.meeting-block'))return;placeFromPointer(e,timeline,org)});
+      document.querySelectorAll('[data-shift]').forEach(btn=>btn.addEventListener('click',()=>shiftProposal(Number(btn.dataset.shift))));
+      const block=document.querySelector('.meeting-block.current');if(block)block.addEventListener('pointerdown',e=>startBlockDrag(e,block,timeline,org));
+      const token=$('meetingToken');if(token&&state.proposalStart==null)token.addEventListener('pointerdown',e=>startTokenDrag(e,token,timeline,org));
+    }
+  }
+  function proposalBounds(){const org=state.request.people[0],d=state.request.duration*MIN;return [org.availStart,org.availEnd-d]}
+  function pointerStartUtc(clientX,timeline,person,grabMs=0,doSnap=true){
+    const rect=timeline.getBoundingClientRect();if(rect.width<=0)return null;
+    const pct=clamp((clientX-rect.left)/rect.width,0,1),local=person.windowLocalStart+pct*WINDOW_MIN*MIN-grabMs;
+    let utc=utcFromLocalMs(local,person.offset);if(doSnap)utc=snap15(utc);const [lo,hi]=proposalBounds();return clamp(utc,lo,hi);
+  }
+  function placeFromPointer(e,timeline,person){const utc=pointerStartUtc(e.clientX,timeline,person,0,true);if(utc==null)return;state.proposalStart=utc;state.dirty=state.lastSentStart!=null&&utc!==state.lastSentStart;render()}
+  function startBlockDrag(e,block,timeline,person){
+    if(e.button!==0)return;e.preventDefault();
+    const br=block.getBoundingClientRect(),duration=state.request.duration*MIN,grabMs=clamp((e.clientX-br.left)/Math.max(1,br.width),0,1)*duration;
+    let draft=state.proposalStart;block.classList.add('dragging');timeline.classList.add('drop-active');
+    const update=ev=>{if(ev.pointerId!==e.pointerId)return;draft=pointerStartUtc(ev.clientX,timeline,person,grabMs,true);if(draft==null)return;block.style.left=`${clamp(posForUtc(draft,person),0,100)}%`;const mt=block.querySelector('.meeting-time');if(mt)mt.textContent=rangeLabel(draft,draft+duration,person);const ro=document.querySelector('.proposal-readout');if(ro)ro.textContent=rangeLabel(draft,draft+duration,person)};
+    const finish=ev=>{if(ev.pointerId!==e.pointerId)return;cleanup();state.proposalStart=draft;state.dirty=state.lastSentStart!=null&&draft!==state.lastSentStart;render()};
+    const cleanup=()=>{block.classList.remove('dragging');timeline.classList.remove('drop-active');document.removeEventListener('pointermove',update);document.removeEventListener('pointerup',finish);document.removeEventListener('pointercancel',finish)};
+    document.addEventListener('pointermove',update);document.addEventListener('pointerup',finish);document.addEventListener('pointercancel',finish);
+  }
+  function startTokenDrag(e,token,timeline,person){
+    if(e.button!==0&&e.pointerType!=='touch')return;e.preventDefault();
+    const startX=e.clientX,startY=e.clientY,duration=state.request.duration*MIN,preview=document.createElement('div');preview.className='drag-preview';preview.style.width=`${duration/(WINDOW_MIN*MIN)*100}%`;preview.innerHTML='<span>drop meeting</span>';timeline.appendChild(preview);token.classList.add('dragging');timeline.classList.add('drop-active');let draft=null,moved=false;
+    const update=ev=>{if(ev.pointerId!==e.pointerId)return;if(Math.hypot(ev.clientX-startX,ev.clientY-startY)>5)moved=true;const tr=timeline.getBoundingClientRect(),inside=ev.clientY>=tr.top-18&&ev.clientY<=tr.bottom+18&&ev.clientX>=tr.left&&ev.clientX<=tr.right;timeline.classList.toggle('drop-valid',inside);if(!inside){draft=null;preview.style.display='none';return}draft=pointerStartUtc(ev.clientX,timeline,person,duration/2,true);preview.style.display='block';preview.style.left=`${clamp(posForUtc(draft,person),0,100)}%`;preview.querySelector('span').textContent=rangeLabel(draft,draft+duration,person)};
+    const finish=ev=>{if(ev.pointerId!==e.pointerId)return;cleanup();if(moved&&draft!=null){state.proposalStart=draft;state.dirty=state.lastSentStart!=null&&draft!==state.lastSentStart;render()}};
+    const cleanup=()=>{preview.remove();token.classList.remove('dragging');timeline.classList.remove('drop-active','drop-valid');document.removeEventListener('pointermove',update);document.removeEventListener('pointerup',finish);document.removeEventListener('pointercancel',finish)};
+    document.addEventListener('pointermove',update);document.addEventListener('pointerup',finish);document.addEventListener('pointercancel',finish);
+  }
+  function shiftProposal(minutes){if(state.mode!=='guided'||state.proposalStart==null)return;const [lo,hi]=proposalBounds();state.proposalStart=clamp(state.proposalStart+minutes*MIN,lo,hi);state.dirty=state.lastSentStart!=null&&state.proposalStart!==state.lastSentStart;render()}
+  function sendProposal(){
+    if(state.proposalStart==null)return;state.lastSentStart=state.proposalStart;state.dirty=false;const success=state.request.people.every(p=>fits(p,state.lastSentStart));
+    if(success){state.solved=true;state.successStart=state.lastSentStart}
+    render();
+  }
+  function clearAttempt(){state.proposalStart=null;state.lastSentStart=null;state.successStart=null;state.dirty=false;state.solved=false;state.drag=null;state.tokenDrag=null;state.typedDraft=null;state.typedError='';state.work={};state.workState={}}
+  function resetProposal(){clearAttempt();render()}
+  function nextRequest(){state.requestNo++;state.request=generateRequest(state.requestNo);state.awarded=false;clearAttempt();render()}
+  function setMode(mode,advance=false){if(!['guided','calculate'].includes(mode)||state.mode===mode&&!advance)return;state.mode=mode;if(advance){nextRequest();return}clearAttempt();render()}
+  function setWorkLevel(level,{advance=false}={}){level=clamp(Number(level)||1,1,4);state.workLevel=level;state.mode='calculate';if(advance){nextRequest();return}clearAttempt();render()}
+  $('sendButton').addEventListener('click',sendProposal);
+  $('resetButton').addEventListener('click',resetProposal);
+  $('nextButton').addEventListener('click',nextRequest);
+  $('guidedMode').addEventListener('click',()=>setMode('guided'));
+  $('calculateMode').addEventListener('click',()=>setMode('calculate'));
+  document.querySelectorAll('[data-work-level]').forEach(b=>b.addEventListener('click',()=>setWorkLevel(Number(b.dataset.workLevel))));
+  $('nextUpgradeButton').addEventListener('click',()=>setWorkLevel(Number($('nextUpgradeButton').dataset.level||1),{advance:true}));
+  function init(){state.request=generateRequest(0);render()}
+  init();
+  window.__timeZoneScheduler={
+    state:()=>({requestNo:state.requestNo,duration:state.request.duration,proposalStart:state.proposalStart,lastSentStart:state.lastSentStart,successStart:state.successStart,solved:state.solved,mode:state.mode,workLevel:state.workLevel,correctCount:state.correctCount,workSolved:[...state.workSolved],people:state.request.people.map(p=>({city:p.city,offset:p.offset,notation:p.notation,availStart:p.availStart,availEnd:p.availEnd}))}),
+    setProposalUtc:utc=>{const [lo,hi]=proposalBounds();state.proposalStart=clamp(utc,lo,hi);state.dirty=state.lastSentStart!=null&&state.proposalStart!==state.lastSentStart;render()},
+    send:sendProposal,next:nextRequest,reset:resetProposal,setMode,setWorkLevel,workingReady,methodExpected
+  };
+})();
+</script>
+</body>
+</html>

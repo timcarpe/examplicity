@@ -254,6 +254,10 @@ the default drawing for an approved lab.
   `app/lab-icon.tsx` case. Confirm the HTML contains one generated frame block,
   one generated manifest head, title, optional subtitle, syllabus-chip block
   and no duplicate Examplicity shell markup.
+- [ ] Compare the integrated lab with the other deployed labs in the same
+  subject. Correct title/subtitle hierarchy, control tokens, neutral supporting
+  panels, syllabus-chip placement and concept-mark geometry before approval;
+  do not use a new lab's authored CSS as the visual baseline.
 - [ ] From `cambridge-labs`, run:
 
   ```text

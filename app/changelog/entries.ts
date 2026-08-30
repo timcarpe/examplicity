@@ -7,6 +7,16 @@ export type ChangelogEntry = {
 
 export const changelogEntries: readonly ChangelogEntry[] = [
   {
+    date: '2026-08-30',
+    displayDate: '30 August 2026',
+    publicChanges: [
+      'Added five Cambridge IGCSE Mathematics 0580 labs covering time-zone scheduling, sequence patterns, motion graphs, straight-line equations, and perpendicular-bisector construction.',
+    ],
+    internalChanges: [
+      'Extended Mathematics topic views and manifest-controlled syllabus alignment to Algebra and graphs and Coordinate geometry.',
+    ],
+  },
+  {
     date: '2026-08-29',
     displayDate: '29 August 2026',
     publicChanges: [

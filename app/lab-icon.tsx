@@ -387,6 +387,46 @@ function IconDrawing({ slug }: LabIconProps) {
           <path className="is-solid tone-one" d="M320 89a112 112 0 0 1 0 182 112 112 0 0 1 0-182z" />
         </>
       );
+    case 'time-zone-timetable-constraints':
+      return (
+        <>
+          <circle cx="170" cy="180" r="82" />
+          <circle cx="320" cy="180" r="82" />
+          <circle cx="470" cy="180" r="82" />
+          <path className="secondary-line" d="M170 180v-44m0 44 34 22M470 180v-44m0 44-34 22" />
+          <path className="is-solid tone-one" d="M320 180v-54m0 54 42-28" />
+        </>
+      );
+    case 'sequence-patterns-differences':
+      return (
+        <>
+          <rect height="72" rx="16" width="96" x="94" y="214" />
+          <rect height="128" rx="16" width="96" x="272" y="158" />
+          <rect className="is-solid tone-one" height="200" rx="16" width="96" x="450" y="86" />
+        </>
+      );
+    case 'motion-graph-rate-area':
+      return (
+        <>
+          <path d="M92 74v218h470" />
+          <path className="is-solid tone-one" d="M132 260 270 116l154 78 92-86v152z" />
+          <path d="M132 260 270 116l154 78 92-86" />
+        </>
+      );
+    case 'straight-line-coordinates-equations':
+      return (
+        <>
+          <path className="tone-one" d="M96 260 516 88" />
+          <path d="M124 304 544 132" />
+        </>
+      );
+    case 'coordinate-distance-midpoint-perpendicular':
+      return (
+        <>
+          <path d="M116 244 293 188.5M347 171.5 524 116M256 68 306 156M334 204 384 292" />
+          <circle className="is-solid tone-one" cx="320" cy="180" r="28" />
+        </>
+      );
     case 'python-programming-practice':
       return (
         <>
