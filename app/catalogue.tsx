@@ -447,7 +447,7 @@ export default function Catalogue({ initialExam, initialSubjectId }: CataloguePr
                 <article className="lab-card" key={lab.slug}>
                   <a
                     aria-label={`Open ${lab.title}`}
-                    href={lab.href}
+                    href={`${examView.href}?lab=${encodeURIComponent(lab.slug)}`}
                     onClick={(event) => {
                       if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
                       event.preventDefault();
