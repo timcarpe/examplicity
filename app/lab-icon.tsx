@@ -465,6 +465,50 @@ function IconDrawing({ slug }: LabIconProps) {
           <path className="tone-one" d="M170 282q1-30-20-45" />
         </>
       );
+    case 'three-dimensional-line-plane-trigonometry':
+      return (
+        <>
+          <path d="m112 242 252-112 164 72-252 112z" />
+          <path className="secondary-line" d="M276 314 364 130" />
+          <path className="tone-one" d="M276 314 452 82" />
+        </>
+      );
+    case 'transformation-order-invariants':
+      return (
+        <>
+          <path d="m104 236 92-132 106 58-54 124z" />
+          <path className="secondary-line" d="M320 74v220" />
+          <path className="is-solid tone-one" d="m536 236-92-132-106 58 54 124z" />
+        </>
+      );
+    case 'vector-routes-resultants':
+      return (
+        <>
+          <path d="M96 270 250 188l-30-2m30 2-18 24M250 188l138-96-30 4m30-4-16 26" />
+          <path className="tone-one" d="M96 270 504 92l-30 2m30-2-18 24" />
+        </>
+      );
+    case 'scatter-correlation-prediction':
+      return (
+        <>
+          <path d="M92 72v218h474" />
+          <circle cx="150" cy="220" r="12" />
+          <circle cx="214" cy="190" r="12" />
+          <circle cx="278" cy="228" r="12" />
+          <circle cx="350" cy="135" r="12" />
+          <circle cx="420" cy="170" r="12" />
+          <circle cx="500" cy="130" r="12" />
+          <path className="tone-one" d="M124 258 530 92" />
+        </>
+      );
+    case 'histogram-area-cumulative-distribution':
+      return (
+        <>
+          <path d="M82 82v210h230M344 82v210h222" />
+          <path d="M110 292v-72h54v72M164 292V166h64v126M228 292V116h56v176" />
+          <path className="tone-one" d="M370 260 410 220 452 164 500 124 548 92" />
+        </>
+      );
     case 'python-programming-practice':
       return (
         <>

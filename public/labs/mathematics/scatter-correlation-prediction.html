@@ -1,0 +1,972 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="data:,">
+<!-- LAB_MANIFEST_HEAD_START -->
+<title>Scatter Diagrams and Lines of Best Fit</title>
+<meta name="description" content="Explore scatter diagrams, correlation, lines of best fit and prediction for Cambridge IGCSE Mathematics 0580 Core and Extended.">
+<link rel="canonical" href="https://www.examplicity.org/labs/mathematics/scatter-correlation-prediction.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Examplicity">
+<meta property="og:title" content="Scatter Diagrams and Lines of Best Fit">
+<meta property="og:description" content="Explore scatter diagrams, correlation, lines of best fit and prediction for Cambridge IGCSE Mathematics 0580 Core and Extended.">
+<meta property="og:url" content="https://www.examplicity.org/labs/mathematics/scatter-correlation-prediction.html">
+<meta property="og:image" content="https://www.examplicity.org/opengraph-image">
+<meta property="og:image:alt" content="Examplicity — Make complex ideas click">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Scatter Diagrams and Lines of Best Fit">
+<meta name="twitter:description" content="Explore scatter diagrams, correlation, lines of best fit and prediction for Cambridge IGCSE Mathematics 0580 Core and Extended.">
+<meta name="twitter:image" content="https://www.examplicity.org/opengraph-image">
+<script type="application/ld+json" data-lab-manifest="structured-data">{"@context":"https://schema.org","@type":"LearningResource","@id":"https://www.examplicity.org/labs/mathematics/scatter-correlation-prediction.html#learning-resource","url":"https://www.examplicity.org/labs/mathematics/scatter-correlation-prediction.html","name":"Scatter Diagrams and Lines of Best Fit","description":"Explore scatter diagrams, correlation, lines of best fit and prediction for Cambridge IGCSE Mathematics 0580 Core and Extended.","inLanguage":"en-GB","isAccessibleForFree":true,"interactivityType":"active","learningResourceType":"Scatter-fit investigation","teaches":"Statistics","educationalLevel":["IGCSE"],"educationalAlignment":[{"@type":"AlignmentObject","alignmentType":"educationalSubject","educationalFramework":"Cambridge IGCSE Mathematics","targetName":"IGCSE 0580 section C9.5, E9.5","targetUrl":"https://www.cambridgeinternational.org/Images/662466-2025-2027-syllabus.pdf#page=31"}],"about":{"@type":"Thing","name":"Mathematics"},"audience":{"@type":"EducationalAudience","educationalRole":"student"},"provider":{"@type":"Organization","name":"Examplicity","url":"https://www.examplicity.org"},"isPartOf":{"@type":"WebSite","@id":"https://www.examplicity.org/#website","name":"Examplicity","url":"https://www.examplicity.org"}}</script>
+<!-- LAB_MANIFEST_HEAD_END -->
+<style>
+:root{
+  --lab-canvas:#f3f5f7;
+  --lab-paper:#fbfbfd;
+  --lab-surface:#fff;
+  --lab-control:#fff;
+  --lab-ink:#1d1d1f;
+  --lab-muted:#6e6e73;
+  --lab-line:#d2d2d7;
+  --lab-line-strong:#a7a7ad;
+  --lab-accent:#5277b8;
+  --lab-accent-soft:#eef2fa;
+  --lab-good:#18794e;
+  --lab-good-soft:#edf8f1;
+  --lab-warn:#946200;
+  --lab-warn-soft:#fff6e7;
+  --lab-bad:#b42318;
+  --lab-bad-soft:#fff0ee;
+  --lab-focus:#1d1d1f;
+  --lab-focus-soft:rgba(29,29,31,.18);
+  --lab-font-sans:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif;
+  --lab-panel-radius:12px;
+  --lab-control-radius:8px;
+  --lab-pill-radius:999px;
+  --lab-panel-shadow:0 1px 2px rgba(29,29,31,.04);
+  --lab-page-gutter:max(28px,calc((100vw - 1200px)/2));
+  --fit:#c66f28;
+  --fit-soft:#fff4e9;
+  --fit-ghost:#5277b8;
+  --above:#3f78b9;
+  --below:#aa6335;
+  --grid-major:#c9d6de;
+  --grid-minor:#e7edf1;
+  --plot-bg:#fbfcfd;
+  --range:#287970;
+  --range-soft:#e9f7f4;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{min-height:100%;background:var(--lab-canvas)}
+body{margin:0;color:var(--lab-ink);font-family:var(--lab-font-sans);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+button,input{font:inherit}
+button{min-height:35px;padding:0 10px;border:1px solid var(--lab-line);border-radius:var(--lab-control-radius);background:var(--lab-control);color:var(--lab-ink);cursor:pointer}
+button:hover:not(:disabled){border-color:var(--lab-line-strong)}
+button:disabled{opacity:.45;cursor:not-allowed}
+button.primary{background:var(--lab-accent);border-color:var(--lab-accent);color:#fff;font-weight:800}
+button.good{background:var(--lab-good);border-color:var(--lab-good);color:#fff;font-weight:800}
+button.quiet{background:transparent}
+:where(button,input):focus-visible{outline:3px solid var(--lab-focus);outline-offset:3px}
+main{container-name:lab-canvas;container-type:inline-size;width:calc(100vw - var(--lab-page-gutter)*2);max-width:1200px;margin:18px var(--lab-page-gutter) 38px}
+.panel{background:var(--lab-surface);border:1px solid var(--lab-line);border-radius:var(--lab-panel-radius);box-shadow:var(--lab-panel-shadow)}
+.lab-manifest-header{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px 28px;align-items:start;padding-bottom:20px;margin-bottom:18px;border-bottom:1px solid var(--lab-line)}
+.lab-manifest-header h1{margin:0;max-width:36ch;font-size:clamp(25px,3.2vw,40px);font-weight:650;letter-spacing:-.045em;line-height:1.02}
+.lab-manifest-subtitle{max-width:74ch;margin:9px 0 0;color:var(--lab-muted);font-size:13px;line-height:1.48}
+.lab-syllabus-chips{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px;margin:0 0 0 auto}
+.lab-syllabus-chip{position:relative;display:inline-flex;align-items:center;gap:4px;min-height:29px;padding:8px 10px;border:1px solid #91c4b0;border-radius:var(--lab-pill-radius);background:#edf8f3;color:#235f4e;font-size:11px;font-weight:650;white-space:nowrap}
+.lab-syllabus-primary-link{position:absolute;inset:0;border-radius:inherit}
+.lab-syllabus-section-link{position:relative;z-index:2;color:inherit;text-decoration:none;border-radius:4px;padding:2px}
+.lab-syllabus-section-link:hover{text-decoration:underline;text-underline-offset:2px}
+.lab-syllabus-name,.lab-syllabus-divider{position:relative;z-index:1;pointer-events:none}
+.mission{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px 18px;align-items:center;padding:10px 11px}
+.setup-meta{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-bottom:3px;color:var(--lab-muted);font-size:9px;font-weight:850;letter-spacing:.05em;text-transform:uppercase}
+.setup-meta span+span::before{content:"·";margin-right:6px;color:#a2a8ad}
+.setup-meta .phase{color:#486a99}
+.setup-meta .support{color:#7b6530}
+.mission-copy strong{display:block;font-size:15px;line-height:1.34}
+.mission-copy>span:last-child{display:block;max-width:78ch;margin-top:2px;color:var(--lab-muted);font-size:10px;line-height:1.4}
+.mission-actions{display:flex;gap:7px;justify-content:flex-end;align-items:center;flex-wrap:wrap}
+.mission-actions button{min-height:31px;font-size:9px;font-weight:750}
+.complexity{display:flex;align-items:center;gap:6px}
+.complexity>span{color:#66737b;font-size:8px;font-weight:900;letter-spacing:.05em;text-transform:uppercase;white-space:nowrap}
+.complexity-switch{display:inline-flex;padding:3px;border:1px solid var(--lab-line);border-radius:9px;background:#f6f8f9}
+.complexity-switch button{min-height:27px;border:0;border-radius:6px;background:transparent;color:#69757d;padding:0 8px;font-size:8px;font-weight:850}
+.complexity-switch button.active{background:#fff;color:var(--lab-ink);box-shadow:0 1px 3px rgba(29,29,31,.12)}
+.lab{margin-top:10px;overflow:hidden}
+.workspace{display:grid;grid-template-columns:minmax(650px,1.72fr) minmax(300px,.78fr);align-items:start}
+.stage-wrap{min-width:0;border-right:1px solid var(--lab-line);background:#fbfcfd}
+.visual-head{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;padding:7px 9px;border-bottom:1px solid var(--lab-line);background:#fff}
+.visual-copy strong{display:block;font-size:11px;line-height:1.3}
+.visual-copy span{display:block;margin-top:1px;color:var(--lab-muted);font-size:8.5px;line-height:1.32}
+.legend{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px 11px;color:var(--lab-muted);font-size:8px;font-weight:750}
+.legend span{display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
+.legend i{display:inline-block;position:relative;width:16px;height:10px}
+.legend .cross::before,.legend .cross::after{content:"";position:absolute;left:7px;top:1px;width:2px;height:9px;border-radius:2px;background:#334650}.legend .cross::before{transform:rotate(45deg)}.legend .cross::after{transform:rotate(-45deg)}
+.legend .solid::before{content:"";position:absolute;left:0;right:0;top:4px;height:3px;border-radius:3px;background:var(--fit)}
+.legend .ghost::before{content:"";position:absolute;left:0;right:0;top:4px;height:3px;border-radius:3px;background:var(--fit-ghost)}
+.legend .dash::before{content:"";position:absolute;left:0;right:0;top:4px;border-top:3px dashed var(--fit-ghost)}
+.plot-shell{position:relative;overflow-x:auto;overscroll-behavior-x:contain;background:#fbfcfd}
+#plot{display:block;width:100%;min-width:790px;height:auto;background:#fbfcfd;touch-action:none;user-select:none}
+.stage-footer{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;min-height:39px;padding:7px 9px;border-top:1px solid var(--lab-line);background:#fff;color:#58656d;font-size:8.5px;line-height:1.35}
+.stage-footer strong{color:var(--lab-ink)}
+.footer-status{min-height:24px;padding:4px 7px;border:1px solid var(--lab-line);border-radius:var(--lab-pill-radius);background:var(--lab-paper);font-size:8px;font-weight:850;white-space:nowrap}
+.footer-status.good{color:var(--lab-good);border-color:#acd2b9;background:var(--lab-good-soft)}
+.footer-status.warn{color:var(--lab-warn);border-color:#e0ca99;background:var(--lab-warn-soft)}
+.footer-status.bad{color:var(--lab-bad);border-color:#e2b5ae;background:var(--lab-bad-soft)}
+.work-panel{min-width:0;padding:10px 10px 9px;background:#fff}
+.work-head{padding-bottom:7px;border-bottom:1px solid var(--lab-line)}
+.work-head-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.work-head strong{display:block;font-size:12px}
+.work-badge{padding:3px 6px;border:1px solid var(--lab-line);border-radius:var(--lab-pill-radius);background:#f7f9fa;color:#64717a;font-size:7px;font-weight:900;letter-spacing:.05em;text-transform:uppercase;white-space:nowrap}
+.work-head p{margin:3px 0 0;color:var(--lab-muted);font-size:8.5px;line-height:1.3}
+.work-flow{position:relative;display:grid;gap:6px;margin-top:7px}
+.work-flow::before{content:"";position:absolute;left:13px;top:18px;bottom:18px;width:2px;background:#dfe6ea}
+.work-step{--step:#71828d;position:relative;padding:7px 7px 7px 29px;border:1px solid #d8e0e5;border-radius:8px;background:#fbfcfd;transition:border-color .14s,background-color .14s,box-shadow .14s}
+.work-step::before{content:"";position:absolute;z-index:2;left:8px;top:11px;width:9px;height:9px;border:3px solid #fff;border-radius:50%;background:var(--step);box-shadow:0 0 0 1px #cfd8de}
+.work-step.active{--step:var(--lab-accent);border-color:#b9c9d6;background:#f2f6fb;box-shadow:inset 3px 0 0 var(--lab-accent)}
+.work-step.good{--step:var(--lab-good);border-color:#a7d2b5;background:#f7fcf8;box-shadow:inset 3px 0 0 var(--lab-good)}
+.work-step.warn{--step:#b19322;border-color:#dfc963;background:#fffdf3;box-shadow:inset 3px 0 0 #d0ad35}
+.work-step.bad{--step:var(--lab-bad);border-color:#e1aaa3;background:#fff8f7;box-shadow:inset 3px 0 0 var(--lab-bad)}
+.step-head{display:flex;align-items:baseline;justify-content:space-between;gap:6px}
+.step-head span{color:#71808a;font-size:7px;font-weight:900;letter-spacing:.065em;text-transform:uppercase}
+.step-head em{color:#98a2a8;font-size:7px;font-style:normal;font-weight:800}
+.step-value{margin-top:3px;color:#263741;font-size:9px;font-weight:850;line-height:1.32}
+.step-value strong{font-size:11px}
+.step-note{margin-top:2px;color:#6c7981;font-size:8px;line-height:1.3}
+.correlation-choices{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-top:5px}
+.correlation-choices button{min-width:0;min-height:29px;padding:0 4px;font-size:8px;font-weight:850}
+.correlation-choices button.selected{background:var(--lab-accent-soft);border-color:var(--lab-accent);color:#365b88}
+.correlation-choices button.correct{background:var(--lab-good-soft);border-color:var(--lab-good);color:var(--lab-good)}
+.correlation-choices button.incorrect{background:var(--lab-bad-soft);border-color:var(--lab-bad);color:var(--lab-bad)}
+.balance-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-top:5px}
+.balance-chip{min-width:0;padding:4px 5px;border:1px solid var(--lab-line);border-radius:6px;background:#fff;text-align:center}
+.balance-chip span{display:block;color:var(--lab-muted);font-size:6.5px;font-weight:850;text-transform:uppercase;letter-spacing:.04em}
+.balance-chip strong{display:block;margin-top:1px;font:900 8px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.range-strip{display:grid;grid-template-columns:1fr auto;gap:6px;align-items:center;margin-top:5px;padding:5px 6px;border:1px solid #b9d7c4;border-radius:7px;background:var(--range-soft)}
+.range-strip span{color:#416a5f;font-size:7.5px;line-height:1.25}
+.range-strip strong{color:#235f4e;font:900 9px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:nowrap}
+.number-field{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:5px;align-items:center;margin-top:5px}
+.number-field label{color:#52606a;font-size:8px;font-weight:800}
+.number-field input{width:72px;height:31px;padding:0 7px;border:2px solid #d0ad35;border-radius:7px;background:#fffbea;color:#202c33;text-align:center;font:900 10px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.number-field input.good{border-color:var(--lab-good);background:var(--lab-good-soft)}
+.number-field input.bad{border-color:var(--lab-bad);background:var(--lab-bad-soft)}
+.field-mark{width:19px;height:19px;display:grid;place-items:center;border:1px solid #d0ad35;border-radius:50%;background:#fffdf5;color:#8a741f;font-size:12px;font-weight:950}
+.field-mark.good{border-color:var(--lab-good);background:var(--lab-good);color:#fff}
+.field-mark.bad{border-color:var(--lab-bad);background:var(--lab-bad);color:#fff}
+.range-fields{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:5px}
+.range-fields label{display:grid;gap:3px;color:#52606a;font-size:7.5px;font-weight:800}
+.range-fields input{width:100%;height:30px;padding:0 6px;border:2px solid #d0ad35;border-radius:7px;background:#fffbea;text-align:center;font:900 10px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.range-fields input.good{border-color:var(--lab-good);background:var(--lab-good-soft)}
+.range-fields input.bad{border-color:var(--lab-bad);background:var(--lab-bad-soft)}
+.working-equation{display:flex;align-items:center;gap:4px;flex-wrap:wrap;margin-top:5px;padding:6px 7px;border:1px solid #d9e1e6;border-radius:7px;background:#fff;color:#40505a;font:850 9px/1.3 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.working-equation strong{font-size:10px;color:#263741}
+.working-equation input{width:66px;height:29px;border:2px solid #d0ad35;border-radius:6px;background:#fffbea;color:#202c33;padding:0 6px;text-align:center;font:900 10px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.working-equation input.good{border-color:var(--lab-good);background:var(--lab-good-soft)}
+.working-equation input.bad{border-color:var(--lab-bad);background:var(--lab-bad-soft)}
+.working-equation .field-mark{flex:0 0 19px}
+.gap-label{color:#6c7981;font-family:var(--lab-font-sans);font-size:8px;font-weight:800}
+.action-row{display:grid;gap:5px;margin-top:6px}
+.action-row button{width:100%;min-height:32px;font-size:8.5px;font-weight:850}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:5px}
+.comparison-card{padding:5px 6px;border:1px solid var(--lab-line);border-radius:7px;background:#fff}
+.comparison-card span{display:block;color:var(--lab-muted);font-size:6.5px;font-weight:850;text-transform:uppercase;letter-spacing:.04em}
+.comparison-card strong{display:block;margin-top:2px;font:900 10px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.evidence-boundary{margin-top:7px;padding:7px 8px;border-left:4px solid #8797a2;border-radius:7px;background:#f7f9fa;color:#5f6d76;font-size:8px;line-height:1.35}
+.evidence-boundary strong{color:#334650}
+.next-card{position:absolute;z-index:30;left:50%;top:10px;transform:translateX(-50%);width:min(330px,calc(100% - 24px));padding:8px 9px;border:1px solid #9cc7aa;border-radius:10px;background:rgba(247,252,248,.99);box-shadow:0 10px 24px rgba(29,29,31,.15);text-align:center;animation:nextCardIn .2s ease-out}
+.next-card[hidden]{display:none}
+.next-card>strong{display:block;color:#2e6d4b;font-size:10px}
+.next-actions{display:flex;gap:5px;margin-top:6px;justify-content:center;flex-wrap:wrap}
+.next-card button{width:auto;min-height:28px;padding:0 9px;font-size:8px;font-weight:900}
+.next-card #nextDataset{background:var(--lab-good);border-color:var(--lab-good);color:#fff}
+.next-card #upgradeSupport{background:var(--lab-accent);border-color:var(--lab-accent);color:#fff}
+.next-card .quiet{background:#fff;color:#5e6b73}
+@keyframes nextCardIn{from{opacity:0;transform:translate(-50%,-6px)}to{opacity:1;transform:translate(-50%,0)}}
+.interaction-guide{position:absolute;z-index:20;max-width:240px;padding:8px 9px;border:1px solid #b9cbe0;border-radius:9px;background:rgba(246,249,253,.98);box-shadow:0 8px 20px rgba(29,29,31,.13);pointer-events:none}
+.interaction-guide[hidden]{display:none}
+.interaction-guide strong{display:block;color:#365b88;font-size:9px}
+.interaction-guide span{display:block;margin-top:2px;color:#607184;font-size:8px;line-height:1.32}
+.interaction-guide::after{content:"";position:absolute;left:28px;bottom:-9px;width:16px;height:16px;border-right:1px solid #b9cbe0;border-bottom:1px solid #b9cbe0;background:#f6f9fd;transform:rotate(45deg)}
+/* SVG */
+.plot-bg{fill:var(--plot-bg)}
+.plot-border{fill:#fff;stroke:#bfcbd3;stroke-width:1.5}
+.grid-minor{stroke:var(--grid-minor);stroke-width:1}
+.grid-major{stroke:var(--grid-major);stroke-width:1.2}
+.axis{stroke:#687985;stroke-width:2}
+.tick-label{fill:#6d7981;font:750 9px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.axis-label{fill:#3e4d56;font:900 11px var(--lab-font-sans)}
+.outside-zone{fill:#f2f4f6;opacity:.82}
+.outside-label{fill:#8a959c;font:800 8px var(--lab-font-sans);letter-spacing:.04em;text-transform:uppercase}
+.observed-bracket{stroke:var(--range);stroke-width:3;stroke-linecap:round}
+.observed-cap{stroke:var(--range);stroke-width:2}
+.observed-label{fill:#235f4e;font:850 8px var(--lab-font-sans)}
+.point-cross{stroke:#334650;stroke-width:3;stroke-linecap:round;pointer-events:none}
+.fit-line-under{stroke:#fff;stroke-width:13;stroke-linecap:round;opacity:.96}
+.fit-line{stroke:var(--fit);stroke-width:5;stroke-linecap:round}
+.fit-line.good{stroke:var(--lab-good)}
+.fit-extension{fill:none;stroke:var(--fit);stroke-width:4;stroke-dasharray:8 7;stroke-linecap:round;opacity:.74}
+.ghost-line{stroke:var(--fit-ghost);stroke-width:4;stroke-linecap:round;opacity:.82}
+.ghost-extension{fill:none;stroke:var(--fit-ghost);stroke-width:3.5;stroke-dasharray:8 7;stroke-linecap:round;opacity:.7}
+.discarded-line{fill:none;stroke:#9aa7af;stroke-width:3.5;stroke-dasharray:7 6;stroke-linecap:round;opacity:.82}
+.line-hit{stroke:transparent;stroke-width:28;pointer-events:stroke;cursor:ns-resize}
+.handle-link{stroke:#b7c1c8;stroke-width:2;stroke-dasharray:4 4}
+.handle{fill:#fff;stroke-width:4;cursor:ns-resize;filter:drop-shadow(0 2px 3px rgba(29,29,31,.15))}
+.handle.move{stroke:var(--fit)}
+.handle.tilt{stroke:#287970}
+.handle.locked{fill:#edf1f3;stroke:#9aa7af;cursor:default;filter:none}
+.handle-hit{fill:transparent;stroke:transparent;pointer-events:all;cursor:ns-resize}
+.handle-label-bg{fill:rgba(255,255,255,.97);stroke:#cfd9df;stroke-width:1}
+.handle-label{font:900 8px var(--lab-font-sans);text-anchor:middle}
+.handle-label.move{fill:#9b4f1f}.handle-label.tilt{fill:#226a5b}
+.probe-line{stroke:#856a28;stroke-width:2.5;stroke-dasharray:6 5}
+.probe-horizontal{stroke:#856a28;stroke-width:2.5;stroke-dasharray:6 5}
+.probe-handle{fill:#fff9e9;stroke:#b58a27;stroke-width:3;cursor:ew-resize;filter:drop-shadow(0 2px 3px rgba(29,29,31,.14))}
+.probe-target{fill:#fff;stroke:#b58a27;stroke-width:2;stroke-dasharray:3 2}
+.probe-target.active{fill:#fff4cc;stroke-width:3}
+.probe-label-bg{fill:#fffaf0;stroke:#d6b86d;stroke-width:1}
+.probe-label{fill:#715416;font:900 9px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;text-anchor:middle}
+.probe-point{fill:#fff;stroke:#9c7620;stroke-width:3}
+.ribbon-bg{fill:#fff;stroke:#cbd5db;stroke-width:1.3}
+.ribbon-centre{stroke:#96a3ab;stroke-width:2}
+.ribbon-divider{stroke:#dce3e7;stroke-width:1.2;stroke-dasharray:4 4}
+.ribbon-title{fill:#44545d;font:900 9px var(--lab-font-sans)}
+.ribbon-sub{fill:#71808a;font:750 7.5px var(--lab-font-sans)}
+.ribbon-segment{fill:#7b8790;font:850 7px var(--lab-font-sans);text-anchor:middle;text-transform:uppercase;letter-spacing:.04em}
+.residual-tick{stroke-width:3;stroke-linecap:round}
+.residual-tick.above{stroke:var(--above)}
+.residual-tick.below{stroke:var(--below)}
+.residual-tick.near{stroke:#6f7e87}
+.ribbon-count{fill:#53616a;font:850 7px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;text-anchor:middle}
+.ribbon-mask{fill:rgba(251,252,253,.92)}
+.ribbon-release{fill:#667780;font:850 9px var(--lab-font-sans);text-anchor:middle}
+.fit-saved-tag{fill:#fff;stroke:#b7c8df;stroke-width:1}
+.fit-saved-text{fill:#365b88;font:900 8px var(--lab-font-sans);text-anchor:middle}
+.compare-pill{fill:#fff;stroke:#cbd5db;stroke-width:1}
+.compare-pill.first{stroke:#9bb4d4}.compare-pill.second{stroke:#d5a879}
+.compare-text{fill:#44545d;font:900 8px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;text-anchor:middle}
+@container lab-canvas (max-width:980px){.workspace{grid-template-columns:1fr}.stage-wrap{border-right:0}.work-panel{border-top:1px solid var(--lab-line)}.mission{grid-template-columns:1fr}.mission-actions{justify-content:flex-start}.legend{justify-content:flex-start}}
+@container lab-canvas (max-width:620px){.visual-head{grid-template-columns:1fr}.legend{justify-content:flex-start}.work-panel{padding:9px}.stage-footer{grid-template-columns:1fr}.footer-status{justify-self:start}.correlation-choices{grid-template-columns:1fr}.next-card{top:8px;width:min(310px,calc(100% - 18px))}.mission-actions{width:100%;justify-content:flex-start}.complexity{width:100%;justify-content:space-between}.complexity-switch{flex:1}.complexity-switch button{flex:1}.mission-actions>#resetCase{flex:1}}
+@media(max-width:620px){:root{--lab-page-gutter:18px}.lab-manifest-header{grid-template-columns:1fr;gap:12px}.lab-syllabus-chips{justify-content:flex-start;margin:0}.lab-syllabus-chip{white-space:normal}main{margin-top:8px}.plot-shell{overflow-x:hidden}#plot{min-width:0}.handle{r:24px}.handle-hit{r:55px}.probe-handle{r:24px}.probe-target{r:12px}.interaction-guide{left:8px!important;top:55px!important;max-width:175px;font-size:8px}.interaction-guide::after{left:auto;right:18px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}}
+</style>
+<!-- LAB_FRAME_STYLES_START -->
+<style data-lab-frame>
+:root {
+  --lab-canvas: #f3f5f7;
+  --lab-paper: #fbfbfd;
+  --lab-surface: #ffffff;
+  --lab-control: #ffffff;
+  --lab-ink: #1d1d1f;
+  --lab-muted: #6e6e73;
+  --lab-line: #d2d2d7;
+  --lab-line-strong: #a7a7ad;
+  --lab-accent: #5277b8;
+  --lab-accent-soft: #eef2fa;
+  --lab-good: #18794e;
+  --lab-good-soft: #edf8f1;
+  --lab-warn: #946200;
+  --lab-warn-soft: #fff6e7;
+  --lab-bad: #b42318;
+  --lab-bad-soft: #fff0ee;
+  --lab-focus: #1d1d1f;
+  --lab-focus-soft: rgba(29, 29, 31, 0.18);
+  --lab-font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+  --lab-panel-radius: 12px;
+  --lab-control-radius: 8px;
+  --lab-pill-radius: 999px;
+  --lab-control-height: 35px;
+  --lab-panel-shadow: 0 1px 2px rgba(29, 29, 31, 0.04);
+  --lab-page-gutter: max(28px, calc((100vw - 1200px) / 2));
+  --lab-compact-workspace-max: 820px;
+}
+
+html,
+body {
+  background: var(--lab-canvas);
+}
+
+body {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  align-content: start !important;
+  font-family: var(--lab-font-sans);
+  padding-bottom: 0;
+  padding-top: 0 !important;
+  text-rendering: optimizeLegibility;
+}
+
+.lab-manifest-header {
+  align-items: start;
+  border-bottom: 1px solid var(--line, var(--lab-line));
+  display: grid;
+  gap: 18px 28px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  margin-bottom: 26px;
+  padding-bottom: 22px;
+}
+
+.lab-manifest-heading {
+  min-width: 0;
+}
+
+.lab-manifest-header h1 {
+  color: var(--ink, var(--lab-ink));
+  font-family: var(--lab-font-sans);
+  font-size: clamp(25px, 3.2vw, 40px);
+  font-weight: 650;
+  letter-spacing: -0.045em;
+  line-height: 1.02;
+  margin: 0;
+  max-width: 24ch;
+  padding: 0;
+  text-align: left;
+}
+
+.lab-manifest-subtitle {
+  color: var(--muted, var(--lab-muted));
+  font-family: var(--lab-font-sans);
+  font-size: 13px;
+  letter-spacing: 0;
+  line-height: 1.5;
+  margin: 10px 0 0;
+  max-width: 72ch;
+  padding: 0;
+  text-align: left;
+}
+
+.lab-authored-title-slot {
+  min-width: 0;
+}
+
+.lab-syllabus-chips {
+  align-items: center;
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+  margin: 0 0 0 auto;
+  max-width: 100%;
+}
+
+.lab-syllabus-chip {
+  align-items: center;
+  background: var(--syllabus-chip-bg) !important;
+  border: 1px solid var(--syllabus-chip-border) !important;
+  border-radius: var(--lab-pill-radius);
+  color: var(--syllabus-chip-text) !important;
+  display: inline-flex;
+  font-size: 11px;
+  font-weight: 650;
+  gap: 4px;
+  line-height: 1;
+  min-height: 29px;
+  padding: 8px 10px;
+  position: relative;
+  transition: background-color 140ms ease, border-color 140ms ease;
+  white-space: nowrap;
+}
+
+.lab-syllabus-chip:hover {
+  background: var(--syllabus-chip-hover) !important;
+}
+
+.lab-syllabus-primary-link {
+  border-radius: inherit;
+  inset: 0;
+  position: absolute;
+  z-index: 0;
+}
+
+.lab-syllabus-primary-link:focus-visible {
+  outline: 2px solid var(--syllabus-chip-text);
+  outline-offset: 2px;
+}
+
+.lab-syllabus-name,
+.lab-syllabus-divider,
+.lab-syllabus-sections {
+  pointer-events: none;
+  position: relative;
+  z-index: 1;
+}
+
+.lab-syllabus-section {
+  border-radius: 4px;
+  color: inherit;
+  padding: 2px;
+  text-decoration: none;
+}
+
+a.lab-syllabus-section {
+  pointer-events: auto;
+}
+
+a.lab-syllabus-section:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+a.lab-syllabus-section:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 1px;
+}
+
+.lab-syllabus-name {
+  color: var(--syllabus-chip-text) !important;
+}
+
+.lab-syllabus-divider,
+.lab-syllabus-separator {
+  color: var(--muted, var(--lab-muted));
+}
+
+.lab-syllabus-prefix {
+  opacity: 0.72;
+  padding-left: 5px;
+}
+
+.lab-syllabus-sections {
+  align-items: center;
+  display: inline-flex;
+}
+
+.lab-syllabus-separator {
+  margin-inline: 0 2px;
+}
+
+html[data-theme="dark"] .lab-syllabus-name {
+  color: var(--syllabus-chip-border) !important;
+}
+
+html[data-theme="dark"] .lab-syllabus-chip:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+html[data-theme="dark"],
+html[data-theme="dark"] body {
+  background: var(--bg);
+}
+
+body > main {
+  container-name: lab-canvas;
+  container-type: inline-size;
+  margin-left: var(--lab-page-gutter);
+  margin-right: auto;
+  margin-top: 18px;
+  max-width: 1200px;
+  width: calc(100vw - var(--lab-page-gutter) - var(--lab-page-gutter));
+}
+
+body[data-lab-layout="compact"] .lab-manifest-header {
+  margin-bottom: 17px;
+  padding-bottom: 13px;
+}
+
+body[data-lab-layout="compact"] [data-lab-workspace] {
+  margin-left: auto;
+  margin-right: auto;
+  width: min(var(--lab-compact-workspace-max), 100%);
+}
+
+:where(button, input, select, textarea, summary):focus-visible {
+  outline: 3px solid var(--lab-focus);
+  outline-offset: 4px;
+}
+
+@media (max-width: 620px) {
+  :root {
+    --lab-page-gutter: 18px;
+  }
+
+  body {
+    padding-bottom: 0;
+    padding-top: 0 !important;
+  }
+
+  .lab-manifest-header {
+    gap: 14px;
+    grid-template-columns: minmax(0, 1fr) !important;
+    margin-bottom: 20px;
+    padding-bottom: 18px;
+  }
+
+  body[data-lab-layout="compact"] .lab-manifest-header {
+    margin-bottom: 16px;
+    padding-bottom: 14px;
+  }
+
+  .lab-manifest-header h1 {
+    font-size: clamp(24px, 8vw, 34px);
+  }
+
+  .lab-syllabus-chips {
+    gap: 4px;
+    justify-content: flex-start !important;
+    margin: 0 !important;
+  }
+
+  .lab-syllabus-chip {
+    font-size: 10px;
+    max-width: 100%;
+    min-height: 27px;
+    padding: 7px 8px;
+    white-space: normal;
+  }
+
+  .lab-syllabus-sections {
+    flex-wrap: wrap;
+  }
+
+  body > main {
+    margin-top: 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+</style>
+<!-- LAB_FRAME_STYLES_END -->
+</head>
+<body data-lab-layout="standard">
+<main>
+<!-- LAB_MANIFEST_HEADER_START -->
+<header class="lab-manifest-header">
+  <div class="lab-manifest-heading">
+    <h1 data-lab-manifest="title">Scatter Diagrams and Lines of Best Fit</h1>
+  <p class="lab-manifest-subtitle" data-lab-manifest="subtitle">Balance a ruler through the whole data cloud, use it to estimate within the observations, then test what happens when the forecast moves beyond them.</p>
+  </div>
+  <!-- LAB_SYLLABUS_CHIPS_START -->
+<nav class="lab-syllabus-chips" aria-label="Syllabus alignment">
+  <section class="lab-syllabus-chip" style="--syllabus-chip-bg:#edf8f3;--syllabus-chip-border:#91c4b0;--syllabus-chip-text:#235f4e;--syllabus-chip-hover:#dcf0e7" aria-label="IGCSE 0580 syllabus alignment">
+    <a class="lab-syllabus-primary-link" href="https://www.cambridgeinternational.org/Images/662466-2025-2027-syllabus.pdf#page=31" target="_blank" rel="noopener noreferrer" aria-label="Open IGCSE 0580 syllabus section C9.5"></a>
+    <span class="lab-syllabus-name">IGCSE 0580</span>
+    <span class="lab-syllabus-divider" aria-hidden="true">·</span>
+    <span class="lab-syllabus-sections"><a class="lab-syllabus-section is-primary" href="https://www.cambridgeinternational.org/Images/662466-2025-2027-syllabus.pdf#page=31" target="_blank" rel="noopener noreferrer" aria-label="Open primary IGCSE 0580 syllabus section C9.5">C9.5</a><span class="lab-syllabus-separator" aria-hidden="true">,</span><a class="lab-syllabus-section" href="https://www.cambridgeinternational.org/Images/662466-2025-2027-syllabus.pdf#page=56" target="_blank" rel="noopener noreferrer" aria-label="Open IGCSE 0580 syllabus section E9.5">E9.5</a></span>
+  </section>
+</nav>
+<!-- LAB_SYLLABUS_CHIPS_END -->
+</header>
+<!-- LAB_MANIFEST_HEADER_END -->
+<span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span><span data-lab-authored-subtitle-slot hidden></span>
+
+<section class="panel mission" aria-live="polite">
+  <div class="mission-copy">
+    <div class="setup-meta"><span id="datasetLabel">Practice 1</span><span id="phaseLabel" class="phase">Fit the cloud</span><span id="supportLabel" class="support">Working shown</span></div>
+    <strong id="missionTitle"></strong>
+    <span id="missionHint"></span>
+  </div>
+  <div class="mission-actions">
+    <div class="complexity"><span>Working required</span><div class="complexity-switch" role="group" aria-label="Working required"><button type="button" data-support="0" class="active" aria-pressed="true">Off</button><button type="button" data-support="1" aria-pressed="false">Some</button><button type="button" data-support="2" aria-pressed="false">All</button></div></div>
+    <button id="resetCase" type="button">Reset dataset</button>
+  </div>
+</section>
+
+<section class="panel lab" data-lab-workspace>
+  <div class="workspace">
+    <section class="stage-wrap" aria-label="Scatter diagram workspace">
+      <div class="visual-head">
+        <div class="visual-copy"><strong id="visualTitle">Observed paired data</strong><span id="visualHint">Small crosses are the recorded pairs. The solid ruler must span the full observed x-range.</span></div>
+        <div class="legend" aria-label="Plot key"><span><i class="cross"></i>observation</span><span id="ghostLegend" hidden><i class="ghost"></i><span id="ghostLegendText">fit 1</span></span><span><i class="solid"></i><span id="fitLegendText">current fit</span></span><span id="dashLegend" hidden><i class="dash"></i>outside observed range</span></div>
+      </div>
+      <div id="plotShell" class="plot-shell">
+        <div id="interactionGuide" class="interaction-guide" hidden><strong id="guideTitle"></strong><span id="guideCopy"></span></div>
+        <div id="nextCard" class="next-card" hidden aria-live="polite">
+          <strong id="nextTitle">Practice complete</strong>
+          <div class="next-actions"><button id="nextDataset" type="button">Another dataset</button><button id="upgradeSupport" type="button" hidden></button><button id="keepExploring" class="quiet" type="button">Adjust fit</button></div>
+        </div>
+        <svg id="plot" viewBox="0 0 920 650" role="img" aria-labelledby="plotTitle plotDesc"></svg>
+      </div>
+      <div class="stage-footer"><div id="footerEvidence"><strong>Next action:</strong> drag the ruler through the whole cloud.</div><span id="footerStatus" class="footer-status">Waiting for a fit</span></div>
+    </section>
+    <aside class="work-panel" aria-label="Persistent evidence and working area">
+      <div class="work-head"><div class="work-head-top"><strong>Reasoning &amp; working</strong><span id="workBadge" class="work-badge">working shown</span></div><p>The visual decisions stay the same; only written working is handed over.</p></div>
+      <div id="workContent"></div>
+      <div class="evidence-boundary"><strong>Evidence boundary:</strong> paired observations can show an association and support an estimate. They do not, by themselves, show that one variable causes the other.</div>
+    </aside>
+  </div>
+</section>
+</main>
+<script>
+(()=>{
+'use strict';
+const NS='http://www.w3.org/2000/svg';
+const $=id=>document.getElementById(id);
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const fmt=(v,d=0)=>{const n=Number(v);if(!Number.isFinite(n))return '—';const s=n.toFixed(d).replace(/\.0+$/,'').replace(/(\.\d*?)0+$/,'$1');return s.replace('-', '−')};
+const near=(a,b,t)=>Math.abs(a-b)<=t;
+const plotBox={x:92,y:48,w:730,h:415};
+const ribbon={x:92,y:520,w:730,h:92,centre:566};
+const supportNames=['working shown','some working','full working'];
+const firstFiveFocus=['positive','negative','zero','noisy','extrapolation'];
+const standardTemplates={
+  positive:[
+    {key:'delivery',context:'Completed cold-chain deliveries',xLabel:'Route distance (km)',yLabel:'Journey time (min)',xDomain:[0,70],yDomain:[0,110],xStep:10,yStep:20,xResolution:2,question:q=>`Estimate the journey time for a ${fmt(q,q%1?1:0)} km delivery route.`},
+    {key:'rainfall',context:'Weekly catchment records',xLabel:'Rainfall (mm)',yLabel:'Reservoir inflow (ML)',xDomain:[0,100],yDomain:[0,90],xStep:20,yStep:20,xResolution:2,question:q=>`Estimate reservoir inflow after ${fmt(q,q%1?1:0)} mm of weekly rainfall.`},
+    {key:'packing',context:'Warehouse dispatch records',xLabel:'Items in order',yLabel:'Packing time (min)',xDomain:[0,60],yDomain:[0,50],xStep:10,yStep:10,xResolution:1,question:q=>`Estimate packing time for an order containing ${fmt(q,q%1?1:0)} items.`},
+    {key:'climb',context:'Recorded hill-climb routes',xLabel:'Total ascent (m)',yLabel:'Climb time (min)',xDomain:[0,1000],yDomain:[0,100],xStep:200,yStep:20,xResolution:20,question:q=>`Estimate climb time for a route with ${fmt(q,q%1?1:0)} m of ascent.`}
+  ],
+  negative:[
+    {key:'queue',context:'Service-desk staffing records',xLabel:'Active desks',yLabel:'Average queue time (s)',xDomain:[5,35],yDomain:[0,300],xStep:5,yStep:50,xResolution:1,question:q=>`Estimate the average queue time when ${fmt(q,q%1?1:0)} desks are active.`},
+    {key:'checkout',context:'Supermarket checkout records',xLabel:'Open checkout lanes',yLabel:'Average wait (min)',xDomain:[2,20],yDomain:[0,30],xStep:3,yStep:5,xResolution:1,question:q=>`Estimate the average wait when ${fmt(q,q%1?1:0)} checkout lanes are open.`},
+    {key:'conveyor',context:'Packing-line trials',xLabel:'Conveyor speed (m/min)',yLabel:'Time per batch (min)',xDomain:[0,60],yDomain:[0,50],xStep:10,yStep:10,xResolution:2,question:q=>`Estimate the batch time at a conveyor speed of ${fmt(q,q%1?1:0)} m/min.`},
+    {key:'bays',context:'Distribution-centre turnaround records',xLabel:'Loading bays available',yLabel:'Turnaround time (min)',xDomain:[0,30],yDomain:[0,140],xStep:5,yStep:20,xResolution:1,question:q=>`Estimate turnaround time when ${fmt(q,q%1?1:0)} loading bays are available.`}
+  ]
+};
+const zeroTemplates=[
+  {key:'parcel',context:'Parcels in dispatch order',xLabel:'Dispatch position',yLabel:'Parcel mass (kg)',xDomain:[0,50],yDomain:[0,20],xStep:10,yStep:5,xResolution:1,question:'Decide whether parcel position supports a useful mass prediction.'},
+  {key:'samples',context:'Quality-control sample order',xLabel:'Sample sequence number',yLabel:'Container mass (kg)',xDomain:[0,60],yDomain:[0,30],xStep:10,yStep:5,xResolution:1,question:'Decide whether sample order supports a useful mass prediction.'},
+  {key:'lockers',context:'Parcel-locker collection records',xLabel:'Locker position',yLabel:'Parcel volume (L)',xDomain:[0,50],yDomain:[0,50],xStep:10,yStep:10,xResolution:1,question:'Decide whether locker position supports a useful parcel-volume prediction.'}
+];
+const extrapolationTemplates=[
+  {key:'pump-hours',context:'Energy used as pumps accumulate running hours',xLabel:'Running hours (thousands)',yLabel:'Energy per batch (kWh)',xDomain:[0,15],yDomain:[30,110],xStep:3,yStep:20,xResolution:.5},
+  {key:'machine-hours',context:'Maintenance records as a machine accumulates operating hours',xLabel:'Operating hours (thousands)',yLabel:'Service time (min)',xDomain:[0,20],yDomain:[0,120],xStep:4,yStep:20,xResolution:.5},
+  {key:'test-cycles',context:'Engine-test records across repeated duty cycles',xLabel:'Duty cycles (hundreds)',yLabel:'Fuel per test (L)',xDomain:[0,18],yDomain:[20,100],xStep:3,yStep:20,xResolution:.5}
+];
+function mulberry32(seed){return function(){let t=seed+=0x6D2B79F5;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296}}
+function hash32(a){a|=0;a=(a+0x7ed55d16)+(a<<12);a=(a^0xc761c23c)^(a>>>19);a=(a+0x165667b1)+(a<<5);a=(a+0xd3a2646c)^(a<<9);a=(a+0xfd7046c5)+(a<<3);a=(a^0xb55a4f09)^(a>>>16);return a>>>0}
+function choose(rng,list){return list[Math.floor(rng()*list.length)]}
+function shuffle(rng,list){const a=[...list];for(let i=a.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function snap(v,step){return Math.round(v/step)*step}
+function pearson(points){const n=points.length,mx=points.reduce((s,p)=>s+p[0],0)/n,my=points.reduce((s,p)=>s+p[1],0)/n;let num=0,dx=0,dy=0;for(const[x,y]of points){const a=x-mx,b=y-my;num+=a*b;dx+=a*a;dy+=b*b}return dx&&dy?num/Math.sqrt(dx*dy):0}
+function focusFor(questionNumber,rng){if(questionNumber<=firstFiveFocus.length)return firstFiveFocus[questionNumber-1];const p=rng();return p<.36?'positive':p<.62?'negative':p<.76?'zero':p<.9?'noisy':'extrapolation'}
+function observedBounds(template,kind,rng){const[x0,x1]=template.xDomain,span=x1-x0;if(kind==='extrapolation')return [snap(x0+span*(.12+rng()*.03),template.xResolution||template.xStep/5),snap(x0+span*(.54+rng()*.04),template.xResolution||template.xStep/5)];return [snap(x0+span*(.1+rng()*.03),template.xResolution||template.xStep/5),snap(x0+span*(.88-rng()*.03),template.xResolution||template.xStep/5)]}
+function xSeries(template,lo,hi,n,rng){const res=template.xResolution||template.xStep/5,out=[];for(let i=0;i<n;i++){const f=i/(n-1),j=(i===0||i===n-1)?0:(rng()-.5)*.34/(n-1);let x=snap(lo+(hi-lo)*clamp(f+j,0,1),res);if(i&&x<=out[i-1])x=snap(out[i-1]+res,res);out.push(Math.min(x,hi))}out[0]=lo;out[out.length-1]=hi;return out}
+function balancedResiduals(n,noisy,rng){const base=[-.055,.045,-.025,.06,-.04,.03,-.05,.02,.05,-.03,.035,-.045,.015,-.015];const out=shuffle(rng,base).slice(0,n);if(noisy&&n>8){const k=2+Math.floor(rng()*(n-4));out[k]=(rng()<.5?-1:1)*(.14+rng()*.025)}return out}
+function buildStandard(template,correlation,noisy,questionNumber,seed,rng){
+  const[x0,x1]=template.xDomain,[y0,y1]=template.yDomain,yr=y1-y0,[lo,hi]=observedBounds(template,'standard',rng),n=11+Math.floor(rng()*3),xs=xSeries(template,lo,hi,n,rng),sign=correlation==='positive'?1:-1;
+  const amplitude=yr*(.40+rng()*.07),mid=y0+yr*(.49+(rng()-.5)*.06),slope=sign*amplitude/(hi-lo),model={mid,slope},res=balancedResiduals(n,noisy,rng),yRes=template.yStep/5;
+  const points=xs.map((x,i)=>[x,snap(clamp(lineAtFor(model,x,lo,hi)+res[i]*yr,y0+yr*.05,y1-yr*.05),yRes)]);
+  const qMin=lo+(hi-lo)*.3,qMax=lo+(hi-lo)*.72,query=snap(qMin+rng()*(qMax-qMin),template.xResolution||template.xStep/5),start={mid:clamp(mid+sign*yr*(.16+rng()*.05),y0,y1),slope:-slope*(.28+rng()*.15)};
+  const direction=correlation==='positive'?'upward':'downward',focusLabel=noisy?'noisy cloud':`${correlation} correlation`;
+  return {id:`${template.key}-${seed}`,seed,questionNumber,kind:'standard',focusLabel,title:template.question(query),hint:noisy?'Keep the line centred on all the observations rather than chasing one unusual cross.':'Move and tilt the ruler until the crosses are roughly balanced above and below over its entire length.',context:template.context,xLabel:template.xLabel,yLabel:template.yLabel,xDomain:[x0,x1],yDomain:[y0,y1],xStep:template.xStep,yStep:template.yStep,points,correlation,query,queryLabel:`${fmt(query,query%1?1:0)} ${template.xLabel.match(/\((.*?)\)/)?.[1]||''}`.trim(),answerDigits:0,start,model,success:`The ruler balances the ${direction} cloud, and x = ${fmt(query)} lies inside the observed data range, so the fitted-line estimate is supported by these observations.`};
+}
+function buildZero(template,questionNumber,seed,rng){
+  const[x0,x1]=template.xDomain,[y0,y1]=template.yDomain,yr=y1-y0,[lo,hi]=observedBounds(template,'standard',rng),n=12,xs=xSeries(template,lo,hi,n,rng),yRes=template.yStep/5;
+  let points=[];for(let tries=0;tries<80;tries++){const levels=shuffle(rng,[.16,.82,.42,.25,.68,.34,.9,.2,.58,.48,.76,.29]);points=xs.map((x,i)=>[x,snap(y0+levels[i]*yr,yRes)]);if(Math.abs(pearson(points))<.16)break}
+  return {id:`${template.key}-${seed}`,seed,questionNumber,kind:'zero',focusLabel:'zero correlation',title:template.question,hint:'Try the ruler. A balanced count is not sufficient if the crosses remain widely scattered rather than clustering around a line.',context:template.context,xLabel:template.xLabel,yLabel:template.yLabel,xDomain:[x0,x1],yDomain:[y0,y1],xStep:template.xStep,yStep:template.yStep,points,correlation:'zero',query:null,answerDigits:0,start:{mid:y0+yr*(.62+rng()*.08),slope:(rng()-.5)*yr/(x1-x0)*.45},model:null,success:'The crosses do not cluster around an upward or downward line, so a fitted straight-line prediction is not justified.'};
+}
+function buildExtrapolation(template,questionNumber,seed,rng){
+  const[x0,x1]=template.xDomain,[y0,y1]=template.yDomain,yr=y1-y0,xspan=x1-x0,[lo,hi]=observedBounds(template,'extrapolation',rng),n=12,xs=xSeries(template,lo,hi,n,rng),sign=rng()<.76?1:-1;
+  const amplitude=yr*(.28+rng()*.05),mid=y0+yr*(sign>0?.42:.6),slope=sign*amplitude/(hi-lo),model={mid,slope},inside=snap(lo+(hi-lo)*(.46+rng()*.08),template.xResolution||template.xStep/5),outside=snap(x0+xspan*(.88+rng()*.04),template.xResolution||template.xStep/5),delta=sign*yr/xspan*(.25+rng()*.025),altSlope=slope+delta,altMid=lineAtFor(model,inside,lo,hi)-altSlope*(inside-(lo+hi)/2),altModel={mid:altMid,slope:altSlope},res=balancedResiduals(n,false,rng),yRes=template.yStep/5;
+  const points=xs.map((x,i)=>[x,snap(clamp(lineAtFor(model,x,lo,hi)+res[i]*yr*.72,y0+yr*.06,y1-yr*.06),yRes)]),correlation=sign>0?'positive':'negative',start={mid:clamp(mid-sign*yr*.14,y0,y1),slope:-slope*.25};
+  return {id:`${template.key}-${seed}`,seed,questionNumber,kind:'extrapolation',focusLabel:'prediction boundary',title:'Save two defensible fits, then compare a forecast inside and beyond the observations.',hint:'Both fits must balance the same cloud. Their disagreement outside the recorded x-range is the evidence to inspect.',context:template.context,xLabel:template.xLabel,yLabel:template.yLabel,xDomain:[x0,x1],yDomain:[y0,y1],xStep:template.xStep,yStep:template.yStep,points,correlation,inside,outside,answerDigits:0,start,model,altModel,success:'Inside the recorded range the two defensible fits give similar estimates. Beyond it, their dashed extensions separate, so the forecast is unsupported extrapolation.'};
+}
+function lineAtFor(line,x,lo,hi){return line.mid+line.slope*(x-(lo+hi)/2)}
+function generatedCaseValid(c){
+  const pts=c.points;if(!pts.length||pts.some(p=>p.some(v=>!Number.isFinite(v))))return false;if(pts.some(([x,y])=>x<c.xDomain[0]||x>c.xDomain[1]||y<c.yDomain[0]||y>c.yDomain[1]))return false;
+  if(c.kind==='zero'){const n=pts.length,mx=pts.reduce((s,p)=>s+p[0],0)/n,my=pts.reduce((s,p)=>s+p[1],0)/n,cov=pts.reduce((s,p)=>s+(p[0]-mx)*(p[1]-my),0),vx=pts.reduce((s,p)=>s+(p[0]-mx)*(p[0]-mx),0),slope=vx?cov/vx:0,mid=my+slope*((xMinFor(c)+xMaxFor(c))/2-mx),q=qualityFor(c,{mid,slope});return Math.abs(pearson(pts))<.22&&q.maeNorm>.17;}
+  const q=qualityFor(c,c.model);if(!q.good)return false;
+  if(c.kind==='standard')return c.query>xMinFor(c)&&c.query<xMaxFor(c)&&!qualityFor(c,c.start).good;
+  const q2=qualityFor(c,c.altModel),inside=Math.abs(lineAtCase(c,c.model,c.inside)-lineAtCase(c,c.altModel,c.inside)),outside=Math.abs(lineAtCase(c,c.model,c.outside)-lineAtCase(c,c.altModel,c.outside));return q2.good&&inside<=caseYRange(c)*.045&&outside>=caseYRange(c)*.1&&!qualityFor(c,c.start).good
+}
+function generateCase(questionNumber,sessionSeed,forcedFocus=null,seedOverride=null){
+  for(let attempt=0;attempt<120;attempt++){
+    const seed=seedOverride===null?hash32(sessionSeed+Math.imul(questionNumber+attempt*997,2654435761)):hash32(seedOverride+attempt*997),rng=mulberry32(seed),focus=forcedFocus||focusFor(questionNumber,rng);let c;
+    if(focus==='zero')c=buildZero(choose(rng,zeroTemplates),questionNumber,seed,rng);
+    else if(focus==='extrapolation')c=buildExtrapolation(choose(rng,extrapolationTemplates),questionNumber,seed,rng);
+    else{const correlation=focus==='negative'?'negative':focus==='positive'?'positive':rng()<.5?'positive':'negative';c=buildStandard(choose(rng,standardTemplates[correlation]),correlation,focus==='noisy',questionNumber,seed,rng)}
+    if(generatedCaseValid(c))return c;
+  }
+  return buildStandard(standardTemplates.positive[0],'positive',false,questionNumber,hash32(sessionSeed+questionNumber),mulberry32(hash32(sessionSeed+questionNumber)));
+}
+function initialSeed(){try{const supplied=Number(new URLSearchParams(location.search).get('seed'));if(Number.isFinite(supplied)&&supplied>=0)return supplied>>>0}catch{}return hash32((Date.now()^Math.floor(Math.random()*0xffffffff))>>>0)}
+const state={questionNumber:1,sessionSeed:initialSeed(),caseData:null,support:0,solvedAtSupport:[0,0,0],line:{mid:0,slope:0},drag:null,attempts:0,dragged:false,evidenceVisible:true,correlationAnswer:null,correlationChecked:false,predictionAnswer:'',rangeLow:'',rangeHigh:'',insideGapAnswer:'',outsideGapAnswer:'',rangeChoice:null,probeX:null,probeDragging:false,fitReady:false,noTrendChosen:false,phase:'fit',firstLine:null,secondLine:null,firstSaved:false,secondSaved:false,seenInside:false,seenOutside:false,completionDismissed:false,guideOpen:true,lastFeedback:'',lastQuality:null};
+state.caseData=generateCase(state.questionNumber,state.sessionSeed);
+const current=()=>state.caseData;
+function xMinFor(c){return Math.min(...c.points.map(p=>p[0]))}
+function xMaxFor(c){return Math.max(...c.points.map(p=>p[0]))}
+function caseYRange(c){return c.yDomain[1]-c.yDomain[0]}
+function lineAtCase(c,line,x){return line.mid+line.slope*(x-(xMinFor(c)+xMaxFor(c))/2)}
+function qualityFor(c,line){
+  const min=xMinFor(c),max=xMaxFor(c),yr=caseYRange(c),tol=.012*yr,residuals=c.points.map(([x,y])=>({x,y,r:y-lineAtCase(c,line,x)})),above=residuals.filter(p=>p.r>tol).length,below=residuals.filter(p=>p.r<-tol).length,nearCount=residuals.length-above-below,mean=residuals.reduce((s,p)=>s+p.r,0)/residuals.length,mae=residuals.reduce((s,p)=>s+Math.abs(p.r),0)/residuals.length;
+  const segments=[0,1,2].map(i=>{const list=residuals.filter(p=>{const t=(p.x-min)/(max-min);return i<2?t>=i/3&&t<(i+1)/3:t>=i/3&&t<=1}),a=list.filter(p=>p.r>tol).length,b=list.filter(p=>p.r<-tol).length;return {above:a,below:b,near:list.length-a-b,mean:list.reduce((s,p)=>s+p.r,0)/Math.max(1,list.length)}});
+  const signOk=c.correlation==='positive'?line.slope>0:c.correlation==='negative'?line.slope<0:true,meanNorm=Math.abs(mean)/yr,maeNorm=mae/yr,maxSegment=Math.max(...segments.map(s=>Math.abs(s.mean)/yr)),good=c.correlation!=='zero'&&signOk&&meanNorm<=.045&&maeNorm<=.11&&Math.abs(above-below)<=3&&maxSegment<=.078,usable=signOk&&maeNorm<=.14;
+  return {residuals,above,below,near:nearCount,segments,mean,mae,meanNorm,maeNorm,maxSegment,signOk,good,usable};
+}
+const xMin=()=>Math.min(...current().points.map(p=>p[0]));
+const xMax=()=>Math.max(...current().points.map(p=>p[0]));
+const yRange=()=>current().yDomain[1]-current().yDomain[0];
+const sx=x=>plotBox.x+(x-current().xDomain[0])/(current().xDomain[1]-current().xDomain[0])*plotBox.w;
+const sy=y=>plotBox.y+plotBox.h-(y-current().yDomain[0])/(current().yDomain[1]-current().yDomain[0])*plotBox.h;
+const ix=px=>current().xDomain[0]+(px-plotBox.x)/plotBox.w*(current().xDomain[1]-current().xDomain[0]);
+const iy=py=>current().yDomain[0]+(plotBox.y+plotBox.h-py)/plotBox.h*(current().yDomain[1]-current().yDomain[0]);
+const lineAt=(line,x)=>line.mid+line.slope*(x-(xMin()+xMax())/2);
+const lineEndpoints=line=>({left:lineAt(line,xMin()),right:lineAt(line,xMax())});
+const add=(root,tag,attrs={},text)=>{const node=document.createElementNS(NS,tag);for(const[k,v]of Object.entries(attrs))if(v!==undefined&&v!==null)node.setAttribute(k,String(v));if(text!==undefined)node.textContent=text;root.appendChild(node);return node};
+const html=(tag,cls,text)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(text!==undefined)e.textContent=text;return e};
+function resetStateForCase(){
+  const c=current();state.line={mid:c.start.mid,slope:c.start.slope};state.drag=null;state.attempts=0;state.dragged=false;state.evidenceVisible=state.questionNumber===1;state.correlationAnswer=null;state.correlationChecked=false;state.predictionAnswer='';state.rangeLow='';state.rangeHigh='';state.insideGapAnswer='';state.outsideGapAnswer='';state.rangeChoice=null;state.probeX=c.kind==='extrapolation'?c.xDomain[0]:(c.query!==null?c.xDomain[0]:null);state.probeDragging=false;state.fitReady=false;state.noTrendChosen=false;state.phase=c.kind==='extrapolation'?'fit-first':'fit';state.firstLine=null;state.secondLine=null;state.firstSaved=false;state.secondSaved=false;state.seenInside=false;state.seenOutside=false;state.completionDismissed=false;state.guideOpen=state.questionNumber===1;state.lastFeedback='';state.lastQuality=null;renderAll();
+}
+function quality(line=state.line){return qualityFor(current(),line)}
+function fitFeedback(q){
+  const c=current();
+  if(c.correlation==='zero'){
+    if(q.maeNorm>.17)return {tone:'warn',text:'The residual ticks stay long: the crosses are widely scattered around this line.'};
+    return {tone:'warn',text:'A line can balance counts here, but the cloud still has no upward or downward direction.'};
+  }
+  if(!q.signOk)return {tone:'bad',text:`The ruler slopes ${state.line.slope>0?'up':'down'}, opposite to the cloud. Rotate it.`};
+  if(q.mean/ yRange()>.045)return {tone:'warn',text:'Most crosses sit above the ruler. Move the whole ruler upward.'};
+  if(q.mean/ yRange()<-.045)return {tone:'warn',text:'Most crosses sit below the ruler. Move the whole ruler downward.'};
+  const worst=q.segments.map((s,i)=>({i,v:Math.abs(s.mean)/yRange(),mean:s.mean})).sort((a,b)=>b.v-a.v)[0];
+  if(worst.v>.078){const names=['left','middle','right'];return {tone:'warn',text:`The ${names[worst.i]} third lies mostly ${worst.mean>0?'above':'below'} the ruler. Tilt it rather than just sliding it.`};}
+  if(q.maeNorm>.11)return {tone:'warn',text:'The counts are balanced, but the residual ticks remain long. Rotate the ruler closer to the cloud.'};
+  if(Math.abs(q.above-q.below)>3)return {tone:'warn',text:`There are ${q.above} crosses above and ${q.below} below. Re-centre the ruler.`};
+  if(q.good)return {tone:'good',text:'The full cloud is close to the ruler and roughly balanced above and below across its length.'};
+  return {tone:'warn',text:'Release after a small move or tilt, then inspect the whole-cloud evidence again.'};
+}
+function correlationComplete(){return state.correlationAnswer===current().correlation}
+function predictionValue(line=state.line,x){return lineAt(line,x)}
+function predictionTolerance(){return Math.max(current().yStep*.65,yRange()*.025)}
+function predictionInputCorrect(x=current().query,line=state.line){
+  if(state.support===0)return true;const n=Number(state.predictionAnswer);return Number.isFinite(n)&&Math.abs(n-predictionValue(line,x))<=predictionTolerance();
+}
+function rangeFullCorrect(){
+  if(state.support<2)return true;const lo=Number(state.rangeLow),hi=Number(state.rangeHigh);return Number.isFinite(lo)&&Number.isFinite(hi)&&Math.abs(lo-xMin())<=current().xStep*.2&&Math.abs(hi-xMax())<=current().xStep*.2;
+}
+function gapInputCorrect(key,answer){if(state.support===0)return true;const n=Number(state[key]);return Number.isFinite(n)&&Math.abs(n-answer)<=Math.max(1,current().yStep*.35)}
+function comparisonWorkingCorrect(){
+  if(state.support===0)return true;if(!state.firstLine||!state.secondLine||!state.seenInside||!state.seenOutside)return false;const c=current();
+  const inside=Math.abs(predictionValue(state.firstLine,c.inside)-predictionValue(state.secondLine,c.inside));
+  const outside=Math.abs(predictionValue(state.firstLine,c.outside)-predictionValue(state.secondLine,c.outside));
+  return gapInputCorrect('insideGapAnswer',inside)&&gapInputCorrect('outsideGapAnswer',outside);
+}
+function isComplete(){
+  const c=current();
+  if(c.kind==='zero')return state.noTrendChosen&&correlationComplete();
+  if(c.kind==='extrapolation')return state.secondSaved&&state.seenInside&&state.seenOutside&&correlationComplete()&&rangeFullCorrect()&&comparisonWorkingCorrect()&&state.rangeChoice==='outside';
+  return state.fitReady&&correlationComplete()&&state.probeX!==null&&Math.abs(state.probeX-c.query)<=c.xStep*.13&&predictionInputCorrect()&&rangeFullCorrect();
+}
+function svgPoint(evt){const svg=$('plot'),p=svg.createSVGPoint();p.x=evt.clientX;p.y=evt.clientY;return p.matrixTransform(svg.getScreenCTM().inverse())}
+function drawGrid(root){
+  const c=current(),x0=c.xDomain[0],x1=c.xDomain[1],y0=c.yDomain[0],y1=c.yDomain[1];
+  add(root,'rect',{x:plotBox.x,y:plotBox.y,width:plotBox.w,height:plotBox.h,class:'plot-border'});
+  const min=xMin(),max=xMax();
+  if(min>x0)add(root,'rect',{x:plotBox.x,y:plotBox.y,width:sx(min)-plotBox.x,height:plotBox.h,class:'outside-zone'});
+  if(max<x1)add(root,'rect',{x:sx(max),y:plotBox.y,width:plotBox.x+plotBox.w-sx(max),height:plotBox.h,class:'outside-zone'});
+  const minorX=c.xStep/5,minorY=c.yStep/5;
+  for(let x=Math.ceil(x0/minorX)*minorX;x<=x1+1e-9;x+=minorX){const major=near((x-x0)%c.xStep,0,1e-6)||near((x-x0)%c.xStep,c.xStep,1e-6);add(root,'line',{x1:sx(x),y1:plotBox.y,x2:sx(x),y2:plotBox.y+plotBox.h,class:major?'grid-major':'grid-minor'})}
+  for(let y=Math.ceil(y0/minorY)*minorY;y<=y1+1e-9;y+=minorY){const major=near((y-y0)%c.yStep,0,1e-6)||near((y-y0)%c.yStep,c.yStep,1e-6);add(root,'line',{x1:plotBox.x,y1:sy(y),x2:plotBox.x+plotBox.w,y2:sy(y),class:major?'grid-major':'grid-minor'})}
+  add(root,'line',{x1:plotBox.x,y1:plotBox.y+plotBox.h,x2:plotBox.x+plotBox.w,y2:plotBox.y+plotBox.h,class:'axis'});
+  add(root,'line',{x1:plotBox.x,y1:plotBox.y,x2:plotBox.x,y2:plotBox.y+plotBox.h,class:'axis'});
+  for(let x=x0;x<=x1+1e-9;x+=c.xStep){add(root,'text',{x:sx(x),y:plotBox.y+plotBox.h+20,class:'tick-label','text-anchor':'middle'},fmt(x,x%1?1:0))}
+  for(let y=y0;y<=y1+1e-9;y+=c.yStep){add(root,'text',{x:plotBox.x-12,y:sy(y)+3,class:'tick-label','text-anchor':'end'},fmt(y,y%1?1:0))}
+  add(root,'text',{x:plotBox.x+plotBox.w/2,y:plotBox.y+plotBox.h+54,class:'axis-label','text-anchor':'middle'},c.xLabel);
+  add(root,'text',{x:25,y:plotBox.y+plotBox.h/2,class:'axis-label','text-anchor':'middle',transform:`rotate(-90 25 ${plotBox.y+plotBox.h/2})`},c.yLabel);
+  add(root,'line',{x1:sx(min),y1:plotBox.y+plotBox.h+28,x2:sx(max),y2:plotBox.y+plotBox.h+28,class:'observed-bracket'});
+  add(root,'line',{x1:sx(min),y1:plotBox.y+plotBox.h+22,x2:sx(min),y2:plotBox.y+plotBox.h+34,class:'observed-cap'});
+  add(root,'line',{x1:sx(max),y1:plotBox.y+plotBox.h+22,x2:sx(max),y2:plotBox.y+plotBox.h+34,class:'observed-cap'});
+  add(root,'text',{x:(sx(min)+sx(max))/2,y:plotBox.y+plotBox.h+42,class:'observed-label','text-anchor':'middle'},'observed data');
+  if(c.kind==='extrapolation')add(root,'text',{x:(sx(max)+plotBox.x+plotBox.w)/2,y:plotBox.y+17,class:'outside-label','text-anchor':'middle'},'no observations');
+}
+function drawPoints(root){for(const[x,y]of current().points){const g=add(root,'g',{transform:`translate(${sx(x)} ${sy(y)})`});add(g,'line',{x1:-5,y1:-5,x2:5,y2:5,class:'point-cross'});add(g,'line',{x1:-5,y1:5,x2:5,y2:-5,class:'point-cross'})}}
+function linePathFor(line,full=false){const c=current(),a=full?c.xDomain[0]:xMin(),b=full?c.xDomain[1]:xMax();return `M ${sx(a)} ${sy(lineAt(line,a))} L ${sx(b)} ${sy(lineAt(line,b))}`}
+function drawExtensions(root,line,cls){const c=current();if(c.xDomain[0]<xMin())add(root,'path',{d:`M ${sx(c.xDomain[0])} ${sy(lineAt(line,c.xDomain[0]))} L ${sx(xMin())} ${sy(lineAt(line,xMin()))}`,class:cls});if(c.xDomain[1]>xMax())add(root,'path',{d:`M ${sx(xMax())} ${sy(lineAt(line,xMax()))} L ${sx(c.xDomain[1])} ${sy(lineAt(line,c.xDomain[1]))}`,class:cls})}
+function drawFitLine(root){
+  const c=current(),locked=state.fitReady&&c.kind!=='extrapolation'&&state.phase==='predict';
+  if(c.kind==='zero'&&state.noTrendChosen){add(root,'path',{d:linePathFor(state.line,false),class:'discarded-line'});return}
+  if(c.kind==='extrapolation'&&state.firstLine){
+    add(root,'path',{d:linePathFor(state.firstLine,false),class:'ghost-line'});
+    if(state.secondSaved)drawExtensions(root,state.firstLine,'ghost-extension');
+    const midx=(sx(xMin())+sx(xMax()))/2,midy=sy(lineAt(state.firstLine,(xMin()+xMax())/2));
+    const tag=add(root,'g',{});add(tag,'rect',{x:midx-27,y:midy-26,width:54,height:17,rx:8,class:'fit-saved-tag'});add(tag,'text',{x:midx,y:midy-15,class:'fit-saved-text'},'fit 1 saved');
+  }
+  if(c.kind==='extrapolation'&&state.secondSaved){
+    add(root,'path',{d:linePathFor(state.secondLine,false),class:'fit-line'});drawExtensions(root,state.secondLine,'fit-extension');return;
+  }
+  if(c.kind==='extrapolation'&&state.phase==='compare')return;
+  const q=state.lastQuality||quality();
+  add(root,'path',{d:linePathFor(state.line,false),class:'fit-line-under'});
+  add(root,'path',{d:linePathFor(state.line,false),class:`fit-line ${q.good?'good':''}`});
+  if(locked)return;
+  const hit=add(root,'path',{d:linePathFor(state.line,false),class:'line-hit','data-drag':'move','aria-label':'Move the whole fitted line'});bindDrag(hit,'move');
+  const midx=(xMin()+xMax())/2,midy=lineAt(state.line,midx),rightY=lineAt(state.line,xMax());
+  const move=add(root,'g',{tabindex:locked?-1:0,role:'slider','aria-label':'Move the whole ruler up or down','data-drag':'move'});add(move,'circle',{cx:sx(midx),cy:sy(midy),r:16,class:`handle move ${locked?'locked':''}`});add(move,'circle',{cx:sx(midx),cy:sy(midy),r:27,class:'handle-hit'});bindDrag(move,'move');bindKeyboard(move,'move');
+  const tilt=add(root,'g',{tabindex:locked?-1:0,role:'slider','aria-label':'Tilt the ruler','data-drag':'tilt'});add(tilt,'circle',{cx:sx(xMax()),cy:sy(rightY),r:16,class:`handle tilt ${locked?'locked':''}`});add(tilt,'circle',{cx:sx(xMax()),cy:sy(rightY),r:27,class:'handle-hit'});bindDrag(tilt,'tilt');bindKeyboard(tilt,'tilt');
+  if(!state.dragged&&state.questionNumber===1){
+    add(root,'rect',{x:sx(midx)-32,y:sy(midy)+22,width:64,height:20,rx:9,class:'handle-label-bg'});add(root,'text',{x:sx(midx),y:sy(midy)+35,class:'handle-label move'},'move');
+    add(root,'rect',{x:sx(xMax())-32,y:sy(rightY)+22,width:64,height:20,rx:9,class:'handle-label-bg'});add(root,'text',{x:sx(xMax()),y:sy(rightY)+35,class:'handle-label tilt'},'tilt');
+  }
+}
+function bindKeyboard(node,kind){node.addEventListener('keydown',e=>{if(!['ArrowUp','ArrowDown'].includes(e.key))return;e.preventDefault();const unit=yRange()*.012*(e.shiftKey?4:1),dir=e.key==='ArrowUp'?1:-1;if(kind==='move')state.line.mid=clamp(state.line.mid+dir*unit,current().yDomain[0]-yRange()*.3,current().yDomain[1]+yRange()*.3);else state.line.slope+=dir*unit/(xMax()-xMin())*2;state.dragged=true;state.evidenceVisible=true;state.attempts++;afterLineChange(true)})}
+function bindDrag(node,kind){node.addEventListener('pointerdown',e=>{if(state.secondSaved||state.phase==='compare')return;state.drag={kind,pointerId:e.pointerId,start:svgPoint(e),mid:state.line.mid,slope:state.line.slope};node.setPointerCapture?.(e.pointerId);state.dragged=true;state.guideOpen=false;if(state.questionNumber>1)state.evidenceVisible=false;renderAll();e.preventDefault()})}
+function drawRibbon(root,q){
+  add(root,'rect',{x:ribbon.x,y:ribbon.y,width:ribbon.w,height:ribbon.h,rx:10,class:'ribbon-bg'});
+  add(root,'text',{x:ribbon.x+12,y:ribbon.y+16,class:'ribbon-title'},'Whole-cloud evidence');
+  add(root,'text',{x:ribbon.x+12,y:ribbon.y+29,class:'ribbon-sub'},'Tick direction shows the side of the ruler; length shows distance from it.');
+  add(root,'line',{x1:ribbon.x+10,y1:ribbon.centre,x2:ribbon.x+ribbon.w-10,y2:ribbon.centre,class:'ribbon-centre'});
+  for(let i=1;i<3;i++)add(root,'line',{x1:ribbon.x+ribbon.w*i/3,y1:ribbon.y+34,x2:ribbon.x+ribbon.w*i/3,y2:ribbon.y+ribbon.h-8,class:'ribbon-divider'});
+  ['left third','middle third','right third'].forEach((t,i)=>add(root,'text',{x:ribbon.x+ribbon.w*(i+.5)/3,y:ribbon.y+43,class:'ribbon-segment'},t));
+  if(!state.evidenceVisible&&state.drag){add(root,'rect',{x:ribbon.x+1,y:ribbon.y+32,width:ribbon.w-2,height:ribbon.h-33,rx:9,class:'ribbon-mask'});add(root,'text',{x:ribbon.x+ribbon.w/2,y:ribbon.centre+4,class:'ribbon-release'},'Release the ruler to inspect the balance');return;}
+  const scale=32/(yRange()*.22);
+  for(const p of q.residuals){const len=clamp(Math.abs(p.r)*scale,3,32),up=p.r>yRange()*.012,down=p.r<-yRange()*.012,y2=up?ribbon.centre-len:down?ribbon.centre+len:ribbon.centre;add(root,'line',{x1:sx(p.x),y1:ribbon.centre,x2:sx(p.x),y2,class:`residual-tick ${up?'above':down?'below':'near'}`})}
+  q.segments.forEach((s,i)=>add(root,'text',{x:ribbon.x+ribbon.w*(i+.5)/3,y:ribbon.y+ribbon.h-9,class:'ribbon-count'},`${s.above} above · ${s.below} below`));
+}
+function probeTargetX(){const c=current();if(c.kind==='extrapolation')return state.seenInside?c.outside:c.inside;return c.query}
+function drawProbe(root){
+  const c=current();
+  if(c.kind==='zero')return;
+  const active=c.kind==='extrapolation'?state.phase==='compare':state.fitReady;
+  if(!active)return;
+  const targets=c.kind==='extrapolation'?[c.inside,c.outside]:[c.query];
+  targets.forEach(x=>{add(root,'circle',{cx:sx(x),cy:plotBox.y+plotBox.h,r:7,class:`probe-target ${near(x,probeTargetX(),1e-6)?'active':''}`});add(root,'text',{x:sx(x),y:plotBox.y+plotBox.h-8,class:'ribbon-sub','text-anchor':'middle'},c.kind==='extrapolation'?(x===c.inside?'inside':'outside'):'target')});
+  const x=state.probeX??c.xDomain[0],lines=c.kind==='extrapolation'?[state.firstLine,state.secondLine]:[state.line],vals=lines.map(l=>predictionValue(l,x));
+  add(root,'line',{x1:sx(x),y1:plotBox.y,x2:sx(x),y2:plotBox.y+plotBox.h,class:'probe-line'});
+  vals.forEach((v,i)=>{add(root,'line',{x1:plotBox.x,y1:sy(v),x2:sx(x),y2:sy(v),class:'probe-horizontal'});add(root,'circle',{cx:sx(x),cy:sy(v),r:6,class:'probe-point'});if(c.kind==='extrapolation'){const g=add(root,'g',{}),yy=sy(v)+(i===0?-15:17);add(g,'rect',{x:sx(x)-31,y:yy-12,width:62,height:18,rx:8,class:`compare-pill ${i===0?'first':'second'}`});add(g,'text',{x:sx(x),y:yy+1,class:'compare-text'},`fit ${i+1}: ${fmt(v,c.answerDigits)}`)}});
+  const handle=add(root,'g',{tabindex:0,role:'slider','aria-label':'Move the prediction probe along the x-axis'});add(handle,'circle',{cx:sx(x),cy:plotBox.y+plotBox.h,r:14,class:'probe-handle'});add(handle,'circle',{cx:sx(x),cy:plotBox.y+plotBox.h,r:25,class:'handle-hit'});handle.addEventListener('pointerdown',e=>{state.probeDragging=true;state.drag={kind:'probe',pointerId:e.pointerId};handle.setPointerCapture?.(e.pointerId);e.preventDefault()});handle.addEventListener('keydown',e=>{if(!['ArrowLeft','ArrowRight'].includes(e.key))return;e.preventDefault();const step=current().xStep/5*(e.shiftKey?5:1);state.probeX=clamp((state.probeX??current().xDomain[0])+(e.key==='ArrowRight'?step:-step),current().xDomain[0],current().xDomain[1]);afterProbeMove(false)});
+  const target=probeTargetX(),reached=Math.abs(x-target)<=c.xStep*.13;
+  const labelX=sx(x),labelY=plotBox.y+plotBox.h+5;add(root,'rect',{x:labelX-34,y:labelY+12,width:68,height:20,rx:9,class:'probe-label-bg'});add(root,'text',{x:labelX,y:labelY+26,class:'probe-label'},reached?`x = ${fmt(target,target%1?1:0)}`:`x = ${fmt(x,1)}`);
+}
+function renderPlot(){
+  const svg=$('plot');svg.replaceChildren();add(svg,'title',{id:'plotTitle'},`${current().context} scatter diagram`);add(svg,'desc',{id:'plotDesc'},'A scatter diagram of small crosses, an adjustable straight ruler spanning the full observed data set, a residual evidence ribbon and, once the fit is accepted, a draggable prediction probe.');add(svg,'rect',{width:920,height:650,class:'plot-bg'});drawGrid(svg);drawPoints(svg);drawFitLine(svg);const q=state.lastQuality||quality();drawRibbon(svg,q);drawProbe(svg);
+}
+function step(title,index,tone=''){const s=html('section',`work-step ${tone}`);const head=html('div','step-head');head.innerHTML=`<span>${index} · ${title}</span><em></em>`;s.appendChild(head);return s}
+function renderCorrelationStep(flow){
+  const c=current(),done=correlationComplete(),canJudge=state.attempts>0||state.fitReady||state.noTrendChosen,tone=done?'good':state.correlationChecked?'bad':'active',s=step('Correlation',1,tone),value=html('div','step-value');
+  value.textContent=canJudge?'State the direction shown by the whole scatter.':'Inspect the whole cloud, then release the ruler.';s.appendChild(value);
+  const choices=html('div','correlation-choices');['positive','zero','negative'].forEach(name=>{const b=html('button','',name[0].toUpperCase()+name.slice(1));b.type='button';b.disabled=!canJudge;if(state.correlationAnswer===name)b.classList.add('selected');if(state.correlationChecked&&state.correlationAnswer===name)b.classList.add(name===c.correlation?'correct':'incorrect');b.addEventListener('click',()=>{state.correlationAnswer=name;state.correlationChecked=true;if(current().kind==='standard'&&name===current().correlation&&quality().good){state.fitReady=true;state.phase='predict';state.probeX=current().xDomain[0]}renderAll()});choices.appendChild(b)});s.appendChild(choices);
+  const note=html('div','step-note');note.textContent=!canJudge?'Use the complete cloud, not a few convenient crosses.':state.correlationChecked&&!done?'That word does not match the overall direction.':'Read the overall direction of the complete cloud, not a few selected crosses.';s.appendChild(note);flow.appendChild(s)
+}
+function renderFitStep(flow,q){
+  const c=current(),ready=c.kind==='zero'?state.attempts>0:q.good,tone=c.kind==='zero'?(state.noTrendChosen?'good':state.attempts?'warn':'active'):(ready?'good':state.attempts?'warn':'active'),s=step(c.kind==='zero'?'Straight-line trend':'Line of best fit',2,tone),fb=fitFeedback(q);const value=html('div','step-value');
+  if(c.kind==='zero')value.innerHTML=state.noTrendChosen?'<strong>No usable straight-line trend</strong>':'Test whether any straight ruler stays close to the full cloud.';
+  else if(q.good)value.innerHTML='<strong>Full cloud balanced</strong>';else value.textContent=state.attempts?fb.text:'Drag the move and tilt handles, then release.';
+  s.appendChild(value);
+  if(state.evidenceVisible||!state.drag){const grid=html('div','balance-grid');q.segments.forEach((seg,i)=>{const chip=html('div','balance-chip');chip.innerHTML=`<span>${['left','middle','right'][i]}</span><strong>${seg.above}↑ ${seg.below}↓</strong>`;grid.appendChild(chip)});s.appendChild(grid)}
+  const note=html('div','step-note');note.textContent=c.kind==='zero'?(q.maeNorm>.17?'Long residual ticks show that the crosses do not cluster around the ruler.':'Balanced sides alone do not create positive or negative correlation.'):fb.text;s.appendChild(note);
+  if(c.kind==='zero'&&state.attempts>0&&!state.noTrendChosen){const row=html('div','action-row'),b=html('button','primary','Conclude: no straight-line trend');b.type='button';b.disabled=state.correlationAnswer!=='zero';b.addEventListener('click',()=>{state.noTrendChosen=true;state.fitReady=false;renderAll()});row.appendChild(b);s.appendChild(row)}
+  if(c.kind==='extrapolation'){
+    const row=html('div','action-row');
+    if(state.phase==='fit-first'&&q.good&&correlationComplete()){const b=html('button','primary','Save first defensible fit');b.type='button';b.addEventListener('click',saveFirstFit);row.appendChild(b)}
+    if(state.phase==='fit-second'&&q.good){const distinct=alternateDistinct();const b=html('button',distinct?'primary':'','Save second defensible fit');b.type='button';b.disabled=!distinct;b.addEventListener('click',saveSecondFit);row.appendChild(b);if(!distinct){const n=html('div','step-note','This is still nearly the same fit. Keep the cloud balanced but rotate around its centre.');row.appendChild(n)}}
+    if(row.childNodes.length)s.appendChild(row)
+  }
+  flow.appendChild(s)
+}
+function renderPredictionStep(flow){
+  const c=current();if(c.kind==='zero'){const s=step('Prediction',3,state.noTrendChosen?'good':'');s.append(html('div','step-value',state.noTrendChosen?'No fitted prediction is justified.':'A prediction waits until a trend is justified.'),html('div','step-note','A line that does not represent the cloud should not be used as a forecasting model.'));flow.appendChild(s);return}
+  if(c.kind==='extrapolation'){renderComparisonStep(flow);return}
+  const atTarget=state.fitReady&&state.probeX!==null&&Math.abs(state.probeX-c.query)<=c.xStep*.13,answerOk=atTarget&&predictionInputCorrect()&&rangeFullCorrect(),tone=answerOk?'good':state.fitReady?'active':'',s=step('Prediction working',3,tone),value=html('div','step-value');
+  value.innerHTML=state.fitReady?`Move the probe to <strong>x = ${fmt(c.query,c.query%1?1:0)}</strong>.`:'Accept the line before reading from it.';s.appendChild(value);
+  if(state.fitReady)appendObservedRange(s);
+  if(atTarget){const estimate=predictionValue(state.line,c.query);s.appendChild(predictionWorkingRow(c.query,estimate,c.yLabel.match(/\((.*?)\)/)?.[1]||''))}
+  flow.appendChild(s)
+}
+function appendObservedRange(host){
+  const range=html('div','range-strip');range.innerHTML=`<span>Observed x-range</span><strong>${state.support<2?`${fmt(xMin(),xMin()%1?1:0)} ≤ x ≤ ${fmt(xMax(),xMax()%1?1:0)}`:'complete the endpoints below'}</strong>`;host.appendChild(range);
+  if(state.support===2){const fields=html('div','range-fields');fields.append(rangeInput('Smallest observed x','rangeLow',xMin()),rangeInput('Largest observed x','rangeHigh',xMax()));host.appendChild(fields)}
+}
+function predictionWorkingRow(x,answer,unit){
+  const row=html('div','working-equation');row.append(document.createTextNode(`x = ${fmt(x,x%1?1:0)} → fitted line → y ≈ `));
+  if(state.support===0){const val=html('strong','',`${fmt(answer,current().answerDigits)}${unit?` ${unit}`:''}`);row.appendChild(val);return row}
+  const input=html('input',''),mark=html('span','field-mark','');input.type='text';input.inputMode='decimal';input.autocomplete='off';input.value=state.predictionAnswer;input.placeholder='?';
+  const update=()=>{const entered=input.value.trim()!==''&&Number.isFinite(Number(input.value)),ok=entered&&Math.abs(Number(input.value)-answer)<=predictionTolerance();input.classList.remove('good','bad');mark.classList.remove('good','bad');mark.textContent='';if(entered){input.classList.add(ok?'good':'bad');mark.classList.add(ok?'good':'bad');mark.textContent=ok?'✓':'×'}renderFooter();renderCompletion()};
+  input.addEventListener('input',()=>{state.predictionAnswer=input.value;update()});row.append(input,document.createTextNode(unit?` ${unit}`:''),mark);update();return row
+}
+function renderComparisonStep(flow){
+  const c=current(),ready=state.secondSaved,tone=isComplete()?'good':ready?'active':'',s=step('Prediction working',3,tone),value=html('div','step-value');
+  if(!ready)value.textContent='Save two defensible fits before extending either line.';
+  else if(!state.seenInside)value.innerHTML=`Move the probe to <strong>x = ${fmt(c.inside,c.inside%1?1:0)}</strong>, inside the records.`;
+  else if(!state.seenOutside)value.innerHTML=`Now move the probe to <strong>x = ${fmt(c.outside,c.outside%1?1:0)}</strong>, beyond the records.`;
+  else value.innerHTML='<strong>Compare the same two fits inside and outside the observations.</strong>';
+  s.appendChild(value);if(state.secondSaved)appendObservedRange(s);
+  if(state.seenInside){const a=predictionValue(state.firstLine,c.inside),b=predictionValue(state.secondLine,c.inside),cmp=html('div','comparison');cmp.append(compareCard('Fit 1 inside',a),compareCard('Fit 2 inside',b));s.appendChild(cmp);s.appendChild(gapWorkingRow('insideGapAnswer',Math.abs(a-b),'inside gap'))}
+  if(state.seenOutside){const a=predictionValue(state.firstLine,c.outside),b=predictionValue(state.secondLine,c.outside),cmp=html('div','comparison');cmp.append(compareCard('Fit 1 outside',a),compareCard('Fit 2 outside',b));s.appendChild(cmp);s.appendChild(gapWorkingRow('outsideGapAnswer',Math.abs(a-b),'outside gap'));const choices=html('div','correlation-choices');[['inside','Inside range'],['outside','Outside range']].forEach(([choice,label])=>{const btt=html('button','',label);btt.type='button';if(state.rangeChoice===choice)btt.classList.add('selected',choice==='outside'?'correct':'incorrect');btt.addEventListener('click',()=>{state.rangeChoice=choice;renderAll()});choices.appendChild(btt)});s.appendChild(choices)}
+  flow.appendChild(s)
+}
+function gapWorkingRow(key,answer,label){
+  const row=html('div','working-equation'),lab=html('span','gap-label',`${label}:`);row.append(lab,document.createTextNode('|fit 1 − fit 2| ≈ '));
+  if(state.support===0){row.appendChild(html('strong','',fmt(answer,current().answerDigits)));return row}
+  const input=html('input',''),mark=html('span','field-mark','');input.type='text';input.inputMode='decimal';input.autocomplete='off';input.value=state[key];input.placeholder='?';
+  const update=()=>{const entered=input.value.trim()!==''&&Number.isFinite(Number(input.value)),ok=entered&&gapInputCorrect(key,answer);input.classList.remove('good','bad');mark.classList.remove('good','bad');mark.textContent='';if(entered){input.classList.add(ok?'good':'bad');mark.classList.add(ok?'good':'bad');mark.textContent=ok?'✓':'×'}renderFooter();renderCompletion()};
+  input.addEventListener('input',()=>{state[key]=input.value;update()});row.append(input,mark);update();return row
+}
+function rangeInput(label,key,answer){
+  const lab=html('label','',label),input=html('input','');input.type='text';input.inputMode='decimal';input.value=state[key];input.placeholder='?';
+  const update=()=>{const value=input.value,entered=value.trim()!==''&&Number.isFinite(Number(value)),ok=entered&&Math.abs(Number(value)-answer)<=current().xStep*.2;input.classList.remove('good','bad');if(entered)input.classList.add(ok?'good':'bad');renderFooter();renderCompletion()};
+  input.addEventListener('input',()=>{state[key]=input.value;update()});lab.appendChild(input);update();return lab
+}
+function compareCard(label,value){const card=html('div','comparison-card');card.innerHTML=`<span>${label}</span><strong>${fmt(value,current().answerDigits)}</strong>`;return card}
+function renderWork(){
+  $('workBadge').textContent=supportNames[state.support];const host=$('workContent');host.replaceChildren();const flow=html('div','work-flow'),q=state.lastQuality||quality();renderCorrelationStep(flow);renderFitStep(flow,q);renderPredictionStep(flow);host.appendChild(flow)
+}
+function renderMission(){
+  const c=current();$('datasetLabel').textContent=`Practice ${state.questionNumber} · ${c.focusLabel}`;$('supportLabel').textContent=supportNames[state.support];let phase='Fit the cloud';
+  if(c.kind==='zero'&&state.noTrendChosen)phase='No usable trend';else if(c.kind==='extrapolation'){phase=state.phase==='fit-first'?'Save fit 1':state.phase==='fit-second'?'Save fit 2':'Compare predictions'}else if(state.fitReady)phase='Use the fitted line';
+  $('phaseLabel').textContent=phase;$('missionTitle').textContent=c.title;document.querySelectorAll('[data-support]').forEach(b=>{const on=Number(b.dataset.support)===state.support;b.classList.toggle('active',on);b.setAttribute('aria-pressed',String(on))});
+  if(c.kind==='extrapolation'&&state.phase==='fit-second')$('missionHint').textContent='The blue line is your first acceptable fit. Find a visibly different line that still balances the same cloud.';
+  else if(c.kind==='extrapolation'&&state.phase==='compare'){$('missionHint').textContent=!state.seenInside?'Move the probe to the inside marker first; then the task will move beyond the observations.':!state.seenOutside?'Move the probe beyond the recorded x-range and compare the two dashed extensions.':state.support>0&&!comparisonWorkingCorrect()?'Complete the highlighted gap working, then use the observed range to judge the forecast.':state.support===2&&!rangeFullCorrect()?'Record the observed x-range, then judge the forecast.':`Use the observed x-range to decide whether x = ${fmt(c.outside,c.outside%1?1:0)} is supported by the data.`;}
+  else if(state.fitReady&&c.kind==='standard')$('missionHint').textContent=`The fit is defensible. Slide the gold probe to ${c.queryLabel} and read across to the vertical axis.`;
+  else $('missionHint').textContent=c.hint;
+  $('visualTitle').textContent=c.context;const extra=c.kind==='extrapolation';$('ghostLegend').hidden=!(extra&&state.firstLine);$('ghostLegendText').textContent='fit 1';$('fitLegendText').textContent=extra&&state.firstLine?(state.secondSaved?'fit 2':'fit 2 candidate'):(state.fitReady?'accepted fit':'current fit');$('dashLegend').hidden=!(extra&&state.secondSaved)
+}
+function renderFooter(){
+  const c=current(),q=state.lastQuality||quality(),fb=fitFeedback(q),e=$('footerEvidence'),s=$('footerStatus');s.className='footer-status';
+  if(isComplete()){e.innerHTML=`<strong>Consequence:</strong> ${c.success}`;s.textContent='Relationship established';s.classList.add('good');return}
+  if(c.kind==='zero'&&state.attempts>0&&!state.noTrendChosen){e.innerHTML='<strong>Visible evidence:</strong> the ticks remain long and the cloud has no consistent upward or downward direction.';s.textContent='Decide whether a trend exists';s.classList.add('warn');return}
+  if(c.kind==='extrapolation'&&state.phase==='fit-second'&&q.good&&!alternateDistinct()){e.innerHTML='<strong>Visible evidence:</strong> this line fits, but it makes almost the same outside prediction as fit 1.';s.textContent='Find a different fit';s.classList.add('warn');return}
+  if(c.kind==='extrapolation'&&state.phase==='compare'){
+    if(!state.seenInside){e.innerHTML='<strong>Next action:</strong> drag the probe to the inside marker.';s.textContent='Test within data';return}
+    if(!state.seenOutside){e.innerHTML='<strong>Next action:</strong> drag the probe to the outside marker.';s.textContent='Test beyond data';return}
+    if(state.support===2&&!rangeFullCorrect()){e.innerHTML='<strong>Next action:</strong> record the smallest and largest observed x-values.';s.textContent='Record the data range';return}
+    if(state.support>0&&!comparisonWorkingCorrect()){e.innerHTML='<strong>Next action:</strong> complete the highlighted comparison working.';s.textContent='Complete the working';return}
+    if(state.rangeChoice!=='outside'){e.innerHTML='<strong>Next action:</strong> decide whether the outside marker lies inside or outside the observed range.';s.textContent='Judge the forecast';return}
+    e.innerHTML='<strong>Visible consequence:</strong> both fits agree inside the records but separate after they are extended beyond them.';s.textContent='Evidence collected';s.classList.add('good');return
+  }
+  if(!state.fitReady&&c.kind!=='zero'){e.innerHTML=`<strong>${state.attempts?'Visible evidence':'Next action'}:</strong> ${state.attempts?fb.text:'drag the ruler through the whole cloud.'}`;s.textContent=q.good?'Fit ready':'Inspect the balance';const tone=q.good?'good':state.attempts?fb.tone:'';if(tone)s.classList.add(tone);return}
+  if(c.kind==='standard'&&state.fitReady){if(state.probeX===null||Math.abs(state.probeX-c.query)>c.xStep*.13){e.innerHTML=`<strong>Next action:</strong> move the prediction probe to ${c.queryLabel}.`;s.textContent='Use the fitted line';return}if(state.support>0&&!predictionInputCorrect()){e.innerHTML='<strong>Next action:</strong> complete the highlighted prediction read-off.';s.textContent='Complete the working';return}if(state.support===2&&!rangeFullCorrect()){e.innerHTML='<strong>Next action:</strong> record the observed x-range.';s.textContent='Complete the working';return}e.innerHTML='<strong>Visible consequence:</strong> the fitted line gives a supported estimate inside the observed x-range.';s.textContent='Evidence collected';s.classList.add('good');return}
+  e.innerHTML='<strong>Next action:</strong> inspect the same plot and evidence ribbon.';s.textContent='Working'
+}
+function renderGuide(){const g=$('interactionGuide');g.hidden=true;if(!state.guideOpen||state.dragged||state.questionNumber!==1)return;g.hidden=false;g.style.left='43%';g.style.top='92px';$('guideTitle').textContent='Balance the whole cloud';$('guideCopy').textContent='Drag the orange move handle, then use the green tilt handle. The evidence ribbon updates when you release.'}
+function upgradeOffer(){const count=state.solvedAtSupport[state.support]+1;if(state.support===0&&count>=2)return 1;if(state.support===1&&count>=2)return 2;return-1}
+function renderCompletion(){
+  const card=$('nextCard'),complete=isComplete()&&!state.completionDismissed;card.hidden=!complete;if(!complete)return;const upgrade=upgradeOffer();$('nextTitle').textContent='Practice complete';$('upgradeSupport').hidden=upgrade<0;if(upgrade>=0){$('upgradeSupport').textContent=upgrade===1?'Some working next':'Full working next';$('upgradeSupport').dataset.level=String(upgrade)}$('nextDataset').textContent='Another dataset';$('keepExploring').hidden=false
+}
+function setSupportLevel(level){level=clamp(Number(level)||0,0,2);if(level===state.support)return;state.support=level;state.completionDismissed=false;renderAll()}
+function renderAll(){state.lastQuality=quality();renderMission();renderPlot();renderWork();renderFooter();renderGuide();renderCompletion();window.__scatterLabSnapshot=getSnapshot()}
+function afterLineChange(released=false){state.fitReady=false;state.completionDismissed=false;state.noTrendChosen=false;if(released){state.attempts++;state.evidenceVisible=true;const q=quality();if(current().kind==='standard'&&q.good&&correlationComplete()){state.fitReady=true;state.phase='predict';state.probeX=current().xDomain[0]}if(current().kind==='extrapolation'&&state.phase==='fit-first'&&q.good&&!correlationComplete()){}renderAll()}else renderAll()}
+function afterProbeMove(released){const c=current(),target=probeTargetX();if(released&&Math.abs(state.probeX-target)<=c.xStep*.28)state.probeX=target;if(c.kind==='extrapolation'&&released&&state.phase==='compare'&&Math.abs(state.probeX-target)<=c.xStep*.13){if(!state.seenInside)state.seenInside=true;else state.seenOutside=true}state.completionDismissed=false;renderAll()}
+function alternateDistinct(){if(!state.firstLine)return false;const c=current(),outside=Math.abs(predictionValue(state.firstLine,c.outside)-predictionValue(state.line,c.outside)),inside=Math.abs(predictionValue(state.firstLine,c.inside)-predictionValue(state.line,c.inside));return outside>=yRange()*.1&&inside<=yRange()*.045}
+function saveFirstFit(){if(!quality().good||!correlationComplete())return;state.firstLine={...state.line};state.firstSaved=true;state.phase='fit-second';const c=current(),target=c.altModel||c.model;state.line={mid:clamp(target.mid+yRange()*.055,c.yDomain[0]-yRange()*.2,c.yDomain[1]+yRange()*.2),slope:target.slope*.86};state.fitReady=false;state.evidenceVisible=true;state.attempts++;renderAll()}
+function saveSecondFit(){if(!quality().good||!alternateDistinct())return;state.secondLine={...state.line};state.secondSaved=true;state.phase='compare';state.probeX=current().xDomain[0];state.fitReady=true;renderAll()}
+function nextCase({upgrade=null,forcedFocus=null}={}){state.solvedAtSupport[state.support]++;if(upgrade!==null)state.support=upgrade;state.questionNumber++;state.caseData=generateCase(state.questionNumber,state.sessionSeed,forcedFocus);resetStateForCase()}
+function getSnapshot(){const q=state.lastQuality||quality(),c=current();return {questionNumber:state.questionNumber,caseId:c.id,seed:c.seed,focus:c.focusLabel,kind:c.kind,support:state.support,phase:state.phase,line:{...state.line},fitGood:q.good,quality:{meanNorm:q.meanNorm,maeNorm:q.maeNorm,above:q.above,below:q.below,segments:q.segments.map(s=>({above:s.above,below:s.below,mean:s.mean}))},probeX:state.probeX,complete:isComplete(),firstLine:state.firstLine,secondLine:state.secondLine,seenInside:state.seenInside,seenOutside:state.seenOutside}}
+window.addEventListener('pointermove',e=>{
+  if(!state.drag)return;const p=svgPoint(e),c=current();
+  if(state.drag.kind==='probe'){state.probeX=clamp(ix(p.x),c.xDomain[0],c.xDomain[1]);afterProbeMove(false);return}
+  const dy=iy(p.y)-iy(state.drag.start.y);if(state.drag.kind==='move')state.line.mid=clamp(state.drag.mid+dy,c.yDomain[0]-yRange()*.3,c.yDomain[1]+yRange()*.3);else if(state.drag.kind==='tilt'){const centre=(xMin()+xMax())/2,half=(xMax()-xMin())/2,newRight=iy(p.y);state.line.slope=(newRight-state.drag.mid)/half;state.line.mid=state.drag.mid}afterLineChange(false)
+});
+function endPointer(e){if(!state.drag||state.drag.pointerId!==e.pointerId)return;const kind=state.drag.kind;state.drag=null;if(kind==='probe'){state.probeDragging=false;afterProbeMove(true)}else afterLineChange(true)}
+window.addEventListener('pointerup',endPointer);window.addEventListener('pointercancel',endPointer);
+$('resetCase').addEventListener('click',resetStateForCase);
+document.querySelectorAll('[data-support]').forEach(b=>b.addEventListener('click',()=>setSupportLevel(Number(b.dataset.support))));
+$('nextDataset').addEventListener('click',()=>nextCase());
+$('upgradeSupport').addEventListener('click',()=>nextCase({upgrade:Number($('upgradeSupport').dataset.level)}));
+$('keepExploring').addEventListener('click',()=>{state.completionDismissed=true;if(current().kind==='standard'){state.fitReady=false;state.phase='fit'}else if(current().kind==='zero'){state.noTrendChosen=false;state.phase='fit'}renderAll()});
+window.__scatterLab={
+  snapshot:getSnapshot,
+  setSupport(i){state.support=clamp(Number(i)||0,0,2);resetStateForCase()},
+  setLine(mid,slope){state.line={mid:Number(mid),slope:Number(slope)};state.dragged=true;state.evidenceVisible=true;state.attempts++;afterLineChange(true)},
+  setCorrelation(value){state.correlationAnswer=value;state.correlationChecked=true;renderAll()},
+  setProbe(x){state.probeX=Number(x);afterProbeMove(true)},saveFirst:saveFirstFit,saveSecond:saveSecondFit,
+  chooseZero(){state.noTrendChosen=true;renderAll()},setPrediction(v){state.predictionAnswer=String(v);renderAll()},setRange(lo,hi,choice='outside'){state.rangeLow=String(lo);state.rangeHigh=String(hi);state.rangeChoice=choice;renderAll()},setGaps(inside,outside){state.insideGapAnswer=String(inside);state.outsideGapAnswer=String(outside);renderAll()},
+  next(focus=null){nextCase({forcedFocus:focus})},
+  regenerate(seed,focus=null){const n=Number(seed);state.caseData=generateCase(state.questionNumber,state.sessionSeed,focus,Number.isFinite(n)?n:null);resetStateForCase()},
+  currentCase(){return JSON.parse(JSON.stringify(current()))},
+  validate(count=100){const issues=[];for(let i=1;i<=count;i++){const c=generateCase(i,123456789);if(!generatedCaseValid(c))issues.push({i,id:c.id,kind:c.kind})}return {count,issues,ok:issues.length===0}}
+};
+resetStateForCase();
+})();
+</script>
+</body>
+</html>

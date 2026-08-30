@@ -81,6 +81,8 @@ export const topics = [
   'Geometry',
   'Mensuration',
   'Trigonometry',
+  'Transformations and vectors',
+  'Statistics',
 ] as const;
 export type Topic = (typeof topics)[number];
 
@@ -186,6 +188,8 @@ const subjectDefinitions = [
           Geometry: 'Move geometric constructions and test the angle, tangent and chord relationships that remain invariant for Cambridge IGCSE Mathematics 0580.',
           Mensuration: 'Change solid dimensions and connect surface area, volume, material and capacity for Cambridge IGCSE Mathematics 0580.',
           Trigonometry: 'Operate right and non-right triangles and trace trigonometric functions to connect ratios, solutions and graph structure for Cambridge IGCSE Mathematics 0580.',
+          'Transformations and vectors': 'Construct transformations and programme vector routes to connect geometric change, displacement and magnitude for Cambridge IGCSE Mathematics 0580.',
+          Statistics: 'Build statistical representations and use them to reason about correlation, grouped distributions, cumulative frequency and spread for Cambridge IGCSE Mathematics 0580.',
         } satisfies Partial<Record<Topic, string>>,
       },
     },
@@ -943,6 +947,110 @@ export const labs: Lab[] = [
       { code: '0580', qualification: 'IGCSE', sections: [{ id: 'E6.5', page: 52, primary: true }] },
     ],
     href: '/labs/mathematics/non-right-triangle-solution-constraints.html',
+  },
+  {
+    subject: 'mathematics',
+    slug: 'three-dimensional-line-plane-trigonometry',
+    title: 'Three-Dimensional Trigonometry',
+    description: 'Project a cable onto the floor, connect two right triangles, and calculate the angle between the line and the plane.',
+    metaDescription: 'Explore three-dimensional Pythagoras, trigonometry, perpendicular projection and the angle between a line and a plane for Cambridge IGCSE Mathematics 0580 Extended.',
+    subtitle: 'Find the cable’s perpendicular floor projection, follow it into two linked right triangles, and calculate the angle between the cable and the floor.',
+    topic: 'Trigonometry',
+    format: 'Line–plane projection model',
+    kind: 'lab',
+    syllabuses: [
+      { code: '0580', qualification: 'IGCSE', sections: [{ id: 'E6.6', page: 52, primary: true }] },
+    ],
+    href: '/labs/mathematics/three-dimensional-line-plane-trigonometry.html',
+  },
+  {
+    subject: 'mathematics',
+    slug: 'transformation-order-invariants',
+    title: 'Transformations and Order',
+    description: 'Construct reflections, rotations, translations and enlargements from corresponding points, then compare how changing their order changes the image.',
+    metaDescription: 'Explore reflections, rotations, translations, enlargements, negative scale factors and combined transformations for Cambridge IGCSE Mathematics 0580.',
+    subtitle: 'Calculate the defining line, centre, vector or scale factor from corresponding points, apply it on the grid, then test what changes when transformation order changes.',
+    topic: 'Transformations and vectors',
+    format: 'Dynamic transformation builder',
+    kind: 'lab',
+    syllabuses: [
+      {
+        code: '0580',
+        qualification: 'IGCSE',
+        sections: [
+          { id: 'C7.1', page: 28, primary: true },
+          { id: 'E7.1', page: 53 },
+        ],
+      },
+    ],
+    href: '/labs/mathematics/transformation-order-invariants.html',
+  },
+  {
+    subject: 'mathematics',
+    slug: 'vector-routes-resultants',
+    title: 'Vector Addition and Magnitude',
+    description: 'Move, scale and reverse vector commands, build a head-to-tail robot route, and compare travelled distance with the resultant displacement.',
+    metaDescription: 'Explore vector translation, addition, subtraction, scalar multiplication and magnitude through programmable routes for Cambridge IGCSE Mathematics 0580 Extended.',
+    subtitle: 'Move, scale and reverse reusable vector commands, build a head-to-tail robot route, then compare the travelled path with its single resultant displacement.',
+    topic: 'Transformations and vectors',
+    format: 'Vector route builder',
+    kind: 'lab',
+    syllabuses: [
+      {
+        code: '0580',
+        qualification: 'IGCSE',
+        sections: [
+          { id: 'E7.2', page: 53, primary: true },
+          { id: 'E7.3', page: 53 },
+        ],
+      },
+    ],
+    href: '/labs/mathematics/vector-routes-resultants.html',
+  },
+  {
+    subject: 'mathematics',
+    slug: 'scatter-correlation-prediction',
+    title: 'Scatter Diagrams and Lines of Best Fit',
+    description: 'Position a line of best fit through generated data, judge correlation, and compare interpolation with extrapolation beyond the observed range.',
+    metaDescription: 'Explore scatter diagrams, correlation, lines of best fit and prediction for Cambridge IGCSE Mathematics 0580 Core and Extended.',
+    subtitle: 'Balance a ruler through the whole data cloud, use it to estimate within the observations, then test what happens when the forecast moves beyond them.',
+    topic: 'Statistics',
+    format: 'Scatter-fit investigation',
+    kind: 'lab',
+    syllabuses: [
+      {
+        code: '0580',
+        qualification: 'IGCSE',
+        sections: [
+          { id: 'C9.5', page: 31, primary: true },
+          { id: 'E9.5', page: 56 },
+        ],
+      },
+    ],
+    href: '/labs/mathematics/scatter-correlation-prediction.html',
+  },
+  {
+    subject: 'mathematics',
+    slug: 'histogram-area-cumulative-distribution',
+    title: 'Histograms and Cumulative Frequency',
+    description: 'Build unequal-width histogram bars from frequency density, link the same grouped data to cumulative frequency, and estimate quartiles and interquartile range.',
+    metaDescription: 'Explore histograms, frequency density, cumulative-frequency diagrams, quartiles and interquartile range for Cambridge IGCSE Mathematics 0580 Extended.',
+    subtitle: 'Build one grouped-data report in two linked forms: unequal-width histogram area and cumulative-frequency growth.',
+    topic: 'Statistics',
+    format: 'Linked distribution builder',
+    kind: 'lab',
+    syllabuses: [
+      {
+        code: '0580',
+        qualification: 'IGCSE',
+        sections: [
+          { id: 'E9.7', page: 56, primary: true },
+          { id: 'E9.6', page: 56 },
+          { id: 'E9.3', page: 55 },
+        ],
+      },
+    ],
+    href: '/labs/mathematics/histogram-area-cumulative-distribution.html',
   },
   {
     subject: 'computer-science',
