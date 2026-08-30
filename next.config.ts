@@ -2,6 +2,7 @@ import type { NextConfig } from 'next';
 import { labs } from './app/labs';
 
 const nextConfig: NextConfig = {
+  allowedDevOrigins: ['127.0.0.1'],
   async redirects() {
     return [
       ...labs.map((lab) => ({
