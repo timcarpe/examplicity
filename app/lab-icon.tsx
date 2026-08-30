@@ -431,8 +431,8 @@ function IconDrawing({ slug }: LabIconProps) {
       return (
         <>
           <circle cx="320" cy="180" r="118" />
-          <path d="M222 246 418 246M236 106 410 232M202 62v236" />
-          <path className="tone-one" d="M202 114a48 48 0 0 1 38 20" />
+          <path d="M225 250 320 62l95 188z" />
+          <path className="tone-one" d="M301 100q19 8 38 0" />
         </>
       );
     case 'solid-surface-volume-tradeoffs':
@@ -447,7 +447,7 @@ function IconDrawing({ slug }: LabIconProps) {
         <>
           <path d="M122 286h396L122 80z" />
           <path d="M122 252h34v34" />
-          <path className="tone-one" d="M454 286a64 64 0 0 0-8-31" />
+          <path className="tone-one" d="M466 286q-1-15 6-24" />
         </>
       );
     case 'trigonometric-function-periodicity-solutions':
@@ -461,8 +461,8 @@ function IconDrawing({ slug }: LabIconProps) {
     case 'non-right-triangle-solution-constraints':
       return (
         <>
-          <path d="M110 282 292 78l238 204zM110 282 390 136l140 146" />
-          <path className="tone-one" d="M167 218a76 76 0 0 0 43 28" />
+          <path d="M110 282 292 78l238 204z" />
+          <path className="tone-one" d="M170 282q1-30-20-45" />
         </>
       );
     case 'python-programming-practice':
