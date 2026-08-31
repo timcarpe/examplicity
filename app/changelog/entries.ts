@@ -13,7 +13,7 @@ export const changelogEntries: readonly ChangelogEntry[] = [
       'Improved standalone lab downloads, changing-state announcements, and catalogue routing safeguards.',
     ],
     internalChanges: [
-      'Hardened the standalone lab contract before introducing shared authoring resources and deterministic publication compilation.',
+      'Hardened the standalone lab contract, added hash-pinned shared authoring resources and deterministic publication compilation, and proved the boundary across varied lab structures.',
     ],
   },
   {

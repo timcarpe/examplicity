@@ -29,6 +29,10 @@ const standaloneChromeStyles = `
   right: 0;
   z-index: 2147483000;
 }
+body {
+  padding-bottom: 58px !important;
+  padding-top: 66px !important;
+}
 .examplicity-download-header {
   align-items: center;
   border-bottom: 1px solid rgba(29,29,31,.08);
@@ -90,6 +94,10 @@ const standaloneChromeStyles = `
   outline-offset: 4px;
 }
 @media (max-width: 620px) {
+  body {
+    padding-bottom: 76px !important;
+    padding-top: 60px !important;
+  }
   .examplicity-download-header {
     height: 60px;
     padding: 0 18px;
@@ -108,6 +116,7 @@ const standaloneChromeStyles = `
   .examplicity-download-footer-links { justify-content: flex-start; }
 }
 @media print {
+  body { padding-block: 0 !important; }
   .examplicity-download-header,
   .examplicity-download-footer { display: none; }
 }

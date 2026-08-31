@@ -5,6 +5,13 @@ Subject directories use the manifest subject ID; exam-code alignment remains
 manifest metadata and does not determine the file path. A downloaded lab must
 work and retain its presentation without the website or a network connection.
 
+For the labs registered in `labs-src/manifest.json`, `labs-src` is the
+maintainable publication source and `public/labs` is generated output. The site
+vendors a hash-pinned Lab Creation kit release under `vendor/lab-kit` and owns
+the deterministic inlining compiler. This centralizes reusable source without
+creating any runtime shared-resource dependency. Labs not yet registered remain
+legacy monolith sources until migrated deliberately.
+
 ## Shared chrome
 
 `public/labs/lab-frame.css` is the maintenance source for the shared lab canvas,
@@ -17,6 +24,12 @@ into every marked `LAB_FRAME_STYLES` block. The content generator writes each
 `LAB_MANIFEST_HEAD`, visible manifest title, optional subtitle and
 `LAB_SYLLABUS_CHIPS` block. `npm run labs:sync:check` verifies every generated
 surface, and the production build runs that check automatically.
+
+The frame and the creation kit are separate layers. The frame is site chrome
+and publication layout. The kit supplies optional, layout-agnostic authoring
+tokens and helpers. A source lab declares only the kit capabilities it uses;
+the publication compiler embeds the pinned CSS and JavaScript before the frame
+and manifest checks run.
 
 Do not edit an embedded `LAB_FRAME_STYLES`, `LAB_MANIFEST_HEAD`,
 `data-lab-manifest` or `LAB_SYLLABUS_CHIPS` region directly.
