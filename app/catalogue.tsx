@@ -102,7 +102,13 @@ export default function Catalogue({ initialExam, initialSubjectId }: CataloguePr
   useEffect(() => {
     const syncLabFromUrl = () => {
       const slug = new URLSearchParams(window.location.search).get('lab');
-      const lab = labs.find((item) => item.slug === slug) ?? null;
+      const lab = labs.find((item) => (
+        item.slug === slug
+        && item.subject === subject.id
+        && item.syllabuses.some((syllabus) => (
+          syllabus.code === exam && syllabusAlignmentIncludesLevel(syllabus.qualification, level)
+        ))
+      )) ?? null;
       setActiveLab(lab);
       setIsLoading(Boolean(lab));
     };
@@ -110,7 +116,7 @@ export default function Catalogue({ initialExam, initialSubjectId }: CataloguePr
     syncLabFromUrl();
     window.addEventListener('popstate', syncLabFromUrl);
     return () => window.removeEventListener('popstate', syncLabFromUrl);
-  }, []);
+  }, [exam, level, subject.id]);
 
   useEffect(() => {
     document.body.style.overflow = activeLab ? 'hidden' : '';

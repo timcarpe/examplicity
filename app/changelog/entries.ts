@@ -7,6 +7,16 @@ export type ChangelogEntry = {
 
 export const changelogEntries: readonly ChangelogEntry[] = [
   {
+    date: '2026-08-31',
+    displayDate: '31 August 2026',
+    publicChanges: [
+      'Improved standalone lab downloads, changing-state announcements, and catalogue routing safeguards.',
+    ],
+    internalChanges: [
+      'Hardened the standalone lab contract before introducing shared authoring resources and deterministic publication compilation.',
+    ],
+  },
+  {
     date: '2026-08-30',
     displayDate: '30 August 2026',
     publicChanges: [
