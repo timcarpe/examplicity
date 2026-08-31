@@ -12,9 +12,11 @@ export const changelogEntries: readonly ChangelogEntry[] = [
     publicChanges: [
       'Improved standalone lab downloads, changing-state announcements, catalogue routing safeguards, and keyboard access to bitmap painting, scheduler arrivals, and sound navigation.',
       'Standardized lab title headers across narrow and wide activities, expanded the pseudocode translator workspace, and kept assisted repeated-percentage challenges interactive.',
+      'Added keyboard control to circle constructions, network builders, transmission routing, and the 3D perspective check.',
+      'Kept the recurring-decimals manipulative fully visible without an internal scrollbar.',
     ],
     internalChanges: [
-      'Hardened the standalone lab contract, added hash-pinned shared authoring resources, a versioned publication profile and deterministic publication compilation, and expanded source-backed publication from seven architectural proofs through a sixteen-lab backward-application wave.',
+      'Hardened the standalone lab contract, added hash-pinned shared authoring resources, a versioned publication profile and deterministic publication compilation, and migrated all 46 live labs to source-backed publication with executable-script and interaction-parity regression checks.',
     ],
   },
   {

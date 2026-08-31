@@ -1,13 +1,13 @@
 # Lab kit proof set
 
-This proof set contains seven architectural publication-source snapshots and
-the first sixteen-lab backward-application wave (W1) copied from the live
-`public/labs` outputs. Together they deliberately span the three structures
-most useful for a future monolithic-HTML boilerplate: guided learning,
-phenomenon observation, and scaffolded mission. Their layout and lab behavior
-are preserved; only the shared-resource declarations and the safe helper
-adoptions described below were added. The site-owned compiler regenerates the
-registered `public/labs` files with those resources inline.
+This record began with seven architectural publication-source snapshots and a
+sixteen-lab backward-application wave (W1). A second wave has now migrated the
+remaining 23 live labs, so all 46 current labs are source-owned under
+`labs-src` and compiler-published to `public/labs`. Together they deliberately
+span guided learning, phenomenon observation, scaffolded mission and hybrids.
+Their layouts and learning models remain local; the common changes are the
+shared-resource declarations, publication contract and safe helper adoptions
+described below.
 
 ## The seven architectural proofs
 
@@ -48,6 +48,21 @@ mission-specific animation remain lab-owned. This keeps W1 useful for
 backward application without turning the compiler into a layout or behavior
 framework.
 
+## W2 full-catalogue migration
+
+W2 registers the remaining 23 live labs without turning their existing page
+compositions or domain logic into kit API.
+
+| Subject | W2 labs | Migration focus |
+| --- | --- | --- |
+| Computer science | `assembly`, `combinational-logic-circuit-design`, `data-transmission-methods`, `fetch-decode-execute`, `huffman-rover`, `ipv4-subnetting`, `memory-management`, `network-topology`, `packet-switching`, `translator` | Preserve application-like tools, construction missions and simulations while making network placement and physical-routing surfaces keyboard operable. |
+| Mathematics | `circle-theorem-constraint-network`, `motion-graph-rate-area`, `non-right-triangle-solution-constraints`, `recurring-decimals-fractions`, `scatter-correlation-prediction`, `sequence-patterns-differences`, `set-membership-operations`, `solid-surface-volume-tradeoffs`, `straight-line-coordinates-equations`, `three-dimensional-line-plane-trigonometry`, `time-zone-timetable-constraints`, `transformation-order-invariants`, `trigonometric-function-periodicity-solutions` | Preserve varied guided, observational and mission structures while adding keyboard parity to circle construction and the 3D perspective check. |
+
+The migration also validates every executable source script and retains
+keyboard paths for direct visual controls. These checks protect the full
+catalogue contract; they do not imply that every lab should adopt the same
+helpers or interaction design.
+
 ## Shared declarations and compilation contract
 
 Every snapshot declares the same two local resources immediately before the
@@ -70,14 +85,14 @@ DOM helpers such as `LabKit.dom.byId`, numeric helpers such as `LabKit.numeric.c
 common reduced-motion/viewport utilities. Lab-specific code should retain the
 lesson copy, data payloads, SVG scene geometry, state machines, validation
 rules, animation choreography, and embedded runtimes shown by these examples.
-The proof set is intentionally broad enough to test that boundary before more
-labs adopt it.
+The complete live catalogue now tests that boundary across deliberately varied
+implementations.
 
 ## Eighth science proof
 
 Lab Creation contains the separate `weather-satellite-antenna` source package.
-It consumes the same kit and a vendored immutable release of this repository's
-compiler to produce an exact self-standing preview. That older lab is a
+It consumes the same kit plus immutable vendored releases of this repository's
+publication profile and compiler to produce an exact self-standing preview. That older lab is a
 configured phenomenon: continuous physical tuning followed by a bounded
 satellite-pass experiment. It needed no science page template. Backward
 application reused DOM, numeric, SVG, animation and keyboard-adjustment

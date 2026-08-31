@@ -5,12 +5,11 @@ Subject directories use the manifest subject ID; exam-code alignment remains
 manifest metadata and does not determine the file path. A downloaded lab must
 work and retain its presentation without the website or a network connection.
 
-For the labs registered in `labs-src/manifest.json`, `labs-src` is the
-maintainable publication source and `public/labs` is generated output. The site
-vendors a hash-pinned Lab Creation kit release under `vendor/lab-kit` and owns
-the deterministic inlining compiler. This centralizes reusable source without
-creating any runtime shared-resource dependency. Labs not yet registered remain
-legacy monolith sources until migrated deliberately.
+Every current live lab is registered in `labs-src/manifest.json`: `labs-src` is
+the maintainable publication source and `public/labs` is generated output. The
+site vendors a hash-pinned Lab Creation kit release under `vendor/lab-kit` and
+owns the deterministic inlining compiler. This centralizes reusable source
+without creating any runtime shared-resource dependency.
 
 The versioned site constraints are recorded separately in
 `tools/lab-publication-profile/profile.json`. That profile owns the target rail,
@@ -136,8 +135,10 @@ scrolling behavior.
 4. Check keyboard focus and reduced motion.
 5. Check the standalone lab at `1440×1000` and `1366×768`. At each size, verify
    `document.documentElement.scrollWidth <= document.documentElement.clientWidth`,
-   the intended primary panels and controls remain above the current fold, and
-   no noticeable dead space was introduced.
+   each primary operated visual has matching client/scroll dimensions, the
+   intended primary panels and controls remain above the current fold, and no
+   noticeable dead space was introduced. Record any intentional internal
+   scroller for human review rather than hiding overflow.
 6. Resize at 1200, 900, and 390 pixels; also check lab-specific breakpoints and
    Binary at 820, 640, and 390 pixels.
 7. Smoke-test the lab interaction before committing.
