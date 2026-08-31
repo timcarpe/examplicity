@@ -326,8 +326,6 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
   --warn-soft:#fff6e8;
   --bad:#b2453a;
   --bad-soft:#fff0ee;
-  --network:#101821;
-  --network-grid:#1b2732;
   --link:#536776;
 }
 *{box-sizing:border-box}
@@ -716,14 +714,6 @@ input[type="checkbox"]{margin:0}
   position:relative;
   min-height:610px;
   overflow:hidden;
-  border:1px solid #263645;
-  border-radius:11px;
-  background:
-    radial-gradient(circle at 50% 45%,rgba(54,86,112,.18),transparent 23rem),
-    linear-gradient(rgba(255,255,255,.018),rgba(255,255,255,.018)),
-    repeating-linear-gradient(0deg,transparent 0 27px,rgba(119,145,164,.075) 28px),
-    repeating-linear-gradient(90deg,transparent 0 27px,rgba(119,145,164,.075) 28px),
-    var(--network);
   touch-action:none;
 }
 .network-canvas.connecting{cursor:crosshair}
@@ -781,11 +771,13 @@ input[type="checkbox"]{margin:0}
   position:absolute;
   top:48px;
   width:70px;
-  color:#c4d0d8;
+  color:var(--muted);
   text-align:center;
   font-size:7px;
   font-weight:750;
 }
+.endpoint-node[data-id="A"] small{left:0}
+.endpoint-node[data-id="B"] small{right:0}
 .router-node{
   width:86px;
   min-height:62px;
@@ -1227,7 +1219,7 @@ input[type="checkbox"]{margin:0}
 .packet-dot.nak-dot span{background:#7f201b}
 
 @media(max-width:1180px){
-  .lab-grid{grid-template-columns:230px minmax(570px,1fr) 230px}
+  .lab-grid{grid-template-columns:minmax(220px,230px) minmax(0,1fr) minmax(220px,230px)}
   .network-canvas{min-height:570px}
 }
 @media(max-width:1000px){
@@ -1423,7 +1415,7 @@ input[type="checkbox"]{margin:0}
         <button id="resetTopology">Reset topology</button>
       </div>
 
-      <div id="networkCanvas" class="network-canvas">
+      <div id="networkCanvas" class="network-canvas lab-kit-canvas" data-grid="square">
         <svg id="networkSvg" class="network-svg" aria-label="Editable router topology"></svg>
         <div id="nodeLayer" class="node-layer"></div>
         <div id="packetLayer" class="packet-layer"></div>
@@ -1517,8 +1509,8 @@ input[type="checkbox"]{margin:0}
   let corruptTargetIndex=null;
 
   const defaultNodes=[
-    {id:"A",type:"endpoint",label:"NIC A",x:3,y:48,fixed:true},
-    {id:"B",type:"endpoint",label:"NIC B",x:97,y:52,fixed:true},
+    {id:"A",type:"endpoint",label:"NIC A",x:8,y:48,fixed:true},
+    {id:"B",type:"endpoint",label:"NIC B",x:92,y:52,fixed:true},
     {id:"R1",type:"router",label:"Router 1",x:20,y:43},
     {id:"R2",type:"router",label:"Router 2",x:43,y:17},
     {id:"R3",type:"router",label:"Router 3",x:50,y:49},

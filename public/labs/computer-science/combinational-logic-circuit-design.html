@@ -70,7 +70,7 @@ body {
 
 .lab-manifest-header {
   align-items: start;
-  border-bottom: 1px solid var(--line, var(--lab-line));
+  border-bottom: 0 !important;
   display: grid;
   gap: 18px 28px;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -333,8 +333,8 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
   --lab-control-radius: 8px;
   --lab-panel-shadow: 0 1px 2px rgba(29, 29, 31, .04);
   --lab-font-sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --board: #18242d;
-  --board-grid: #2a3b48;
+  --board: var(--lab-paper);
+  --board-grid: #e7ebee;
   --wire: #738796;
   --signal: #f3a738;
 }
@@ -389,7 +389,7 @@ button.primary { border-color: var(--lab-accent); background: var(--lab-accent);
 .board-shell { position: relative; margin-top: 8px; overflow: hidden; border-radius: 10px; background: var(--board); }
 #circuit-board { display: block; width: 100%; height: auto; min-height: 390px; color: var(--board-grid); touch-action: none; user-select: none; -webkit-user-select: none; }
 .board-grid { opacity: .7; }
-.drop-hint { position: absolute; z-index: 3; padding: 5px 8px; border-radius: 6px; background: rgba(5, 10, 14, .88); color: #fff; font-size: 10px; font-weight: 750; pointer-events: none; transform: translate(-50%, -125%); }
+.drop-hint { position: absolute; z-index: 3; padding: 5px 8px; border: 1px solid var(--lab-line); border-radius: 6px; background: rgba(255, 255, 255, .94); color: var(--lab-ink); font-size: 10px; font-weight: 750; pointer-events: none; transform: translate(-50%, -125%); }
 .fixed-node .node-shell { fill: #eef4f8; stroke: #90a8b8; stroke-width: 2; }
 .fixed-node text { fill: #20313d; text-anchor: middle; font-weight: 800; }
 .fixed-node .fixed-value { font-size: 21px; }
@@ -402,9 +402,9 @@ button.primary { border-color: var(--lab-accent); background: var(--lab-accent);
 .logic-gate .gate-label { fill: #20313d; text-anchor: middle; font-size: 14px; font-weight: 850; pointer-events: none; }
 .port { cursor: crosshair; touch-action: none; user-select: none; -webkit-user-select: none; }
 .port .port-hit { fill: transparent; stroke: none; }
-.port .port-dot { fill: #d9e4eb; stroke: #17242d; stroke-width: 2; }
-.port:hover .port-dot, .port.pending .port-dot { fill: #84c3ff; stroke: #eaf6ff; }
-.port text { fill: #b9c7d0; font-size: 10px; font-weight: 750; pointer-events: none; }
+.port .port-dot { fill: #d9e4eb; stroke: var(--lab-ink); stroke-width: 2; }
+.port:hover .port-dot, .port.pending .port-dot { fill: #84c3ff; stroke: #fff; }
+.port text { fill: var(--lab-muted); font-size: 10px; font-weight: 750; pointer-events: none; }
 .wire-base { fill: none; stroke: var(--wire); stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; cursor: pointer; }
 .wire-base.selected { stroke: #84c3ff; stroke-width: 8; }
 .wire-flow { fill: none; stroke: var(--signal); stroke-width: 4; stroke-linecap: round; stroke-dasharray: 4 13; filter: url(#signal-glow); pointer-events: none; animation: signal-flow .72s linear infinite; }
@@ -468,26 +468,29 @@ button.primary { border-color: var(--lab-accent); background: var(--lab-accent);
 }
 </style>
 <!-- LAB_RESOURCE_START id="lab-kit.css" type="stylesheet" -->
-<style data-lab-resource="lab-kit.css" data-lab-resource-type="stylesheet" data-lab-resource-bytes="3130">
+<style data-lab-resource="lab-kit.css" data-lab-resource-type="stylesheet" data-lab-resource-bytes="4164">
 :root {
-  --lab-kit-ink: #20303a;
-  --lab-kit-muted: #687780;
-  --lab-kit-line: #cbd6dc;
-  --lab-kit-surface: #ffffff;
-  --lab-kit-panel: #f6f9fb;
-  --lab-kit-accent: #2b7ac3;
-  --lab-kit-accent-soft: #e9f3fb;
-  --lab-kit-good: #23794d;
-  --lab-kit-good-soft: #e9f7ef;
-  --lab-kit-warn: #8b6419;
-  --lab-kit-warn-soft: #fff7d9;
-  --lab-kit-bad: #a3443d;
-  --lab-kit-bad-soft: #fff0ef;
-  --lab-kit-focus: #1f6fb4;
+  --lab-kit-ink: var(--lab-ink, #20303a);
+  --lab-kit-muted: var(--lab-muted, #687780);
+  --lab-kit-line: var(--lab-line, #cbd6dc);
+  --lab-kit-surface: var(--lab-surface, #ffffff);
+  --lab-kit-panel: var(--lab-paper, #f6f9fb);
+  --lab-kit-accent: var(--lab-accent, #2b7ac3);
+  --lab-kit-accent-soft: var(--lab-accent-soft, #e9f3fb);
+  --lab-kit-good: var(--lab-good, #23794d);
+  --lab-kit-good-soft: var(--lab-good-soft, #e9f7ef);
+  --lab-kit-warn: var(--lab-warn, #8b6419);
+  --lab-kit-warn-soft: var(--lab-warn-soft, #fff7d9);
+  --lab-kit-bad: var(--lab-bad, #a3443d);
+  --lab-kit-bad-soft: var(--lab-bad-soft, #fff0ef);
+  --lab-kit-focus: var(--lab-focus, #1f6fb4);
   --lab-kit-focus-ring: rgba(31, 111, 180, .28);
-  --lab-kit-radius: 12px;
-  --lab-kit-control-radius: 8px;
-  --lab-kit-shadow: 0 5px 16px rgba(32, 48, 58, .08);
+  --lab-kit-canvas: var(--lab-paper, #fbfbfd);
+  --lab-kit-canvas-grid: #e7ebee;
+  --lab-kit-canvas-grid-size: 24px;
+  --lab-kit-radius: var(--lab-panel-radius, 12px);
+  --lab-kit-control-radius: var(--lab-control-radius, 8px);
+  --lab-kit-shadow: var(--lab-panel-shadow, 0 5px 16px rgba(32, 48, 58, .08));
 }
 
 .lab-kit-visually-hidden {
@@ -514,7 +517,24 @@ button.primary { border-color: var(--lab-accent); background: var(--lab-accent);
 .lab-kit-cluster { display: flex; flex-wrap: wrap; align-items: center; gap: var(--lab-kit-cluster-gap, .5rem); }
 .lab-kit-grid { display: grid; gap: var(--lab-kit-grid-gap, 1rem); grid-template-columns: repeat(var(--lab-kit-grid-columns, 1), minmax(0, 1fr)); }
 .lab-kit-scroll { max-width: 100%; overflow: auto; }
-.lab-kit-svg { display: block; max-width: 100%; height: auto; }
+.lab-kit-svg { display: block; width: 100%; max-width: 100%; height: auto; }
+
+.lab-kit-canvas {
+  box-sizing: border-box;
+  min-width: 0;
+  color: var(--lab-kit-ink);
+  background-color: var(--lab-kit-canvas);
+  border: 1px solid var(--lab-kit-line);
+  border-radius: var(--lab-kit-radius);
+  box-shadow: inset 0 0 0 1px rgba(32, 48, 58, .025);
+}
+
+.lab-kit-canvas[data-grid="square"] {
+  background-image:
+    linear-gradient(var(--lab-kit-canvas-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--lab-kit-canvas-grid) 1px, transparent 1px);
+  background-size: var(--lab-kit-canvas-grid-size) var(--lab-kit-canvas-grid-size);
+}
 
 .lab-kit-field { display: grid; gap: .35rem; color: var(--lab-kit-ink); }
 .lab-kit-field > label { font-weight: 700; }
@@ -618,8 +638,8 @@ button.primary { border-color: var(--lab-accent); background: var(--lab-accent);
           </div>
         </div>
 
-        <div id="board-shell" class="board-shell">
-          <svg id="circuit-board" viewBox="0 0 820 470" role="img" aria-labelledby="board-svg-title board-svg-desc">
+        <div id="board-shell" class="board-shell lab-kit-canvas">
+          <svg id="circuit-board" class="lab-kit-svg" viewBox="0 0 820 470" role="img" aria-labelledby="board-svg-title board-svg-desc">
             <title id="board-svg-title">Interactive logic circuit board</title>
             <desc id="board-svg-desc">Circuit inputs are on the left, the output is on the right, and gates can be placed and wired between them.</desc>
             <defs>
@@ -670,7 +690,7 @@ button.primary { border-color: var(--lab-accent); background: var(--lab-accent);
   "use strict";
 
   const host = globalThis;
-  const VERSION = "0.1.0";
+  const VERSION = "0.2.0";
 
   function documentFor(root) {
     return root || host.document || null;

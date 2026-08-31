@@ -333,8 +333,8 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
   --lab-control-radius: 8px;
   --lab-panel-shadow: 0 1px 2px rgba(29, 29, 31, .04);
   --lab-font-sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --board: #18242d;
-  --board-grid: #2a3b48;
+  --board: var(--lab-paper);
+  --board-grid: #e7ebee;
   --wire: #738796;
   --signal: #f3a738;
 }
@@ -389,7 +389,7 @@ button.primary { border-color: var(--lab-accent); background: var(--lab-accent);
 .board-shell { position: relative; margin-top: 8px; overflow: hidden; border-radius: 10px; background: var(--board); }
 #circuit-board { display: block; width: 100%; height: auto; min-height: 390px; color: var(--board-grid); touch-action: none; user-select: none; -webkit-user-select: none; }
 .board-grid { opacity: .7; }
-.drop-hint { position: absolute; z-index: 3; padding: 5px 8px; border-radius: 6px; background: rgba(5, 10, 14, .88); color: #fff; font-size: 10px; font-weight: 750; pointer-events: none; transform: translate(-50%, -125%); }
+.drop-hint { position: absolute; z-index: 3; padding: 5px 8px; border: 1px solid var(--lab-line); border-radius: 6px; background: rgba(255, 255, 255, .94); color: var(--lab-ink); font-size: 10px; font-weight: 750; pointer-events: none; transform: translate(-50%, -125%); }
 .fixed-node .node-shell { fill: #eef4f8; stroke: #90a8b8; stroke-width: 2; }
 .fixed-node text { fill: #20313d; text-anchor: middle; font-weight: 800; }
 .fixed-node .fixed-value { font-size: 21px; }
@@ -402,9 +402,9 @@ button.primary { border-color: var(--lab-accent); background: var(--lab-accent);
 .logic-gate .gate-label { fill: #20313d; text-anchor: middle; font-size: 14px; font-weight: 850; pointer-events: none; }
 .port { cursor: crosshair; touch-action: none; user-select: none; -webkit-user-select: none; }
 .port .port-hit { fill: transparent; stroke: none; }
-.port .port-dot { fill: #d9e4eb; stroke: #17242d; stroke-width: 2; }
-.port:hover .port-dot, .port.pending .port-dot { fill: #84c3ff; stroke: #eaf6ff; }
-.port text { fill: #b9c7d0; font-size: 10px; font-weight: 750; pointer-events: none; }
+.port .port-dot { fill: #d9e4eb; stroke: var(--lab-ink); stroke-width: 2; }
+.port:hover .port-dot, .port.pending .port-dot { fill: #84c3ff; stroke: #fff; }
+.port text { fill: var(--lab-muted); font-size: 10px; font-weight: 750; pointer-events: none; }
 .wire-base { fill: none; stroke: var(--wire); stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; cursor: pointer; }
 .wire-base.selected { stroke: #84c3ff; stroke-width: 8; }
 .wire-flow { fill: none; stroke: var(--signal); stroke-width: 4; stroke-linecap: round; stroke-dasharray: 4 13; filter: url(#signal-glow); pointer-events: none; animation: signal-flow .72s linear infinite; }
@@ -534,8 +534,8 @@ button.primary { border-color: var(--lab-accent); background: var(--lab-accent);
           </div>
         </div>
 
-        <div id="board-shell" class="board-shell">
-          <svg id="circuit-board" viewBox="0 0 820 470" role="img" aria-labelledby="board-svg-title board-svg-desc">
+        <div id="board-shell" class="board-shell lab-kit-canvas">
+          <svg id="circuit-board" class="lab-kit-svg" viewBox="0 0 820 470" role="img" aria-labelledby="board-svg-title board-svg-desc">
             <title id="board-svg-title">Interactive logic circuit board</title>
             <desc id="board-svg-desc">Circuit inputs are on the left, the output is on the right, and gates can be placed and wired between them.</desc>
             <defs>
