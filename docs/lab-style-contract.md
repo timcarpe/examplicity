@@ -115,13 +115,36 @@ as decoration. A coloured rail is appropriate only inside an operated visual or
 when its changing colour communicates a semantic state such as success, warning
 or error.
 
+Primary operated diagrams, models and manipulatives should use the optional
+`.lab-kit-canvas` surface when their background is generic framing rather than
+instructional content. The primitive supplies the shared light paper, line,
+radius and optional construction grid without choosing a size, aspect ratio,
+layout or interaction. SVG geometry remains lab-owned; use a stable `viewBox`,
+responsive sizing and equivalent pointer and keyboard paths. A primary visual
+must fit its region without an internal scrollbar unless panning is the actual
+learner operation and has been explicitly reviewed.
+
+Use one visual frame by default. Do not wrap self-describing nodes, servers,
+protocol layers or similar objects in successive bordered panel, canvas and
+card surfaces. A nested boundary is justified only when it communicates real
+containment, grouping, hardware, clipping or an operated region; otherwise let
+the objects populate the parent field directly.
+
+Darkness is not a generic Computer Science canvas style. Retain a dark surface
+only when it communicates the thing being represented—for example a code
+editor, terminal, powered-off monitor, hardware display or mission prop. Keep
+packet, signal, protocol, state and geometry colours local where they carry
+meaning, but place them on the shared light operated surface when the surrounding
+canvas itself is neutral.
+
 Keep these local to each lab:
 
 - diagram, canvas, waveform, packet, signal, bus, syntax, and command colors;
 - geometry whose dimensions carry instructional meaning;
 - simulation timing and interaction logic;
 - monospace code/data typography;
-- specialized dark, hardware, map, editor, and visualization surfaces.
+- specialized hardware displays, maps, editors and consoles whose dark treatment
+  is part of the represented object or state.
 
 Binary Register Practice keeps its `820px` maximum width. Other labs use the
 shared `1200px` maximum and must retain their existing internal responsive or

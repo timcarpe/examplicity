@@ -26,7 +26,7 @@
   --ink:var(--lab-ink,#1d1d1f);--muted:var(--lab-muted,#6e6e73);--line:var(--lab-line,#d2d2d7);--line-strong:var(--lab-line-strong,#a7a7ad);
   --accent:var(--lab-accent,#5277b8);--accent-soft:var(--lab-accent-soft,#eef2fa);--good:var(--lab-good,#18794e);--good-soft:var(--lab-good-soft,#edf8f1);
   --warn:var(--lab-warn,#946200);--warn-soft:var(--lab-warn-soft,#fff6e7);--bad:var(--lab-bad,#b42318);--bad-soft:var(--lab-bad-soft,#fff0ee);
-  --board:#13212b;--board-grid:#263a47;--link:#7d919e;--stream:#4aa3ff;--plain:#d65b4e;--eve:#a56a91;--public:#4e9277;--private:#b67a27;--secret:#5681c4;
+  --link:#7d919e;--stream:#4aa3ff;--plain:#d65b4e;--eve:#a56a91;--public:#4e9277;--private:#b67a27;--secret:#5681c4;
 }
 *{box-sizing:border-box}html,body{min-height:100%}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--lab-font-sans,-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif)}
@@ -43,12 +43,12 @@ button{min-height:34px;padding:0 10px;border:1px solid var(--line);border-radius
 
 .lab-grid{margin-top:10px;display:grid;grid-template-columns:minmax(0,1fr) 230px;gap:8px;align-items:start}
 .workspace{min-width:0;padding:10px}.workspace-head{min-height:38px;display:flex;justify-content:space-between;gap:10px;align-items:center}.workspace-head strong{display:block;font-size:14px}.workspace-head span{display:block;margin-top:2px;color:var(--muted);font-size:9px;line-height:1.35}.workspace-actions{display:flex;gap:7px;flex-wrap:wrap}.workspace-actions button{min-height:36px;padding:0 12px;font-size:10px;font-weight:760}
-.board-shell{position:relative;margin-top:8px;overflow:auto;border-radius:11px;background:var(--board)}
+.board-shell{position:relative;margin-top:8px;overflow:auto;border-radius:11px;background:var(--lab-kit-panel,#f6f9fb)}
 .board-shell.is-fitted{overflow:hidden}
 .board-stage{position:relative;width:1020px;height:650px}
-.board{position:relative;width:1020px;height:650px;overflow:hidden;transform-origin:top left;border:1px solid #3c5260;border-radius:11px;background:radial-gradient(circle at 50% 40%,rgba(75,114,142,.18),transparent 24rem),repeating-linear-gradient(0deg,transparent 0 31px,rgba(177,199,214,.07) 32px),repeating-linear-gradient(90deg,transparent 0 31px,rgba(177,199,214,.07) 32px),var(--board);color:#eaf1f5}
+.board{position:relative;width:1020px;height:650px;overflow:hidden;transform-origin:top left;color:var(--lab-ink)}
 .links{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}.link-base{fill:none;stroke:var(--link);stroke-width:9;stroke-linecap:round}.link-core{fill:none;stroke:#243a49;stroke-width:4;stroke-linecap:round}.branch-base{fill:none;stroke:var(--link);stroke-width:8;stroke-linecap:round}.branch-core{fill:none;stroke:#243a49;stroke-width:3;stroke-linecap:round}
-.path-label{position:absolute;z-index:2;left:50%;top:21px;transform:translateX(-50%);padding:5px 10px;border:1px solid #49606f;border-radius:999px;background:#20313d;color:#d9e6ee;font:850 8px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:.07em;text-transform:uppercase}.line-caption{display:none}
+.path-label{position:absolute;z-index:2;left:50%;top:21px;transform:translateX(-50%);padding:5px 10px;border:1px solid var(--lab-line);border-radius:999px;background:rgba(255,255,255,.94);color:var(--lab-ink);font:850 8px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:.07em;text-transform:uppercase;box-shadow:0 2px 6px rgba(29,29,31,.08)}.line-caption{display:none}
 
 .device{position:absolute;z-index:4;width:276px;padding:9px;border:1px solid #718895;border-radius:12px;background:linear-gradient(145deg,#eef3f6,#c9d5dc);color:#25343d;box-shadow:0 12px 22px rgba(0,0,0,.24)}
 .device.alice{left:20px;top:78px;min-height:330px}.device.bob{right:20px;top:78px;min-height:330px}.device.eve{left:50%;top:432px;transform:translateX(-50%);width:442px;min-height:196px;border-color:#9a7088;background:linear-gradient(145deg,#f4ebf1,#d9c1d0)}
@@ -423,7 +423,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 
       <div class="board-shell">
         <div class="board-stage">
-        <div id="board" class="board" aria-label="Interactive encryption transmission line">
+        <div id="board" class="board lab-kit-canvas" data-grid="square" aria-label="Interactive encryption transmission line">
           <svg class="links" viewBox="0 0 1020 650" aria-hidden="true">
             <path class="link-base" d="M276 270 H748"/><path class="link-core" d="M276 270 H748"/>
             <path class="branch-base" d="M608 270 V432"/><path class="branch-core" d="M608 270 V432"/>

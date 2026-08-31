@@ -101,6 +101,7 @@ test('publication profile is hash-pinned and matches its canonical release', asy
 
   assert.equal(publicationManifest.publicationProfile.name, manifest.name);
   assert.equal(publicationManifest.publicationProfile.version, manifest.version);
+  assert.equal(publicationManifest.kit.version, '0.2.0');
   assert.equal(
     publicationManifest.publicationProfile.manifestSha256,
     createHash('sha256').update(manifestContent).digest('hex'),

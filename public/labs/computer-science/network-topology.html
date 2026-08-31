@@ -35,8 +35,8 @@
   --warn-soft:var(--lab-warn-soft);
   --bad:var(--lab-bad);
   --bad-soft:var(--lab-bad-soft);
-  --network:#22313d;
-  --network-grid:#324756;
+  --network:var(--lab-paper);
+  --network-grid:#e7ebee;
   --link:#718694;
   --packet:#4aa3ff;
   --mesh:#8d72d6;
@@ -116,19 +116,19 @@ button.danger{color:var(--bad)}
   min-width:960px;
   min-height:620px;
   overflow:hidden;
-  border:1px solid #415666;
+  border:1px solid var(--lab-line);
   border-radius:11px;
   background:
-    radial-gradient(circle at 50% 48%,rgba(87,116,137,.2),transparent 24rem),
-    repeating-linear-gradient(0deg,transparent 0 31px,rgba(173,194,209,.1) 32px),
-    repeating-linear-gradient(90deg,transparent 0 31px,rgba(173,194,209,.1) 32px),
+    radial-gradient(circle at 50% 48%,rgba(82,119,184,.06),transparent 24rem),
+    repeating-linear-gradient(0deg,transparent 0 31px,rgba(167,167,173,.2) 32px),
+    repeating-linear-gradient(90deg,transparent 0 31px,rgba(167,167,173,.2) 32px),
     var(--network);
   touch-action:pan-x pan-y;
 }
 .canvas.cable-mode{cursor:crosshair}
 .canvas.delete-mode{cursor:not-allowed}
 .canvas.drop-ready{box-shadow:inset 0 0 0 3px rgba(74,163,255,.58)}
-.link-svg,.activity-svg,.node-layer,.packet-layer{position:absolute;inset:0;width:100%;height:100%}
+.canvas .link-svg,.canvas .activity-svg,.canvas .node-layer,.canvas .packet-layer{position:absolute;inset:0;width:100%;height:100%}
 .link-svg{z-index:1;overflow:visible}
 .activity-svg{z-index:2;overflow:visible;pointer-events:none}
 .node-layer{z-index:4;pointer-events:none}
@@ -157,20 +157,20 @@ button.danger{color:var(--bad)}
 .canvas:not(.cable-mode):not(.delete-mode) .network-node{cursor:grab}
 .canvas:not(.cable-mode):not(.delete-mode) .network-node:active{cursor:grabbing}
 .network-node.connect-source{filter:drop-shadow(0 0 9px #ffd76b)}
-.network-node.mesh-target .node-shell{box-shadow:0 0 0 3px rgba(141,114,214,.22),0 7px 16px rgba(0,0,0,.26)}
+.network-node.mesh-target .node-shell{box-shadow:0 0 0 3px rgba(141,114,214,.22),0 4px 10px rgba(29,29,31,.1)}
 .network-node.mesh-target::after{
   content:"mesh";position:absolute;left:50%;top:-17px;transform:translateX(-50%);padding:2px 5px;
   border:1px solid #b7a4e8;border-radius:999px;background:#f3effd;color:#6748ad;
   font-size:7px;font-weight:900;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap
 }
 .network-node.mesh-target.mesh-complete::after{content:"meshed";border-color:#a9d4b9;background:var(--good-soft);color:var(--good)}
-.node-shell{position:relative;border:2px solid #718593;background:linear-gradient(145deg,#f5f8fa,#cbd6dd);box-shadow:0 7px 16px rgba(0,0,0,.26);transition:.15s}
+.node-shell{position:relative;border:2px solid #718593;background:linear-gradient(145deg,#fff,var(--lab-paper));box-shadow:0 4px 10px rgba(29,29,31,.1);transition:.15s}
 .node-title{font-size:9px;font-weight:900;white-space:nowrap}
 .node-status{margin-top:3px;color:#60707b;font-size:7px;font-weight:850;letter-spacing:.03em;text-transform:uppercase;text-align:center}
-.network-node.sending .node-shell{border-color:#4aa3ff;box-shadow:0 0 0 4px rgba(74,163,255,.24),0 0 18px rgba(74,163,255,.55),0 7px 16px rgba(0,0,0,.26)}
-.network-node.working .node-shell{border-color:#e2aa45;box-shadow:0 0 0 4px rgba(226,170,69,.22),0 0 16px rgba(226,170,69,.45),0 7px 16px rgba(0,0,0,.26)}
-.network-node.received .node-shell{border-color:#51b778;box-shadow:0 0 0 4px rgba(81,183,120,.23),0 0 17px rgba(81,183,120,.48),0 7px 16px rgba(0,0,0,.26)}
-.network-node.ignored .node-shell{border-color:#9b7bd4;box-shadow:0 0 0 3px rgba(155,123,212,.18),0 0 12px rgba(155,123,212,.35),0 7px 16px rgba(0,0,0,.26)}
+.network-node.sending .node-shell{border-color:#4aa3ff;box-shadow:0 0 0 4px rgba(74,163,255,.24),0 0 16px rgba(74,163,255,.4),0 4px 10px rgba(29,29,31,.1)}
+.network-node.working .node-shell{border-color:#e2aa45;box-shadow:0 0 0 4px rgba(226,170,69,.22),0 0 14px rgba(226,170,69,.36),0 4px 10px rgba(29,29,31,.1)}
+.network-node.received .node-shell{border-color:#51b778;box-shadow:0 0 0 4px rgba(81,183,120,.23),0 0 15px rgba(81,183,120,.4),0 4px 10px rgba(29,29,31,.1)}
+.network-node.ignored .node-shell{border-color:#9b7bd4;box-shadow:0 0 0 3px rgba(155,123,212,.18),0 0 11px rgba(155,123,212,.3),0 4px 10px rgba(29,29,31,.1)}
 .network-node.sending .node-status{color:#1d67aa}
 .network-node.working .node-status{color:#8c5a11}
 .network-node.received .node-status{color:#207448}
@@ -335,7 +335,7 @@ body {
 
 .lab-manifest-header {
   align-items: start;
-  border-bottom: 1px solid var(--line, var(--lab-line));
+  border-bottom: 0 !important;
   display: grid;
   gap: 18px 28px;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -577,26 +577,29 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 </style>
 <!-- LAB_FRAME_STYLES_END -->
 <!-- LAB_RESOURCE_START id="lab-kit.css" type="stylesheet" -->
-<style data-lab-resource="lab-kit.css" data-lab-resource-type="stylesheet" data-lab-resource-bytes="3130">
+<style data-lab-resource="lab-kit.css" data-lab-resource-type="stylesheet" data-lab-resource-bytes="4164">
 :root {
-  --lab-kit-ink: #20303a;
-  --lab-kit-muted: #687780;
-  --lab-kit-line: #cbd6dc;
-  --lab-kit-surface: #ffffff;
-  --lab-kit-panel: #f6f9fb;
-  --lab-kit-accent: #2b7ac3;
-  --lab-kit-accent-soft: #e9f3fb;
-  --lab-kit-good: #23794d;
-  --lab-kit-good-soft: #e9f7ef;
-  --lab-kit-warn: #8b6419;
-  --lab-kit-warn-soft: #fff7d9;
-  --lab-kit-bad: #a3443d;
-  --lab-kit-bad-soft: #fff0ef;
-  --lab-kit-focus: #1f6fb4;
+  --lab-kit-ink: var(--lab-ink, #20303a);
+  --lab-kit-muted: var(--lab-muted, #687780);
+  --lab-kit-line: var(--lab-line, #cbd6dc);
+  --lab-kit-surface: var(--lab-surface, #ffffff);
+  --lab-kit-panel: var(--lab-paper, #f6f9fb);
+  --lab-kit-accent: var(--lab-accent, #2b7ac3);
+  --lab-kit-accent-soft: var(--lab-accent-soft, #e9f3fb);
+  --lab-kit-good: var(--lab-good, #23794d);
+  --lab-kit-good-soft: var(--lab-good-soft, #e9f7ef);
+  --lab-kit-warn: var(--lab-warn, #8b6419);
+  --lab-kit-warn-soft: var(--lab-warn-soft, #fff7d9);
+  --lab-kit-bad: var(--lab-bad, #a3443d);
+  --lab-kit-bad-soft: var(--lab-bad-soft, #fff0ef);
+  --lab-kit-focus: var(--lab-focus, #1f6fb4);
   --lab-kit-focus-ring: rgba(31, 111, 180, .28);
-  --lab-kit-radius: 12px;
-  --lab-kit-control-radius: 8px;
-  --lab-kit-shadow: 0 5px 16px rgba(32, 48, 58, .08);
+  --lab-kit-canvas: var(--lab-paper, #fbfbfd);
+  --lab-kit-canvas-grid: #e7ebee;
+  --lab-kit-canvas-grid-size: 24px;
+  --lab-kit-radius: var(--lab-panel-radius, 12px);
+  --lab-kit-control-radius: var(--lab-control-radius, 8px);
+  --lab-kit-shadow: var(--lab-panel-shadow, 0 5px 16px rgba(32, 48, 58, .08));
 }
 
 .lab-kit-visually-hidden {
@@ -623,7 +626,24 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 .lab-kit-cluster { display: flex; flex-wrap: wrap; align-items: center; gap: var(--lab-kit-cluster-gap, .5rem); }
 .lab-kit-grid { display: grid; gap: var(--lab-kit-grid-gap, 1rem); grid-template-columns: repeat(var(--lab-kit-grid-columns, 1), minmax(0, 1fr)); }
 .lab-kit-scroll { max-width: 100%; overflow: auto; }
-.lab-kit-svg { display: block; max-width: 100%; height: auto; }
+.lab-kit-svg { display: block; width: 100%; max-width: 100%; height: auto; }
+
+.lab-kit-canvas {
+  box-sizing: border-box;
+  min-width: 0;
+  color: var(--lab-kit-ink);
+  background-color: var(--lab-kit-canvas);
+  border: 1px solid var(--lab-kit-line);
+  border-radius: var(--lab-kit-radius);
+  box-shadow: inset 0 0 0 1px rgba(32, 48, 58, .025);
+}
+
+.lab-kit-canvas[data-grid="square"] {
+  background-image:
+    linear-gradient(var(--lab-kit-canvas-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--lab-kit-canvas-grid) 1px, transparent 1px);
+  background-size: var(--lab-kit-canvas-grid-size) var(--lab-kit-canvas-grid-size);
+}
 
 .lab-kit-field { display: grid; gap: .35rem; color: var(--lab-kit-ink); }
 .lab-kit-field > label { font-weight: 700; }
@@ -719,9 +739,9 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
       </div>
 
       <div class="canvas-shell">
-        <div id="canvas" class="canvas">
-          <svg id="linkSvg" class="link-svg" aria-label="Network cables"></svg>
-          <svg id="activitySvg" class="activity-svg" aria-hidden="true"></svg>
+        <div id="canvas" class="canvas lab-kit-canvas">
+          <svg id="linkSvg" class="link-svg lab-kit-svg" aria-label="Network cables"></svg>
+          <svg id="activitySvg" class="activity-svg lab-kit-svg" aria-hidden="true"></svg>
           <div id="nodeLayer" class="node-layer"></div>
           <div id="packetLayer" class="packet-layer" aria-hidden="true"></div>
         </div>
@@ -753,7 +773,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
   "use strict";
 
   const host = globalThis;
-  const VERSION = "0.1.0";
+  const VERSION = "0.2.0";
 
   function documentFor(root) {
     return root || host.document || null;
