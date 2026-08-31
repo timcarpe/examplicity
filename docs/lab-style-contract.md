@@ -47,6 +47,10 @@ Do not edit an embedded `LAB_FRAME_STYLES`, `LAB_MANIFEST_HEAD`,
   inside that rail. A clipped fixed-width canvas, hidden page-level horizontal
   scrollbar, or wrapper-level overflow workaround is a failed layout—not a
   supported compatibility technique.
+- The generated manifest header always occupies that responsive `1200px` rail,
+  even when a compact or otherwise narrow lab keeps a smaller teaching
+  workspace beneath it. Lab-owned width rules must not narrow the shared title,
+  subtitle and syllabus alignment surface.
 - Preserve the lab's intended single-screen desktop composition at both
   `1440×1000` and `1366×768`. Adapt lab-owned columns, fixed canvases, controls,
   spacing and typography to the 1200px rail. Do not satisfy the width contract
@@ -81,6 +85,11 @@ Do not edit an embedded `LAB_FRAME_STYLES`, `LAB_MANIFEST_HEAD`,
   labels and other geometry-constrained instructional text are exempt.
 - Keep lab-specific spacing and geometry local when it carries instructional
   meaning; do not force every internal layout into the shared frame grid.
+- Assistance and “working required” controls change which calculations the
+  learner must supply; they never remove the need to operate, answer, predict,
+  choose or otherwise act on the model. A freshly loaded problem must be
+  incomplete at every assistance level. When working is shown, completion must
+  still follow a meaningful learner-triggered state transition.
 
 ## Boundary between chrome and content
 
@@ -127,3 +136,6 @@ scrolling behavior.
 6. Resize at 1200, 900, and 390 pixels; also check lab-specific breakpoints and
    Binary at 820, 640, and 390 pixels.
 7. Smoke-test the lab interaction before committing.
+8. For every assistance or working level, start a fresh problem and confirm it
+   is incomplete before interaction, cannot advance immediately, and completes
+   only after the level-appropriate learner action.

@@ -383,7 +383,9 @@
   --lab-pill-radius: 999px;
   --lab-control-height: 35px;
   --lab-panel-shadow: 0 1px 2px rgba(29, 29, 31, 0.04);
-  --lab-page-gutter: max(28px, calc((100vw - 1200px) / 2));
+  --lab-header-max-width: 1200px;
+  --lab-header-gutter: max(28px, calc((100vw - var(--lab-header-max-width)) / 2));
+  --lab-page-gutter: var(--lab-header-gutter);
   --lab-compact-workspace-max: 820px;
 }
 
@@ -408,8 +410,11 @@ body {
   display: grid;
   gap: 18px 28px;
   grid-template-columns: minmax(0, 1fr) auto;
+  margin-left: calc(50% - 50vw + var(--lab-header-gutter));
   margin-bottom: 26px;
+  max-width: var(--lab-header-max-width);
   padding-bottom: 22px;
+  width: calc(100vw - var(--lab-header-gutter) - var(--lab-header-gutter));
 }
 
 .lab-manifest-heading {
@@ -560,7 +565,7 @@ body > main {
   margin-left: var(--lab-page-gutter);
   margin-right: auto;
   margin-top: 18px;
-  max-width: 1200px;
+  max-width: var(--lab-header-max-width);
   width: calc(100vw - var(--lab-page-gutter) - var(--lab-page-gutter));
 }
 
@@ -582,6 +587,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 
 @media (max-width: 620px) {
   :root {
+    --lab-header-gutter: 18px;
     --lab-page-gutter: 18px;
   }
 
