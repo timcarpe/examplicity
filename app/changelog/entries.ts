@@ -10,10 +10,10 @@ export const changelogEntries: readonly ChangelogEntry[] = [
     date: '2026-08-31',
     displayDate: '31 August 2026',
     publicChanges: [
-      'Improved standalone lab downloads, changing-state announcements, and catalogue routing safeguards.',
+      'Improved standalone lab downloads, changing-state announcements, catalogue routing safeguards, and keyboard access to bitmap painting, scheduler arrivals, and sound navigation.',
     ],
     internalChanges: [
-      'Hardened the standalone lab contract, added hash-pinned shared authoring resources and deterministic publication compilation, and proved the boundary across varied lab structures.',
+      'Hardened the standalone lab contract, added hash-pinned shared authoring resources and deterministic publication compilation, and expanded source-backed publication from seven architectural proofs through a sixteen-lab backward-application wave.',
     ],
   },
   {

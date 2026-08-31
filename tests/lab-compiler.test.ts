@@ -13,7 +13,42 @@ const resources = [
   { id: 'lab-kit.css', type: 'stylesheet' as const, content: '.lab-kit-panel { display: grid; }' },
   { id: 'lab-kit.js', type: 'script' as const, content: 'globalThis.LabKit = Object.freeze({ version: "test" });' },
 ];
-const compilerRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', 'tools', 'lab-compiler');
+const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const compilerRoot = path.join(repositoryRoot, 'tools', 'lab-compiler');
+const publicationManifestPath = path.join(repositoryRoot, 'labs-src', 'manifest.json');
+
+const originalProofs = [
+  'computer-science/automated-system-control-flowcharts',
+  'computer-science/binary-floating-point',
+  'computer-science/dijkstra-a-star-graph-search',
+  'computer-science/python-programming-practice',
+  'mathematics/coordinate-distance-midpoint-perpendicular',
+  'mathematics/prime-factors-hcf-lcm',
+  'mathematics/vector-routes-resultants',
+];
+const waveOne = [
+  'computer-science/binary-numbers',
+  'computer-science/bitmap-compression',
+  'computer-science/csma-cd',
+  'computer-science/database-normalisation',
+  'computer-science/dns-web-page-retrieval',
+  'computer-science/encryption-in-data-transmission',
+  'computer-science/parity-arq',
+  'computer-science/process-states-scheduling',
+  'computer-science/software-stack',
+  'computer-science/sound-sampling',
+  'computer-science/tcp-ip-encapsulation',
+  'mathematics/histogram-area-cumulative-distribution',
+  'mathematics/ratio-concentration-flow-rate',
+  'mathematics/repeated-percentage-change',
+  'mathematics/right-triangle-ratio-invariance',
+  'mathematics/rounded-measurements-bounds',
+];
+const manifestKey = (entry: { subject: string; slug: string }) => `${entry.subject}/${entry.slug}`;
+const resourceDeclarationPattern = /<(?:link|script)\b[^>]*\bdata-lab-resource\s*=\s*["']([^"']+)["'][^>]*>/gi;
+const cssDeclarationPattern = /<link\b(?=[^>]*\brel\s*=\s*["']stylesheet["'])(?=[^>]*\bhref\s*=\s*["']\.\/lab-kit\.css["'])(?=[^>]*\bdata-lab-resource\s*=\s*["']lab-kit\.css["'])[^>]*>/gi;
+const scriptDeclarationPattern = /<script\b(?=[^>]*\bsrc\s*=\s*["']\.\/lab-kit\.js["'])(?=[^>]*\bdata-lab-resource\s*=\s*["']lab-kit\.js["'])[^>]*>/gi;
+const count = (source: string, expression: RegExp) => [...source.matchAll(expression)].length;
 
 const source = `<!doctype html>
 <html>
@@ -81,4 +116,96 @@ test('release manifest pins the canonical compiler source', async () => {
   assert.equal(manifest.version, '0.1.0');
   assert.equal(manifest.files[0].bytes, source.byteLength);
   assert.equal(manifest.files[0].sha256, createHash('sha256').update(source).digest('hex'));
+});
+
+test('publication manifest contains the original proofs and exact W1 wave in stable order', async () => {
+  const manifest = JSON.parse(await readFile(publicationManifestPath, 'utf8'));
+  const keys = manifest.labs.map(manifestKey);
+  const expected = [...originalProofs, ...waveOne].sort();
+
+  assert.equal(keys.length, 23);
+  assert.equal(new Set(keys).size, keys.length);
+  assert.deepEqual(keys, expected);
+  assert.deepEqual(keys.filter((key) => waveOne.includes(key)), waveOne);
+});
+
+test('registered sources and generated outputs satisfy the compiler-owned contract', async () => {
+  const manifest = JSON.parse(await readFile(publicationManifestPath, 'utf8'));
+  const sourceRoot = path.join(repositoryRoot, 'labs-src');
+  const publicRoot = path.join(repositoryRoot, 'public', 'labs');
+  const vendorRoot = path.join(repositoryRoot, manifest.kit.vendorDirectory);
+  const kitResources = await Promise.all(manifest.kit.resources.map(async (resource: {
+    id: string;
+    type: 'stylesheet' | 'script';
+    path: string;
+  }) => ({
+    id: resource.id,
+    type: resource.type,
+    content: await readFile(path.join(vendorRoot, resource.path), 'utf8'),
+  })));
+  const failures: string[] = [];
+
+  for (const entry of manifest.labs) {
+    const key = manifestKey(entry);
+    const relativePath = path.join(entry.subject, `${entry.slug}.html`);
+    const sourcePath = path.join(sourceRoot, relativePath);
+    const outputPath = path.join(publicRoot, relativePath);
+    let source: string;
+    try {
+      source = await readFile(sourcePath, 'utf8');
+    } catch (error) {
+      failures.push(`${key}: source is unavailable (${error instanceof Error ? error.message : String(error)})`);
+      continue;
+    }
+
+    const declarations = [...source.matchAll(resourceDeclarationPattern)].map((match) => match[1]);
+    const cssDeclarations = [...source.matchAll(cssDeclarationPattern)];
+    const scriptDeclarations = [...source.matchAll(scriptDeclarationPattern)];
+    if (declarations.join(',') !== 'lab-kit.css,lab-kit.js') {
+      failures.push(`${key}: expected exactly lab-kit.css then lab-kit.js declarations, received ${declarations.join(',') || '(none)'}`);
+      continue;
+    }
+    if (cssDeclarations.length !== 1 || scriptDeclarations.length !== 1) {
+      failures.push(`${key}: expected one canonical CSS and one canonical JS declaration`);
+      continue;
+    }
+    if ((cssDeclarations[0].index ?? 0) >= (scriptDeclarations[0].index ?? 0)) {
+      failures.push(`${key}: CSS declaration must precede JS declaration`);
+      continue;
+    }
+
+    try {
+      const compiled = compileLabResources(source, kitResources);
+      assert.deepEqual(compiled.resources, ['lab-kit.css', 'lab-kit.js']);
+      assert.deepEqual(findUnresolvedRuntimeResources(compiled.source), []);
+      const checked = compileLabResources(compiled.source, kitResources, { check: true });
+      assert.equal(checked.changed, false);
+      assert.equal(checked.source, compiled.source);
+    } catch (error) {
+      failures.push(`${key}: compiler validation failed (${error instanceof Error ? error.message : String(error)})`);
+      continue;
+    }
+
+    try {
+      const output = await readFile(outputPath, 'utf8');
+      if (findUnresolvedRuntimeResources(output).length > 0) {
+        failures.push(`${key}: generated output retains an external runtime CSS/JS resource`);
+      }
+      if (count(output, /<!-- LAB_FRAME_STYLES_START -->/g) !== 1 || count(output, /<!-- LAB_FRAME_STYLES_END -->/g) !== 1) {
+        failures.push(`${key}: generated output does not contain exactly one frame marker pair`);
+      }
+      for (const resource of kitResources) {
+        const start = `<!-- LAB_RESOURCE_START id="${resource.id}" type="${resource.type}" -->`;
+        const end = `<!-- LAB_RESOURCE_END id="${resource.id}" type="${resource.type}" -->`;
+        if (count(output, new RegExp(start.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g')) !== 1
+          || count(output, new RegExp(end.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g')) !== 1) {
+          failures.push(`${key}: generated output does not contain exactly one ${resource.id} compiler block`);
+        }
+      }
+    } catch (error) {
+      failures.push(`${key}: generated output is unavailable (${error instanceof Error ? error.message : String(error)})`);
+    }
+  }
+
+  assert.deepEqual(failures, [], failures.join('\n'));
 });

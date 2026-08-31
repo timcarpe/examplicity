@@ -1,14 +1,15 @@
 # Lab kit proof set
 
-This proof set contains seven publication-source snapshots copied from the live
-`public/labs` outputs. The snapshots deliberately span the three structures
+This proof set contains seven architectural publication-source snapshots and
+the first sixteen-lab backward-application wave (W1) copied from the live
+`public/labs` outputs. Together they deliberately span the three structures
 most useful for a future monolithic-HTML boilerplate: guided learning,
 phenomenon observation, and scaffolded mission. Their layout and lab behavior
 are preserved; only the shared-resource declarations and the safe helper
-adoptions described below were added. The site-owned compiler now regenerates
-the corresponding `public/labs` files with those resources inline.
+adoptions described below were added. The site-owned compiler regenerates the
+registered `public/labs` files with those resources inline.
 
-## The seven examples
+## The seven architectural proofs
 
 | Snapshot | Structural reason for inclusion | Main interaction / learning loop | Kit surface consumed |
 | --- | --- | --- | --- |
@@ -27,6 +28,25 @@ Automated control flow is a scaffolded mission: the learner constructs an
 artifact under constraints, executes it, and iterates from diagnostic feedback.
 Python programming is also mission-like, but its embedded interpreter and
 lesson/test payload make it a separate runtime-heavy variant.
+
+## W1 backward-application wave
+
+W1 registers the following sixteen live labs for source ownership and
+compiler-backed publication. It is a migration wave, not a claim that every
+lab should use the same interaction model or helper surface.
+
+| Subject | W1 labs | Migration focus |
+| --- | --- | --- |
+| Computer science | `binary-numbers`, `bitmap-compression`, `csma-cd`, `database-normalisation`, `dns-web-page-retrieval`, `encryption-in-data-transmission`, `parity-arq`, `process-states-scheduling`, `software-stack`, `sound-sampling`, `tcp-ip-encapsulation` | Observation and scaffolded network/data-system activities; retain canvas/audio and drag-specific behavior locally. |
+| Mathematics | `histogram-area-cumulative-distribution`, `ratio-concentration-flow-rate`, `repeated-percentage-change`, `right-triangle-ratio-invariance`, `rounded-measurements-bounds` | Guided learning and quantitative modelling; adopt only helpers with exact semantic equivalence. |
+
+Helper adoption stays selective. A repeated `$` lookup, numeric clamp, SVG
+coordinate conversion, seeded RNG, or animation scheduler may move to the kit
+only when its contract is demonstrably identical across the adopting labs.
+Canvas/audio, editor state, lesson data, SVG geometry, validation rules, and
+mission-specific animation remain lab-owned. This keeps W1 useful for
+backward application without turning the compiler into a layout or behavior
+framework.
 
 ## Shared declarations and compilation contract
 
