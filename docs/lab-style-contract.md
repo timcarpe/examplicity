@@ -12,6 +12,11 @@ the deterministic inlining compiler. This centralizes reusable source without
 creating any runtime shared-resource dependency. Labs not yet registered remain
 legacy monolith sources until migrated deliberately.
 
+The versioned site constraints are recorded separately in
+`tools/lab-publication-profile/profile.json`. That profile owns the target rail,
+viewport, artifact and minimum-interaction requirements; it is neither a page
+template nor part of the creation kit.
+
 ## Shared chrome
 
 `public/labs/lab-frame.css` is the maintenance source for the shared lab canvas,

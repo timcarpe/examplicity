@@ -15,6 +15,7 @@ const resources = [
 ];
 const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const compilerRoot = path.join(repositoryRoot, 'tools', 'lab-compiler');
+const profileRoot = path.join(repositoryRoot, 'tools', 'lab-publication-profile');
 const publicationManifestPath = path.join(repositoryRoot, 'labs-src', 'manifest.json');
 
 const originalProofs = [
@@ -116,6 +117,22 @@ test('release manifest pins the canonical compiler source', async () => {
   assert.equal(manifest.version, '0.1.0');
   assert.equal(manifest.files[0].bytes, source.byteLength);
   assert.equal(manifest.files[0].sha256, createHash('sha256').update(source).digest('hex'));
+});
+
+test('publication profile is hash-pinned and matches its canonical release', async () => {
+  const publicationManifest = JSON.parse(await readFile(publicationManifestPath, 'utf8'));
+  const manifestContent = await readFile(path.join(profileRoot, 'manifest.json'));
+  const manifest = JSON.parse(manifestContent.toString('utf8'));
+  const profile = await readFile(path.join(profileRoot, 'profile.json'));
+
+  assert.equal(publicationManifest.publicationProfile.name, manifest.name);
+  assert.equal(publicationManifest.publicationProfile.version, manifest.version);
+  assert.equal(
+    publicationManifest.publicationProfile.manifestSha256,
+    createHash('sha256').update(manifestContent).digest('hex'),
+  );
+  assert.equal(manifest.files[0].bytes, profile.byteLength);
+  assert.equal(manifest.files[0].sha256, createHash('sha256').update(profile).digest('hex'));
 });
 
 test('publication manifest contains the original proofs and exact W1 wave in stable order', async () => {

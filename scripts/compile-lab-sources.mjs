@@ -14,8 +14,45 @@ const sha256 = (content) => createHash('sha256').update(content).digest('hex');
 
 const manifest = JSON.parse(await readFile(path.join(sourceRoot, 'manifest.json'), 'utf8'));
 if (manifest.schemaVersion !== 1) throw new Error('Unsupported lab publication manifest schema.');
+if (!manifest.publicationProfile?.manifestPath || !manifest.publicationProfile?.manifestSha256) {
+  throw new Error('Lab publication manifest has no pinned publication profile.');
+}
 if (!manifest.kit?.version || !Array.isArray(manifest.kit.resources)) {
   throw new Error('Lab publication manifest has no pinned kit release.');
+}
+
+const profileManifestPath = path.resolve(root, manifest.publicationProfile.manifestPath);
+const profileRoot = path.join(root, 'tools', 'lab-publication-profile');
+if (!profileManifestPath.startsWith(`${profileRoot}${path.sep}`)) {
+  throw new Error('Publication profile manifest must resolve inside tools/lab-publication-profile/.');
+}
+const profileManifestContent = await readFile(profileManifestPath);
+if (sha256(profileManifestContent) !== manifest.publicationProfile.manifestSha256) {
+  throw new Error('Pinned publication profile manifest hash mismatch.');
+}
+const profileManifest = JSON.parse(profileManifestContent.toString('utf8'));
+if (
+  profileManifest.schemaVersion !== 1
+  || profileManifest.name !== manifest.publicationProfile.name
+  || profileManifest.version !== manifest.publicationProfile.version
+) {
+  throw new Error('Publication profile manifest does not match the pinned release.');
+}
+const profileEntry = profileManifest.files?.find((entry) => entry.path === 'profile.json');
+const profilePath = path.resolve(root, profileManifest.canonicalPath);
+if (!profileEntry || !profilePath.startsWith(`${profileRoot}${path.sep}`)) {
+  throw new Error('Publication profile release has no canonical profile.json.');
+}
+const profileContent = await readFile(profilePath);
+if (
+  profileEntry.bytes !== profileContent.byteLength
+  || profileEntry.sha256 !== sha256(profileContent)
+) {
+  throw new Error('Publication profile does not match its release manifest.');
+}
+const profile = JSON.parse(profileContent.toString('utf8'));
+if (profile.name !== profileManifest.name || profile.version !== profileManifest.version) {
+  throw new Error('Publication profile content does not match its release manifest.');
 }
 
 const vendorRoot = path.resolve(root, manifest.kit.vendorDirectory);

@@ -40,6 +40,9 @@ Keep those responsibilities separate.
   `data-lab-resource`. The site-owned compiler resolves only the vendored,
   hash-checked kit release and inlines it into the public HTML. Do not import a
   sibling Lab Creation checkout, a mutable `latest` release, or a runtime CDN.
+- [ ] Validate against the pinned site-owned publication profile recorded in
+  `labs-src/manifest.json`. The profile supplies target viewport and artifact
+  constraints without moving those responsibilities into the creation kit.
 - [ ] Include either the marked `LAB_FRAME_STYLES` block or the temporary
   `/labs/lab-frame.css` link accepted by `npm run labs:sync`. The sync command
   embeds the standard background, canvas and responsive frame so the downloaded
