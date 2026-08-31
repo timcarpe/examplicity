@@ -1,0 +1,1748 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- LAB_MANIFEST_HEAD_START -->
+<title>Binary Number Practice</title>
+<meta name="description" content="Practise binary, denary and hexadecimal conversions for Cambridge Computer Science 0478 and 9618.">
+<link rel="canonical" href="https://www.examplicity.org/labs/computer-science/binary-numbers.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Examplicity">
+<meta property="og:title" content="Binary Number Practice">
+<meta property="og:description" content="Practise binary, denary and hexadecimal conversions for Cambridge Computer Science 0478 and 9618.">
+<meta property="og:url" content="https://www.examplicity.org/labs/computer-science/binary-numbers.html">
+<meta property="og:image" content="https://www.examplicity.org/opengraph-image">
+<meta property="og:image:alt" content="Examplicity — Make complex ideas click">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Binary Number Practice">
+<meta name="twitter:description" content="Practise binary, denary and hexadecimal conversions for Cambridge Computer Science 0478 and 9618.">
+<meta name="twitter:image" content="https://www.examplicity.org/opengraph-image">
+<script type="application/ld+json" data-lab-manifest="structured-data">{"@context":"https://schema.org","@type":"LearningResource","@id":"https://www.examplicity.org/labs/computer-science/binary-numbers.html#learning-resource","url":"https://www.examplicity.org/labs/computer-science/binary-numbers.html","name":"Binary Number Practice","description":"Practise binary, denary and hexadecimal conversions for Cambridge Computer Science 0478 and 9618.","inLanguage":"en-GB","isAccessibleForFree":true,"interactivityType":"active","learningResourceType":"Practice","teaches":"Data representation","educationalLevel":["IGCSE","AS Level","A Level"],"educationalAlignment":[{"@type":"AlignmentObject","alignmentType":"educationalSubject","educationalFramework":"Cambridge IGCSE Computer Science","targetName":"IGCSE 0478 section 1.1","targetUrl":"https://www.cambridgeinternational.org/Images/697167-2026-2028-syllabus.pdf#page=11"},{"@type":"AlignmentObject","alignmentType":"educationalSubject","educationalFramework":"Cambridge International AS & A Level Computer Science","targetName":"AS/A 9618 section 1.1, 4.3","targetUrl":"https://www.cambridgeinternational.org/Images/697372-2026-syllabus.pdf#page=14"}],"about":{"@type":"Thing","name":"Computer Science"},"audience":{"@type":"EducationalAudience","educationalRole":"student"},"provider":{"@type":"Organization","name":"Examplicity","url":"https://www.examplicity.org"},"isPartOf":{"@type":"WebSite","@id":"https://www.examplicity.org/#website","name":"Examplicity","url":"https://www.examplicity.org"}}</script>
+<!-- LAB_MANIFEST_HEAD_END -->
+<style>
+:root{
+  --bg:var(--lab-canvas);
+  --panel:var(--lab-surface);
+  --ink:var(--lab-ink);
+  --muted:var(--lab-muted);
+  --line:var(--lab-line);
+  --line-strong:var(--lab-line-strong);
+  --accent:var(--lab-accent);
+  --accent-soft:var(--lab-accent-soft);
+  --good:var(--lab-good);
+  --good-soft:var(--lab-good-soft);
+  --bad:var(--lab-bad);
+  --bad-soft:var(--lab-bad-soft);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  min-height:100svh;
+  padding:max(20px,calc((100svh - 540px)/2)) 0 20px;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:var(--lab-font-sans);
+}
+body[data-lab-layout="compact"]{
+  display:grid;
+  align-content:center;
+  padding:66px 0 58px;
+}
+button,input{font:inherit}
+button{cursor:pointer}
+.shell{width:min(820px,calc(100% - 24px));margin-inline:auto}
+.topbar{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);
+  gap:12px;
+  align-items:center;
+  margin-bottom:10px;
+}
+.title{
+  margin:0;
+  justify-self:center;
+  color:var(--ink);
+  font-size:15px;
+  font-weight:700;
+  letter-spacing:normal;
+  text-align:center;
+  text-transform:none;
+}
+.pill-toggle{
+  display:inline-flex;
+  padding:3px;
+  border:1px solid var(--line);
+  border-radius:var(--lab-pill-radius);
+  background:var(--lab-paper);
+}
+.level-toggle{justify-self:start}
+.range-toggle{justify-self:end}
+.pill-toggle button{
+  min-height:31px;
+  border:0;
+  border-radius:var(--lab-pill-radius);
+  padding:5px 11px;
+  background:transparent;
+  color:var(--muted);
+  font-size:12px;
+  font-weight:750;
+  white-space:nowrap;
+}
+.pill-toggle button[aria-checked="true"]{
+  background:var(--accent);
+  color:var(--lab-paper);
+}
+.pill-toggle button:hover:not([aria-checked="true"]){
+  background:var(--accent-soft);
+  color:var(--ink);
+}
+.card{
+  padding:28px;
+  border:1px solid var(--line);
+  border-radius:var(--lab-panel-radius);
+  background:var(--panel);
+  box-shadow:var(--lab-panel-shadow);
+}
+.prompt-row{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:11px;
+  align-items:start;
+}
+#prompt{
+  margin:0;
+  font-size:18px;
+  font-weight:720;
+  line-height:1.45;
+  letter-spacing:-.01em;
+}
+.help-button{
+  width:30px;
+  height:30px;
+  display:grid;
+  place-items:center;
+  border:1px solid var(--line);
+  border-radius:50%;
+  background:var(--lab-control);
+  color:var(--muted);
+  font-size:13px;
+  font-weight:850;
+}
+.help-button:hover,.help-button:focus-visible,.help-button[aria-expanded="true"]{
+  border-color:var(--accent);
+  color:var(--accent);
+}
+.help-tip{
+  display:none;
+  margin-top:10px;
+  padding:9px 11px;
+  border:1px solid var(--lab-line);
+  border-radius:9px;
+  background:var(--lab-accent-soft);
+  color:var(--lab-ink);
+  font-size:11px;
+  line-height:1.45;
+}
+.card.help-active .help-tip{display:block}
+.initial-area{
+  min-height:132px;
+  display:grid;
+  place-items:center;
+  margin:24px 0 18px;
+}
+.scalar{
+  display:grid;
+  justify-items:center;
+  gap:4px;
+  padding:17px 24px;
+  border:1px solid var(--line);
+  border-radius:11px;
+  background:#fbfcfd;
+}
+.scalar-value{
+  font:850 35px/1.1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  letter-spacing:.03em;
+}
+.scalar-base{
+  color:var(--muted);
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.055em;
+  text-transform:uppercase;
+}
+.register-group{
+  --bits:8;
+  --operator-space:40px;
+  width:min(100%,628px);
+  margin-inline:auto;
+}
+.place-values{
+  height:18px;
+  margin-inline:var(--operator-space);
+  display:grid;
+  grid-template-columns:repeat(var(--bits),minmax(0,1fr));
+  align-items:end;
+  color:var(--muted);
+  font:750 10px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  text-align:center;
+  opacity:0;
+  transition:opacity .12s ease;
+  user-select:none;
+}
+.card.help-active .place-values{opacity:1}
+.operand-row{
+  display:grid;
+  grid-template-columns:var(--operator-space) minmax(0,1fr) var(--operator-space);
+  align-items:center;
+}
+.operand-row+.operand-row{margin-top:7px}
+.operand-row .bit-row{grid-column:2}
+.operand-row::after{content:"";grid-column:3}
+.operand-row.addend{padding-bottom:8px}
+.operand-row.addend .bit-row{box-shadow:0 3px 0 var(--line-strong)}
+.operator{
+  grid-column:1;
+  color:var(--ink);
+  font:850 21px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  text-align:center;
+}
+.operator.word{font-size:12px;letter-spacing:-.03em}
+.bit-row{
+  min-width:0;
+  display:grid;
+  grid-template-columns:repeat(var(--bits),minmax(0,1fr));
+  overflow:hidden;
+  border:1px solid var(--line-strong);
+  border-radius:7px;
+  background:#fff;
+}
+.bit-cell{
+  min-width:0;
+  height:58px;
+  display:grid;
+  place-items:center;
+  border-left:1px solid var(--line-strong);
+  background:#fff;
+  font:850 23px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+.bit-cell:first-child{border-left:0}
+.bit-cell.nibble-start{border-left-width:2px}
+.bit-cell.byte-start{border-left-width:3px}
+.bit-input{
+  width:100%;
+  height:100%;
+  min-width:0;
+  padding:0;
+  border:0;
+  border-radius:0;
+  background:transparent;
+  color:var(--ink);
+  text-align:center;
+  font:inherit;
+  caret-color:var(--accent);
+}
+.bit-input:focus{
+  position:relative;
+  z-index:2;
+  outline:3px solid var(--lab-focus-soft);
+  outline-offset:-3px;
+  background:var(--accent-soft);
+}
+.register-group[data-bits="16"] .bit-cell{font-size:18px}
+.register-group[data-bits="16"] .place-values{font-size:7.5px;letter-spacing:-.05em}
+.answer-block{padding-top:17px;border-top:1px solid var(--line)}
+.answer-label{
+  margin-bottom:8px;
+  color:var(--muted);
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.045em;
+  text-align:center;
+  text-transform:uppercase;
+}
+#answerArea,.answer-control{
+  width:100%;
+  display:grid;
+  justify-items:center;
+}
+.text-answer{
+  width:min(100%,260px);
+  height:54px;
+  display:block;
+  margin:auto;
+  border:1px solid var(--line-strong);
+  border-radius:8px;
+  background:var(--lab-control);
+  color:var(--ink);
+  text-align:center;
+  font:850 23px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+.text-answer:focus{
+  outline:3px solid var(--lab-focus-soft);
+  outline-offset:2px;
+  border-color:var(--accent);
+}
+.choice-answer{
+  display:flex;
+  justify-content:center;
+  gap:8px;
+}
+.choice-answer button{
+  min-width:100px;
+  height:43px;
+  border:1px solid var(--line);
+  border-radius:var(--lab-pill-radius);
+  background:var(--lab-control);
+  color:var(--ink);
+  font-weight:750;
+}
+.choice-answer button[aria-pressed="true"]{
+  border-color:var(--accent);
+  background:var(--accent-soft);
+  color:var(--accent);
+}
+.answer-control.incorrect .bit-row,
+.text-answer.incorrect,
+.choice-answer.incorrect button{
+  border-color:var(--bad);
+  background:var(--bad-soft);
+}
+.answer-control.correct .bit-row,
+.text-answer.correct,
+.choice-answer.correct button[aria-pressed="true"]{
+  border-color:var(--good);
+  background:var(--good-soft);
+}
+.feedback{
+  min-height:24px;
+  margin-top:12px;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.45;
+  text-align:center;
+}
+.feedback.good{color:var(--good);font-weight:700}
+.feedback.bad{color:var(--bad);font-weight:700}
+.actions{
+  display:flex;
+  justify-content:center;
+  gap:8px;
+  margin-top:13px;
+}
+.actions button{
+  height:38px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:0 13px;
+  background:var(--lab-control);
+  color:var(--ink);
+  font-weight:700;
+}
+.actions .primary{
+  border-color:var(--accent);
+  background:var(--accent);
+  color:var(--lab-paper);
+}
+.actions button:hover{border-color:var(--lab-line-strong)}
+.actions .primary:hover{border-color:color-mix(in srgb,var(--accent) 82%,#000);background:color-mix(in srgb,var(--accent) 82%,#000)}
+button:focus-visible{outline:3px solid var(--lab-focus);outline-offset:4px}
+@media(max-width:640px){
+  body[data-lab-layout="compact"]{align-content:start;padding-top:60px;padding-bottom:76px}
+  .topbar{grid-template-columns:auto minmax(0,1fr) auto;gap:8px}
+  .title{grid-column:1/-1;grid-row:1;justify-self:start}
+  .level-toggle{grid-column:1;grid-row:2}
+  .range-toggle{grid-column:2/4;grid-row:2}
+  .card{padding:19px 15px;border-radius:13px}
+  #prompt{font-size:16px}
+  .initial-area{min-height:116px;margin:19px 0 15px}
+  .register-group{--operator-space:30px}
+  .bit-cell{height:45px;font-size:19px}
+  .place-values{font-size:8px}
+  .operator{font-size:18px}
+  .operator.word{font-size:10px}
+  .scalar-value{font-size:30px}
+  .register-group[data-bits="16"] .bit-cell{font-size:15px}
+  .register-group[data-bits="16"] .place-values{font-size:6px}
+}
+@media(max-width:390px){
+  .pill-toggle button{padding:5px 8px;font-size:11px}
+  .register-group{--operator-space:25px}
+  .bit-cell{height:41px;font-size:18px}
+  .register-group[data-bits="16"] .bit-cell{font-size:13px}
+  .actions{display:grid;grid-template-columns:1fr 1fr}
+  .actions button{padding:0 8px}
+}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+</style>
+<!-- LAB_FRAME_STYLES_START -->
+<style data-lab-frame>
+:root {
+  --lab-canvas: #f3f5f7;
+  --lab-paper: #fbfbfd;
+  --lab-surface: #ffffff;
+  --lab-control: #ffffff;
+  --lab-ink: #1d1d1f;
+  --lab-muted: #6e6e73;
+  --lab-line: #d2d2d7;
+  --lab-line-strong: #a7a7ad;
+  --lab-accent: #5277b8;
+  --lab-accent-soft: #eef2fa;
+  --lab-good: #18794e;
+  --lab-good-soft: #edf8f1;
+  --lab-warn: #946200;
+  --lab-warn-soft: #fff6e7;
+  --lab-bad: #b42318;
+  --lab-bad-soft: #fff0ee;
+  --lab-focus: #1d1d1f;
+  --lab-focus-soft: rgba(29, 29, 31, 0.18);
+  --lab-font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+  --lab-panel-radius: 12px;
+  --lab-control-radius: 8px;
+  --lab-pill-radius: 999px;
+  --lab-control-height: 35px;
+  --lab-panel-shadow: 0 1px 2px rgba(29, 29, 31, 0.04);
+  --lab-page-gutter: max(28px, calc((100vw - 1200px) / 2));
+  --lab-compact-workspace-max: 820px;
+}
+
+html,
+body {
+  background: var(--lab-canvas);
+}
+
+body {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  align-content: start !important;
+  font-family: var(--lab-font-sans);
+  padding-bottom: 0;
+  padding-top: 0 !important;
+  text-rendering: optimizeLegibility;
+}
+
+.lab-manifest-header {
+  align-items: start;
+  border-bottom: 1px solid var(--line, var(--lab-line));
+  display: grid;
+  gap: 18px 28px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  margin-bottom: 26px;
+  padding-bottom: 22px;
+}
+
+.lab-manifest-heading {
+  min-width: 0;
+}
+
+.lab-manifest-header h1 {
+  color: var(--ink, var(--lab-ink));
+  font-family: var(--lab-font-sans);
+  font-size: clamp(25px, 3.2vw, 40px);
+  font-weight: 650;
+  letter-spacing: -0.045em;
+  line-height: 1.02;
+  margin: 0;
+  max-width: 24ch;
+  padding: 0;
+  text-align: left;
+}
+
+.lab-manifest-subtitle {
+  color: var(--muted, var(--lab-muted));
+  font-family: var(--lab-font-sans);
+  font-size: 13px;
+  letter-spacing: 0;
+  line-height: 1.5;
+  margin: 10px 0 0;
+  max-width: 72ch;
+  padding: 0;
+  text-align: left;
+}
+
+.lab-authored-title-slot {
+  min-width: 0;
+}
+
+.lab-syllabus-chips {
+  align-items: center;
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+  margin: 0 0 0 auto;
+  max-width: 100%;
+}
+
+.lab-syllabus-chip {
+  align-items: center;
+  background: var(--syllabus-chip-bg) !important;
+  border: 1px solid var(--syllabus-chip-border) !important;
+  border-radius: var(--lab-pill-radius);
+  color: var(--syllabus-chip-text) !important;
+  display: inline-flex;
+  font-size: 11px;
+  font-weight: 650;
+  gap: 4px;
+  line-height: 1;
+  min-height: 29px;
+  padding: 8px 10px;
+  position: relative;
+  transition: background-color 140ms ease, border-color 140ms ease;
+  white-space: nowrap;
+}
+
+.lab-syllabus-chip:hover {
+  background: var(--syllabus-chip-hover) !important;
+}
+
+.lab-syllabus-primary-link {
+  border-radius: inherit;
+  inset: 0;
+  position: absolute;
+  z-index: 0;
+}
+
+.lab-syllabus-primary-link:focus-visible {
+  outline: 2px solid var(--syllabus-chip-text);
+  outline-offset: 2px;
+}
+
+.lab-syllabus-name,
+.lab-syllabus-divider,
+.lab-syllabus-sections {
+  pointer-events: none;
+  position: relative;
+  z-index: 1;
+}
+
+.lab-syllabus-section {
+  border-radius: 4px;
+  color: inherit;
+  padding: 2px;
+  text-decoration: none;
+}
+
+a.lab-syllabus-section {
+  pointer-events: auto;
+}
+
+a.lab-syllabus-section:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+a.lab-syllabus-section:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 1px;
+}
+
+.lab-syllabus-name {
+  color: var(--syllabus-chip-text) !important;
+}
+
+.lab-syllabus-divider,
+.lab-syllabus-separator {
+  color: var(--muted, var(--lab-muted));
+}
+
+.lab-syllabus-prefix {
+  opacity: 0.72;
+  padding-left: 5px;
+}
+
+.lab-syllabus-sections {
+  align-items: center;
+  display: inline-flex;
+}
+
+.lab-syllabus-separator {
+  margin-inline: 0 2px;
+}
+
+html[data-theme="dark"] .lab-syllabus-name {
+  color: var(--syllabus-chip-border) !important;
+}
+
+html[data-theme="dark"] .lab-syllabus-chip:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+html[data-theme="dark"],
+html[data-theme="dark"] body {
+  background: var(--bg);
+}
+
+body > main {
+  container-name: lab-canvas;
+  container-type: inline-size;
+  margin-left: var(--lab-page-gutter);
+  margin-right: auto;
+  margin-top: 18px;
+  max-width: 1200px;
+  width: calc(100vw - var(--lab-page-gutter) - var(--lab-page-gutter));
+}
+
+body[data-lab-layout="compact"] .lab-manifest-header {
+  margin-bottom: 17px;
+  padding-bottom: 13px;
+}
+
+body[data-lab-layout="compact"] [data-lab-workspace] {
+  margin-left: auto;
+  margin-right: auto;
+  width: min(var(--lab-compact-workspace-max), 100%);
+}
+
+:where(button, input, select, textarea, summary):focus-visible {
+  outline: 3px solid var(--lab-focus);
+  outline-offset: 4px;
+}
+
+@media (max-width: 620px) {
+  :root {
+    --lab-page-gutter: 18px;
+  }
+
+  body {
+    padding-bottom: 0;
+    padding-top: 0 !important;
+  }
+
+  .lab-manifest-header {
+    gap: 14px;
+    grid-template-columns: minmax(0, 1fr) !important;
+    margin-bottom: 20px;
+    padding-bottom: 18px;
+  }
+
+  body[data-lab-layout="compact"] .lab-manifest-header {
+    margin-bottom: 16px;
+    padding-bottom: 14px;
+  }
+
+  .lab-manifest-header h1 {
+    font-size: clamp(24px, 8vw, 34px);
+  }
+
+  .lab-syllabus-chips {
+    gap: 4px;
+    justify-content: flex-start !important;
+    margin: 0 !important;
+  }
+
+  .lab-syllabus-chip {
+    font-size: 10px;
+    max-width: 100%;
+    min-height: 27px;
+    padding: 7px 8px;
+    white-space: normal;
+  }
+
+  .lab-syllabus-sections {
+    flex-wrap: wrap;
+  }
+
+  body > main {
+    margin-top: 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+</style>
+<!-- LAB_FRAME_STYLES_END -->
+<link rel="stylesheet" href="./lab-kit.css" data-lab-resource="lab-kit.css">
+</head>
+<body data-lab-layout="compact">
+<main class="shell">
+<!-- LAB_MANIFEST_HEADER_START -->
+<header class="lab-manifest-header">
+  <div class="lab-manifest-heading">
+    <h1 data-lab-manifest="title">Binary Number Practice</h1>
+  <p class="lab-manifest-subtitle" data-lab-manifest="subtitle">Practise binary arithmetic and convert between binary, denary and hexadecimal for Cambridge IGCSE Computer Science 0478 and AS Level Computer Science 9618.</p>
+  </div>
+  <!-- LAB_SYLLABUS_CHIPS_START -->
+<nav class="lab-syllabus-chips" aria-label="Syllabus alignment">
+  <section class="lab-syllabus-chip" style="--syllabus-chip-bg:#edf4ff;--syllabus-chip-border:#9ab6e6;--syllabus-chip-text:#173d78;--syllabus-chip-hover:#dce9fc" aria-label="IGCSE 0478 syllabus alignment">
+    <a class="lab-syllabus-primary-link" href="https://www.cambridgeinternational.org/Images/697167-2026-2028-syllabus.pdf#page=11" target="_blank" rel="noopener noreferrer" aria-label="Open IGCSE 0478 syllabus section 1.1"></a>
+    <span class="lab-syllabus-name">IGCSE 0478</span>
+    <span class="lab-syllabus-divider" aria-hidden="true">·</span>
+    <span class="lab-syllabus-sections"><span class="lab-syllabus-section is-primary">1.1</span></span>
+  </section>
+  <section class="lab-syllabus-chip" style="--syllabus-chip-bg:#f4effb;--syllabus-chip-border:#b9a2dc;--syllabus-chip-text:#4f2b77;--syllabus-chip-hover:#e8ddf6" aria-label="AS/A 9618 syllabus alignment">
+    <a class="lab-syllabus-primary-link" href="https://www.cambridgeinternational.org/Images/697372-2026-syllabus.pdf#page=14" target="_blank" rel="noopener noreferrer" aria-label="Open AS/A 9618 syllabus section 1.1"></a>
+    <span class="lab-syllabus-name">AS/A 9618</span>
+    <span class="lab-syllabus-divider" aria-hidden="true">·</span>
+    <span class="lab-syllabus-sections"><a class="lab-syllabus-section is-primary" href="https://www.cambridgeinternational.org/Images/697372-2026-syllabus.pdf#page=14" target="_blank" rel="noopener noreferrer" aria-label="Open primary AS/A 9618 syllabus section 1.1">1.1</a><span class="lab-syllabus-separator" aria-hidden="true">,</span><a class="lab-syllabus-section" href="https://www.cambridgeinternational.org/Images/697372-2026-syllabus.pdf#page=22" target="_blank" rel="noopener noreferrer" aria-label="Open AS/A 9618 syllabus section 4.3">4.3</a></span>
+  </section>
+</nav>
+<!-- LAB_SYLLABUS_CHIPS_END -->
+</header>
+<!-- LAB_MANIFEST_HEADER_END -->
+<div class="topbar" data-lab-workspace>
+    <div class="pill-toggle level-toggle" role="radiogroup" aria-label="Qualification level">
+      <button type="button" role="radio" data-level="gcse" aria-checked="true">IGCSE</button>
+      <button type="button" role="radio" data-level="as" aria-checked="false">AS</button>
+    </div>
+
+    <span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span>
+
+    <div class="pill-toggle range-toggle" role="radiogroup" aria-label="Question range">
+      <button type="button" role="radio" data-range="binary" aria-checked="true">Binary</button>
+      <button type="button" role="radio" data-range="hex" aria-checked="false">Binary and hex</button>
+    </div>
+  </div>
+
+  <section id="questionCard" class="card" data-lab-workspace aria-labelledby="prompt">
+    <div class="prompt-row">
+      <p id="prompt"></p>
+      <button id="helpButton" class="help-button" type="button" aria-label="Show place values and a reminder" aria-expanded="false" aria-describedby="helpTip">?</button>
+    </div>
+    <div id="helpTip" class="help-tip" role="tooltip"></div>
+
+    <div id="initialArea" class="initial-area"></div>
+
+    <form id="answerForm" class="answer-block" novalidate>
+      <div id="answerLabel" class="answer-label"></div>
+      <div id="answerArea"></div>
+      <div id="feedback" class="feedback" role="status" aria-live="polite"></div>
+      <div class="actions">
+        <button id="checkButton" class="primary" type="submit">Check answer</button>
+        <button id="newButton" type="button">New question</button>
+      </div>
+    </form>
+  </section>
+</main>
+
+
+<script src="./lab-kit.js" data-lab-resource="lab-kit.js"></script>
+<script>
+(() => {
+  const $=LabKit.dom.byId;
+  const state={
+    level:"gcse",
+    range:"binary",
+    question:null,
+    correct:false,
+    selectedChoice:null,
+    helpPinned:false,
+    helpPreview:false,
+    recent:[],
+    lastTemplate:null
+  };
+
+  const randomInt=(minimum,maximum)=>Math.floor(Math.random()*(maximum-minimum+1))+minimum;
+  const pick=values=>values[randomInt(0,values.length-1)];
+  const plural=(number,word)=>number===1?word:word+"s";
+  const maxUnsigned=bits=>2**bits-1;
+
+  function normaliseDenaryInput(value){
+    return value.replace(/[−–—]/g,"-");
+  }
+
+  function binaryString(value,bits=8){
+    const modulus=2**bits;
+    const normalised=((value%modulus)+modulus)%modulus;
+    return normalised.toString(2).padStart(bits,"0");
+  }
+
+  function hexString(value,digits=2){
+    const modulus=16**digits;
+    const normalised=((value%modulus)+modulus)%modulus;
+    return normalised.toString(16).toUpperCase().padStart(digits,"0");
+  }
+
+  function invertBits(bits){
+    return [...bits].map(bit=>bit==="0"?"1":"0").join("");
+  }
+
+  function onesString(value,bits=8){
+    const magnitude=binaryString(Math.abs(value),bits);
+    return value<0?invertBits(magnitude):magnitude;
+  }
+
+  function bcdString(value){
+    const tens=Math.floor(value/10);
+    const units=value%10;
+    return binaryString(tens,4)+binaryString(units,4);
+  }
+
+  function rotateLeft(value,places,bits=8){
+    const shift=places%bits;
+    const mask=maxUnsigned(bits);
+    return ((value<<shift)|(value>>(bits-shift)))&mask;
+  }
+
+  function rotateRight(value,places,bits=8){
+    const shift=places%bits;
+    const mask=maxUnsigned(bits);
+    return ((value>>shift)|(value<<(bits-shift)))&mask;
+  }
+
+  function question(data){
+    return {answerLabel:"Answer",...data};
+  }
+
+  function conversionWidth(){
+    return Math.random()<0.62?8:16;
+  }
+
+  function signedPair(operation){
+    for(let attempt=0;attempt<500;attempt++){
+      const first=randomInt(-100,100);
+      const second=randomInt(-100,100);
+      if(first===0&&second===0) continue;
+      const result=operation==="+"?first+second:first-second;
+      if(result>=-128&&result<=127) return {first,second,result};
+    }
+    return {first:28,second:-11,result:operation==="+"?17:39};
+  }
+
+  function signedOverflowPair(operation,wantOverflow){
+    for(let attempt=0;attempt<3000;attempt++){
+      const first=randomInt(-128,127);
+      const second=randomInt(-128,127);
+      const result=operation==="+"?first+second:first-second;
+      const overflow=result<-128||result>127;
+      if(overflow===wantOverflow) return {first,second,result};
+    }
+    return wantOverflow
+      ? operation==="+"?{first:100,second:60,result:160}:{first:90,second:-70,result:160}
+      : operation==="+"?{first:40,second:-15,result:25}:{first:40,second:15,result:25};
+  }
+
+  const templates={
+    "denary-binary":()=>{
+      const bits=conversionWidth();
+      const value=bits===8?randomInt(1,255):randomInt(256,65535);
+      const answer=binaryString(value,bits);
+      return question({
+        key:"denary-binary",
+        signature:`denary-binary|${bits}|${value}`,
+        prompt:`Convert the denary integer ${value} to a ${bits}-bit binary integer.`,
+        hint:"Use the place values above the register. Put 1 in each place value used to make the denary total.",
+        initial:{kind:"scalar",value:String(value),base:"denary"},
+        answer:{kind:"binary",value:answer,bits,representation:"unsigned"},
+        answerLabel:`Answer · ${bits}-bit binary`,
+        solution:`Correct. ${value} in denary is ${answer} in ${bits}-bit binary.`
+      });
+    },
+
+    "binary-denary":()=>{
+      const bits=conversionWidth();
+      const value=bits===8?randomInt(1,255):randomInt(256,65535);
+      const binary=binaryString(value,bits);
+      return question({
+        key:"binary-denary",
+        signature:`binary-denary|${binary}`,
+        prompt:`Convert the following unsigned ${bits}-bit binary integer to denary.`,
+        hint:"Add the place values above every bit that contains 1.",
+        initial:{kind:"register",rows:[binary],bits,representation:"unsigned"},
+        answer:{kind:"denary",value},
+        answerLabel:"Answer · denary",
+        solution:`Correct. ${binary} in binary is ${value} in denary.`
+      });
+    },
+
+    "binary-addition":()=>{
+      const first=randomInt(1,200);
+      const second=randomInt(1,255-first);
+      const total=first+second;
+      return question({
+        key:"binary-addition",
+        signature:`binary-addition|${first}|${second}`,
+        prompt:"Add the following two positive 8-bit binary integers. Give your answer as an 8-bit binary integer.",
+        hint:"Add from right to left. Carry 1 when a column total is 2 or 3.",
+        initial:{kind:"register",rows:[binaryString(first),binaryString(second)],operator:"+",bits:8,representation:"unsigned"},
+        answer:{kind:"binary",value:binaryString(total),bits:8,representation:"unsigned"},
+        answerLabel:"Answer · 8-bit binary",
+        solution:`Correct. The denary check is ${first} + ${second} = ${total}.`
+      });
+    },
+
+    "overflow":()=>{
+      const overflow=Math.random()<0.5;
+      let first,second;
+      if(overflow){
+        first=randomInt(128,255);
+        second=randomInt(256-first,255);
+      }else{
+        first=randomInt(1,200);
+        second=randomInt(1,255-first);
+      }
+      const total=first+second;
+      return question({
+        key:"overflow",
+        signature:`overflow|${first}|${second}`,
+        prompt:"The following two positive 8-bit binary integers are added. State whether an overflow error occurs.",
+        hint:"An unsigned 8-bit register stores values from 0 to 255. A result greater than 255 requires a ninth bit.",
+        initial:{kind:"register",rows:[binaryString(first),binaryString(second)],operator:"+",bits:8,representation:"unsigned"},
+        answer:{kind:"choice",value:overflow?"yes":"no"},
+        solution:overflow
+          ? `Correct. ${first} + ${second} = ${total}, which is outside the 8-bit unsigned range.`
+          : `Correct. ${first} + ${second} = ${total}, so the result fits in 8 bits.`
+      });
+    },
+
+    "shift-left":()=>{
+      const value=randomInt(1,255);
+      const places=randomInt(1,3);
+      const result=(value<<places)&255;
+      return question({
+        key:"shift-left",
+        signature:`shift-left|${value}|${places}`,
+        prompt:`Perform a logical left shift by ${places} ${plural(places,"place")} on the following positive 8-bit binary integer. Give the resulting 8-bit binary integer.`,
+        hint:"Move every bit left. Bits leaving the most significant end are lost; zeros enter from the right.",
+        initial:{kind:"register",rows:[binaryString(value)],bits:8,representation:"unsigned"},
+        answer:{kind:"binary",value:binaryString(result),bits:8,representation:"unsigned"},
+        answerLabel:"Answer · 8-bit binary",
+        solution:`Correct. A logical left shift by ${places} ${plural(places,"place")} gives ${binaryString(result)}; shifted-out bits are lost.`
+      });
+    },
+
+    "shift-right":()=>{
+      const value=randomInt(1,255);
+      const places=randomInt(1,3);
+      const result=value>>places;
+      return question({
+        key:"shift-right",
+        signature:`shift-right|${value}|${places}`,
+        prompt:`Perform a logical right shift by ${places} ${plural(places,"place")} on the following positive 8-bit binary integer. Give the resulting 8-bit binary integer.`,
+        hint:"Move every bit right. Bits leaving the least significant end are lost; zeros enter from the left.",
+        initial:{kind:"register",rows:[binaryString(value)],bits:8,representation:"unsigned"},
+        answer:{kind:"binary",value:binaryString(result),bits:8,representation:"unsigned"},
+        answerLabel:"Answer · 8-bit binary",
+        solution:`Correct. A logical right shift by ${places} ${plural(places,"place")} gives ${binaryString(result)}; shifted-out bits are lost.`
+      });
+    },
+
+    "denary-twos":()=>{
+      const value=Math.random()<0.72?randomInt(-128,-1):randomInt(1,127);
+      const answer=binaryString(value);
+      return question({
+        key:"denary-twos",
+        signature:`denary-twos|${value}`,
+        prompt:`Represent the denary integer ${value} as an 8-bit binary integer using two's complement.`,
+        hint:"For a negative value, write the positive 8-bit value, invert every bit, then add 1. Positive values use ordinary binary.",
+        initial:{kind:"scalar",value:String(value),base:"denary"},
+        answer:{kind:"binary",value:answer,bits:8,representation:"twos"},
+        answerLabel:"Answer · 8-bit two's complement",
+        solution:`Correct. ${value} is represented as ${answer} using 8-bit two's complement.`
+      });
+    },
+
+    "twos-denary":()=>{
+      const target=Math.random()<0.72?randomInt(-128,-1):randomInt(0,127);
+      const binary=binaryString(target);
+      return question({
+        key:"twos-denary",
+        signature:`twos-denary|${binary}`,
+        prompt:"The following 8-bit binary integer is stored using two's complement. State its denary value.",
+        hint:"The most significant bit has place value −128. If it is 1, the stored value is negative.",
+        initial:{kind:"register",rows:[binary],bits:8,representation:"twos"},
+        answer:{kind:"denary",value:target},
+        answerLabel:"Answer · denary",
+        solution:`Correct. ${binary} represents ${target} in 8-bit two's complement.`
+      });
+    },
+
+    "negate-binary":()=>{
+      const value=randomInt(1,127);
+      const source=binaryString(value);
+      const answer=binaryString(-value);
+      return question({
+        key:"negate-binary",
+        signature:`negate-binary|${source}`,
+        prompt:"Write the 8-bit two's complement representation of the negative value of the following positive binary integer.",
+        hint:"Invert every bit in the positive 8-bit value, then add 1.",
+        initial:{kind:"register",rows:[source],bits:8,representation:"unsigned"},
+        answer:{kind:"binary",value:answer,bits:8,representation:"twos"},
+        answerLabel:"Answer · negative 8-bit two's complement",
+        solution:`Correct. ${source} represents ${value}; its negative value is ${answer}.`
+      });
+    },
+
+    "denary-hex":()=>{
+      const bits=conversionWidth();
+      const digits=bits/4;
+      const value=bits===8?randomInt(16,255):randomInt(4096,65535);
+      const answer=hexString(value,digits);
+      return question({
+        key:"denary-hex",
+        signature:`denary-hex|${digits}|${value}`,
+        prompt:`Convert the denary integer ${value} to a ${digits}-digit hexadecimal integer.`,
+        hint:"Divide the denary value into powers of 16. Hexadecimal digits after 9 are A, B, C, D, E and F.",
+        initial:{kind:"scalar",value:String(value),base:"denary"},
+        answer:{kind:"hex",value:answer,digits},
+        answerLabel:"Answer · hexadecimal",
+        solution:`Correct. ${value} in denary is ${answer} in hexadecimal.`
+      });
+    },
+
+    "hex-denary":()=>{
+      const bits=conversionWidth();
+      const digits=bits/4;
+      const value=bits===8?randomInt(16,255):randomInt(4096,65535);
+      const hexadecimal=hexString(value,digits);
+      return question({
+        key:"hex-denary",
+        signature:`hex-denary|${hexadecimal}`,
+        prompt:"Convert the following hexadecimal integer to denary.",
+        hint:"Multiply each hexadecimal digit by its power of 16, then add the results.",
+        initial:{kind:"scalar",value:hexadecimal,base:"hexadecimal"},
+        answer:{kind:"denary",value},
+        answerLabel:"Answer · denary",
+        solution:`Correct. ${hexadecimal} in hexadecimal is ${value} in denary.`
+      });
+    },
+
+    "binary-hex":()=>{
+      const bits=conversionWidth();
+      const digits=bits/4;
+      const value=bits===8?randomInt(16,255):randomInt(4096,65535);
+      const binary=binaryString(value,bits);
+      const answer=hexString(value,digits);
+      return question({
+        key:"binary-hex",
+        signature:`binary-hex|${binary}`,
+        prompt:`Convert the following ${bits}-bit binary integer to a ${digits}-digit hexadecimal integer.`,
+        hint:"Split the register into groups of four bits. Convert each group to one hexadecimal digit.",
+        initial:{kind:"register",rows:[binary],bits,representation:"unsigned"},
+        answer:{kind:"hex",value:answer,digits},
+        answerLabel:"Answer · hexadecimal",
+        solution:`Correct. ${binary} in binary is ${answer} in hexadecimal.`
+      });
+    },
+
+    "hex-binary":()=>{
+      const bits=conversionWidth();
+      const digits=bits/4;
+      const value=bits===8?randomInt(16,255):randomInt(4096,65535);
+      const hexadecimal=hexString(value,digits);
+      const answer=binaryString(value,bits);
+      return question({
+        key:"hex-binary",
+        signature:`hex-binary|${hexadecimal}`,
+        prompt:`Convert the following hexadecimal integer to a ${bits}-bit binary integer.`,
+        hint:"Convert each hexadecimal digit to four binary bits, keeping leading zeros.",
+        initial:{kind:"scalar",value:hexadecimal,base:"hexadecimal"},
+        answer:{kind:"binary",value:answer,bits,representation:"unsigned"},
+        answerLabel:`Answer · ${bits}-bit binary`,
+        solution:`Correct. ${hexadecimal} in hexadecimal is ${answer} in ${bits}-bit binary.`
+      });
+    },
+
+    "denary-ones":()=>{
+      const value=Math.random()<0.72?randomInt(-127,-1):randomInt(1,127);
+      const answer=onesString(value);
+      return question({
+        key:"denary-ones",
+        signature:`denary-ones|${value}`,
+        prompt:`Represent the denary integer ${value} as an 8-bit binary integer using one's complement.`,
+        hint:"For a negative value, invert every bit of the positive 8-bit representation. Do not add 1.",
+        initial:{kind:"scalar",value:String(value),base:"denary"},
+        answer:{kind:"binary",value:answer,bits:8,representation:"ones"},
+        answerLabel:"Answer · 8-bit one's complement",
+        solution:`Correct. ${value} is represented as ${answer} using 8-bit one's complement.`
+      });
+    },
+
+    "ones-denary":()=>{
+      const target=Math.random()<0.72?randomInt(-127,-1):randomInt(1,127);
+      const binary=onesString(target);
+      return question({
+        key:"ones-denary",
+        signature:`ones-denary|${binary}`,
+        prompt:"The following 8-bit binary integer is stored using one's complement. State its denary value.",
+        hint:"If the most significant bit is 1, invert every bit to find the positive magnitude, then make the value negative.",
+        initial:{kind:"register",rows:[binary],bits:8,representation:"ones"},
+        answer:{kind:"denary",value:target},
+        answerLabel:"Answer · denary",
+        solution:`Correct. ${binary} represents ${target} in 8-bit one's complement.`
+      });
+    },
+
+    "ones-to-twos":()=>{
+      const value=randomInt(-127,-1);
+      const source=onesString(value);
+      const answer=binaryString(value);
+      return question({
+        key:"ones-to-twos",
+        signature:`ones-to-twos|${value}`,
+        prompt:"Convert the following negative 8-bit one's complement integer to two's complement.",
+        hint:"For the same negative value, add 1 to the one's complement bit pattern.",
+        initial:{kind:"register",rows:[source],bits:8,representation:"ones"},
+        answer:{kind:"binary",value:answer,bits:8,representation:"twos"},
+        answerLabel:"Answer · 8-bit two's complement",
+        solution:`Correct. ${source} in one's complement and ${answer} in two's complement both represent ${value}.`
+      });
+    },
+
+    "twos-to-ones":()=>{
+      const value=randomInt(-127,-1);
+      const source=binaryString(value);
+      const answer=onesString(value);
+      return question({
+        key:"twos-to-ones",
+        signature:`twos-to-ones|${value}`,
+        prompt:"Convert the following negative 8-bit two's complement integer to one's complement.",
+        hint:"For the same negative value, subtract 1 from the two's complement bit pattern.",
+        initial:{kind:"register",rows:[source],bits:8,representation:"twos"},
+        answer:{kind:"binary",value:answer,bits:8,representation:"ones"},
+        answerLabel:"Answer · 8-bit one's complement",
+        solution:`Correct. ${source} in two's complement and ${answer} in one's complement both represent ${value}.`
+      });
+    },
+
+    "denary-bcd":()=>{
+      const value=randomInt(0,99);
+      const answer=bcdString(value);
+      return question({
+        key:"denary-bcd",
+        signature:`denary-bcd|${value}`,
+        prompt:`Represent the denary integer ${value} using 8-bit Binary Coded Decimal (BCD).`,
+        hint:"Convert the tens digit and the units digit separately. Each denary digit uses four bits.",
+        initial:{kind:"scalar",value:String(value),base:"denary"},
+        answer:{kind:"binary",value:answer,bits:8,representation:"bcd"},
+        answerLabel:"Answer · 8-bit BCD",
+        solution:`Correct. The two denary digits are stored separately as ${answer.slice(0,4)} ${answer.slice(4)}.`
+      });
+    },
+
+    "bcd-denary":()=>{
+      const value=randomInt(0,99);
+      const bcd=bcdString(value);
+      return question({
+        key:"bcd-denary",
+        signature:`bcd-denary|${bcd}`,
+        prompt:"The following 8-bit register stores a two-digit denary integer using Binary Coded Decimal (BCD). State the denary value.",
+        hint:"Read each four-bit group as a separate denary digit.",
+        initial:{kind:"register",rows:[bcd],bits:8,representation:"bcd"},
+        answer:{kind:"denary",value},
+        answerLabel:"Answer · denary",
+        solution:`Correct. ${bcd.slice(0,4)} represents ${Math.floor(value/10)} and ${bcd.slice(4)} represents ${value%10}, giving ${value}.`
+      });
+    },
+
+    "prefix-conversion":()=>{
+      const usesBinaryPrefix=Math.random()<0.5;
+      const pair=pick(usesBinaryPrefix
+        ? [
+            {larger:"KiB",smaller:"bytes"},
+            {larger:"MiB",smaller:"KiB"},
+            {larger:"GiB",smaller:"MiB"},
+            {larger:"TiB",smaller:"GiB"}
+          ]
+        : [
+            {larger:"kB",smaller:"bytes"},
+            {larger:"MB",smaller:"kB"},
+            {larger:"GB",smaller:"MB"},
+            {larger:"TB",smaller:"GB"}
+          ]
+      );
+      const quantity=randomInt(1,9);
+      const factor=usesBinaryPrefix?1024:1000;
+      const result=quantity*factor;
+      return question({
+        key:"prefix-conversion",
+        signature:`prefix-conversion|${pair.larger}|${quantity}`,
+        prompt:`Convert ${quantity} ${pair.larger} to ${pair.smaller}.`,
+        hint:"Binary prefixes such as kibi, mebi, gibi and tebi increase by 1024. Decimal prefixes such as kilo, mega, giga and tera increase by 1000.",
+        initial:{kind:"scalar",value:`${quantity} ${pair.larger}`,base:usesBinaryPrefix?"binary prefix":"decimal prefix"},
+        answer:{kind:"denary",value:result},
+        answerLabel:`Answer · ${pair.smaller}`,
+        solution:`Correct. ${quantity} × ${factor} = ${result}, so ${quantity} ${pair.larger} is ${result} ${pair.smaller}.`
+      });
+    },
+
+    "signed-addition":()=>{
+      const {first,second,result}=signedPair("+");
+      return question({
+        key:"signed-addition",
+        signature:`signed-addition|${first}|${second}`,
+        prompt:"Add the following 8-bit two's complement binary integers. Give the answer as an 8-bit two's complement integer.",
+        hint:"Add the bit patterns from right to left and discard any carry beyond 8 bits. The question is generated so the mathematical result is in range.",
+        initial:{kind:"register",rows:[binaryString(first),binaryString(second)],operator:"+",bits:8,representation:"twos"},
+        answer:{kind:"binary",value:binaryString(result),bits:8,representation:"twos"},
+        answerLabel:"Answer · 8-bit two's complement",
+        solution:`Correct. The denary check is ${first} + (${second}) = ${result}.`
+      });
+    },
+
+    "signed-subtraction":()=>{
+      const {first,second,result}=signedPair("−");
+      return question({
+        key:"signed-subtraction",
+        signature:`signed-subtraction|${first}|${second}`,
+        prompt:"Subtract the second 8-bit two's complement binary integer from the first. Give the answer as an 8-bit two's complement integer.",
+        hint:"Subtraction can be performed by adding the two's complement negative of the second operand.",
+        initial:{kind:"register",rows:[binaryString(first),binaryString(second)],operator:"−",bits:8,representation:"twos"},
+        answer:{kind:"binary",value:binaryString(result),bits:8,representation:"twos"},
+        answerLabel:"Answer · 8-bit two's complement",
+        solution:`Correct. The denary check is ${first} − (${second}) = ${result}.`
+      });
+    },
+
+    "signed-overflow":()=>{
+      const operation=Math.random()<0.5?"+":"−";
+      const overflow=Math.random()<0.5;
+      const {first,second,result}=signedOverflowPair(operation,overflow);
+      return question({
+        key:"signed-overflow",
+        signature:`signed-overflow|${operation}|${first}|${second}`,
+        prompt:`The following 8-bit two's complement integers are ${operation==="+"?"added":"subtracted"}. State whether an overflow error occurs.`,
+        hint:"An 8-bit two's complement integer must be from −128 to 127. Overflow occurs when the mathematical result is outside this range.",
+        initial:{kind:"register",rows:[binaryString(first),binaryString(second)],operator:operation,bits:8,representation:"twos"},
+        answer:{kind:"choice",value:overflow?"yes":"no"},
+        solution:overflow
+          ? `Correct. The denary result is ${result}, outside the range −128 to 127.`
+          : `Correct. The denary result is ${result}, which fits in an 8-bit two's complement register.`
+      });
+    },
+
+    "arithmetic-left":()=>{
+      const places=randomInt(1,2);
+      let value,result;
+      do{
+        value=randomInt(-64,63);
+        result=value*2**places;
+      }while(value===0||result<-128||result>127);
+      return question({
+        key:"arithmetic-left",
+        signature:`arithmetic-left|${value}|${places}`,
+        prompt:`Perform an arithmetic left shift by ${places} ${plural(places,"place")} on the following 8-bit two's complement integer. Give the resulting bit pattern.`,
+        hint:"Move every bit left and enter zeros from the right. At bit level, an arithmetic left shift is the same as a logical left shift.",
+        initial:{kind:"register",rows:[binaryString(value)],bits:8,representation:"twos"},
+        answer:{kind:"binary",value:binaryString(result),bits:8,representation:"twos"},
+        answerLabel:"Answer · 8-bit two's complement",
+        solution:`Correct. ${value} shifted left by ${places} ${plural(places,"place")} represents ${result}.`
+      });
+    },
+
+    "arithmetic-right":()=>{
+      const places=randomInt(1,3);
+      const value=Math.random()<0.7?randomInt(-128,-1):randomInt(1,127);
+      const result=value>>places;
+      return question({
+        key:"arithmetic-right",
+        signature:`arithmetic-right|${value}|${places}`,
+        prompt:`Perform an arithmetic right shift by ${places} ${plural(places,"place")} on the following 8-bit two's complement integer. Give the resulting bit pattern.`,
+        hint:"Move every bit right and copy the original sign bit into the empty positions on the left.",
+        initial:{kind:"register",rows:[binaryString(value)],bits:8,representation:"twos"},
+        answer:{kind:"binary",value:binaryString(result),bits:8,representation:"twos"},
+        answerLabel:"Answer · 8-bit two's complement",
+        solution:`Correct. Copying the sign bit gives ${binaryString(result)}, representing ${result}.`
+      });
+    },
+
+    "cyclic-left":()=>{
+      const places=randomInt(1,3);
+      const value=randomInt(1,255);
+      const result=rotateLeft(value,places);
+      return question({
+        key:"cyclic-left",
+        signature:`cyclic-left|${value}|${places}`,
+        prompt:`Perform a cyclic left shift by ${places} ${plural(places,"place")} on the following 8-bit register.`,
+        hint:"Bits leaving the left end re-enter at the right end. No bit is discarded.",
+        initial:{kind:"register",rows:[binaryString(value)],bits:8,representation:"unsigned"},
+        answer:{kind:"binary",value:binaryString(result),bits:8,representation:"unsigned"},
+        answerLabel:"Answer · 8-bit binary",
+        solution:`Correct. Rotating left gives ${binaryString(result)}.`
+      });
+    },
+
+    "cyclic-right":()=>{
+      const places=randomInt(1,3);
+      const value=randomInt(1,255);
+      const result=rotateRight(value,places);
+      return question({
+        key:"cyclic-right",
+        signature:`cyclic-right|${value}|${places}`,
+        prompt:`Perform a cyclic right shift by ${places} ${plural(places,"place")} on the following 8-bit register.`,
+        hint:"Bits leaving the right end re-enter at the left end. No bit is discarded.",
+        initial:{kind:"register",rows:[binaryString(value)],bits:8,representation:"unsigned"},
+        answer:{kind:"binary",value:binaryString(result),bits:8,representation:"unsigned"},
+        answerLabel:"Answer · 8-bit binary",
+        solution:`Correct. Rotating right gives ${binaryString(result)}.`
+      });
+    },
+
+    "bitwise-and":()=>bitwiseQuestion("AND"),
+    "bitwise-or":()=>bitwiseQuestion("OR"),
+    "bitwise-xor":()=>bitwiseQuestion("XOR"),
+
+    "set-bit":()=>{
+      const position=randomInt(0,7);
+      const value=randomInt(0,255);
+      const mask=1<<position;
+      const result=value|mask;
+      return question({
+        key:"set-bit",
+        signature:`set-bit|${value}|${position}`,
+        prompt:`The mask shown is applied using OR to set bit position ${position} of the first register. Give the 8-bit result.`,
+        hint:"Bit position 0 is the least significant bit. OR with 1 sets that position; OR with 0 leaves every other bit unchanged.",
+        initial:{kind:"register",rows:[binaryString(value),binaryString(mask)],operator:"OR",bits:8,representation:"unsigned"},
+        answer:{kind:"binary",value:binaryString(result),bits:8,representation:"unsigned"},
+        answerLabel:"Answer · 8-bit binary",
+        solution:`Correct. The mask ${binaryString(mask)} sets bit position ${position}, giving ${binaryString(result)}.`
+      });
+    },
+
+    "test-bit":()=>{
+      const position=randomInt(0,7);
+      const value=randomInt(0,255);
+      const mask=1<<position;
+      const result=value&mask;
+      return question({
+        key:"test-bit",
+        signature:`test-bit|${value}|${position}`,
+        prompt:`The mask shown is applied using AND to test bit position ${position} of the first register. Give the 8-bit result.`,
+        hint:"Bit position 0 is the least significant bit. AND clears every unmasked bit; the result is zero unless the tested bit was 1.",
+        initial:{kind:"register",rows:[binaryString(value),binaryString(mask)],operator:"AND",bits:8,representation:"unsigned"},
+        answer:{kind:"binary",value:binaryString(result),bits:8,representation:"unsigned"},
+        answerLabel:"Answer · 8-bit binary",
+        solution:`Correct. The AND result is ${binaryString(result)}, so bit position ${position} was ${result?1:0}.`
+      });
+    }
+  };
+
+  function bitwiseQuestion(operation){
+    const first=randomInt(0,255);
+    const second=randomInt(0,255);
+    const result=operation==="AND"?first&second:operation==="OR"?first|second:first^second;
+    return question({
+      key:`bitwise-${operation.toLowerCase()}`,
+      signature:`bitwise-${operation}|${first}|${second}`,
+      prompt:`Perform a bitwise ${operation} operation on the following 8-bit registers.`,
+      hint:`Work one column at a time. ${operation==="AND"?"AND gives 1 only when both bits are 1.":operation==="OR"?"OR gives 1 when either or both bits are 1.":"XOR gives 1 when the two bits are different."}`,
+      initial:{kind:"register",rows:[binaryString(first),binaryString(second)],operator:operation,bits:8,representation:"unsigned"},
+      answer:{kind:"binary",value:binaryString(result),bits:8,representation:"unsigned"},
+      answerLabel:"Answer · 8-bit binary",
+      solution:`Correct. The bitwise ${operation} result is ${binaryString(result)}.`
+    });
+  }
+
+  const gcseBinaryPool=[
+    "denary-binary","binary-denary","binary-addition","overflow",
+    "shift-left","shift-right","denary-twos","denary-twos",
+    "twos-denary","twos-denary","negate-binary"
+  ];
+
+  const asOnlyPool=[
+    "denary-ones","ones-denary","ones-to-twos","twos-to-ones",
+    "denary-bcd","bcd-denary","prefix-conversion","signed-addition","signed-subtraction",
+    "signed-overflow","arithmetic-left","arithmetic-right","cyclic-left",
+    "cyclic-right","bitwise-and","bitwise-or","bitwise-xor","set-bit","test-bit"
+  ];
+
+  const hexPool=["denary-hex","hex-denary","binary-hex","hex-binary"];
+
+  function activePool(){
+    const pool=state.level==="as"?[...gcseBinaryPool,...asOnlyPool]:[...gcseBinaryPool];
+    if(state.range==="hex") pool.push(...hexPool);
+    return pool;
+  }
+
+  function generateQuestion(forcedKey=null){
+    const pool=activePool();
+    const available=forcedKey?[forcedKey]:pool.filter(key=>key!==state.lastTemplate);
+    let candidate;
+    for(let attempt=0;attempt<50;attempt++){
+      const key=pick(available.length?available:pool);
+      candidate=templates[key]();
+      if(forcedKey||!state.recent.includes(candidate.signature)) break;
+    }
+    state.lastTemplate=candidate.key;
+    state.recent.push(candidate.signature);
+    state.recent=state.recent.slice(-32);
+    return candidate;
+  }
+
+  function placeValuesFor(bits,representation){
+    if(representation==="bcd"&&bits===8) return [80,40,20,10,8,4,2,1];
+    const values=Array.from({length:bits},(_,index)=>2**(bits-1-index));
+    if(representation==="twos") values[0]=-values[0];
+    if(representation==="ones") values[0]=-(values[0]-1);
+    return values;
+  }
+
+  function placeValues(bits,representation){
+    const row=document.createElement("div");
+    row.className="place-values";
+    placeValuesFor(bits,representation).forEach(value=>{
+      const cell=document.createElement("span");
+      cell.textContent=String(value).replace("-","−");
+      row.appendChild(cell);
+    });
+    return row;
+  }
+
+  function markBoundary(cell,index){
+    if(index>0&&index%8===0) cell.classList.add("byte-start");
+    else if(index>0&&index%4===0) cell.classList.add("nibble-start");
+  }
+
+  function staticBitRow(bits){
+    const row=document.createElement("div");
+    row.className="bit-row";
+    row.setAttribute("aria-label",bits.split("").join(" "));
+    [...bits].forEach((bit,index)=>{
+      const cell=document.createElement("div");
+      cell.className="bit-cell";
+      markBoundary(cell,index);
+      cell.textContent=bit;
+      row.appendChild(cell);
+    });
+    return row;
+  }
+
+  function registerGroup({rows,bits=8,representation="unsigned",operator=null,editable=false}){
+    const group=document.createElement("div");
+    group.className="register-group"+(operator?" has-operator":"");
+    group.dataset.bits=String(bits);
+    group.style.setProperty("--bits",String(bits));
+    group.appendChild(placeValues(bits,representation));
+
+    rows.forEach((bitString,index)=>{
+      const operand=document.createElement("div");
+      operand.className="operand-row"+(operator&&index===rows.length-1?" addend":"");
+
+      if(operator){
+        const symbol=document.createElement("span");
+        symbol.className="operator"+(String(operator).length>1?" word":"");
+        symbol.textContent=index===rows.length-1?operator:"";
+        operand.appendChild(symbol);
+      }
+
+      if(editable){
+        const row=document.createElement("div");
+        row.className="bit-row";
+        for(let bitIndex=0;bitIndex<bits;bitIndex++){
+          const cell=document.createElement("div");
+          cell.className="bit-cell";
+          markBoundary(cell,bitIndex);
+          const input=document.createElement("input");
+          input.className="bit-input";
+          input.type="text";
+          input.inputMode="numeric";
+          input.autocomplete="off";
+          input.maxLength=1;
+          input.setAttribute("data-bit-input","");
+          input.setAttribute("aria-label",`Answer bit ${bitIndex+1} of ${bits}`);
+          cell.appendChild(input);
+          row.appendChild(cell);
+        }
+        operand.appendChild(row);
+      }else{
+        operand.appendChild(staticBitRow(bitString));
+      }
+      group.appendChild(operand);
+    });
+    return group;
+  }
+
+  function renderInitial(initial){
+    const area=$("initialArea");
+    area.innerHTML="";
+    if(initial.kind==="scalar"){
+      const scalar=document.createElement("div");
+      scalar.className="scalar";
+      const value=document.createElement("div");
+      value.className="scalar-value";
+      value.textContent=initial.value;
+      const base=document.createElement("div");
+      base.className="scalar-base";
+      base.textContent=initial.base;
+      scalar.append(value,base);
+      area.appendChild(scalar);
+      return;
+    }
+    area.appendChild(registerGroup({
+      rows:initial.rows,
+      bits:initial.bits||initial.rows[0].length,
+      representation:initial.representation||"unsigned",
+      operator:initial.operator||null
+    }));
+  }
+
+  function renderAnswer(answer){
+    const area=$("answerArea");
+    area.innerHTML="";
+    state.selectedChoice=null;
+
+    if(answer.kind==="binary"){
+      const control=document.createElement("div");
+      control.className="answer-control";
+      control.appendChild(registerGroup({
+        rows:[""],
+        bits:answer.bits||8,
+        representation:answer.representation||"unsigned",
+        editable:true
+      }));
+      area.appendChild(control);
+      bindBinaryInputs(control);
+      requestAnimationFrame(()=>control.querySelector(".bit-input")?.focus());
+      return;
+    }
+
+    if(answer.kind==="denary"||answer.kind==="hex"){
+      const input=document.createElement("input");
+      input.className="text-answer";
+      input.type="text";
+      input.autocomplete="off";
+      input.spellcheck=false;
+      input.inputMode=answer.kind==="denary"?"numeric":"text";
+      input.maxLength=answer.kind==="hex"?(answer.digits||answer.value.length):7;
+      input.setAttribute("aria-label",answer.kind==="denary"?"Denary answer":"Hexadecimal answer");
+      if(answer.kind==="hex"){
+        input.addEventListener("input",()=>{
+          const length=answer.digits||answer.value.length;
+          input.value=input.value.toUpperCase().replace(/[^0-9A-F]/g,"").slice(0,length);
+          clearAnswerState();
+        });
+      }else{
+        input.addEventListener("input",()=>{
+          input.value=normaliseDenaryInput(input.value).replace(/[^0-9-]/g,"").replace(/(?!^)-/g,"");
+          clearAnswerState();
+        });
+      }
+      area.appendChild(input);
+      requestAnimationFrame(()=>input.focus());
+      return;
+    }
+
+    const choices=document.createElement("div");
+    choices.className="choice-answer";
+    [{value:"yes",label:"Yes"},{value:"no",label:"No"}].forEach(option=>{
+      const button=document.createElement("button");
+      button.type="button";
+      button.textContent=option.label;
+      button.dataset.value=option.value;
+      button.setAttribute("aria-pressed","false");
+      button.addEventListener("click",()=>{
+        state.selectedChoice=option.value;
+        choices.querySelectorAll("button").forEach(item=>item.setAttribute("aria-pressed",String(item===button)));
+        clearAnswerState();
+      });
+      choices.appendChild(button);
+    });
+    area.appendChild(choices);
+    requestAnimationFrame(()=>choices.querySelector("button")?.focus());
+  }
+
+  function bindBinaryInputs(control){
+    const inputs=[...control.querySelectorAll(".bit-input")];
+
+    function distribute(text,startIndex=0){
+      const bits=text.replace(/[^01]/g,"");
+      if(!bits) return;
+      bits.slice(0,inputs.length-startIndex).split("").forEach((bit,offset)=>{
+        inputs[startIndex+offset].value=bit;
+      });
+      const next=Math.min(startIndex+bits.length,inputs.length-1);
+      inputs[next].focus();
+      inputs[next].select();
+      clearAnswerState();
+    }
+
+    inputs.forEach((input,index)=>{
+      input.addEventListener("input",event=>{
+        const cleaned=event.target.value.replace(/[^01]/g,"");
+        if(cleaned.length>1){
+          distribute(cleaned,index);
+          return;
+        }
+        event.target.value=cleaned.slice(-1);
+        clearAnswerState();
+        if(event.target.value&&index<inputs.length-1){
+          inputs[index+1].focus();
+          inputs[index+1].select();
+        }
+      });
+
+      input.addEventListener("paste",event=>{
+        const text=event.clipboardData?.getData("text")||"";
+        if(/[01]/.test(text)){
+          event.preventDefault();
+          distribute(text,index);
+        }
+      });
+
+      input.addEventListener("keydown",event=>{
+        if(event.key==="ArrowLeft"&&index>0){
+          event.preventDefault();
+          inputs[index-1].focus();
+          inputs[index-1].select();
+        }else if(event.key==="ArrowRight"&&index<inputs.length-1){
+          event.preventDefault();
+          inputs[index+1].focus();
+          inputs[index+1].select();
+        }else if(event.key==="Backspace"&&!input.value&&index>0){
+          event.preventDefault();
+          inputs[index-1].value="";
+          inputs[index-1].focus();
+          clearAnswerState();
+        }else if(event.key==="Home"){
+          event.preventDefault();
+          inputs[0].focus();
+          inputs[0].select();
+        }else if(event.key==="End"){
+          event.preventDefault();
+          inputs.at(-1).focus();
+          inputs.at(-1).select();
+        }
+      });
+    });
+  }
+
+  function renderQuestion(forcedKey=null){
+    state.question=generateQuestion(forcedKey);
+    state.correct=false;
+    state.helpPinned=false;
+    state.helpPreview=false;
+    $("prompt").textContent=state.question.prompt;
+    $("helpTip").textContent=state.question.hint;
+    $("answerLabel").textContent=state.question.answerLabel;
+    renderInitial(state.question.initial);
+    renderAnswer(state.question.answer);
+    $("feedback").textContent="";
+    $("feedback").className="feedback";
+    $("checkButton").textContent="Check answer";
+    syncHelp();
+  }
+
+  function clearAnswerState(){
+    if(state.correct) return;
+    $("feedback").textContent="";
+    $("feedback").className="feedback";
+    document.querySelectorAll(".incorrect,.correct").forEach(element=>element.classList.remove("incorrect","correct"));
+  }
+
+  function readAnswer(){
+    const expected=state.question.answer;
+    if(expected.kind==="binary"){
+      const inputs=[...document.querySelectorAll("[data-bit-input]")];
+      if(inputs.some(input=>input.value!=="0"&&input.value!=="1")) return {complete:false};
+      return {complete:true,value:inputs.map(input=>input.value).join("")};
+    }
+    if(expected.kind==="choice"){
+      return state.selectedChoice?{complete:true,value:state.selectedChoice}:{complete:false};
+    }
+    const input=$("answerArea").querySelector(".text-answer");
+    const raw=input.value.trim();
+    if(!raw) return {complete:false};
+    if(expected.kind==="denary"){
+      const normalised=normaliseDenaryInput(raw);
+      if(!/^-?\d+$/.test(normalised)) return {complete:false};
+      return {complete:true,value:Number(normalised)};
+    }
+    const digits=expected.digits||expected.value.length;
+    if(!new RegExp(`^[0-9A-Fa-f]{1,${digits}}$`).test(raw)) return {complete:false};
+    return {complete:true,value:raw.toUpperCase().padStart(digits,"0")};
+  }
+
+  function markAnswer(kind){
+    const target=$("answerArea").querySelector(".answer-control,.text-answer,.choice-answer");
+    target?.classList.add(kind);
+  }
+
+  function checkAnswer(){
+    const submitted=readAnswer();
+    const feedback=$("feedback");
+    if(!submitted.complete){
+      feedback.textContent="Complete the answer before checking.";
+      feedback.className="feedback bad";
+      markAnswer("incorrect");
+      return;
+    }
+
+    const expected=state.question.answer.value;
+    if(submitted.value===expected){
+      state.correct=true;
+      feedback.textContent=state.question.solution;
+      feedback.className="feedback good";
+      markAnswer("correct");
+      $("checkButton").textContent="Next question";
+      document.querySelectorAll("#answerArea input,#answerArea button").forEach(control=>control.disabled=true);
+      $("checkButton").focus();
+    }else{
+      feedback.textContent="Not correct. Check the register and try again.";
+      feedback.className="feedback bad";
+      markAnswer("incorrect");
+    }
+  }
+
+  function syncHelp(){
+    const active=state.helpPinned||state.helpPreview;
+    $("questionCard").classList.toggle("help-active",active);
+    $("helpButton").setAttribute("aria-expanded",String(active));
+  }
+
+  function setLevel(level){
+    state.level=level;
+    state.lastTemplate=null;
+    state.recent=[];
+    document.querySelectorAll("[data-level]").forEach(button=>{
+      button.setAttribute("aria-checked",String(button.dataset.level===level));
+    });
+    renderQuestion();
+  }
+
+  function setRange(range){
+    state.range=range;
+    state.lastTemplate=null;
+    state.recent=[];
+    document.querySelectorAll("[data-range]").forEach(button=>{
+      button.setAttribute("aria-checked",String(button.dataset.range===range));
+    });
+    renderQuestion();
+  }
+
+  $("answerForm").addEventListener("submit",event=>{
+    event.preventDefault();
+    if(state.correct) renderQuestion();
+    else checkAnswer();
+  });
+  $("newButton").addEventListener("click",()=>renderQuestion());
+
+  document.querySelectorAll("[data-level]").forEach(button=>{
+    button.addEventListener("click",()=>setLevel(button.dataset.level));
+  });
+  document.querySelectorAll("[data-range]").forEach(button=>{
+    button.addEventListener("click",()=>setRange(button.dataset.range));
+  });
+
+  const helpButton=$("helpButton");
+  helpButton.addEventListener("pointerenter",()=>{state.helpPreview=true;syncHelp();});
+  helpButton.addEventListener("pointerleave",()=>{state.helpPreview=false;syncHelp();});
+  helpButton.addEventListener("focus",()=>{state.helpPreview=true;syncHelp();});
+  helpButton.addEventListener("blur",()=>{state.helpPreview=false;syncHelp();});
+  helpButton.addEventListener("click",()=>{
+    state.helpPinned=!state.helpPinned;
+    state.helpPreview=false;
+    syncHelp();
+  });
+
+  document.addEventListener("keydown",event=>{
+    if(event.key==="Escape"&&state.helpPinned){
+      state.helpPinned=false;
+      state.helpPreview=false;
+      syncHelp();
+      helpButton.focus();
+    }
+  });
+
+  renderQuestion();
+})();
+</script>
+</body>
+</html>

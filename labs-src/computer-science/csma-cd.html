@@ -1,0 +1,1101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- LAB_MANIFEST_HEAD_START -->
+<title>Ethernet CSMA/CD</title>
+<meta name="description" content="Explore carrier sensing, Ethernet collisions and binary exponential backoff for Cambridge A Level Computer Science 9618.">
+<link rel="canonical" href="https://www.examplicity.org/labs/computer-science/csma-cd.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Examplicity">
+<meta property="og:title" content="Ethernet CSMA/CD">
+<meta property="og:description" content="Explore carrier sensing, Ethernet collisions and binary exponential backoff for Cambridge A Level Computer Science 9618.">
+<meta property="og:url" content="https://www.examplicity.org/labs/computer-science/csma-cd.html">
+<meta property="og:image" content="https://www.examplicity.org/opengraph-image">
+<meta property="og:image:alt" content="Examplicity — Make complex ideas click">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Ethernet CSMA/CD">
+<meta name="twitter:description" content="Explore carrier sensing, Ethernet collisions and binary exponential backoff for Cambridge A Level Computer Science 9618.">
+<meta name="twitter:image" content="https://www.examplicity.org/opengraph-image">
+<script type="application/ld+json" data-lab-manifest="structured-data">{"@context":"https://schema.org","@type":"LearningResource","@id":"https://www.examplicity.org/labs/computer-science/csma-cd.html#learning-resource","url":"https://www.examplicity.org/labs/computer-science/csma-cd.html","name":"Ethernet CSMA/CD","description":"Explore carrier sensing, Ethernet collisions and binary exponential backoff for Cambridge A Level Computer Science 9618.","inLanguage":"en-GB","isAccessibleForFree":true,"interactivityType":"active","learningResourceType":"Network simulation","teaches":"Networks & communication","educationalLevel":["AS Level"],"educationalAlignment":[{"@type":"AlignmentObject","alignmentType":"educationalSubject","educationalFramework":"Cambridge International AS & A Level Computer Science","targetName":"AS 9618 section 2.1","targetUrl":"https://www.cambridgeinternational.org/Images/697372-2026-syllabus.pdf#page=16"}],"about":{"@type":"Thing","name":"Computer Science"},"audience":{"@type":"EducationalAudience","educationalRole":"student"},"provider":{"@type":"Organization","name":"Examplicity","url":"https://www.examplicity.org"},"isPartOf":{"@type":"WebSite","@id":"https://www.examplicity.org/#website","name":"Examplicity","url":"https://www.examplicity.org"}}</script>
+<!-- LAB_MANIFEST_HEAD_END -->
+<style>
+:root{
+  --bg:var(--lab-canvas);
+  --panel:var(--lab-surface);
+  --ink:var(--lab-ink);
+  --muted:var(--lab-muted);
+  --line:var(--lab-line);
+  --accent:var(--lab-accent);
+  --accent-soft:var(--lab-accent-soft);
+  --good:#26734a;
+  --good-soft:#edf8f1;
+  --warn:#9a601b;
+  --warn-soft:#fff6e8;
+  --bad:#b2453a;
+  --bad-soft:#fff0ee;
+  --network:#22313d;
+  --network-grid:#324756;
+}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{
+  margin:0;
+  background:var(--lab-canvas);
+  color:var(--lab-ink);
+  font-family:var(--lab-font-sans);
+}
+button{font:inherit;cursor:pointer}
+button:disabled{opacity:.45;cursor:not-allowed}
+main{width:min(1120px,calc(100% - 20px));margin:16px auto 38px}
+h1{margin:0;font-size:27px;font-weight:630;letter-spacing:-.025em}
+.sub{margin:5px 0 13px;color:var(--lab-muted);font-size:13px;line-height:1.45}
+.panel{background:var(--lab-surface);border:1px solid var(--lab-line);border-radius:var(--lab-panel-radius);box-shadow:var(--lab-panel-shadow,0 1px 2px rgba(29,29,31,.04))}
+button{
+  min-height:34px;
+  padding:0 10px;
+  border:1px solid var(--lab-line);
+  border-radius:var(--lab-control-radius);
+  background:var(--lab-control,#fff);
+  color:var(--lab-ink);
+}
+button:hover:not(:disabled){border-color:var(--lab-line-strong,#9ba8b2)}
+button.primary{background:var(--lab-accent);border-color:var(--lab-accent);color:#fff;font-weight:750}
+button.active{background:var(--lab-accent-soft);border-color:var(--lab-accent);color:var(--lab-accent);font-weight:800}
+
+.challenge{
+  padding:11px 12px;
+  display:grid;
+  grid-template-columns:minmax(260px,1fr) auto;
+  gap:14px;
+  align-items:center;
+}
+.eyebrow{
+  display:block;
+  margin-bottom:3px;
+  color:var(--lab-accent);
+  font-size:9px;
+  font-weight:900;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+#scenarioTitle{display:block;font-size:15px}
+#scenarioHint{display:block;margin-top:3px;color:var(--muted);font-size:10px;line-height:1.35}
+.scenario-buttons{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.scenario-buttons button{font-size:10px}
+
+.stage{margin-top:10px;padding:9px}
+.stage-head{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:center;
+  margin-bottom:7px;
+}
+.stage-head strong{font-size:14px}
+.stage-head span{display:block;margin-top:2px;color:var(--muted);font-size:10px}
+.run-buttons{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.run-buttons button{font-size:10px}
+.shell{overflow:auto;border-radius:11px;background:var(--network)}
+.canvas{
+  position:relative;
+  min-width:930px;
+  min-height:510px;
+  overflow:hidden;
+  border:1px solid #415666;
+  border-radius:11px;
+  background:
+    radial-gradient(circle at 50% 60%,rgba(87,116,137,.2),transparent 25rem),
+    repeating-linear-gradient(0deg,transparent 0 31px,rgba(173,194,209,.1) 32px),
+    repeating-linear-gradient(90deg,transparent 0 31px,rgba(173,194,209,.1) 32px),
+    var(--network);
+}
+.station-layer,.signal-layer{position:absolute;inset:0}
+.station-layer{z-index:5;pointer-events:none}
+.signal-layer{z-index:4;pointer-events:none}
+
+.station{
+  position:absolute;
+  top:28px;
+  width:230px;
+  min-height:152px;
+  transform:translateX(-50%);
+  border:1px solid #6f8290;
+  border-radius:12px;
+  background:linear-gradient(145deg,#455866,#22303a 72%,#344754);
+  color:#f5f8fa;
+  box-shadow:0 10px 20px rgba(8,17,24,.26),inset 0 0 0 1px rgba(255,255,255,.08);
+  overflow:hidden;
+  transition:border-color .2s,box-shadow .2s,transform .2s;
+}
+.station.focus{
+  border-color:var(--station);
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--station) 24%,transparent),0 0 19px color-mix(in srgb,var(--station) 43%,transparent),0 10px 20px rgba(0,0,0,.32);
+}
+.station.collision{
+  border-color:#e9685c;
+  box-shadow:0 0 0 3px rgba(233,104,92,.24),0 0 21px rgba(233,104,92,.52),0 10px 20px rgba(0,0,0,.32);
+}
+.station.success{
+  border-color:#4fba78;
+  box-shadow:0 0 0 3px rgba(79,186,120,.22),0 0 17px rgba(79,186,120,.38),0 10px 20px rgba(0,0,0,.32);
+}
+.station-head{
+  height:32px;
+  display:flex;
+  align-items:center;
+  gap:7px;
+  padding:0 9px;
+  border-bottom:1px solid rgba(255,255,255,.12);
+  background:linear-gradient(180deg,#526674,#364854);
+}
+.station-dot{width:8px;height:8px;border-radius:50%;background:#91a1ac;flex:0 0 auto}
+.station.focus .station-dot{background:var(--station);box-shadow:0 0 7px var(--station)}
+.station.collision .station-dot{background:#ee6a5e;box-shadow:0 0 8px #ee6a5e}
+.station.success .station-dot{background:#55bd7b;box-shadow:0 0 8px #55bd7b}
+.station-name{flex:1;font-size:10px;font-weight:900}
+.station-state{
+  padding:3px 6px;
+  border-radius:999px;
+  background:#405563;
+  color:#e0e8ed;
+  font-size:7px;
+  font-weight:850;
+  white-space:nowrap;
+}
+.station-body{padding:9px}
+.station-thought{min-height:42px;color:#edf2f5;font-size:10px;line-height:1.35}
+.station-frame{
+  margin-top:7px;
+  padding:6px 7px;
+  border:1px solid #607584;
+  border-radius:7px;
+  background:#263844;
+  color:#d6e0e6;
+  font:800 8px/1.35 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.station-frame.empty{color:#91a1ac}
+
+.tap{
+  position:absolute;
+  top:180px;
+  height:118px;
+  border-left:3px solid #8499a7;
+  transform:translateX(-50%);
+  z-index:2;
+}
+.tap::after{
+  content:"";
+  position:absolute;
+  left:-8px;
+  bottom:-8px;
+  width:13px;
+  height:13px;
+  border:2px solid #dce5ea;
+  border-radius:50%;
+  background:#2d4657;
+  box-shadow:0 0 0 4px rgba(255,255,255,.04);
+}
+.tap.busy::after{background:#d7a23f;box-shadow:0 0 0 4px rgba(215,162,63,.16),0 0 11px rgba(215,162,63,.8)}
+.tap.send::after{background:var(--station);box-shadow:0 0 0 4px color-mix(in srgb,var(--station) 22%,transparent),0 0 12px var(--station)}
+.tap.collision::after{background:#ec6257;box-shadow:0 0 0 5px rgba(236,98,87,.2),0 0 15px #ec6257}
+
+.cable{
+  position:absolute;
+  left:5%;
+  right:5%;
+  top:293px;
+  height:14px;
+  border:1px solid #9aabb6;
+  border-radius:999px;
+  background:linear-gradient(#8297a5,#4e6473 46%,#273743 52%,#657b8a);
+  box-shadow:0 0 0 3px rgba(255,255,255,.035),0 5px 11px rgba(0,0,0,.34);
+  z-index:1;
+}
+.cable::after{content:"";position:absolute;left:0;right:0;top:3px;height:2px;border-radius:99px;background:rgba(255,255,255,.28)}
+.cable-label{
+  position:absolute;
+  left:50%;
+  top:315px;
+  transform:translateX(-50%);
+  color:#a9bac5;
+  font:800 7px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  letter-spacing:.05em;
+  text-transform:uppercase;
+}
+
+.signal{
+  position:absolute;
+  top:289px;
+  height:22px;
+  min-width:2px;
+  border:2px solid rgba(255,255,255,.76);
+  border-radius:999px;
+  background:var(--signal);
+  box-shadow:0 0 13px color-mix(in srgb,var(--signal) 74%,transparent);
+  opacity:1;
+  transition:left .62s cubic-bezier(.2,.78,.2,1),width .62s cubic-bezier(.2,.78,.2,1),opacity .22s;
+}
+.signal::before,.signal::after{
+  content:"";
+  position:absolute;
+  top:50%;
+  width:8px;
+  height:8px;
+  border:2px solid #fff;
+  border-radius:50%;
+  background:var(--signal);
+  transform:translateY(-50%);
+}
+.signal::before{left:-5px}.signal::after{right:-5px}
+.signal-label{
+  position:absolute;
+  left:50%;
+  bottom:27px;
+  transform:translateX(-50%);
+  max-width:190px;
+  padding:3px 6px;
+  border-radius:5px;
+  background:rgba(28,41,50,.94);
+  color:#f6fbfd;
+  font:800 8px/1.25 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.signal.collision-band{
+  top:286px;
+  height:28px;
+  border-radius:5px;
+  border-color:#ffd6d2;
+  background:repeating-linear-gradient(135deg,#ee6256 0 6px,#7b2923 6px 12px);
+  box-shadow:0 0 17px rgba(238,98,86,.82);
+  z-index:8;
+}
+.signal.collision-band::before,.signal.collision-band::after{display:none}
+.signal.jam-band{
+  top:286px;
+  height:28px;
+  border-radius:5px;
+  border-color:#ffe0b6;
+  background:repeating-linear-gradient(135deg,#f29a3d 0 6px,#8c4216 6px 12px);
+  box-shadow:0 0 15px rgba(242,154,61,.78);
+  z-index:9;
+}
+.signal.jam-band::before,.signal.jam-band::after{display:none}
+
+.narration{
+  position:absolute;
+  left:7%;
+  right:7%;
+  top:352px;
+  z-index:12;
+  min-height:118px;
+  display:grid;
+  grid-template-columns:135px 1fr;
+  gap:14px;
+  align-items:start;
+  padding:13px 14px;
+  border:1px solid #607583;
+  border-left:5px solid var(--tone,#6f8798);
+  border-radius:11px;
+  background:rgba(32,46,56,.97);
+  color:#f3f7f9;
+  box-shadow:0 12px 24px rgba(8,17,24,.24);
+}
+.narration-phase{
+  padding:7px 8px;
+  border:1px solid #607583;
+  border-radius:8px;
+  background:#2a3d4a;
+  color:#bbc9d2;
+  font-size:9px;
+  font-weight:900;
+  letter-spacing:.07em;
+  text-transform:uppercase;
+}
+.narration-phase strong{display:block;margin-top:4px;color:#fff;font-size:15px;letter-spacing:0;text-transform:none}
+.narration-copy strong{display:block;font-size:14px;line-height:1.25}
+.narration-copy p{margin:5px 0 0;color:#d7e0e5;font-size:10px;line-height:1.45}
+.visual-key{margin-top:8px;color:#acbbc5;font-size:9px}
+.visual-key b{color:#e1e7eb}
+
+.rule{
+  margin-top:8px;
+  padding:9px 11px;
+  border-left:3px solid var(--lab-accent);
+  border-radius:7px;
+  background:var(--lab-accent-soft);
+  color:var(--lab-ink);
+  font-size:11px;
+  line-height:1.4;
+}
+.rule strong{color:var(--lab-accent)}
+
+@media(max-width:760px){
+  main{width:min(100% - 12px,1120px);margin-top:8px}
+  .challenge{grid-template-columns:1fr}
+  .scenario-buttons{justify-content:flex-start}
+  .stage-head{align-items:flex-start;flex-direction:column}
+  .run-buttons{justify-content:flex-start}
+}
+@media(prefers-reduced-motion:reduce){
+  .signal{transition-duration:.08s}
+}
+</style>
+<!-- LAB_FRAME_STYLES_START -->
+<style data-lab-frame>
+:root {
+  --lab-canvas: #f3f5f7;
+  --lab-paper: #fbfbfd;
+  --lab-surface: #ffffff;
+  --lab-control: #ffffff;
+  --lab-ink: #1d1d1f;
+  --lab-muted: #6e6e73;
+  --lab-line: #d2d2d7;
+  --lab-line-strong: #a7a7ad;
+  --lab-accent: #5277b8;
+  --lab-accent-soft: #eef2fa;
+  --lab-good: #18794e;
+  --lab-good-soft: #edf8f1;
+  --lab-warn: #946200;
+  --lab-warn-soft: #fff6e7;
+  --lab-bad: #b42318;
+  --lab-bad-soft: #fff0ee;
+  --lab-focus: #1d1d1f;
+  --lab-focus-soft: rgba(29, 29, 31, 0.18);
+  --lab-font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+  --lab-panel-radius: 12px;
+  --lab-control-radius: 8px;
+  --lab-pill-radius: 999px;
+  --lab-control-height: 35px;
+  --lab-panel-shadow: 0 1px 2px rgba(29, 29, 31, 0.04);
+  --lab-page-gutter: max(28px, calc((100vw - 1200px) / 2));
+  --lab-compact-workspace-max: 820px;
+}
+
+html,
+body {
+  background: var(--lab-canvas);
+}
+
+body {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  align-content: start !important;
+  font-family: var(--lab-font-sans);
+  padding-bottom: 0;
+  padding-top: 0 !important;
+  text-rendering: optimizeLegibility;
+}
+
+.lab-manifest-header {
+  align-items: start;
+  border-bottom: 1px solid var(--line, var(--lab-line));
+  display: grid;
+  gap: 18px 28px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  margin-bottom: 26px;
+  padding-bottom: 22px;
+}
+
+.lab-manifest-heading {
+  min-width: 0;
+}
+
+.lab-manifest-header h1 {
+  color: var(--ink, var(--lab-ink));
+  font-family: var(--lab-font-sans);
+  font-size: clamp(25px, 3.2vw, 40px);
+  font-weight: 650;
+  letter-spacing: -0.045em;
+  line-height: 1.02;
+  margin: 0;
+  max-width: 24ch;
+  padding: 0;
+  text-align: left;
+}
+
+.lab-manifest-subtitle {
+  color: var(--muted, var(--lab-muted));
+  font-family: var(--lab-font-sans);
+  font-size: 13px;
+  letter-spacing: 0;
+  line-height: 1.5;
+  margin: 10px 0 0;
+  max-width: 72ch;
+  padding: 0;
+  text-align: left;
+}
+
+.lab-authored-title-slot {
+  min-width: 0;
+}
+
+.lab-syllabus-chips {
+  align-items: center;
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+  margin: 0 0 0 auto;
+  max-width: 100%;
+}
+
+.lab-syllabus-chip {
+  align-items: center;
+  background: var(--syllabus-chip-bg) !important;
+  border: 1px solid var(--syllabus-chip-border) !important;
+  border-radius: var(--lab-pill-radius);
+  color: var(--syllabus-chip-text) !important;
+  display: inline-flex;
+  font-size: 11px;
+  font-weight: 650;
+  gap: 4px;
+  line-height: 1;
+  min-height: 29px;
+  padding: 8px 10px;
+  position: relative;
+  transition: background-color 140ms ease, border-color 140ms ease;
+  white-space: nowrap;
+}
+
+.lab-syllabus-chip:hover {
+  background: var(--syllabus-chip-hover) !important;
+}
+
+.lab-syllabus-primary-link {
+  border-radius: inherit;
+  inset: 0;
+  position: absolute;
+  z-index: 0;
+}
+
+.lab-syllabus-primary-link:focus-visible {
+  outline: 2px solid var(--syllabus-chip-text);
+  outline-offset: 2px;
+}
+
+.lab-syllabus-name,
+.lab-syllabus-divider,
+.lab-syllabus-sections {
+  pointer-events: none;
+  position: relative;
+  z-index: 1;
+}
+
+.lab-syllabus-section {
+  border-radius: 4px;
+  color: inherit;
+  padding: 2px;
+  text-decoration: none;
+}
+
+a.lab-syllabus-section {
+  pointer-events: auto;
+}
+
+a.lab-syllabus-section:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+a.lab-syllabus-section:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 1px;
+}
+
+.lab-syllabus-name {
+  color: var(--syllabus-chip-text) !important;
+}
+
+.lab-syllabus-divider,
+.lab-syllabus-separator {
+  color: var(--muted, var(--lab-muted));
+}
+
+.lab-syllabus-prefix {
+  opacity: 0.72;
+  padding-left: 5px;
+}
+
+.lab-syllabus-sections {
+  align-items: center;
+  display: inline-flex;
+}
+
+.lab-syllabus-separator {
+  margin-inline: 0 2px;
+}
+
+html[data-theme="dark"] .lab-syllabus-name {
+  color: var(--syllabus-chip-border) !important;
+}
+
+html[data-theme="dark"] .lab-syllabus-chip:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+html[data-theme="dark"],
+html[data-theme="dark"] body {
+  background: var(--bg);
+}
+
+body > main {
+  container-name: lab-canvas;
+  container-type: inline-size;
+  margin-left: var(--lab-page-gutter);
+  margin-right: auto;
+  margin-top: 18px;
+  max-width: 1200px;
+  width: calc(100vw - var(--lab-page-gutter) - var(--lab-page-gutter));
+}
+
+body[data-lab-layout="compact"] .lab-manifest-header {
+  margin-bottom: 17px;
+  padding-bottom: 13px;
+}
+
+body[data-lab-layout="compact"] [data-lab-workspace] {
+  margin-left: auto;
+  margin-right: auto;
+  width: min(var(--lab-compact-workspace-max), 100%);
+}
+
+:where(button, input, select, textarea, summary):focus-visible {
+  outline: 3px solid var(--lab-focus);
+  outline-offset: 4px;
+}
+
+@media (max-width: 620px) {
+  :root {
+    --lab-page-gutter: 18px;
+  }
+
+  body {
+    padding-bottom: 0;
+    padding-top: 0 !important;
+  }
+
+  .lab-manifest-header {
+    gap: 14px;
+    grid-template-columns: minmax(0, 1fr) !important;
+    margin-bottom: 20px;
+    padding-bottom: 18px;
+  }
+
+  body[data-lab-layout="compact"] .lab-manifest-header {
+    margin-bottom: 16px;
+    padding-bottom: 14px;
+  }
+
+  .lab-manifest-header h1 {
+    font-size: clamp(24px, 8vw, 34px);
+  }
+
+  .lab-syllabus-chips {
+    gap: 4px;
+    justify-content: flex-start !important;
+    margin: 0 !important;
+  }
+
+  .lab-syllabus-chip {
+    font-size: 10px;
+    max-width: 100%;
+    min-height: 27px;
+    padding: 7px 8px;
+    white-space: normal;
+  }
+
+  .lab-syllabus-sections {
+    flex-wrap: wrap;
+  }
+
+  body > main {
+    margin-top: 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+</style>
+<!-- LAB_FRAME_STYLES_END -->
+<link rel="stylesheet" href="./lab-kit.css" data-lab-resource="lab-kit.css">
+</head>
+<body data-lab-layout="standard">
+<main>
+<!-- LAB_MANIFEST_HEADER_START -->
+<header class="lab-manifest-header">
+  <div class="lab-manifest-heading">
+    <h1 data-lab-manifest="title">Ethernet CSMA/CD</h1>
+  <p class="lab-manifest-subtitle" data-lab-manifest="subtitle">Explore CSMA/CD for Cambridge AS &amp; A Level Computer Science 9618 as three stations share one cable and respond when two begin at once.</p>
+  </div>
+  <!-- LAB_SYLLABUS_CHIPS_START -->
+<nav class="lab-syllabus-chips" aria-label="Syllabus alignment">
+  <section class="lab-syllabus-chip" style="--syllabus-chip-bg:#f4effb;--syllabus-chip-border:#b9a2dc;--syllabus-chip-text:#4f2b77;--syllabus-chip-hover:#e8ddf6" aria-label="AS 9618 syllabus alignment">
+    <a class="lab-syllabus-primary-link" href="https://www.cambridgeinternational.org/Images/697372-2026-syllabus.pdf#page=16" target="_blank" rel="noopener noreferrer" aria-label="Open AS 9618 syllabus section 2.1"></a>
+    <span class="lab-syllabus-name">AS 9618</span>
+    <span class="lab-syllabus-divider" aria-hidden="true">·</span>
+    <span class="lab-syllabus-sections"><span class="lab-syllabus-section is-primary">2.1</span></span>
+  </section>
+</nav>
+<!-- LAB_SYLLABUS_CHIPS_END -->
+</header>
+<!-- LAB_MANIFEST_HEADER_END -->
+<span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span>
+  <span data-lab-authored-subtitle-slot hidden></span>
+
+  <section class="panel challenge">
+    <div>
+      <span class="eyebrow">Choose a situation</span>
+      <strong id="scenarioTitle">Two stations both hear silence</strong>
+      <span id="scenarioHint">A and C are far apart. Their signals need time to travel, so both may start before hearing the other.</span>
+    </div>
+    <div class="scenario-buttons" role="group" aria-label="Choose a transmission situation">
+      <button data-scenario="singleA">A sends to C</button>
+      <button data-scenario="singleB">B sends to C</button>
+      <button class="active" data-scenario="collision">A and C collide</button>
+    </div>
+  </section>
+
+  <section class="panel stage">
+    <div class="stage-head">
+      <div>
+        <strong>Shared Ethernet cable</strong>
+        <span>Watch the signal on the cable and the decision made at each station.</span>
+      </div>
+      <div class="run-buttons">
+        <button id="nextButton">Next</button>
+        <button id="playButton" class="primary">Play</button>
+        <button id="resetButton">Reset</button>
+      </div>
+    </div>
+
+    <div class="shell">
+      <div id="canvas" class="canvas">
+        <div class="cable"></div>
+        <div class="cable-label">Shared cable</div>
+        <div id="signalLayer" class="signal-layer"></div>
+        <div id="stationLayer" class="station-layer"></div>
+
+        <div id="narration" class="narration" aria-live="polite">
+          <div class="narration-phase">
+            <span id="stepCount">Step 1 of 9</span>
+            <strong id="phaseLabel">Ready</strong>
+          </div>
+          <div class="narration-copy">
+            <strong id="narrationTitle">A and C both have a frame to send.</strong>
+            <p id="narrationText">Press Play or Next. Each station will make its own decision from the signal it can hear at its connection.</p>
+            <div class="visual-key"><b>Colour</b> = a frame signal · <b>red</b> = collision · <b>orange</b> = jam signal</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="rule">
+      <strong>CSMA/CD:</strong> Listen first → send while still listening → if a collision is heard, stop, wait a random time, then retry.
+    </div>
+  </section>
+</main>
+
+
+<script src="./lab-kit.js" data-lab-resource="lab-kit.js"></script>
+<script>
+(() => {
+  "use strict";
+
+  const $=LabKit.dom.byId;
+  const reduceMotion=window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  const STEP_DELAY=reduceMotion?120:1050;
+
+  const STATIONS={
+    A:{name:"Station A",position:10,colour:"#4ba7e3"},
+    B:{name:"Station B",position:50,colour:"#59b979"},
+    C:{name:"Station C",position:90,colour:"#d5a340"}
+  };
+
+  const SCENARIO_COPY={
+    singleA:{
+      title:"A sends one frame to C",
+      hint:"A listens first. Once its signal reaches the other stations, they know the cable is busy."
+    },
+    singleB:{
+      title:"B sends one frame to C",
+      hint:"Any station may use the shared cable. The same rules apply to all of them."
+    },
+    collision:{
+      title:"Two stations both hear silence",
+      hint:"A and C are far apart. Their signals need time to travel, so both may start before hearing the other."
+    }
+  };
+
+  const idleStation=(thought="Waiting for something to send.")=>({state:"Waiting",thought,tone:"idle",frame:""});
+  const signal=(id,start,end,colour,label,type="data")=>({id,start,end,colour,label,type});
+
+  function singleScenario(sender,destination,payload){
+    const other=["A","B","C"].find(id=>id!==sender&&id!==destination);
+    const source=STATIONS[sender];
+    const frame=`${sender} → ${destination} · “${payload}”`;
+    const start=source.position;
+    const nearLeft=Math.max(0,start-18);
+    const nearRight=Math.min(100,start+18);
+    const midLeft=Math.max(0,start-48);
+    const midRight=Math.min(100,start+48);
+
+    return [
+      {
+        phase:"Ready",tone:"#6f8798",
+        title:`${source.name} has a frame for Station ${destination}.`,
+        text:"The cable is quiet. Press Play or Next to follow the decision.",
+        stations:{
+          A:sender==="A"?{state:"Ready",thought:`I want to send “${payload}” to ${destination}.`,tone:"focus",frame}:idleStation(),
+          B:sender==="B"?{state:"Ready",thought:`I want to send “${payload}” to ${destination}.`,tone:"focus",frame}:idleStation(),
+          C:sender==="C"?{state:"Ready",thought:`I want to send “${payload}” to ${destination}.`,tone:"focus",frame}:idleStation()
+        },signals:[]
+      },
+      {
+        phase:"Listen",tone:"#69a7d8",
+        title:`${source.name} checks the cable before speaking.`,
+        text:"It hears no signal at its own connection, so the medium appears idle.",
+        stations:{
+          A:sender==="A"?{state:"Listening",thought:"Is the cable quiet? Yes.",tone:"focus",frame}:idleStation(),
+          B:sender==="B"?{state:"Listening",thought:"Is the cable quiet? Yes.",tone:"focus",frame}:idleStation(),
+          C:sender==="C"?{state:"Listening",thought:"Is the cable quiet? Yes.",tone:"focus",frame}:idleStation()
+        },signals:[]
+      },
+      {
+        phase:"Send",tone:source.colour,
+        title:`${source.name} starts sending the frame.`,
+        text:"The electrical signal spreads away from the station in both directions. The sender keeps listening while it transmits.",
+        stations:{
+          A:sender==="A"?{state:"Sending",thought:"I am sending and listening at the same time.",tone:"focus",tap:"send",frame}:idleStation("I have not heard the signal yet."),
+          B:sender==="B"?{state:"Sending",thought:"I am sending and listening at the same time.",tone:"focus",tap:"send",frame}:idleStation("I have not heard the signal yet."),
+          C:sender==="C"?{state:"Sending",thought:"I am sending and listening at the same time.",tone:"focus",tap:"send",frame}:idleStation("I have not heard the signal yet.")
+        },signals:[signal("frame",nearLeft,nearRight,source.colour,frame)]
+      },
+      {
+        phase:"Busy",tone:"#d7a23f",
+        title:"The signal reaches the other stations.",
+        text:"They now hear a busy cable, so they do not begin another transmission.",
+        stations:{
+          A:sender==="A"?{state:"Sending",thought:"Still sending. No collision heard.",tone:"focus",tap:"send",frame}:{state:"Busy",thought:"I hear a signal, so I wait.",tone:"idle",tap:"busy",frame:""},
+          B:sender==="B"?{state:"Sending",thought:"Still sending. No collision heard.",tone:"focus",tap:"send",frame}:{state:"Busy",thought:"I hear a signal, so I wait.",tone:"idle",tap:"busy",frame:""},
+          C:sender==="C"?{state:"Sending",thought:"Still sending. No collision heard.",tone:"focus",tap:"send",frame}:{state:"Busy",thought:"I hear a signal, so I wait.",tone:"idle",tap:"busy",frame:""}
+        },signals:[signal("frame",midLeft,midRight,source.colour,frame)]
+      },
+      {
+        phase:"Receive",tone:"#55bd7b",
+        title:`Station ${destination} receives the complete frame.`,
+        text:`The destination accepts “${payload}”. ${other} heard the frame but it was not addressed there.`,
+        stations:{
+          A:destination==="A"?{state:"Received",thought:`The frame is for me: “${payload}”.`,tone:"success",tap:"busy",frame}:sender==="A"?{state:"Sending",thought:"The final part of my frame is leaving.",tone:"focus",tap:"send",frame}:{state:"Not for me",thought:"I hear the frame, but it has another destination.",tone:"idle",tap:"busy",frame:""},
+          B:destination==="B"?{state:"Received",thought:`The frame is for me: “${payload}”.`,tone:"success",tap:"busy",frame}:sender==="B"?{state:"Sending",thought:"The final part of my frame is leaving.",tone:"focus",tap:"send",frame}:{state:"Not for me",thought:"I hear the frame, but it has another destination.",tone:"idle",tap:"busy",frame:""},
+          C:destination==="C"?{state:"Received",thought:`The frame is for me: “${payload}”.`,tone:"success",tap:"busy",frame}:sender==="C"?{state:"Sending",thought:"The final part of my frame is leaving.",tone:"focus",tap:"send",frame}:{state:"Not for me",thought:"I hear the frame, but it has another destination.",tone:"idle",tap:"busy",frame:""}
+        },signals:[signal("frame",0,100,source.colour,frame)]
+      },
+      {
+        phase:"Done",tone:"#55bd7b",
+        title:"The cable becomes quiet again.",
+        text:"Carrier sensing helped the stations share the medium without a collision.",
+        stations:{
+          A:sender==="A"?{state:"Sent",thought:`My frame reached ${destination}.`,tone:"success",frame}:destination==="A"?{state:"Delivered",thought:`I received “${payload}”.`,tone:"success",frame}:idleStation("The cable is idle again."),
+          B:sender==="B"?{state:"Sent",thought:`My frame reached ${destination}.`,tone:"success",frame}:destination==="B"?{state:"Delivered",thought:`I received “${payload}”.`,tone:"success",frame}:idleStation("The cable is idle again."),
+          C:sender==="C"?{state:"Sent",thought:`My frame reached ${destination}.`,tone:"success",frame}:destination==="C"?{state:"Delivered",thought:`I received “${payload}”.`,tone:"success",frame}:idleStation("The cable is idle again.")
+        },signals:[]
+      }
+    ];
+  }
+
+  function collisionScenario(){
+    const aWait=Math.random()<.5?0:1;
+    const cWait=1-aWait;
+    const winner=aWait<cWait?"A":"C";
+    const loser=winner==="A"?"C":"A";
+    const winnerFrame=winner==="A"?"A → C · “HELLO”":"C → A · “READY?”";
+    const loserFrame=loser==="A"?"A → C · “HELLO”":"C → A · “READY?”";
+    const winnerColour=STATIONS[winner].colour;
+    const loserColour=STATIONS[loser].colour;
+    const winnerDestination=winner==="A"?"C":"A";
+    const loserDestination=loser==="A"?"C":"A";
+
+    return [
+      {
+        phase:"Ready",tone:"#6f8798",
+        title:"A and C both have a frame to send.",
+        text:"There is no central referee. Each station must decide from what it can hear locally.",
+        stations:{
+          A:{state:"Ready",thought:"I want to send “HELLO” to C.",tone:"focus",frame:"A → C · “HELLO”"},
+          B:idleStation(),
+          C:{state:"Ready",thought:"I want to send “READY?” to A.",tone:"focus",frame:"C → A · “READY?”"}
+        },signals:[]
+      },
+      {
+        phase:"Listen",tone:"#69a7d8",
+        title:"A and C both check the cable.",
+        text:"Both hear silence. The other station's signal has not started yet, so both decide they may send.",
+        stations:{
+          A:{state:"Listening",thought:"My connection is quiet. I can send.",tone:"focus",frame:"A → C · “HELLO”"},
+          B:idleStation("I have nothing to send."),
+          C:{state:"Listening",thought:"My connection is quiet. I can send.",tone:"focus",frame:"C → A · “READY?”"}
+        },signals:[]
+      },
+      {
+        phase:"Send",tone:"#8e9fb1",
+        title:"A and C start at almost the same time.",
+        text:"Their signals spread along the cable. Neither sender has heard the other one yet.",
+        stations:{
+          A:{state:"Sending",thought:"I am sending and still listening.",tone:"focus",tap:"send",frame:"A → C · “HELLO”"},
+          B:idleStation("The two signals are moving towards me."),
+          C:{state:"Sending",thought:"I am sending and still listening.",tone:"focus",tap:"send",frame:"C → A · “READY?”"}
+        },signals:[
+          signal("A-frame",0,46,STATIONS.A.colour,"A → C · HELLO"),
+          signal("C-frame",54,100,STATIONS.C.colour,"C → A · READY?")
+        ]
+      },
+      {
+        phase:"Collision",tone:"#ee6256",
+        title:"The signals meet and the frame bits are damaged.",
+        text:"The clash begins near B, then the corrupted signal travels back towards both senders.",
+        stations:{
+          A:{state:"Still sending",thought:"The collision has not reached my connection yet.",tone:"focus",tap:"send",frame:"A → C · “HELLO”"},
+          B:{state:"Collision",thought:"I hear two signals at once. The data is unreadable.",tone:"collision",tap:"collision",frame:""},
+          C:{state:"Still sending",thought:"The collision has not reached my connection yet.",tone:"focus",tap:"send",frame:"C → A · “READY?”"}
+        },signals:[
+          signal("A-frame",0,60,STATIONS.A.colour,"A → C · HELLO"),
+          signal("C-frame",40,100,STATIONS.C.colour,"C → A · READY?"),
+          signal("collision",40,60,"#ee6256","signals overlap","collision")
+        ]
+      },
+      {
+        phase:"Detect",tone:"#f29a3d",
+        title:"A and C detect the collision and stop their frames.",
+        text:"Each sends a short jam signal so every station knows this attempt failed.",
+        stations:{
+          A:{state:"Jam",thought:"Collision heard. Stop the frame and mark the failure.",tone:"collision",tap:"collision",frame:"A → C · failed"},
+          B:{state:"Jam heard",thought:"The attempt failed. I keep waiting.",tone:"collision",tap:"collision",frame:""},
+          C:{state:"Jam",thought:"Collision heard. Stop the frame and mark the failure.",tone:"collision",tap:"collision",frame:"C → A · failed"}
+        },signals:[
+          signal("A-jam",0,38,"#f29a3d","jam from A","jam"),
+          signal("C-jam",62,100,"#f29a3d","jam from C","jam")
+        ]
+      },
+      {
+        phase:"Backoff",tone:"#d7a23f",
+        title:"The cable clears. A and C choose different random waits.",
+        text:`This time A chooses ${aWait} slot${aWait===1?"":"s"}; C chooses ${cWait} slot${cWait===1?"":"s"}. ${winner} will retry first.`,
+        stations:{
+          A:{state:`Wait ${aWait}`,thought:aWait===0?"My random wait is over. I will listen again.":"I wait one slot before trying again.",tone:aWait===0?"focus":"idle",frame:"A → C · “HELLO”"},
+          B:idleStation("I wait for the cable to become quiet."),
+          C:{state:`Wait ${cWait}`,thought:cWait===0?"My random wait is over. I will listen again.":"I wait one slot before trying again.",tone:cWait===0?"focus":"idle",frame:"C → A · “READY?”"}
+        },signals:[]
+      },
+      {
+        phase:"Retry",tone:winnerColour,
+        title:`${winner} retries first while ${loser} waits.`,
+        text:`${winner} listens again, finds the cable idle, and retransmits ${winnerFrame}.`,
+        stations:{
+          A:winner==="A"?{state:"Retrying",thought:"The cable is quiet. I try again.",tone:"focus",tap:"send",frame:winnerFrame}:{state:"Backoff",thought:"I keep waiting, so I do not collide again.",tone:"idle",tap:"busy",frame:loserFrame},
+          B:{state:"Busy",thought:`I hear ${winner}'s retry, so I stay quiet.`,tone:"idle",tap:"busy",frame:""},
+          C:winner==="C"?{state:"Retrying",thought:"The cable is quiet. I try again.",tone:"focus",tap:"send",frame:winnerFrame}:{state:"Backoff",thought:"I keep waiting, so I do not collide again.",tone:"idle",tap:"busy",frame:loserFrame}
+        },signals:[signal("winner-frame",0,100,winnerColour,winnerFrame)]
+      },
+      {
+        phase:"Second turn",tone:loserColour,
+        title:`${winnerDestination} receives the retry. Then ${loser} gets a turn.`,
+        text:`After the cable becomes quiet, ${loser} listens again and retransmits ${loserFrame}.`,
+        stations:{
+          A:loser==="A"?{state:"Retrying",thought:"I received the first retry. Now I send my own frame.",tone:"focus",tap:"send",frame:loserFrame}:{state:"Sent",thought:`My retry arrived. I hear ${loser}'s frame, so I stay quiet.`,tone:"success",tap:"busy",frame:winnerFrame},
+          B:{state:"Busy",thought:`I hear ${loser}'s retry, so I stay quiet.`,tone:"idle",tap:"busy",frame:""},
+          C:loser==="C"?{state:"Retrying",thought:"I received the first retry. Now I send my own frame.",tone:"focus",tap:"send",frame:loserFrame}:{state:"Sent",thought:`My retry arrived. I hear ${loser}'s frame, so I stay quiet.`,tone:"success",tap:"busy",frame:winnerFrame}
+        },signals:[signal("loser-frame",0,100,loserColour,loserFrame)]
+      },
+      {
+        phase:"Solved",tone:"#55bd7b",
+        title:"Both frames arrive without another collision.",
+        text:"Ethernet did not prevent the first collision. It detected the clash, stopped quickly, and separated the retries with random waits.",
+        stations:{
+          A:{state:"Done",thought:loserDestination==="A"?`I received ${loserFrame}.`:"My frame was delivered.",tone:"success",frame:"A → C · delivered"},
+          B:idleStation("The cable is quiet again."),
+          C:{state:"Done",thought:loserDestination==="C"?`I received ${loserFrame}.`:"My frame was delivered.",tone:"success",frame:"C → A · delivered"}
+        },signals:[]
+      }
+    ];
+  }
+
+  let scenarioKey="collision";
+  let steps=[];
+  let stepIndex=0;
+  let playing=false;
+  let playToken=0;
+
+  function canvasPercent(cablePosition){return 5+cablePosition*.9;}
+
+  function loadScenario(key,autoPlay=false){
+    stopPlaying();
+    scenarioKey=key;
+    steps=key==="singleA"
+      ?singleScenario("A","C","HELLO")
+      :key==="singleB"
+        ?singleScenario("B","C","PING")
+        :collisionScenario();
+    stepIndex=0;
+    document.querySelectorAll("[data-scenario]").forEach(button=>{
+      button.classList.toggle("active",button.dataset.scenario===key);
+    });
+    $("scenarioTitle").textContent=SCENARIO_COPY[key].title;
+    $("scenarioHint").textContent=SCENARIO_COPY[key].hint;
+    render();
+    if(autoPlay) play();
+  }
+
+  function stationToneClass(tone){
+    if(tone==="focus") return "focus";
+    if(tone==="collision") return "collision";
+    if(tone==="success") return "success";
+    return "";
+  }
+
+  function renderStations(step){
+    const layer=$("stationLayer");
+    layer.innerHTML="";
+
+    Object.entries(STATIONS).forEach(([id,meta])=>{
+      const state=step.stations[id]||idleStation();
+      const station=document.createElement("div");
+      station.className=`station ${stationToneClass(state.tone)}`;
+      station.style.left=canvasPercent(meta.position)+"%";
+      station.style.setProperty("--station",meta.colour);
+      station.innerHTML=`
+        <div class="station-head">
+          <span class="station-dot"></span>
+          <span class="station-name">${meta.name}</span>
+          <span class="station-state">${state.state}</span>
+        </div>
+        <div class="station-body">
+          <div class="station-thought">${state.thought}</div>
+          <div class="station-frame ${state.frame?"":"empty"}">${state.frame||"No frame active"}</div>
+        </div>`;
+      layer.appendChild(station);
+
+      const tap=document.createElement("div");
+      tap.className=`tap ${state.tap||""}`;
+      tap.style.left=canvasPercent(meta.position)+"%";
+      tap.style.setProperty("--station",meta.colour);
+      layer.appendChild(tap);
+    });
+  }
+
+  function applySignalPosition(element,item){
+    const left=canvasPercent(item.start);
+    const right=canvasPercent(item.end);
+    element.style.left=left+"%";
+    element.style.width=Math.max(.2,right-left)+"%";
+    element.style.opacity="1";
+  }
+
+  function renderSignals(step){
+    const layer=$("signalLayer");
+    const wanted=new Set(step.signals.map(item=>item.id));
+
+    [...layer.children].forEach(element=>{
+      if(!wanted.has(element.dataset.id)){
+        element.style.opacity="0";
+        setTimeout(()=>{if(element.parentNode&&element.style.opacity==="0") element.remove();},240);
+      }
+    });
+
+    step.signals.forEach(item=>{
+      let element=layer.querySelector(`[data-id="${item.id}"]`);
+      if(!element){
+        element=document.createElement("div");
+        element.dataset.id=item.id;
+        element.className="signal";
+        element.style.setProperty("--signal",item.colour);
+        const origin=(item.start+item.end)/2;
+        element.style.left=canvasPercent(origin)+"%";
+        element.style.width="0.2%";
+        element.style.opacity="0";
+        element.innerHTML=`<span class="signal-label"></span>`;
+        layer.appendChild(element);
+        requestAnimationFrame(()=>requestAnimationFrame(()=>applySignalPosition(element,item)));
+      }else{
+        applySignalPosition(element,item);
+      }
+      element.className=`signal ${item.type==="collision"?"collision-band":item.type==="jam"?"jam-band":""}`;
+      element.style.setProperty("--signal",item.colour);
+      element.querySelector(".signal-label").textContent=item.label;
+    });
+  }
+
+  function render(){
+    const step=steps[stepIndex];
+    if(!step) return;
+    renderStations(step);
+    renderSignals(step);
+    $("stepCount").textContent=`Step ${stepIndex+1} of ${steps.length}`;
+    $("phaseLabel").textContent=step.phase;
+    $("narrationTitle").textContent=step.title;
+    $("narrationText").textContent=step.text;
+    $("narration").style.setProperty("--tone",step.tone);
+    $("nextButton").disabled=stepIndex>=steps.length-1||playing;
+    $("playButton").textContent=playing?"Pause":stepIndex>=steps.length-1?"Replay":"Play";
+  }
+
+  function stopPlaying(){
+    playing=false;
+    playToken++;
+    if(steps.length) render();
+  }
+
+  function wait(ms,token){
+    return new Promise(resolve=>setTimeout(()=>resolve(token===playToken),ms));
+  }
+
+  async function play(){
+    if(playing){
+      stopPlaying();
+      return;
+    }
+    if(stepIndex>=steps.length-1){
+      stepIndex=0;
+      render();
+    }
+    playing=true;
+    const token=++playToken;
+    render();
+    while(playing&&stepIndex<steps.length-1){
+      const current=await wait(STEP_DELAY,token);
+      if(!current||!playing) return;
+      stepIndex++;
+      render();
+    }
+    playing=false;
+    render();
+  }
+
+  document.querySelectorAll("[data-scenario]").forEach(button=>{
+    button.addEventListener("click",()=>loadScenario(button.dataset.scenario,true));
+  });
+  $("nextButton").addEventListener("click",()=>{
+    if(stepIndex<steps.length-1){stepIndex++;render();}
+  });
+  $("playButton").addEventListener("click",play);
+  $("resetButton").addEventListener("click",()=>loadScenario(scenarioKey,false));
+
+  loadScenario("collision",false);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1945 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- LAB_MANIFEST_HEAD_START -->
+<title>Software Stack &amp; Boot Process</title>
+<meta name="description" content="Explore the operating-system software stack and computer boot process for Cambridge Computer Science 0478 and 9618.">
+<link rel="canonical" href="https://www.examplicity.org/labs/computer-science/software-stack.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Examplicity">
+<meta property="og:title" content="Software Stack &amp; Boot Process">
+<meta property="og:description" content="Explore the operating-system software stack and computer boot process for Cambridge Computer Science 0478 and 9618.">
+<meta property="og:url" content="https://www.examplicity.org/labs/computer-science/software-stack.html">
+<meta property="og:image" content="https://www.examplicity.org/opengraph-image">
+<meta property="og:image:alt" content="Examplicity — Make complex ideas click">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Software Stack &amp; Boot Process">
+<meta name="twitter:description" content="Explore the operating-system software stack and computer boot process for Cambridge Computer Science 0478 and 9618.">
+<meta name="twitter:image" content="https://www.examplicity.org/opengraph-image">
+<script type="application/ld+json" data-lab-manifest="structured-data">{"@context":"https://schema.org","@type":"LearningResource","@id":"https://www.examplicity.org/labs/computer-science/software-stack.html#learning-resource","url":"https://www.examplicity.org/labs/computer-science/software-stack.html","name":"Software Stack & Boot Process","description":"Explore the operating-system software stack and computer boot process for Cambridge Computer Science 0478 and 9618.","inLanguage":"en-GB","isAccessibleForFree":true,"interactivityType":"active","learningResourceType":"Systems model","teaches":"System software","educationalLevel":["IGCSE","AS Level"],"educationalAlignment":[{"@type":"AlignmentObject","alignmentType":"educationalSubject","educationalFramework":"Cambridge IGCSE Computer Science","targetName":"IGCSE 0478 section 4.1","targetUrl":"https://www.cambridgeinternational.org/Images/697167-2026-2028-syllabus.pdf#page=20"},{"@type":"AlignmentObject","alignmentType":"educationalSubject","educationalFramework":"Cambridge International AS & A Level Computer Science","targetName":"AS 9618 section 5.1","targetUrl":"https://www.cambridgeinternational.org/Images/697372-2026-syllabus.pdf#page=23"}],"about":{"@type":"Thing","name":"Computer Science"},"audience":{"@type":"EducationalAudience","educationalRole":"student"},"provider":{"@type":"Organization","name":"Examplicity","url":"https://www.examplicity.org"},"isPartOf":{"@type":"WebSite","@id":"https://www.examplicity.org/#website","name":"Examplicity","url":"https://www.examplicity.org"}}</script>
+<!-- LAB_MANIFEST_HEAD_END -->
+<style>
+:root{
+  --bg:var(--lab-canvas,#f3f5f7);
+  --panel:var(--lab-surface,#ffffff);
+  --ink:var(--lab-ink,#1d2730);
+  --muted:var(--lab-muted,#687681);
+  --line:var(--lab-line,#d7dfe5);
+  --accent:var(--lab-accent,#2865d8);
+  --accent-soft:var(--lab-accent-soft,#edf3ff);
+  --monitor:#252b31;
+  --screen:#070a0e;
+  --power:#3bb36b;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+button,select{font:inherit}
+button{cursor:pointer}
+main{width:min(1240px,calc(100% - 24px));margin:18px auto 42px}
+h1{margin:0;font-size:27px;font-weight:630;letter-spacing:-.02em}
+.sub{margin:5px 0 14px;color:var(--muted);font-size:13px;line-height:1.45}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--lab-panel-radius,12px);box-shadow:var(--lab-panel-shadow,0 1px 2px rgba(29,29,31,.04))}
+.mission-panel{
+  padding:11px 12px;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:14px;
+  align-items:center;
+}
+#missionText{font-size:15px;line-height:1.35}
+.mission-actions{display:flex;gap:8px;align-items:end;flex-wrap:wrap}
+.mission-actions label{color:var(--muted);font-size:10px}
+.mission-actions label span{display:block;margin-bottom:4px}
+select{
+  height:35px;border:1px solid var(--line);border-radius:var(--lab-control-radius,8px);background:var(--lab-control,var(--lab-surface,#fff));color:var(--ink);padding:0 9px;
+}
+.ui-button{
+  height:35px;border:1px solid var(--line);border-radius:var(--lab-control-radius,8px);background:var(--lab-control,var(--lab-surface,#fff));color:var(--ink);padding:0 11px;
+}
+.ui-button:hover{border-color:var(--lab-line-strong,#9da9b2)}
+.lab-grid{
+  margin-top:12px;display:grid;grid-template-columns:minmax(0,1.92fr) minmax(340px,.88fr);gap:12px;align-items:start;
+}
+.computer-panel{padding:16px}
+.bank-panel{padding:13px;position:sticky;top:78px;max-height:calc(100dvh - 148px);overflow:auto}
+.panel-heading{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:10px}
+.panel-heading strong{font-size:16px}
+.panel-heading span{color:var(--muted);font-size:10px;line-height:1.3;text-align:right}
+
+.computer-stage{
+  min-height:455px;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 158px;
+  gap:22px;
+  align-items:end;
+  padding:18px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:
+    radial-gradient(circle at 18% 8%,rgba(255,255,255,.88),transparent 25rem),
+    linear-gradient(180deg,#e9edf0 0 72%,#d9dfe3 72% 74%,#cbd2d7 74%);
+  overflow:hidden;
+}
+.monitor-wrap{min-width:0;align-self:center}
+.monitor{position:relative;width:100%;max-width:740px;margin:auto}
+.monitor-bezel{
+  position:relative;padding:15px 15px 19px;border-radius:15px;
+  background:linear-gradient(145deg,#343b42,#1d2328);
+  box-shadow:0 16px 28px rgba(34,44,52,.19), inset 0 0 0 1px rgba(255,255,255,.08);
+}
+.monitor-bezel::after{
+  content:"";position:absolute;bottom:7px;left:50%;
+  width:5px;height:5px;transform:translateX(-50%);border-radius:50%;background:#58626b;
+}
+.screen{
+  position:relative;width:100%;aspect-ratio:16/9;border-radius:7px;overflow:hidden;
+  background:var(--screen);color:#e8eef3;box-shadow:inset 0 0 18px rgba(0,0,0,.65);
+}
+.screen::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(120deg,rgba(255,255,255,.055),transparent 28%);
+}
+.monitor-neck{width:62px;height:48px;margin:auto;background:linear-gradient(90deg,#aeb7be,#d5dade,#aeb7be)}
+.monitor-foot{
+  width:180px;height:15px;margin:auto;border-radius:50% 50% 6px 6px;
+  background:linear-gradient(#cbd2d7,#9da8b0);box-shadow:0 5px 8px rgba(39,48,55,.16);
+}
+.tower{
+  position:relative;width:145px;height:330px;margin:0 auto 14px;padding:20px 15px;
+  border:1px solid #aeb7be;border-radius:10px 10px 7px 7px;
+  background:linear-gradient(100deg,#dce2e6,#f2f4f6 42%,#cbd3d8);
+  box-shadow:0 15px 23px rgba(42,51,58,.18);
+}
+.tower::before{
+  content:"";position:absolute;left:12px;right:12px;top:18px;height:74px;
+  border:1px solid #b8c0c6;border-radius:5px;
+  background:repeating-linear-gradient(to bottom,#cbd2d7 0 2px,transparent 2px 7px),#e8ecef;
+}
+.tower-logo{
+  position:absolute;top:107px;left:0;right:0;text-align:center;color:#839099;font-size:11px;font-weight:850;letter-spacing:.09em;
+}
+.tower-vents{
+  position:absolute;left:26px;right:26px;bottom:38px;height:118px;border-radius:7px;
+  background:radial-gradient(circle,#89949c 0 2px,transparent 2.5px) 0 0/12px 12px,#cbd2d7;
+  box-shadow:inset 0 0 0 1px #aeb7be;
+}
+.power-cluster{position:absolute;top:134px;left:0;right:0;display:grid;justify-items:center;gap:7px}
+.power-button{
+  width:48px;height:48px;border:2px solid #7f8b94;border-radius:50%;
+  background:linear-gradient(#f7f8f9,#cbd2d7);color:#4f5b64;display:grid;place-items:center;
+  box-shadow:inset 0 0 0 4px #e2e6e9,0 2px 4px rgba(28,36,42,.18);
+}
+.power-button:hover{border-color:var(--accent)}
+.power-button svg{width:21px;height:21px;stroke:currentColor;stroke-width:2.2;fill:none}
+.power-button.on{color:#207544;box-shadow:inset 0 0 0 4px #dcf3e4,0 0 12px rgba(59,179,107,.4)}
+.power-label{color:#5d6870;font-size:10px;font-weight:800}
+.power-led{width:7px;height:7px;border-radius:50%;background:#8f999f}
+.power-led.on{background:var(--power);box-shadow:0 0 8px rgba(59,179,107,.85)}
+
+/* screen states */
+.screen-state{position:absolute;inset:0;display:grid;place-items:center;padding:22px}
+.off-state{color:#68727a;font:700 12px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.wake-state{background:#020305}
+.wake-dot{width:7px;height:7px;border-radius:50%;background:#d8e7ef;animation:wake .55s ease-in-out infinite alternate}
+@keyframes wake{to{opacity:.2}}
+.firmware-state{align-content:center;gap:13px;background:#080c11;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.firmware-brand{color:#edf5fa;font:850 27px Inter,system-ui,sans-serif;letter-spacing:.12em}
+.firmware-kind{color:#8fc8ff;font-size:11px;font-weight:800}
+.boot-lines{width:min(340px,90%);color:#b6c2cb;font-size:10px;line-height:1.65}
+.progress{width:min(330px,88%);height:6px;border-radius:999px;overflow:hidden;background:#27313a}
+.progress span{display:block;width:28%;height:100%;background:#79b9ed;animation:progress 1.05s ease-in-out infinite}
+@keyframes progress{from{transform:translateX(-110%)}to{transform:translateX(370%)}}
+.os-start-state{align-content:center;gap:14px;background:linear-gradient(145deg,#163f69,#236aa3)}
+.os-logo{width:66px;height:66px;border:5px solid rgba(255,255,255,.93);border-radius:18px;transform:rotate(8deg)}
+.os-name{font-size:22px;font-weight:800;letter-spacing:.02em}
+.spinner{width:24px;height:24px;border:3px solid rgba(255,255,255,.25);border-top-color:#fff;border-radius:50%;animation:spin .75s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.utility-state{align-content:center;gap:12px;background:linear-gradient(145deg,#1d3041,#31495f)}
+.utility-state strong{font-size:20px;letter-spacing:.02em}
+.utility-checklist{width:min(360px,92%);display:grid;gap:7px;color:#d9e5ed;font-size:11px}
+.utility-row{padding:6px 9px;border-radius:7px;background:rgba(255,255,255,.08);display:flex;justify-content:space-between;gap:10px}
+.utility-row span:last-child{font-weight:800;color:#8fe3ad}
+.diagnostic-state{align-content:start;justify-items:start;background:#05080b;color:#c9d4dc;font:650 12px/1.65 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.diagnostic-state strong{color:#fff;font-size:14px}
+.diagnostic-code{margin-top:13px;color:#8fc8ff}
+.bsod-state{align-content:start;justify-items:start;padding:8% 9%;background:#1769b2;color:#fff}
+.bsod-title{margin-bottom:22px;font-size:25px;font-weight:500}
+.bsod-copy{max-width:530px;font-size:13px;line-height:1.55}
+.bsod-code{margin-top:24px;font:800 12px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.malware-state{
+  background:radial-gradient(circle at 20% 15%,rgba(255,0,0,.18),transparent 18rem),linear-gradient(145deg,#0d0000,#210000 45%,#060606);
+  color:#fff;align-content:start;justify-items:start;padding:8% 8%;
+}
+.malware-title{font-size:28px;font-weight:850;color:#ff6b6b;letter-spacing:.03em}
+.malware-copy{margin-top:16px;max-width:520px;font-size:13px;line-height:1.6}
+.malware-banner{
+  margin-top:20px;padding:8px 10px;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.08);
+  color:#ffd5d5;font:800 12px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+.desktop-state{
+  display:block;padding:0;
+  background:radial-gradient(circle at 72% 20%,rgba(255,255,255,.28),transparent 19rem),linear-gradient(145deg,#4d83b9,#8cb4d6 55%,#d2e0eb);
+}
+.desktop-icons{position:absolute;top:17px;left:14px;display:grid;gap:13px}
+.desktop-icon{
+  width:75px;color:#fff;text-align:center;font-size:9px;text-shadow:0 1px 2px rgba(0,0,0,.58);cursor:pointer;
+}
+.desktop-icon-shape{
+  width:36px;height:36px;margin:0 auto 4px;border-radius:9px;background:rgba(255,255,255,.92);box-shadow:0 2px 5px rgba(24,43,58,.28);
+}
+.taskbar{
+  position:absolute;left:0;right:0;bottom:0;height:34px;display:flex;align-items:center;gap:8px;padding:0 9px;
+  background:rgba(25,37,48,.82);backdrop-filter:blur(8px);
+}
+.start-button{
+  width:21px;height:21px;border:2px solid #dceaf3;border-radius:5px;cursor:pointer;
+}
+.task-pill{width:73px;height:18px;border-radius:5px;background:rgba(255,255,255,.18)}
+.clock-small{margin-left:auto;color:#e7f0f5;font-size:9px}
+.start-menu{
+  position:absolute;left:8px;bottom:40px;width:190px;border:1px solid #9fb0bb;border-radius:9px;overflow:hidden;
+  background:rgba(245,248,250,.97);color:#24313a;box-shadow:0 14px 30px rgba(20,38,51,.28);backdrop-filter:blur(8px);
+}
+.start-menu-head{padding:10px 12px;background:#e8edf1;font-size:11px;font-weight:800}
+.start-list{padding:8px}
+.start-app{
+  display:flex;align-items:center;gap:8px;padding:8px 9px;border-radius:6px;font-size:11px;cursor:pointer;
+}
+.start-app:hover{background:#edf3ff}
+.start-app i{display:block;width:16px;height:16px;border-radius:4px;background:#c9d3db}
+.dialog{
+  position:absolute;left:50%;top:48%;width:min(380px,78%);transform:translate(-50%,-50%);
+  border:1px solid #aebac3;border-radius:9px;overflow:hidden;background:#f7f9fa;color:#24313a;
+  box-shadow:0 16px 34px rgba(16,32,45,.32);
+}
+.dialog-title{padding:8px 10px;background:#e8edf1;font-size:11px;font-weight:800}
+.dialog-body{padding:18px;font-size:12px;line-height:1.45}
+.dialog-code{margin-top:10px;color:#6e7a83;font:750 10px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.dialog-actions{margin-top:14px;display:flex;justify-content:flex-end;gap:8px}
+.dialog-actions button{
+  height:30px;padding:0 10px;border:1px solid #b7c2ca;border-radius:7px;background:#fff;
+}
+.app-window{
+  position:absolute;left:6%;right:6%;top:8%;bottom:10%;overflow:hidden;
+  border:1px solid #8f9ca5;border-radius:8px;background:#f8fafb;color:#24313a;
+  box-shadow:0 17px 36px rgba(20,38,51,.33);animation:openApp .33s ease-out;
+}
+@keyframes openApp{from{opacity:0;transform:scale(.92) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.app-titlebar{
+  height:30px;padding:0 10px;display:flex;align-items:center;gap:8px;background:#e8edf1;font-size:11px;font-weight:800;
+}
+.app-close{
+  margin-left:auto;width:24px;height:22px;border:1px solid #b6c1c8;border-radius:6px;background:#fff;color:#51606a;
+}
+.writer-toolbar,.image-toolbar,.browser-toolbar{
+  height:28px;display:flex;align-items:center;gap:6px;padding:0 8px;border-bottom:1px solid #d9e0e5;background:#fff;
+}
+.tool-square{width:18px;height:16px;border:1px solid #bfc8cf;border-radius:3px}
+.document-page{width:72%;height:72%;margin:17px auto;padding:18px;background:#fff;box-shadow:0 2px 8px rgba(37,54,66,.17)}
+.document-line{height:5px;margin-bottom:8px;border-radius:5px;background:#c9d1d7}
+.document-line.short{width:64%}
+.image-workspace{height:calc(100% - 58px);display:grid;grid-template-columns:38px 1fr 72px;background:#313840}
+.image-tools{border-right:1px solid #4d5660;padding:8px;display:grid;align-content:start;gap:7px}
+.image-tools i{display:block;height:20px;border:1px solid #7d8993;border-radius:3px}
+.image-canvas{margin:auto;width:72%;aspect-ratio:4/3;background:#fff;box-shadow:0 7px 17px rgba(0,0,0,.28)}
+.image-canvas svg{display:block;width:100%;height:100%}
+.layers-panel{border-left:1px solid #4d5660;padding:8px;color:#e4edf2;font-size:9px}
+.layer-row{height:23px;margin-top:7px;border-radius:3px;background:#4a535c}
+.browser-toolbar{gap:8px}
+.browser-dot{width:8px;height:8px;border-radius:50%;background:#aab4bb}
+.address-bar{flex:1;height:18px;border-radius:9px;background:#edf1f4}
+.web-page{height:calc(100% - 58px);padding:22px;background:#fff}
+.web-hero{height:43%;border-radius:9px;background:linear-gradient(145deg,#4f84b7,#b9d4e7)}
+.web-title{width:55%;height:12px;margin-top:18px;border-radius:5px;background:#53636f}
+.web-copy{width:85%;height:6px;margin-top:9px;border-radius:5px;background:#c7d0d6}
+
+/* stack */
+.platform-section{margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
+.platform-heading{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:9px}
+.platform-heading strong{font-size:15px}
+.platform-heading span{color:var(--muted);font-size:10px;line-height:1.3;text-align:right}
+.stack-stage{width:min(760px,100%);margin:auto}
+.stack-list{
+  min-height:90px;padding:9px;display:flex;flex-direction:column;gap:7px;
+  border:1px dashed #b8c2ca;border-bottom:0;border-radius:10px 10px 0 0;background:#fafbfc;
+}
+.stack-list.drag-over{background:var(--accent-soft);border-color:var(--accent)}
+.stack-placeholder{min-height:68px;display:grid;place-items:center;color:#87939c;font-size:11px}
+.stack-layer{
+  position:relative;border:1px solid #bfc9d1;border-radius:9px;background:#fff;
+  box-shadow:0 2px 4px rgba(38,52,62,.07);cursor:grab;
+}
+.stack-layer.dragging{opacity:.4}
+.stack-layer.drop-before::before{
+  content:"";position:absolute;left:4px;right:4px;top:-6px;height:3px;border-radius:99px;background:var(--accent);
+}
+.layer-head{min-height:45px;display:flex;align-items:center;gap:9px;padding:7px 9px}
+.drag-handle{color:#9ba6ae;font-size:14px;letter-spacing:-2px}
+.layer-name{min-width:0;flex:1;font-size:12px;font-weight:800}
+.remove-card{
+  width:26px;height:26px;border:1px solid var(--line);border-radius:7px;background:#fff;color:#73808a;display:grid;place-items:center;
+}
+.remove-card:hover{color:#a33f37;border-color:#d7aaa5}
+.layer-contents{margin:0 8px 8px;padding:8px;border:1px dashed #bfcad1;border-radius:7px;background:#f8fafb}
+.layer-contents.drag-over{border-color:var(--accent);background:var(--accent-soft)}
+.layer-contents-title{
+  margin-bottom:6px;color:#6e7e86;font-size:9px;font-weight:850;letter-spacing:.04em;text-transform:uppercase;
+}
+.contents-grid{display:flex;flex-wrap:wrap;gap:5px;min-height:31px}
+.contents-empty{width:100%;min-height:27px;display:grid;place-items:center;color:#98a4ac;font-size:9px}
+.content-chip{
+  display:inline-flex;align-items:center;gap:5px;padding:5px 6px;border:1px solid #c7d1d8;border-radius:6px;background:#fff;
+  color:#34515f;font-size:9px;font-weight:750;cursor:grab;
+}
+.content-chip button{
+  width:16px;height:16px;padding:0;border:0;border-radius:50%;background:#edf1f3;color:#667780;font-size:10px;
+}
+.hardware-base{
+  min-height:57px;padding:8px 13px;display:flex;align-items:center;justify-content:space-between;gap:10px;
+  border:1px solid #727f88;border-radius:0 0 10px 10px;
+  background:repeating-linear-gradient(90deg,transparent 0 17px,rgba(255,255,255,.05) 17px 18px),#37434c;color:#fff;
+}
+.hardware-base strong{font-size:12px}
+.hardware-base span{color:#c9d2d8;font-size:9px}
+.hardware-chip{width:42px;height:30px;border:1px solid #9eabb4;border-radius:5px;background:#202930;position:relative}
+.hardware-chip::before,.hardware-chip::after{
+  content:"";position:absolute;left:-6px;right:-6px;height:5px;background:repeating-linear-gradient(to right,#c1c9ce 0 4px,transparent 4px 8px);
+}
+.hardware-chip::before{top:4px}.hardware-chip::after{bottom:4px}
+
+/* bank */
+.selection-status{
+  min-height:36px;margin-bottom:10px;padding:8px 9px;border:1px solid var(--line);border-radius:8px;background:#fafbfc;
+  color:var(--muted);font-size:10px;line-height:1.35;
+}
+.selection-status strong{color:var(--ink)}
+.bank-cards{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.bank-card{
+  min-height:48px;padding:8px 9px;border:1px solid #c7d0d7;border-radius:8px;background:#fff;color:var(--ink);
+  display:flex;align-items:center;gap:8px;cursor:grab;user-select:none;font-size:10px;font-weight:750;line-height:1.25;
+}
+.bank-card:hover{transform:translateY(-1px);box-shadow:0 3px 7px rgba(42,55,64,.09)}
+.bank-card.selected{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent);background:var(--accent-soft)}
+.bank-card::before{content:"";width:8px;height:28px;flex:0 0 auto;border-radius:4px;background:#aeb8bf}
+.bank-panel.locked{opacity:.72}
+.bank-panel.drop-target{box-shadow:inset 0 0 0 2px var(--accent)}
+
+
+.bank-card::before{content:none}
+.bank-card{align-items:flex-start}
+.bank-inner{display:flex;align-items:flex-start;gap:8px;width:100%}
+.bank-icon,.layer-icon,.desktop-glyph,.start-app i,.chip-icon{
+  flex:0 0 auto;
+  width:22px;height:22px;
+  display:grid;place-items:center;
+  border:1px solid #c7d0d7;border-radius:6px;
+  background:#f6f8fa;color:#5e6c76;
+}
+.bank-icon svg,.layer-icon svg,.desktop-glyph svg,.start-app i svg,.chip-icon svg{
+  width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;
+}
+.bank-text{min-width:0;flex:1}
+.bank-name{display:block}
+.bank-badge,.layer-badge,.chip-badge{
+  display:inline-block;
+  margin-top:4px;
+  padding:2px 6px;
+  border-radius:999px;
+  font-size:8px;
+  font-weight:800;
+  letter-spacing:.03em;
+}
+.reveal-system{border-color:#b7c8da;background:#eef4fb}
+.reveal-system .bank-badge,.reveal-system .layer-badge,.content-chip.reveal-system .chip-badge{background:#dbeaf7;color:#355d84}
+.reveal-application{border-color:#d2c3eb;background:#f6f1fd}
+.reveal-application .bank-badge,.reveal-application .layer-badge,.content-chip.reveal-application .chip-badge{background:#e9dcfa;color:#6846a0}
+.reveal-os{border-color:#c2dbc9;background:#eff8f2}
+.reveal-os .bank-badge,.reveal-os .layer-badge,.content-chip.reveal-os .chip-badge{background:#def0e4;color:#356247}
+.reveal-utility{border-color:#ead7bd;background:#fbf6ee}
+.reveal-utility .bank-badge,.reveal-utility .layer-badge,.content-chip.reveal-utility .chip-badge{background:#f3e8d6;color:#7d5b28}
+.reveal-invalid{border-color:#e4c2c2;background:#fcf1f1}
+.reveal-invalid .bank-badge,.reveal-invalid .layer-badge,.content-chip.reveal-invalid .chip-badge{background:#f4dddd;color:#8f4343}
+.layer-head{align-items:flex-start}
+.layer-main{display:flex;gap:8px;align-items:flex-start;min-width:0;flex:1}
+.layer-text{min-width:0;flex:1}
+.content-chip{align-items:flex-start}
+.chip-text{min-width:0;flex:1}
+.desktop-icons{grid-template-columns:repeat(2,75px)}
+.desktop-icon-shape{
+  display:grid;
+  place-items:center;
+  background:rgba(255,255,255,.95);
+}
+.desktop-glyph{
+  width:26px;height:26px;border-color:#d7e0e7;background:#ffffff;color:#5f6d77;border-radius:8px;
+}
+.start-app i{
+  width:18px;height:18px;border-radius:5px;background:#fff;
+}
+
+@media(max-width:980px){
+  .lab-grid{grid-template-columns:1fr}
+  .bank-panel{position:static;max-height:none}
+  .bank-cards{grid-template-columns:repeat(3,1fr)}
+}
+@media(max-width:680px){
+  main{width:min(100% - 12px,1200px);margin-top:8px}
+  .mission-panel{grid-template-columns:1fr}
+  .computer-panel{padding:11px}
+  .computer-stage{grid-template-columns:1fr;min-height:0;padding:13px}
+  .tower{width:128px;height:265px;margin-top:3px}
+  .tower::before{height:56px}
+  .tower-logo{top:90px}
+  .power-cluster{top:111px}
+  .tower-vents{height:85px;bottom:30px}
+  .bank-cards{grid-template-columns:1fr 1fr}
+}
+@media(max-width:420px){
+  .bank-cards{grid-template-columns:1fr}
+  .platform-heading,.panel-heading{display:block}
+  .platform-heading span,.panel-heading span{display:block;margin-top:3px;text-align:left}
+}
+</style>
+<!-- LAB_FRAME_STYLES_START -->
+<style data-lab-frame>
+:root {
+  --lab-canvas: #f3f5f7;
+  --lab-paper: #fbfbfd;
+  --lab-surface: #ffffff;
+  --lab-control: #ffffff;
+  --lab-ink: #1d1d1f;
+  --lab-muted: #6e6e73;
+  --lab-line: #d2d2d7;
+  --lab-line-strong: #a7a7ad;
+  --lab-accent: #5277b8;
+  --lab-accent-soft: #eef2fa;
+  --lab-good: #18794e;
+  --lab-good-soft: #edf8f1;
+  --lab-warn: #946200;
+  --lab-warn-soft: #fff6e7;
+  --lab-bad: #b42318;
+  --lab-bad-soft: #fff0ee;
+  --lab-focus: #1d1d1f;
+  --lab-focus-soft: rgba(29, 29, 31, 0.18);
+  --lab-font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+  --lab-panel-radius: 12px;
+  --lab-control-radius: 8px;
+  --lab-pill-radius: 999px;
+  --lab-control-height: 35px;
+  --lab-panel-shadow: 0 1px 2px rgba(29, 29, 31, 0.04);
+  --lab-page-gutter: max(28px, calc((100vw - 1200px) / 2));
+  --lab-compact-workspace-max: 820px;
+}
+
+html,
+body {
+  background: var(--lab-canvas);
+}
+
+body {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  align-content: start !important;
+  font-family: var(--lab-font-sans);
+  padding-bottom: 0;
+  padding-top: 0 !important;
+  text-rendering: optimizeLegibility;
+}
+
+.lab-manifest-header {
+  align-items: start;
+  border-bottom: 1px solid var(--line, var(--lab-line));
+  display: grid;
+  gap: 18px 28px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  margin-bottom: 26px;
+  padding-bottom: 22px;
+}
+
+.lab-manifest-heading {
+  min-width: 0;
+}
+
+.lab-manifest-header h1 {
+  color: var(--ink, var(--lab-ink));
+  font-family: var(--lab-font-sans);
+  font-size: clamp(25px, 3.2vw, 40px);
+  font-weight: 650;
+  letter-spacing: -0.045em;
+  line-height: 1.02;
+  margin: 0;
+  max-width: 24ch;
+  padding: 0;
+  text-align: left;
+}
+
+.lab-manifest-subtitle {
+  color: var(--muted, var(--lab-muted));
+  font-family: var(--lab-font-sans);
+  font-size: 13px;
+  letter-spacing: 0;
+  line-height: 1.5;
+  margin: 10px 0 0;
+  max-width: 72ch;
+  padding: 0;
+  text-align: left;
+}
+
+.lab-authored-title-slot {
+  min-width: 0;
+}
+
+.lab-syllabus-chips {
+  align-items: center;
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+  margin: 0 0 0 auto;
+  max-width: 100%;
+}
+
+.lab-syllabus-chip {
+  align-items: center;
+  background: var(--syllabus-chip-bg) !important;
+  border: 1px solid var(--syllabus-chip-border) !important;
+  border-radius: var(--lab-pill-radius);
+  color: var(--syllabus-chip-text) !important;
+  display: inline-flex;
+  font-size: 11px;
+  font-weight: 650;
+  gap: 4px;
+  line-height: 1;
+  min-height: 29px;
+  padding: 8px 10px;
+  position: relative;
+  transition: background-color 140ms ease, border-color 140ms ease;
+  white-space: nowrap;
+}
+
+.lab-syllabus-chip:hover {
+  background: var(--syllabus-chip-hover) !important;
+}
+
+.lab-syllabus-primary-link {
+  border-radius: inherit;
+  inset: 0;
+  position: absolute;
+  z-index: 0;
+}
+
+.lab-syllabus-primary-link:focus-visible {
+  outline: 2px solid var(--syllabus-chip-text);
+  outline-offset: 2px;
+}
+
+.lab-syllabus-name,
+.lab-syllabus-divider,
+.lab-syllabus-sections {
+  pointer-events: none;
+  position: relative;
+  z-index: 1;
+}
+
+.lab-syllabus-section {
+  border-radius: 4px;
+  color: inherit;
+  padding: 2px;
+  text-decoration: none;
+}
+
+a.lab-syllabus-section {
+  pointer-events: auto;
+}
+
+a.lab-syllabus-section:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+a.lab-syllabus-section:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 1px;
+}
+
+.lab-syllabus-name {
+  color: var(--syllabus-chip-text) !important;
+}
+
+.lab-syllabus-divider,
+.lab-syllabus-separator {
+  color: var(--muted, var(--lab-muted));
+}
+
+.lab-syllabus-prefix {
+  opacity: 0.72;
+  padding-left: 5px;
+}
+
+.lab-syllabus-sections {
+  align-items: center;
+  display: inline-flex;
+}
+
+.lab-syllabus-separator {
+  margin-inline: 0 2px;
+}
+
+html[data-theme="dark"] .lab-syllabus-name {
+  color: var(--syllabus-chip-border) !important;
+}
+
+html[data-theme="dark"] .lab-syllabus-chip:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+html[data-theme="dark"],
+html[data-theme="dark"] body {
+  background: var(--bg);
+}
+
+body > main {
+  container-name: lab-canvas;
+  container-type: inline-size;
+  margin-left: var(--lab-page-gutter);
+  margin-right: auto;
+  margin-top: 18px;
+  max-width: 1200px;
+  width: calc(100vw - var(--lab-page-gutter) - var(--lab-page-gutter));
+}
+
+body[data-lab-layout="compact"] .lab-manifest-header {
+  margin-bottom: 17px;
+  padding-bottom: 13px;
+}
+
+body[data-lab-layout="compact"] [data-lab-workspace] {
+  margin-left: auto;
+  margin-right: auto;
+  width: min(var(--lab-compact-workspace-max), 100%);
+}
+
+:where(button, input, select, textarea, summary):focus-visible {
+  outline: 3px solid var(--lab-focus);
+  outline-offset: 4px;
+}
+
+@media (max-width: 620px) {
+  :root {
+    --lab-page-gutter: 18px;
+  }
+
+  body {
+    padding-bottom: 0;
+    padding-top: 0 !important;
+  }
+
+  .lab-manifest-header {
+    gap: 14px;
+    grid-template-columns: minmax(0, 1fr) !important;
+    margin-bottom: 20px;
+    padding-bottom: 18px;
+  }
+
+  body[data-lab-layout="compact"] .lab-manifest-header {
+    margin-bottom: 16px;
+    padding-bottom: 14px;
+  }
+
+  .lab-manifest-header h1 {
+    font-size: clamp(24px, 8vw, 34px);
+  }
+
+  .lab-syllabus-chips {
+    gap: 4px;
+    justify-content: flex-start !important;
+    margin: 0 !important;
+  }
+
+  .lab-syllabus-chip {
+    font-size: 10px;
+    max-width: 100%;
+    min-height: 27px;
+    padding: 7px 8px;
+    white-space: normal;
+  }
+
+  .lab-syllabus-sections {
+    flex-wrap: wrap;
+  }
+
+  body > main {
+    margin-top: 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+</style>
+<!-- LAB_FRAME_STYLES_END -->
+<link rel="stylesheet" href="./lab-kit.css" data-lab-resource="lab-kit.css">
+</head>
+<body data-lab-layout="standard">
+<main>
+<!-- LAB_MANIFEST_HEADER_START -->
+<header class="lab-manifest-header">
+  <div class="lab-manifest-heading">
+    <h1 data-lab-manifest="title">Software Stack &amp; Boot Process</h1>
+  <p class="lab-manifest-subtitle" data-lab-manifest="subtitle">For Cambridge IGCSE and AS &amp; A Level Computer Science (0478 and 9618), arrange the software layers, boot the system and test an application.</p>
+  </div>
+  <!-- LAB_SYLLABUS_CHIPS_START -->
+<nav class="lab-syllabus-chips" aria-label="Syllabus alignment">
+  <section class="lab-syllabus-chip" style="--syllabus-chip-bg:#edf4ff;--syllabus-chip-border:#9ab6e6;--syllabus-chip-text:#173d78;--syllabus-chip-hover:#dce9fc" aria-label="IGCSE 0478 syllabus alignment">
+    <a class="lab-syllabus-primary-link" href="https://www.cambridgeinternational.org/Images/697167-2026-2028-syllabus.pdf#page=20" target="_blank" rel="noopener noreferrer" aria-label="Open IGCSE 0478 syllabus section 4.1"></a>
+    <span class="lab-syllabus-name">IGCSE 0478</span>
+    <span class="lab-syllabus-divider" aria-hidden="true">·</span>
+    <span class="lab-syllabus-sections"><span class="lab-syllabus-section is-primary">4.1</span></span>
+  </section>
+  <section class="lab-syllabus-chip" style="--syllabus-chip-bg:#f4effb;--syllabus-chip-border:#b9a2dc;--syllabus-chip-text:#4f2b77;--syllabus-chip-hover:#e8ddf6" aria-label="AS 9618 syllabus alignment">
+    <a class="lab-syllabus-primary-link" href="https://www.cambridgeinternational.org/Images/697372-2026-syllabus.pdf#page=23" target="_blank" rel="noopener noreferrer" aria-label="Open AS 9618 syllabus section 5.1"></a>
+    <span class="lab-syllabus-name">AS 9618</span>
+    <span class="lab-syllabus-divider" aria-hidden="true">·</span>
+    <span class="lab-syllabus-sections"><span class="lab-syllabus-section is-primary">5.1</span></span>
+  </section>
+</nav>
+<!-- LAB_SYLLABUS_CHIPS_END -->
+</header>
+<!-- LAB_MANIFEST_HEADER_END -->
+<span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span>
+  <span data-lab-authored-subtitle-slot hidden></span>
+
+  <section class="panel mission-panel">
+    <div class="mission-copy">
+      <strong id="missionText">Goal: Build a working software stack, then open the Image Editor.</strong>
+    </div>
+    <div class="mission-actions">
+      <label>
+        <span>Target application</span>
+        <select id="targetApplication">
+          <option value="image" selected>Image Editor</option>
+          <option value="word">Word Processor</option>
+          <option value="browser">Web Browser</option>
+          <option value="sheet">Spreadsheet</option>
+          <option value="slides">Presentation Software</option>
+          <option value="media">Media Player</option>
+        </select>
+      </label>
+      <button id="resetLab" class="ui-button">Reset</button>
+    </div>
+  </section>
+
+  <div class="lab-grid">
+    <section class="panel computer-panel">
+      <div class="computer-stage">
+        <div class="monitor-wrap">
+          <div class="monitor">
+            <div class="monitor-bezel">
+              <div id="screen" class="screen">
+                <div class="screen-state off-state">POWER OFF</div>
+              </div>
+            </div>
+            <div class="monitor-neck"></div>
+            <div class="monitor-foot"></div>
+          </div>
+        </div>
+
+        <div class="tower">
+          <div class="tower-logo">ASTRA</div>
+          <div class="power-cluster">
+            <button id="powerButton" class="power-button" aria-label="Turn computer on">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 2v9"/>
+                <path d="M7.4 5.7a8 8 0 1 0 9.2 0"/>
+              </svg>
+            </button>
+            <div id="powerLabel" class="power-label">Power</div>
+            <div id="powerLed" class="power-led"></div>
+          </div>
+          <div class="tower-vents"></div>
+        </div>
+      </div>
+
+      <section class="platform-section">
+        <div class="platform-heading">
+          <strong>Software stack</strong>
+          <span>Drag software cards into the stack. Place OS functions and utility functions inside their matching layers.</span>
+        </div>
+        <div class="stack-stage">
+          <div id="stackList" class="stack-list" aria-label="Software stack"></div>
+          <div id="hardwareBase" class="hardware-base">
+            <div>
+              <strong>Computer hardware</strong>
+              <span>Fixed physical platform</span>
+            </div>
+            <div class="hardware-chip" aria-hidden="true"></div>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <aside id="bankPanel" class="panel bank-panel">
+      <div class="panel-heading">
+        <strong>Software items</strong>
+        <span>Arrange items, then test by turning the computer on.</span>
+      </div>
+      <div id="selectionStatus" class="selection-status" role="status" aria-live="polite">
+        Drag a card, or select one and then select its destination.
+      </div>
+      <div id="bankCards" class="bank-cards"></div>
+    </aside>
+  </div>
+</main>
+
+
+<script src="./lab-kit.js" data-lab-resource="lab-kit.js"></script>
+<script>
+(() => {
+  const $ = LabKit.dom.byId;
+
+  const layerItems = {
+    firmware:{id:"firmware",name:"Firmware / Bootloader",kind:"layer"},
+    os:{id:"os",name:"Operating System",kind:"layer"},
+    utility:{id:"utility",name:"Utility Software",kind:"layer"},
+
+    word:{id:"word",name:"Word Processor",kind:"application"},
+    image:{id:"image",name:"Image Editor",kind:"application"},
+    browser:{id:"browser",name:"Web Browser",kind:"application"},
+    sheet:{id:"sheet",name:"Spreadsheet",kind:"application"},
+    slides:{id:"slides",name:"Presentation Software",kind:"application"},
+    media:{id:"media",name:"Media Player",kind:"application"}
+  };
+
+  const contentItems = {
+    files:{id:"files",name:"Manage files",validIn:"os"},
+    interrupts:{id:"interrupts",name:"Handle interrupts",validIn:"os"},
+    interface:{id:"interface",name:"Provide a user interface",validIn:"os"},
+    drivers:{id:"drivers",name:"Manage peripherals and drivers",validIn:"os"},
+    memory:{id:"memory",name:"Manage memory",validIn:"os"},
+    multitasking:{id:"multitasking",name:"Manage multitasking",validIn:"os"},
+    platform:{id:"platform",name:"Provide a platform for applications",validIn:"os"},
+    security:{id:"security",name:"Provide system security",validIn:"os"},
+    accounts:{id:"accounts",name:"Manage user accounts",validIn:"os"},
+
+    antivirus:{id:"antivirus",name:"Anti-virus",validIn:"utility"},
+    backup:{id:"backup",name:"Backup utility",validIn:"utility"},
+    compression:{id:"compression",name:"File compression",validIn:"utility"},
+    defrag:{id:"defrag",name:"Disk defragmenter",validIn:"utility"},
+
+    editImages:{id:"editImages",name:"Edit images",validIn:"none"},
+    writeDocs:{id:"writeDocs",name:"Write documents",validIn:"none"},
+    browseWeb:{id:"browseWeb",name:"Browse websites",validIn:"none"},
+    translate:{id:"translate",name:"Translate source code",validIn:"none"},
+    game:{id:"game",name:"Play games",validIn:"none"},
+    wallpaper:{id:"wallpaper",name:"Change wallpaper",validIn:"none"},
+    bluetoothMouse:{id:"bluetoothMouse",name:"Bluetooth mouse",validIn:"none"},
+    database:{id:"database",name:"Manage databases",validIn:"none"},
+    printPhoto:{id:"printPhoto",name:"Print photos",validIn:"none"},
+    createChart:{id:"createChart",name:"Create charts",validIn:"none"}
+  };
+
+  const fundamentalOS = ["files","memory","interface","platform"];
+  const laterOS = ["drivers","interrupts","multitasking","security","accounts"];
+  const requiredUtility = ["antivirus","backup","compression","defrag"];
+
+  const appInfo = {
+    image:{label:"Image Editor", title:"Image Editor"},
+    word:{label:"Word Processor", title:"Simple Writer"},
+    browser:{label:"Web Browser", title:"Web Browser"},
+    sheet:{label:"Spreadsheet", title:"Number Sheets"},
+    slides:{label:"Presentation Software", title:"Slide Deck"},
+    media:{label:"Media Player", title:"Media Player"}
+  };
+
+  let stack = [];
+  let osContents = [];
+  let utilityContents = [];
+  let selected = null;
+  let dragSource = null;
+  let editing = true;
+  let powered = false;
+  let booting = false;
+  let runToken = 0;
+  let bankOrder = [];
+  let currentDesktop = null;
+  let categoriesRevealed = false;
+
+  const sleep = ms => new Promise(resolve => setTimeout(resolve,ms));
+
+  function shuffle(values){
+    const copy=[...values];
+    for(let i=copy.length-1;i>0;i--){
+      const j=Math.floor(Math.random()*(i+1));
+      [copy[i],copy[j]]=[copy[j],copy[i]];
+    }
+    return copy;
+  }
+
+  function resetOrder(){
+    bankOrder = shuffle([...Object.keys(layerItems), ...Object.keys(contentItems)]);
+  }
+
+  function targetApplication(){ return $("targetApplication").value; }
+  function updateMission(){ $("missionText").textContent = `Goal: Build a working software stack, then open the ${appInfo[targetApplication()].label}.`; }
+  function isLayerId(id){ return !!layerItems[id]; }
+  function isContentId(id){ return !!contentItems[id]; }
+  function isApplicationId(id){ return !!layerItems[id] && layerItems[id].kind==="application"; }
+  function placedContentIds(){ return [...osContents, ...utilityContents]; }
+  function installedApps(){
+    const aboveOS = stack.slice(0, stack.indexOf("os"));
+    return aboveOS.filter(isApplicationId);
+  }
+
+  function categoryMeta(kind,id){
+    if(kind==="layer"){
+      if(layerItems[id].kind==="application"){
+        return {label:"Application software", className:"reveal-application"};
+      }
+      return {label:"System software", className:"reveal-system"};
+    }
+
+    const validIn = contentItems[id].validIn;
+    if(validIn==="os") return {label:"OS functionality", className:"reveal-os"};
+    if(validIn==="utility") return {label:"Utility functionality", className:"reveal-utility"};
+    return {label:"Not part of OS / Utility", className:"reveal-invalid"};
+  }
+
+  function iconSVG(id){
+    switch(id){
+      case "firmware": return `<svg viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="12" rx="2"/><path d="M8 10h8M8 14h5"/></svg>`;
+      case "os": return `<svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="2"/><path d="M4 10h16M12 10v9"/></svg>`;
+      case "utility": return `<svg viewBox="0 0 24 24"><path d="M14 5l5 5-3 3-5-5"/><path d="M10 14l-5 5"/><circle cx="8" cy="8" r="2"/></svg>`;
+      case "word": return `<svg viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="16" rx="2"/><path d="M9 9l2 6 2-4 2 4 1-6"/></svg>`;
+      case "image": return `<svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="2"/><circle cx="9" cy="10" r="1.5"/><path d="M6 17l4-4 3 3 3-5 2 6"/></svg>`;
+      case "browser": return `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M4.5 10h15"/><path d="M12 4a14 14 0 0 1 0 16"/><path d="M12 4a14 14 0 0 0 0 16"/></svg>`;
+      case "sheet": return `<svg viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="16" rx="2"/><path d="M5 10h14M10 10v10M14.5 10v10"/></svg>`;
+      case "slides": return `<svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="11" rx="2"/><path d="M12 16v4M9 20h6"/><path d="M7 9h10"/></svg>`;
+      case "media": return `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M10 9l5 3-5 3z"/></svg>`;
+
+      case "files": return `<svg viewBox="0 0 24 24"><path d="M4 8h6l2 2h8v8H4z"/></svg>`;
+      case "interrupts": return `<svg viewBox="0 0 24 24"><path d="M13 3L6 13h5l-1 8 8-12h-5l1-6z"/></svg>`;
+      case "interface": return `<svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="12" rx="2"/><path d="M9 20h6"/></svg>`;
+      case "drivers": return `<svg viewBox="0 0 24 24"><path d="M8 7v10M16 7v10M5 9h3M5 15h3M16 9h3M16 15h3"/><rect x="8" y="5" width="8" height="14" rx="2"/></svg>`;
+      case "memory": return `<svg viewBox="0 0 24 24"><rect x="5" y="8" width="14" height="8" rx="1"/><path d="M8 8V5M12 8V5M16 8V5M8 16v3M12 16v3M16 16v3"/></svg>`;
+      case "multitasking": return `<svg viewBox="0 0 24 24"><rect x="4" y="5" width="7" height="6" rx="1"/><rect x="13" y="5" width="7" height="6" rx="1"/><rect x="4" y="13" width="7" height="6" rx="1"/><rect x="13" y="13" width="7" height="6" rx="1"/></svg>`;
+      case "platform": return `<svg viewBox="0 0 24 24"><path d="M4 16h16"/><path d="M7 16V8h10v8"/><path d="M10 11h4"/></svg>`;
+      case "security": return `<svg viewBox="0 0 24 24"><path d="M12 4l7 3v5c0 4-2.5 6.8-7 8-4.5-1.2-7-4-7-8V7z"/></svg>`;
+      case "accounts": return `<svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="3"/><path d="M6 19c1.5-3 10.5-3 12 0"/></svg>`;
+
+      case "antivirus": return `<svg viewBox="0 0 24 24"><path d="M12 4l7 3v5c0 4-2.5 6.8-7 8-4.5-1.2-7-4-7-8V7z"/><path d="M9 12l2 2 4-4"/></svg>`;
+      case "backup": return `<svg viewBox="0 0 24 24"><path d="M6 12a6 6 0 1 0 2-4.5"/><path d="M6 5v4h4"/></svg>`;
+      case "compression": return `<svg viewBox="0 0 24 24"><path d="M9 4h6M10 8h4M10 12h4M9 16h6"/><path d="M7 4v16M17 4v16"/></svg>`;
+      case "defrag": return `<svg viewBox="0 0 24 24"><rect x="5" y="6" width="14" height="12" rx="2"/><path d="M8 10h3M13 10h3M8 14h7"/></svg>`;
+
+      case "editImages": return `<svg viewBox="0 0 24 24"><path d="M5 19l4-1 8-8-3-3-8 8-1 4z"/><path d="M13 6l3 3"/></svg>`;
+      case "writeDocs": return `<svg viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="16" rx="2"/><path d="M9 9h6M9 13h6"/></svg>`;
+      case "browseWeb": return `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M4.5 10h15"/></svg>`;
+      case "translate": return `<svg viewBox="0 0 24 24"><path d="M5 7h8M9 7c0 5-2 8-5 10"/><path d="M11 17h8M15 7l4 10"/></svg>`;
+      case "game": return `<svg viewBox="0 0 24 24"><path d="M7 10H5v4h2m0-2H3"/><path d="M16.5 11h.01M19.5 13h.01"/><path d="M6 8h12l2 3v4l-2 2H6l-2-2v-4z"/></svg>`;
+      case "wallpaper": return `<svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="2"/><path d="M6 16l4-4 2 2 3-3 3 5"/></svg>`;
+      case "bluetoothMouse": return `<svg viewBox="0 0 24 24"><rect x="8" y="4" width="8" height="16" rx="4"/><path d="M12 4v5"/></svg>`;
+      case "database": return `<svg viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="6" ry="2.5"/><path d="M6 6v8c0 1.4 2.7 2.5 6 2.5s6-1.1 6-2.5V6"/></svg>`;
+      case "printPhoto": return `<svg viewBox="0 0 24 24"><path d="M7 8V4h10v4"/><rect x="5" y="8" width="14" height="8" rx="2"/><rect x="8" y="14" width="8" height="6"/></svg>`;
+      case "createChart": return `<svg viewBox="0 0 24 24"><path d="M5 18h14"/><path d="M8 16v-5M12 16V8M16 16v-3"/></svg>`;
+      default: return `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/></svg>`;
+    }
+  }
+
+  function itemName(kind,id){
+    return kind==="layer" ? layerItems[id].name : contentItems[id].name;
+  }
+
+  function clearSelection(){ selected=null; }
+
+  function setSelection(kind,id){
+    if(!editing) return;
+    if(selected && selected.kind===kind && selected.id===id) selected=null;
+    else selected={kind,id};
+    renderAll();
+  }
+
+  function updateSelectionStatus(message){
+    const box=$("selectionStatus");
+    if(message){ box.textContent=message; return; }
+    if(!editing){
+      if(categoriesRevealed){
+        box.innerHTML="<strong>Solved.</strong> Categories are now revealed. Turn the computer off to change the platform.";
+      }else{
+        box.innerHTML="<strong>Computer is powered.</strong> Turn it off before changing the platform.";
+      }
+      return;
+    }
+    if(selected){
+      box.innerHTML=`<strong>Selected:</strong> ${itemName(selected.kind,selected.id)}.`;
+      return;
+    }
+    if(categoriesRevealed){
+      box.innerHTML="<strong>Categories revealed.</strong> You can now compare your solution with the correct software groupings.";
+      return;
+    }
+    box.textContent="Drag a card, or select one and then select its destination.";
+  }
+
+  function makeBankCard(kind,id){
+    const item = kind==="layer" ? layerItems[id] : contentItems[id];
+    const card=document.createElement("div");
+    card.className="bank-card";
+    if(selected && selected.kind===kind && selected.id===id) card.classList.add("selected");
+    if(categoriesRevealed){
+      card.classList.add(categoryMeta(kind,id).className);
+    }
+    card.draggable=editing;
+    card.tabIndex=0;
+    card.setAttribute("role","button");
+
+    const inner=document.createElement("div");
+    inner.className="bank-inner";
+
+    const icon=document.createElement("div");
+    icon.className="bank-icon";
+    icon.innerHTML=iconSVG(id);
+
+    const text=document.createElement("div");
+    text.className="bank-text";
+
+    const name=document.createElement("span");
+    name.className="bank-name";
+    name.textContent=item.name;
+    text.appendChild(name);
+
+    if(categoriesRevealed){
+      const badge=document.createElement("span");
+      badge.className="bank-badge";
+      badge.textContent=categoryMeta(kind,id).label;
+      text.appendChild(badge);
+    }
+
+    inner.append(icon,text);
+    card.appendChild(inner);
+
+    card.addEventListener("click",()=>setSelection(kind,id));
+    card.addEventListener("keydown",event=>{
+      if(event.key==="Enter" || event.key===" "){
+        event.preventDefault();
+        setSelection(kind,id);
+      }
+    });
+    card.addEventListener("dragstart",event=>{
+      if(!editing){ event.preventDefault(); return; }
+      dragSource={source:"bank",kind,id};
+      event.dataTransfer.effectAllowed="move";
+      event.dataTransfer.setData("text/plain",JSON.stringify(dragSource));
+      card.classList.add("dragging");
+    });
+    card.addEventListener("dragend",()=>{
+      card.classList.remove("dragging");
+      clearDragMarkers();
+      dragSource=null;
+    });
+    return card;
+  }
+
+  function renderBank(){
+    const bank=$("bankCards");
+    bank.innerHTML="";
+    const inStack=new Set(stack);
+    const inContents=new Set(placedContentIds());
+    bankOrder.forEach(id=>{
+      if(isLayerId(id) && !inStack.has(id)) bank.appendChild(makeBankCard("layer",id));
+      else if(isContentId(id) && !inContents.has(id)) bank.appendChild(makeBankCard("content",id));
+    });
+    updateSelectionStatus();
+  }
+
+  function removeLayer(index){
+    if(!editing) return;
+    const [removed]=stack.splice(index,1);
+    if(removed==="os") osContents=[];
+    if(removed==="utility") utilityContents=[];
+    clearSelection();
+    renderAll();
+  }
+
+  function insertLayer(id,index){
+    if(!editing || !isLayerId(id)) return;
+    const existing=stack.indexOf(id);
+    if(existing!==-1){
+      stack.splice(existing,1);
+      if(existing<index) index-=1;
+    }
+    index=Math.max(0,Math.min(index,stack.length));
+    stack.splice(index,0,id);
+    clearSelection();
+    renderAll();
+  }
+
+  function moveLayer(fromIndex,toIndex){
+    if(!editing) return;
+    if(fromIndex<0 || fromIndex>=stack.length) return;
+    const [id]=stack.splice(fromIndex,1);
+    if(fromIndex<toIndex) toIndex-=1;
+    toIndex=Math.max(0,Math.min(toIndex,stack.length));
+    stack.splice(toIndex,0,id);
+    clearSelection();
+    renderAll();
+  }
+
+  function addContentTo(target,id){
+    if(!editing || !isContentId(id)) return;
+    if(target==="os" && !stack.includes("os")){ updateSelectionStatus("Place the Operating System in the stack first."); return; }
+    if(target==="utility" && !stack.includes("utility")){ updateSelectionStatus("Place Utility Software in the stack first."); return; }
+    if(osContents.includes(id) || utilityContents.includes(id)) return;
+    if(target==="os") osContents.push(id);
+    else utilityContents.push(id);
+    clearSelection();
+    renderAll();
+  }
+
+  function removeContentFrom(target,id){
+    if(!editing) return;
+    if(target==="os") osContents=osContents.filter(v=>v!==id);
+    else utilityContents=utilityContents.filter(v=>v!==id);
+    clearSelection();
+    renderAll();
+  }
+
+  function clearDragMarkers(){
+    document.querySelectorAll(".drop-before,.drag-over,.drop-target")
+      .forEach(el=>el.classList.remove("drop-before","drag-over","drop-target"));
+    $("hardwareBase").style.boxShadow="";
+  }
+
+  function getDragSource(event){
+    if(dragSource) return dragSource;
+    try{ return JSON.parse(event.dataTransfer.getData("text/plain")); }
+    catch{ return null; }
+  }
+
+  function renderContents(container,target,contentsArray){
+    const title=document.createElement("div");
+    title.className="layer-contents-title";
+    title.textContent="Contents";
+    const grid=document.createElement("div");
+    grid.className="contents-grid";
+
+    if(contentsArray.length===0){
+      const empty=document.createElement("div");
+      empty.className="contents-empty";
+      empty.textContent="Drop cards here";
+      grid.appendChild(empty);
+    }else{
+      contentsArray.forEach(id=>{
+        const chip=document.createElement("div");
+        chip.className="content-chip";
+        if(categoriesRevealed) chip.classList.add(categoryMeta("content",id).className);
+        chip.draggable=editing;
+
+        const icon=document.createElement("div");
+        icon.className="chip-icon";
+        icon.innerHTML=iconSVG(id);
+
+        const text=document.createElement("div");
+        text.className="chip-text";
+        text.textContent=contentItems[id].name;
+
+        if(categoriesRevealed){
+          const badge=document.createElement("span");
+          badge.className="chip-badge";
+          badge.textContent=categoryMeta("content",id).label;
+          text.appendChild(document.createElement("br"));
+          text.appendChild(badge);
+        }
+
+        const remove=document.createElement("button");
+        remove.type="button";
+        remove.setAttribute("aria-label",`Remove ${contentItems[id].name}`);
+        remove.textContent="×";
+        remove.addEventListener("click",event=>{
+          event.stopPropagation();
+          removeContentFrom(target,id);
+        });
+
+        chip.append(icon,text,remove);
+
+        chip.addEventListener("dragstart",event=>{
+          if(!editing){ event.preventDefault(); return; }
+          dragSource={source:target,kind:"content",id};
+          event.dataTransfer.effectAllowed="move";
+          event.dataTransfer.setData("text/plain",JSON.stringify(dragSource));
+        });
+        chip.addEventListener("dragend",()=>{
+          clearDragMarkers();
+          dragSource=null;
+        });
+        grid.appendChild(chip);
+      });
+    }
+
+    container.append(title,grid);
+
+    container.addEventListener("click",event=>{
+      event.stopPropagation();
+      if(selected && selected.kind==="content"){ addContentTo(target,selected.id); return; }
+      if(selected && selected.kind==="layer"){
+        const card=container.closest(".stack-layer");
+        const index=card ? Number(card.dataset.index) : 0;
+        insertLayer(selected.id,index);
+      }
+    });
+
+    container.addEventListener("dragover",event=>{
+      const source=getDragSource(event);
+      if(!source || source.kind!=="content") return;
+      event.preventDefault();
+      event.stopPropagation();
+      container.classList.add("drag-over");
+    });
+    container.addEventListener("dragleave",event=>{
+      if(!container.contains(event.relatedTarget)) container.classList.remove("drag-over");
+    });
+    container.addEventListener("drop",event=>{
+      const source=getDragSource(event);
+      if(!source || source.kind!=="content") return;
+      event.preventDefault();
+      event.stopPropagation();
+      container.classList.remove("drag-over");
+      addContentTo(target,source.id);
+      dragSource=null;
+    });
+  }
+
+  function createStackLayer(id,index){
+    const item=layerItems[id];
+    const card=document.createElement("div");
+    card.className="stack-layer";
+    if(categoriesRevealed) card.classList.add(categoryMeta("layer",id).className);
+    card.draggable=editing;
+    card.tabIndex=0;
+    card.dataset.index=index;
+
+    const head=document.createElement("div");
+    head.className="layer-head";
+
+    const handle=document.createElement("span");
+    handle.className="drag-handle";
+    handle.textContent="⋮⋮";
+
+    const main=document.createElement("div");
+    main.className="layer-main";
+
+    const icon=document.createElement("div");
+    icon.className="layer-icon";
+    icon.innerHTML=iconSVG(id);
+
+    const text=document.createElement("div");
+    text.className="layer-text";
+
+    const name=document.createElement("span");
+    name.className="layer-name";
+    name.textContent=item.name;
+    text.appendChild(name);
+
+    if(categoriesRevealed){
+      const badge=document.createElement("span");
+      badge.className="layer-badge";
+      badge.textContent=categoryMeta("layer",id).label;
+      text.appendChild(document.createElement("br"));
+      text.appendChild(badge);
+    }
+
+    main.append(icon,text);
+
+    const remove=document.createElement("button");
+    remove.type="button";
+    remove.className="remove-card";
+    remove.setAttribute("aria-label",`Remove ${item.name}`);
+    remove.textContent="×";
+    remove.addEventListener("click",event=>{
+      event.stopPropagation();
+      removeLayer(index);
+    });
+
+    head.append(handle,main,remove);
+    card.appendChild(head);
+
+    if(id==="os" || id==="utility"){
+      const contents=document.createElement("div");
+      contents.className="layer-contents";
+      renderContents(contents,id,id==="os" ? osContents : utilityContents);
+      card.appendChild(contents);
+    }
+
+    card.addEventListener("click",()=>{
+      if(selected && selected.kind==="layer") insertLayer(selected.id,index);
+      else if(selected && selected.kind==="content" && (id==="os" || id==="utility")) addContentTo(id,selected.id);
+    });
+    card.addEventListener("dragstart",event=>{
+      if(!editing){ event.preventDefault(); return; }
+      dragSource={source:"stack",kind:"layer",index,id};
+      event.dataTransfer.effectAllowed="move";
+      event.dataTransfer.setData("text/plain",JSON.stringify(dragSource));
+      card.classList.add("dragging");
+    });
+    card.addEventListener("dragend",()=>{
+      card.classList.remove("dragging");
+      clearDragMarkers();
+      dragSource=null;
+    });
+    card.addEventListener("dragover",event=>{
+      const source=getDragSource(event);
+      if(!source || source.kind!=="layer") return;
+      event.preventDefault();
+      event.stopPropagation();
+      card.classList.add("drop-before");
+    });
+    card.addEventListener("dragleave",event=>{
+      if(!card.contains(event.relatedTarget)) card.classList.remove("drop-before");
+    });
+    card.addEventListener("drop",event=>{
+      const source=getDragSource(event);
+      if(!source || source.kind!=="layer") return;
+      event.preventDefault();
+      event.stopPropagation();
+      card.classList.remove("drop-before");
+      if(source.source==="stack") moveLayer(source.index,index);
+      else insertLayer(source.id,index);
+      dragSource=null;
+    });
+
+    return card;
+  }
+
+  function renderStack(){
+    const list=$("stackList");
+    list.innerHTML="";
+    if(stack.length===0){
+      const placeholder=document.createElement("div");
+      placeholder.className="stack-placeholder";
+      placeholder.textContent="Software cards appear here";
+      list.appendChild(placeholder);
+    }else{
+      stack.forEach((id,index)=>list.appendChild(createStackLayer(id,index)));
+    }
+  }
+
+  function renderAll(){
+    renderStack();
+    renderBank();
+    $("bankPanel").classList.toggle("locked",!editing);
+  }
+
+  function addSelectedToTop(){
+    if(!selected) return;
+    if(selected.kind==="layer") insertLayer(selected.id,0);
+    else updateSelectionStatus("That card belongs inside a software layer if you choose to use it.");
+  }
+
+  $("stackList").addEventListener("click",event=>{
+    if(event.target===$("stackList") || event.target.classList.contains("stack-placeholder")) addSelectedToTop();
+  });
+  $("stackList").addEventListener("dragover",event=>{
+    const source=getDragSource(event);
+    if(!source || source.kind!=="layer") return;
+    event.preventDefault();
+    $("stackList").classList.add("drag-over");
+  });
+  $("stackList").addEventListener("dragleave",event=>{
+    if(!$("stackList").contains(event.relatedTarget)) $("stackList").classList.remove("drag-over");
+  });
+  $("stackList").addEventListener("drop",event=>{
+    const source=getDragSource(event);
+    if(!source || source.kind!=="layer") return;
+    event.preventDefault();
+    $("stackList").classList.remove("drag-over");
+    if(source.source==="stack") moveLayer(source.index,0);
+    else insertLayer(source.id,0);
+    dragSource=null;
+  });
+
+  $("hardwareBase").addEventListener("click",()=>{
+    if(selected && selected.kind==="layer") insertLayer(selected.id,stack.length);
+  });
+  $("hardwareBase").addEventListener("dragover",event=>{
+    const source=getDragSource(event);
+    if(!source || source.kind!=="layer") return;
+    event.preventDefault();
+    $("hardwareBase").style.boxShadow="inset 0 0 0 2px var(--accent)";
+  });
+  $("hardwareBase").addEventListener("dragleave",()=>{ $("hardwareBase").style.boxShadow=""; });
+  $("hardwareBase").addEventListener("drop",event=>{
+    const source=getDragSource(event);
+    if(!source || source.kind!=="layer") return;
+    event.preventDefault();
+    $("hardwareBase").style.boxShadow="";
+    if(source.source==="stack") moveLayer(source.index,stack.length);
+    else insertLayer(source.id,stack.length);
+    dragSource=null;
+  });
+
+  $("bankPanel").addEventListener("dragover",event=>{
+    const source=getDragSource(event);
+    if(!source || source.source==="bank") return;
+    event.preventDefault();
+    $("bankPanel").classList.add("drop-target");
+  });
+  $("bankPanel").addEventListener("dragleave",event=>{
+    if(!$("bankPanel").contains(event.relatedTarget)) $("bankPanel").classList.remove("drop-target");
+  });
+  $("bankPanel").addEventListener("drop",event=>{
+    const source=getDragSource(event);
+    if(!source || source.source==="bank") return;
+    event.preventDefault();
+    $("bankPanel").classList.remove("drop-target");
+    if(source.source==="stack") removeLayer(source.index);
+    else if(source.source==="os") removeContentFrom("os",source.id);
+    else if(source.source==="utility") removeContentFrom("utility",source.id);
+    dragSource=null;
+  });
+
+  function setEditing(enabled){
+    editing=enabled;
+    renderAll();
+  }
+
+  function setScreen(className,content){
+    const screen=$("screen");
+    screen.className=`screen ${className}`;
+    screen.innerHTML=content;
+  }
+
+  function screenOff(){
+    currentDesktop=null;
+    setScreen("",'<div class="screen-state off-state">POWER OFF</div>');
+  }
+  function screenWake(){ currentDesktop=null; setScreen("",'<div class="screen-state wake-state"><span class="wake-dot"></span></div>'); }
+  function screenFirmware(){
+    currentDesktop=null;
+    setScreen("",
+      `<div class="screen-state firmware-state">
+        <div class="firmware-brand">ASTRA</div>
+        <div class="firmware-kind">BIOS / UEFI FIRMWARE · BOOTLOADER</div>
+        <div class="boot-lines">
+          Initialising hardware... OK<br>
+          Checking memory... OK<br>
+          Searching for operating system...
+        </div>
+        <div class="progress"><span></span></div>
+      </div>`
+    );
+  }
+  function screenOsStart(){
+    currentDesktop=null;
+    setScreen("",
+      `<div class="screen-state os-start-state">
+        <div class="os-logo"></div>
+        <div class="os-name">Orbit OS</div>
+        <div class="spinner"></div>
+        <div style="font-size:10px;color:rgba(255,255,255,.8)">Starting system services</div>
+      </div>`
+    );
+  }
+  function screenUtilityStage(){
+    currentDesktop=null;
+    setScreen("",
+      `<div class="screen-state utility-state">
+        <strong>Running utility software</strong>
+        <div class="utility-checklist">
+          <div class="utility-row"><span>Scanning for threats</span><span>OK</span></div>
+          <div class="utility-row"><span>Checking drive health</span><span>OK</span></div>
+          <div class="utility-row"><span>Preparing compressed files</span><span>OK</span></div>
+          <div class="utility-row"><span>Confirming recovery backup</span><span>OK</span></div>
+        </div>
+      </div>`
+    );
+  }
+  function screenDiagnostic(title,code,copy){
+    currentDesktop=null;
+    setScreen("",
+      `<div class="screen-state diagnostic-state">
+        <strong>${title}</strong>
+        <div style="margin-top:14px">${copy}</div>
+        <div class="diagnostic-code">${code}</div>
+        <div style="margin-top:18px;color:#7f8d96">System halted.</div>
+      </div>`
+    );
+  }
+  function screenBsod(title,copy,code){
+    currentDesktop=null;
+    setScreen("",
+      `<div class="screen-state bsod-state">
+        <div class="bsod-title">${title}</div>
+        <div class="bsod-copy">${copy}</div>
+        <div class="bsod-code">${code}</div>
+      </div>`
+    );
+  }
+  function screenMalware(copy, code){
+    currentDesktop=null;
+    setScreen("",
+      `<div class="screen-state malware-state">
+        <div class="malware-title">Malware has taken control</div>
+        <div class="malware-copy">${copy}</div>
+        <div class="malware-banner">${code}</div>
+      </div>`
+    );
+  }
+
+  function desktopMarkup(state){
+    const icons = state.apps.map(id =>
+      `<div class="desktop-icon" data-action="open-app" data-app="${id}">
+        <div class="desktop-icon-shape"><span class="desktop-glyph">${iconSVG(id)}</span></div>
+        ${appInfo[id].label}
+      </div>`
+    ).join("");
+
+    const startMenu = state.startOpen ? `
+      <div class="start-menu">
+        <div class="start-menu-head">Start</div>
+        <div class="start-list">
+          ${state.apps.map(id => `
+            <div class="start-app" data-action="open-app" data-app="${id}">
+              <i>${iconSVG(id)}</i>${appInfo[id].label}
+            </div>
+          `).join("")}
+        </div>
+      </div>` : "";
+
+    const dialog = state.dialog ? `
+      <div class="dialog">
+        <div class="dialog-title">${state.dialog.title}</div>
+        <div class="dialog-body">
+          ${state.dialog.body}
+          <div class="dialog-code">${state.dialog.code}</div>
+          <div class="dialog-actions">
+            <button type="button" data-action="close-dialog">Close</button>
+          </div>
+        </div>
+      </div>` : "";
+
+    const appWindow = state.openApp ? appWindowMarkup(state.openApp) : "";
+
+    return `<div class="screen-state desktop-state">
+      <div class="desktop-icons">${icons}</div>
+      ${startMenu}
+      <div class="taskbar">
+        <div class="start-button" data-action="toggle-start"></div>
+        <div class="task-pill"></div>
+        <div class="clock-small">09:41</div>
+      </div>
+      ${dialog}
+      ${appWindow}
+    </div>`;
+  }
+
+  function renderDesktopState(){
+    if(!currentDesktop) return;
+    setScreen("", desktopMarkup(currentDesktop));
+  }
+
+  function showDesktop({openApp=null, dialog=null, startOpen=false}={}){
+    currentDesktop = {
+      apps: installedApps(),
+      openApp,
+      dialog,
+      startOpen
+    };
+    renderDesktopState();
+  }
+
+  function appWindowMarkup(id){
+    const close = `<button class="app-close" type="button" data-action="close-app" aria-label="Close application">×</button>`;
+
+    if(id==="word"){
+      return `<div class="app-window">
+        <div class="app-titlebar">Simple Writer${close}</div>
+        <div class="writer-toolbar"><span class="tool-square"></span><span class="tool-square"></span><span class="tool-square"></span><span class="tool-square"></span></div>
+        <div class="document-page">
+          <div class="document-line"></div><div class="document-line"></div><div class="document-line short"></div>
+          <div style="height:16px"></div><div class="document-line"></div><div class="document-line short"></div>
+        </div>
+      </div>`;
+    }
+    if(id==="browser"){
+      return `<div class="app-window">
+        <div class="app-titlebar">Web Browser${close}</div>
+        <div class="browser-toolbar"><span class="browser-dot"></span><span class="browser-dot"></span><span class="address-bar"></span></div>
+        <div class="web-page"><div class="web-hero"></div><div class="web-title"></div><div class="web-copy"></div><div class="web-copy"></div></div>
+      </div>`;
+    }
+    if(id==="sheet"){
+      return `<div class="app-window">
+        <div class="app-titlebar">Number Sheets${close}</div>
+        <div style="height:calc(100% - 30px);padding:12px;background:#fff">
+          <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:1px;background:#c7d0d6">
+            ${Array.from({length:30},(_,i)=>`<div style="height:26px;background:${i<6?'#eef3f6':'#fff'}"></div>`).join("")}
+          </div>
+        </div>
+      </div>`;
+    }
+    if(id==="slides"){
+      return `<div class="app-window">
+        <div class="app-titlebar">Slide Deck${close}</div>
+        <div style="height:calc(100% - 30px);display:grid;grid-template-columns:82px 1fr;background:#eef2f5">
+          <div style="padding:10px;border-right:1px solid #d3dbe0">
+            <div style="height:56px;border:1px solid #bfc8cf;background:#fff;margin-bottom:9px"></div>
+            <div style="height:56px;border:1px solid #bfc8cf;background:#fff"></div>
+          </div>
+          <div style="display:grid;place-items:center"><div style="width:74%;aspect-ratio:16/9;background:#fff;box-shadow:0 4px 14px rgba(38,55,66,.16)"></div></div>
+        </div>
+      </div>`;
+    }
+    if(id==="media"){
+      return `<div class="app-window">
+        <div class="app-titlebar">Media Player${close}</div>
+        <div style="height:calc(100% - 30px);background:#1e2730;color:#fff;display:grid;place-items:center">
+          <div style="width:76%;text-align:center">
+            <div style="width:128px;height:128px;border-radius:12px;background:#415361;margin:0 auto 18px"></div>
+            <div style="height:8px;background:#415361;border-radius:999px"></div>
+            <div style="display:flex;justify-content:center;gap:12px;margin-top:15px"><div style="width:24px;height:24px;border-radius:50%;background:#fff3"></div><div style="width:36px;height:36px;border-radius:50%;background:#fff7"></div><div style="width:24px;height:24px;border-radius:50%;background:#fff3"></div></div>
+          </div>
+        </div>
+      </div>`;
+    }
+    return `<div class="app-window">
+      <div class="app-titlebar">Image Editor${close}</div>
+      <div class="image-toolbar"><span class="tool-square"></span><span class="tool-square"></span><span class="tool-square"></span><span class="tool-square"></span></div>
+      <div class="image-workspace">
+        <div class="image-tools"><i></i><i></i><i></i><i></i></div>
+        <div class="image-canvas">
+          <svg viewBox="0 0 320 240" aria-hidden="true">
+            <defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6fa8d4"/><stop offset="1" stop-color="#d7e7f2"/></linearGradient></defs>
+            <rect width="320" height="240" fill="url(#sky)"/><circle cx="252" cy="58" r="28" fill="#f2cf63"/>
+            <path d="M0 206L86 101L145 167L202 91L320 206Z" fill="#667e73"/><path d="M0 213L105 146L176 205L255 139L320 190V240H0Z" fill="#4d725c"/>
+          </svg>
+        </div>
+        <div class="layers-panel">Layers<div class="layer-row"></div><div class="layer-row"></div></div>
+      </div>
+    </div>`;
+  }
+
+  $("screen").addEventListener("click", event => {
+    const target = event.target.closest("[data-action]");
+    if(!target || !currentDesktop) return;
+
+    const action = target.dataset.action;
+    if(action==="toggle-start"){
+      currentDesktop.startOpen = !currentDesktop.startOpen;
+      renderDesktopState();
+    }else if(action==="open-app"){
+      currentDesktop.openApp = target.dataset.app;
+      currentDesktop.startOpen = false;
+      currentDesktop.dialog = null;
+      renderDesktopState();
+    }else if(action==="close-app"){
+      currentDesktop.openApp = null;
+      renderDesktopState();
+    }else if(action==="close-dialog"){
+      currentDesktop.dialog = null;
+      renderDesktopState();
+    }
+  });
+
+  function setPowerVisual(on){
+    powered=on;
+    $("powerButton").classList.toggle("on",on);
+    $("powerLed").classList.toggle("on",on);
+    $("powerLabel").textContent=on ? "Power off" : "Power";
+    $("powerButton").setAttribute("aria-label", on ? "Turn computer off" : "Turn computer on");
+  }
+
+  function powerOff(){
+    runToken += 1;
+    booting = false;
+    setPowerVisual(false);
+    setEditing(true);
+    screenOff();
+  }
+
+  function validateOS(){
+    for(const id of osContents){
+      if(contentItems[id].validIn!=="os"){
+        return {
+          stage:"early",
+          title:"Incorrect operating-system component",
+          code:"INVALID_OS_COMPONENT",
+          copy:`"${contentItems[id].name}" does not belong inside the Operating System.`
+        };
+      }
+    }
+
+    const earlyHints = {
+      files:{title:"Startup files unavailable",code:"MISSING_OS_FILE_MANAGEMENT",copy:"Orbit OS could not organise and retrieve the files needed to continue startup."},
+      memory:{title:"Memory allocation failed",code:"MISSING_OS_MEMORY_MANAGEMENT",copy:"Orbit OS cannot manage RAM correctly while loading its services."},
+      interface:{title:"No user interface available",code:"MISSING_OS_INTERFACE",copy:"The system started loading, but there is no user interface through which the user can interact with it."},
+      platform:{title:"Application platform missing",code:"MISSING_OS_APPLICATION_PLATFORM",copy:"Orbit OS cannot provide the platform on which application software runs."}
+    };
+
+    for(const id of fundamentalOS){
+      if(!osContents.includes(id)) return {stage:"early", ...earlyHints[id]};
+    }
+
+    const lateHints = {
+      drivers:{title:"Unexpected hardware detected",code:"MISSING_OS_DRIVERS",copy:"Orbit OS reached the desktop, but a Bluetooth mouse was detected and the system cannot manage peripherals and device drivers."},
+      interrupts:{title:"Interrupt handling unavailable",code:"MISSING_OS_INTERRUPTS",copy:"The system reached the desktop, but keyboard and mouse events cannot interrupt the processor reliably."},
+      multitasking:{title:"System services could not run together",code:"MISSING_OS_MULTITASKING",copy:"The desktop loaded, but background tasks and active services could not be managed at the same time."},
+      security:{title:"Security services unavailable",code:"MISSING_OS_SECURITY",copy:"The desktop loaded, but the operating system cannot protect the computer from unauthorised processes."},
+      accounts:{title:"User account service unavailable",code:"MISSING_OS_USER_ACCOUNTS",copy:"Orbit OS reached the desktop, but no stable user session could be maintained."}
+    };
+
+    for(const id of laterOS){
+      if(!osContents.includes(id)) return {stage:"late", ...lateHints[id]};
+    }
+
+    return null;
+  }
+
+  function validateUtility(){
+    if(!stack.includes("utility")){
+      return {
+        type:"malware",
+        title:"No utility software found",
+        code:"MISSING_UTILITY_LAYER",
+        copy:"The computer reached the desktop, but no utility software was available. Without protective and maintenance utilities, malware has taken control before the application could start."
+      };
+    }
+
+    for(const id of utilityContents){
+      if(contentItems[id].validIn!=="utility"){
+        return {
+          type:"dialog",
+          title:"Incorrect utility item",
+          code:"INVALID_UTILITY_COMPONENT",
+          copy:`"${contentItems[id].name}" does not belong inside Utility Software.`
+        };
+      }
+    }
+
+    if(!utilityContents.includes("antivirus")){
+      return {
+        type:"malware",
+        title:"Threat detected before launch",
+        code:"MISSING_ANTIVIRUS_UTILITY",
+        copy:"No anti-virus utility was available, so malicious software took over the system before the application could start."
+      };
+    }
+    if(!utilityContents.includes("defrag")){
+      return {
+        type:"diagnostic",
+        title:"Disk error",
+        code:"MISSING_DEFRAGMENTER_UTILITY",
+        copy:"The hard drive is badly fragmented and responding too slowly. The application cannot continue loading."
+      };
+    }
+    if(!utilityContents.includes("backup")){
+      return {
+        type:"dialog",
+        title:"No backup found",
+        code:"MISSING_BACKUP_UTILITY",
+        copy:"The application launch was stopped because no backup utility was available to protect recovery data."
+      };
+    }
+    if(!utilityContents.includes("compression")){
+      const noAppsInstalled = installedApps().length===0;
+      return {
+        type:"dialog",
+        title:noAppsInstalled ? "Compression utility missing" : "Cannot uncompress application",
+        code:noAppsInstalled ? "MISSING_COMPRESSION_UTILITY_NO_APPS" : "MISSING_COMPRESSION_UTILITY",
+        copy:noAppsInstalled
+          ? "No application software has been added to the stack yet. Without a file-compression utility, the computer will not be able to unpack and install application files when they are needed."
+          : `The ${appInfo[targetApplication()].label} could not be unpacked and installed because no file-compression utility is available.`
+      };
+    }
+
+    return null;
+  }
+
+  async function waitFor(ms,token){
+    await sleep(ms);
+    return token===runToken && powered;
+  }
+
+  async function finishFailure(){ booting=false; }
+
+  async function attemptBoot(){
+    if(powered){ powerOff(); return; }
+
+    const token=++runToken;
+    booting=true;
+    setPowerVisual(true);
+    setEditing(false);
+    screenWake();
+
+    if(!await waitFor(420,token)) return;
+
+    const bottom = stack[stack.length-1];
+    if(bottom!=="firmware"){
+      screenDiagnostic("BOOT ERROR","STARTUP_FIRMWARE_NOT_FOUND","The computer could not begin the startup process.");
+      await finishFailure();
+      return;
+    }
+
+    screenFirmware();
+    if(!await waitFor(1200,token)) return;
+
+    if(stack[stack.length-2] !== "os"){
+      if(stack.includes("os")){
+        screenDiagnostic("INVALID SOFTWARE PLATFORM","OPERATING_SYSTEM_LAYER_INVALID","The startup firmware could not locate the Operating System in the required position.");
+      }else{
+        screenDiagnostic("NO BOOTABLE OPERATING SYSTEM","OPERATING_SYSTEM_NOT_FOUND","Firmware completed, but no operating system could be started.");
+      }
+      await finishFailure();
+      return;
+    }
+
+    const aboveOS = stack.slice(0,stack.length-2);
+    const utilityPresent = aboveOS.includes("utility");
+
+    if(utilityPresent && aboveOS[aboveOS.length-1] !== "utility"){
+      screenDiagnostic("INVALID SOFTWARE PLATFORM","UTILITY_LAYER_INVALID","Utility Software must sit above the Operating System and below any application software.");
+      await finishFailure();
+      return;
+    }
+
+    const appLayers = utilityPresent ? aboveOS.slice(0,-1) : aboveOS;
+    if(appLayers.some(id=>!isApplicationId(id))){
+      screenDiagnostic("INVALID SOFTWARE PLATFORM","UNEXPECTED_PLATFORM_LAYER","Only application software may sit above the Operating System or Utility Software.");
+      await finishFailure();
+      return;
+    }
+
+    screenOsStart();
+    if(!await waitFor(1250,token)) return;
+
+    const osIssue = validateOS();
+    if(osIssue && osIssue.stage==="early"){
+      screenBsod(osIssue.title, osIssue.copy, osIssue.code);
+      await finishFailure();
+      return;
+    }
+
+    showDesktop();
+    if(!await waitFor(850,token)) return;
+
+    if(osIssue && osIssue.stage==="late"){
+      screenBsod(osIssue.title, osIssue.copy, osIssue.code);
+      await finishFailure();
+      return;
+    }
+
+    const utilityIssue = validateUtility();
+    if(utilityIssue){
+      if(utilityIssue.type==="malware"){
+        screenMalware(utilityIssue.copy, utilityIssue.code);
+      }else if(utilityIssue.type==="diagnostic"){
+        screenDiagnostic(utilityIssue.title, utilityIssue.code, utilityIssue.copy);
+      }else{
+        showDesktop({
+          dialog:{
+            title:utilityIssue.title,
+            code:utilityIssue.code,
+            body:utilityIssue.copy
+          }
+        });
+      }
+      await finishFailure();
+      return;
+    }
+
+    screenUtilityStage();
+    if(!await waitFor(700,token)) return;
+
+    showDesktop();
+    if(!await waitFor(450,token)) return;
+
+    if(appLayers.length===0){
+      showDesktop({
+        dialog:{
+          title:"Application not found",
+          code:"TARGET_APPLICATION_NOT_INSTALLED",
+          body:`The ${appInfo[targetApplication()].label} is not available on this computer.`
+        }
+      });
+      await finishFailure();
+      return;
+    }
+
+    if(!appLayers.includes(targetApplication())){
+      showDesktop({
+        dialog:{
+          title:"Application not found",
+          code:"TARGET_APPLICATION_NOT_INSTALLED",
+          body:`One or more applications are installed, but the selected ${appInfo[targetApplication()].label} is not installed.`
+        }
+      });
+      await finishFailure();
+      return;
+    }
+
+    categoriesRevealed = true;
+    renderAll();
+    showDesktop({openApp:targetApplication()});
+    booting=false;
+  }
+
+  $("powerButton").addEventListener("click",attemptBoot);
+
+  function resetLab(){
+    powerOff();
+    categoriesRevealed = false;
+    stack=[];
+    osContents=[];
+    utilityContents=[];
+    clearSelection();
+    resetOrder();
+    updateMission();
+    renderAll();
+  }
+
+  $("resetLab").addEventListener("click",resetLab);
+  $("targetApplication").addEventListener("change",resetLab);
+
+  window.__softwareStackLabV3 = {
+    getState:()=>({
+      stack:[...stack],
+      osContents:[...osContents],
+      utilityContents:[...utilityContents],
+      target:targetApplication(),
+      powered,
+      booting,
+      currentDesktop
+    }),
+    setState:(newStack,newOS,newUtility,target)=>{
+      if(!editing) powerOff();
+      stack=[...newStack];
+      osContents=[...newOS];
+      utilityContents=[...newUtility];
+      if(target && appInfo[target]) $("targetApplication").value=target;
+      clearSelection();
+      updateMission();
+      renderAll();
+    },
+    attemptBoot
+  };
+
+  resetOrder();
+  updateMission();
+  renderAll();
+  screenOff();
+})();
+</script>
+</body>
+</html>

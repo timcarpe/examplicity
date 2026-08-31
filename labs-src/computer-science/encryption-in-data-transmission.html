@@ -1,0 +1,683 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- LAB_MANIFEST_HEAD_START -->
+<title>Encryption in Data Transmission</title>
+<meta name="description" content="Explore plaintext, ciphertext and symmetric and asymmetric keys in an interactive transmission lab for Cambridge Computer Science 0478 and 9618.">
+<link rel="canonical" href="https://www.examplicity.org/labs/computer-science/encryption-in-data-transmission.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Examplicity">
+<meta property="og:title" content="Encryption in Data Transmission">
+<meta property="og:description" content="Explore plaintext, ciphertext and symmetric and asymmetric keys in an interactive transmission lab for Cambridge Computer Science 0478 and 9618.">
+<meta property="og:url" content="https://www.examplicity.org/labs/computer-science/encryption-in-data-transmission.html">
+<meta property="og:image" content="https://www.examplicity.org/opengraph-image">
+<meta property="og:image:alt" content="Examplicity — Make complex ideas click">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Encryption in Data Transmission">
+<meta name="twitter:description" content="Explore plaintext, ciphertext and symmetric and asymmetric keys in an interactive transmission lab for Cambridge Computer Science 0478 and 9618.">
+<meta name="twitter:image" content="https://www.examplicity.org/opengraph-image">
+<script type="application/ld+json" data-lab-manifest="structured-data">{"@context":"https://schema.org","@type":"LearningResource","@id":"https://www.examplicity.org/labs/computer-science/encryption-in-data-transmission.html#learning-resource","url":"https://www.examplicity.org/labs/computer-science/encryption-in-data-transmission.html","name":"Encryption in Data Transmission","description":"Explore plaintext, ciphertext and symmetric and asymmetric keys in an interactive transmission lab for Cambridge Computer Science 0478 and 9618.","inLanguage":"en-GB","isAccessibleForFree":true,"interactivityType":"active","learningResourceType":"Security experiment","teaches":"Networks & communication","educationalLevel":["IGCSE","A Level"],"educationalAlignment":[{"@type":"AlignmentObject","alignmentType":"educationalSubject","educationalFramework":"Cambridge IGCSE Computer Science","targetName":"IGCSE 0478 section 2.3","targetUrl":"https://www.cambridgeinternational.org/Images/697167-2026-2028-syllabus.pdf#page=15"},{"@type":"AlignmentObject","alignmentType":"educationalSubject","educationalFramework":"Cambridge International AS & A Level Computer Science","targetName":"A 9618 section 17.1","targetUrl":"https://www.cambridgeinternational.org/Images/697372-2026-syllabus.pdf#page=36"}],"about":{"@type":"Thing","name":"Computer Science"},"audience":{"@type":"EducationalAudience","educationalRole":"student"},"provider":{"@type":"Organization","name":"Examplicity","url":"https://www.examplicity.org"},"isPartOf":{"@type":"WebSite","@id":"https://www.examplicity.org/#website","name":"Examplicity","url":"https://www.examplicity.org"}}</script>
+<!-- LAB_MANIFEST_HEAD_END -->
+<style>
+:root{
+  --bg:var(--lab-canvas,#f3f5f7);--panel:var(--lab-surface,#fff);--paper:var(--lab-paper,#fbfbfd);
+  --ink:var(--lab-ink,#1d1d1f);--muted:var(--lab-muted,#6e6e73);--line:var(--lab-line,#d2d2d7);--line-strong:var(--lab-line-strong,#a7a7ad);
+  --accent:var(--lab-accent,#5277b8);--accent-soft:var(--lab-accent-soft,#eef2fa);--good:var(--lab-good,#18794e);--good-soft:var(--lab-good-soft,#edf8f1);
+  --warn:var(--lab-warn,#946200);--warn-soft:var(--lab-warn-soft,#fff6e7);--bad:var(--lab-bad,#b42318);--bad-soft:var(--lab-bad-soft,#fff0ee);
+  --board:#13212b;--board-grid:#263a47;--link:#7d919e;--stream:#4aa3ff;--plain:#d65b4e;--eve:#a56a91;--public:#4e9277;--private:#b67a27;--secret:#5681c4;
+}
+*{box-sizing:border-box}html,body{min-height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--lab-font-sans,-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif)}
+button,input,textarea{font:inherit}button{cursor:pointer}button:disabled{opacity:.45;cursor:not-allowed}
+main{width:min(1380px,calc(100% - 22px));margin:16px auto 42px}
+h1{margin:0;font-size:27px;font-weight:630;letter-spacing:-.025em;line-height:1.1}.sub{margin:5px 0 12px;color:var(--muted);font-size:13px;line-height:1.45}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--lab-panel-radius,12px);box-shadow:var(--lab-panel-shadow,0 1px 2px rgba(29,29,31,.04))}
+button{min-height:34px;padding:0 10px;border:1px solid var(--line);border-radius:var(--lab-control-radius,8px);background:var(--lab-control,#fff);color:var(--ink)}button:hover:not(:disabled){border-color:var(--line-strong)}
+
+.mission{min-height:64px;padding:10px 11px;display:grid;grid-template-columns:minmax(280px,1fr) auto auto;gap:12px;align-items:center}
+.mission-copy strong{display:block;font-size:15px}.mission-copy span{display:block;margin-top:3px;color:var(--muted);font-size:10px;line-height:1.35}
+.mode-tabs{display:flex;gap:5px;flex-wrap:wrap}.mode-btn{font-size:10px;font-weight:800}.mode-btn.active{background:var(--accent);border-color:var(--accent);color:#fff}.mode-btn.complete:not(.active){border-color:var(--good);background:var(--good-soft);color:var(--good)}
+.goal-lights{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}.goal-light{display:flex;align-items:center;gap:5px;min-height:28px;padding:4px 7px;border:1px solid var(--line);border-radius:999px;background:var(--paper);color:var(--muted);font-size:8px;font-weight:850;white-space:nowrap}.goal-light i{width:8px;height:8px;border-radius:50%;background:#aab4ba}.goal-light.good{color:var(--good);border-color:#afd4ba;background:var(--good-soft)}.goal-light.good i{background:#43a26d}.goal-light.bad{color:var(--bad);border-color:#e2b5ae;background:var(--bad-soft)}.goal-light.bad i{background:#d65b4e}.goal-light.warn{color:var(--warn);border-color:#e7d09e;background:var(--warn-soft)}.goal-light.warn i{background:#d4a13c}
+
+.lab-grid{margin-top:10px;display:grid;grid-template-columns:minmax(0,1fr) 230px;gap:8px;align-items:start}
+.workspace{min-width:0;padding:10px}.workspace-head{min-height:38px;display:flex;justify-content:space-between;gap:10px;align-items:center}.workspace-head strong{display:block;font-size:14px}.workspace-head span{display:block;margin-top:2px;color:var(--muted);font-size:9px;line-height:1.35}.workspace-actions{display:flex;gap:7px;flex-wrap:wrap}.workspace-actions button{min-height:36px;padding:0 12px;font-size:10px;font-weight:760}
+.board-shell{position:relative;margin-top:8px;overflow:auto;border-radius:11px;background:var(--board)}
+.board-shell.is-fitted{overflow:hidden}
+.board-stage{position:relative;width:1020px;height:650px}
+.board{position:relative;width:1020px;height:650px;overflow:hidden;transform-origin:top left;border:1px solid #3c5260;border-radius:11px;background:radial-gradient(circle at 50% 40%,rgba(75,114,142,.18),transparent 24rem),repeating-linear-gradient(0deg,transparent 0 31px,rgba(177,199,214,.07) 32px),repeating-linear-gradient(90deg,transparent 0 31px,rgba(177,199,214,.07) 32px),var(--board);color:#eaf1f5}
+.links{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}.link-base{fill:none;stroke:var(--link);stroke-width:9;stroke-linecap:round}.link-core{fill:none;stroke:#243a49;stroke-width:4;stroke-linecap:round}.branch-base{fill:none;stroke:var(--link);stroke-width:8;stroke-linecap:round}.branch-core{fill:none;stroke:#243a49;stroke-width:3;stroke-linecap:round}
+.path-label{position:absolute;z-index:2;left:50%;top:21px;transform:translateX(-50%);padding:5px 10px;border:1px solid #49606f;border-radius:999px;background:#20313d;color:#d9e6ee;font:850 8px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:.07em;text-transform:uppercase}.line-caption{display:none}
+
+.device{position:absolute;z-index:4;width:276px;padding:9px;border:1px solid #718895;border-radius:12px;background:linear-gradient(145deg,#eef3f6,#c9d5dc);color:#25343d;box-shadow:0 12px 22px rgba(0,0,0,.24)}
+.device.alice{left:20px;top:78px;min-height:330px}.device.bob{right:20px;top:78px;min-height:330px}.device.eve{left:50%;top:432px;transform:translateX(-50%);width:442px;min-height:196px;border-color:#9a7088;background:linear-gradient(145deg,#f4ebf1,#d9c1d0)}
+.device-head{display:flex;align-items:center;gap:7px}.device-icon{width:34px;height:29px;display:grid;place-items:center;border:1px solid #8fa1ac;border-radius:7px;background:#f9fbfc;color:#526b79}.device.eve .device-icon{border-color:#b992a9;color:#86556f;background:#fff8fc}.device-icon svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}.device-head strong{font-size:11px}.device-head span{display:block;margin-top:1px;color:#6b7b85;font-size:7px;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+.monitor{margin-top:7px;padding:6px;border:5px solid #2c373e;border-radius:8px;background:#111820;box-shadow:inset 0 0 13px rgba(0,0,0,.62)}.device.eve .monitor{border-color:#3a2b35}.screen{position:relative;min-height:156px;padding:7px;border-radius:3px;background:linear-gradient(145deg,#102a3d,#174868 58%,#276886);color:#eaf6ff;overflow:hidden}.device.bob .screen{background:linear-gradient(145deg,#163a32,#235f50 58%,#357c69)}.device.eve .screen{min-height:121px;background:linear-gradient(145deg,#2a1722,#4a263a 58%,#6d3b56)}
+.screen-title{display:flex;justify-content:space-between;gap:7px;align-items:center;color:rgba(255,255,255,.68);font:800 7px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;text-transform:uppercase;letter-spacing:.05em}.screen-badge{padding:2px 4px;border:1px solid rgba(255,255,255,.28);border-radius:999px;color:#fff}.screen-badge.good{background:rgba(53,160,99,.32)}.screen-badge.bad{background:rgba(213,79,68,.32)}.screen-badge.cipher{background:rgba(80,139,197,.35)}
+.composer{margin-top:7px}.composer textarea{width:100%;height:52px;padding:7px;resize:none;border:1px solid rgba(255,255,255,.28);border-radius:6px;background:rgba(0,0,0,.2);color:#fff;outline:none;font:800 12px/1.25 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.composer textarea:focus{box-shadow:0 0 0 2px rgba(255,255,255,.26)}
+.source-preview{margin-top:6px;padding:5px 6px;border:1px solid rgba(255,255,255,.21);border-radius:6px;background:rgba(0,0,0,.16)}.source-preview span{display:block;color:rgba(255,255,255,.55);font:800 6px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;text-transform:uppercase;letter-spacing:.05em}.source-preview code{display:block;margin-top:3px;color:#fff;font:850 9px/1.3 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.send-card{width:100%;min-height:42px;margin-top:6px;padding:7px 9px;border:1px solid rgba(255,255,255,.45);border-radius:8px;background:linear-gradient(180deg,rgba(255,255,255,.18),rgba(255,255,255,.11));color:#fff;text-align:left;display:grid;grid-template-columns:26px minmax(0,1fr) auto;gap:7px;align-items:center}.send-card:hover:not(:disabled){border-color:#fff;background:linear-gradient(180deg,rgba(255,255,255,.24),rgba(255,255,255,.14))}.envelope{width:25px;height:19px;border:2px solid currentColor;border-radius:3px;position:relative}.envelope:after{content:"";position:absolute;left:2px;right:2px;top:1px;height:10px;border-bottom:2px solid currentColor;transform:skewY(-24deg)}.send-copy strong{display:block;font-size:10px}.send-copy span{display:block;margin-top:1px;color:rgba(255,255,255,.78);font-size:7px}.send-arrow{font-size:18px;font-weight:900}
+
+.key-bay{margin-top:7px;min-height:62px;padding:7px 8px;border:2px dashed #7d93a0;border-radius:8px;background:rgba(255,255,255,.82);display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px;align-items:center;transition:.12s}.device.eve .key-bay{border-color:#a88198;background:rgba(255,255,255,.72)}.key-bay.drop-ready{border-style:solid;border-color:var(--accent);box-shadow:0 0 0 3px rgba(82,119,184,.18),inset 0 0 0 1px var(--accent);background:#eef4ff}.key-bay.bad-key{border-style:solid;border-color:var(--bad);background:var(--bad-soft);animation:shake .25s linear 1}@keyframes shake{0%,100%{transform:translateX(0)}35%{transform:translateX(-4px)}70%{transform:translateX(4px)}}.bay-copy{min-width:78px}.bay-copy strong{display:block;font-size:8px;text-transform:uppercase;letter-spacing:.05em}.bay-copy span{display:block;margin-top:2px;color:#70808a;font-size:6px;line-height:1.25}.key-bay .key-token{min-width:0;width:100%;padding:5px 6px;border-radius:6px;box-shadow:none}.key-bay .key-token strong{font-size:8px}.key-bay .key-token small{display:none}.key-bay .key-glyph{width:20px;height:20px}.key-bay .key-glyph svg{width:13px;height:13px}.bay-empty{padding:5px 0;color:#5f727c;font-size:8px;font-weight:850;text-align:center;text-transform:uppercase;letter-spacing:.05em}
+
+.crypto-gate{position:absolute;z-index:5;left:316px;top:213px;width:94px;height:116px;padding:7px;border:1px solid #8da0ad;border-radius:10px;background:linear-gradient(145deg,#eef4f7,#becbd3);color:#293943;box-shadow:0 8px 18px rgba(0,0,0,.23)}
+.crypto-gate .gate-title{display:flex;justify-content:space-between;gap:5px;align-items:center}.crypto-gate .gate-title strong{font-size:8px;text-transform:uppercase;letter-spacing:.06em}.gate-led{width:7px;height:7px;border-radius:50%;background:#98a5ad}.crypto-gate.ready .gate-led{background:#4caf76;box-shadow:0 0 7px rgba(76,175,118,.7)}.crypto-gate.active{border-color:#86b8df;box-shadow:0 0 0 3px rgba(74,163,255,.18),0 8px 18px rgba(0,0,0,.23)}
+.gate-window{margin-top:7px;height:43px;padding:5px;border:1px solid #7c909d;border-radius:6px;background:#172630;color:#fff;display:grid;grid-template-columns:1fr auto 1fr;gap:4px;align-items:center;text-align:center;font:850 9px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.gate-window b{color:#8fb5cb}.gate-window .out{color:#9fd3ff}.gate-window .out.plain{color:#ffb0a8}.gate-key{margin-top:5px;padding:4px 5px;border-radius:5px;background:#f7f9fa;color:#61717b;font-size:6px;line-height:1.25;text-align:center}.gate-key strong{display:block;color:#344650;font-size:7px}.gate-note{display:none}
+.relay{position:absolute;z-index:5;left:464px;top:228px;width:96px;height:86px;padding:7px;border:1px solid #718895;border-radius:10px;background:linear-gradient(145deg,#e7edf1,#bdcbd4);color:#26343c;box-shadow:0 8px 18px rgba(0,0,0,.22)}.relay-head{display:flex;justify-content:space-between;gap:6px;align-items:center}.relay strong{font-size:7px}.led{width:7px;height:7px;border-radius:50%;background:#51b778;box-shadow:0 0 6px rgba(81,183,120,.65)}.ports{height:23px;margin-top:6px;padding:5px;display:grid;grid-template-columns:repeat(7,1fr);gap:3px;border:1px solid #7c909d;border-radius:5px;background:#50636f}.ports i{border-radius:2px;background:#1e2b33}.relay small{display:none}
+.tap{position:absolute;z-index:6;left:608px;top:248px;width:31px;height:45px;transform:translateX(-50%);display:grid;place-items:center}.tap-core{width:20px;height:20px;border:4px solid #b8adc1;border-radius:50%;background:#2f3d48;box-shadow:0 0 0 3px rgba(184,173,193,.12)}.tap::after{content:"eve";position:absolute;top:32px;padding:2px 5px;border:1px solid #6c7b87;border-radius:999px;background:#20313d;color:#d7e2e8;font-size:6px;font-weight:850;text-transform:uppercase;letter-spacing:.05em}
+
+.wire-readout{position:absolute;z-index:4;left:397px;top:333px;width:276px;min-height:58px;padding:7px 8px;border:1px solid #49606f;border-radius:8px;background:rgba(9,18,24,.9);box-shadow:0 7px 17px rgba(0,0,0,.2)}.wire-readout-head{display:flex;justify-content:space-between;gap:8px;color:#9fb0ba;font:800 7px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;text-transform:uppercase;letter-spacing:.05em}.wire-readout-head strong{color:#d9e6ee;font-size:7px}.wire-data{margin-top:5px;min-height:24px;color:#dce8ee;font:850 9px/1.4 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;overflow-wrap:anywhere;word-break:break-word}.wire-data.plain{color:#ffb8b0}.wire-data.cipher{color:#a9d7ff}.wire-note{display:none}
+
+.stream-layer{position:absolute;inset:0;z-index:10;pointer-events:none}.stream-char{position:absolute;left:0;top:0;min-width:34px;height:28px;padding:0 5px;display:grid;place-items:center;border:2px solid #fff;border-radius:7px;background:var(--plain);color:#fff;box-shadow:0 0 0 3px rgba(214,91,78,.19),0 0 12px rgba(214,91,78,.64);font:900 12px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;opacity:0;transform:translate(-50%,-50%);transition:left .28s linear,top .28s linear,background-color .12s,color .12s,opacity .10s,transform .10s}.stream-char.visible{opacity:1}.stream-char.cipher{background:var(--stream);box-shadow:0 0 0 3px rgba(74,163,255,.18),0 0 12px rgba(74,163,255,.7)}.stream-char.clone{background:var(--stream);box-shadow:0 0 0 3px rgba(74,163,255,.18),0 0 12px rgba(74,163,255,.7)}.stream-char.arrive{transform:translate(-50%,-50%) scale(.82);opacity:.25}
+
+.flow-box{margin-top:6px;padding:6px;border:1px solid rgba(255,255,255,.22);border-radius:6px;background:rgba(0,0,0,.17)}.flow-label{display:flex;justify-content:space-between;gap:7px;color:rgba(255,255,255,.56);font:800 6px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;text-transform:uppercase;letter-spacing:.05em}.flow-value{min-height:28px;margin-top:3px;color:#fff;font:850 9px/1.35 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;overflow-wrap:anywhere;word-break:break-word}.flow-value.cipher{color:#b9ddff}.flow-value.blocked{color:#d9bdd0}.decode-trace{margin-top:6px;display:grid;grid-template-columns:minmax(0,1fr) 58px minmax(0,1fr);gap:5px;align-items:stretch}.decode-step{min-width:0;padding:5px;border:1px solid rgba(255,255,255,.2);border-radius:5px;background:rgba(0,0,0,.13)}.decode-step span{display:block;color:rgba(255,255,255,.6);font-size:6.5px;text-transform:uppercase;letter-spacing:.05em}.decode-step code{display:block;margin-top:3px;color:#fff;font:850 9px/1.35 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;overflow-wrap:anywhere;word-break:break-word}.decode-step code.cipher{color:#b9ddff}.decode-action{display:grid;place-items:center;text-align:center;color:rgba(255,255,255,.68);font-size:6px;line-height:1.2}.decode-action i{width:28px;height:22px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.25);border-radius:5px;background:rgba(255,255,255,.08);font-style:normal;font-size:12px}.decode-action.ready i{background:rgba(64,169,107,.26);border-color:#7fc59d;color:#d8ffe7}.decode-action.wrong i{background:rgba(194,77,67,.23);border-color:#d18e87;color:#ffd7d3}.decode-action.flash i{animation:keyPulse .42s ease-out 1}@keyframes keyPulse{0%{transform:scale(.78);box-shadow:0 0 0 0 rgba(126,211,163,.55)}100%{transform:scale(1);box-shadow:0 0 0 9px rgba(126,211,163,0)}}
+
+.capture-history{margin-top:5px;display:grid;gap:3px}.capture-row{min-height:21px;padding:4px 5px;border:1px solid rgba(255,255,255,.17);border-radius:5px;background:rgba(0,0,0,.13);display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:5px;align-items:center}.capture-row small{color:rgba(255,255,255,.55);font:750 6px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.capture-row code{overflow:hidden;color:#d9bdd0;font:800 7px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:nowrap;text-overflow:ellipsis}.capture-row code.open{color:#d9bdd0}.capture-state{font-size:8px;font-weight:900}.capture-state.open{color:#a7f0c5}.capture-state.locked{color:#f2c5df}
+
+.key-dock{padding:10px;position:sticky;top:76px}.dock-head{display:flex;justify-content:space-between;gap:8px;align-items:flex-start;margin-bottom:9px}.dock-head strong{display:block;font-size:14px}.dock-head span{display:block;margin-top:2px;color:var(--muted);font-size:9px;line-height:1.3}.dock-head button{min-height:32px;font-size:9px}.key-group{margin-top:8px;padding:8px;border:1px solid var(--line);border-radius:9px;background:#f8fafb}.key-group-title{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:6px}.key-group-title strong{font-size:9px}.key-group-title span{color:var(--muted);font-size:7px;text-align:right}.key-tray{min-height:64px;display:grid;gap:6px}.key-tray.drop-ready{outline:2px solid var(--accent);outline-offset:2px;border-radius:7px}.tray-empty{min-height:52px;display:grid;place-items:center;color:#89969e;font-size:8px;border:1px dashed #c4cdd2;border-radius:7px}
+.key-token{width:100%;padding:6px 7px;border:1px solid #b9c6cf;border-left:5px solid var(--secret);border-radius:8px;background:#fff;color:#35434d;box-shadow:0 2px 5px rgba(39,55,67,.07);cursor:grab;touch-action:none;user-select:none;transition:.1s}.key-token:hover{transform:translateY(-1px);box-shadow:0 4px 9px rgba(39,55,67,.11)}.key-token.dragging{opacity:.38}.key-token.selected{box-shadow:0 0 0 2px var(--accent),0 4px 9px rgba(39,55,67,.11)}.key-top{display:grid;grid-template-columns:27px minmax(0,1fr);gap:6px;align-items:center}.key-glyph{width:27px;height:27px;display:grid;place-items:center;border:1px solid #cbd5db;border-radius:7px;background:#f7fafc;color:var(--secret)}.key-glyph svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.key-token strong{display:block;font-size:9px}.key-token small{display:block;margin-top:1px;color:var(--muted);font-size:7px;line-height:1.25}.key-token.public{border-left-color:var(--public)}.key-token.public .key-glyph{color:var(--public);background:#edf8f3}.key-token.private{border-left-color:var(--private)}.key-token.private .key-glyph{color:var(--private);background:#fff5e5}.key-token.secret{border-left-color:var(--secret)}
+.legend{margin-top:9px;padding-top:8px;border-top:1px solid var(--line);display:grid;gap:5px;color:var(--muted);font-size:7px;line-height:1.25}.legend-row{display:grid;grid-template-columns:12px minmax(0,1fr);gap:6px;align-items:start}.legend-row i{width:10px;height:10px;margin-top:1px;border-radius:3px;background:#cfd6db}.legend-row.public i{background:#d9efe6;border:1px solid #9cc9b7}.legend-row.private i{background:#ffedcf;border:1px solid #d8ad69}.legend-row.secret i{background:#dfe9f7;border:1px solid #9ab5da}
+.feedback{margin-top:8px;min-height:46px;padding:8px 10px;border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:9px;background:var(--paper);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:9px;align-items:center}.feedback.good{border-left-color:var(--good);background:var(--good-soft)}.feedback.warn{border-left-color:var(--warn);background:var(--warn-soft)}.feedback.bad{border-left-color:var(--bad);background:var(--bad-soft)}.feedback strong{display:block;font-size:11px}.feedback span{display:block;margin-top:2px;color:var(--muted);font-size:8px;line-height:1.25}.feedback code{font:800 8px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:var(--muted);white-space:nowrap}.footer{display:none}.drag-ghost{position:fixed;z-index:1000;pointer-events:none;min-width:150px;max-width:210px;padding:7px 9px;border:1px solid #95aec0;border-radius:9px;background:rgba(255,255,255,.97);box-shadow:0 10px 25px rgba(30,47,60,.24);color:#2a3943;font-size:9px;font-weight:800;transform:translate(-50%,-50%)}
+@container lab-canvas (max-width:1050px){.lab-grid{grid-template-columns:1fr}.key-dock{position:static}.key-tray{grid-template-columns:repeat(3,minmax(0,1fr))}.legend{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:760px){main{width:min(100% - 12px,1380px);margin-top:8px}.mission{grid-template-columns:1fr}.goal-lights{justify-content:flex-start}.workspace-head{align-items:flex-start;flex-direction:column}.key-tray{grid-template-columns:1fr}.legend{grid-template-columns:1fr}.feedback{grid-template-columns:1fr}.feedback code{white-space:normal}}
+</style>
+<!-- LAB_FRAME_STYLES_START -->
+<style data-lab-frame>
+:root {
+  --lab-canvas: #f3f5f7;
+  --lab-paper: #fbfbfd;
+  --lab-surface: #ffffff;
+  --lab-control: #ffffff;
+  --lab-ink: #1d1d1f;
+  --lab-muted: #6e6e73;
+  --lab-line: #d2d2d7;
+  --lab-line-strong: #a7a7ad;
+  --lab-accent: #5277b8;
+  --lab-accent-soft: #eef2fa;
+  --lab-good: #18794e;
+  --lab-good-soft: #edf8f1;
+  --lab-warn: #946200;
+  --lab-warn-soft: #fff6e7;
+  --lab-bad: #b42318;
+  --lab-bad-soft: #fff0ee;
+  --lab-focus: #1d1d1f;
+  --lab-focus-soft: rgba(29, 29, 31, 0.18);
+  --lab-font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+  --lab-panel-radius: 12px;
+  --lab-control-radius: 8px;
+  --lab-pill-radius: 999px;
+  --lab-control-height: 35px;
+  --lab-panel-shadow: 0 1px 2px rgba(29, 29, 31, 0.04);
+  --lab-page-gutter: max(28px, calc((100vw - 1200px) / 2));
+  --lab-compact-workspace-max: 820px;
+}
+
+html,
+body {
+  background: var(--lab-canvas);
+}
+
+body {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  align-content: start !important;
+  font-family: var(--lab-font-sans);
+  padding-bottom: 0;
+  padding-top: 0 !important;
+  text-rendering: optimizeLegibility;
+}
+
+.lab-manifest-header {
+  align-items: start;
+  border-bottom: 1px solid var(--line, var(--lab-line));
+  display: grid;
+  gap: 18px 28px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  margin-bottom: 26px;
+  padding-bottom: 22px;
+}
+
+.lab-manifest-heading {
+  min-width: 0;
+}
+
+.lab-manifest-header h1 {
+  color: var(--ink, var(--lab-ink));
+  font-family: var(--lab-font-sans);
+  font-size: clamp(25px, 3.2vw, 40px);
+  font-weight: 650;
+  letter-spacing: -0.045em;
+  line-height: 1.02;
+  margin: 0;
+  max-width: 24ch;
+  padding: 0;
+  text-align: left;
+}
+
+.lab-manifest-subtitle {
+  color: var(--muted, var(--lab-muted));
+  font-family: var(--lab-font-sans);
+  font-size: 13px;
+  letter-spacing: 0;
+  line-height: 1.5;
+  margin: 10px 0 0;
+  max-width: 72ch;
+  padding: 0;
+  text-align: left;
+}
+
+.lab-authored-title-slot {
+  min-width: 0;
+}
+
+.lab-syllabus-chips {
+  align-items: center;
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+  margin: 0 0 0 auto;
+  max-width: 100%;
+}
+
+.lab-syllabus-chip {
+  align-items: center;
+  background: var(--syllabus-chip-bg) !important;
+  border: 1px solid var(--syllabus-chip-border) !important;
+  border-radius: var(--lab-pill-radius);
+  color: var(--syllabus-chip-text) !important;
+  display: inline-flex;
+  font-size: 11px;
+  font-weight: 650;
+  gap: 4px;
+  line-height: 1;
+  min-height: 29px;
+  padding: 8px 10px;
+  position: relative;
+  transition: background-color 140ms ease, border-color 140ms ease;
+  white-space: nowrap;
+}
+
+.lab-syllabus-chip:hover {
+  background: var(--syllabus-chip-hover) !important;
+}
+
+.lab-syllabus-primary-link {
+  border-radius: inherit;
+  inset: 0;
+  position: absolute;
+  z-index: 0;
+}
+
+.lab-syllabus-primary-link:focus-visible {
+  outline: 2px solid var(--syllabus-chip-text);
+  outline-offset: 2px;
+}
+
+.lab-syllabus-name,
+.lab-syllabus-divider,
+.lab-syllabus-sections {
+  pointer-events: none;
+  position: relative;
+  z-index: 1;
+}
+
+.lab-syllabus-section {
+  border-radius: 4px;
+  color: inherit;
+  padding: 2px;
+  text-decoration: none;
+}
+
+a.lab-syllabus-section {
+  pointer-events: auto;
+}
+
+a.lab-syllabus-section:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+a.lab-syllabus-section:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 1px;
+}
+
+.lab-syllabus-name {
+  color: var(--syllabus-chip-text) !important;
+}
+
+.lab-syllabus-divider,
+.lab-syllabus-separator {
+  color: var(--muted, var(--lab-muted));
+}
+
+.lab-syllabus-prefix {
+  opacity: 0.72;
+  padding-left: 5px;
+}
+
+.lab-syllabus-sections {
+  align-items: center;
+  display: inline-flex;
+}
+
+.lab-syllabus-separator {
+  margin-inline: 0 2px;
+}
+
+html[data-theme="dark"] .lab-syllabus-name {
+  color: var(--syllabus-chip-border) !important;
+}
+
+html[data-theme="dark"] .lab-syllabus-chip:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+html[data-theme="dark"],
+html[data-theme="dark"] body {
+  background: var(--bg);
+}
+
+body > main {
+  container-name: lab-canvas;
+  container-type: inline-size;
+  margin-left: var(--lab-page-gutter);
+  margin-right: auto;
+  margin-top: 18px;
+  max-width: 1200px;
+  width: calc(100vw - var(--lab-page-gutter) - var(--lab-page-gutter));
+}
+
+body[data-lab-layout="compact"] .lab-manifest-header {
+  margin-bottom: 17px;
+  padding-bottom: 13px;
+}
+
+body[data-lab-layout="compact"] [data-lab-workspace] {
+  margin-left: auto;
+  margin-right: auto;
+  width: min(var(--lab-compact-workspace-max), 100%);
+}
+
+:where(button, input, select, textarea, summary):focus-visible {
+  outline: 3px solid var(--lab-focus);
+  outline-offset: 4px;
+}
+
+@media (max-width: 620px) {
+  :root {
+    --lab-page-gutter: 18px;
+  }
+
+  body {
+    padding-bottom: 0;
+    padding-top: 0 !important;
+  }
+
+  .lab-manifest-header {
+    gap: 14px;
+    grid-template-columns: minmax(0, 1fr) !important;
+    margin-bottom: 20px;
+    padding-bottom: 18px;
+  }
+
+  body[data-lab-layout="compact"] .lab-manifest-header {
+    margin-bottom: 16px;
+    padding-bottom: 14px;
+  }
+
+  .lab-manifest-header h1 {
+    font-size: clamp(24px, 8vw, 34px);
+  }
+
+  .lab-syllabus-chips {
+    gap: 4px;
+    justify-content: flex-start !important;
+    margin: 0 !important;
+  }
+
+  .lab-syllabus-chip {
+    font-size: 10px;
+    max-width: 100%;
+    min-height: 27px;
+    padding: 7px 8px;
+    white-space: normal;
+  }
+
+  .lab-syllabus-sections {
+    flex-wrap: wrap;
+  }
+
+  body > main {
+    margin-top: 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+</style>
+<!-- LAB_FRAME_STYLES_END -->
+<link rel="stylesheet" href="./lab-kit.css" data-lab-resource="lab-kit.css">
+</head>
+<body data-lab-layout="standard">
+<main>
+<!-- LAB_MANIFEST_HEADER_START -->
+<header class="lab-manifest-header">
+  <div class="lab-manifest-heading">
+    <h1 data-lab-manifest="title">Encryption in Data Transmission</h1>
+  <p class="lab-manifest-subtitle" data-lab-manifest="subtitle">Type a message. Watch plain text become cipher text on the shared line. Keys decide who can turn it back into plain text.</p>
+  </div>
+  <!-- LAB_SYLLABUS_CHIPS_START -->
+<nav class="lab-syllabus-chips" aria-label="Syllabus alignment">
+  <section class="lab-syllabus-chip" style="--syllabus-chip-bg:#edf4ff;--syllabus-chip-border:#9ab6e6;--syllabus-chip-text:#173d78;--syllabus-chip-hover:#dce9fc" aria-label="IGCSE 0478 syllabus alignment">
+    <a class="lab-syllabus-primary-link" href="https://www.cambridgeinternational.org/Images/697167-2026-2028-syllabus.pdf#page=15" target="_blank" rel="noopener noreferrer" aria-label="Open IGCSE 0478 syllabus section 2.3"></a>
+    <span class="lab-syllabus-name">IGCSE 0478</span>
+    <span class="lab-syllabus-divider" aria-hidden="true">·</span>
+    <span class="lab-syllabus-sections"><span class="lab-syllabus-section is-primary">2.3</span></span>
+  </section>
+  <section class="lab-syllabus-chip" style="--syllabus-chip-bg:#f4effb;--syllabus-chip-border:#b9a2dc;--syllabus-chip-text:#4f2b77;--syllabus-chip-hover:#e8ddf6" aria-label="A 9618 syllabus alignment">
+    <a class="lab-syllabus-primary-link" href="https://www.cambridgeinternational.org/Images/697372-2026-syllabus.pdf#page=36" target="_blank" rel="noopener noreferrer" aria-label="Open A 9618 syllabus section 17.1"></a>
+    <span class="lab-syllabus-name">A 9618</span>
+    <span class="lab-syllabus-divider" aria-hidden="true">·</span>
+    <span class="lab-syllabus-sections"><span class="lab-syllabus-section is-primary">17.1</span></span>
+  </section>
+</nav>
+<!-- LAB_SYLLABUS_CHIPS_END -->
+</header>
+<!-- LAB_MANIFEST_HEADER_END -->
+<span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span>
+  <span data-lab-authored-subtitle-slot hidden></span>
+
+  <section class="panel mission" aria-label="Lab mission">
+    <div class="mission-copy">
+      <strong id="missionTitle">Make Bob readable and Eve unreadable using one shared secret.</strong>
+      <span id="missionHint">Send once with no key. Then add keys and compare what Bob and Eve can read.</span>
+    </div>
+    <div class="mode-tabs" aria-label="Encryption method">
+      <button id="symMode" class="mode-btn active" type="button">Shared key</button>
+      <button id="asymMode" class="mode-btn" type="button">Public + private</button>
+    </div>
+    <div class="goal-lights" aria-label="Current result">
+      <span id="wireGoal" class="goal-light"><i></i>wire protected</span>
+      <span id="bobGoal" class="goal-light"><i></i>Bob reads</span>
+      <span id="eveGoal" class="goal-light"><i></i>Eve blocked</span>
+    </div>
+  </section>
+
+  <div class="lab-grid">
+    <section class="panel workspace">
+      <div class="workspace-head">
+        <div><strong>Shared line</strong><span>The text on the line is what Bob and Eve both receive.</span></div>
+        <div class="workspace-actions"><button id="resetTraffic" type="button">Clear line</button><button id="resetAll" type="button">Reset lab</button></div>
+      </div>
+
+      <div class="board-shell">
+        <div class="board-stage">
+        <div id="board" class="board" aria-label="Interactive encryption transmission line">
+          <svg class="links" viewBox="0 0 1020 650" aria-hidden="true">
+            <path class="link-base" d="M276 270 H748"/><path class="link-core" d="M276 270 H748"/>
+            <path class="branch-base" d="M608 270 V432"/><path class="branch-core" d="M608 270 V432"/>
+          </svg>
+          <div class="path-label">shared line</div>
+          <div class="line-caption"><span>sender output</span><span>same stream on the wire</span><span>receiver input</span></div>
+
+          <section class="device alice" aria-label="Alice sender workstation">
+            <div class="device-head">
+              <div class="device-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg></div>
+              <div><strong>Alice</strong><span>plain-text sender</span></div>
+            </div>
+            <div class="monitor"><div class="screen">
+              <div class="screen-title"><span>message before transmission</span><span id="aliceState" class="screen-badge">plain text</span></div>
+              <div class="composer"><textarea id="messageInput" maxlength="28" spellcheck="false" aria-label="Message to transmit">ACCESS CODE 47-B</textarea></div>
+              <div class="source-preview"><span>plain text</span><code id="sourcePreview">ACCESS CODE 47-B</code></div>
+              <div class="source-preview"><span>cipher text</span><code id="cipherPreview">same as plain text</code></div>
+              <button id="sendPacket" class="send-card" type="button" aria-label="Transmit the current message">
+                <span class="envelope" aria-hidden="true"></span><span class="send-copy"><strong id="sendTitle">Send plain text</strong><span id="sendSub">No key at sender</span></span><span class="send-arrow" aria-hidden="true">→</span>
+              </button>
+            </div></div>
+            <div id="aliceBay" class="key-bay" data-bay="alice" tabindex="0" role="button" aria-label="Alice encryption key bay">
+              <div class="bay-copy"><strong>Encryption key</strong><span id="aliceBayHint">optional</span></div><div class="bay-empty">drop encryption key</div>
+            </div>
+          </section>
+
+          <section id="encryptGate" class="crypto-gate" aria-label="Encryption gate">
+            <div class="gate-title"><strong>Encryption</strong><span class="gate-led"></span></div>
+            <div class="gate-window"><span id="gateIn">A</span><b>→</b><span id="gateOut" class="out plain">A</span></div>
+            <div class="gate-key"><strong id="gateKeyName">No key</strong><span id="gateKeyRole">plain text passes unchanged</span></div>
+            <div class="gate-note"></div>
+          </section>
+
+          <section class="relay" aria-label="Network relay">
+            <div class="relay-head"><strong>RELAY</strong><span class="led"></span></div>
+            <div class="ports"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><small>forwards same stream</small>
+          </section>
+
+          <div class="tap" aria-label="Passive packet capture tap"><div class="tap-core"></div></div>
+
+          <div class="wire-readout" aria-live="polite">
+            <div class="wire-readout-head"><span>shared line</span><strong id="wireKind">no data</strong></div>
+            <div id="wireData" class="wire-data">—</div>
+            <div class="wire-note"></div>
+          </div>
+
+          <section class="device bob" aria-label="Bob receiver workstation">
+            <div class="device-head">
+              <div class="device-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg></div>
+              <div><strong>Bob</strong><span>intended receiver</span></div>
+            </div>
+            <div class="monitor"><div class="screen">
+              <div class="screen-title"><span>cipher text → plain text</span><span id="bobState" class="screen-badge">waiting</span></div>
+              <div class="decode-trace">
+                <div class="decode-step"><span>cipher text</span><code id="bobRaw">—</code></div>
+                <div id="bobDecodeAction" class="decode-action"><i>KEY</i><span id="bobActionText">no data</span></div>
+                <div class="decode-step"><span>plain text</span><code id="bobReadable">—</code></div>
+              </div>
+              <div id="bobNote" class="source-preview"><span>status</span><code>—</code></div>
+            </div></div>
+            <div id="bobBay" class="key-bay" data-bay="bob" tabindex="0" role="button" aria-label="Bob decryption key bay">
+              <div class="bay-copy"><strong>Decryption key</strong><span id="bobBayHint">needed for cipher text</span></div><div class="bay-empty">drop decryption key</div>
+            </div>
+          </section>
+
+          <section class="device eve" aria-label="Eve packet sniffer">
+            <div class="device-head">
+              <div class="device-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12s3.2-5 9-5 9 5 9 5-3.2 5-9 5-9-5-9-5Z"/><circle cx="12" cy="12" r="2.5"/></svg></div>
+              <div><strong>Eve</strong><span>eavesdropper</span></div>
+            </div>
+            <div style="display:grid;grid-template-columns:minmax(0,1.35fr) minmax(138px,.65fr);gap:7px;align-items:stretch">
+              <div class="monitor"><div class="screen">
+                <div class="screen-title"><span>cipher text → plain text</span><span id="eveState" class="screen-badge">0 captures</span></div>
+                <div class="decode-trace" style="grid-template-columns:minmax(0,1fr) 52px minmax(0,1fr)">
+                  <div class="decode-step"><span>cipher text</span><code id="eveRaw">—</code></div>
+                  <div id="eveDecodeAction" class="decode-action"><i>KEY</i><span id="eveActionText">no key</span></div>
+                  <div class="decode-step"><span>plain text</span><code id="eveReadable">—</code></div>
+                </div>
+                <div id="captureHistory" class="capture-history"><div class="capture-row"><small>—</small><code>No stored captures</code><span class="capture-state locked">○</span></div></div>
+              </div></div>
+              <div id="eveBay" class="key-bay" data-bay="eve" tabindex="0" role="button" aria-label="Eve decryption key bay" style="margin-top:7px;grid-template-columns:1fr;align-content:start">
+                <div class="bay-copy"><strong>Decryption key</strong><span id="eveBayHint">optional</span></div><div class="bay-empty">drop decryption key</div>
+              </div>
+            </div>
+          </section>
+
+          <div id="streamLayer" class="stream-layer" aria-hidden="true"></div>
+        </div>
+        </div>
+      </div>
+
+      <div id="feedback" class="feedback" role="status" aria-live="polite">
+        <div><strong id="feedbackTitle">Send once with no key.</strong><span id="feedbackDetail">Then add keys and compare what Bob and Eve can read.</span></div><code id="feedbackCode">transmission —</code>
+      </div>
+    </section>
+
+    <aside class="panel key-dock" aria-label="Key rack">
+      <div class="dock-head"><div><strong id="dockTitle">Keys</strong><span id="dockSub">All K7 tokens are the same secret key.</span></div><button id="returnKeys" type="button">Return keys</button></div>
+      <div id="secretGroup" class="key-group"><div class="key-group-title"><strong>Shared key</strong><span>same secret</span></div><div id="secretTray" class="key-tray" data-bay="tray"></div></div>
+      <div id="publicGroup" class="key-group" hidden><div class="key-group-title"><strong>Public key</strong><span>safe to share</span></div><div id="publicTray" class="key-tray" data-bay="tray"></div></div>
+      <div id="privateGroup" class="key-group" hidden><div class="key-group-title"><strong>Private key</strong><span>Bob should keep this</span></div><div id="privateTray" class="key-tray" data-bay="tray"></div></div>
+      <div class="legend">
+        <div id="secretLegend" class="legend-row secret"><i></i><span><strong>Shared:</strong> encrypts and decrypts.</span></div>
+        <div id="publicLegend" class="legend-row public" hidden><i></i><span><strong>Public:</strong> makes cipher text.</span></div>
+        <div id="privateLegend" class="legend-row private" hidden><i></i><span><strong>Private:</strong> restores plain text.</span></div>
+      </div>
+    </aside>
+  </div>
+
+  <div class="footer">0478 §2.3 teaching model. One visual tile is used per source character so the plain-text → cipher-text → plain-text relationship is directly observable. The hexadecimal-looking cipher tokens are a teaching representation, not a real encryption algorithm. The lab deliberately focuses on confidentiality and symmetric/asymmetric key roles.</div>
+</main>
+
+<script src="./lab-kit.js" data-lab-resource="lab-kit.js"></script>
+<script>
+(() => {
+  const $=LabKit.dom.byId;
+  const reduceMotion=window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  const pause=ms=>new Promise(resolve=>setTimeout(resolve,reduceMotion?Math.min(ms,18):ms));
+  const keyIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="12" r="4"/><path d="M12 12h9M17 12v3M20 12v2"/></svg>';
+  const state={mode:"sym",locations:new Map(),selectedKey:null,drag:null,busy:false,transmissionNo:0,captures:[],latest:null,completed:new Set(),animationToken:0,wireUnits:[],bobUnits:[],eveUnits:[]};
+  const metas={
+    k1:{kind:"secret",label:"Shared secret K7",copy:"copy A · same secret"},k2:{kind:"secret",label:"Shared secret K7",copy:"copy B · same secret"},k3:{kind:"secret",label:"Shared secret K7",copy:"spare copy · same secret"},
+    pub1:{kind:"public",label:"Bob public key",copy:"directory copy 1"},pub2:{kind:"public",label:"Bob public key",copy:"directory copy 2"},priv:{kind:"private",label:"Bob private key",copy:"single private key"}
+  };
+  const allBays=["alice","bob","eve"];
+  const activeKeys=()=>state.mode==="sym"?["k1","k2","k3"]:["pub1","pub2","priv"];
+  const cleanMessage=value=>value.replace(/[\r\n\t]+/g," ").replace(/\s{2,}/g," ").slice(0,28);
+  const keyAt=bay=>{for(const [id,where] of state.locations)if(where===bay)return id;return null};
+  const kindAt=bay=>{const id=keyAt(bay);return id?metas[id].kind:null};
+  const isValidEncrypt=()=>state.mode==="sym"?kindAt("alice")==="secret":kindAt("alice")==="public";
+  const isWrongEncryptKey=()=>!!kindAt("alice")&&!isValidEncrypt();
+  const canDecrypt=(bay,packet=state.latest)=>{if(!packet||!packet.encrypted)return true;return state.mode==="sym"?kindAt(bay)==="secret":kindAt(bay)==="private"};
+  const visualChar=ch=>ch===" "?"·":ch;
+  const cipherUnit=(ch,index,number)=>{const glyphs=(state.mode==="sym"?"Q7W4E9R2T8Y5U3P6":"N4M7K2H8J5V3X9Z6");const base=ch.charCodeAt(0)+(state.mode==="sym"?37:83)+(index*11)+(number*17);return glyphs[(base*7+index*3)%glyphs.length]+glyphs[(base*13+number*5)%glyphs.length];};
+  const joinUnits=(units,cipher)=>cipher?units.filter(v=>v!==undefined).join(" "):units.filter(v=>v!==undefined).join("");
+
+  function makeKey(id){
+    const meta=metas[id],el=document.createElement("div");el.className=`key-token ${meta.kind}`;el.dataset.key=id;el.tabIndex=0;el.setAttribute("role","button");
+    el.setAttribute("aria-label",`${meta.label}. ${meta.copy}. Drag to a device key bay or press Enter to select.`);
+    el.innerHTML=`<div class="key-top"><span class="key-glyph">${keyIcon}</span><span><strong>${meta.label}</strong><small>${meta.copy}</small></span></div>`;
+    el.addEventListener("pointerdown",e=>startDrag(e,id,el));el.addEventListener("click",e=>{e.stopPropagation();if(el.dataset.suppress)return;selectKey(id)});
+    el.addEventListener("keydown",e=>{e.stopPropagation();if(e.key==="Enter"||e.key===" "){e.preventDefault();selectKey(id)}if(e.key==="Escape")clearSelection()});return el;
+  }
+  function targetContainer(where,id){if(where==="alice")return $("aliceBay");if(where==="bob")return $("bobBay");if(where==="eve")return $("eveBay");if(state.mode==="sym")return $("secretTray");return metas[id].kind==="private"?$("privateTray"):$("publicTray")}
+  function renderKeys(){
+    ["secretTray","publicTray","privateTray"].forEach(id=>$(id).replaceChildren());
+    allBays.forEach(bay=>{const root=$(bay+"Bay"),copy=root.querySelector(".bay-copy");root.replaceChildren(copy);const empty=document.createElement("div");empty.className="bay-empty";empty.textContent=bay==="alice"?"drop encryption key":"drop decryption key";root.append(empty)});
+    activeKeys().forEach(id=>{if(!state.locations.has(id))state.locations.set(id,"tray");const container=targetContainer(state.locations.get(id),id);container.querySelector(":scope > .bay-empty")?.remove();container.append(makeKey(id))});
+    ["secretTray","publicTray","privateTray"].forEach(id=>{const root=$(id);if(!root.hidden&&!root.children.length){const empty=document.createElement("div");empty.className="tray-empty";empty.textContent="No keys here";root.append(empty)}});applySelection();updateGate();
+  }
+  function selectKey(id){state.selectedKey=state.selectedKey===id?null:id;applySelection();setFeedback("","Key selected.",state.selectedKey?`Choose Alice, Bob, Eve or a tray to move ${metas[id].label}.`:"Selection cleared.")}
+  function clearSelection(){state.selectedKey=null;applySelection()}
+  function applySelection(){document.querySelectorAll(".key-token").forEach(el=>el.classList.toggle("selected",el.dataset.key===state.selectedKey))}
+  function placeKey(id,where){
+    if(state.busy||!id||!activeKeys().includes(id))return;if(where!=="tray"){const occupied=keyAt(where);if(occupied&&occupied!==id)state.locations.set(occupied,"tray")}
+    state.locations.set(id,where);state.selectedKey=null;renderKeys();updateAlicePreview();evaluateEndpoints(true);updateGoals();
+  }
+  const bayClick=bay=>{if(state.selectedKey)placeKey(state.selectedKey,bay)};const trayClick=()=>{if(state.selectedKey)placeKey(state.selectedKey,"tray")};
+  function startDrag(event,id,source){if(event.button>0||state.busy)return;event.preventDefault();state.drag={id,source,pointerId:event.pointerId,startX:event.clientX,startY:event.clientY,moved:false,ghost:null};source.setPointerCapture?.(event.pointerId)}
+  function dropTarget(x,y){return [$("aliceBay"),$("bobBay"),$("eveBay"),$("secretTray"),$("publicTray"),$("privateTray")].filter(el=>!el.hidden&&el.offsetParent!==null).find(el=>{const r=el.getBoundingClientRect();return x>=r.left&&x<=r.right&&y>=r.top&&y<=r.bottom})||null}
+  function clearDropReady(){document.querySelectorAll(".drop-ready").forEach(el=>el.classList.remove("drop-ready"))}
+  function dragMove(event){const d=state.drag;if(!d||d.pointerId!==event.pointerId)return;if(!d.moved&&Math.hypot(event.clientX-d.startX,event.clientY-d.startY)>5){d.moved=true;d.source.classList.add("dragging");d.ghost=document.createElement("div");d.ghost.className="drag-ghost";d.ghost.textContent=metas[d.id].label;document.body.append(d.ghost)}if(d.ghost){d.ghost.style.left=event.clientX+"px";d.ghost.style.top=event.clientY+"px"}clearDropReady();dropTarget(event.clientX,event.clientY)?.classList.add("drop-ready")}
+  function dragEnd(event){const d=state.drag;if(!d||d.pointerId!==event.pointerId)return;d.source.classList.remove("dragging");d.ghost?.remove();clearDropReady();if(d.moved){d.source.dataset.suppress="1";setTimeout(()=>delete d.source.dataset.suppress,0);const target=dropTarget(event.clientX,event.clientY);if(target){const bay=target.dataset.bay;placeKey(d.id,bay==="tray"?"tray":bay)}}state.drag=null}
+  window.addEventListener("pointermove",dragMove);window.addEventListener("pointerup",dragEnd);window.addEventListener("pointercancel",dragEnd);
+
+  function updateAlicePreview(){
+    const message=cleanMessage($("messageInput").value),badge=$("aliceState"),sub=$("sendSub"),title=$("sendTitle");$("sourcePreview").textContent=message||"—";badge.className="screen-badge";
+    if(!kindAt("alice")){badge.textContent="plain text";sub.textContent="No key at sender";title.textContent="Send plain text";$("cipherPreview").textContent=message||"same as plain text"}
+    else if(isValidEncrypt()){badge.textContent="encryption ready";badge.classList.add("cipher");sub.textContent=state.mode==="sym"?"Shared key will make cipher text":"Public key will make cipher text";title.textContent="Encrypt + send";$("cipherPreview").textContent=message?joinUnits([...message].map((ch,i)=>cipherUnit(ch,i,state.transmissionNo+1)),true):"—"}
+    else{badge.textContent="wrong key";badge.classList.add("bad");sub.textContent="Wrong key at sender";title.textContent="Wrong key";$("cipherPreview").textContent="wrong key"}
+    updateGate();
+  }
+  function updateGate(){
+    const gate=$("encryptGate"),id=keyAt("alice"),valid=isValidEncrypt();gate.classList.toggle("ready",valid);$("gateKeyName").textContent=id?metas[id].label:"No key";
+    if(!id)$("gateKeyRole").textContent="plain text stays plain text";else if(valid)$("gateKeyRole").textContent=state.mode==="sym"?"shared key makes cipher text":"public key makes cipher text";else $("gateKeyRole").textContent="wrong key";
+  }
+  function gateFlash(input,output,encrypted){const gate=$("encryptGate");$("gateIn").textContent=visualChar(input);$("gateOut").textContent=encrypted?output:visualChar(input);$("gateOut").className="out"+(encrypted?"":" plain");gate.classList.add("active");setTimeout(()=>gate.classList.remove("active"),140)}
+
+  function createStreamToken(text,kind="plain"){const el=document.createElement("div");el.className="stream-char "+kind;el.textContent=text;$("streamLayer").append(el);return el}
+  function setPos(el,x,y){el.style.left=x+"px";el.style.top=y+"px"}
+  async function move(el,x,y,ms=260){el.style.transitionDuration=(reduceMotion?"1ms":ms+"ms");requestAnimationFrame(()=>setPos(el,x,y));await pause(ms+18)}
+  async function animateUnit(packet,index,token){
+    const plain=packet.message[index],raw=packet.encrypted?packet.units[index]:plain;setPos(token,276,270);token.classList.add("visible");await pause(index?index*120:40);
+    if(packet.encrypted){await move(token,346,270,210);gateFlash(plain,raw,true);token.textContent=raw;token.classList.remove("plain");token.classList.add("cipher")}else{gateFlash(plain,raw,false);await move(token,346,270,210)}
+    await move(token,506,270,280);state.wireUnits[index]=raw;renderLiveBuffers(packet);
+    await move(token,608,270,230);
+    const clone=createStreamToken(raw,packet.encrypted?"cipher":"plain");setPos(clone,608,270);clone.classList.add("visible");
+    const toBob=move(token,748,270,290).then(()=>{state.bobUnits[index]=raw;renderLiveBuffers(packet);token.classList.add("arrive");setTimeout(()=>token.remove(),120)});
+    const toEve=move(clone,608,432,320).then(()=>{state.eveUnits[index]=raw;renderLiveBuffers(packet);clone.classList.add("arrive");setTimeout(()=>clone.remove(),120)});
+    await Promise.all([toBob,toEve]);
+  }
+  function renderLiveBuffers(packet){
+    const wire=joinUnits(state.wireUnits,packet.encrypted),bob=joinUnits(state.bobUnits,packet.encrypted),eve=joinUnits(state.eveUnits,packet.encrypted);
+    $("wireData").textContent=wire||"—";$("wireData").className="wire-data "+(packet.encrypted?"cipher":"plain");$("wireKind").textContent=packet.encrypted?"cipher text":"plain text";
+    $("bobRaw").textContent=bob||"—";$("bobRaw").className=packet.encrypted?"cipher":"";$("eveRaw").textContent=eve||"—";$("eveRaw").className=packet.encrypted?"cipher":"";
+  }
+
+  async function transmit(){
+    if(state.busy)return;const message=cleanMessage($("messageInput").value.trim());if(!message){setFeedback("warn","Enter a message.","Alice needs plain text to send.");return}$("messageInput").value=message;updateAlicePreview();
+    if(isWrongEncryptKey()){$("aliceBay").classList.remove("bad-key");void $("aliceBay").offsetWidth;$("aliceBay").classList.add("bad-key");setTimeout(()=>$("aliceBay").classList.remove("bad-key"),330);setFeedback("bad","Wrong key at Alice.",state.mode==="asym"?"Use Bob's public key at Alice.":"Use a K7 shared key at Alice.");return}
+    state.busy=true;$("sendPacket").disabled=true;const token=++state.animationToken;state.transmissionNo++;const encrypted=isValidEncrypt();const packet={number:state.transmissionNo,message,encrypted,mode:state.mode,units:[...message].map((ch,i)=>encrypted?cipherUnit(ch,i,state.transmissionNo):ch)};packet.wire=joinUnits(packet.units,encrypted);state.latest=packet;state.wireUnits=[];state.bobUnits=[];state.eveUnits=[];$("streamLayer").replaceChildren();$("bobReadable").textContent="—";$("eveReadable").textContent="—";setFeedback("",encrypted?"Cipher text on the line.":"Plain text on the line.",encrypted?"Watch the text change at Alice, then reach Bob and Eve as cipher text.":"Bob and Eve both receive readable plain text.",packet);
+    const tokens=[...message].map(ch=>createStreamToken(visualChar(ch),"plain"));const jobs=tokens.map((el,i)=>animateUnit(packet,i,el));await Promise.all(jobs);if(token!==state.animationToken)return;
+    state.captures.unshift({...packet});state.captures=state.captures.slice(0,4);evaluateEndpoints(true);updateGoals();state.busy=false;$("sendPacket").disabled=false;explainOutcome(packet);
+  }
+
+  function displayed(packet,bay){if(!packet)return {read:false,text:"—"};if(!packet.encrypted)return {read:true,text:packet.message};if(canDecrypt(bay,packet))return {read:true,text:packet.message};return {read:false,text:packet.wire}}
+  function flashDecode(id){const el=$(id);el.classList.remove("flash");void el.offsetWidth;el.classList.add("flash");setTimeout(()=>el.classList.remove("flash"),460)}
+  function evaluateEndpoints(fromKeyChange=false){
+    const p=state.latest,bob=displayed(p,"bob"),latestCapture=state.captures[0]||null,eve=displayed(latestCapture,"eve");
+    if(!p){$("bobRaw").textContent="—";$("bobReadable").textContent="—";$("bobState").textContent="waiting";$("bobState").className="screen-badge";$("bobActionText").textContent="no data";$("bobDecodeAction").className="decode-action";$("bobNote").querySelector("code").textContent="—"}
+    else{
+      $("bobRaw").textContent=p.wire;$("bobRaw").className=p.encrypted?"cipher":"";$("bobReadable").textContent=bob.read?p.message:"—";$("bobReadable").className=bob.read?"":"cipher";
+      $("bobState").textContent=bob.read?"plain text":"locked";$("bobState").className="screen-badge "+(bob.read?"good":"cipher");
+      const action=$("bobDecodeAction");action.className="decode-action "+(p.encrypted?(bob.read?"ready":"wrong"):"ready");$("bobActionText").textContent=p.encrypted?(bob.read?"restores":"cannot" ):"not needed";
+      $("bobNote").querySelector("code").textContent=bob.read?(p.encrypted?"Key restored plain text":"Wire carried plain text"):(state.mode==="sym"?"Needs matching K7 key":"Needs Bob's private key");if(fromKeyChange&&p.encrypted)flashDecode("bobDecodeAction");
+    }
+    if(!latestCapture){$("eveRaw").textContent="—";$("eveReadable").textContent="—";$("eveState").textContent="0 captures";$("eveState").className="screen-badge";$("eveActionText").textContent="no data";$("eveDecodeAction").className="decode-action"}
+    else{
+      $("eveRaw").textContent=latestCapture.wire;$("eveRaw").className=latestCapture.encrypted?"cipher":"";$("eveReadable").textContent=eve.read?latestCapture.message:"—";$("eveReadable").className=eve.read?"":"blocked";
+      $("eveState").textContent=`${state.captures.length} capture${state.captures.length===1?"":"s"}`;$("eveState").className="screen-badge "+(eve.read?"bad":"good");const action=$("eveDecodeAction");action.className="decode-action "+(latestCapture.encrypted?(eve.read?"ready":"wrong"):"ready");$("eveActionText").textContent=latestCapture.encrypted?(eve.read?"restores":"cannot" ):"not needed";if(fromKeyChange&&latestCapture.encrypted)flashDecode("eveDecodeAction");
+    }
+    renderCaptureHistory();
+  }
+  function renderCaptureHistory(){const root=$("captureHistory");root.replaceChildren();if(!state.captures.length){const row=document.createElement("div");row.className="capture-row";row.innerHTML='<small>—</small><code>No stored captures</code><span class="capture-state locked">○</span>';root.append(row);return}state.captures.forEach(p=>{const view=displayed(p,"eve"),row=document.createElement("div");row.className="capture-row";const code=document.createElement("code");code.className=view.read?"open":"";code.textContent=p.wire;const num=document.createElement("small");num.textContent="#"+String(p.number).padStart(2,"0");const stateEl=document.createElement("span");stateEl.className="capture-state "+(view.read?"open":"locked");stateEl.textContent=view.read?"●":"○";row.append(num,code,stateEl);root.append(row)})}
+
+  function updateGoals(){const p=state.latest;setGoal("wireGoal",p?(p.encrypted?"good":"bad"):"");if(!p){setGoal("bobGoal","");setGoal("eveGoal","");return}const bob=displayed(p,"bob").read,eve=displayed(state.captures[0]||p,"eve").read;setGoal("bobGoal",bob?"good":"warn");setGoal("eveGoal",eve?"bad":"good");if(p.encrypted&&bob&&!eve){state.completed.add(state.mode);renderModeTabs()}}
+  const setGoal=(id,kind)=>$(id).className="goal-light"+(kind?` ${kind}`:"");
+  function renderModeTabs(){$("symMode").className="mode-btn"+(state.mode==="sym"?" active":"")+(state.completed.has("sym")?" complete":"");$("asymMode").className="mode-btn"+(state.mode==="asym"?" active":"")+(state.completed.has("asym")?" complete":"")}
+  function explainOutcome(packet){const bob=displayed(packet,"bob").read,eve=displayed(state.captures[0],"eve").read;if(!packet.encrypted){setFeedback("bad","Bob and Eve both read the line.","The shared line carried plain text.",packet);return}if(bob&&!eve){setFeedback("good","The line carried cipher text.","Bob restored plain text. Eve could not.",packet);return}if(eve){setFeedback("bad","Eve can now read it too.","The stored cipher text did not change. Key possession changed who could read it.",packet);return}if(!bob)setFeedback("warn","Cipher text is protected, but Bob is locked out.",state.mode==="sym"?"Bob needs the same K7 key.":"Bob needs his private key.",packet)}
+  function setFeedback(kind,title,detail,packet=null){$("feedback").className="feedback"+(kind?` ${kind}`:"");$("feedbackTitle").textContent=title;$("feedbackDetail").textContent=detail;$("feedbackCode").textContent=packet?`transmission #${String(packet.number).padStart(2,"0")} · ${packet.encrypted?"cipher text":"plain text"}`:"transmission —"}
+
+  function resetTraffic(){if(state.busy)return;state.animationToken++;state.transmissionNo=0;state.captures=[];state.latest=null;state.wireUnits=[];state.bobUnits=[];state.eveUnits=[];$("streamLayer").replaceChildren();$("wireKind").textContent="no data";$("wireData").textContent="—";$("wireData").className="wire-data";evaluateEndpoints();updateGoals();setFeedback("","Line cleared.","Send again with the current key setup.")}
+  function returnKeys(){if(state.busy)return;activeKeys().forEach(id=>state.locations.set(id,"tray"));clearSelection();renderKeys();updateAlicePreview();evaluateEndpoints(true);updateGoals();setFeedback("","Keys returned.","Stored cipher text stays in Eve's capture list.")}
+  function resetAll(){if(state.busy)return;state.locations.clear();activeKeys().forEach(id=>state.locations.set(id,"tray"));clearSelection();renderKeys();resetTraffic();$("messageInput").value="ACCESS CODE 47-B";updateAlicePreview();$("gateIn").textContent="A";$("gateOut").textContent="A";$("gateOut").className="out plain";setFeedback("","Lab reset.","Send once with no key, then add keys.")}
+  function setMode(mode){if(state.busy||state.mode===mode)return;state.mode=mode;state.animationToken++;state.locations.clear();state.selectedKey=null;state.captures=[];state.latest=null;state.transmissionNo=0;const asym=mode==="asym";$("secretGroup").hidden=asym;$("publicGroup").hidden=!asym;$("privateGroup").hidden=!asym;$("secretLegend").hidden=asym;$("publicLegend").hidden=!asym;$("privateLegend").hidden=!asym;$("missionTitle").textContent=asym?"Make Bob readable and Eve unreadable using Bob's public/private keys.":"Make Bob readable and Eve unreadable using one shared secret.";$("missionHint").textContent=asym?"Alice may use Bob's public key openly. Discover which different key restores the captured cipher text.":"Alice and Bob need copies of the same secret. Give Eve a copy later and watch an old capture become readable.";$("dockTitle").textContent="Keys";$("dockSub").textContent=asym?"Public can be shared. Private should stay with Bob.":"All K7 tokens are the same secret key.";$("aliceBayHint").textContent=asym?"Bob public key":"optional";$("bobBayHint").textContent=asym?"Bob private key":"same K7 used by Alice";$("eveBayHint").textContent=asym?"optional":"optional";renderModeTabs();renderKeys();resetTraffic();updateAlicePreview();setFeedback("",asym?"Public/private mode.":"Shared-key mode.",asym?"Use Bob's public key at Alice and Bob's private key at Bob.":"Use matching K7 keys at Alice and Bob.")}
+
+  ["alice","bob","eve"].forEach(bay=>{$(bay+"Bay").addEventListener("click",()=>bayClick(bay));$(bay+"Bay").addEventListener("keydown",e=>{if((e.key==="Enter"||e.key===" ")&&state.selectedKey){e.preventDefault();bayClick(bay)}})});
+  ["secretTray","publicTray","privateTray"].forEach(id=>{$(id).addEventListener("click",trayClick);$(id).addEventListener("keydown",e=>{if((e.key==="Enter"||e.key===" ")&&state.selectedKey){e.preventDefault();trayClick()}})});
+  $("messageInput").addEventListener("input",e=>{const clean=cleanMessage(e.target.value);if(clean!==e.target.value)e.target.value=clean;updateAlicePreview()});
+  $("sendPacket").addEventListener("click",transmit);$("resetTraffic").addEventListener("click",resetTraffic);$("resetAll").addEventListener("click",resetAll);$("returnKeys").addEventListener("click",returnKeys);$("symMode").addEventListener("click",()=>setMode("sym"));$("asymMode").addEventListener("click",()=>setMode("asym"));
+  const fitBoard=()=>{
+    const shell=document.querySelector(".board-shell"),stage=document.querySelector(".board-stage"),board=$("board");
+    if(!shell||!stage||!board)return;
+    const shouldFit=shell.clientWidth>=760,scale=shouldFit?Math.min(1,shell.clientWidth/1020):1;
+    shell.classList.toggle("is-fitted",shouldFit);
+    stage.style.width=(shouldFit?shell.clientWidth:1020)+"px";
+    stage.style.height=Math.ceil(650*scale)+"px";
+    board.style.transform=`scale(${scale})`;
+    if(shouldFit)shell.scrollLeft=0;
+  };
+  new ResizeObserver(fitBoard).observe(document.querySelector(".board-shell"));
+  fitBoard();
+  renderModeTabs();renderKeys();updateAlicePreview();evaluateEndpoints();updateGoals();
+})();
+</script>
+</body>
+</html>

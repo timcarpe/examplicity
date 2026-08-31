@@ -47,7 +47,9 @@
   --lab-pill-radius: 999px;
   --lab-control-height: 35px;
   --lab-panel-shadow: 0 1px 2px rgba(29, 29, 31, 0.04);
-  --lab-page-gutter: max(28px, calc((100vw - 1200px) / 2));
+  --lab-header-max-width: 1200px;
+  --lab-header-gutter: max(28px, calc((100vw - var(--lab-header-max-width)) / 2));
+  --lab-page-gutter: var(--lab-header-gutter);
   --lab-compact-workspace-max: 820px;
 }
 
@@ -72,8 +74,11 @@ body {
   display: grid;
   gap: 18px 28px;
   grid-template-columns: minmax(0, 1fr) auto;
+  margin-left: calc(50% - 50vw + var(--lab-header-gutter));
   margin-bottom: 26px;
+  max-width: var(--lab-header-max-width);
   padding-bottom: 22px;
+  width: calc(100vw - var(--lab-header-gutter) - var(--lab-header-gutter));
 }
 
 .lab-manifest-heading {
@@ -224,7 +229,7 @@ body > main {
   margin-left: var(--lab-page-gutter);
   margin-right: auto;
   margin-top: 18px;
-  max-width: 1200px;
+  max-width: var(--lab-header-max-width);
   width: calc(100vw - var(--lab-page-gutter) - var(--lab-page-gutter));
 }
 
@@ -246,6 +251,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 
 @media (max-width: 620px) {
   :root {
+    --lab-header-gutter: 18px;
     --lab-page-gutter: 18px;
   }
 
@@ -305,6 +311,91 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 }
 </style>
 <!-- LAB_FRAME_STYLES_END -->
+<!-- LAB_RESOURCE_START id="lab-kit.css" type="stylesheet" -->
+<style data-lab-resource="lab-kit.css" data-lab-resource-type="stylesheet" data-lab-resource-bytes="3130">
+:root {
+  --lab-kit-ink: #20303a;
+  --lab-kit-muted: #687780;
+  --lab-kit-line: #cbd6dc;
+  --lab-kit-surface: #ffffff;
+  --lab-kit-panel: #f6f9fb;
+  --lab-kit-accent: #2b7ac3;
+  --lab-kit-accent-soft: #e9f3fb;
+  --lab-kit-good: #23794d;
+  --lab-kit-good-soft: #e9f7ef;
+  --lab-kit-warn: #8b6419;
+  --lab-kit-warn-soft: #fff7d9;
+  --lab-kit-bad: #a3443d;
+  --lab-kit-bad-soft: #fff0ef;
+  --lab-kit-focus: #1f6fb4;
+  --lab-kit-focus-ring: rgba(31, 111, 180, .28);
+  --lab-kit-radius: 12px;
+  --lab-kit-control-radius: 8px;
+  --lab-kit-shadow: 0 5px 16px rgba(32, 48, 58, .08);
+}
+
+.lab-kit-visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.lab-kit-panel {
+  color: var(--lab-kit-ink);
+  background: var(--lab-kit-surface);
+  border: 1px solid var(--lab-kit-line);
+  border-radius: var(--lab-kit-radius);
+  box-shadow: var(--lab-kit-shadow);
+}
+
+.lab-kit-stack { display: flex; flex-direction: column; gap: var(--lab-kit-stack-gap, 1rem); }
+.lab-kit-cluster { display: flex; flex-wrap: wrap; align-items: center; gap: var(--lab-kit-cluster-gap, .5rem); }
+.lab-kit-grid { display: grid; gap: var(--lab-kit-grid-gap, 1rem); grid-template-columns: repeat(var(--lab-kit-grid-columns, 1), minmax(0, 1fr)); }
+.lab-kit-scroll { max-width: 100%; overflow: auto; }
+.lab-kit-svg { display: block; max-width: 100%; height: auto; }
+
+.lab-kit-field { display: grid; gap: .35rem; color: var(--lab-kit-ink); }
+.lab-kit-field > label { font-weight: 700; }
+.lab-kit-field > small { color: var(--lab-kit-muted); line-height: 1.4; }
+.lab-kit-output { color: var(--lab-kit-ink); font-variant-numeric: tabular-nums; }
+
+.lab-kit-button,
+.lab-kit-input {
+  min-height: 2.5rem;
+  border: 1px solid var(--lab-kit-line);
+  border-radius: var(--lab-kit-control-radius);
+  background: var(--lab-kit-surface);
+  color: var(--lab-kit-ink);
+  font: inherit;
+}
+
+.lab-kit-button { padding: 0 .8rem; cursor: pointer; }
+.lab-kit-button[data-variant="primary"] { border-color: var(--lab-kit-accent); background: var(--lab-kit-accent); color: #fff; font-weight: 700; }
+.lab-kit-input { width: 100%; padding: 0 .6rem; }
+.lab-kit-button:focus-visible,
+.lab-kit-input:focus-visible,
+[data-lab-kit-focus]:focus-visible {
+  outline: 3px solid var(--lab-kit-focus-ring);
+  outline-offset: 2px;
+}
+
+.lab-kit-status { padding: .65rem .8rem; border-left: 3px solid var(--lab-kit-accent); background: var(--lab-kit-accent-soft); color: var(--lab-kit-ink); }
+.lab-kit-status[data-state="good"] { border-color: var(--lab-kit-good); background: var(--lab-kit-good-soft); }
+.lab-kit-status[data-state="warn"] { border-color: var(--lab-kit-warn); background: var(--lab-kit-warn-soft); }
+.lab-kit-status[data-state="bad"] { border-color: var(--lab-kit-bad); background: var(--lab-kit-bad-soft); }
+
+@media (prefers-reduced-motion: reduce) {
+  .lab-kit-motion { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
+}
+
+</style>
+<!-- LAB_RESOURCE_END id="lab-kit.css" type="stylesheet" -->
 <style>
 :root{
   --lab-canvas:#f3f5f7;--lab-paper:#fbfbfd;--lab-surface:#fff;--lab-control:#fff;--lab-ink:#1d1d1f;--lab-muted:#6e6e73;
@@ -345,7 +436,7 @@ button:focus-visible,input:focus-visible,[tabindex="0"]:focus-visible{outline:3p
 
 .gate-card{width:180px;min-width:180px;position:relative;display:grid;place-items:center}.gate-arrow{position:absolute;z-index:0;left:-9px;right:-9px;top:50%;height:2px;background:#bbc5cc}.gate-arrow::after{content:"";position:absolute;right:-1px;top:-4px;border-left:8px solid #83919a;border-top:5px solid transparent;border-bottom:5px solid transparent}.gate-core{position:relative;z-index:1;margin:0 auto;width:170px;min-height:148px;padding:9px;border:1px solid #cbd3d8;border-radius:10px;background:#fff;box-shadow:0 3px 8px rgba(39,54,64,.06)}.gate-core.active{border:2px solid var(--lab-accent);background:linear-gradient(#fff,var(--lab-accent-soft));box-shadow:0 0 0 4px rgba(82,119,184,.10)}.gate-core.locked{opacity:.58}.gate-core.solved{border-color:#a9d0b7;background:linear-gradient(#fff,#f7fcf8)}
 .gate-top{display:flex;align-items:center;justify-content:space-between;gap:7px}.gate-rate{font:900 16px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#61492f}.gate-period{color:var(--lab-muted);font-size:9px;font-weight:850}.calc-line{margin-top:7px;padding:7px;border:1px solid #d9e0e5;border-radius:8px;background:#fbfcfd}.calc-label{display:block;color:#687681;font-size:8px;font-weight:900;text-transform:uppercase;letter-spacing:.05em}.calc-equation{margin-top:4px;display:grid;grid-template-columns:minmax(0,1fr) 70px;gap:4px 6px;align-items:center;color:#43515a;font:850 10px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.calc-expression{grid-column:1/-1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.calc-result-label{justify-self:end;color:#56636c;font-size:8px;font-weight:850;white-space:nowrap}.calc-equation input{width:70px;height:31px;text-align:right}.currency-prefix{font-weight:900;color:#3f4b53}
-.rate-meter{position:relative;height:17px;margin-top:8px;border:1px solid #cfd7dc;border-radius:999px;background:#eef1f3;overflow:hidden}.rate-fill{height:100%;width:0;background:#d9a252;transition:width .12s}.rate-target{position:absolute;top:-2px;bottom:-2px;width:2px;background:#52616a}.rate-target::after{content:"target";position:absolute;left:50%;top:-11px;transform:translateX(-50%);color:#687681;font-size:7px;font-weight:900}.rate-readout{margin-top:4px;display:flex;justify-content:space-between;gap:6px;color:#6c7880;font:800 8px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.gate-note{min-height:30px;margin-top:6px;color:#65727b;font-size:9px;line-height:1.35;overflow-wrap:anywhere}.gate-note strong{color:#33414a}.gate-note.good{color:#356149}.gate-note.warn{color:#80580e}
+.rate-meter{position:relative;height:17px;margin-top:8px;border:1px solid #cfd7dc;border-radius:999px;background:#eef1f3;overflow:hidden}.rate-fill{height:100%;width:0;background:#d9a252;transition:width .12s}.rate-target{position:absolute;top:-2px;bottom:-2px;width:2px;background:#52616a}.rate-target::after{content:"target";position:absolute;left:50%;top:-11px;transform:translateX(-50%);color:#687681;font-size:7px;font-weight:900}.rate-readout{margin-top:4px;display:flex;justify-content:space-between;gap:6px;color:#6c7880;font:800 8px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.gate-note{min-height:30px;margin-top:6px;color:#65727b;font-size:9px;line-height:1.35;overflow-wrap:anywhere}.gate-note strong{color:#33414a}.gate-note.good{color:#356149}.gate-note.warn{color:#80580e}.guided-apply{width:100%;min-height:29px;margin-top:6px;border-color:var(--lab-accent);background:var(--lab-accent);color:#fff;font-size:8.5px;font-weight:900}
 .lock-copy{min-height:78px;display:grid;place-items:center;text-align:center;color:#87929a;font-size:9px;line-height:1.4}
 
 /* Compression is the second phase of the same mechanism, not a separate dashboard. */
@@ -420,7 +511,7 @@ button:focus-visible,input:focus-visible,[tabindex="0"]:focus-visible{outline:3p
               <div id="multiplierDeriveNote" class="derive-note"></div>
             </div>
           </div>
-          <div id="replacementResult" class="replacement-result"></div>
+          <div id="replacementResult" class="replacement-result" role="status" aria-live="polite"></div>
         </div>
         <div class="projection">
           <div class="projection-head"><div><strong>Same states, one repeated multiplier</strong><span id="projectionHint">Enter a multiplier to compare it with the values you just built.</span></div></div>
@@ -433,9 +524,415 @@ button:focus-visible,input:focus-visible,[tabindex="0"]:focus-visible{outline:3p
   </section>
 
 </main>
+<!-- LAB_RESOURCE_START id="lab-kit.js" type="script" -->
+<script data-lab-resource="lab-kit.js" data-lab-resource-type="script" data-lab-resource-bytes="13750">
+(() => {
+  "use strict";
+
+  const host = globalThis;
+  const VERSION = "0.1.0";
+
+  function documentFor(root) {
+    return root || host.document || null;
+  }
+
+  function resolve(target, root) {
+    if (typeof target !== "string") return target || null;
+    const scope = documentFor(root);
+    return scope?.querySelector?.(target) || null;
+  }
+
+  function all(selector, root) {
+    const scope = documentFor(root);
+    return [...(scope?.querySelectorAll?.(selector) || [])];
+  }
+
+  function byId(id, root) {
+    const scope = documentFor(root);
+    return scope?.getElementById?.(id) || null;
+  }
+
+  function required(target, root) {
+    const node = resolve(target, root);
+    if (!node) throw new Error(`LabKit could not find ${typeof target === "string" ? target : "the requested node"}.`);
+    return node;
+  }
+
+  const dom = Object.freeze({
+    get: resolve,
+    all,
+    byId,
+    require: required,
+    on(target, eventName, handler, options) {
+      const node = required(target);
+      node.addEventListener(eventName, handler, options);
+      return () => node.removeEventListener(eventName, handler, options);
+    }
+  });
+
+  function parseNumber(value, fallback = null) {
+    if (typeof value === "string" && value.trim() === "") return fallback;
+    const number = typeof value === "number" ? value : Number(value);
+    return Number.isFinite(number) ? number : fallback;
+  }
+
+  function clamp(value, minimum, maximum) {
+    if (minimum > maximum) throw new RangeError("LabKit clamp minimum cannot exceed maximum.");
+    const number = parseNumber(value, minimum);
+    return Math.min(maximum, Math.max(minimum, number));
+  }
+
+  function lerp(start, end, amount) {
+    return start + (end - start) * amount;
+  }
+
+  function inverseLerp(start, end, value) {
+    if (start === end) return 0;
+    return (value - start) / (end - start);
+  }
+
+  function round(value, decimals = 0) {
+    const number = parseNumber(value, 0);
+    const factor = 10 ** decimals;
+    return Math.round((number + Number.EPSILON) * factor) / factor;
+  }
+
+  function format(value, options = {}) {
+    const number = parseNumber(value, 0);
+    const decimals = options.decimals ?? 0;
+    const suffix = options.suffix ?? "";
+    return `${number.toFixed(decimals)}${suffix}`;
+  }
+
+  const numeric = Object.freeze({ parse: parseNumber, clamp, lerp, inverseLerp, round, format });
+
+  function hashSeed(seed) {
+    if (typeof seed === "number" && Number.isFinite(seed)) return (seed >>> 0) || 0x6d2b79f5;
+    const text = String(seed ?? "lab-kit");
+    let hash = 2166136261;
+    for (let index = 0; index < text.length; index += 1) {
+      hash ^= text.charCodeAt(index);
+      hash = Math.imul(hash, 16777619);
+    }
+    return hash >>> 0 || 0x6d2b79f5;
+  }
+
+  function createRng(seed = Date.now()) {
+    const originalSeed = hashSeed(seed);
+    let state = originalSeed;
+    const next = () => {
+      state = (state + 0x6d2b79f5) >>> 0;
+      let value = state;
+      value = Math.imul(value ^ (value >>> 15), value | 1);
+      value ^= value + Math.imul(value ^ (value >>> 7), value | 61);
+      return ((value ^ (value >>> 14)) >>> 0) / 4294967296;
+    };
+    return Object.freeze({
+      seed: originalSeed,
+      next,
+      float: next,
+      int(minimum, maximum) {
+        if (!Number.isFinite(minimum) || !Number.isFinite(maximum) || maximum < minimum) {
+          throw new RangeError("LabKit RNG bounds are invalid.");
+        }
+        const low = Math.ceil(minimum);
+        const high = Math.floor(maximum);
+        return low + Math.floor(next() * (high - low + 1));
+      },
+      pick(items) {
+        if (!items?.length) return undefined;
+        return items[this.int(0, items.length - 1)];
+      },
+      shuffle(items) {
+        const copy = [...items];
+        for (let index = copy.length - 1; index > 0; index -= 1) {
+          const other = this.int(0, index);
+          [copy[index], copy[other]] = [copy[other], copy[index]];
+        }
+        return copy;
+      }
+    });
+  }
+
+  const rng = Object.freeze({ create: createRng, hashSeed });
+
+  function setStatus(target, message, options = {}) {
+    const node = required(target, options.root);
+    const politeness = options.politeness || "polite";
+    node.setAttribute?.("role", options.role || "status");
+    node.setAttribute?.("aria-live", politeness);
+    node.setAttribute?.("aria-atomic", "true");
+    if (options.busy === true) node.setAttribute?.("aria-busy", "true");
+    else node.removeAttribute?.("aria-busy");
+    node.textContent = message == null ? "" : String(message);
+    return node;
+  }
+
+  function ensureStatus(options = {}) {
+    const root = documentFor(options.root);
+    if (!root) throw new Error("LabKit status.ensure needs a document or root.");
+    const existing = options.id ? byId(options.id, root) : root.querySelector?.("[data-lab-kit-status]");
+    if (existing) return existing;
+    if (!root.createElement) throw new Error("LabKit status.ensure needs a document-like root.");
+    const node = root.createElement("div");
+    if (options.id) node.id = options.id;
+    if (node.dataset) node.dataset.labKitStatus = "true";
+    node.className = options.className || "lab-kit-visually-hidden";
+    if (root.body?.appendChild) root.body.appendChild(node);
+    else root.appendChild?.(node);
+    return setStatus(node, options.initialMessage || "", options);
+  }
+
+  const status = Object.freeze({ set: setStatus, announce: setStatus, ensure: ensureStatus });
+
+  function snapshot(value, clone) {
+    return clone ? clone(value) : value;
+  }
+
+  function createHistory(options = {}) {
+    const limit = Math.max(1, Math.floor(options.limit ?? 20));
+    const clone = options.clone;
+    let past = [];
+    let future = [];
+    let presentSet = Object.hasOwn(options, "initial");
+    let present = presentSet ? snapshot(options.initial, clone) : undefined;
+
+    const trim = () => {
+      if (past.length > limit) past = past.slice(-limit);
+    };
+    const api = {
+      record(value) {
+        if (presentSet) past.push(present);
+        present = snapshot(value, clone);
+        presentSet = true;
+        future = [];
+        trim();
+        return present;
+      },
+      undo() {
+        if (!past.length) return present;
+        future.unshift(present);
+        present = past.pop();
+        return present;
+      },
+      redo() {
+        if (!future.length) return present;
+        past.push(present);
+        present = future.shift();
+        trim();
+        return present;
+      },
+      clear(value) {
+        past = [];
+        future = [];
+        presentSet = arguments.length > 0;
+        present = presentSet ? snapshot(value, clone) : undefined;
+        return present;
+      },
+      current() { return present; },
+      canUndo() { return past.length > 0; },
+      canRedo() { return future.length > 0; },
+      size() { return past.length + (presentSet ? 1 : 0) + future.length; },
+      entries() { return [...past, ...(presentSet ? [present] : []), ...future]; }
+    };
+    return Object.freeze(api);
+  }
+
+  const history = Object.freeze({ create: createHistory });
+
+  function clientCoordinates(event) {
+    const source = event?.touches?.[0] || event?.changedTouches?.[0] || event;
+    const x = Number(source?.clientX);
+    const y = Number(source?.clientY);
+    if (!Number.isFinite(x) || !Number.isFinite(y)) throw new TypeError("LabKit SVG events need clientX and clientY.");
+    return { x, y };
+  }
+
+  function svgPoint(svg, event) {
+    if (!svg) throw new TypeError("LabKit svg.point needs an SVG element.");
+    const client = clientCoordinates(event);
+    const matrix = svg.getScreenCTM?.();
+    if (svg.createSVGPoint && matrix?.inverse) {
+      const point = svg.createSVGPoint();
+      point.x = client.x;
+      point.y = client.y;
+      return point.matrixTransform(matrix.inverse());
+    }
+    const rect = svg.getBoundingClientRect?.();
+    const viewBox = svg.viewBox?.baseVal;
+    if (!rect || !viewBox || !rect.width || !rect.height) return client;
+    return {
+      x: viewBox.x + (client.x - rect.left) * viewBox.width / rect.width,
+      y: viewBox.y + (client.y - rect.top) * viewBox.height / rect.height
+    };
+  }
+
+  const svg = Object.freeze({ point: svgPoint, clientPoint: clientCoordinates });
+
+  function now() {
+    return host.performance?.now?.() ?? Date.now();
+  }
+
+  function createAnimation(options = {}) {
+    const onFrame = options.onFrame || (() => {});
+    const onComplete = options.onComplete || (() => {});
+    const duration = options.reducedMotion ? 0 : (options.duration ?? null);
+    const requestFrame = options.requestFrame || host.requestAnimationFrame?.bind(host) || ((callback) => host.setTimeout(() => callback(now()), 16));
+    const cancelFrame = options.cancelFrame || host.cancelAnimationFrame?.bind(host) || host.clearTimeout?.bind(host);
+    let frameId = null;
+    let running = false;
+    let completed = false;
+    let elapsed = 0;
+    let startedAt = null;
+
+    const progressFor = (milliseconds) => duration === null ? null : duration === 0 ? 1 : clamp(milliseconds / duration, 0, 1);
+    const api = {
+      start() {
+        if (running) return api;
+        if (completed) {
+          completed = false;
+          elapsed = 0;
+          startedAt = null;
+        }
+        running = true;
+        frameId = requestFrame(tick);
+        return api;
+      },
+      pause() {
+        if (!running) return api;
+        running = false;
+        if (frameId !== null) cancelFrame?.(frameId);
+        frameId = null;
+        startedAt = null;
+        return api;
+      },
+      stop() {
+        running = false;
+        if (frameId !== null) cancelFrame?.(frameId);
+        frameId = null;
+        startedAt = null;
+        return api;
+      },
+      reset() {
+        api.stop();
+        completed = false;
+        elapsed = 0;
+        startedAt = null;
+        return api;
+      },
+      seek(milliseconds) {
+        elapsed = Math.max(0, Number(milliseconds) || 0);
+        startedAt = running ? now() - elapsed : null;
+        completed = duration !== null && elapsed >= duration;
+        return api;
+      },
+      isRunning() { return running; },
+      isComplete() { return completed; },
+      elapsed() { return elapsed; },
+      progress() { return progressFor(elapsed); },
+      duration
+    };
+
+    function tick(time) {
+      if (!running) return;
+      const timestamp = Number.isFinite(time) ? time : now();
+      if (startedAt === null) startedAt = timestamp - elapsed;
+      elapsed = Math.max(0, timestamp - startedAt);
+      const progress = progressFor(elapsed);
+      const done = progress !== null && progress >= 1;
+      onFrame({ elapsed, progress, done });
+      if (done) {
+        running = false;
+        completed = true;
+        frameId = null;
+        onComplete({ elapsed, progress: 1 });
+      } else {
+        frameId = requestFrame(tick);
+      }
+    }
+
+    return Object.freeze(api);
+  }
+
+  const animation = Object.freeze({ create: createAnimation });
+
+  function bindKeyboardAdjustable(target, options = {}) {
+    const node = required(target);
+    const minimum = options.min ?? -Infinity;
+    const maximum = options.max ?? Infinity;
+    const step = Math.abs(options.step ?? 1) || 1;
+    let value = parseNumber(options.value, 0);
+    if (options.getValue) value = parseNumber(options.getValue(), value);
+
+    const setAria = () => {
+      if (options.role !== false && !node.getAttribute?.("role")) node.setAttribute?.("role", options.role || "slider");
+      if (options.tabIndex !== false && !node.hasAttribute?.("tabindex")) node.setAttribute?.("tabindex", String(options.tabIndex ?? 0));
+      if (Number.isFinite(minimum)) node.setAttribute?.("aria-valuemin", String(minimum));
+      if (Number.isFinite(maximum)) node.setAttribute?.("aria-valuemax", String(maximum));
+      node.setAttribute?.("aria-valuenow", String(value));
+      if (options.formatAriaValue) node.setAttribute?.("aria-valuetext", String(options.formatAriaValue(value)));
+    };
+
+    const update = () => {
+      if (options.getValue) value = parseNumber(options.getValue(), value);
+      setAria();
+      return value;
+    };
+
+    const set = (nextValue, event) => {
+      const next = clamp(nextValue, minimum, maximum);
+      const changed = next !== value;
+      value = next;
+      options.setValue?.(value, event);
+      setAria();
+      if (changed) options.onChange?.(value, event);
+      return changed;
+    };
+
+    const onKeyDown = (event) => {
+      if (event.defaultPrevented || event.ctrlKey || event.metaKey || event.altKey) return;
+      const multiplier = event.shiftKey ? 10 : 1;
+      let delta = 0;
+      if (event.key === "ArrowRight" || event.key === "ArrowUp") delta = step * multiplier;
+      if (event.key === "ArrowLeft" || event.key === "ArrowDown") delta = -step * multiplier;
+      if (event.key === "PageUp") delta = step * 10;
+      if (event.key === "PageDown") delta = -step * 10;
+      if (event.key === "Home") {
+        event.preventDefault?.();
+        set(minimum, event);
+        return;
+      }
+      if (event.key === "End") {
+        event.preventDefault?.();
+        set(maximum, event);
+        return;
+      }
+      if (!delta) return;
+      event.preventDefault?.();
+      set((options.getValue ? parseNumber(options.getValue(), value) : value) + delta, event);
+    };
+
+    node.addEventListener("keydown", onKeyDown);
+    update();
+    return Object.freeze({
+      set,
+      value: () => value,
+      update,
+      destroy: () => node.removeEventListener("keydown", onKeyDown)
+    });
+  }
+
+  const direct = Object.freeze({ keyboardAdjustable: bindKeyboardAdjustable });
+
+  const api = Object.freeze({ version: VERSION, dom, numeric, rng, status, history, svg, animation, direct });
+  host.LabKit = api;
+})();
+
+</script>
+<!-- LAB_RESOURCE_END id="lab-kit.js" type="script" -->
 <script>
 (()=>{
-const $=id=>document.getElementById(id);
+const $=LabKit.dom.byId;
 const LEVELS=[
  {name:'Guided',summary:'a worked first gate and shown multiplier bridge'},
  {name:'Partial',summary:'the multiplier bridge with key working supplied by you'},
@@ -481,7 +978,8 @@ function makeReverse(seed){
 function makeProblem(kind,seed){return kind==='reverse'?makeReverse(seed):makeForward(kind,seed)}
 function fresh(c){
  const level=state.workingLevel;
- return c.mode==='forward'?{changes:Array(c.periods).fill(null).map((value,i)=>level===0?round2(Math.abs(c.rate)*(i?c.amounts[i]:c.opening)):value),resultPercent:level<2?percentExpected(c):null,multiplier:level===0?multiplierExpected(c):null,horizon:Math.max(6,c.periods)}:{resultPercent:level<2?percentExpected(c):null,forwardMultiplier:level===0?multiplierExpected(c):null,operator:level===0?'divide':'',inverseFactor:level===0?multiplierExpected(c):null};
+ if(c.mode==='forward')return {changes:Array(c.periods).fill(null),resultPercent:level<2?percentExpected(c):null,multiplier:level===0?multiplierExpected(c):null,horizon:Math.max(6,c.periods)};
+ return {resultPercent:level<2?percentExpected(c):null,forwardMultiplier:level===0?multiplierExpected(c):null,operator:'',inverseFactor:level===0?multiplierExpected(c):null};
 }
 function parseDecimalDraft(raw){
  const text=String(raw??'').trim().replace(',','.');
@@ -504,7 +1002,7 @@ function restoreInteraction(snapshot){
    const scroll=document.querySelector('.chain-scroll');
    if(scroll)scroll.scrollLeft=snapshot.chainLeft;
    if(snapshot.focus){
-     const field=document.getElementById(snapshot.focus.id);
+     const field=LabKit.dom.byId(snapshot.focus.id);
      if(field){
        if(snapshot.focus.numeric){field.value=snapshot.focus.value;if(snapshot.focus.invalid)field.setAttribute('aria-invalid',snapshot.focus.invalid);else field.removeAttribute('aria-invalid')}
        try{field.focus({preventScroll:true})}catch{field.focus()}
@@ -556,11 +1054,11 @@ function multiplierExpected(c){return 1+c.rate}
 function multiplierExact(c,s){return Number.isFinite(s.multiplier)&&close(s.multiplier,multiplierExpected(c),.0005)}
 function challengeComplete(c,s){if(c.mode==='reverse')return reverseComplete(c,s);return manualComplete(c,s)&&(state.workingLevel<2||percentExact(c,s))&&(state.workingLevel<1||multiplierExact(c,s))}
 function ownershipInstruction(c){
- if(c.mode==='reverse')return state.workingLevel===0?'Follow the complete forward and inverse calculation.':state.workingLevel===1?'Find the multiplier, then build its inverse.':'Build the percentage, multiplier and inverse.';
- return state.workingLevel===0?'Follow the complete repeated-change calculation.':state.workingLevel===1?'Calculate every change and the multiplier.':'Calculate every change, percentage and multiplier.';
+ if(c.mode==='reverse')return state.workingLevel===0?'Use the shown factor, then choose the inverse operation.':state.workingLevel===1?'Find the multiplier, then build its inverse.':'Build the percentage, multiplier and inverse.';
+ return state.workingLevel===0?'Apply each shown percentage change to the new base.':state.workingLevel===1?'Calculate every change and the multiplier.':'Calculate every change, percentage and multiplier.';
 }
 function renderGoal(){
- const c=current(),help=['Off · calculations are revealed','Some · write the key results','All · write the full calculation chain'];$('stepLabel').textContent=ownershipInstruction(c);$('goalTitle').textContent=c.title;$('goalHint').textContent=c.hint;$('complexityHelp').textContent=help[state.workingLevel];document.querySelectorAll('[data-work-level]').forEach(button=>{const active=Number(button.dataset.workLevel)===state.workingLevel;button.classList.toggle('active',active);button.setAttribute('aria-pressed',String(active))});
+ const c=current(),help=['Off · apply the revealed steps','Some · write the key results','All · write the full calculation chain'];$('stepLabel').textContent=ownershipInstruction(c);$('goalTitle').textContent=c.title;$('goalHint').textContent=c.hint;$('complexityHelp').textContent=help[state.workingLevel];document.querySelectorAll('[data-work-level]').forEach(button=>{const active=Number(button.dataset.workLevel)===state.workingLevel;button.classList.toggle('active',active);button.setAttribute('aria-pressed',String(active))});
 }
 function renderMain(){const host=$('mainVisual');host.replaceChildren();const c=current(),s=session();c.mode==='forward'?renderForward(host,c,s):renderReverse(host,c,s)}
 
@@ -584,7 +1082,7 @@ function gateElement(c,s,i,amounts,active){
  const gate=document.createElement('div');gate.className='gate-card';const core=document.createElement('div');const locked=i>active&&active!==null,solved=gateExact(c,s,i),isActive=i===active;core.className=`gate-core${locked?' locked':''}${solved?' solved':''}${isActive?' active':''}`;
  const pctTarget=targetRate(c),base=amounts[i],change=s.changes[i],expected=base==null?null:round2(Math.abs(c.rate)*base),actual=base&&change!=null?change/base*100:null,meterMax=Math.max(40,pctTarget*1.5),fill=actual==null?0:Math.min(100,Math.max(0,actual/meterMax*100)),mark=Math.min(100,pctTarget/meterMax*100),guided=state.workingLevel===0;
  if(locked||base==null){core.innerHTML=`<div class="gate-top"><span class="gate-rate">${c.rate>0?'+':'−'}${pctTarget}%</span><span class="gate-period">Year ${i+1}</span></div><div class="lock-copy">Finish the previous percentage calculation first.<br>The next base is not fixed yet.</div>`}
- else if(guided){core.innerHTML=`<div class="gate-top"><span class="gate-rate">${c.rate>0?'+':'−'}${pctTarget}%</span><span class="gate-period">Year ${i+1}</span></div><div class="calc-line"><span class="calc-label">Worked calculation</span><div class="calc-equation"><span class="calc-expression">${format(c,base)} × ${pctTarget}%</span><span class="calc-result-label">${deltaVerb(c.rate)} =</span><strong>${format(c,change)}</strong></div><div class="rate-meter"><div class="rate-fill" style="width:${fill}%"></div><div class="rate-target" style="left:${mark}%"></div></div><div class="rate-readout"><span>${pctTarget}% of ${format(c,base)}</span></div></div><div class="gate-note good">Use the new base for the next calculation.</div>`}
+ else if(guided){core.innerHTML=`<div class="gate-top"><span class="gate-rate">${c.rate>0?'+':'−'}${pctTarget}%</span><span class="gate-period">Year ${i+1}</span></div><div class="calc-line"><span class="calc-label">Worked calculation</span><div class="calc-equation"><span class="calc-expression">${format(c,base)} × ${pctTarget}%</span><span class="calc-result-label">${deltaVerb(c.rate)} =</span><strong>${format(c,expected)}</strong></div><div class="rate-meter"><div class="rate-fill" style="width:${fill}%"></div><div class="rate-target" style="left:${mark}%"></div></div><div class="rate-readout"><span>${pctTarget}% of ${format(c,base)}</span></div></div>${solved?'<div class="gate-note good">Applied. The new value is now the base for the next period.</div>':`<button class="guided-apply" type="button" data-apply-guided>Apply this change</button><div class="gate-note">Use the shown change to move the system to its next state.</div>`}`;const apply=core.querySelector('[data-apply-guided]');if(apply)apply.addEventListener('click',()=>setChange(i,expected))}
  else{
    const note=change==null?'Enter the percentage amount to calculate the next value.':solved?`${format(c,base)} × ${pctTarget}% = ${format(c,expected)}.`:`${format(c,change)} is ${format(c,round2(Math.abs(change-expected)))} ${change<expected?'too low':'too high'}. Enter ${format(c,expected)}.`;
    core.innerHTML=`<div class="gate-top"><span class="gate-rate">${c.rate>0?'+':'−'}${pctTarget}%</span><span class="gate-period">Year ${i+1}</span></div><div class="calc-line"><span class="calc-label">Your calculation</span><div class="calc-equation"><span class="calc-expression">${format(c,base)} × ${pctTarget}%</span><span class="calc-result-label">${deltaVerb(c.rate)} = ${c.currency?'£':''}</span><input id="change-${i}" class="numeric-entry" type="text" inputmode="decimal" enterkeyhint="done" value="${change==null?'':change}" placeholder="?" autocomplete="off" spellcheck="false" aria-label="${deltaVerb(c.rate)} amount for year ${i+1}"></div><div class="rate-meter"><div class="rate-fill" style="width:${fill}%"></div><div class="rate-target" style="left:${mark}%"></div></div><div class="rate-readout"><span>your amount ${change==null?'—':format(c,change)}</span><span>target ${format(c,expected)}</span></div></div><div class="gate-note ${change==null?'':solved?'good':'warn'}">${note}</div>`;
@@ -593,7 +1091,7 @@ function gateElement(c,s,i,amounts,active){
  gate.innerHTML='<div class="gate-arrow"></div>';gate.appendChild(core);return gate;
 }
 function setChange(i,value){
- const c=current(),s=session();if(state.workingLevel===0&&i===0)return;const v=value!=null&&value>=0?value:null;s.changes[i]=v;for(let j=i+1;j<c.periods;j++)s.changes[j]=null;s.resultPercent=state.workingLevel<2?percentExpected(c):null;s.multiplier=state.workingLevel===0?multiplierExpected(c):null;schedulePreservingRender();
+ const c=current(),s=session();const v=value!=null&&value>=0?value:null;s.changes[i]=v;for(let j=i+1;j<c.periods;j++)s.changes[j]=null;s.resultPercent=state.workingLevel<2?percentExpected(c):null;s.multiplier=state.workingLevel===0?multiplierExpected(c):null;schedulePreservingRender();
 }
 
 function renderCompress(){
@@ -661,7 +1159,8 @@ function advanceProblem(){
  state.problemNumber++;startProblem();
 }
 function setWorkingLevel(level){level=Math.max(0,Math.min(LEVELS.length-1,Number(level)||0));if(level===state.workingLevel)return;state.workingLevel=level;state.session=fresh(current());render()}
-function render(){renderGoal();renderMain();renderCompress();renderNextCard();}
+function enableGuidedReverseChoice(){if(current().mode!=='reverse'||state.workingLevel!==0||!reverseBridgeComplete(current(),session()))return;document.querySelectorAll('.operator-choice button').forEach(button=>{button.disabled=false})}
+function render(){renderGoal();renderMain();renderCompress();renderNextCard();enableGuidedReverseChoice()}
 $('resetChallenge').addEventListener('click',()=>{clearTimeout(numericRenderTimer);numericRenderTimer=null;state.session=fresh(current());render()});
 document.querySelectorAll('[data-work-level]').forEach(button=>button.addEventListener('click',()=>setWorkingLevel(button.dataset.workLevel)));
 $('nextProblem').addEventListener('click',advanceProblem);

@@ -1,0 +1,703 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- LAB_FRAME_STYLES_START -->
+<style data-lab-frame>
+:root {
+  --lab-canvas: #f3f5f7;
+  --lab-paper: #fbfbfd;
+  --lab-surface: #ffffff;
+  --lab-control: #ffffff;
+  --lab-ink: #1d1d1f;
+  --lab-muted: #6e6e73;
+  --lab-line: #d2d2d7;
+  --lab-line-strong: #a7a7ad;
+  --lab-accent: #5277b8;
+  --lab-accent-soft: #eef2fa;
+  --lab-good: #18794e;
+  --lab-good-soft: #edf8f1;
+  --lab-warn: #946200;
+  --lab-warn-soft: #fff6e7;
+  --lab-bad: #b42318;
+  --lab-bad-soft: #fff0ee;
+  --lab-focus: #1d1d1f;
+  --lab-focus-soft: rgba(29, 29, 31, 0.18);
+  --lab-font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+  --lab-panel-radius: 12px;
+  --lab-control-radius: 8px;
+  --lab-pill-radius: 999px;
+  --lab-control-height: 35px;
+  --lab-panel-shadow: 0 1px 2px rgba(29, 29, 31, 0.04);
+  --lab-page-gutter: max(28px, calc((100vw - 1200px) / 2));
+  --lab-compact-workspace-max: 820px;
+}
+
+html,
+body {
+  background: var(--lab-canvas);
+}
+
+body {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  align-content: start !important;
+  font-family: var(--lab-font-sans);
+  padding-bottom: 0;
+  padding-top: 0 !important;
+  text-rendering: optimizeLegibility;
+}
+
+.lab-manifest-header {
+  align-items: start;
+  border-bottom: 1px solid var(--line, var(--lab-line));
+  display: grid;
+  gap: 18px 28px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  margin-bottom: 26px;
+  padding-bottom: 22px;
+}
+
+.lab-manifest-heading {
+  min-width: 0;
+}
+
+.lab-manifest-header h1 {
+  color: var(--ink, var(--lab-ink));
+  font-family: var(--lab-font-sans);
+  font-size: clamp(25px, 3.2vw, 40px);
+  font-weight: 650;
+  letter-spacing: -0.045em;
+  line-height: 1.02;
+  margin: 0;
+  max-width: 24ch;
+  padding: 0;
+  text-align: left;
+}
+
+.lab-manifest-subtitle {
+  color: var(--muted, var(--lab-muted));
+  font-family: var(--lab-font-sans);
+  font-size: 13px;
+  letter-spacing: 0;
+  line-height: 1.5;
+  margin: 10px 0 0;
+  max-width: 72ch;
+  padding: 0;
+  text-align: left;
+}
+
+.lab-authored-title-slot {
+  min-width: 0;
+}
+
+.lab-syllabus-chips {
+  align-items: center;
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+  margin: 0 0 0 auto;
+  max-width: 100%;
+}
+
+.lab-syllabus-chip {
+  align-items: center;
+  background: var(--syllabus-chip-bg) !important;
+  border: 1px solid var(--syllabus-chip-border) !important;
+  border-radius: var(--lab-pill-radius);
+  color: var(--syllabus-chip-text) !important;
+  display: inline-flex;
+  font-size: 11px;
+  font-weight: 650;
+  gap: 4px;
+  line-height: 1;
+  min-height: 29px;
+  padding: 8px 10px;
+  position: relative;
+  transition: background-color 140ms ease, border-color 140ms ease;
+  white-space: nowrap;
+}
+
+.lab-syllabus-chip:hover {
+  background: var(--syllabus-chip-hover) !important;
+}
+
+.lab-syllabus-primary-link {
+  border-radius: inherit;
+  inset: 0;
+  position: absolute;
+  z-index: 0;
+}
+
+.lab-syllabus-primary-link:focus-visible {
+  outline: 2px solid var(--syllabus-chip-text);
+  outline-offset: 2px;
+}
+
+.lab-syllabus-name,
+.lab-syllabus-divider,
+.lab-syllabus-sections {
+  pointer-events: none;
+  position: relative;
+  z-index: 1;
+}
+
+.lab-syllabus-section {
+  border-radius: 4px;
+  color: inherit;
+  padding: 2px;
+  text-decoration: none;
+}
+
+a.lab-syllabus-section {
+  pointer-events: auto;
+}
+
+a.lab-syllabus-section:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+a.lab-syllabus-section:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 1px;
+}
+
+.lab-syllabus-name {
+  color: var(--syllabus-chip-text) !important;
+}
+
+.lab-syllabus-divider,
+.lab-syllabus-separator {
+  color: var(--muted, var(--lab-muted));
+}
+
+.lab-syllabus-prefix {
+  opacity: 0.72;
+  padding-left: 5px;
+}
+
+.lab-syllabus-sections {
+  align-items: center;
+  display: inline-flex;
+}
+
+.lab-syllabus-separator {
+  margin-inline: 0 2px;
+}
+
+html[data-theme="dark"] .lab-syllabus-name {
+  color: var(--syllabus-chip-border) !important;
+}
+
+html[data-theme="dark"] .lab-syllabus-chip:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+html[data-theme="dark"],
+html[data-theme="dark"] body {
+  background: var(--bg);
+}
+
+body > main {
+  container-name: lab-canvas;
+  container-type: inline-size;
+  margin-left: var(--lab-page-gutter);
+  margin-right: auto;
+  margin-top: 18px;
+  max-width: 1200px;
+  width: calc(100vw - var(--lab-page-gutter) - var(--lab-page-gutter));
+}
+
+body[data-lab-layout="compact"] .lab-manifest-header {
+  margin-bottom: 17px;
+  padding-bottom: 13px;
+}
+
+body[data-lab-layout="compact"] [data-lab-workspace] {
+  margin-left: auto;
+  margin-right: auto;
+  width: min(var(--lab-compact-workspace-max), 100%);
+}
+
+:where(button, input, select, textarea, summary):focus-visible {
+  outline: 3px solid var(--lab-focus);
+  outline-offset: 4px;
+}
+
+@media (max-width: 620px) {
+  :root {
+    --lab-page-gutter: 18px;
+  }
+
+  body {
+    padding-bottom: 0;
+    padding-top: 0 !important;
+  }
+
+  .lab-manifest-header {
+    gap: 14px;
+    grid-template-columns: minmax(0, 1fr) !important;
+    margin-bottom: 20px;
+    padding-bottom: 18px;
+  }
+
+  body[data-lab-layout="compact"] .lab-manifest-header {
+    margin-bottom: 16px;
+    padding-bottom: 14px;
+  }
+
+  .lab-manifest-header h1 {
+    font-size: clamp(24px, 8vw, 34px);
+  }
+
+  .lab-syllabus-chips {
+    gap: 4px;
+    justify-content: flex-start !important;
+    margin: 0 !important;
+  }
+
+  .lab-syllabus-chip {
+    font-size: 10px;
+    max-width: 100%;
+    min-height: 27px;
+    padding: 7px 8px;
+    white-space: normal;
+  }
+
+  .lab-syllabus-sections {
+    flex-wrap: wrap;
+  }
+
+  body > main {
+    margin-top: 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+</style>
+<!-- LAB_FRAME_STYLES_END -->
+<link rel="stylesheet" href="./lab-kit.css" data-lab-resource="lab-kit.css">
+<link rel="icon" href="data:,">
+<!-- LAB_MANIFEST_HEAD_START -->
+<title>Right-Triangle Trigonometry</title>
+<meta name="description" content="Explore right-triangle trigonometry, side roles and sine, cosine and tangent ratios for Cambridge IGCSE Mathematics 0580.">
+<link rel="canonical" href="https://www.examplicity.org/labs/mathematics/right-triangle-ratio-invariance.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Examplicity">
+<meta property="og:title" content="Right-Triangle Trigonometry">
+<meta property="og:description" content="Explore right-triangle trigonometry, side roles and sine, cosine and tangent ratios for Cambridge IGCSE Mathematics 0580.">
+<meta property="og:url" content="https://www.examplicity.org/labs/mathematics/right-triangle-ratio-invariance.html">
+<meta property="og:image" content="https://www.examplicity.org/opengraph-image">
+<meta property="og:image:alt" content="Examplicity — Make complex ideas click">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Right-Triangle Trigonometry">
+<meta name="twitter:description" content="Explore right-triangle trigonometry, side roles and sine, cosine and tangent ratios for Cambridge IGCSE Mathematics 0580.">
+<meta name="twitter:image" content="https://www.examplicity.org/opengraph-image">
+<script type="application/ld+json" data-lab-manifest="structured-data">{"@context":"https://schema.org","@type":"LearningResource","@id":"https://www.examplicity.org/labs/mathematics/right-triangle-ratio-invariance.html#learning-resource","url":"https://www.examplicity.org/labs/mathematics/right-triangle-ratio-invariance.html","name":"Right-Triangle Trigonometry","description":"Explore right-triangle trigonometry, side roles and sine, cosine and tangent ratios for Cambridge IGCSE Mathematics 0580.","inLanguage":"en-GB","isAccessibleForFree":true,"interactivityType":"active","learningResourceType":"Right-triangle ratio model","teaches":"Trigonometry","educationalLevel":["IGCSE"],"educationalAlignment":[{"@type":"AlignmentObject","alignmentType":"educationalSubject","educationalFramework":"Cambridge IGCSE Mathematics","targetName":"IGCSE 0580 section C6.2, E6.2","targetUrl":"https://www.cambridgeinternational.org/Images/662466-2025-2027-syllabus.pdf#page=27"}],"about":{"@type":"Thing","name":"Mathematics"},"audience":{"@type":"EducationalAudience","educationalRole":"student"},"provider":{"@type":"Organization","name":"Examplicity","url":"https://www.examplicity.org"},"isPartOf":{"@type":"WebSite","@id":"https://www.examplicity.org/#website","name":"Examplicity","url":"https://www.examplicity.org"}}</script>
+<!-- LAB_MANIFEST_HEAD_END -->
+<style>
+:root{
+  --lab-canvas:#f3f5f7;--lab-paper:#fbfbfd;--lab-surface:#fff;--lab-control:#fff;
+  --lab-ink:#1d1d1f;--lab-muted:#6e6e73;--lab-line:#d2d2d7;--lab-line-strong:#a7a7ad;
+  --lab-accent:#5277b8;--lab-accent-soft:#eef2fa;--lab-good:#18794e;--lab-good-soft:#edf8f1;
+  --lab-warn:#946200;--lab-warn-soft:#fff6e7;--lab-bad:#b42318;--lab-bad-soft:#fff0ee;
+  --lab-focus:#1d1d1f;--lab-focus-soft:rgba(29,29,31,.18);--lab-font-sans:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif;
+  --lab-panel-radius:12px;--lab-control-radius:8px;--lab-pill-radius:999px;--lab-panel-shadow:0 1px 2px rgba(29,29,31,.04);
+  --adj:#5277b8;--adj-soft:#eaf0f8;--opp:#cc7b2e;--opp-soft:#fff4e8;--hyp:#7a65a8;--hyp-soft:#f2eef9;--angle:#18794e;--history:#82909a;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{min-height:100%;background:var(--lab-canvas)}
+body{margin:0;color:var(--lab-ink);font-family:var(--lab-font-sans);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+body>main{container-name:lab-canvas;container-type:inline-size;margin:12px auto 34px;width:min(1200px,calc(100% - 22px))}
+button{font:inherit;min-height:34px;padding:0 10px;border:1px solid var(--lab-line);border-radius:var(--lab-control-radius);background:var(--lab-control);color:var(--lab-ink);cursor:pointer}
+button:hover:not(:disabled){border-color:var(--lab-line-strong)}button:disabled{opacity:.44;cursor:not-allowed}
+:where(button,[tabindex]):focus-visible{outline:3px solid var(--lab-focus);outline-offset:4px}
+.panel{background:var(--lab-surface);border:1px solid var(--lab-line);border-radius:var(--lab-panel-radius);box-shadow:var(--lab-panel-shadow)}
+.lab-manifest-header{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px 24px;align-items:start;border-bottom:1px solid var(--lab-line);margin-bottom:10px;padding-bottom:12px}
+.lab-manifest-header h1{margin:0;max-width:27ch;font-size:clamp(24px,3vw,36px);font-weight:650;letter-spacing:-.043em;line-height:1.03}
+.lab-manifest-subtitle{margin:6px 0 0;max-width:78ch;color:var(--lab-muted);font-size:12px;line-height:1.42}
+.lab-syllabus-chips{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.lab-syllabus-chip{position:relative;display:inline-flex;align-items:center;gap:4px;min-height:29px;padding:8px 10px;border:1px solid #91c4b0;border-radius:999px;background:#edf8f3;color:#235f4e;font-size:10px;font-weight:700;white-space:nowrap}
+.lab-syllabus-primary-link{position:absolute;inset:0;border-radius:inherit}.lab-syllabus-name,.lab-syllabus-divider,.lab-syllabus-sections{pointer-events:none;position:relative;z-index:1}.lab-syllabus-section{position:relative;z-index:2;color:inherit;text-decoration:none;padding:2px;border-radius:4px;pointer-events:auto}.lab-syllabus-section:hover{text-decoration:underline;text-underline-offset:2px}.lab-syllabus-divider,.lab-syllabus-separator{color:#628879}.lab-syllabus-separator{margin-right:2px}
+
+.mission{padding:9px 10px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 12px;align-items:center}
+.mission-copy{min-width:0}.stage-kicker{display:flex;align-items:center;gap:7px;flex-wrap:wrap;color:var(--lab-accent);font-size:8px;font-weight:900;letter-spacing:.07em;text-transform:uppercase}.stage-kicker .extended{color:#765189}.mission-copy strong{display:block;margin-top:3px;font-size:15px;line-height:1.28}.mission-copy span:last-child{display:block;margin-top:2px;color:var(--lab-muted);font-size:9px;line-height:1.34}
+.stage-nav{display:flex;gap:5px;align-items:center;justify-content:flex-end;flex-wrap:wrap}.stage-nav button{min-height:29px;padding:0 8px;border-radius:999px;font-size:8px;font-weight:850;color:var(--lab-muted)}.stage-nav button.active{background:var(--lab-accent);border-color:var(--lab-accent);color:#fff}.stage-nav button.done:not(.active){border-color:#9bc6aa;background:var(--lab-good-soft);color:var(--lab-good)}.stage-nav button.locked{opacity:.36}
+
+.lab{margin-top:8px;overflow:hidden}
+.workspace{display:grid;grid-template-columns:minmax(650px,1.68fr) minmax(300px,.72fr);align-items:stretch;min-height:590px}
+.stage-side{min-width:0;border-right:1px solid var(--lab-line);background:linear-gradient(180deg,#fff,#fbfcfd)}
+.visual-head{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;padding:7px 9px;border-bottom:1px solid var(--lab-line);background:#fff}
+.visual-copy strong{display:block;font-size:12px}.visual-copy span{display:block;margin-top:2px;color:var(--lab-muted);font-size:8.5px;line-height:1.3}.visual-tools{display:flex;gap:5px;align-items:center;justify-content:flex-end}.visual-tools button{min-height:29px;font-size:8.5px;padding:0 8px}.visual-tools .primary{background:var(--lab-accent);border-color:var(--lab-accent);color:#fff;font-weight:850}
+.stage-shell{position:relative;overflow-x:auto;background:#f8fbfd;overscroll-behavior-x:contain}.stage{display:block;width:100%;min-width:760px;height:auto;background:#f8fbfd;touch-action:none;user-select:none}.stage text{font-family:var(--lab-font-sans)}
+.stage-note{padding:6px 9px;border-top:1px solid var(--lab-line);background:#fff;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center}.stage-note-copy{font-size:8.5px;line-height:1.3;color:#58656d}.stage-note-copy strong{color:var(--lab-ink)}.stage-note-state{min-height:24px;padding:4px 7px;border:1px solid var(--lab-line);border-radius:999px;background:var(--lab-paper);font-size:8px;font-weight:850;white-space:nowrap}.stage-note-state.good{border-color:#acd2b9;background:var(--lab-good-soft);color:var(--lab-good)}.stage-note-state.warn{border-color:#e5d29f;background:var(--lab-warn-soft);color:var(--lab-warn)}
+.next-card{position:absolute;z-index:30;left:50%;top:12px;transform:translateX(-50%);width:min(292px,calc(100% - 20px));padding:8px 9px;border:1px solid #9cc7aa;border-radius:10px;background:rgba(247,252,248,.99);box-shadow:0 10px 24px rgba(29,29,31,.14);text-align:left;animation:nextCardIn .16s ease-out}.next-card[hidden]{display:none}.next-card>strong{display:block;color:#2e6d4b;font-size:11px}.next-card>span{display:block;margin:2px 0 0;color:#52705f;font-size:8px;line-height:1.25}.next-actions{margin-top:6px}.next-actions button{width:100%;min-height:30px;background:var(--lab-good);border-color:var(--lab-good);color:#fff;font-size:8.5px;font-weight:900}@keyframes nextCardIn{from{opacity:.7}to{opacity:1}}
+
+.evidence{min-width:0;padding:9px;display:flex;flex-direction:column;gap:8px;background:#fbfcfd}
+.evidence-section{padding-bottom:8px;border-bottom:1px solid var(--lab-line)}.evidence-section:last-of-type{padding-bottom:0;border-bottom:0}.eyebrow{color:var(--lab-muted);font-size:7.5px;font-weight:900;letter-spacing:.075em;text-transform:uppercase}.angle-readout{display:flex;align-items:baseline;gap:6px;margin-top:2px}.angle-readout strong{font:900 22px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:var(--angle)}.angle-readout span{color:var(--lab-muted);font-size:8px}.lock-note{display:inline-flex;align-items:center;gap:4px;margin-top:5px;padding:3px 6px;border:1px solid var(--lab-line);border-radius:999px;background:#fff;color:#68757d;font-size:7.5px;font-weight:800}.lock-note i{display:block;width:7px;height:7px;border-radius:50%;background:#9aa6ad}.lock-note.unlocked i{background:var(--angle)}
+.side-table{margin-top:5px;display:grid;gap:4px}.side-row{display:grid;grid-template-columns:62px minmax(0,1fr) auto;gap:5px;align-items:center;padding:5px 6px;border:1px solid var(--lab-line);border-radius:7px;background:#fff;font-size:8px}.side-row b{font-size:8px}.side-row.adj b{color:#3f6292}.side-row.opp b{color:#8f5b1f}.side-row.hyp b{color:#604d88}.side-row span{color:var(--lab-muted)}.side-row strong{font:850 9px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:nowrap}
+.ratio-list{margin-top:5px;display:grid;gap:5px}.ratio-card{position:relative;overflow:hidden;padding:7px 8px;border:1px solid var(--lab-line);border-radius:8px;background:#fff}.ratio-top{display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:6px;align-items:baseline}.ratio-name{font:900 10px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#33424b}.ratio-expression{min-width:0;color:#55636c;font:800 8px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ratio-value{font:900 12px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.ratio-scale{position:relative;height:5px;margin-top:5px;border-radius:999px;background:#edf0f2;overflow:hidden}.ratio-scale i{display:block;height:100%;width:0;border-radius:inherit;background:var(--lab-accent);transition:width .12s linear}.ratio-card.changed{border-color:#b8c9dc;background:#f6f9fd;box-shadow:inset 3px 0 0 var(--lab-accent)}.ratio-previous{display:none;margin-top:3px;color:#77838b;font-size:7px}.ratio-previous.show{display:block}
+.relationship{padding:7px 8px;border:1px solid var(--lab-line);border-radius:8px;background:#fff;color:#526069;font-size:8.5px;line-height:1.34}.relationship strong{color:var(--lab-ink)}.relationship.good{border-color:#add2ba;background:var(--lab-good-soft);color:#436b53}.relationship.info{border-color:#b9cce0;background:#f2f6fb;color:#47627f}
+.ref-switch{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:6px}.ref-switch button{min-height:30px;font-size:8px;font-weight:850}.ref-switch button.active{background:var(--lab-accent);border-color:var(--lab-accent);color:#fff}
+.source-basis{margin-top:auto;padding-top:6px;color:#7b858d;font-size:7px}.source-basis summary{cursor:pointer;user-select:none}.source-basis p{margin:4px 0 0;line-height:1.35}
+
+/* SVG */
+.sky{fill:#eef6fb}.ground{fill:#eef0ec}.runway{fill:#6b7277}.runway-edge{stroke:#c8d0d3;stroke-width:2}.runway-mark{stroke:#f5f4e7;stroke-width:4;stroke-dasharray:18 16}.aim-ring{fill:#fff;stroke:#d18b39;stroke-width:4}.aim-dot{fill:#d18b39}.guide-ray{stroke:#c5cdd3;stroke-width:2;stroke-dasharray:6 5}.triangle-adj{stroke:var(--adj);stroke-width:6;stroke-linecap:round}.triangle-opp{stroke:var(--opp);stroke-width:6;stroke-linecap:round}.triangle-hyp{stroke:var(--hyp);stroke-width:6;stroke-linecap:round}.triangle-ghost{fill:none;stroke:var(--history);stroke-width:2;stroke-dasharray:6 5;opacity:.38}.ghost-point{fill:#fff;stroke:var(--history);stroke-width:2;opacity:.65}.foot{fill:#fff;stroke:#7b8790;stroke-width:2}.right-box{fill:none;stroke:#5e6c75;stroke-width:2}.angle-arc{fill:none;stroke:var(--angle);stroke-width:4;stroke-linecap:round}.angle-hit{fill:none;stroke:transparent;stroke-width:22;cursor:pointer}.angle-label{fill:#2c6d4a;font-size:13px;font-weight:900;paint-order:stroke;stroke:#fff;stroke-width:5px}.side-label{font-size:12px;font-weight:900;paint-order:stroke;stroke:#fff;stroke-width:5px}.side-label.adj{fill:#3d6091}.side-label.opp{fill:#935f25}.side-label.hyp{fill:#5f4d86}.dim-label{fill:#55636c;font:850 10px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;paint-order:stroke;stroke:#fff;stroke-width:4px}.aircraft{cursor:ew-resize;filter:drop-shadow(0 4px 5px rgba(34,48,58,.15))}.aircraft-body{fill:#e9eef1;stroke:#4d5c66;stroke-width:2}.aircraft-window{fill:#6f9caf}.aircraft-accent{fill:#d18b39}.aircraft-hit{fill:transparent;stroke:transparent;stroke-width:30}.angle-handle{fill:#fff;stroke:var(--angle);stroke-width:4;cursor:grab}.angle-handle:active{cursor:grabbing}.handle-halo{fill:none;stroke:rgba(24,121,78,.22);stroke-width:8}.handle-label{fill:#4e6659;font-size:9px;font-weight:850;paint-order:stroke;stroke:#fff;stroke-width:4px}.horizontal-guide{stroke:#6e899c;stroke-width:2;stroke-dasharray:7 5}.parallel-mark{stroke:#6e899c;stroke-width:2}.depression-arc{fill:none;stroke:#356b90;stroke-width:3.5}.depression-label{fill:#356b90;font-size:12px;font-weight:900;paint-order:stroke;stroke:#fff;stroke-width:5px}.other-arc{fill:none;stroke:#8c6aac;stroke-width:3.5}.other-label{fill:#785b96;font-size:11px;font-weight:900;paint-order:stroke;stroke:#fff;stroke-width:5px}
+
+.work-badge{font-size:8px}.step-title strong{font-size:10px}.step-copy{font-size:9px;line-height:1.35}.step-note,.problem-family-note{font-size:8.5px;line-height:1.35}
+@container lab-canvas (max-width:980px){.workspace{grid-template-columns:1fr}.stage-side{border-right:0;border-bottom:1px solid var(--lab-line)}.evidence{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.evidence-section{padding:0 7px 0 0;border-bottom:0;border-right:1px solid var(--lab-line)}.evidence-section:nth-child(3){border-right:0}.relationship{grid-column:1/-1}.source-basis{grid-column:1/-1}.stage{min-width:720px}}
+@container lab-canvas (max-width:640px){.mission{grid-template-columns:1fr}.stage-nav{justify-content:flex-start}.visual-head{grid-template-columns:1fr}.visual-tools{justify-content:flex-start}.stage-note{grid-template-columns:1fr}.stage-note-state{justify-self:start}.evidence{grid-template-columns:1fr}.evidence-section{padding:0 0 7px;border-right:0;border-bottom:1px solid var(--lab-line)}.evidence-section:nth-child(3){border-bottom:1px solid var(--lab-line)}.ratio-top{grid-template-columns:34px minmax(0,1fr) auto}.stage{min-width:0;width:100%}.side-label{font-size:18px}.dim-label{display:none}.angle-label{font-size:18px}.other-label,.depression-label{font-size:16px}.handle-label{font-size:13px}.next-card{top:9px;width:min(330px,calc(100% - 18px))}}
+@media(max-width:620px){body>main{width:min(100% - 12px,1200px);margin-top:7px}.lab-manifest-header{grid-template-columns:1fr;gap:10px}.lab-syllabus-chips{justify-content:flex-start}.lab-manifest-header h1{font-size:clamp(23px,8vw,31px)}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}}
+
+/* v2: generated problems + progressive working ownership */
+.problem-kicker{display:flex;align-items:center;gap:7px;flex-wrap:wrap;color:var(--lab-accent);font-size:8px;font-weight:900;letter-spacing:.07em;text-transform:uppercase}.problem-kicker .extended{color:#765189}
+.mission-tools{display:flex;align-items:center;gap:8px;justify-content:flex-end}.complexity{display:grid;grid-template-columns:auto auto;gap:4px 7px;align-items:center;justify-items:end}.complexity-copy{text-align:right}.complexity-copy strong{display:block;color:#52606a;font-size:8px;font-weight:900;letter-spacing:.05em;text-transform:uppercase}.complexity-copy span{display:block;margin-top:1px;max-width:30ch;color:var(--lab-muted);font-size:8px;line-height:1.25}.complexity-switch{display:inline-flex;padding:3px;border:1px solid var(--lab-line);border-radius:9px;background:#f6f8f9}.complexity-switch button{min-height:27px;border:0;border-radius:6px;background:transparent;padding:0 8px;color:#66737b;font-size:8px;font-weight:850}.complexity-switch button.active{background:#fff;color:var(--lab-ink);box-shadow:0 1px 4px rgba(29,29,31,.14)}.complexity.disabled{opacity:.46}.complexity.disabled button{pointer-events:none}
+.workspace{grid-template-columns:minmax(650px,1.68fr) minmax(325px,.78fr)}
+.work-panel{min-width:0;padding:9px;display:flex;flex-direction:column;gap:7px;background:#fbfcfd}.work-head{padding-bottom:7px;border-bottom:1px solid var(--lab-line)}.work-head-top{display:flex;align-items:center;justify-content:space-between;gap:8px}.work-head strong{font-size:12px}.work-badge{padding:3px 6px;border:1px solid var(--lab-line);border-radius:999px;background:#f7f9fa;color:#64717a;font-size:7px;font-weight:900;letter-spacing:.05em;text-transform:uppercase;white-space:nowrap}.work-head p{margin:3px 0 0;color:var(--lab-muted);font-size:8.5px;line-height:1.3}
+.work-step{position:relative;padding:7px 8px;border:1px solid var(--lab-line);border-radius:8px;background:#fff}.work-step.locked{opacity:.48;background:#f8f9fa}.work-step.good{border-color:#abd2b9;background:#f8fcf9;box-shadow:inset 3px 0 0 var(--lab-good)}.work-step.bad{border-color:#e1aaa3;background:#fff8f7;box-shadow:inset 3px 0 0 var(--lab-bad)}.step-head{display:flex;align-items:center;gap:6px;justify-content:space-between}.step-title{display:flex;align-items:center;gap:6px;min-width:0}.step-num{width:19px;height:19px;display:grid;place-items:center;border-radius:50%;background:#eef1f3;color:#5c6972;font-size:8px;font-weight:900;flex:0 0 auto}.step-title strong{font-size:9px}.scope-badge{padding:2px 5px;border-radius:999px;background:#f1f3f5;color:#68747c;font-size:6.5px;font-weight:900;letter-spacing:.045em;text-transform:uppercase;white-space:nowrap}.scope-badge.specific{background:#f3eef9;color:#675187}.step-copy{margin-top:4px;color:#69767e;font-size:8px;line-height:1.3}.step-equation{margin-top:5px;color:#273740;font:900 10.5px/1.45 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;overflow-wrap:anywhere}.step-note{margin-top:3px;color:#6d7a82;font-size:7.5px;line-height:1.3}.step-note.good{color:var(--lab-good);font-weight:800}.step-note.bad{color:var(--lab-bad);font-weight:800}
+.role-grid{display:grid;gap:4px;margin-top:5px}.role-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px;align-items:center;padding:4px 5px;border:1px solid #e1e5e8;border-radius:7px;background:#fbfcfd}.role-copy strong{display:block;font-size:8px}.role-copy span{display:block;margin-top:1px;color:var(--lab-muted);font-size:7px}.role-buttons{display:flex;gap:3px}.role-buttons button{min-width:28px;min-height:25px;padding:0 5px;font-size:7px;font-weight:900}.role-buttons button.active{background:var(--lab-accent);border-color:var(--lab-accent);color:#fff}.role-buttons button.correct{background:var(--lab-good-soft);border-color:#9bc7aa;color:var(--lab-good)}.role-buttons button.wrong{background:var(--lab-bad-soft);border-color:#dfaaa3;color:var(--lab-bad)}
+.pair-readout{margin-top:5px;padding:5px 6px;border-radius:7px;background:#f7f9fa;color:#526069;font-size:8px;line-height:1.3}.pair-readout strong{color:var(--lab-ink)}
+.ratio-choice-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-top:5px}.ratio-choice{min-width:0;min-height:46px;padding:5px 4px;display:grid;align-content:center;justify-items:center;gap:2px;border:1px solid var(--lab-line);border-radius:7px;background:#fff}.ratio-choice b{font:900 10px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.ratio-choice span{color:var(--lab-muted);font-size:6.5px;font-weight:850}.ratio-choice.active{background:var(--lab-accent-soft);border-color:#a9bfdd;color:#345d91}.ratio-choice.correct{background:var(--lab-good-soft);border-color:#9cc9ab;color:var(--lab-good)}.ratio-choice.wrong{background:var(--lab-bad-soft);border-color:#dfaaa3;color:var(--lab-bad)}
+.answer-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px;align-items:end;margin-top:6px}.answer-field{display:grid;gap:3px}.answer-field label{color:var(--lab-muted);font-size:7px;font-weight:850}.answer-input-wrap{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;border:2px solid #d5a632;border-radius:7px;background:#fffbea;overflow:hidden}.answer-input-wrap.good{border-color:var(--lab-good);background:var(--lab-good-soft)}.answer-input-wrap.bad{border-color:var(--lab-bad);background:var(--lab-bad-soft)}.answer-input-wrap input{width:100%;height:32px;border:0;background:transparent;padding:0 7px;color:var(--lab-ink);font:900 11px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.answer-input-wrap input:focus{outline:0}.answer-input-wrap span{padding-right:7px;color:#68757d;font-size:8px;font-weight:850}.check-button{min-height:34px;background:var(--lab-accent);border-color:var(--lab-accent);color:#fff;font-size:8px;font-weight:900}.check-button:disabled{background:#eef1f3;border-color:#d7dde1;color:#8b969d}
+.work-feedback{min-height:35px;padding:6px 7px;border:1px solid var(--lab-line);border-radius:7px;background:#f9fafb;color:#5e6c74;font-size:8px;line-height:1.32}.work-feedback.good{border-color:#abd2b9;background:var(--lab-good-soft);color:#3f6d51}.work-feedback.bad{border-color:#e1aaa3;background:var(--lab-bad-soft);color:#854239}.generality{padding:6px 7px;border-left:3px solid var(--lab-accent);border-radius:6px;background:var(--lab-accent-soft);color:#40556d;font-size:7.5px;line-height:1.32}.generality strong{color:#2f4968}
+.cal-pair-map{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-top:5px}.cal-pair{padding:5px;border:1px solid var(--lab-line);border-radius:7px;background:#fff;text-align:center}.cal-pair b{display:block;font:900 9px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.cal-pair span{display:block;margin-top:1px;color:var(--lab-muted);font-size:6.5px}.cal-pair strong{display:block;margin-top:3px;font:900 10px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#3d5f8c}
+.cal-table-wrap{margin-top:5px;overflow:auto;border:1px solid var(--lab-line);border-radius:7px;background:#fff}.cal-table{width:100%;border-collapse:collapse;min-width:320px}.cal-table th{padding:4px 5px;border-bottom:1px solid var(--lab-line);background:#f7f9fa;color:#748089;font-size:6.5px;text-align:right;white-space:nowrap}.cal-table th:first-child,.cal-table td:first-child{text-align:left}.cal-table td{padding:4px 5px;border-bottom:1px solid #edf0f2;font:800 7.5px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;text-align:right;white-space:nowrap}.cal-table tr:last-child td{border-bottom:0}.cal-empty{padding:10px;color:var(--lab-muted);font-size:8px;text-align:center}.cal-realisation{margin-top:5px;padding:6px 7px;border:1px solid #b8cbe1;border-radius:7px;background:#f3f7fc;color:#46617f;font-size:8px;line-height:1.32}.cal-realisation.good{border-color:#abd2b9;background:var(--lab-good-soft);color:#3f6c51}.ratio-compare{display:grid;gap:3px;margin-top:5px}.ratio-compare-row{display:grid;grid-template-columns:32px 1fr auto 1fr;gap:4px;align-items:center;font:850 7.5px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.ratio-compare-row b{color:#44535d}.ratio-compare-row span{padding:3px 4px;border-radius:5px;background:#fff;border:1px solid var(--lab-line);text-align:center}.ratio-compare-row i{font-style:normal;color:#7c878e}
+.candidate-line{fill:none;stroke:#b8862c;stroke-width:3;stroke-dasharray:7 5}.candidate-guide{fill:none;stroke:#b8862c;stroke-width:2;stroke-dasharray:4 5;opacity:.78}.candidate-point{fill:#fff8e6;stroke:#b8862c;stroke-width:4}.candidate-label{fill:#8b671e;font-size:10px;font-weight:900;paint-order:stroke;stroke:#fff;stroke-width:4px}.candidate-layer.good .candidate-line,.candidate-layer.good .candidate-guide{stroke:var(--lab-good)}.candidate-layer.good .candidate-point{stroke:var(--lab-good);fill:var(--lab-good-soft)}.candidate-layer.good .candidate-label{fill:var(--lab-good)}.candidate-layer.bad .candidate-line,.candidate-layer.bad .candidate-guide{stroke:var(--lab-bad)}.candidate-layer.bad .candidate-point{stroke:var(--lab-bad);fill:var(--lab-bad-soft)}.candidate-layer.bad .candidate-label{fill:var(--lab-bad)}
+.next-insight{display:none}.next-upgrade{margin-top:6px;padding:6px 7px;border:1px solid #b7c8df;border-radius:7px;background:#f3f7fc;text-align:left}.next-upgrade[hidden]{display:none}.next-upgrade strong{display:block;color:#365b88;font-size:9px}.next-upgrade span{display:block;margin-top:1px;color:#607184;font-size:7.5px;line-height:1.25}.next-upgrade button{width:100%;min-height:29px;margin-top:5px;background:var(--lab-accent);border-color:var(--lab-accent);color:#fff;font-size:8px;font-weight:900}.next-card.has-upgrade .next-actions button{background:#fff;border-color:#9cc7aa;color:#2e6d4b}
+.source-basis-v2{margin-top:auto;padding-top:4px;color:#7b858d;font-size:7px}.source-basis-v2 summary{cursor:pointer;user-select:none}.source-basis-v2 p{margin:4px 0 0;line-height:1.35}
+@container lab-canvas (max-width:980px){.workspace{grid-template-columns:1fr}.work-panel{border-top:1px solid var(--lab-line);display:grid;grid-template-columns:1fr 1fr;align-items:start}.work-head,.generality,.work-feedback,.source-basis-v2{grid-column:1/-1}.work-step{min-height:100%}.cal-table-wrap,.cal-realisation,.ratio-compare{grid-column:1/-1}}
+@container lab-canvas (max-width:650px){.mission{grid-template-columns:1fr}.mission-tools{justify-content:space-between;align-items:flex-end}.complexity{justify-items:start}.complexity-copy{text-align:left}.work-panel{grid-template-columns:1fr}.work-head,.generality,.work-feedback,.source-basis-v2{grid-column:auto}.ratio-choice-grid,.cal-pair-map{grid-template-columns:1fr 1fr 1fr}.answer-row{grid-template-columns:1fr}.check-button{width:100%}}
+</style>
+
+<style data-revision="v3-working-transfer">
+/* v3: compact visual working transfer, using the established 0580 working-field states */
+.work-panel{padding:8px;gap:6px;background:#fbfcfd}
+.work-head{padding-bottom:5px}.work-head p{display:none}.work-head strong{font-size:12px}
+.process-rail{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;align-items:stretch}
+.process-node{position:relative;min-width:0;padding:5px 4px;border:1px solid var(--lab-line);border-radius:7px;background:#fff;text-align:center;color:#67747c}
+.process-node:not(:last-child)::after{content:"›";position:absolute;right:-7px;top:50%;z-index:3;transform:translateY(-52%);width:10px;color:#98a3aa;font-size:14px;font-weight:900}
+.process-node span{display:block;font-size:6.5px;font-weight:900;letter-spacing:.055em;text-transform:uppercase}.process-node strong{display:block;margin-top:1px;font-size:8px;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.process-node.done{background:#f5f7f8}.process-node.needs-working{border-color:#dfc963;background:#fffdf3;box-shadow:inset 0 -3px 0 #d0ad35}.process-node.work-good{border-color:#a7d2b5;background:var(--lab-good-soft);color:#2f6d4b;box-shadow:inset 0 -3px 0 var(--lab-good)}.process-node.work-bad{border-color:#e1aaa3;background:var(--lab-bad-soft);color:#8d453d;box-shadow:inset 0 -3px 0 var(--lab-bad)}.process-node.locked{opacity:.5;background:#f6f7f8}
+.work-step{padding:6px 7px}.work-step.done{background:#f7f9fa}.work-step.needs-working{border-color:#dfc963;background:#fffdf3;box-shadow:inset 3px 0 0 #d0ad35}.work-step.work-good{border-color:#a7d2b5;background:var(--lab-good-soft);box-shadow:inset 3px 0 0 var(--lab-good)}.work-step.work-bad{border-color:#e1aaa3;background:var(--lab-bad-soft);box-shadow:inset 3px 0 0 var(--lab-bad)}
+.step-head{min-height:20px}.step-title strong{font-size:9px}.step-num{width:18px;height:18px;font-size:7.5px}.work-status{min-width:21px;min-height:19px;display:inline-grid;place-items:center;padding:2px 5px;border:1px solid var(--lab-line);border-radius:999px;background:#f7f9fa;color:#758189;font-size:7px;font-weight:950;white-space:nowrap}.work-status.needs{border-color:#d9bf70;background:#fff7da;color:#8d6d13}.work-status.good{border-color:#9bc8aa;background:#fff;color:var(--lab-good);font-size:12px}.work-status.bad{border-color:#dfa8a0;background:#fff;color:var(--lab-bad);font-size:12px}.work-status.done{font-size:6.5px;text-transform:uppercase;letter-spacing:.04em}
+.scope-badge{display:none}.step-copy,.step-note,.generality,.work-feedback{display:none}
+.role-grid{gap:4px;margin-top:4px}.role-row{min-height:31px;padding:3px 5px;background:#fff}.role-row.auto{background:#f7f9fa}.role-row.needs{border-color:#ddc670;background:#fffdf3}.role-row.good{border-color:#a8d0b6;background:var(--lab-good-soft)}.role-row.bad{border-color:#e2aaa4;background:var(--lab-bad-soft)}
+.role-copy{display:flex;align-items:baseline;gap:5px;min-width:0}.role-copy strong{font-size:8px}.role-copy span{margin:0;color:#7a868d;font:800 7px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:nowrap}.role-auto{display:flex;align-items:center;gap:5px;color:#43515a}.role-auto b{font:950 10px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.role-auto span{color:#6d7981;font-size:7px;font-weight:800}
+.role-buttons button{position:relative;min-width:31px;min-height:25px}.role-buttons button.correct::after,.role-buttons button.wrong::after{margin-left:3px;font-weight:950}.role-buttons button.correct::after{content:"✓"}.role-buttons button.wrong::after{content:"×"}
+.ratio-choice-grid{margin-top:4px}.ratio-choice{position:relative;min-height:43px}.ratio-choice b{font-size:11px}.ratio-choice span{font-size:7px}.ratio-choice.correct::after,.ratio-choice.wrong::after{position:absolute;right:4px;top:3px;font-size:11px;font-weight:950}.ratio-choice.correct::after{content:"✓"}.ratio-choice.wrong::after{content:"×"}.ratio-choice.done{background:#f5f7f8;border-color:#cfd6db}.ratio-choice.done.active{background:#eef3f9;border-color:#a9bfdd;color:#345d91}
+.calc-stack{display:grid;gap:4px;margin-top:4px}.calc-line{display:grid;grid-template-columns:53px minmax(0,1fr);gap:5px;align-items:center;padding:4px 5px;border:1px solid #e0e5e8;border-radius:6px;background:#fff}.calc-line span{color:#7a858d;font-size:6.5px;font-weight:900;letter-spacing:.05em;text-transform:uppercase}.calc-line strong{font:900 9px/1.3 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#32424c;overflow-wrap:anywhere}.calc-line.result{border-color:#b8cbe1;background:#f3f7fc}.calc-line.result strong{color:#365d89}
+.calc-fields{display:grid;grid-template-columns:1fr;gap:5px;margin-top:5px}.calc-field{position:relative;display:grid;gap:3px}.calc-field>span:first-child{color:#6e7a82;font-size:7px;font-weight:850}.calc-input-wrap{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;min-height:34px;border:2px solid #d0ad35;border-radius:7px;background:#fffbea;overflow:hidden}.calc-input-wrap.good{border-color:var(--lab-good);background:var(--lab-good-soft)}.calc-input-wrap.bad{border-color:var(--lab-bad);background:var(--lab-bad-soft)}.calc-input-wrap.locked{border-color:#d8dde1;background:#f5f7f8;opacity:.58}.calc-input-wrap input{width:100%;height:31px;border:0;background:transparent;padding:0 7px;color:#202c33;font:900 11px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.calc-input-wrap input:focus{outline:0}.calc-unit{padding:0 5px;color:#67747c;font-size:8px;font-weight:850}.field-status{width:23px;text-align:center;font-size:15px;font-weight:950;line-height:1}.calc-input-wrap.good .field-status{color:var(--lab-good)}.calc-input-wrap.bad .field-status{color:var(--lab-bad)}
+.worked-solution{margin-top:4px;padding:5px 6px;border:1px solid #b8cbe1;border-radius:7px;background:#f3f7fc}.worked-solution .calc-line{border:0;border-bottom:1px solid #dbe4ef;border-radius:0;background:transparent;padding:3px 1px}.worked-solution .calc-line:last-child{border-bottom:0}.worked-solution .calc-line.result{background:transparent}.worked-solution .calc-line.result strong{color:#2f6c4d}
+.worked-next{display:grid;grid-template-columns:1fr;gap:4px;margin-top:5px}.worked-next button{min-height:30px;background:var(--lab-accent);border-color:var(--lab-accent);color:#fff;font-size:8px;font-weight:900}.worked-next button.secondary{background:#fff;border-color:var(--lab-line);color:#52606a}
+.calibration-topline{display:flex;align-items:center;justify-content:space-between;gap:6px}.angle-lock{display:inline-flex;align-items:baseline;gap:5px;padding:4px 7px;border:1px solid #b4d5c0;border-radius:999px;background:var(--lab-good-soft);color:#3f6b50}.angle-lock span{font-size:6.5px;font-weight:900;text-transform:uppercase;letter-spacing:.05em}.angle-lock strong{font:950 10px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.cal-pair-map{margin-top:4px}.cal-pair{padding:4px}.cal-pair b{font-size:10px}.cal-pair span{font-size:7px}.cal-pair strong{font-size:11px}.cal-realisation{margin-top:4px;padding:5px 6px;font-size:7.5px}.ratio-compare{margin-top:4px}.source-basis-v2{margin-top:3px}
+@container lab-canvas (max-width:980px){.work-panel{grid-template-columns:1fr 1fr}.work-head,.process-rail,.calibration-topline,.cal-pair-map,.cal-table-wrap,.cal-realisation,.ratio-compare,.source-basis-v2,.worked-next{grid-column:1/-1}.work-step{min-height:100%}}
+@container lab-canvas (max-width:640px){.work-panel{grid-template-columns:1fr}.process-rail{grid-template-columns:repeat(4,minmax(0,1fr))}.process-node strong{font-size:7px}.role-copy{display:block}.role-copy span{display:block;margin-top:1px}.ratio-choice{min-height:48px}}
+</style>
+
+
+<style data-revision="v4-guided-flow">
+/* v4: action → evidence → ownership progression, adapted from the supplied 0580 geometry labs. */
+.progress-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end}.ownership-pill,.problem-progress{min-height:26px;display:inline-flex;align-items:center;padding:0 8px;border:1px solid var(--lab-line);border-radius:999px;background:#f7f9fa;color:#66737b;font-size:7.5px;font-weight:900;letter-spacing:.045em;text-transform:uppercase;white-space:nowrap}.ownership-pill{border-color:#b8cbe1;background:var(--lab-accent-soft);color:#365f8f}.problem-progress{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;text-transform:none;letter-spacing:0}
+.interaction-guide{position:absolute;z-index:25;inset:0;pointer-events:none}.interaction-guide[hidden]{display:none}.guide-card{position:absolute;width:min(220px,calc(100% - 16px));padding:7px 8px;border:1px solid #8faed1;border-radius:9px;background:rgba(250,252,255,.97);box-shadow:0 8px 18px rgba(29,29,31,.13)}.guide-kicker{display:block;color:var(--lab-accent);font-size:6.5px;font-weight:900;letter-spacing:.07em;text-transform:uppercase}.guide-card strong{display:block;margin-top:1px;color:#2f557f;font-size:10px}.guide-copy{display:block;margin-top:2px;color:#5f7184;font-size:7.7px;line-height:1.28}.guide-target{filter:drop-shadow(0 0 5px rgba(82,119,184,.9)) drop-shadow(0 0 10px rgba(82,119,184,.35));animation:guidePulse .85s ease-in-out infinite alternate}@keyframes guidePulse{to{filter:drop-shadow(0 0 7px rgba(82,119,184,1)) drop-shadow(0 0 14px rgba(82,119,184,.55))}}
+.angle-hit.ref-option{pointer-events:stroke;cursor:pointer}.angle-hit.ref-selected-good{stroke:rgba(24,121,78,.28)!important}.angle-hit.ref-selected-bad{stroke:rgba(180,35,24,.28)!important}.angle-arc.ref-good,.other-arc.ref-good,.depression-arc.ref-good{stroke:var(--lab-good)!important;stroke-width:4!important}.angle-arc.ref-bad,.other-arc.ref-bad,.depression-arc.ref-bad{stroke:var(--lab-bad)!important;stroke-width:4!important}.depression-hit{fill:none;stroke:transparent;stroke-width:24;pointer-events:stroke;cursor:pointer}
+.reference-choice{margin-top:4px;padding:6px 7px;border:2px solid #d8c36a;border-radius:8px;background:#fffdf5;color:#6b5b17;font-size:8px;line-height:1.3}.reference-choice.good{border-color:var(--lab-good);background:var(--lab-good-soft);color:#32694b}.reference-choice.bad{border-color:var(--lab-bad);background:var(--lab-bad-soft);color:#8c443b}.reference-choice strong{display:block;color:inherit;font-size:9px}.reference-choice span{display:block;margin-top:2px}.work-step.locked{opacity:.48}.process-node.current{border-color:#9eb7d4;background:#f6f9fd;color:#365f94;box-shadow:inset 0 -3px 0 var(--lab-accent)}
+.completion-layer{position:absolute;z-index:34;inset:0;pointer-events:none;background:transparent}.completion-layer[hidden]{display:none}.completion-layer .next-card{display:block!important;position:absolute!important;left:auto!important;top:auto!important;transform:none!important;width:min(292px,calc(100% - 16px))!important;margin:0!important;pointer-events:auto;text-align:left!important;box-shadow:0 12px 28px rgba(35,53,65,.16)!important}.completion-layer .next-card>strong{font-size:11px}.completion-layer .next-card>span{font-size:8px;line-height:1.25}.completion-layer .next-actions{display:flex;gap:5px;justify-content:flex-end}.completion-layer .next-actions button{min-height:30px}.completion-layer .next-upgrade{font-size:8px}
+@container lab-canvas (max-width:650px){.progress-meta{justify-content:flex-start}.mission-tools{align-items:center}.interaction-guide{inset:0}.guide-card{width:min(200px,calc(100% - 14px))}.completion-layer .next-card{width:min(276px,calc(100% - 14px))!important;max-height:calc(100% - 14px);overflow:auto}.problem-progress{display:none}}
+</style>
+
+<style data-revision="v5-one-interaction-progression">
+/* v5: no calibration/problem split. Every problem uses the same reference-click + resize interaction; only calculation ownership changes. */
+#angleHandleGroup{display:none!important}
+.aircraft.locked{cursor:not-allowed;opacity:.82}.aircraft.ready{cursor:grab}.aircraft.ready:active{cursor:grabbing}
+.angle-hit.ref-option:hover,.depression-hit:hover{stroke:rgba(82,119,184,.23)!important}.angle-hit:focus-visible,.depression-hit:focus-visible{outline:none!important;stroke:rgba(82,119,184,.30)!important}
+.target-guide{fill:none;stroke:#bd8b2e;stroke-width:3;stroke-dasharray:8 6;pointer-events:none}.target-guide.good{stroke:var(--lab-good);stroke-width:4;stroke-dasharray:none}
+.target-notch{fill:#fff9ec;stroke:#bd8b2e;stroke-width:3;pointer-events:none}.target-notch.good{fill:var(--lab-good-soft);stroke:var(--lab-good)}
+.target-label{fill:#80580e;font-size:10px;font-weight:900;paint-order:stroke;stroke:#fff;stroke-width:4px;pointer-events:none}.target-label.good{fill:var(--lab-good)}
+.ghost-caption{fill:#75828a;font-size:8px;font-weight:850;paint-order:stroke;stroke:#fff;stroke-width:4px}
+.ratio-evidence{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;padding:5px;border:1px solid #d8e2e8;border-radius:8px;background:#f8fafc}
+.ratio-evidence-card{min-width:0;padding:5px 4px;border:1px solid #dce3e8;border-radius:7px;background:#fff;text-align:center}.ratio-evidence-card b{display:block;color:#33424b;font:900 10px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.ratio-evidence-card span{display:block;margin-top:1px;color:#728089;font-size:6.6px;font-weight:850}.ratio-evidence-card strong{display:block;margin-top:2px;color:#365e8e;font:900 11px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.ratio-evidence-card.used{border-color:#9eb8d6;background:#eef4fb}.ratio-evidence-card.used strong{color:#274f82}
+.scale-check{margin-top:4px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px;align-items:center;padding:5px 6px;border:2px solid #d8c36a;border-radius:7px;background:#fffdf5}.scale-check.good{border-color:var(--lab-good);background:var(--lab-good-soft)}.scale-check strong{display:block;font-size:8px}.scale-check span{display:block;margin-top:1px;color:#6f7b83;font-size:7px}.scale-check output{font:900 9px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#7c671b}.scale-check.good output{color:var(--lab-good)}
+.reference-choice .choice-action{font-weight:900}.reference-choice .choice-why{color:#71808a}
+.worked-result-row{display:grid;grid-template-columns:53px minmax(0,1fr);gap:5px;align-items:center;padding:4px 5px;border:1px solid #e0e5e8;border-radius:6px;background:#fff}.worked-result-row span{color:#7a858d;font-size:6.5px;font-weight:900;letter-spacing:.05em;text-transform:uppercase}.worked-result-row strong{font:900 9px/1.3 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#32424c}.worked-result-row.result{border-color:#a9d0b7;background:var(--lab-good-soft)}.worked-result-row.result strong{color:#2f6c4d}
+.problem-family-note{padding:6px 7px;border:1px solid var(--lab-line);border-radius:7px;background:#f8f9fa;color:#5d6971;font-size:8.5px;line-height:1.35}
+@container lab-canvas (max-width:980px){.ratio-evidence{grid-column:1/-1}}
+@container lab-canvas (max-width:640px){.target-label{font-size:14px}.ghost-caption{font-size:11px}.ratio-evidence-card b{font-size:11px}.ratio-evidence-card span{font-size:7px}.ratio-evidence-card strong{font-size:12px}}
+</style>
+
+</head>
+<body data-lab-layout="standard">
+<main>
+<!-- LAB_MANIFEST_HEADER_START -->
+<header class="lab-manifest-header">
+  <div class="lab-manifest-heading">
+    <h1 data-lab-manifest="title">Right-Triangle Trigonometry</h1>
+  <p class="lab-manifest-subtitle" data-lab-manifest="subtitle">Resize the triangle around one angle, identify the side roles, and use the ratio that remains unchanged to solve the problem.</p>
+  </div>
+  <!-- LAB_SYLLABUS_CHIPS_START -->
+<nav class="lab-syllabus-chips" aria-label="Syllabus alignment">
+  <section class="lab-syllabus-chip" style="--syllabus-chip-bg:#edf8f3;--syllabus-chip-border:#91c4b0;--syllabus-chip-text:#235f4e;--syllabus-chip-hover:#dcf0e7" aria-label="IGCSE 0580 syllabus alignment">
+    <a class="lab-syllabus-primary-link" href="https://www.cambridgeinternational.org/Images/662466-2025-2027-syllabus.pdf#page=27" target="_blank" rel="noopener noreferrer" aria-label="Open IGCSE 0580 syllabus section C6.2"></a>
+    <span class="lab-syllabus-name">IGCSE 0580</span>
+    <span class="lab-syllabus-divider" aria-hidden="true">·</span>
+    <span class="lab-syllabus-sections"><a class="lab-syllabus-section is-primary" href="https://www.cambridgeinternational.org/Images/662466-2025-2027-syllabus.pdf#page=27" target="_blank" rel="noopener noreferrer" aria-label="Open primary IGCSE 0580 syllabus section C6.2">C6.2</a><span class="lab-syllabus-separator" aria-hidden="true">,</span><a class="lab-syllabus-section" href="https://www.cambridgeinternational.org/Images/662466-2025-2027-syllabus.pdf#page=51" target="_blank" rel="noopener noreferrer" aria-label="Open IGCSE 0580 syllabus section E6.2">E6.2</a></span>
+  </section>
+</nav>
+<!-- LAB_SYLLABUS_CHIPS_END -->
+</header>
+<!-- LAB_MANIFEST_HEADER_END -->
+<span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span>
+<span data-lab-authored-subtitle-slot hidden></span>
+
+<section class="panel mission" aria-live="polite">
+  <div class="mission-copy">
+    <div class="problem-kicker"><span id="problemKicker">Core method</span><span id="problemLevel"></span></div>
+    <strong id="missionTitle">Choose the reference angle, then resize to the given side.</strong>
+    <span id="missionHint">Click the stated angle first. Then drag the aircraft along the fixed glidepath until the given side reaches its target.</span>
+  </div>
+  <div class="mission-tools">
+    <div class="complexity"><div class="complexity-copy"><strong>Working required</strong><span id="complexityHelp"></span></div><div class="complexity-switch" role="group" aria-label="Working required"><button type="button" data-work-level="0" class="active" aria-pressed="true">Off</button><button type="button" data-work-level="1" aria-pressed="false">Some</button><button type="button" data-work-level="2" aria-pressed="false">All</button></div></div>
+    <button id="resetCase" type="button">Reset</button>
+  </div>
+</section>
+
+<section class="panel lab">
+  <div class="workspace">
+    <div class="stage-side">
+      <div class="visual-head">
+        <div class="visual-copy"><strong id="visualTitle">Same glidepath interaction on every problem</strong><span id="visualHint">Choose the reference angle, then resize the triangle until the given side matches its target.</span></div>
+        <div class="visual-tools"><button id="clearHistory" type="button" hidden>Clear traces</button></div>
+      </div>
+      <div class="stage-shell">
+        <svg id="stage" class="stage" viewBox="0 0 1020 620" role="img" aria-label="Right triangle formed by an aircraft, its vertical height above the runway, and a glidepath to a runway aiming point">
+          <rect class="sky" x="0" y="0" width="1020" height="520"></rect>
+          <rect class="ground" x="0" y="520" width="1020" height="100"></rect>
+          <rect class="runway" x="0" y="520" width="1020" height="56"></rect>
+          <line class="runway-edge" x1="0" y1="520" x2="1020" y2="520"></line>
+          <line class="runway-mark" x1="35" y1="548" x2="985" y2="548"></line>
+          <g id="ghostLayer"></g>
+          <g id="depressionLayer"></g>
+          <g id="candidateLayer"></g>
+          <g id="triangleLayer">
+            <line id="adjLine" class="triangle-adj"></line>
+            <line id="oppLine" class="triangle-opp"></line>
+            <line id="hypLine" class="triangle-hyp"></line>
+            <path id="rightBox" class="right-box"></path>
+            <path id="groundArc" class="angle-arc"></path>
+            <path id="groundArcHit" class="angle-hit" tabindex="0" role="button" aria-label="Use the runway acute angle as the reference angle"></path>
+            <path id="otherArc" class="other-arc"></path>
+            <path id="otherArcHit" class="angle-hit" tabindex="0" role="button" aria-label="Use the other acute angle as the reference angle"></path>
+            <text id="groundAngleLabel" class="angle-label"></text>
+            <text id="otherAngleLabel" class="other-label"></text>
+            <text id="adjLabel" class="side-label adj"></text>
+            <text id="oppLabel" class="side-label opp"></text>
+            <text id="hypLabel" class="side-label hyp"></text>
+            <text id="adjDim" class="dim-label"></text>
+            <text id="oppDim" class="dim-label"></text>
+            <text id="hypDim" class="dim-label"></text>
+            <circle id="foot" class="foot" r="5"></circle>
+            <g id="aim"><circle class="aim-ring" r="12"></circle><circle class="aim-dot" r="4"></circle><text x="0" y="27" text-anchor="middle" class="dim-label">aiming point</text></g>
+            <g id="aircraft" class="aircraft" tabindex="0" role="slider" aria-label="Aircraft distance along glidepath" aria-valuemin="240" aria-valuemax="760">
+              <path class="aircraft-hit" d="M-42,0 L42,0"></path>
+              <path class="aircraft-body" d="M-38,-7 L9,-7 L31,-1 L9,5 L-38,5 L-48,0 Z"></path>
+              <path class="aircraft-body" d="M-5,-7 L-15,-24 L-4,-24 L10,-7 Z"></path>
+              <path class="aircraft-body" d="M-16,5 L-29,19 L-18,19 L2,5 Z"></path>
+              <rect class="aircraft-window" x="5" y="-5" width="8" height="4" rx="1"></rect>
+              <rect class="aircraft-accent" x="-33" y="-2" width="31" height="3" rx="1"></rect>
+            </g>
+            <g id="angleHandleGroup"><circle id="handleHalo" class="handle-halo" r="13"></circle><circle id="angleHandle" class="angle-handle" r="8" tabindex="0" role="slider" aria-label="Glidepath angle" aria-valuemin="8" aria-valuemax="32"></circle><text id="angleHandleLabel" class="handle-label">change angle</text></g>
+          </g>
+        </svg>
+        <div id="interactionGuide" class="interaction-guide" hidden aria-live="polite">
+          <div id="guideCard" class="guide-card"><span id="guideKicker" class="guide-kicker"></span><strong id="guideTitle"></strong><span id="guideCopy" class="guide-copy"></span></div>
+        </div>
+        <div id="completionLayer" class="completion-layer" hidden>
+          <div id="nextCard" class="next-card" hidden role="dialog" aria-modal="true" aria-live="polite">
+            <strong id="nextCardTitle"></strong><span id="nextCardText"></span>
+            <div id="nextInsight" class="next-insight"></div>
+            <div id="nextUpgrade" class="next-upgrade" hidden><strong id="nextUpgradeTitle"></strong><span id="nextUpgradeText"></span><button id="upgradeLevel" type="button"></button></div>
+            <div class="next-actions"><button id="nextProblem" type="button"></button></div>
+          </div>
+        </div>
+      </div>
+      <div id="stageNote" class="stage-note" role="status" aria-live="polite"><div id="stageNoteCopy" class="stage-note-copy"></div><div id="stageNoteState" class="stage-note-state"></div></div>
+    </div>
+
+    <aside id="workPanel" class="work-panel" aria-label="Trigonometry working area"></aside>
+  </div>
+</section>
+</main>
+<script src="./lab-kit.js" data-lab-resource="lab-kit.js"></script>
+<script>
+(()=>{
+'use strict';
+const $=LabKit.dom.byId,svg=$('stage'),SVG='http://www.w3.org/2000/svg';
+const AIM={x:900,y:520},DEG=Math.PI/180;
+const ROLE_NAMES={O:'opposite',A:'adjacent',H:'hypotenuse'};
+const PHYS_NAMES={opp:'height',adj:'runway distance',hyp:'glidepath'};
+const RATIO={sin:{name:'sine',num:'O',den:'H',pair:['O','H']},cos:{name:'cosine',num:'A',den:'H',pair:['A','H']},tan:{name:'tangent',num:'O',den:'A',pair:['O','A']}};
+const WORK_LABELS=['working shown','some working','all working'];
+const FIRST_CASES=[
+ {ref:'ground',ratio:'tan',known:'A',target:'O',refAngle:18,knownValue:420,tag:'tangent from O/A'},
+ {ref:'ground',ratio:'sin',known:'H',target:'O',refAngle:18,knownValue:620,tag:'sine from O/H'},
+ {ref:'ground',ratio:'cos',known:'H',target:'A',refAngle:24,knownValue:580,tag:'cosine from A/H'}
+];
+const GUIDED_CASES=[
+ {ref:'ground',ratio:'tan',known:'O',target:'A'},
+ {ref:'ground',ratio:'sin',known:'O',target:'H'},
+ {ref:'ground',ratio:'cos',known:'A',target:'H'},
+ {ref:'ground',ratio:'tan',known:'A',target:'O'},
+ {ref:'ground',ratio:'sin',known:'H',target:'O'},
+ {ref:'ground',ratio:'cos',known:'H',target:'A'}
+];
+const FULL_CASES=[
+ {ref:'ground',ratio:'tan',known:'A',target:'O'},
+ {ref:'ground',ratio:'sin',known:'O',target:'H'},
+ {ref:'ground',ratio:'cos',known:'H',target:'A'},
+ {ref:'upper',ratio:'tan',known:'A',target:'O'},
+ {ref:'depression',ratio:'tan',known:'O',target:'A',extended:true},
+ {ref:'ground',ratio:'cos',known:'A',target:'H'},
+ {ref:'upper',ratio:'sin',known:'H',target:'O'},
+ {ref:'depression',ratio:'sin',known:'H',target:'O',extended:true}
+];
+const clamp=LabKit.numeric.clamp,rad=d=>d*DEG,fmt=(v,d=1)=>Number(v).toFixed(d).replace(/\.0$/,''),round1=v=>Math.round(v*10)/10;
+const esc=s=>String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+function rng(seed){let x=(seed|0)>>>0;return()=>{x=(Math.imul(x,1664525)+1013904223)>>>0;return x/4294967296}}
+function pick(r,a){return a[Math.floor(r()*a.length)]}
+function el(name,attrs={},text=''){const e=document.createElementNS(SVG,name);for(const[k,v]of Object.entries(attrs))e.setAttribute(k,String(v));if(text)e.textContent=text;return e}
+function setLine(id,a,b){const e=$(id);e.setAttribute('x1',a.x);e.setAttribute('y1',a.y);e.setAttribute('x2',b.x);e.setAttribute('y2',b.y)}
+function textPos(id,x,y,text,anchor='middle',rotate=null){const e=$(id);e.setAttribute('x',x);e.setAttribute('y',y);e.setAttribute('text-anchor',anchor);e.textContent=text;if(rotate===null)e.removeAttribute('transform');else e.setAttribute('transform',`rotate(${rotate} ${x} ${y})`)}
+function arcPath(cx,cy,r,startDeg,endDeg){const p=a=>({x:cx+r*Math.cos(rad(a)),y:cy-r*Math.sin(rad(a))}),a=p(startDeg),b=p(endDeg);return`M ${a.x} ${a.y} A ${r} ${r} 0 0 1 ${b.x} ${b.y}`}
+function roleToPhysical(role,ref){if(role==='H')return'hyp';if(ref==='upper')return role==='O'?'adj':'opp';return role==='O'?'opp':'adj'}
+function physicalToRole(phys,ref){if(phys==='hyp')return'H';if(ref==='upper')return phys==='adj'?'O':'A';return phys==='opp'?'O':'A'}
+function rolesToPhysical(roles,ref){return{opp:roles[physicalToRole('opp',ref)],adj:roles[physicalToRole('adj',ref)],hyp:roles.H}}
+function rolesFromKnown(role,value,a){if(role==='A')return{A:value,O:value*Math.tan(rad(a)),H:value/Math.cos(rad(a))};if(role==='O')return{O:value,A:value/Math.tan(rad(a)),H:value/Math.sin(rad(a))};return{H:value,O:value*Math.sin(rad(a)),A:value*Math.cos(rad(a))}}
+function groundTheta(ref,refAngle){return ref==='upper'?90-refAngle:refAngle}
+function geomFromAdj(adj,theta){const opp=adj*Math.tan(rad(theta)),hyp=adj/Math.cos(rad(theta));return{theta,adj,opp,hyp,air:{x:AIM.x-adj,y:AIM.y-opp},foot:{x:AIM.x-adj,y:AIM.y}}}
+function refPhrase(p){if(p.ref==='depression')return`The aiming point is seen ${fmt(p.refAngle,1)}° below the aircraft horizontal.`;if(p.ref==='upper')return`Use the ${fmt(p.refAngle,1)}° acute angle between the height and the glidepath.`;return`The glidepath makes a ${fmt(p.refAngle,1)}° angle with the runway.`}
+function measurement(v){return`${fmt(v,1)} m`}
+function fitProblem(c,seed,forced=false){const r=rng(seed),angles=c.ref==='upper'?[62,64,66,68,70]:[12,14,16,18,20,22,24,26,28];const a=c.refAngle??pick(r,angles);let known=c.knownValue;
+ const pools={A:[120,150,180,220,260,300,360,420,480,520,560],O:[100,120,140,160,180,200,220,240],H:[420,460,500,540,580,620,660,700]};
+ for(let i=0;i<80;i++){
+   const value=known??pick(r,pools[c.known]);const roles=rolesFromKnown(c.known,value,a),phys=rolesToPhysical(roles,c.ref),theta=groundTheta(c.ref,a);
+   if(phys.adj>=255&&phys.adj<=660&&phys.opp>=72&&phys.opp<=305&&phys.hyp<=735){const ans=round1(roles[c.target]);return{...c,seed,refAngle:a,groundTheta:theta,roles,phys,knownValue:value,answer:ans,knownPhysical:roleToPhysical(c.known,c.ref),targetPhysical:roleToPhysical(c.target,c.ref)}}
+   known=null;
+ }
+ const value=c.known==='H'?560:c.known==='O'?160:360,roles=rolesFromKnown(c.known,value,a),phys=rolesToPhysical(roles,c.ref);return{...c,seed,refAngle:a,groundTheta:groundTheta(c.ref,a),roles,phys,knownValue:value,answer:round1(roles[c.target]),knownPhysical:roleToPhysical(c.known,c.ref),targetPhysical:roleToPhysical(c.target,c.ref)}
+}
+function caseForProblem(n,level,seed){if(n<=FIRST_CASES.length)return fitProblem(FIRST_CASES[n-1],seed,true);const arr=level<2?GUIDED_CASES:FULL_CASES;return fitProblem(arr[(n-FIRST_CASES.length-1)%arr.length],seed)}
+function titleFor(p){return`${refPhrase(p)} ${PHYS_NAMES[p.knownPhysical][0].toUpperCase()+PHYS_NAMES[p.knownPhysical].slice(1)} = ${measurement(p.knownValue)}. Find the ${PHYS_NAMES[p.targetPhysical]}.`}
+function freshSession(p){const f=(p.seed%2)?0.72:1.27;let start=clamp(p.phys.adj*f,255,660);if(Math.abs(start-p.phys.adj)<45)start=clamp(p.phys.adj+(f<1?-95:95),255,660);return{reference:'',roles:{opp:'',adj:'',hyp:''},ratio:'',answerText:'',adj:start,startAdj:start,drag:null,completed:false,recorded:false}}
+const state={problemNumber:1,workingLevel:0,solvedAtLevel:[0,0,0],seed:81731,problem:null,session:null,history:[],trainedReference:false,modal:false};
+function p(){return state.problem}function s(){return state.session}
+function currentGeom(){return geomFromAdj(s().adj,p().groundTheta)}
+function currentPhys(){const g=currentGeom();return{adj:g.adj,opp:g.opp,hyp:g.hyp}}
+function referenceCorrect(){return s().reference===p().ref}
+function currentKnown(){return currentPhys()[p().knownPhysical]}
+function matchTol(){return p().knownPhysical==='hyp'?1.2:1}
+function scaleMatched(){return Math.abs(currentKnown()-p().knownValue)<=matchTol()}
+function rolesCorrect(){if(state.workingLevel<2)return true;return['opp','adj','hyp'].every(phys=>s().roles[phys]===physicalToRole(phys,p().ref))}
+function ratioCorrect(){return state.workingLevel===0||s().ratio===p().ratio}
+function answerNumber(){const v=Number(s().answerText);return String(s().answerText).trim()!==''&&Number.isFinite(v)?v:null}
+function answerCorrect(){if(state.workingLevel===0)return true;const v=answerNumber();return v!==null&&Math.abs(v-p().answer)<=.11}
+function problemComplete(){return referenceCorrect()&&scaleMatched()&&rolesCorrect()&&ratioCorrect()&&answerCorrect()}
+function ratioSet(){const a=p().refAngle;return{sin:Math.sin(rad(a)),cos:Math.cos(rad(a)),tan:Math.tan(rad(a))}}
+function rolePair(){return[p().known,p().target]}
+function chooseTemplate(){state.seed=(Math.imul(state.seed,1664525)+1013904223)>>>0;state.problem=caseForProblem(state.problemNumber,state.workingLevel,state.seed);state.session=freshSession(state.problem);state.modal=false;hideCompletion();renderAll()}
+function resetProblem(){state.session=freshSession(p());state.modal=false;hideCompletion();renderAll()}
+function selectReference(key){s().reference=key;s().roles={opp:'',adj:'',hyp:''};s().ratio='';s().answerText='';s().completed=false;hideCompletion();if(referenceCorrect())state.trainedReference=true;renderAll()}
+function snapIfNear(){const target=p().phys.adj;if(Math.abs(s().adj-target)<9)s().adj=target}
+function setAdjFromPointer(model){const th=rad(p().groundTheta),u={x:-Math.cos(th),y:-Math.sin(th)},vx=model.x-AIM.x,vy=model.y-AIM.y,H=vx*u.x+vy*u.y,adj=clamp(H*Math.cos(th),245,680);s().adj=adj;snapIfNear()}
+function pointFromEvent(ev){const pt=svg.createSVGPoint();pt.x=ev.clientX;pt.y=ev.clientY;return pt.matrixTransform(svg.getScreenCTM().inverse())}
+function renderDepression(g){const host=$('depressionLayer');host.replaceChildren();if(p().ref!=='depression')return;const y=g.air.y,arc=arcPath(g.air.x,g.air.y,64,-g.theta,0);host.append(el('line',{class:'horizontal-guide',x1:g.air.x,y1:y,x2:Math.min(AIM.x+8,g.air.x+260),y2:y}));const arcEl=el('path',{class:'depression-arc',d:arc});host.append(arcEl);host.append(el('path',{class:'depression-hit angle-hit ref-option',d:arc,'data-ref':'depression',tabindex:'0',role:'button','aria-label':'Use the aircraft horizontal angle of depression as the reference angle'}));const mid=g.theta/2,lab=el('text',{class:'depression-label',x:g.air.x+84*Math.cos(rad(mid)),y:g.air.y+84*Math.sin(rad(mid))+4,'text-anchor':'middle'},`${fmt(p().refAngle,1)}°`);host.append(lab);for(const [x,yy] of [[g.air.x+150,y],[AIM.x-170,AIM.y]]){host.append(el('line',{class:'parallel-mark',x1:x-5,y1:yy-4,x2:x+5,y2:yy+4}));host.append(el('line',{class:'parallel-mark',x1:x+3,y1:yy-4,x2:x+13,y2:yy+4}))}if(s().reference==='depression')arcEl.classList.add(referenceCorrect()?'ref-good':'ref-bad')}
+function renderTarget(g){const host=$('candidateLayer');host.replaceChildren();const good=scaleMatched(),phys=p().knownPhysical,target=p().phys,grp=el('g',{'data-target-marker':'true'});let lab;
+ if(phys==='adj'){
+   const x=AIM.x-target.adj;grp.append(el('line',{class:`target-guide${good?' good':''}`,x1:x,y1:104,x2:x,y2:AIM.y+9}));grp.append(el('rect',{class:`target-notch${good?' good':''}`,x:x-8,y:AIM.y+3,width:16,height:14,rx:4}));lab=el('text',{class:`target-label${good?' good':''}`,x:x,y:92,'text-anchor':'middle'},`given ${measurement(p().knownValue)}`)
+ }else if(phys==='opp'){
+   const y=AIM.y-target.opp;grp.append(el('line',{class:`target-guide${good?' good':''}`,x1:145,y1:y,x2:AIM.x+4,y2:y}));grp.append(el('rect',{class:`target-notch${good?' good':''}`,x:132,y:y-8,width:16,height:16,rx:4}));lab=el('text',{class:`target-label${good?' good':''}`,x:154,y:y-10,'text-anchor':'start'},`given ${measurement(p().knownValue)}`)
+ }else{
+   const tg=geomFromAdj(target.adj,p().groundTheta);grp.append(el('circle',{class:`target-notch${good?' good':''}`,cx:tg.air.x,cy:tg.air.y,r:20}));grp.append(el('line',{class:`target-guide${good?' good':''}`,x1:AIM.x,y1:AIM.y,x2:tg.air.x,y2:tg.air.y}));lab=el('text',{class:`target-label${good?' good':''}`,x:tg.air.x+24,y:tg.air.y-18,'text-anchor':'start'},`given ${measurement(p().knownValue)}`)
+ }
+ grp.append(lab);host.append(grp)
+}
+function renderGhost(){const host=$('ghostLayer');host.replaceChildren();if(!referenceCorrect())return;const gg=geomFromAdj(s().startAdj,p().groundTheta);host.append(el('path',{class:'triangle-ghost',d:`M ${AIM.x} ${AIM.y} L ${gg.foot.x} ${gg.foot.y} L ${gg.air.x} ${gg.air.y} Z`}));host.append(el('circle',{class:'ghost-point',cx:gg.air.x,cy:gg.air.y,r:4}));host.append(el('text',{class:'ghost-caption',x:gg.air.x+12,y:gg.air.y-12},'start size'))}
+function roleVisible(phys){if(!referenceCorrect())return'';const expected=physicalToRole(phys,p().ref);if(state.workingLevel<2)return expected;return s().roles[phys]===expected?expected:''}
+function renderTriangle(){const g=currentGeom();$('aim').setAttribute('transform',`translate(${AIM.x} ${AIM.y})`);setLine('adjLine',g.foot,AIM);setLine('oppLine',g.air,g.foot);setLine('hypLine',g.air,AIM);$('foot').setAttribute('cx',g.foot.x);$('foot').setAttribute('cy',g.foot.y);$('aircraft').setAttribute('transform',`translate(${g.air.x} ${g.air.y}) rotate(${g.theta})`);$('aircraft').classList.toggle('locked',!referenceCorrect());$('aircraft').classList.toggle('ready',referenceCorrect());$('aircraft').setAttribute('aria-valuenow',fmt(g.adj,0));$('rightBox').setAttribute('d',`M ${g.foot.x} ${AIM.y-16} L ${g.foot.x+16} ${AIM.y-16} L ${g.foot.x+16} ${AIM.y}`);
+ const groundArc=arcPath(AIM.x,AIM.y,72,180-g.theta,180);$('groundArc').setAttribute('d',groundArc);$('groundArcHit').setAttribute('d',groundArc);$('groundArcHit').dataset.ref='ground';$('groundArcHit').classList.add('ref-option');
+ const phi=90-g.theta,otherArc=arcPath(g.air.x,g.air.y,55,270,270+phi);$('otherArc').setAttribute('d',otherArc);$('otherArcHit').setAttribute('d',otherArc);$('otherArcHit').dataset.ref='upper';$('otherArcHit').classList.add('ref-option');$('otherArcHit').style.pointerEvents=p().ref==='depression'?'none':'stroke';$('otherArc').style.opacity=p().ref==='depression'?0:.72;
+ const gm=180-g.theta/2,om=270+phi/2;textPos('groundAngleLabel',AIM.x+96*Math.cos(rad(gm)),AIM.y-96*Math.sin(rad(gm))+4,`${fmt(g.theta,1)}°`);textPos('otherAngleLabel',g.air.x+77*Math.cos(rad(om)),g.air.y-77*Math.sin(rad(om))+4,p().ref==='depression'?'':`${fmt(phi,1)}°`);$('otherAngleLabel').style.opacity=p().ref==='depression'?0:1;
+ for(const [key,arc,hit] of [['ground',$('groundArc'),$('groundArcHit')],['upper',$('otherArc'),$('otherArcHit')]]){arc.classList.remove('ref-good','ref-bad');hit.classList.remove('ref-selected-good','ref-selected-bad');if(s().reference===key){const ok=referenceCorrect();arc.classList.add(ok?'ref-good':'ref-bad');hit.classList.add(ok?'ref-selected-good':'ref-selected-bad')}}
+ renderDepression(g);renderTarget(g);renderGhost();
+ const phys=currentPhys(),known=p().knownPhysical,target=p().targetPhysical;for(const ph of['adj','opp','hyp']){const role=roleVisible(ph),label=role?`${PHYS_NAMES[ph]} · ${role}`:PHYS_NAMES[ph];if(ph==='adj')textPos('adjLabel',(g.foot.x+AIM.x)/2,AIM.y+39,label);if(ph==='opp')textPos('oppLabel',g.air.x-58,(g.air.y+g.foot.y)/2+4,label,'middle',-90);if(ph==='hyp'){const mx=(g.air.x+AIM.x)/2,my=(g.air.y+AIM.y)/2,ang=Math.atan2(AIM.y-g.air.y,AIM.x-g.air.x)/DEG;textPos('hypLabel',mx,my-18,label,'middle',ang)}
+   let dim='';if(ph===known)dim=`${fmt(phys[ph],1)} m`;else if(state.workingLevel===0&&scaleMatched())dim=`${fmt(phys[ph],1)} m`;else if(ph===target)dim='?';if(ph==='adj')textPos('adjDim',(g.foot.x+AIM.x)/2,AIM.y+18,dim);if(ph==='opp')textPos('oppDim',g.air.x-28,(g.air.y+g.foot.y)/2+4,dim,'middle',-90);if(ph==='hyp'){const mx=(g.air.x+AIM.x)/2,my=(g.air.y+AIM.y)/2,ang=Math.atan2(AIM.y-g.air.y,AIM.x-g.air.x)/DEG;textPos('hypDim',mx,my+3,dim,'middle',ang)}}
+}
+function refName(ref){return ref==='ground'?'runway angle':ref==='upper'?'upper acute angle':'angle of depression'}
+function renderMission(){const q=p();$('problemKicker').textContent='Core method';$('problemLevel').textContent=q.extended?'· Extended':'';$('problemLevel').className=q.extended?'extended':'';$('complexityHelp').textContent=['Off · calculations revealed','Some · key results','All · full chain'][state.workingLevel];document.querySelectorAll('[data-work-level]').forEach(b=>{const active=Number(b.dataset.workLevel)===state.workingLevel;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active))});$('missionTitle').textContent=titleFor(q);
+ if(!referenceCorrect())$('missionHint').textContent=state.problemNumber===1&&!s().reference?'Click the green 18° runway angle first so opposite and adjacent are defined from that reference.':'Click the angle named in the problem so opposite and adjacent are defined from the same reference.';else if(!scaleMatched())$('missionHint').textContent=`Now drag the aircraft along the fixed glidepath until the live ${PHYS_NAMES[q.knownPhysical]} reaches ${measurement(q.knownValue)}. The ratio values should not change while you resize.`;else if(state.workingLevel===0)$('missionHint').textContent='The given side now matches. Read the completed side-pair → ratio → calculation chain for the triangle you just resized.';else $('missionHint').textContent='The geometry is set. Complete the yellow working; the interaction is unchanged, only your calculation ownership has increased.'}
+function renderVisualHead(){$('visualTitle').textContent='Reference angle → resize → calculate';$('visualHint').textContent=!referenceCorrect()?'The angle arcs are clickable. Choose the reference named by the problem.':!scaleMatched()?`Drag the aircraft; the ${fmt(p().refAngle,1)}° reference angle stays fixed while the triangle changes size.`:'The given side is matched. Keep this same geometry while you complete the working.'}
+function ratioEvidenceMarkup(){const vals=ratioSet(),used=state.workingLevel===0&&scaleMatched()?p().ratio:s().ratio;return`<div class="ratio-evidence">${['sin','cos','tan'].map(k=>`<div class="ratio-evidence-card ${used===k?'used':''}"><b>${k}</b><span>${RATIO[k].num} ÷ ${RATIO[k].den}</span><strong>${referenceCorrect()?fmt(vals[k],3):'—'}</strong></div>`).join('')}</div>`}
+function referenceState(){if(!s().reference)return'needs-working';return referenceCorrect()?'work-good':'work-bad'}
+function resizeState(){if(!referenceCorrect())return'locked';if(state.workingLevel===2&&!rolesCorrect()){const bad=['opp','adj','hyp'].some(ph=>s().roles[ph]&&s().roles[ph]!==physicalToRole(ph,p().ref));if(bad)return'work-bad'}if(scaleMatched()&&rolesCorrect())return'work-good';return'needs-working'}
+function ratioState(){if(!referenceCorrect()||!scaleMatched()||(state.workingLevel===2&&!rolesCorrect()))return'locked';if(state.workingLevel===0)return'done';if(!s().ratio)return'needs-working';return ratioCorrect()?'work-good':'work-bad'}
+function calcState(){if(!referenceCorrect()||!scaleMatched()||(state.workingLevel===2&&!rolesCorrect())||!ratioCorrect())return'locked';if(state.workingLevel===0)return'done';if(!String(s().answerText).trim())return'needs-working';return answerCorrect()?'work-good':'work-bad'}
+function statusPill(st){if(st==='done')return'<span class="work-status done">shown</span>';if(st==='work-good')return'<span class="work-status good">✓</span>';if(st==='work-bad')return'<span class="work-status bad">×</span>';if(st==='locked')return'<span class="work-status done">locked</span>';return'<span class="work-status needs">your turn</span>'}
+function processRail(){const states=[referenceState(),resizeState(),ratioState(),calcState()],labels=['Reference','Resize + sides','Ratio','Calculate'];return`<div class="process-rail">${states.map((st,i)=>`<div class="process-node ${st==='needs-working'?'current':st}"><span>${i+1}</span><strong>${labels[i]}</strong></div>`).join('')}</div>`}
+function referenceMarkup(){const st=referenceState();if(st==='needs-working')return`<div class="reference-choice"><strong class="choice-action">Click an angle arc in the diagram.</strong><span class="choice-why">Use the angle named by the problem; O and A depend on this choice.</span></div>`;if(st==='work-good')return`<div class="reference-choice good"><strong>selected: ${refName(p().ref)}</strong><span>Side roles are now defined from this angle.</span></div>`;return`<div class="reference-choice bad"><strong>× different reference selected</strong><span>Choose the ${refName(p().ref)} named in the problem.</span></div>`}
+function roleRows(){if(!referenceCorrect())return'';const phys=currentPhys();return`<div class="role-grid">${['opp','adj','hyp'].map(ph=>{const exp=physicalToRole(ph,p().ref),isKnown=ph===p().knownPhysical,measure=isKnown?`${fmt(phys[ph],1)} m live`:(ph===p().targetPhysical?'?':'');if(state.workingLevel<2)return`<div class="role-row auto"><div class="role-copy"><strong>${PHYS_NAMES[ph]}</strong><span>${measure}</span></div><div class="role-auto"><b>${exp}</b><span>${ROLE_NAMES[exp]}</span></div></div>`;const chosen=s().roles[ph],good=chosen===exp,cls=!chosen?'needs':good?'good':'bad';return`<div class="role-row ${cls}"><div class="role-copy"><strong>${PHYS_NAMES[ph]}</strong><span>${measure}</span></div><div class="role-buttons">${['O','A','H'].map(r=>`<button type="button" data-phys="${ph}" data-role="${r}" class="${chosen===r?(good?'correct':'wrong'):''}" aria-pressed="${chosen===r}">${r}</button>`).join('')}</div></div>`}).join('')}</div>`}
+function scaleMarkup(){const good=scaleMatched();return`<div class="scale-check ${good?'good':''}"><div><strong>${good?'Given side matched':'Match the given side'}</strong><span>Drag the aircraft along the fixed glidepath; the reference angle and ratio strip stay constant.</span></div><output>${fmt(currentKnown(),1)} / ${fmt(p().knownValue,1)} m${good?' ✓':''}</output></div>`}
+function ratioChoices(){if(ratioState()==='locked')return'';if(state.workingLevel===0)return`<div class="ratio-choice-grid">${['sin','cos','tan'].map(k=>`<div class="ratio-choice done ${p().ratio===k?'active':''}"><b>${k}</b><span>${RATIO[k].num} / ${RATIO[k].den}</span></div>`).join('')}</div>`;return`<div class="ratio-choice-grid">${['sin','cos','tan'].map(k=>{const selected=s().ratio===k,cls=selected?(k===p().ratio?'correct':'wrong'):'';return`<button type="button" data-ratio="${k}" class="ratio-choice ${cls}" aria-pressed="${selected}"><b>${k}</b><span>${RATIO[k].num} / ${RATIO[k].den}</span></button>`}).join('')}</div>`}
+function formulaLines(){const q=p(),d=RATIO[q.ratio],num=q.roles[d.num],den=q.roles[d.den],a=fmt(q.refAngle,1),target=q.target;let sub,rearr;if(target===d.num){sub=`${q.ratio} ${a}° = x / ${fmt(den,1)}`;rearr=`x = ${fmt(den,1)} × ${q.ratio} ${a}°`}else{sub=`${q.ratio} ${a}° = ${fmt(num,1)} / x`;rearr=`x = ${fmt(num,1)} ÷ ${q.ratio} ${a}°`}return{sub,rearr}}
+function calcInput(){const raw=s().answerText,filled=String(raw).trim()!=='',good=filled&&answerCorrect(),cls=!filled?'':good?'good':'bad';return`<label class="calc-field"><span>${PHYS_NAMES[p().targetPhysical]} to 1 d.p.</span><span class="calc-input-wrap ${cls}"><input id="answerInput" inputmode="decimal" value="${esc(raw)}" placeholder="?"><span class="calc-unit">m</span><span class="field-status">${!filled?'':good?'✓':'×'}</span></span></label>`}
+function calcBody(){if(calcState()==='locked')return'';const f=formulaLines();if(state.workingLevel===0)return`<div class="worked-solution"><div class="worked-result-row"><span>formula</span><strong>${p().ratio} θ = ${RATIO[p().ratio].num} / ${RATIO[p().ratio].den}</strong></div><div class="worked-result-row"><span>substitute</span><strong>${f.sub}</strong></div><div class="worked-result-row"><span>rearrange</span><strong>${f.rearr}</strong></div><div class="worked-result-row result"><span>result</span><strong>${measurement(p().answer)}</strong></div></div>`;if(!ratioCorrect())return'';return`<div class="calc-stack"><div class="calc-line"><span>use</span><strong>${p().ratio} θ = ${RATIO[p().ratio].num} / ${RATIO[p().ratio].den}</strong></div>${state.workingLevel===1?`<div class="calc-line"><span>setup</span><strong>${f.sub}</strong></div>`:''}</div><div class="calc-fields">${calcInput()}</div>`}
+function renderWork(){const a=referenceState(),b=resizeState(),c=ratioState(),d=calcState();$('workPanel').innerHTML=`<div class="work-head"><div class="work-head-top"><strong>Same method on every problem</strong><span class="work-badge">${WORK_LABELS[state.workingLevel]}</span></div></div>${ratioEvidenceMarkup()}${processRail()}<section class="work-step ${a}"><div class="step-head"><div class="step-title"><span class="step-num">1</span><strong>Choose the reference angle</strong></div>${statusPill(a)}</div>${referenceMarkup()}</section><section class="work-step ${b}"><div class="step-head"><div class="step-title"><span class="step-num">2</span><strong>Resize to the given side + name O/A/H</strong></div>${statusPill(b)}</div>${scaleMarkup()}${roleRows()}</section><section class="work-step ${c}"><div class="step-head"><div class="step-title"><span class="step-num">3</span><strong>Use the two side roles to choose a ratio</strong></div>${statusPill(c)}</div>${ratioChoices()}</section><section class="work-step ${d}"><div class="step-head"><div class="step-title"><span class="step-num">4</span><strong>Calculate the missing side</strong></div>${statusPill(d)}</div>${calcBody()}</section><div class="problem-family-note">What stays the same: reference → resize → side roles → ratio → result. What changes later is only how much of that calculation you must supply.</div>`;wireWork()}
+function wireWork(){document.querySelectorAll('[data-phys][data-role]').forEach(btn=>btn.addEventListener('click',()=>{s().roles[btn.dataset.phys]=btn.dataset.role;s().ratio='';s().answerText='';hideCompletion();renderAll()}));document.querySelectorAll('[data-ratio]').forEach(btn=>btn.addEventListener('click',()=>{s().ratio=btn.dataset.ratio;s().answerText='';hideCompletion();renderAll()}));const input=$('answerInput');if(input)input.addEventListener('input',()=>{s().answerText=input.value;hideCompletion();renderAll();requestAnimationFrame(()=>{const next=$('answerInput');if(next){next.focus();next.setSelectionRange?.(next.value.length,next.value.length)}})})}
+function stageNote(){let copy,tone='warn',tag;if(!referenceCorrect()){copy=s().reference?'<strong>That angle gives a different O/A labelling.</strong> Choose the reference named in the problem.':'<strong>First action:</strong> click the reference angle named in the problem.';tag='choose angle'}else if(!scaleMatched()){copy=`<strong>Resize the same-angle triangle.</strong> Live ${PHYS_NAMES[p().knownPhysical]}: ${fmt(currentKnown(),1)} m; target: ${fmt(p().knownValue,1)} m. The ratio strip stays fixed.`;tag='drag aircraft'}else if(state.workingLevel===0){copy='<strong>Given side matched.</strong> Your physical placement and the completed calculation now describe the same triangle.';tone='good';tag='worked example'}else if(problemComplete()){copy='<strong>Geometry and working agree.</strong> The same interaction has now been justified by your calculation.';tone='good';tag='verified'}else{copy='<strong>Given side matched.</strong> Complete the yellow working without changing the triangle.';tag='working'}$('stageNoteCopy').innerHTML=copy;$('stageNoteState').textContent=tag;$('stageNoteState').className=`stage-note-state ${tone}`}
+function clearGuideTargets(){document.querySelectorAll('.guide-target').forEach(n=>n.classList.remove('guide-target'))}
+function guideInfo(){if(!referenceCorrect()){let targets=[];if(state.problemNumber===1&&!s().reference)targets=[$('groundArc')];else{targets=[$('groundArc')];if(p().ref!=='depression')targets.push($('otherArc'));const dep=svg.querySelector('.depression-arc');if(dep)targets.push(dep)}return{k:state.problemNumber===1?'1 · reference':'same action',title:state.problemNumber===1?'Click the 18° arc':'Click the named angle',copy:'Sets opposite and adjacent from this reference.',targets}}if(!scaleMatched())return{k:'2 · resize',title:'Drag the aircraft',copy:`Match the ${PHYS_NAMES[p().knownPhysical]} target; the angle stays fixed.`,targets:[$('aircraft'),svg.querySelector('[data-target-marker]')]};return null}
+function updateGuide(){const guide=$('interactionGuide'),card=$('guideCard'),host=$('stage').parentElement,info=guideInfo();clearGuideTargets();if(!info||!info.targets.filter(Boolean).length){guide.hidden=true;return}guide.hidden=false;$('guideKicker').textContent=info.k;$('guideTitle').textContent=info.title;$('guideCopy').textContent=info.copy;const nodes=info.targets.filter(Boolean);nodes.forEach(n=>n.classList.add('guide-target'));requestAnimationFrame(()=>positionGuideCard(host,card,nodes))}
+function positionGuideCard(host,card,nodes){if(!nodes.length)return;const hr=host.getBoundingClientRect(),rs=nodes.map(n=>n.getBoundingClientRect()),left=Math.min(...rs.map(r=>r.left))-hr.left,right=Math.max(...rs.map(r=>r.right))-hr.left,top=Math.min(...rs.map(r=>r.top))-hr.top,bottom=Math.max(...rs.map(r=>r.bottom))-hr.top,m=8,g=12;const narrow=matchMedia('(max-width:650px)').matches,cw=Math.min(narrow?200:220,Math.max(narrow?150:180,hr.width*(narrow?.5:.27)));card.style.width=`${cw}px`;card.style.left='0px';card.style.top='0px';const cr=card.getBoundingClientRect(),w=cr.width,h=cr.height;const candidates=[{x:right+g,y:(top+bottom-h)/2},{x:left-w-g,y:(top+bottom-h)/2},{x:(left+right-w)/2,y:top-h-g},{x:(left+right-w)/2,y:bottom+g},{x:m,y:m},{x:hr.width-w-m,y:m},{x:m,y:hr.height-h-m},{x:hr.width-w-m,y:hr.height-h-m}];const target={left:left-g,right:right+g,top:top-g,bottom:bottom+g};let best=null,bestScore=Infinity;for(const c0 of candidates){const c={x:Math.max(m,Math.min(hr.width-w-m,c0.x)),y:Math.max(m,Math.min(hr.height-h-m,c0.y))},box={left:c.x,right:c.x+w,top:c.y,bottom:c.y+h};const overlap=overlapArea(box,target),outside=(c0.x<c.x||c0.y<c.y||c0.x>c.x+.1||c0.y>c.y+.1)?1:0,score=overlap*1000+outside*250+Math.hypot((box.left+box.right)/2-(target.left+target.right)/2,(box.top+box.bottom)/2-(target.top+target.bottom)/2)*.02;if(score<bestScore){bestScore=score;best=c}}card.style.left=`${best.x}px`;card.style.top=`${best.y}px`}
+function hideCompletion(){state.modal=false;$('completionLayer').hidden=true;$('nextCard').hidden=true}
+function openCompletion(){state.modal=true;$('completionLayer').hidden=false;$('nextCard').hidden=false;requestAnimationFrame(positionCompletion)}
+function overlapArea(a,b){const x=Math.max(0,Math.min(a.right,b.right)-Math.max(a.left,b.left)),y=Math.max(0,Math.min(a.bottom,b.bottom)-Math.max(a.top,b.top));return x*y}
+function positionCompletion(){const layer=$('completionLayer'),card=$('nextCard');if(layer.hidden||card.hidden)return;const lr=layer.getBoundingClientRect(),m=8;card.style.left=`${m}px`;card.style.top=`${m}px`;card.style.right='auto';card.style.bottom='auto';const cr=card.getBoundingClientRect(),w=cr.width,h=cr.height,candidates=[{x:m,y:m},{x:lr.width-w-m,y:m},{x:m,y:lr.height-h-m},{x:lr.width-w-m,y:lr.height-h-m},{x:m,y:(lr.height-h)/2},{x:lr.width-w-m,y:(lr.height-h)/2},{x:(lr.width-w)/2,y:m},{x:(lr.width-w)/2,y:lr.height-h-m}],busy=[...svg.querySelectorAll('#aircraft,[data-ref],[data-target-marker],#aim,#angleHandleGroup,.side-label,.dim-label,.angle-label,.other-label,.depression-label,.target-label')].filter(e=>{const r=e.getBoundingClientRect();return r.width>0&&r.height>0}).map(e=>{const r=e.getBoundingClientRect();return{left:r.left-lr.left-10,right:r.right-lr.left+10,top:r.top-lr.top-10,bottom:r.bottom-lr.top+10}});let best=candidates[0],score=Infinity;for(const c0 of candidates){const c={x:Math.max(m,Math.min(lr.width-w-m,c0.x)),y:Math.max(m,Math.min(lr.height-h-m,c0.y))},box={left:c.x,right:c.x+w,top:c.y,bottom:c.y+h};let sco=busy.reduce((n,r)=>n+overlapArea(box,r),0);const centre={x:c.x+w/2,y:c.y+h/2};for(const r of busy){const d=Math.hypot(centre.x-(r.left+r.right)/2,centre.y-(r.top+r.bottom)/2);if(d<80)sco+=(80-d)*2}if(sco<score){score=sco;best=c}}card.style.left=`${best.x}px`;card.style.top=`${best.y}px`}
+function learningInsight(){if(state.problemNumber===1)return`You resized the triangle while the ${fmt(p().refAngle,1)}° reference stayed fixed, and sin/cos/tan stayed fixed too. This calculation used O/A, so it was tangent.`;if(state.problemNumber===2)return`This triangle was a different size, but the reference angle was still 18°. The three ratio values matched Problem 1; this time O/H selected sine.`;if(state.problemNumber===3)return`The interaction did not change, but the reference angle changed to 24°. All three ratio values changed; A/H selected cosine.`;if(p().ref==='depression')return`The same click-and-resize routine still works: the reference is now the aircraft horizontal, then O/A/H are named from that angle.`;if(p().ref==='upper')return`The same triangle has a different acute reference. Opposite and adjacent swap roles, but the side-pair rule still selects the ratio.`;return`${RATIO[p().ratio].name} is not a separate procedure: it is simply the ratio containing ${ROLE_NAMES[p().known]} and ${ROLE_NAMES[p().target]} for the chosen reference angle.`}
+function suggestedLevel(){if(state.workingLevel>=2)return-1;return state.solvedAtLevel[state.workingLevel]+1>=3?state.workingLevel+1:-1}
+function renderCompletion(){if(!problemComplete()){if(state.modal)hideCompletion();return}const next=suggestedLevel();$('nextCardTitle').textContent='Triangle verified';$('nextCardText').textContent='Geometry and working agree.';$('nextInsight').textContent='';$('nextCard').classList.toggle('has-upgrade',next>state.workingLevel);$('nextUpgrade').hidden=next<=state.workingLevel;if(next>state.workingLevel){$('nextUpgradeTitle').textContent=next===1?'Next: some working':'Next: full working';$('nextUpgradeText').textContent=next===1?'Same click + drag. You choose the ratio and result.':'Same click + drag. You also label O/A/H.';$('upgradeLevel').textContent=next===1?'Try some working':'Take full ownership';$('upgradeLevel').dataset.level=String(next)}$('nextProblem').textContent='Next problem';if(!state.modal)openCompletion();else requestAnimationFrame(positionCompletion)}
+function advance(levelOverride=null){if(!problemComplete())return;state.solvedAtLevel[state.workingLevel]++;if(!s().recorded){const q=ratioSet();state.history.push({angle:p().refAngle,ref:p().ref,ratios:q,ratio:p().ratio,answer:p().answer});s().recorded=true}if(levelOverride!==null)state.workingLevel=clamp(Number(levelOverride)||0,0,2);state.problemNumber++;chooseTemplate()}
+function renderAll(){renderMission();renderVisualHead();renderTriangle();renderWork();stageNote();updateGuide();renderCompletion()}
+
+$('aircraft').addEventListener('pointerdown',ev=>{if(!referenceCorrect()||state.modal)return;s().drag={id:ev.pointerId};svg.setPointerCapture?.(ev.pointerId);ev.preventDefault()});svg.addEventListener('pointermove',ev=>{if(!s().drag||s().drag.id!==ev.pointerId)return;setAdjFromPointer(pointFromEvent(ev));hideCompletion();renderAll();ev.preventDefault()});function endDrag(ev){if(!s().drag||s().drag.id!==ev.pointerId)return;snapIfNear();s().drag=null;try{svg.releasePointerCapture?.(ev.pointerId)}catch{}renderAll()}svg.addEventListener('pointerup',endDrag);svg.addEventListener('pointercancel',endDrag);
+$('aircraft').addEventListener('keydown',ev=>{if(!referenceCorrect()||!['ArrowLeft','ArrowRight'].includes(ev.key))return;ev.preventDefault();s().adj=clamp(s().adj+(ev.key==='ArrowLeft'?8:-8),245,680);snapIfNear();renderAll()});
+svg.addEventListener('click',ev=>{const t=ev.target.closest?.('[data-ref]');if(t){selectReference(t.dataset.ref);ev.preventDefault()}});svg.addEventListener('keydown',ev=>{const t=ev.target.closest?.('[data-ref]');if(t&&(ev.key==='Enter'||ev.key===' ')){ev.preventDefault();selectReference(t.dataset.ref)}});
+$('resetCase').addEventListener('click',resetProblem);document.querySelectorAll('[data-work-level]').forEach(button=>button.addEventListener('click',()=>{state.workingLevel=clamp(Number(button.dataset.workLevel)||0,0,2);state.session=freshSession(p());hideCompletion();renderAll()}));$('nextProblem').addEventListener('click',()=>advance());$('upgradeLevel').addEventListener('click',()=>advance($('upgradeLevel').dataset.level));window.addEventListener('resize',()=>{updateGuide();positionCompletion()});
+window.labTest={
+ getState:()=>JSON.parse(JSON.stringify({problemNumber:state.problemNumber,workingLevel:state.workingLevel,solvedAtLevel:state.solvedAtLevel,problem:state.problem,session:state.session,complete:problemComplete(),scaleMatched:scaleMatched(),referenceCorrect:referenceCorrect(),history:state.history})),
+ setWorkLevel:l=>{state.workingLevel=clamp(Number(l)||0,0,2);state.session=freshSession(p());hideCompletion();renderAll()},
+ setProblem:(n=1,level=state.workingLevel)=>{state.problemNumber=Math.max(1,Number(n)||1);state.workingLevel=clamp(Number(level)||0,0,2);chooseTemplate()},
+ selectReference,
+ matchScale:()=>{s().adj=p().phys.adj;renderAll()},
+ setAdj:a=>{s().adj=clamp(Number(a)||p().phys.adj,245,680);renderAll()},
+ fillCorrect:()=>{s().reference=p().ref;s().adj=p().phys.adj;if(state.workingLevel===2)for(const ph of['opp','adj','hyp'])s().roles[ph]=physicalToRole(ph,p().ref);if(state.workingLevel>0){s().ratio=p().ratio;s().answerText=String(p().answer)}renderAll()},
+ fillWrong:()=>{s().reference=p().ref==='ground'?'upper':'ground';s().adj=p().phys.adj;if(state.workingLevel===2){s().roles.opp='H';s().roles.adj='O';s().roles.hyp='A'}if(state.workingLevel>0){s().ratio=p().ratio==='sin'?'cos':'sin';s().answerText=String(p().answer+7)}renderAll()},
+ advance:(level=null)=>advance(level),render:renderAll
+};
+chooseTemplate();
+})();
+</script>
+<!-- v5 progression: every generated problem uses the same two learner interactions—click the named reference angle, then drag the aircraft along the fixed glidepath until the given side matches. Worked → Some → All changes calculation ownership only. -->
+<!-- v6 polish: compact completion cards, non-blocking overlay, and target-aware guide/modal placement. -->
+</body>
+</html>

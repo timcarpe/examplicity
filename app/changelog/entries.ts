@@ -7,6 +7,17 @@ export type ChangelogEntry = {
 
 export const changelogEntries: readonly ChangelogEntry[] = [
   {
+    date: '2026-08-31',
+    displayDate: '31 August 2026',
+    publicChanges: [
+      'Improved standalone lab downloads, changing-state announcements, catalogue routing safeguards, and keyboard access to bitmap painting, scheduler arrivals, and sound navigation.',
+      'Standardized lab title headers across narrow and wide activities, expanded the pseudocode translator workspace, and kept assisted repeated-percentage challenges interactive.',
+    ],
+    internalChanges: [
+      'Hardened the standalone lab contract, added hash-pinned shared authoring resources, a versioned publication profile and deterministic publication compilation, and expanded source-backed publication from seven architectural proofs through a sixteen-lab backward-application wave.',
+    ],
+  },
+  {
     date: '2026-08-30',
     displayDate: '30 August 2026',
     publicChanges: [

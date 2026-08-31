@@ -10,13 +10,12 @@ redesign existing labs or introduce a new runtime architecture.
 - [ ] Confirm that the source is a **lab**: it teaches one interactive concept and
   belongs in the catalogue. Record its syllabus coverage, topic, short card
   description, and the interaction the card should depict.
-- [ ] Preserve the source as one document at
-  `public/labs/<subject>/<slug>.html`. The subject directory is the manifest
-  `subject` ID, such as `computer-science`; it is not an exam-code directory.
-  Current labs such as `public/labs/computer-science/binary-numbers.html` and
-  `public/labs/computer-science/memory-management.html` contain their own inline
-  `<style>` and `<script>` blocks. Do not split a lab into React components, a
-  route, or shared assets as part of ingestion.
+- [ ] For a kit-enabled package, preserve the approved authoring document at
+  `labs-src/<subject>/<slug>.html` and register it in `labs-src/manifest.json`.
+  The compiler writes `public/labs/<subject>/<slug>.html`; never hand-edit that
+  generated output. Existing labs not yet registered in `labs-src/manifest.json`
+  remain legacy monolith sources in `public/labs`. In either lane the subject
+  directory is the manifest `subject` ID, not an exam-code directory.
 - [ ] Inspect the actual HTML and run the lab before writing catalogue copy or
   an icon. The title and topic are not enough to infer its mechanics; identify
   the controls, state changes, feedback, and main visual model in the document.
@@ -37,6 +36,13 @@ Keep those responsibilities separate.
 - [ ] Keep lab-specific CSS and JavaScript inside that HTML. A static file in
   `public/labs` does not receive `app/globals.css` and must not depend on a
   React component or an undocumented host callback.
+- [ ] A kit-enabled source may declare a pinned resource with
+  `data-lab-resource`. The site-owned compiler resolves only the vendored,
+  hash-checked kit release and inlines it into the public HTML. Do not import a
+  sibling Lab Creation checkout, a mutable `latest` release, or a runtime CDN.
+- [ ] Validate against the pinned site-owned publication profile recorded in
+  `labs-src/manifest.json`. The profile supplies target viewport and artifact
+  constraints without moving those responsibilities into the creation kit.
 - [ ] Include either the marked `LAB_FRAME_STYLES` block or the temporary
   `/labs/lab-frame.css` link accepted by `npm run labs:sync`. The sync command
   embeds the standard background, canvas and responsive frame so the downloaded
@@ -248,7 +254,9 @@ the default drawing for an approved lab.
 
 - [ ] Run `npm run labs:sync` to embed the shared frame and generate the
   manifest-owned head metadata, visible title, optional subtitle and syllabus
-  chips. Never hand-edit a generated marker or controlled attribute.
+  chips. For every entry in `labs-src/manifest.json`, this first compiles the
+  pinned shared resources into `public/labs`. Never hand-edit a generated
+  marker or controlled attribute.
 - [ ] Confirm the three-way path contract and changed-file scope:
   `public/labs/<subject>/<slug>.html`, its `app/labs.ts` entry, and its
   `app/lab-icon.tsx` case. Confirm the HTML contains one generated frame block,
@@ -267,9 +275,10 @@ the default drawing for an approved lab.
   git diff --check
   ```
 
-  The aggregate check also packages every lab in memory and verifies that its
-  manifest-controlled head, title, optional subtitle, syllabus chips and
-  standalone download chrome each occur exactly once.
+  The aggregate check also verifies source compilation is deterministic, then
+  packages every lab in memory and checks that its manifest-controlled head,
+  title, optional subtitle, syllabus chips, embedded frame and standalone
+  download chrome each occur exactly once with no runtime CSS or script URL.
 
 - [ ] With `npm run dev`, test the selected exam tabs and confirm the new card
   appears only for its manifest `syllabuses`, under the exact `topic`, with the
@@ -285,9 +294,10 @@ the default drawing for an approved lab.
   current fold, fixed visualizations start in a useful fully readable position,
   and compaction has not created conspicuous whitespace. Repeat at 1200, 900 and
   390 pixels for responsive behavior.
-- [ ] If the lab cannot remain monolithic, needs shared runtime code, changes
-  the host/iframe contract, adds dependencies, or requires a new exam/topic
-  convention, stop and request approval for that specific architecture change.
+- [ ] If the final lab cannot remain monolithic, needs a shared capability that
+  is not in the pinned kit, changes the host/iframe contract, adds runtime
+  dependencies, or requires a new exam/topic convention, stop and request
+  approval for that specific architecture change.
 
 ## 7. Approval gate
 
