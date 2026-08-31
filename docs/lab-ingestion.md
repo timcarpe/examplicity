@@ -10,12 +10,11 @@ redesign existing labs or introduce a new runtime architecture.
 - [ ] Confirm that the source is a **lab**: it teaches one interactive concept and
   belongs in the catalogue. Record its syllabus coverage, topic, short card
   description, and the interaction the card should depict.
-- [ ] For a kit-enabled package, preserve the approved authoring document at
+- [ ] Preserve the approved authoring document at
   `labs-src/<subject>/<slug>.html` and register it in `labs-src/manifest.json`.
   The compiler writes `public/labs/<subject>/<slug>.html`; never hand-edit that
-  generated output. Existing labs not yet registered in `labs-src/manifest.json`
-  remain legacy monolith sources in `public/labs`. In either lane the subject
-  directory is the manifest `subject` ID, not an exam-code directory.
+  generated output. The subject directory is the manifest `subject` ID, not an
+  exam-code directory.
 - [ ] Inspect the actual HTML and run the lab before writing catalogue copy or
   an icon. The title and topic are not enough to infer its mechanics; identify
   the controls, state changes, feedback, and main visual model in the document.
@@ -36,7 +35,7 @@ Keep those responsibilities separate.
 - [ ] Keep lab-specific CSS and JavaScript inside that HTML. A static file in
   `public/labs` does not receive `app/globals.css` and must not depend on a
   React component or an undocumented host callback.
-- [ ] A kit-enabled source may declare a pinned resource with
+- [ ] A source may declare a pinned resource with
   `data-lab-resource`. The site-owned compiler resolves only the vendored,
   hash-checked kit release and inlines it into the public HTML. Do not import a
   sibling Lab Creation checkout, a mutable `latest` release, or a runtime CDN.
@@ -294,6 +293,11 @@ the default drawing for an approved lab.
   current fold, fixed visualizations start in a useful fully readable position,
   and compaction has not created conspicuous whitespace. Repeat at 1200, 900 and
   390 pixels for responsive behavior.
+- [ ] Compare `clientWidth`/`scrollWidth` and `clientHeight`/`scrollHeight` for
+  each primary operated visual or manipulative. It should fit without its own
+  scrollbar. Record and review any exception; do not hide overflow as a fit fix.
+  Scrolling remains appropriate in explicitly named secondary panes such as
+  lesson navigation, editors, consoles and long reference lists.
 - [ ] If the final lab cannot remain monolithic, needs a shared capability that
   is not in the pinned kit, changes the host/iframe contract, adds runtime
   dependencies, or requires a new exam/topic convention, stop and request

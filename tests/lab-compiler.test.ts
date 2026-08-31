@@ -4,6 +4,7 @@ import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
+import { labs } from '../app/labs.ts';
 import {
   compileLabResources,
   findUnresolvedRuntimeResources,
@@ -18,33 +19,6 @@ const compilerRoot = path.join(repositoryRoot, 'tools', 'lab-compiler');
 const profileRoot = path.join(repositoryRoot, 'tools', 'lab-publication-profile');
 const publicationManifestPath = path.join(repositoryRoot, 'labs-src', 'manifest.json');
 
-const originalProofs = [
-  'computer-science/automated-system-control-flowcharts',
-  'computer-science/binary-floating-point',
-  'computer-science/dijkstra-a-star-graph-search',
-  'computer-science/python-programming-practice',
-  'mathematics/coordinate-distance-midpoint-perpendicular',
-  'mathematics/prime-factors-hcf-lcm',
-  'mathematics/vector-routes-resultants',
-];
-const waveOne = [
-  'computer-science/binary-numbers',
-  'computer-science/bitmap-compression',
-  'computer-science/csma-cd',
-  'computer-science/database-normalisation',
-  'computer-science/dns-web-page-retrieval',
-  'computer-science/encryption-in-data-transmission',
-  'computer-science/parity-arq',
-  'computer-science/process-states-scheduling',
-  'computer-science/software-stack',
-  'computer-science/sound-sampling',
-  'computer-science/tcp-ip-encapsulation',
-  'mathematics/histogram-area-cumulative-distribution',
-  'mathematics/ratio-concentration-flow-rate',
-  'mathematics/repeated-percentage-change',
-  'mathematics/right-triangle-ratio-invariance',
-  'mathematics/rounded-measurements-bounds',
-];
 const manifestKey = (entry: { subject: string; slug: string }) => `${entry.subject}/${entry.slug}`;
 const resourceDeclarationPattern = /<(?:link|script)\b[^>]*\bdata-lab-resource\s*=\s*["']([^"']+)["'][^>]*>/gi;
 const cssDeclarationPattern = /<link\b(?=[^>]*\brel\s*=\s*["']stylesheet["'])(?=[^>]*\bhref\s*=\s*["']\.\/lab-kit\.css["'])(?=[^>]*\bdata-lab-resource\s*=\s*["']lab-kit\.css["'])[^>]*>/gi;
@@ -135,15 +109,14 @@ test('publication profile is hash-pinned and matches its canonical release', asy
   assert.equal(manifest.files[0].sha256, createHash('sha256').update(profile).digest('hex'));
 });
 
-test('publication manifest contains the original proofs and exact W1 wave in stable order', async () => {
+test('publication manifest owns every live lab in stable order', async () => {
   const manifest = JSON.parse(await readFile(publicationManifestPath, 'utf8'));
   const keys = manifest.labs.map(manifestKey);
-  const expected = [...originalProofs, ...waveOne].sort();
+  const expected = labs.map(manifestKey).sort();
 
-  assert.equal(keys.length, 23);
+  assert.equal(keys.length, labs.length);
   assert.equal(new Set(keys).size, keys.length);
   assert.deepEqual(keys, expected);
-  assert.deepEqual(keys.filter((key) => waveOne.includes(key)), waveOne);
 });
 
 test('registered sources and generated outputs satisfy the compiler-owned contract', async () => {
@@ -222,6 +195,29 @@ test('registered sources and generated outputs satisfy the compiler-owned contra
     } catch (error) {
       failures.push(`${key}: generated output is unavailable (${error instanceof Error ? error.message : String(error)})`);
     }
+  }
+
+  assert.deepEqual(failures, [], failures.join('\n'));
+});
+
+test('every registered inline executable script parses', async () => {
+  const manifest = JSON.parse(await readFile(publicationManifestPath, 'utf8'));
+  const sourceRoot = path.join(repositoryRoot, 'labs-src');
+  const failures: string[] = [];
+
+  for (const entry of manifest.labs) {
+    const key = manifestKey(entry);
+    const source = await readFile(path.join(sourceRoot, entry.subject, `${entry.slug}.html`), 'utf8');
+    const scripts = [...source.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)]
+      .filter((match) => !/\bsrc\s*=/i.test(match[1]) && !/\btype\s*=/i.test(match[1]));
+
+    scripts.forEach((script, index) => {
+      try {
+        Function(script[2]);
+      } catch (error) {
+        failures.push(`${key}: executable script ${index + 1} does not parse (${error instanceof Error ? error.message : String(error)})`);
+      }
+    });
   }
 
   assert.deepEqual(failures, [], failures.join('\n'));

@@ -35,3 +35,17 @@ test('the translator dedicates the remaining desktop viewport height to its work
   assert.match(source, /\.workspace\{[\s\S]*?height:calc\(100svh - 256px\);[\s\S]*?min-height:330px/);
   assert.match(source, /@container lab-canvas \(max-width:1160px\)\{[\s\S]*?\.workspace\{height:calc\(100svh - 298px\)\}/);
 });
+
+test('the recurring-decimals manipulative fits without an internal scrollbar', async () => {
+  const source = await readFile(
+    path.join(repositoryRoot, 'labs-src', 'mathematics', 'recurring-decimals-fractions.html'),
+    'utf8',
+  );
+
+  assert.match(source, /\.board-scroll\{overflow-x:hidden\}/);
+  assert.match(source, /\.alignment-board\{width:100%;min-width:0/);
+  assert.match(source, /@media\(max-width:700px\)\{[\s\S]*?\.place-row,\.tape-row,\.result-grid-row,\.subtract-gesture\{width:100%;grid-template-columns:minmax\(0,1fr\)/);
+  assert.match(source, /const cellStep=\(\)=>/);
+  assert.doesNotMatch(source, /CELL_STEP/);
+  assert.doesNotMatch(source, /\.board-scroll[\s\S]{0,120}scrollLeft|positionBoardForCase/);
+});
