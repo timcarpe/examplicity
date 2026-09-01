@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } f
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
+  labAppearsInSubject,
   labs,
   qualificationLevels,
   subjects,
@@ -81,7 +82,7 @@ export default function Catalogue({ initialExam, initialSubjectId }: CataloguePr
   const exam = view.exam;
   const examView = subject.views[exam]!;
   const visibleLabs = labs.filter((lab) => (
-    lab.subject === subject.id && lab.syllabuses.some((syllabus) => (
+    labAppearsInSubject(lab, subject.id as SubjectId) && lab.syllabuses.some((syllabus) => (
       viewIncludesExam(view, syllabus.code) && syllabusAlignmentIncludesLevel(syllabus.qualification, level)
     ))
   ));

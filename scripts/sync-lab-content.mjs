@@ -2,7 +2,7 @@ import { readFile, readdir, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { applyLabManifestContent } from '../app/lab-content.ts';
-import { labs, subjects, syllabusAlignmentIncludesLevel, syllabusRegistry, topics } from '../app/labs.ts';
+import { labAppearsInSubject, labs, subjects, syllabusAlignmentIncludesLevel, syllabusRegistry, topics } from '../app/labs.ts';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const labsDirectory = path.join(root, 'public', 'labs');
@@ -56,8 +56,8 @@ for (const lab of labs) {
   const subject = subjects.find((entry) => entry.id === lab.subject);
   if (!subject) throw new Error(`${lab.slug} references unknown subject ${lab.subject}`);
   for (const alignment of lab.syllabuses) {
-    if (!syllabusRegistry[alignment.code]?.subjects.includes(subject.id)) {
-      throw new Error(`${lab.slug} references ${alignment.code}, which is not enabled for ${subject.id}`);
+    if (!syllabusRegistry[alignment.code]?.subjects.some((subjectId) => labAppearsInSubject(lab, subjectId))) {
+      throw new Error(`${lab.slug} references ${alignment.code}, which is not enabled for its catalogue subjects`);
     }
   }
 }
@@ -84,7 +84,7 @@ for (const subject of subjects) {
     }
     const visibleTopics = new Set(
       labs
-        .filter((lab) => lab.subject === subject.id && lab.syllabuses.some((alignment) => (
+        .filter((lab) => labAppearsInSubject(lab, subject.id) && lab.syllabuses.some((alignment) => (
           alignedExams.includes(alignment.code) && syllabusAlignmentIncludesLevel(alignment.qualification, level)
         )))
         .map((lab) => lab.topic),

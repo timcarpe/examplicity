@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Catalogue from '../../catalogue';
 import {
+  labAppearsInSubject,
   labs,
   subjects,
   syllabusAlignmentIncludesLevel,
@@ -77,7 +78,7 @@ export default async function SubjectCatalogue({ params }: PageProps) {
   const alignedExams = qualificationView.alignedExams ?? [qualificationView.exam];
   const educationalLevel = qualificationView.headerLabel;
   const visibleLabs = labs.filter((lab) => (
-    lab.subject === subject.id && lab.syllabuses.some((syllabus) => (
+    labAppearsInSubject(lab, subject.id as SubjectId) && lab.syllabuses.some((syllabus) => (
       alignedExams.includes(syllabus.code) && syllabusAlignmentIncludesLevel(syllabus.qualification, level)
     ))
   ));

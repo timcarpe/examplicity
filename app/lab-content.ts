@@ -1,4 +1,4 @@
-import { subjects, syllabusRegistry, type Lab } from './labs.ts';
+import { labAppearsInSubject, subjects, syllabusRegistry, type Lab } from './labs.ts';
 import { productionSiteUrl, siteTitle } from './site.ts';
 
 const headStart = '<!-- LAB_MANIFEST_HEAD_START -->';
@@ -137,8 +137,8 @@ const renderSyllabusChips = (lab: Lab) => {
   const chips = lab.syllabuses.map((alignment) => {
     const syllabus = syllabusRegistry[alignment.code];
     if (!syllabus) throw new Error(`${lab.slug} references unknown syllabus ${alignment.code}`);
-    if (!syllabus.subjects.some((subject) => subject === lab.subject)) {
-      throw new Error(`${lab.slug} belongs to ${lab.subject} but references a syllabus outside that subject`);
+    if (!syllabus.subjects.some((subject) => labAppearsInSubject(lab, subject))) {
+      throw new Error(`${lab.slug} references a syllabus outside its catalogue subjects`);
     }
     if (seenSyllabuses.has(alignment.code)) throw new Error(`${lab.slug} repeats syllabus ${alignment.code}`);
     seenSyllabuses.add(alignment.code);

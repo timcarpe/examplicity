@@ -65,6 +65,19 @@ export const syllabusRegistry = {
       hover: '#e8f0d6',
     },
   },
+  '0620': {
+    subjects: ['chemistry'],
+    title: 'Cambridge IGCSE Chemistry',
+    officialPage: 'https://www.cambridgeinternational.org/programmes-and-qualifications/cambridge-igcse-chemistry-0620/',
+    documentUrl: 'https://www.cambridgeinternational.org/Images/697205-2026-2028-syllabus.pdf',
+    validFor: '2026–2028',
+    palette: {
+      background: '#fff4e8',
+      border: '#d4a56d',
+      text: '#754617',
+      hover: '#f8e5cf',
+    },
+  },
   '0625': {
     subjects: ['physics'],
     title: 'Cambridge IGCSE Physics',
@@ -102,6 +115,19 @@ export const syllabusRegistry = {
       border: '#c8a0b7',
       text: '#703b59',
       hover: '#f0dee8',
+    },
+  },
+  '9701': {
+    subjects: ['chemistry'],
+    title: 'Cambridge International AS & A Level Chemistry',
+    officialPage: 'https://www.cambridgeinternational.org/programmes-and-qualifications/cambridge-international-as-and-a-level-chemistry-9701/',
+    documentUrl: 'https://www.cambridgeinternational.org/Images/664563-2025-2027-syllabus.pdf',
+    validFor: '2025–2027',
+    palette: {
+      background: '#f8f0e8',
+      border: '#c4a27f',
+      text: '#684b2f',
+      hover: '#efe1d3',
     },
   },
   '9702': {
@@ -351,6 +377,44 @@ const subjectDefinitions = [
       },
     },
   },
+  {
+    id: 'chemistry',
+    name: 'Chemistry',
+    exams: ['0620', '9701'],
+    views: {
+      '0620': {
+        href: '/chemistry/0620',
+        metaDescription: 'Interactive Cambridge IGCSE Chemistry 0620 and Co-ordinated Sciences 0654 chemistry labs for exam practice and visual concept explanations.',
+      },
+      '9701': {
+        href: '/chemistry/9701',
+        metaDescription: 'Interactive Cambridge International AS & A Level Chemistry 9701 labs for exam practice and visual concept explanations.',
+      },
+    },
+    qualificationViews: {
+      IGCSE: {
+        exam: '0620',
+        alignedExams: ['0620', '0654'],
+        headerLabel: 'Cambridge IGCSE Chemistry · 0620 / 0654',
+        intro: 'Interactive Cambridge IGCSE Chemistry labs aligned to Chemistry 0620 and the Chemistry objectives in Co-ordinated Sciences 0654.',
+        topicBriefings: {
+          'Thermal physics': 'Compress a fixed mass of gas and connect particle collisions, pressure and volume through the chemistry particle model.',
+        } satisfies Partial<Record<Topic, string>>,
+      },
+      AS: {
+        exam: '9701',
+        headerLabel: 'Cambridge International AS Level Chemistry · 9701',
+        intro: 'Interactive Cambridge International AS Level Chemistry 9701 labs grounded in the current syllabus outcomes.',
+        topicBriefings: {} satisfies Partial<Record<Topic, string>>,
+      },
+      A: {
+        exam: '9701',
+        headerLabel: 'Cambridge International A Level Chemistry · 9701',
+        intro: 'Interactive Cambridge International A Level Chemistry 9701 labs for investigating chemical relationships through visible evidence.',
+        topicBriefings: {} satisfies Partial<Record<Topic, string>>,
+      },
+    },
+  },
 ] as const satisfies readonly SubjectDefinition[];
 export const subjects = subjectDefinitions;
 export type SubjectId = (typeof subjectDefinitions)[number]['id'];
@@ -365,6 +429,7 @@ export type Activity = {
 
 export type Lab = Activity & {
   subject: SubjectId;
+  catalogueSubjects?: readonly SubjectId[];
   topic: Topic;
   format: string;
   layout?: 'compact';
@@ -380,6 +445,10 @@ export type Lab = Activity & {
     }[];
   }[];
 };
+
+export const labAppearsInSubject = (lab: Lab, subjectId: SubjectId) => (
+  lab.subject === subjectId || lab.catalogueSubjects?.includes(subjectId) === true
+);
 
 export const translator: Lab = {
   subject: 'computer-science',
@@ -1405,17 +1474,19 @@ export const labs: Lab[] = [
   },
   {
     subject: 'physics',
+    catalogueSubjects: ['physics', 'chemistry'],
     slug: 'gas-compression-at-constant-temperature',
     title: 'Gas Compression at Constant Temperature',
     description: 'Compress a fixed mass of gas, inspect particle collisions, and test the inverse pressure–volume relationship at constant temperature.',
-    metaDescription: 'Explore gas pressure, particle collisions and the pressure–volume relationship for Cambridge IGCSE Physics 0625 and Co-ordinated Sciences 0654.',
+    metaDescription: 'Explore gas pressure, particle collisions and the pressure–volume relationship for Cambridge IGCSE Physics 0625, Chemistry 0620 and Co-ordinated Sciences 0654.',
     subtitle: 'Move the piston while temperature and particle count stay fixed, then connect collision frequency to pressure and the constant pressure–volume product.',
     topic: 'Thermal physics',
     format: 'Particle-pressure investigation',
     kind: 'lab',
     syllabuses: [
       { code: '0625', qualification: 'IGCSE', sections: [{ id: '2.1.3', page: 19, primary: true }] },
-      { code: '0654', qualification: 'IGCSE', sections: [{ id: 'P2.1.3', page: 63, primary: true }] },
+      { code: '0654', qualification: 'IGCSE', sections: [{ id: 'P2.1.3', page: 63, primary: true }, { id: 'C1.1', page: 35 }] },
+      { code: '0620', qualification: 'IGCSE', sections: [{ id: '1.1', page: 12, primary: true }] },
     ],
     href: '/labs/physics/gas-compression-at-constant-temperature.html',
   },
