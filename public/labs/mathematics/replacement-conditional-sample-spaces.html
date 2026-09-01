@@ -41,11 +41,18 @@ body {
   background: var(--lab-canvas);
 }
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 body {
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
   align-content: start !important;
   font-family: var(--lab-font-sans);
+  margin: 0;
   padding-bottom: 0;
   padding-top: 0 !important;
   text-rendering: optimizeLegibility;
@@ -246,8 +253,10 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
   .lab-manifest-header {
     gap: 14px;
     grid-template-columns: minmax(0, 1fr) !important;
+    margin-left: 0;
     margin-bottom: 20px;
     padding-bottom: 18px;
+    width: 100%;
   }
 
   body[data-lab-layout="compact"] .lab-manifest-header {
@@ -279,6 +288,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 
   body > main {
     margin-top: 8px;
+    width: calc(100% - var(--lab-page-gutter) - var(--lab-page-gutter));
   }
 }
 
@@ -740,6 +750,22 @@ body>main{margin-top:8px;margin-bottom:12px;width:min(1200px,calc(100% - 18px))}
 }
 </style>
 
+<style data-dynamic-practice-polish>
+.bag.dense{gap:9px;padding-left:12px;padding-right:12px}
+.bag.dense .counter{width:46px;height:46px;font-size:9px}
+.problem-meta{min-width:0;flex-wrap:wrap}
+.problem-meta span{white-space:nowrap}
+.problem-bar strong,.problem-bar p,.next-action strong,.next-action p,.work-main>strong,.work-main>p,.work-status{overflow-wrap:anywhere}
+@container lab-canvas (max-width:700px){
+  .live-prob{min-width:104px}
+}
+@container lab-canvas (max-width:520px){
+  .draw-card{height:92px!important}
+  .bag.dense{gap:6px!important;padding-left:7px!important;padding-right:7px!important}
+  .bag.dense .counter{width:38px!important;height:38px!important;font-size:7.5px!important}
+  .problem-meta{gap:4px!important}
+}
+</style>
 </head>
 <body data-lab-layout="standard">
 <main>
@@ -1214,17 +1240,35 @@ body>main{margin-top:8px;margin-bottom:12px;width:min(1200px,calc(100% - 18px))}
 'use strict';
 const $=id=>document.getElementById(id);
 const COLOURS={red:{label:'red',short:'R',fill:'var(--red)',edge:'var(--red-dark)'},blue:{label:'blue',short:'B',fill:'var(--blue)',edge:'var(--blue-dark)'}};
-const PROBLEMS=[
- {rule:'leave',condition:'red',target:'blue',counts:{red:3,blue:2},guided:true,pair:0},
- {rule:'return',condition:'red',target:'blue',counts:{red:3,blue:2},guided:true,pair:0},
- {rule:'leave',condition:'blue',target:'blue',counts:{red:3,blue:2},guided:false,pair:1},
- {rule:'return',condition:'blue',target:'blue',counts:{red:3,blue:2},guided:false,pair:1},
- {rule:'leave',condition:'red',target:'red',counts:{red:2,blue:3},guided:false,pair:2},
- {rule:'return',condition:'red',target:'red',counts:{red:2,blue:3},guided:false,pair:2}
+const COUNT_OPTIONS=[
+ {red:2,blue:2},{red:2,blue:3},{red:3,blue:2},{red:3,blue:3},{red:2,blue:4},{red:4,blue:2}
 ];
-const state={problemIndex:0,phase:'draw',drawnId:null,appliedRule:null,selected:new Set(),feedback:'',preview:null};
+const recentScenarioKeys=[];
+let rngSeed=(()=>{try{const v=new Uint32Array(1);crypto.getRandomValues(v);return v[0]||0x9e3779b9}catch{return (Date.now()>>>0)||0x9e3779b9}})();
+function random(){rngSeed=(rngSeed+0x6D2B79F5)>>>0;let t=rngSeed;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return((t^(t>>>14))>>>0)/4294967296}
+function pick(items){return items[Math.floor(random()*items.length)]}
+function scenarioKey(s){return `${s.counts.red}:${s.counts.blue}:${s.condition}:${s.target}`}
+function makeScenario(previous=null){
+  const wantSame=previous?previous.condition!==previous.target:random()<.5;
+  let candidate=null;
+  for(let attempt=0;attempt<30;attempt++){
+    const counts={...pick(COUNT_OPTIONS)};
+    const condition=random()<.5?'red':'blue';
+    const target=wantSame?condition:(condition==='red'?'blue':'red');
+    candidate={counts,condition,target};
+    const key=scenarioKey(candidate);
+    if(!recentScenarioKeys.includes(key))break;
+  }
+  const key=scenarioKey(candidate);
+  recentScenarioKeys.push(key);while(recentScenarioKeys.length>5)recentScenarioKeys.shift();
+  return candidate;
+}
+const state={
+  scenario:makeScenario(),pairStep:0,pairNumber:1,questionNumber:1,workLevel:'guided',
+  phase:'draw',drawnId:null,appliedRule:null,selected:new Set(),feedback:'',preview:null
+};
 let drag=null;
-const p=()=>PROBLEMS[state.problemIndex];
+const p=()=>({...state.scenario,rule:state.pairStep===0?'leave':'return',guided:state.workLevel==='guided'});
 const total=()=>p().counts.red+p().counts.blue;
 const phraseRule=r=>r==='return'?'with replacement':'without replacement';
 const tokens=()=>['red','blue'].flatMap(key=>Array.from({length:p().counts[key]},(_,i)=>({id:`${COLOURS[key].short}${i+1}`,key,index:i+1,label:`${COLOURS[key].short}${i+1}`})));
@@ -1247,10 +1291,12 @@ function renderSteps(){
 }
 function renderProblem(){
  const q=p(),c=COLOURS[q.condition].label,t=COLOURS[q.target].label;
- $('problemNumber').textContent=`Problem ${state.problemIndex+1} of ${PROBLEMS.length}`;
+ $('problemNumber').textContent=`Question ${state.questionNumber}`;
  $('supportLabel').textContent=q.guided?'Guided':'Independent';
  $('problemText').textContent=`Two counters are drawn ${phraseRule(q.rule)}. Given that the first is ${c}, find P(second is ${t}).`;
- $('problemSub').textContent='Drag the counters to make the condition, replacement rule and favourable outcomes visible.';
+ $('problemSub').textContent=state.pairStep===0
+   ?`Fresh example · ${q.counts.red} red and ${q.counts.blue} blue counters. Build the conditional draw-2 sample space by dragging.`
+   :'Same bag and known first draw. Only the replacement rule has changed — compare what changes and what stays fixed.';
 }
 function renderAction(){
  const q=p(),c=COLOURS[q.condition].label,t=COLOURS[q.target].label,d=drawn();
@@ -1269,7 +1315,7 @@ function renderAction(){
  }else{
    const m=metrics(),s=simplify(m.n,m.d);
    kicker='Complete'; title=`The current draw-2 sample space gives ${m.n}/${m.d}${s[0]!==m.n||s[1]!==m.d?` = ${s[0]}/${s[1]}`:''}.`;
-   copy=`The condition fixes draw 1. The replacement rule changes what is available next. The probability is then favourable draw-2 outcomes ÷ all possible draw-2 outcomes.`;
+   copy=`The condition fixes draw 1. The replacement rule changes what is available next. The probability is favourable draw-2 outcomes ÷ all possible draw-2 outcomes.`;
  }
  $('actionKicker').textContent=kicker;$('actionTitle').textContent=title;$('actionCopy').textContent=copy;
  $('actionFeedback').hidden=!state.feedback;$('actionFeedback').textContent=state.feedback;
@@ -1285,6 +1331,7 @@ function bagTokenMarkup(t){
 function renderBag(){
  const bag=inBag(),q=p(),d=drawn();
  $('bag').className='bag';
+ if(total()>=6)$('bag').classList.add('dense');
  if(state.phase==='rule'&&q.rule==='return')$('bag').classList.add('drop-target');
  if(state.appliedRule==='return')$('bag').classList.add('restored');
  else if(d)$('bag').classList.add('changed');
@@ -1307,7 +1354,7 @@ function renderDraw(){
    $('drawState').className='draw-state';$('drawState').textContent='The question has already fixed this colour.';
  }else if(state.phase==='rule'){
    head.textContent='First draw';sub.textContent='move the same counter again';
-   $('drawSlot').innerHTML=counterMarkup(d,'drag-source guide',`data-drag-kind="rule" data-id="${d.id}" aria-label="Drag ${d.label} to ${q.rule==='return'?'the same bag':'Keep out'}"`)+`<div class="draw-record"><strong>${d.label} drawn first</strong>${q.rule==='return'?'Return it before draw 2.':'Keep it out for draw 2.'}</div>`;
+   $('drawSlot').innerHTML=counterMarkup(d,`drag-source${q.guided?' guide':''}`,`data-drag-kind="rule" data-id="${d.id}" aria-label="Drag ${d.label} to ${q.rule==='return'?'the same bag':'Keep out'}"`)+`<div class="draw-record"><strong>${d.label} drawn first</strong>${q.rule==='return'?'Return it before draw 2.':'Keep it out for draw 2.'}</div>`;
    if(q.rule==='leave'){$('drawState').className='draw-state keepout-target drop-target';$('drawState').innerHTML='<strong>Keep out</strong><span>drop the drawn counter here</span>'}
    else{$('drawState').className='draw-state';$('drawState').textContent=`Return it to the bag above. The bag will restore to ${total()}.`}
  }else if(state.phase==='target'){
@@ -1334,20 +1381,28 @@ function currentEvidence(){
  const m=metrics(),extra=previewExtra(),marked=Math.min(m.n,selectedCount(extra)),complete=state.phase==='complete';
  return {chips:[['Possible draw-2 outcomes',String(m.d),'changed'],['Favourable marked',`${marked} of ${m.n}`,'good']],title:complete?'The fraction is now read directly from the conditional sample space.':'Each correct drag builds the numerator while the denominator stays fixed.',copy:`Possible outcomes = ${m.d}. Favourable ${COLOURS[q.target].label} outcomes = ${marked}${complete?'.':'. Drag the next favourable counter.'}`,status:preview?.valid?`Release: probability becomes ${marked}/${m.d}.`:complete?'All favourable outcomes have been marked.':`Current probability evidence: ${marked}/${m.d}.`,fraction:{n:marked,d:m.d,complete,preview:!!preview?.valid}};
 }
-function pairResults(pair){
- const rows=PROBLEMS.filter(x=>x.pair===pair).map(q=>{const all=q.counts.red+q.counts.blue,n0=q.counts[q.target],n=q.rule==='return'?n0:n0-(q.condition===q.target?1:0),d=q.rule==='return'?all:all-1;return{rule:q.rule,n,d}});return rows;
+function resultFor(rule){
+ const q={...state.scenario,rule},all=q.counts.red+q.counts.blue,n0=q.counts[q.target];
+ const n=rule==='return'?n0:n0-(q.condition===q.target?1:0),d=rule==='return'?all:all-1;
+ return{rule,n,d};
+}
+function pairResults(){return [resultFor('leave'),resultFor('return')]}
+function nextButtonLabel(){
+ if(state.pairStep===0)return 'Compare rule';
+ if(state.workLevel==='guided')return 'Try independently';
+ return 'Fresh question';
 }
 function renderWorkArea(){
  const e=currentEvidence(),q=p();
  const chips=e.chips.map(([label,value,tone])=>`<div class="work-chip ${tone||''}"><span>${label}</span><strong>${value}</strong></div>`).join('');
  let control='';
  if(e.fraction){
-   const s=e.fraction.d? simplify(e.fraction.n,e.fraction.d):[0,1];
+   const s=e.fraction.d?simplify(e.fraction.n,e.fraction.d):[0,1];
    const simp=e.fraction.complete&&e.fraction.n>0&&(s[0]!==e.fraction.n||s[1]!==e.fraction.d)?`= ${s[0]}/${s[1]}`:'';
-   control=`<div class="live-prob ${e.fraction.preview?'preview':''} ${e.fraction.complete?'complete':''}"><span class="prob-label">live probability</span><span class="prob-frac"><b>${e.fraction.n}</b><b>${e.fraction.d}</b></span><span class="prob-simplified">${simp}</span>${e.fraction.complete?`<button id="nextProblem" type="button" class="good next-problem">${state.problemIndex===PROBLEMS.length-1?'Start again':state.problemIndex%2===0?'Compare rule':'Next condition'}</button>`:''}</div>`;
+   control=`<div class="live-prob ${e.fraction.preview?'preview':''} ${e.fraction.complete?'complete':''}"><span class="prob-label">live probability</span><span class="prob-frac"><b>${e.fraction.n}</b><b>${e.fraction.d}</b></span><span class="prob-simplified">${simp}</span>${e.fraction.complete?`<button id="nextProblem" type="button" class="good next-problem">${nextButtonLabel()}</button>`:''}</div>`;
  }else control=`<div class="live-prob ${state.preview?.valid?'preview':''}"><span class="prob-label">draw-2 denominator</span><span class="prob-frac"><b>?</b><b>${state.phase==='draw'?(state.preview?.valid?total()-1:total()):(state.preview?.valid&&q.rule==='return'?total():total()-1)}</b></span><span class="prob-simplified">not ready yet</span></div>`;
  let compare='';
- if(state.phase==='complete'&&state.problemIndex%2===1){const rows=pairResults(q.pair),a=rows.find(r=>r.rule==='leave'),b=rows.find(r=>r.rule==='return');compare=`<div class="compare-compact"><span>without <b>${a.n}/${a.d}</b></span><span>with <b>${b.n}/${b.d}</b></span></div>`}
+ if(state.phase==='complete'&&state.pairStep===1){const rows=pairResults(),a=rows.find(r=>r.rule==='leave'),b=rows.find(r=>r.rule==='return');compare=`<div class="compare-compact"><span>without <b>${a.n}/${a.d}</b></span><span>with <b>${b.n}/${b.d}</b></span></div>`}
  $('workArea').className=`work-area ${state.phase==='complete'?'complete':state.phase==='target'?'attention':''}`;
  $('workArea').innerHTML=`<div class="work-shell"><div class="work-evidence">${chips}</div><div class="work-main"><span class="work-kicker">Current evidence</span><strong>${e.title}</strong><p>${e.copy}</p><div class="work-status ${state.feedback?'bad':state.phase==='complete'?'good':''}">${state.feedback||e.status}</div>${compare}</div>${control}</div>`;
  $('nextProblem')?.addEventListener('click',nextProblem);
@@ -1406,17 +1461,30 @@ function renderGuidance(){
  document.querySelector('.draw-card')?.classList.toggle('cause-focus',state.phase==='rule');
 }
 function renderAll(){renderProblem();renderSteps();renderAction();renderBag();renderDraw();renderWorkArea();renderGuidance();bindDrags()}
-function resetProblem(){if(drag){drag.ghost?.remove();drag=null}state.phase='draw';state.drawnId=null;state.appliedRule=null;state.selected=new Set();state.feedback='';state.preview=null;renderAll()}
-function nextProblem(){state.problemIndex=(state.problemIndex+1)%PROBLEMS.length;resetProblem()}
+function resetProgress(){if(drag){drag.ghost?.remove();drag=null}state.phase='draw';state.drawnId=null;state.appliedRule=null;state.selected=new Set();state.feedback='';state.preview=null;renderAll()}
+function resetProblem(){resetProgress()}
+function nextProblem(){
+  state.questionNumber++;
+  if(state.pairStep===0){
+    state.pairStep=1;
+  }else{
+    const previous=state.scenario;
+    state.pairStep=0;state.pairNumber++;
+    if(state.workLevel==='guided')state.workLevel='independent';
+    state.scenario=makeScenario(previous);
+  }
+  resetProgress();
+}
 $('resetButton').addEventListener('click',resetProblem);
 window.labTest={
- getState:()=>({problemIndex:state.problemIndex,phase:state.phase,drawnId:state.drawnId,appliedRule:state.appliedRule,selected:[...state.selected],metrics:state.appliedRule?metrics():null,problem:p(),feedback:state.feedback}),
- setProblem:i=>{state.problemIndex=Math.max(0,Math.min(PROBLEMS.length-1,Number(i)||0));resetProblem()},
+ getState:()=>({questionNumber:state.questionNumber,pairNumber:state.pairNumber,pairStep:state.pairStep,workLevel:state.workLevel,phase:state.phase,drawnId:state.drawnId,appliedRule:state.appliedRule,selected:[...state.selected],metrics:state.appliedRule?metrics():null,problem:p(),scenario:{...state.scenario,counts:{...state.scenario.counts}},feedback:state.feedback}),
+ setSeed:n=>{rngSeed=(Number(n)>>>0)||1},
+ setScenario:(red,blue,condition='red',target='blue',pairStep=0,workLevel='independent')=>{state.scenario={counts:{red:Math.max(2,Math.min(4,Number(red)||2)),blue:Math.max(2,Math.min(4,Number(blue)||2))},condition:condition==='blue'?'blue':'red',target:target==='red'?'red':'blue'};if(state.scenario.counts.red+state.scenario.counts.blue>6){state.scenario.counts.blue=6-state.scenario.counts.red}state.pairStep=pairStep?1:0;state.workLevel=workLevel==='guided'?'guided':'independent';resetProgress()},
  drawCorrect:()=>{const t=tokens().find(x=>x.key===p().condition);commitDrag('draw',t.id)},
  applyRule:()=>commitDrag('rule',state.drawnId),
  markOne:()=>{const t=targetTokens().find(x=>!state.selected.has(x.id));if(t)commitDrag('favourable',t.id)},
  markAll:()=>{targetTokens().filter(x=>!state.selected.has(x.id)).forEach(t=>state.selected.add(t.id));state.phase='complete';renderAll()},
- reset:resetProblem,next:nextProblem
+ reset:resetProblem,next:nextProblem,newScenario:()=>{state.scenario=makeScenario(state.scenario);state.pairStep=0;state.questionNumber++;state.pairNumber++;resetProgress()}
 };
 renderAll();
 })();

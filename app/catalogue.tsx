@@ -44,6 +44,10 @@ const writePreference = (key: string, value: string) => {
 const availableLevels = (subject: SubjectDefinition) => (
   qualificationLevels.filter((level) => Boolean(subject.qualificationViews[level]))
 );
+const viewIncludesExam = (
+  view: NonNullable<SubjectDefinition['qualificationViews'][QualificationLevel]>,
+  exam: ExamCode,
+) => (view.alignedExams ?? [view.exam]).includes(exam);
 
 type CatalogueProps = {
   initialExam: ExamCode;
@@ -55,7 +59,10 @@ export default function Catalogue({ initialExam, initialSubjectId }: CataloguePr
   const [subjectId, setSubjectId] = useState<SubjectId>(initialSubjectId);
   const [level, setLevel] = useState<QualificationLevel>(() => {
     const initialSubject: SubjectDefinition = subjects.find((item) => item.id === initialSubjectId) ?? subjects[0];
-    return availableLevels(initialSubject).find((item) => initialSubject.qualificationViews[item]?.exam === initialExam)
+    return availableLevels(initialSubject).find((item) => {
+      const initialView = initialSubject.qualificationViews[item];
+      return initialView ? viewIncludesExam(initialView, initialExam) : false;
+    })
       ?? availableLevels(initialSubject)[0]
       ?? qualificationLevels[0];
   });
@@ -75,7 +82,7 @@ export default function Catalogue({ initialExam, initialSubjectId }: CataloguePr
   const examView = subject.views[exam]!;
   const visibleLabs = labs.filter((lab) => (
     lab.subject === subject.id && lab.syllabuses.some((syllabus) => (
-      syllabus.code === exam && syllabusAlignmentIncludesLevel(syllabus.qualification, level)
+      viewIncludesExam(view, syllabus.code) && syllabusAlignmentIncludesLevel(syllabus.qualification, level)
     ))
   ));
   const groupedLabs = visibleLabs.reduce<Map<Topic, typeof labs>>((groups, lab) => {
@@ -91,7 +98,7 @@ export default function Catalogue({ initialExam, initialSubjectId }: CataloguePr
       if (
         savedLevel
         && qualificationLevels.includes(savedLevel)
-        && initialSubject.qualificationViews[savedLevel]?.exam === initialExam
+        && viewIncludesExam(initialSubject.qualificationViews[savedLevel]!, initialExam)
       ) {
         setLevel(savedLevel);
       }
@@ -106,7 +113,7 @@ export default function Catalogue({ initialExam, initialSubjectId }: CataloguePr
         item.slug === slug
         && item.subject === subject.id
         && item.syllabuses.some((syllabus) => (
-          syllabus.code === exam && syllabusAlignmentIncludesLevel(syllabus.qualification, level)
+          viewIncludesExam(view, syllabus.code) && syllabusAlignmentIncludesLevel(syllabus.qualification, level)
         ))
       )) ?? null;
       setActiveLab(lab);
@@ -116,7 +123,7 @@ export default function Catalogue({ initialExam, initialSubjectId }: CataloguePr
     syncLabFromUrl();
     window.addEventListener('popstate', syncLabFromUrl);
     return () => window.removeEventListener('popstate', syncLabFromUrl);
-  }, [exam, level, subject.id]);
+  }, [level, subject.id, view]);
 
   useEffect(() => {
     document.body.style.overflow = activeLab ? 'hidden' : '';
@@ -294,7 +301,7 @@ export default function Catalogue({ initialExam, initialSubjectId }: CataloguePr
           </div>
           <span>
             Make complex ideas click. ·{' '}
-            <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>
+            <a href="https://opensource.org/license/mit">MIT License</a>
           </span>
         </footer>
       </main>
@@ -445,7 +452,7 @@ export default function Catalogue({ initialExam, initialSubjectId }: CataloguePr
                   {view.topicBriefings[topic]}
                 </p>
               </div>
-              <span>{topicLabs.length} {topicLabs.length === 1 ? 'lab' : 'labs'} · {level} {exam}</span>
+              <span>{topicLabs.length} {topicLabs.length === 1 ? 'lab' : 'labs'} · {level} {view.alignedExams?.join(' / ') ?? exam}</span>
             </div>
 
             <div className="lab-grid">
@@ -487,7 +494,7 @@ export default function Catalogue({ initialExam, initialSubjectId }: CataloguePr
         </div>
         <span>
           IGCSE, AS &amp; A Level exam practice and concept labs. ·{' '}
-          <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>
+          <a href="https://opensource.org/license/mit">MIT License</a>
         </span>
       </footer>
     </main>

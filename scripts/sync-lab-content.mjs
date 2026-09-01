@@ -2,7 +2,7 @@ import { readFile, readdir, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { applyLabManifestContent } from '../app/lab-content.ts';
-import { labs, subjects, syllabusAlignmentIncludesLevel, topics } from '../app/labs.ts';
+import { labs, subjects, syllabusAlignmentIncludesLevel, syllabusRegistry, topics } from '../app/labs.ts';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const labsDirectory = path.join(root, 'public', 'labs');
@@ -56,7 +56,7 @@ for (const lab of labs) {
   const subject = subjects.find((entry) => entry.id === lab.subject);
   if (!subject) throw new Error(`${lab.slug} references unknown subject ${lab.subject}`);
   for (const alignment of lab.syllabuses) {
-    if (!subject.exams.includes(alignment.code)) {
+    if (!syllabusRegistry[alignment.code]?.subjects.includes(subject.id)) {
       throw new Error(`${lab.slug} references ${alignment.code}, which is not enabled for ${subject.id}`);
     }
   }
@@ -73,13 +73,19 @@ for (const subject of subjects) {
     if (!subject.exams.includes(view.exam)) {
       throw new Error(`${subject.id} ${level} references unknown exam ${view.exam}`);
     }
+    const alignedExams = view.alignedExams ?? [view.exam];
+    for (const exam of alignedExams) {
+      if (!syllabusRegistry[exam]?.subjects.includes(subject.id)) {
+        throw new Error(`${subject.id} ${level} references incompatible exam ${exam}`);
+      }
+    }
     if (!view.headerLabel.trim() || !view.intro.trim()) {
       throw new Error(`${subject.id} ${level} has incomplete visible text`);
     }
     const visibleTopics = new Set(
       labs
         .filter((lab) => lab.subject === subject.id && lab.syllabuses.some((alignment) => (
-          alignment.code === view.exam && syllabusAlignmentIncludesLevel(alignment.qualification, level)
+          alignedExams.includes(alignment.code) && syllabusAlignmentIncludesLevel(alignment.qualification, level)
         )))
         .map((lab) => lab.topic),
     );

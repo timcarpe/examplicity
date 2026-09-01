@@ -1,0 +1,2239 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="data:,">
+<!-- revision v5: programmatically generated examples; practice loop preserves learner working level; no-scroll composition -->
+<!-- LAB_FRAME_STYLES_START -->
+<style data-lab-frame>
+:root {
+  --lab-canvas: #f3f5f7;
+  --lab-paper: #fbfbfd;
+  --lab-surface: #ffffff;
+  --lab-control: #ffffff;
+  --lab-ink: #1d1d1f;
+  --lab-muted: #6e6e73;
+  --lab-line: #d2d2d7;
+  --lab-line-strong: #a7a7ad;
+  --lab-accent: #5277b8;
+  --lab-accent-soft: #eef2fa;
+  --lab-good: #18794e;
+  --lab-good-soft: #edf8f1;
+  --lab-warn: #946200;
+  --lab-warn-soft: #fff6e7;
+  --lab-bad: #b42318;
+  --lab-bad-soft: #fff0ee;
+  --lab-focus: #1d1d1f;
+  --lab-focus-soft: rgba(29, 29, 31, 0.18);
+  --lab-font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+  --lab-panel-radius: 12px;
+  --lab-control-radius: 8px;
+  --lab-pill-radius: 999px;
+  --lab-control-height: 35px;
+  --lab-panel-shadow: 0 1px 2px rgba(29, 29, 31, 0.04);
+  --lab-header-max-width: 1200px;
+  --lab-header-gutter: max(28px, calc((100vw - var(--lab-header-max-width)) / 2));
+  --lab-page-gutter: var(--lab-header-gutter);
+  --lab-compact-workspace-max: 820px;
+}
+
+html,
+body { background: var(--lab-canvas); }
+
+body {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  align-content: start !important;
+  font-family: var(--lab-font-sans);
+  padding-bottom: 0;
+  padding-top: 0 !important;
+  text-rendering: optimizeLegibility;
+}
+
+.lab-manifest-header {
+  align-items: start;
+  border-bottom: 0 !important;
+  display: grid;
+  gap: 18px 28px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  margin-left: calc(50% - 50vw + var(--lab-header-gutter));
+  margin-bottom: 26px;
+  max-width: var(--lab-header-max-width);
+  padding-bottom: 22px;
+  width: calc(100vw - var(--lab-header-gutter) - var(--lab-header-gutter));
+}
+
+.lab-manifest-heading { min-width: 0; }
+
+.lab-manifest-header h1 {
+  color: var(--ink, var(--lab-ink));
+  font-family: var(--lab-font-sans);
+  font-size: clamp(25px, 3.2vw, 40px);
+  font-weight: 650;
+  letter-spacing: -0.045em;
+  line-height: 1.02;
+  margin: 0;
+  max-width: 24ch;
+  padding: 0;
+  text-align: left;
+}
+
+.lab-manifest-subtitle {
+  color: var(--muted, var(--lab-muted));
+  font-family: var(--lab-font-sans);
+  font-size: 13px;
+  letter-spacing: 0;
+  line-height: 1.5;
+  margin: 10px 0 0;
+  max-width: 72ch;
+  padding: 0;
+  text-align: left;
+}
+
+.lab-authored-title-slot { min-width: 0; }
+
+.lab-syllabus-chips {
+  align-items: center;
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+  margin: 0 0 0 auto;
+  max-width: 100%;
+}
+
+.lab-syllabus-chip {
+  align-items: center;
+  background: var(--syllabus-chip-bg) !important;
+  border: 1px solid var(--syllabus-chip-border) !important;
+  border-radius: var(--lab-pill-radius);
+  color: var(--syllabus-chip-text) !important;
+  display: inline-flex;
+  font-size: 11px;
+  font-weight: 650;
+  gap: 4px;
+  line-height: 1;
+  min-height: 29px;
+  padding: 8px 10px;
+  position: relative;
+  transition: background-color 140ms ease, border-color 140ms ease;
+  white-space: nowrap;
+}
+
+.lab-syllabus-chip:hover { background: var(--syllabus-chip-hover) !important; }
+.lab-syllabus-primary-link { border-radius: inherit; inset: 0; position: absolute; z-index: 0; }
+.lab-syllabus-primary-link:focus-visible { outline: 2px solid var(--syllabus-chip-text); outline-offset: 2px; }
+.lab-syllabus-name,
+.lab-syllabus-divider,
+.lab-syllabus-sections { pointer-events: none; position: relative; z-index: 1; }
+.lab-syllabus-section { border-radius: 4px; color: inherit; padding: 2px; text-decoration: none; }
+a.lab-syllabus-section { pointer-events: auto; }
+a.lab-syllabus-section:hover { text-decoration: underline; text-underline-offset: 2px; }
+a.lab-syllabus-section:focus-visible { outline: 2px solid currentColor; outline-offset: 1px; }
+.lab-syllabus-name { color: var(--syllabus-chip-text) !important; }
+.lab-syllabus-divider,
+.lab-syllabus-separator { color: var(--muted, var(--lab-muted)); }
+.lab-syllabus-sections { align-items: center; display: inline-flex; }
+
+body > main {
+  container-name: lab-canvas;
+  container-type: inline-size;
+  margin-left: var(--lab-page-gutter);
+  margin-right: auto;
+  margin-top: 18px;
+  max-width: var(--lab-header-max-width);
+  width: calc(100vw - var(--lab-page-gutter) - var(--lab-page-gutter));
+}
+
+:where(button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 3px solid var(--lab-focus);
+  outline-offset: 4px;
+}
+
+@media (max-width: 620px) {
+  :root { --lab-header-gutter: 18px; --lab-page-gutter: 18px; }
+  body { padding-bottom: 0; padding-top: 0 !important; }
+  .lab-manifest-header {
+    gap: 14px;
+    grid-template-columns: minmax(0, 1fr) !important;
+    margin-bottom: 20px;
+    padding-bottom: 18px;
+  }
+  .lab-manifest-header h1 { font-size: clamp(24px, 8vw, 34px); }
+  .lab-syllabus-chips { gap: 4px; justify-content: flex-start !important; margin: 0 !important; }
+  .lab-syllabus-chip { font-size: 10px; max-width: 100%; min-height: 27px; padding: 7px 8px; white-space: normal; }
+  body > main { margin-top: 8px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+</style>
+<!-- LAB_FRAME_STYLES_END -->
+<!-- LAB_MANIFEST_HEAD_START -->
+<title>Diffraction Through a Gap</title>
+<meta name="description" content="Explore how gap width and wavelength affect diffraction through a gap using an interactive ripple-tank model for Cambridge IGCSE Physics 0625.">
+<link rel="canonical" href="https://www.examplicity.org/labs/physics/diffraction-through-a-gap.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Examplicity">
+<meta property="og:title" content="Diffraction Through a Gap">
+<meta property="og:description" content="Explore how gap width and wavelength affect diffraction through a gap using an interactive ripple-tank model for Cambridge IGCSE Physics 0625.">
+<meta property="og:url" content="https://www.examplicity.org/labs/physics/diffraction-through-a-gap.html">
+<meta property="og:image" content="https://www.examplicity.org/opengraph-image">
+<meta property="og:image:alt" content="Examplicity — Make complex ideas click">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Diffraction Through a Gap">
+<meta name="twitter:description" content="Explore how gap width and wavelength affect diffraction through a gap using an interactive ripple-tank model for Cambridge IGCSE Physics 0625.">
+<meta name="twitter:image" content="https://www.examplicity.org/opengraph-image">
+<script type="application/ld+json" data-lab-manifest="structured-data">{"@context":"https://schema.org","@type":"LearningResource","@id":"https://www.examplicity.org/labs/physics/diffraction-through-a-gap.html#learning-resource","url":"https://www.examplicity.org/labs/physics/diffraction-through-a-gap.html","name":"Diffraction Through a Gap","description":"Explore how gap width and wavelength affect diffraction through a gap using an interactive ripple-tank model for Cambridge IGCSE Physics 0625.","inLanguage":"en-GB","isAccessibleForFree":true,"interactivityType":"active","learningResourceType":"Ripple-tank investigation","teaches":"Waves","educationalLevel":["IGCSE"],"educationalAlignment":[{"@type":"AlignmentObject","alignmentType":"educationalSubject","educationalFramework":"Cambridge IGCSE Physics","targetName":"IGCSE 0625 section 3.1","targetUrl":"https://www.cambridgeinternational.org/Images/697209-2026-2028-syllabus.pdf#page=23"}],"about":{"@type":"Thing","name":"Physics"},"audience":{"@type":"EducationalAudience","educationalRole":"student"},"provider":{"@type":"Organization","name":"Examplicity","url":"https://www.examplicity.org"},"isPartOf":{"@type":"WebSite","@id":"https://www.examplicity.org/#website","name":"Examplicity","url":"https://www.examplicity.org"}}</script>
+<!-- LAB_MANIFEST_HEAD_END -->
+<style>
+:root {
+  --ink: var(--lab-ink);
+  --muted: var(--lab-muted);
+  --line: var(--lab-line);
+  --accent: var(--lab-accent);
+  --accent-soft: var(--lab-accent-soft);
+  --good: var(--lab-good);
+  --good-soft: var(--lab-good-soft);
+  --warn: var(--lab-warn);
+  --warn-soft: var(--lab-warn-soft);
+  --bad: var(--lab-bad);
+  --bad-soft: var(--lab-bad-soft);
+  --water: #e8f4f8;
+  --water-deep: #89bdd0;
+  --wave: #2f789f;
+  --wave-soft: #d7edf5;
+  --barrier: #56636c;
+  --barrier-edge: #38434a;
+  --reference: #b7762a;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; color: var(--ink); background: var(--lab-canvas); }
+button, input { font: inherit; }
+button { cursor: pointer; }
+button:disabled, input:disabled { cursor: not-allowed; opacity: .48; }
+.panel { background: var(--lab-surface); border: 1px solid var(--line); border-radius: var(--lab-panel-radius); box-shadow: var(--lab-panel-shadow); }
+body > main { margin-top: 6px; }
+.lab-manifest-header { margin-bottom: 9px; padding-bottom: 10px; border-bottom: 1px solid var(--line) !important; }
+.lab-manifest-header h1 { font-size: clamp(24px, 2.8vw, 34px); }
+.lab-manifest-subtitle { margin-top: 6px; font-size: 12px; line-height: 1.4; }
+
+.mission {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px 18px;
+  align-items: center;
+  padding: 10px 11px;
+}
+.mission-copy { min-width: 0; }
+.problem-kicker { color: var(--accent); font-size: 8px; font-weight: 900; letter-spacing: .075em; text-transform: uppercase; }
+.mission-copy strong { display: block; margin-top: 3px; font-size: 15px; line-height: 1.32; }
+.mission-copy > span { display: block; margin-top: 3px; color: var(--muted); font-size: 9.5px; line-height: 1.38; }
+.mission-tools { display: flex; align-items: center; justify-content: flex-end; gap: 8px; flex-wrap: wrap; }
+.phase-track { display: flex; align-items: center; gap: 4px; }
+.phase-step {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 29px;
+  padding: 5px 8px;
+  border: 1px solid var(--line);
+  border-radius: var(--lab-pill-radius);
+  background: var(--lab-paper);
+  color: var(--muted);
+  font-size: 8.5px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+.phase-step i { width: 7px; height: 7px; border-radius: 50%; background: #acb4ba; }
+.phase-step.current { border-color: #9db3d2; background: var(--accent-soft); color: #345a88; }
+.phase-step.current i { background: var(--accent); }
+.phase-step.done { border-color: #afd1ba; background: var(--good-soft); color: var(--good); }
+.phase-step.done i { background: var(--good); }
+.ui-button {
+  min-height: 32px;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--lab-control-radius);
+  background: var(--lab-control);
+  color: var(--ink);
+  font-size: 9.5px;
+  font-weight: 760;
+}
+.ui-button:hover:not(:disabled) { border-color: var(--lab-line-strong); }
+.ui-button.primary { border-color: var(--accent); background: var(--accent); color: #fff; }
+.ui-button.good { border-color: var(--good); background: var(--good); color: #fff; }
+
+.lab {
+  margin-top: 8px;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(360px, .46fr);
+  grid-template-areas:
+    "head head"
+    "stage work"
+    "controls work";
+  align-items: stretch;
+}
+.visual-head { grid-area: head; }
+.visual-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 9px 14px;
+  align-items: center;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--line);
+}
+.visual-copy strong { display: block; font-size: 12px; }
+.visual-copy span { display: block; margin-top: 2px; color: var(--muted); font-size: 8.5px; line-height: 1.32; }
+.readouts { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 5px; }
+.readout {
+  min-height: 27px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 7px;
+  border: 1px solid var(--line);
+  border-radius: var(--lab-pill-radius);
+  background: var(--lab-paper);
+  color: var(--muted);
+  font-size: 8px;
+  font-weight: 760;
+  white-space: nowrap;
+}
+.readout b { color: var(--ink); font: 850 10px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+.readout.spread { color: #27637e; border-color: #a9cad8; background: #edf8fb; }
+.readout.reference { color: #7a511f; border-color: #d8b98d; background: #fff8eb; }
+
+.stage-shell { grid-area: stage; position: relative; overflow-x: auto; overscroll-behavior-x: contain; background: #edf5f8; }
+.stage-frame { position: relative; width: 100%; min-width: 680px; aspect-ratio: 900 / 430; overflow: hidden; background: var(--water); }
+#waveCanvas, #overlay { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+#waveCanvas { background: var(--water); }
+#overlay { user-select: none; touch-action: none; }
+#overlay text { font-family: var(--lab-font-sans); }
+.tank-outline { fill: none; stroke: #789ba9; stroke-width: 2; }
+.tank-shine { fill: none; stroke: rgba(255,255,255,.72); stroke-width: 2; }
+.barrier { fill: var(--barrier); stroke: var(--barrier-edge); stroke-width: 2; }
+.barrier-stripe { stroke: rgba(255,255,255,.22); stroke-width: 2; }
+.gap-edge { stroke: #f5c05b; stroke-width: 4; stroke-linecap: round; }
+.gap-handle { fill: #fff; stroke: #2c5f7d; stroke-width: 3; cursor: ns-resize; }
+.gap-handle-halo { fill: rgba(255,255,255,.74); stroke: rgba(47,120,159,.33); stroke-width: 2; cursor: ns-resize; }
+.gap-handle.locked, .gap-handle-halo.locked { cursor: not-allowed; opacity: .45; }
+.lambda-line, .lambda-cap { stroke: #225f82; stroke-width: 2; }
+.lambda-line.outgoing, .lambda-cap.outgoing { stroke: #4d7890; }
+.lambda-handle { fill: #fff; stroke: #225f82; stroke-width: 3; cursor: ew-resize; }
+.lambda-handle-halo { fill: rgba(255,255,255,.78); stroke: rgba(34,95,130,.3); stroke-width: 2; cursor: ew-resize; }
+.lambda-handle.locked, .lambda-handle-halo.locked { cursor: not-allowed; opacity: .45; }
+.measure-label { fill: #244f67; font-size: 11px; font-weight: 850; }
+.measure-note { fill: #55707e; font-size: 9px; font-weight: 720; }
+.gap-label-bg { fill: rgba(42,67,79,.86); stroke: rgba(255,255,255,.55); stroke-width: 1; }
+.gap-label { fill: #fff; font-size: 9px; font-weight: 850; text-anchor: middle; }
+.fan-fill { fill: rgba(82,119,184,.09); }
+.fan-edge { fill: none; stroke: rgba(54,91,136,.78); stroke-width: 2; stroke-dasharray: 7 6; }
+.fan-arc { fill: none; stroke: rgba(54,91,136,.88); stroke-width: 3; }
+.reference-fill { fill: rgba(183,118,42,.075); }
+.reference-edge { fill: none; stroke: #a85d17; stroke-width: 3; stroke-dasharray: 6 5; opacity: 1; }
+.reference-arc { fill: none; stroke: #a85d17; stroke-width: 3; stroke-dasharray: 5 4; }
+.direction { fill: none; stroke: #456a7d; stroke-width: 2; marker-end: url(#arrowHead); }
+.direction-label { fill: #385b6c; font-size: 9px; font-weight: 800; }
+.stage-pill { fill: rgba(255,255,255,.9); stroke: rgba(80,112,128,.35); stroke-width: 1; }
+.stage-pill-text { fill: #385661; font-size: 9px; font-weight: 800; }
+.guide-card {
+  position: absolute;
+  z-index: 8;
+  width: 215px;
+  padding: 8px 9px;
+  border: 1px solid #8faed1;
+  border-radius: 9px;
+  background: rgba(250,252,255,.97);
+  box-shadow: 0 8px 18px rgba(29,29,31,.13);
+  pointer-events: none;
+}
+.guide-card strong { display: block; color: #2f557f; font-size: 10px; line-height: 1.25; }
+.guide-card span { display: block; margin-top: 2px; color: #5f7184; font-size: 8px; line-height: 1.3; }
+.guide-gap { left: 33.5%; top: 36%; }
+.guide-wave { left: 8%; top: 19%; }
+.guide-target { filter: drop-shadow(0 0 6px rgba(82,119,184,.92)); animation: guidePulse .8s ease-in-out infinite alternate; }
+@keyframes guidePulse { to { filter: drop-shadow(0 0 11px rgba(82,119,184,.65)); } }
+
+.controls {
+  grid-area: controls;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(150px, .72fr);
+  gap: 8px;
+  padding: 8px 9px;
+  border-top: 1px solid var(--line);
+  background: #fff;
+}
+.control-card {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 5px 8px;
+  align-items: center;
+  padding: 7px 8px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--lab-paper);
+}
+.control-card.is-locked { background: #f4f5f6; }
+.control-title { display: flex; align-items: baseline; gap: 6px; min-width: 0; }
+.control-title strong { font-size: 10px; }
+.control-title span { color: var(--muted); font-size: 8px; }
+.control-value { color: #274f68; font: 850 13px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: nowrap; }
+.control-card input[type="range"] { grid-column: 1 / -1; width: 100%; accent-color: var(--accent); }
+.lock-state { grid-column: 1 / -1; color: var(--muted); font-size: 7.5px; font-weight: 760; }
+.relation-card { grid-template-columns: 1fr; align-content: center; }
+.relation-card .relation-kicker { color: var(--muted); font-size: 7px; font-weight: 900; letter-spacing: .06em; text-transform: uppercase; }
+.relation-card strong { color: #315d77; font-size: 11px; line-height: 1.28; }
+.relation-bar { height: 7px; overflow: hidden; border-radius: 999px; background: #dfe7eb; }
+.relation-bar > i { display: block; height: 100%; width: 0; border-radius: inherit; background: linear-gradient(90deg,#8eb7ca,#5277b8); transition: width 160ms ease; }
+
+.workbench {
+  grid-area: work;
+  min-height: 0;
+  overflow: hidden;
+  contain: size;
+  border-left: 1px solid var(--line);
+  background: #fff;
+}
+.workbench-grid { height: 100%; min-height: 0; overflow: hidden; display: grid; grid-template-columns: 1fr; grid-template-rows: minmax(0, 1fr) 95px; }
+.coach { min-width: 0; min-height: 0; padding: 10px 11px; overflow: auto; border-bottom: 1px solid var(--line); }
+.coach section { min-height: 100%; }
+.eyebrow { color: var(--accent); font-size: 7px; font-weight: 900; letter-spacing: .075em; text-transform: uppercase; }
+.coach h2 { margin: 4px 0 0; font-size: 15px; line-height: 1.3; }
+.coach-copy { margin: 4px 0 0; color: var(--muted); font-size: 9px; line-height: 1.4; }
+.prediction-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.choice {
+  min-height: 34px;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--lab-control);
+  color: var(--ink);
+  font-size: 9px;
+  font-weight: 760;
+}
+.choice:hover { border-color: var(--lab-line-strong); }
+.choice.selected { border-color: var(--accent); background: var(--accent-soft); color: #345a88; }
+.action-strip, .result-card, .feedback-card {
+  margin-top: 9px;
+  padding: 8px 9px;
+  border: 1px solid #b9cbe2;
+  border-radius: 9px;
+  background: #f4f8fd;
+  color: #355875;
+  font-size: 9px;
+  line-height: 1.4;
+}
+.result-card.good, .feedback-card.good { border-color: #a9ceb5; background: var(--good-soft); color: #245f42; }
+.result-card.bad, .feedback-card.bad { border-color: #e0b6af; background: var(--bad-soft); color: #8f3029; }
+.feedback-card.warn { border-color: #e4cf9f; background: var(--warn-soft); color: #78561b; }
+.action-strip strong, .result-card strong, .feedback-card strong { display: block; margin-bottom: 2px; color: inherit; font-size: 10px; }
+.coach-actions { display: flex; gap: 7px; align-items: center; flex-wrap: wrap; margin-top: 9px; }
+.live-line { color: var(--muted); font-size: 8.5px; }
+
+.challenge-grid { display: grid; grid-template-columns: 1fr; gap: 7px; margin-top: 7px; align-items: start; }
+#comparePhase .coach-copy { display: none; }
+#comparePhase h2 { line-height: 1.22; }
+#comparePhase .challenge-grid { gap: 5px; margin-top: 5px; }
+#comparePhase .target-list { gap: 3px; }
+#comparePhase .target { min-height: 23px; padding: 2px 6px; }
+#comparePhase .coach-actions { margin-top: 6px; gap: 5px 7px; }
+#comparePhase .coach-actions .ui-button { min-height: 30px; }
+.target-list { display: grid; gap: 4px; }
+.target {
+  display: grid;
+  grid-template-columns: 11px minmax(0, 1fr) auto;
+  gap: 6px;
+  align-items: center;
+  min-height: 27px;
+  padding: 4px 7px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--lab-paper);
+  font-size: 7.8px;
+}
+.target i { width: 8px; height: 8px; border-radius: 50%; background: #aeb6bc; }
+.target strong { font-size: 8.2px; }
+.target span:last-child { color: var(--muted); font: 800 8.2px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: nowrap; }
+.target.met { border-color: #b1d2bc; background: var(--good-soft); }
+.target.met i { background: var(--good); }
+.target.met span:last-child { color: var(--good); }
+.working-box {
+  height: 135px;
+  overflow: hidden;
+  padding: 7px 8px;
+  border: 1px solid #d6c28d;
+  border-radius: 9px;
+  background: #fffaf0;
+}
+.working-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.working-title strong { display: block; color: #654f22; font-size: 8.5px; }
+.working-title span { display: block; margin-top: 1px; color: #82704a; font-size: 6.8px; }
+.working-switch { display: inline-flex; padding: 2px; border: 1px solid #d8c99d; border-radius: 999px; background: #f5eedc; }
+.working-switch button { min-height: 25px; padding: 0 7px; border: 0; border-radius: 999px; background: transparent; color: #75643f; font-size: 7.5px; font-weight: 850; }
+.working-switch button.active { background: #fff; color: #3f5360; box-shadow: 0 1px 3px rgba(29,29,31,.12); }
+.working-grid {
+  display: grid;
+  grid-template-columns: minmax(63px,1fr) auto minmax(63px,1fr) auto minmax(63px,1fr);
+  gap: 4px;
+  align-items: end;
+  margin-top: 7px;
+}
+.work-op { align-self: center; padding-bottom: 13px; color: #625b4d; font: 900 11px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+.work-field { position: relative; min-width: 0; padding: 4px 5px; border: 1px solid #ded7c7; border-radius: 7px; background: #fff; transition: border-color .14s, background-color .14s, box-shadow .14s; }
+.work-field > span:first-child { display: block; color: #81765f; font-size: 6.5px; font-weight: 850; text-transform: uppercase; letter-spacing: .04em; white-space: nowrap; }
+.work-auto { display: block; height: 27px; padding-top: 5px; color: #3f4b52; font: 850 10.5px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+.work-field input { display: none; width: 100%; min-width: 0; height: 27px; margin-top: 2px; padding: 0 21px 0 5px; border: 1px solid #d1ad45; border-radius: 6px; background: #fff; color: var(--ink); font: 850 10.5px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+.work-field.owned { border-color: #dfc963; background: #fffdf3; box-shadow: inset 3px 0 0 #d0ad35; }
+.work-field.owned .work-auto { display: none; }
+.work-field.owned input { display: block; }
+.work-field.correct { border-color: #a9d4b9; background: var(--good-soft); box-shadow: inset 3px 0 0 var(--good); }
+.work-field.correct input { border-color: var(--good); background: #fff; color: var(--good); }
+.work-field.incorrect { border-color: #e1aaa3; background: #fff8f7; box-shadow: inset 3px 0 0 var(--bad); }
+.work-field.incorrect input { border-color: var(--bad); background: #fff; color: var(--bad); }
+.work-field input:focus { border-color: var(--accent); outline: 3px solid var(--lab-focus-soft); outline-offset: 1px; }
+.work-state { display: block; min-height: 9px; margin-top: 2px; color: #82765f; font-size: 6.2px; font-weight: 760; line-height: 1.1; white-space: nowrap; }
+.work-field.correct .work-state { color: var(--good); }
+.work-field.incorrect .work-state { color: var(--bad); }
+.working-hint { min-height: 19px; margin-top: 5px; color: #76694e; font-size: 6.9px; line-height: 1.28; }
+
+.evidence { min-width: 0; min-height: 0; padding: 8px 9px; overflow: auto; background: #fbfcfd; }
+.evidence-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.evidence-head strong { font-size: 11px; }
+.evidence-head span { color: var(--muted); font-size: 7.5px; }
+.evidence-list { display: grid; gap: 4px; margin-top: 6px; }
+.evidence-row { padding: 5px 6px; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
+.evidence-row.current { border-color: #a9bdd8; background: #f3f7fc; }
+.evidence-row.done { border-color: #b0d2bb; background: #f4fbf6; }
+.evidence-row strong { display: flex; justify-content: space-between; gap: 6px; font-size: 8.5px; }
+.evidence-row strong span { color: var(--muted); font-size: 7.5px; font-weight: 760; }
+.evidence-row p { margin: 2px 0 0; color: #5f6e77; font-size: 7.3px; line-height: 1.28; }
+.evidence-row b { color: #315d77; }
+.evidence-row.done b { color: var(--good); }
+.model-note { display: none; }
+
+@container lab-canvas (max-width: 900px) {
+  .controls { grid-template-columns: 1fr 1fr; }
+  .relation-card { grid-column: 1 / -1; }
+  .mission { gap: 8px 12px; }
+  .phase-step { padding-inline: 6px; }
+}
+
+@container lab-canvas (max-width: 760px) {
+  .mission { grid-template-columns: 1fr; }
+  .mission-tools { justify-content: flex-start; }
+  .lab {
+    grid-template-columns: 1fr;
+    grid-template-areas: "head" "stage" "controls" "work";
+  }
+  .visual-head { grid-template-columns: 1fr; }
+  .readouts { justify-content: flex-start; }
+  .workbench { height: 420px; border-left: 0; border-top: 1px solid var(--line); }
+  .workbench-grid { grid-template-columns: minmax(0, 1.35fr) minmax(250px, .65fr); grid-template-rows: 1fr; }
+  .coach { border-right: 1px solid var(--line); border-bottom: 0; }
+}
+
+@container lab-canvas (max-width: 620px) {
+  .visual-head { min-height: 105px; align-content: start; }
+  .phase-track { flex-wrap: wrap; }
+  .phase-step { font-size: 8px; }
+  .controls { grid-template-columns: 1fr; }
+  .relation-card { grid-column: auto; }
+  .workbench { height: 610px; }
+  .workbench-grid { grid-template-columns: 1fr; grid-template-rows: 410px 200px; }
+  .coach { border-right: 0; border-bottom: 1px solid var(--line); }
+  .guide-card { width: 190px; }
+  .guide-gap { left: 36%; top: 42%; }
+  .working-grid { grid-template-columns: minmax(56px,1fr) auto minmax(56px,1fr) auto minmax(56px,1fr); }
+  .working-switch button { padding-inline: 6px; }
+}
+
+@media (max-width: 520px) {
+  #outgoingMeasure { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .guide-target { animation: none; }
+}
+
+/* revision v3: every lab region remains fully visible; no internal scrolling */
+html, body { max-width: 100%; overflow-x: hidden; }
+.workbench-grid { grid-template-rows: minmax(0, 1fr) 74px; }
+.evidence { padding: 5px 6px; }
+.evidence-head strong { font-size: 9px; }
+.evidence-head span { font-size: 6.5px; }
+.evidence-list { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; margin-top: 3px; }
+.evidence-row { min-width: 0; padding: 3px 4px; border-radius: 6px; }
+.evidence-row strong { font-size: 7px; line-height: 1.15; }
+.evidence-row strong span { font-size: 6px; }
+.evidence-row p { margin-top: 1px; font-size: 6.1px; line-height: 1.15; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+#comparePhase .target { min-height: 21px; padding: 2px 5px; }
+#comparePhase .target-list { gap: 2px; }
+#comparePhase .challenge-grid { gap: 4px; margin-top: 4px; }
+#comparePhase .working-box { height: 112px; padding: 6px 7px; }
+#comparePhase .working-grid { margin-top: 5px; }
+#comparePhase .working-hint { min-height: 14px; margin-top: 3px; }
+#comparePhase .coach-actions { margin-top: 5px; }
+#comparePhase .feedback-card { margin-top: 5px; padding: 5px 7px; }
+.stage-shell { overflow: hidden; overscroll-behavior: none; }
+.stage-frame { min-width: 0; width: 100%; }
+.workbench { overflow: hidden; contain: none; }
+.coach, .evidence { overflow: hidden; }
+.coach section { min-height: 0; }
+
+@container lab-canvas (max-width: 1100px) and (min-width: 901px) {
+  #comparePhase .coach { padding: 8px 9px; }
+  #comparePhase h2 { font-size: 13.5px; line-height: 1.22; }
+  #comparePhase .target strong, #comparePhase .target span:last-child { font-size: 7.2px; }
+  #comparePhase .working-title strong { font-size: 8px; }
+  #comparePhase .working-title span { font-size: 6.2px; }
+  #comparePhase .working-switch button { min-height: 22px; padding: 0 6px; font-size: 6.8px; }
+  #comparePhase .work-field { padding: 3px 4px; }
+  #comparePhase .work-field > span:first-child { font-size: 5.8px; }
+  #comparePhase .work-auto, #comparePhase .work-field input { height: 23px; font-size: 9.5px; }
+  #comparePhase .work-state { min-height: 7px; font-size: 5.6px; }
+  #comparePhase .working-hint { font-size: 6px; line-height: 1.18; }
+  #comparePhase .coach-actions .ui-button { min-height: 28px; font-size: 8px; }
+  #comparePhase .feedback-card { font-size: 7px; line-height: 1.2; }
+  #comparePhase .feedback-card strong { font-size: 8px; }
+}
+
+@container lab-canvas (max-width: 900px) and (min-width: 701px) {
+  .lab { grid-template-columns: minmax(0, 1fr) minmax(320px, .52fr); }
+  .workbench-grid { grid-template-rows: minmax(0, 1fr) 66px; }
+  .coach { padding: 8px 9px; }
+  .coach h2 { margin-top: 3px; font-size: 13px; line-height: 1.24; }
+  .coach-copy { margin-top: 3px; font-size: 8px; line-height: 1.3; }
+  .prediction-row { margin-top: 7px; gap: 4px; }
+  .choice { min-height: 30px; padding: 0 7px; font-size: 8px; }
+  .action-strip, .result-card, .feedback-card { margin-top: 6px; padding: 6px 7px; font-size: 7.8px; line-height: 1.3; }
+  .action-strip strong, .result-card strong, .feedback-card strong { font-size: 8.7px; }
+  .coach-actions { margin-top: 6px; gap: 5px; }
+  .live-line { font-size: 7.5px; }
+  .evidence { padding: 5px 6px; }
+  .evidence-head strong { font-size: 9px; }
+  .evidence-head span { font-size: 6.5px; }
+  .evidence-list { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 3px; margin-top: 3px; }
+  .evidence-row { min-width: 0; min-height: 0; padding: 2px 3px; border-radius: 6px; }
+  .evidence-row strong { display: block; font-size: 6.4px; line-height: 1.1; }
+  .evidence-row strong span { float: right; margin-left: 2px; font-size: 5.5px; }
+  .evidence-row p { display: -webkit-box; margin-top: 1px; font-size: 5.6px; line-height: 1.1; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  #comparePhase .challenge-grid { gap: 4px; margin-top: 4px; }
+  #comparePhase .target-list { gap: 2px; }
+  #comparePhase .target { min-height: 20px; padding: 2px 5px; }
+  .target { grid-template-columns: 9px minmax(0,1fr) auto; gap: 4px; font-size: 7px; }
+  .target i { width: 7px; height: 7px; }
+  .target strong, .target span:last-child { font-size: 7px; }
+  .working-box { height: 118px; padding: 6px 7px; }
+  .working-title strong { font-size: 8px; }
+  .working-title span { font-size: 6.2px; }
+  .working-switch button { min-height: 22px; padding: 0 6px; font-size: 6.8px; }
+  .working-grid { gap: 3px; margin-top: 5px; }
+  .work-field { padding: 3px 4px; }
+  .work-field > span:first-child { font-size: 5.8px; }
+  .work-auto, .work-field input { height: 24px; font-size: 9.5px; }
+  .work-state { min-height: 8px; font-size: 5.7px; }
+  .working-hint { min-height: 15px; margin-top: 3px; font-size: 6.2px; line-height: 1.2; }
+}
+
+@container lab-canvas (max-width: 700px) {
+  .mission { padding: 7px 8px; gap: 6px 8px; }
+  .mission-copy strong { font-size: 14px; line-height: 1.24; }
+  .mission-copy > span { margin-top: 2px; font-size: 8px; line-height: 1.25; }
+  .phase-track { gap: 3px; }
+  .phase-step { min-height: 25px; padding: 3px 6px; font-size: 7.4px; }
+  .ui-button { min-height: 27px; padding: 0 8px; font-size: 8px; }
+  .lab {
+    grid-template-columns: 1fr;
+    grid-template-areas: "head" "stage" "controls" "work";
+  }
+  .visual-head { min-height: 0; grid-template-columns: 1fr; gap: 4px; padding: 5px 7px; }
+  .visual-copy strong { font-size: 11px; }
+  .visual-copy span { font-size: 7.5px; }
+  .readouts { gap: 3px; justify-content: flex-start; }
+  .readout { min-height: 24px; padding: 3px 5px; font-size: 6.8px; }
+  .readout b { font-size: 8.5px; }
+  .stage-frame { aspect-ratio: 900 / 430; }
+  .controls { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; padding: 5px 6px; }
+  .relation-card { grid-column: auto; }
+  .control-card { padding: 5px 6px; gap: 3px 5px; }
+  .control-title { gap: 4px; }
+  .control-title strong { font-size: 8.5px; }
+  .control-title span { display: none; }
+  .control-value { font-size: 10px; }
+  .lock-state { font-size: 6.2px; }
+  .relation-card .relation-kicker { font-size: 5.8px; }
+  .relation-card strong { font-size: 8px; line-height: 1.18; }
+  .relation-bar { height: 5px; }
+  .workbench { height: auto; border-left: 0; border-top: 1px solid var(--line); }
+  .workbench-grid { height: auto; grid-template-columns: minmax(0, 1.65fr) minmax(150px, .65fr); grid-template-rows: auto; }
+  .coach { padding: 8px 9px; border-right: 1px solid var(--line); border-bottom: 0; }
+  .coach h2 { margin-top: 3px; font-size: 13px; line-height: 1.23; }
+  .coach-copy { margin-top: 3px; font-size: 8px; line-height: 1.28; }
+  .prediction-row { margin-top: 7px; gap: 4px; }
+  .choice { min-height: 30px; padding: 0 7px; font-size: 8px; }
+  .action-strip, .result-card, .feedback-card { margin-top: 6px; padding: 6px 7px; font-size: 7.8px; line-height: 1.3; }
+  .coach-actions { margin-top: 6px; gap: 5px; }
+  .live-line { font-size: 7.2px; }
+  .evidence { padding: 6px; background: #fbfcfd; }
+  .evidence-head { display: block; }
+  .evidence-head strong { font-size: 9px; }
+  .evidence-head span { display: none; }
+  .evidence-list { gap: 3px; margin-top: 4px; }
+  .evidence-row { padding: 3px 4px; }
+  .evidence-row strong { display: block; font-size: 6.7px; line-height: 1.15; }
+  .evidence-row strong span { float: right; margin-left: 3px; font-size: 5.8px; }
+  .evidence-row p { margin-top: 1px; font-size: 6px; line-height: 1.15; }
+  .evidence-row:not(.current):not(.done) p { display: none; }
+  .evidence-row, .evidence-row strong, .evidence-row p { overflow-wrap: anywhere; word-break: normal; }
+  .evidence-row strong span { float: none; display: block; margin: 1px 0 0; }
+  #comparePhase .challenge-grid { gap: 4px; margin-top: 4px; }
+  #comparePhase .target-list { gap: 2px; }
+  #comparePhase .target { min-height: 20px; padding: 2px 5px; }
+  .target { grid-template-columns: 9px minmax(0,1fr) auto; gap: 4px; }
+  .target strong, .target span:last-child { font-size: 6.8px; }
+  .working-box { height: 116px; padding: 6px; }
+  .working-switch button { min-height: 22px; padding: 0 5px; font-size: 6.5px; }
+  .working-grid { gap: 2px; margin-top: 5px; }
+  .work-field { padding: 3px; }
+  .work-field > span:first-child { font-size: 5.5px; }
+  .work-auto, .work-field input { height: 23px; font-size: 9px; }
+  .work-state { min-height: 7px; font-size: 5.4px; }
+  .working-hint { min-height: 14px; margin-top: 3px; font-size: 5.8px; line-height: 1.18; }
+}
+
+@media (max-width: 620px) {
+  .lab-manifest-header {
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    gap: 8px 10px;
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+  }
+  .lab-manifest-header h1 { font-size: clamp(23px, 6vw, 29px); }
+  .lab-manifest-subtitle { margin-top: 4px; font-size: 10.5px; line-height: 1.3; }
+  .lab-syllabus-chips { justify-content: flex-end !important; margin: 0 0 0 auto !important; }
+  .lab-syllabus-chip { min-height: 25px; padding: 6px 8px; font-size: 9px; white-space: nowrap; }
+}
+
+@container lab-canvas (max-width: 520px) {
+  .visual-head { grid-template-columns: 1fr; }
+  .readouts { justify-content: flex-start; }
+  .controls { grid-template-columns: 1fr 1fr; }
+  .relation-card { grid-column: 1 / -1; }
+  .workbench-grid { grid-template-columns: minmax(0, 1fr) 138px; }
+}
+</style>
+
+<style id="revision-v4-styles">
+/* v4: use layout, not tiny type, to keep the complete causal model visible. */
+html,body{width:100%;height:100%;overflow:hidden}
+body>main{width:min(1210px,calc(100vw - 28px));height:auto;max-height:calc(100vh - 8px);margin:8px auto 0;max-width:none}
+.lab-manifest-header{min-height:66px;margin:0 0 8px;padding:0 0 9px;align-items:start}
+.lab-manifest-header h1{font-size:clamp(26px,2.6vw,34px);line-height:1.02}
+.lab-manifest-subtitle{max-width:72ch;margin-top:5px;font-size:12px;line-height:1.35}
+.lab-syllabus-chip{font-size:10px;min-height:28px;padding:7px 9px}
+.mission{min-height:62px;padding:8px 10px;gap:10px 14px}
+.problem-kicker{font-size:9px}
+.mission-copy strong{font-size:15px;line-height:1.27}
+.mission-copy>span{font-size:10.5px;line-height:1.32}
+.phase-step{min-height:30px;padding:5px 8px;font-size:9px}
+.ui-button{min-height:32px;font-size:10px}
+.lab{margin-top:7px;grid-template-columns:minmax(0,1fr) 420px;grid-template-areas:"head head" "stage work" "controls work";align-items:stretch}
+.visual-head{min-height:44px;padding:7px 9px}
+.visual-copy strong{font-size:13px}
+.visual-copy span{font-size:10px;line-height:1.3}
+.readout{min-height:28px;padding:4px 7px;font-size:9px}
+.readout b{font-size:10.5px}
+.stage-shell{overflow:hidden;display:flex;align-items:stretch;justify-content:center}
+.stage-frame{width:100%;min-width:0;aspect-ratio:900/420;overflow:hidden}
+.measure-label{font-size:14px}
+.measure-note{font-size:11px}
+.gap-label{font-size:11px}
+.direction-label{font-size:11px}
+.stage-pill-text{font-size:10.5px}
+.guide-card{width:225px;padding:9px 10px}
+.guide-card strong{font-size:12px;line-height:1.25}
+.guide-card span{font-size:10px;line-height:1.3}
+.controls{min-height:76px;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(190px,.72fr);gap:7px;padding:7px 8px}
+.control-card{padding:6px 8px;gap:4px 7px}
+.control-title strong{font-size:11px}
+.control-title span{font-size:9px}
+.control-value{font-size:13px}
+.lock-state{font-size:9px}
+.relation-card .relation-kicker{font-size:8px}
+.relation-card strong{font-size:11.5px;line-height:1.26}
+.workbench{border-left:1px solid var(--line);overflow:hidden;contain:none}
+.workbench-grid{height:100%;grid-template-rows:minmax(0,1fr) 132px;overflow:hidden}
+.coach{padding:12px 13px;overflow:hidden}
+.coach section{min-height:0}
+.eyebrow{font-size:9px}
+.coach h2{margin-top:5px;font-size:17px;line-height:1.24}
+.coach-copy{margin-top:6px;font-size:10.5px;line-height:1.35}
+.prediction-map{position:relative;display:grid;grid-template-columns:minmax(0,.9fr) 24px minmax(0,1.1fr);align-items:center;gap:7px;margin-top:10px;padding:10px;border:2px solid #9fb9dd;border-radius:11px;background:#f6f9fe;box-shadow:0 0 0 3px rgba(82,119,184,.06)}
+.prediction-node{min-width:0;padding:8px 9px;border:1px solid #c8d5e5;border-radius:9px;background:#fff}
+.prediction-node span,.prediction-held span{display:block;color:#657788;font-size:8.5px;font-weight:850;letter-spacing:.055em;text-transform:uppercase}
+.prediction-node strong{display:block;margin-top:3px;font-size:12px;line-height:1.2}
+.prediction-node.outcome{border-color:#9fb9dd;background:#eef4fc}
+.prediction-node.outcome strong{color:#345c8b}
+.prediction-map.has-choice .prediction-node.outcome{border-color:#6f97ca;background:#e9f2fd;box-shadow:inset 3px 0 0 var(--accent)}
+.prediction-map.has-choice .prediction-node.outcome strong::before{content:"✓ ";color:var(--accent)}
+.prediction-arrow{color:#607b91;font-size:19px;font-weight:900;text-align:center}
+.prediction-held{grid-column:1/-1;display:flex;justify-content:space-between;gap:8px;align-items:center;padding:6px 8px;border:1px dashed #c8d1d8;border-radius:8px;background:#fff;color:#4e5d66}
+.prediction-held strong{font-size:10.5px}
+.prediction-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:9px;padding:7px;border:1px solid #d9e1ec;border-radius:10px;background:#fbfcff}
+.choice{position:relative;min-height:39px;padding:0 8px 0 26px;font-size:10.5px;line-height:1.15;text-align:left}
+.choice::before{content:"";position:absolute;left:9px;top:50%;width:10px;height:10px;transform:translateY(-50%);border:2px solid #9aa9b5;border-radius:50%;background:#fff}
+.choice.selected{border-color:#6f97ca;background:#e9f2fd;color:#2e5a8d;box-shadow:inset 0 0 0 1px rgba(82,119,184,.18)}
+.choice.selected::before{border-color:var(--accent);background:var(--accent);box-shadow:inset 0 0 0 2px #fff}
+.action-strip,.result-card,.feedback-card{margin-top:8px;padding:8px 9px;font-size:10px;line-height:1.34}
+.action-strip strong,.result-card strong,.feedback-card strong{font-size:11px}
+.coach-actions{margin-top:8px;gap:6px}
+.live-line{font-size:9.5px;line-height:1.3}
+.evidence{padding:8px 9px;overflow:hidden;background:#fbfcfd}
+.evidence-head strong{font-size:11px}
+.evidence-head span{font-size:9px}
+.evidence-list{display:grid;grid-template-columns:1fr;gap:4px;margin-top:5px}
+.evidence-row{padding:5px 7px}
+.evidence-row strong{font-size:9px;line-height:1.18}
+.evidence-row strong span{font-size:8px}
+.evidence-row p{margin-top:2px;font-size:8.5px;line-height:1.22;display:block;overflow:visible}
+#comparePhase h2{font-size:16px}
+#comparePhase .challenge-grid{gap:7px;margin-top:7px}
+#comparePhase .target-list{gap:4px}
+#comparePhase .target{min-height:31px;padding:4px 7px;grid-template-columns:12px minmax(0,1fr) auto;gap:6px}
+.target strong,.target span:last-child{font-size:9px}
+.target i{width:9px;height:9px}
+.working-box,#comparePhase .working-box{height:156px;padding:8px 9px;border-color:#d7bf7a;background:#fffaf0}
+.working-title strong{font-size:10px}
+.working-title span{font-size:8.5px}
+.working-switch{padding:3px}
+.working-switch button{min-height:28px;padding:0 8px;font-size:8.5px}
+.working-grid,#comparePhase .working-grid{grid-template-columns:minmax(70px,1fr) 15px minmax(70px,1fr) 15px minmax(70px,1fr);gap:5px;margin-top:8px}
+.work-op{padding-bottom:16px;font-size:13px}
+.work-field{padding:5px 6px;border-radius:8px}
+.work-field>span:first-child{font-size:8px}
+.work-auto,.work-field input{height:31px;font-size:12px}
+.work-field:not(.owned):not(.correct):not(.incorrect){border-color:#a9d4b9;background:var(--good-soft);box-shadow:inset 3px 0 0 var(--good)}
+.work-field:not(.owned):not(.correct):not(.incorrect) .work-auto{color:var(--good)}
+.work-field:not(.owned):not(.correct):not(.incorrect) .work-state{color:var(--good)}
+.work-field:not(.owned):not(.correct):not(.incorrect) .work-state::before{content:"✓ ";font-weight:900}
+.work-field.owned{border-color:#d5b84f;background:#fff8d8;box-shadow:inset 4px 0 0 #d0ad35}
+.work-field.owned input{border-color:#c9a838;background:#fffef7}
+.work-field.correct{border-color:#8dc6a3;background:var(--good-soft);box-shadow:inset 4px 0 0 var(--good)}
+.work-field.incorrect{border-color:#dc958d;background:var(--bad-soft);box-shadow:inset 4px 0 0 var(--bad)}
+.work-state{min-height:12px;margin-top:3px;font-size:8px;line-height:1.15}
+.working-hint,#comparePhase .working-hint{min-height:22px;margin-top:6px;font-size:9px;line-height:1.28}
+#comparePhase .coach-actions{margin-top:7px}
+#comparePhase .coach-actions .ui-button{min-height:31px;font-size:9.5px}
+#comparePhase .feedback-card{margin-top:7px;font-size:9.5px}
+
+@media (max-height:800px){
+ body>main{margin-top:6px}
+ .lab-manifest-header{min-height:58px;margin-bottom:6px;padding-bottom:7px}
+ .lab-manifest-subtitle{font-size:11px}
+ .mission{min-height:56px;padding:7px 9px}
+ .mission-copy>span{font-size:9.5px}
+ .lab{margin-top:6px}
+ .visual-head{min-height:40px;padding:6px 8px}
+ .stage-frame{aspect-ratio:900/405}
+ .controls{min-height:69px;padding:6px 7px}
+ .workbench-grid{grid-template-rows:minmax(0,1fr) 118px}
+ .coach{padding:10px 11px}
+ .coach h2{font-size:16px}
+ .prediction-map{margin-top:7px;padding:8px}
+ .prediction-node{padding:6px 7px}
+ .prediction-row{margin-top:7px;padding:6px}
+ .choice{min-height:36px}
+ .evidence{padding:6px 7px}
+ .evidence-list{gap:3px;margin-top:4px}
+ .evidence-row{padding:4px 6px}
+ .evidence-row p{font-size:8px}
+ .working-box,#comparePhase .working-box{height:146px;padding:7px 8px}
+ .working-grid,#comparePhase .working-grid{margin-top:6px}
+ .working-hint,#comparePhase .working-hint{margin-top:4px}
+}
+
+@media (max-width:1080px){
+ body>main{width:calc(100vw - 28px)}
+ .lab{grid-template-columns:1fr;grid-template-areas:"head" "stage" "work" "controls"}
+ .stage-frame{height:clamp(250px,37vw,318px);aspect-ratio:auto}
+ .workbench{height:auto;border-left:0;border-top:1px solid var(--line)}
+ .workbench-grid{height:auto;grid-template-columns:minmax(0,1.75fr) minmax(250px,.75fr);grid-template-rows:1fr}
+ .coach{border-right:1px solid var(--line);border-bottom:0;padding:10px 11px}
+ .evidence{padding:8px 9px}
+ .evidence-list{grid-template-columns:1fr;gap:4px}
+ .prediction-map{grid-template-columns:minmax(0,.85fr) 22px minmax(0,1.15fr);margin-top:7px;padding:8px}
+ .prediction-held{padding:5px 7px}
+ .prediction-row{margin-top:7px;padding:6px}
+ #comparePhase .challenge-grid{grid-template-columns:minmax(190px,.75fr) minmax(300px,1.25fr);gap:7px;align-items:stretch}
+ #comparePhase .target-list{align-content:start}
+ #comparePhase .working-box{height:145px}
+ .controls{min-height:67px}
+}
+
+@media (max-width:760px){
+ body>main{width:calc(100vw - 18px)}
+ .lab-manifest-header{grid-template-columns:minmax(0,1fr) auto!important;gap:8px 10px}
+ .lab-manifest-header h1{font-size:clamp(24px,5vw,30px)}
+ .lab-manifest-subtitle{font-size:10.5px;line-height:1.28}
+ .lab-syllabus-chip{font-size:9px;min-height:25px;padding:6px 7px;white-space:nowrap}
+ .mission{grid-template-columns:1fr auto;gap:7px 9px}
+ .mission-copy strong{font-size:14px}
+ .mission-copy>span{font-size:9.5px}
+ .phase-track{gap:3px}
+ .phase-step{min-height:27px;padding:4px 6px;font-size:8.5px}
+ .mission-tools{gap:5px}
+ .mission-tools>.ui-button{min-height:29px;padding:0 8px;font-size:9px}
+ .visual-head{grid-template-columns:1fr;gap:4px}
+ .visual-copy strong{font-size:12px}
+ .visual-copy span{font-size:9px}
+ .readouts{justify-content:flex-start;gap:3px}
+ .readout{min-height:24px;padding:3px 5px;font-size:8px}
+ .readout b{font-size:9px}
+ .stage-frame{height:clamp(225px,42vw,285px)}
+ .measure-label{font-size:16px}.measure-note{font-size:13px}.gap-label{font-size:12px}.direction-label{font-size:12px}.stage-pill-text{font-size:11px}
+ .guide-card{width:205px;padding:8px 9px}.guide-card strong{font-size:12px}.guide-card span{font-size:10px}
+ .workbench-grid{grid-template-columns:minmax(0,1.7fr) minmax(178px,.7fr)}
+ .coach{padding:9px 10px}
+ .coach h2{font-size:15px}
+ .coach-copy{font-size:10px}
+ .prediction-node span,.prediction-held span{font-size:8px}
+ .prediction-node strong{font-size:11px}
+ .choice{min-height:35px;padding-left:24px;font-size:9.5px}
+ .evidence-head span{display:none}
+ .evidence-row strong{display:block;font-size:8.5px}
+ .evidence-row strong span{display:block;margin-top:1px;font-size:7.5px}
+ .evidence-row p{font-size:8px;line-height:1.18}
+ .controls{grid-template-columns:1fr 1fr minmax(160px,.75fr);gap:5px;padding:5px 6px}
+ .control-card{padding:5px 6px}
+ .control-title strong{font-size:10px}.control-title span{display:none}.control-value{font-size:11px}.lock-state{font-size:8px}.relation-card strong{font-size:10px}
+ #comparePhase h2{font-size:14px}
+ #comparePhase .challenge-grid{grid-template-columns:minmax(160px,.72fr) minmax(260px,1.28fr);gap:5px}
+ #comparePhase .target{min-height:28px;padding:3px 5px}
+ .target strong,.target span:last-child{font-size:8px}
+ #comparePhase .working-box{height:138px;padding:6px 7px}
+ .working-title strong{font-size:9.5px}.working-title span{font-size:8px}.working-switch button{min-height:26px;padding:0 7px;font-size:8px}
+ .working-grid,#comparePhase .working-grid{grid-template-columns:minmax(60px,1fr) 12px minmax(60px,1fr) 12px minmax(60px,1fr);gap:3px}
+ .work-field>span:first-child{font-size:7.5px}.work-auto,.work-field input{height:29px;font-size:11px}.work-state{font-size:7.5px}.working-hint,#comparePhase .working-hint{font-size:8.5px}
+}
+
+@media (max-width:650px){
+ body>main{margin-top:5px}
+ .lab-manifest-header{min-height:58px}
+ .lab-manifest-subtitle{max-width:50ch}
+ .mission{min-height:58px}
+ .problem-kicker{font-size:8px}
+ .mission-copy>span{display:none}
+ .phase-step{font-size:8px}
+ .phase-step i{width:6px;height:6px}
+ .mission-tools>.ui-button{display:none}
+ .visual-copy span{display:none}
+ .stage-frame{height:clamp(230px,43vw,260px)}
+ .workbench-grid{grid-template-columns:1fr;grid-template-rows:auto 82px}
+ .coach{border-right:0;border-bottom:1px solid var(--line)}
+ .evidence{padding:5px 6px}
+ .evidence-head{display:none}
+ .evidence-list{grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;margin:0}
+ .evidence-row{padding:4px 5px}
+ .evidence-row strong{font-size:8px}
+ .evidence-row strong span{font-size:7px}
+ .evidence-row p{display:none}
+ .prediction-map{grid-template-columns:minmax(0,.9fr) 20px minmax(0,1.1fr);margin-top:6px;padding:7px}
+ .prediction-held{grid-column:1/-1}
+ .prediction-row{gap:5px;margin-top:6px;padding:5px}
+ .choice{min-height:34px;padding:0 5px 0 22px;font-size:9px}
+ .choice::before{left:7px;width:9px;height:9px}
+ .action-strip,.result-card,.feedback-card{font-size:9.5px}
+ .controls{grid-template-columns:1fr 1fr;min-height:92px}
+ .relation-card{grid-column:1/-1;min-height:40px}
+ .relation-card .relation-bar{display:none}
+ #comparePhase .challenge-grid{grid-template-columns:1fr 1.35fr;gap:5px}
+ #comparePhase .working-box{height:136px}
+ #comparePhase .coach-actions{margin-top:5px}
+ #comparePhase .feedback-card{margin-top:5px}
+}
+</style>
+
+<style id="revision-v4-1-styles">
+/* v4.1 composition polish */
+@media (min-width:1081px){
+  .workbench-grid{grid-template-rows:minmax(0,1fr) 150px}
+  .coach>section:not(#comparePhase){display:flex;flex-direction:column;height:100%}
+  .coach>section:not(#comparePhase) .coach-actions{margin-top:auto;padding-top:8px}
+  .evidence-list{height:calc(100% - 19px);grid-template-rows:repeat(3,minmax(0,1fr))}
+  .evidence-row{display:flex;flex-direction:column;justify-content:center}
+  body[data-phase="compare"] .workbench{min-height:520px}
+  body[data-phase="compare"] .workbench-grid{grid-template-rows:minmax(0,1fr) 150px}
+}
+.working-box,#comparePhase .working-box{height:auto;min-height:154px}
+.evidence-row p{font-size:9px}
+
+@media (max-width:1080px) and (min-width:651px){
+  body>main{margin-top:5px}
+  .lab-manifest-header{min-height:52px;margin-bottom:5px;padding-bottom:6px}
+  .lab-manifest-subtitle{display:none}
+  .mission{min-height:54px;padding:6px 8px}
+  .mission-copy>span{font-size:9px}
+  .lab{
+    grid-template-columns:minmax(0,1.72fr) minmax(270px,.72fr);
+    grid-template-areas:"head head" "stage stage" "work controls";
+  }
+  .visual-head{min-height:40px;padding:5px 7px}
+  .stage-frame{height:clamp(258px,34vw,300px);aspect-ratio:auto}
+  .workbench{height:auto;border-left:0;border-top:1px solid var(--line);border-right:1px solid var(--line)}
+  .workbench-grid{height:auto;grid-template-columns:minmax(0,1.75fr) minmax(190px,.75fr);grid-template-rows:1fr}
+  .coach{border-right:1px solid var(--line);border-bottom:0;padding:8px 9px}
+  .coach h2{font-size:15px}
+  .coach-copy{display:none}
+  .prediction-map{grid-template-columns:minmax(0,.8fr) 18px minmax(0,1fr) minmax(0,.78fr);gap:5px;margin-top:6px;padding:6px}
+  .prediction-node{padding:5px 6px}
+  .prediction-held{grid-column:auto;display:block;padding:5px 6px;border-style:solid}
+  .prediction-held strong{display:block;margin-top:3px;font-size:9.5px}
+  .prediction-row{gap:5px;margin-top:6px;padding:5px}
+  .choice{min-height:34px;padding-left:23px;font-size:9.5px}
+  .choice::before{left:7px}
+  .coach-actions{margin-top:5px}
+  .live-line{font-size:9px}
+  .evidence{padding:6px 7px}
+  .evidence-head strong{font-size:10px}
+  .evidence-head span{display:none}
+  .evidence-list{gap:4px;margin-top:4px}
+  .evidence-row{padding:4px 5px}
+  .evidence-row strong{display:block;font-size:8.5px}
+  .evidence-row strong span{display:block;margin-top:1px;font-size:7.5px}
+  .evidence-row p{font-size:8px;line-height:1.17}
+  .controls{grid-template-columns:1fr;grid-template-rows:repeat(3,minmax(0,1fr));gap:5px;min-height:0;padding:5px;border-top:1px solid var(--line);border-left:0;background:#fff}
+  .relation-card{grid-column:auto}
+  .control-card{min-height:51px;padding:5px 6px}
+  .control-card input[type="range"]{height:16px}
+  .lock-state{font-size:8px}
+  .relation-card strong{font-size:10px}
+  #comparePhase .challenge-grid{grid-template-columns:minmax(155px,.72fr) minmax(255px,1.28fr);gap:5px}
+  #comparePhase .target{min-height:28px;padding:3px 5px}
+  #comparePhase .working-box{min-height:146px;padding:6px 7px}
+  body[data-phase="compare"] .workbench-grid{grid-template-columns:1fr 190px}
+  body[data-phase="compare"] .coach{min-height:226px}
+  body[data-phase="compare"] .evidence-row p{display:none}
+}
+
+@media (max-width:860px) and (min-width:651px){
+  .stage-frame{height:260px}
+  .lab{grid-template-columns:minmax(0,1.65fr) minmax(255px,.75fr)}
+  .mission-copy>span{display:none}
+  .mission{min-height:50px}
+  .visual-copy span{display:none}
+  .readout{font-size:8px}.readout b{font-size:9px}
+  .workbench-grid{grid-template-columns:minmax(0,1.8fr) minmax(175px,.7fr)}
+  .coach{padding:7px 8px}
+  .coach h2{font-size:14.5px}
+  .prediction-node span,.prediction-held span{font-size:7.5px}
+  .prediction-node strong{font-size:10.5px}
+  .prediction-held strong{font-size:9px}
+  .evidence-row p{display:none}
+  .evidence-row{min-height:39px}
+  .controls{padding:4px;gap:4px}
+  .control-card{min-height:47px;padding:4px 5px}
+  .control-title strong{font-size:9.5px}.control-value{font-size:10.5px}
+  .relation-card .relation-kicker{font-size:7.5px}.relation-card strong{font-size:9.5px}
+  #comparePhase .challenge-grid{grid-template-columns:minmax(145px,.68fr) minmax(240px,1.32fr)}
+  .target strong,.target span:last-child{font-size:7.8px}
+  .working-title span{display:none}
+}
+
+@media (max-width:650px){
+  .stage-frame{height:235px}
+  .working-box,#comparePhase .working-box{height:auto;min-height:150px}
+  .controls{min-height:108px}
+  .control-card{min-height:45px}
+  .relation-card{min-height:38px}
+}
+
+</style>
+
+<style id="revision-v4-2-styles">
+/* v4.2: spend available space on legibility and keep prediction/working states visually explicit. */
+.mission-copy>span{display:none}
+.coach h2{font-size:17px}
+.readout{font-size:9.5px}.readout b{font-size:11px}
+.prediction-node span,.prediction-held span{font-size:9px}
+.prediction-held strong{font-size:11px}
+.evidence-row:not(.current):not(.done) p{display:none}
+.evidence-row strong{font-size:10px}.evidence-row strong span{font-size:9px}.evidence-row p{font-size:9.5px;line-height:1.24}
+.working-title strong{font-size:10.5px}.working-title span{font-size:9px}.working-switch button{font-size:9px}
+.work-field>span:first-child{font-size:9px}.work-state{font-size:8.5px}.working-hint,#comparePhase .working-hint{font-size:9.5px}
+.work-field.correct input{border-color:#6ead85;background:#f1faf4;color:#12683f}
+.work-field.incorrect input{border-color:#d88379;background:#fff4f2;color:#a82f25}
+.target strong,.target span:last-child{font-size:9.5px}
+
+@media (max-width:1080px) and (min-width:651px){
+  .readout{font-size:9.5px}.readout b{font-size:10.5px}
+  .prediction-node span,.prediction-held span{font-size:8.5px}
+  .prediction-node strong{font-size:11.5px}.prediction-held strong{font-size:10px}
+  .choice{font-size:10px}
+  .evidence-row strong{font-size:9.5px}.evidence-row strong span{font-size:8.5px}.evidence-row p{font-size:9px}
+  .control-title strong{font-size:10.5px}.control-value{font-size:11.5px}.lock-state{font-size:9px}
+  .relation-card .relation-kicker{font-size:8px}.relation-card strong{font-size:10.5px}
+  #comparePhase .target strong,#comparePhase .target span:last-child{font-size:9.5px}
+  #comparePhase .working-title strong{font-size:10.5px}
+  #comparePhase .working-title span{font-size:9px}
+  #comparePhase .working-switch button{font-size:9px;min-height:28px}
+  #comparePhase .work-field>span:first-child{font-size:9.5px}
+  #comparePhase .work-auto,#comparePhase .work-field input{font-size:12px;height:31px}
+  #comparePhase .work-state{font-size:8.5px;min-height:11px}
+  #comparePhase .working-hint{font-size:9.5px;line-height:1.24}
+
+  /* In the counterexample, the dashed reference on the tank is the retained evidence.
+     Give the working the full lower-left width instead of squeezing it beside a duplicate log. */
+  body[data-phase="compare"] .workbench-grid{grid-template-columns:1fr}
+  body[data-phase="compare"] .coach{width:100%;border-right:0;min-height:0}
+  body[data-phase="compare"] .evidence{display:none}
+  body[data-phase="compare"] #comparePhase .challenge-grid{grid-template-columns:minmax(170px,.7fr) minmax(300px,1.3fr);gap:8px}
+  body[data-phase="compare"] #comparePhase .working-box{padding:7px 8px}
+  body[data-phase="compare"] #comparePhase .live-line{display:none}
+}
+
+@media (max-width:860px) and (min-width:651px){
+  .readout{font-size:9px}.readout b{font-size:10px}
+  .prediction-node span,.prediction-held span{font-size:8.5px}
+  .prediction-node strong{font-size:11px}.prediction-held strong{font-size:9.5px}
+  .evidence-row strong{font-size:9.5px}.evidence-row strong span{font-size:8.5px}
+  .control-title strong{font-size:10px}.control-value{font-size:11.5px}
+  .relation-card strong{font-size:10.5px}
+  body[data-phase="compare"] #comparePhase .challenge-grid{grid-template-columns:minmax(165px,.68fr) minmax(0,1.32fr)}
+}
+
+@media (max-width:650px){
+  .readout{font-size:9px}.readout b{font-size:10px}
+  .coach-copy,.live-line{display:none}
+  .coach section.completed .prediction-row{display:none}
+  .workbench-grid:has(.coach section.completed:not([hidden])),
+  .workbench-grid:has(.coach .action-strip:not([hidden])){grid-template-rows:auto 0}
+  .workbench-grid:has(.coach section.completed:not([hidden])) .evidence,
+  .workbench-grid:has(.coach .action-strip:not([hidden])) .evidence{display:none}
+  .action-strip,.result-card,.feedback-card{font-size:10px}
+  .coach h2{font-size:15.5px}
+  .prediction-node span,.prediction-held span{font-size:8.5px}
+  .prediction-node strong{font-size:11.5px}.prediction-held strong{font-size:10.5px}
+  .choice{font-size:9.5px}
+  /* Three compact evidence headers are enough here; remove the empty fixed band. */
+  .workbench-grid{grid-template-rows:auto 58px}
+  .evidence{padding:5px 6px}
+  .evidence-list{height:100%;align-items:stretch}
+  .evidence-row{display:flex;align-items:center;padding:4px 5px}
+  .evidence-row strong{width:100%;font-size:9.5px;line-height:1.14}
+  .evidence-row strong span{font-size:8.5px}
+  .control-title strong{font-size:10.5px}.control-value{font-size:11.5px}.lock-state{font-size:9px}
+  .relation-card strong{font-size:10.5px}
+  #comparePhase .target strong,#comparePhase .target span:last-child{font-size:8.8px}
+  #comparePhase .working-title strong{font-size:10px}
+  #comparePhase .working-title span{font-size:8.5px}
+  #comparePhase .working-switch button{font-size:8.5px}
+  #comparePhase .work-field>span:first-child{font-size:8.5px}
+  #comparePhase .work-state{font-size:8px}
+  #comparePhase .working-hint{font-size:9px}
+}
+</style>
+
+
+<style id="revision-v5-styles">
+/* v5: fresh-example practice without adding a new panel or shrinking type. */
+#comparePhase .coach-actions:has(#resetChallenge.primary){display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center}
+#comparePhase #resetChallenge.primary{justify-self:start;min-width:104px}
+#comparePhase .feedback-card strong{margin-right:3px}
+@media (max-width:650px){
+  #comparePhase .coach-actions:has(#resetChallenge.primary){grid-template-columns:auto minmax(0,1fr)}
+  #comparePhase #resetChallenge.primary{min-width:96px}
+}
+</style>
+<link rel="stylesheet" href="./lab-kit.css" data-lab-resource="lab-kit.css">
+</head>
+<body data-lab-layout="standard" data-phase="gap">
+<main>
+<!-- LAB_MANIFEST_HEADER_START -->
+<header class="lab-manifest-header">
+  <div class="lab-manifest-heading">
+    <h1 data-lab-manifest="title">Diffraction Through a Gap</h1>
+    <p class="lab-manifest-subtitle" data-lab-manifest="subtitle">Change the gap and wavelength in a ripple tank, then use the wavefront evidence to decide what controls diffraction.</p>
+  </div>
+  <!-- LAB_SYLLABUS_CHIPS_START -->
+  <nav class="lab-syllabus-chips" aria-label="Syllabus alignment">
+    <section class="lab-syllabus-chip" style="--syllabus-chip-bg:#edf8f3;--syllabus-chip-border:#91c4b0;--syllabus-chip-text:#235f4e;--syllabus-chip-hover:#dcf0e7" aria-label="IGCSE 0625 syllabus alignment">
+      <a class="lab-syllabus-primary-link" href="https://www.cambridgeinternational.org/Images/697209-2026-2028-syllabus.pdf#page=23" target="_blank" rel="noopener noreferrer" aria-label="Open IGCSE 0625 syllabus section 3.1"></a>
+      <span class="lab-syllabus-name">IGCSE 0625</span>
+      <span class="lab-syllabus-divider" aria-hidden="true">·</span>
+      <span class="lab-syllabus-sections"><a class="lab-syllabus-section is-primary" href="https://www.cambridgeinternational.org/Images/697209-2026-2028-syllabus.pdf#page=23" target="_blank" rel="noopener noreferrer" aria-label="Open IGCSE 0625 syllabus section 3.1">3.1</a></span>
+    </section>
+  </nav>
+  <!-- LAB_SYLLABUS_CHIPS_END -->
+</header>
+<!-- LAB_MANIFEST_HEADER_END -->
+<span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span>
+<span data-lab-authored-subtitle-slot hidden></span>
+
+<section class="panel mission" aria-live="polite">
+  <div class="mission-copy">
+    <div id="missionKicker" class="problem-kicker">Investigation 1 · change one variable</div>
+    <strong id="missionTitle">Find the gap width that makes the outgoing wavefronts curve strongly.</strong>
+    <span id="missionHint">Predict first. Then drag either edge of the gap while wavelength stays fixed.</span>
+  </div>
+  <div class="mission-tools">
+    <div class="phase-track" aria-label="Lab progress">
+      <span id="stepGap" class="phase-step current"><i></i>1 Gap</span>
+      <span id="stepWave" class="phase-step"><i></i>2 Wavelength</span>
+      <span id="stepCompare" class="phase-step"><i></i>3 Compare</span>
+    </div>
+    <button id="pauseButton" class="ui-button" type="button">Pause waves</button>
+    <button id="resetButton" class="ui-button" type="button">Reset step</button>
+  </div>
+</section>
+
+<section class="panel lab" data-lab-workspace>
+  <div class="visual-head">
+    <div class="visual-copy">
+      <strong>Ripple tank: plane wavefronts pass through one adjustable gap</strong>
+      <span>The water depth is unchanged, so the wavefront spacing before and after the gap is the same.</span>
+    </div>
+    <div class="readouts" aria-live="polite">
+      <span class="readout">gap <b id="gapChip">4.8 cm</b></span>
+      <span class="readout">wavelength <b id="lambdaChip">0.8 cm</b></span>
+      <span class="readout">gap ÷ λ <b id="ratioChip">6.00</b></span>
+      <span id="spreadChip" class="readout spread">diffraction <b>slight</b></span>
+      <span id="referenceChip" class="readout reference" hidden>reference <b>slight</b></span>
+    </div>
+  </div>
+
+  <div class="stage-shell">
+    <div class="stage-frame" id="stageFrame">
+      <canvas id="waveCanvas" width="900" height="430" aria-label="Animated ripple-tank wavefronts passing through a gap"></canvas>
+      <svg id="overlay" viewBox="0 0 900 430" role="img" aria-label="Adjustable gap, wavelength measurements and diffraction spread">
+        <defs>
+          <marker id="arrowHead" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" fill="#456a7d"></path></marker>
+        </defs>
+        <path id="fanFill" class="fan-fill"></path>
+        <path id="fanTop" class="fan-edge"></path>
+        <path id="fanBottom" class="fan-edge"></path>
+        <path id="fanArc" class="fan-arc"></path>
+        <g id="referenceFan" style="display:none">
+          <path id="referenceFill" class="reference-fill"></path>
+          <path id="referenceTop" class="reference-edge"></path>
+          <path id="referenceBottom" class="reference-edge"></path>
+          <path id="referenceArc" class="reference-arc"></path>
+        </g>
+
+        <rect id="barrierTop" class="barrier" x="340" y="0" width="20" height="115"></rect>
+        <rect id="barrierBottom" class="barrier" x="340" y="315" width="20" height="115"></rect>
+        <g id="barrierStripes"></g>
+        <line id="gapEdgeTop" class="gap-edge" x1="339" x2="361" y1="115" y2="115"></line>
+        <line id="gapEdgeBottom" class="gap-edge" x1="339" x2="361" y1="315" y2="315"></line>
+        <g id="gapTopHandle" tabindex="0" role="slider" aria-label="Gap width" aria-valuemin="0.5" aria-valuemax="5.5" aria-valuenow="4.8">
+          <circle class="gap-handle-halo" r="18" cx="350" cy="115"></circle>
+          <circle class="gap-handle" r="9" cx="350" cy="115"></circle>
+        </g>
+        <g id="gapBottomHandle" tabindex="0" role="slider" aria-label="Gap width" aria-valuemin="0.5" aria-valuemax="5.5" aria-valuenow="4.8">
+          <circle class="gap-handle-halo" r="18" cx="350" cy="315"></circle>
+          <circle class="gap-handle" r="9" cx="350" cy="315"></circle>
+        </g>
+        <rect id="gapLabelBg" class="gap-label-bg" x="368" y="202" width="88" height="24" rx="12"></rect>
+        <text id="gapLabel" class="gap-label" x="412" y="218">gap 4.8 cm</text>
+
+        <g id="lambdaMeasure" tabindex="0" role="slider" aria-label="Wavelength" aria-valuemin="0.4" aria-valuemax="2.8" aria-valuenow="0.8">
+          <line id="lambdaLine" class="lambda-line" x1="84" y1="62" x2="118" y2="62"></line>
+          <line class="lambda-cap" x1="84" y1="53" x2="84" y2="71"></line>
+          <line id="lambdaCapEnd" class="lambda-cap" x1="118" y1="53" x2="118" y2="71"></line>
+          <circle id="lambdaHalo" class="lambda-handle-halo" r="16" cx="118" cy="62"></circle>
+          <circle id="lambdaHandle" class="lambda-handle" r="8" cx="118" cy="62"></circle>
+          <text class="measure-label" x="84" y="42">wavelength λ</text>
+          <text id="lambdaDragLabel" class="measure-note" x="84" y="84">drag the end</text>
+        </g>
+        <g id="outgoingMeasure">
+          <line id="outLambdaLine" class="lambda-line outgoing" x1="504" y1="331" x2="538" y2="331"></line>
+          <line class="lambda-cap outgoing" x1="504" y1="323" x2="504" y2="339"></line>
+          <line id="outLambdaCapEnd" class="lambda-cap outgoing" x1="538" y1="323" x2="538" y2="339"></line>
+          <text class="measure-note" x="504" y="352">same λ after the gap</text>
+        </g>
+
+        <path class="direction" d="M96 399 L204 399"></path>
+        <text class="direction-label" x="96" y="389">incoming plane wavefronts</text>
+        <path class="direction" d="M704 399 L812 399"></path>
+        <text class="direction-label" x="704" y="389">diffracted wavefronts</text>
+
+        <g id="referenceLabel" style="display:none">
+          <rect class="stage-pill" x="615" y="18" width="270" height="28" rx="14"></rect>
+          <text id="referenceLabelText" class="stage-pill-text" x="629" y="36">orange dashed reference · gap 1.6 cm · λ 0.5 cm</text>
+        </g>
+        <rect class="tank-outline" x="1" y="1" width="898" height="428" rx="3"></rect>
+        <rect class="tank-shine" x="5" y="5" width="890" height="420" rx="2"></rect>
+      </svg>
+      <div id="gapGuide" class="guide-card guide-gap"><strong>Drag either gap edge</strong><span>Move it towards the centre and watch the real wavefronts beyond the barrier.</span></div>
+      <div id="waveGuide" class="guide-card guide-wave" hidden><strong>Change the wavefront spacing</strong><span>Drag the wavelength bracket or use the slider below.</span></div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <label id="gapControl" class="control-card">
+      <span class="control-title"><strong>Gap width</strong><span>drag the two gap edges</span></span>
+      <output id="gapValue" class="control-value" for="gapRange">4.8 cm</output>
+      <input id="gapRange" type="range" min="0.5" max="5.5" step="0.1" value="4.8" aria-label="Gap width in centimetres">
+      <span id="gapLock" class="lock-state">Adjustable after your prediction</span>
+    </label>
+    <label id="lambdaControl" class="control-card is-locked">
+      <span class="control-title"><strong>Wavelength λ</strong><span>wavefront spacing</span></span>
+      <output id="lambdaValue" class="control-value" for="lambdaRange">0.8 cm</output>
+      <input id="lambdaRange" type="range" min="0.4" max="2.8" step="0.1" value="0.8" aria-label="Wavelength in centimetres" disabled>
+      <span id="lambdaLock" class="lock-state">Held constant in this investigation</span>
+    </label>
+    <div class="control-card relation-card">
+      <span class="relation-kicker">Visible consequence</span>
+      <strong id="relationText">The gap is much wider than one wavelength, so the wavefronts stay nearly straight.</strong>
+      <span class="relation-bar" aria-hidden="true"><i id="relationBar"></i></span>
+    </div>
+  </div>
+
+  <div class="workbench">
+    <div class="workbench-grid">
+      <div class="coach" aria-live="polite">
+        <section id="gapPhase">
+          <div class="eyebrow">Predict → change gap → observe</div>
+          <h2>If only the gap becomes narrower, what will happen to the spreading?</h2>
+          <div id="gapPredictionMap" class="prediction-map" aria-label="Prediction model for narrowing the gap">
+            <div class="prediction-node change"><span>Change</span><strong>gap width ↓</strong></div>
+            <span class="prediction-arrow" aria-hidden="true">→</span>
+            <div class="prediction-node outcome"><span>Your prediction</span><strong id="gapPredictionVisual">Choose one</strong></div>
+            <div class="prediction-held"><span>Held constant</span><strong id="gapHeldValue">λ = 0.8 cm</strong></div>
+          </div>
+          <p class="coach-copy">Record a prediction first. The gap then unlocks while wavelength stays fixed.</p>
+          <div class="prediction-row" role="group" aria-label="Prediction about narrowing the gap">
+            <button class="choice" type="button" data-gap-prediction="more">More spreading</button>
+            <button class="choice" type="button" data-gap-prediction="less">Less spreading</button>
+            <button class="choice" type="button" data-gap-prediction="same">No change</button>
+          </div>
+          <div id="gapAction" class="action-strip" hidden><strong>Now test it in the tank.</strong>Drag either gap edge towards the centre. Compare the fan beyond the barrier with the starting wavefronts.</div>
+          <div id="gapResult" class="result-card good" hidden></div>
+          <div class="coach-actions">
+            <button id="continueGap" class="ui-button primary" type="button" hidden>Hold the gap and change wavelength</button>
+            <span id="gapLive" class="live-line">Make a prediction to unlock the gap.</span>
+          </div>
+        </section>
+
+        <section id="wavePhase" hidden>
+          <div class="eyebrow">Predict → change wavelength → observe</div>
+          <h2>If the gap stays fixed and wavelength increases, what happens to diffraction?</h2>
+          <div id="wavePredictionMap" class="prediction-map" aria-label="Prediction model for increasing wavelength">
+            <div class="prediction-node change"><span>Change</span><strong>wavelength λ ↑</strong></div>
+            <span class="prediction-arrow" aria-hidden="true">→</span>
+            <div class="prediction-node outcome"><span>Your prediction</span><strong id="wavePredictionVisual">Choose one</strong></div>
+            <div class="prediction-held"><span>Held constant</span><strong id="waveHeldValue">gap = 2.6 cm</strong></div>
+          </div>
+          <p class="coach-copy">Record a prediction first. Wavelength then unlocks while the gap stays fixed.</p>
+          <div class="prediction-row" role="group" aria-label="Prediction about increasing wavelength">
+            <button class="choice" type="button" data-wave-prediction="more">More spreading</button>
+            <button class="choice" type="button" data-wave-prediction="less">Less spreading</button>
+            <button class="choice" type="button" data-wave-prediction="same">No change</button>
+          </div>
+          <div id="waveAction" class="action-strip" hidden><strong>Now test it in the tank.</strong>Increase the wavefront spacing. The gap width is visibly locked.</div>
+          <div id="waveResult" class="result-card good" hidden></div>
+          <div class="coach-actions">
+            <button id="continueWave" class="ui-button primary" type="button" hidden>Build a counterexample</button>
+            <span id="waveLive" class="live-line">Make a prediction to unlock wavelength.</span>
+          </div>
+        </section>
+
+        <section id="comparePhase" hidden>
+          <div id="compareEyebrow" class="eyebrow">Counterexample · practice 1</div>
+          <h2 id="compareTitle">Make the gap wider than 1.6 cm, but produce more spreading than the reference.</h2>
+          <p class="coach-copy">A wider gap alone reduces diffraction. Can wavelength increase by enough to reverse that consequence?</p>
+          <div class="challenge-grid">
+            <div class="target-list" aria-label="Counterexample requirements">
+              <div id="targetGap" class="target"><i></i><strong id="targetGapLabel">Gap is wider than the reference</strong><span id="targetGapValue">1.6 cm</span></div>
+              <div id="targetSpread" class="target"><i></i><strong>Wavefront fan is wider than the reference</strong><span id="targetSpreadValue">same</span></div>
+              <div id="targetRatio" class="target"><i></i><strong id="targetRatioLabel">Compare the current gap ÷ wavelength</strong><span id="targetRatioValue">not checked</span></div>
+            </div>
+            <div class="working-box" id="workingBox">
+              <div class="working-head">
+                <div class="working-title"><strong>Your working</strong><span>observe first, then take over</span></div>
+                <div class="working-switch" role="group" aria-label="How much of the ratio calculation you complete">
+                  <button type="button" data-work-level="0" class="active" aria-pressed="true">None</button>
+                  <button type="button" data-work-level="1" aria-pressed="false">Some</button>
+                  <button type="button" data-work-level="2" aria-pressed="false">All</button>
+                </div>
+              </div>
+              <div class="working-grid" aria-label="Gap divided by wavelength calculation">
+                <label id="workGapField" class="work-field"><span>gap g</span><strong id="workGapAuto" class="work-auto">1.6</strong><input id="workGapInput" type="number" step="0.1" inputmode="decimal" autocomplete="off" aria-label="Gap value used in the calculation"><small id="workGapState" class="work-state">shown</small></label>
+                <span class="work-op" aria-hidden="true">÷</span>
+                <label id="workLambdaField" class="work-field"><span>wavelength λ</span><strong id="workLambdaAuto" class="work-auto">0.5</strong><input id="workLambdaInput" type="number" step="0.1" inputmode="decimal" autocomplete="off" aria-label="Wavelength value used in the calculation"><small id="workLambdaState" class="work-state">shown</small></label>
+                <span class="work-op" aria-hidden="true">=</span>
+                <label id="workRatioField" class="work-field"><span>g ÷ λ</span><strong id="workRatioAuto" class="work-auto">3.20</strong><input id="workRatioInput" type="number" step="0.01" inputmode="decimal" autocomplete="off" aria-label="Calculated gap divided by wavelength"><small id="workRatioState" class="work-state">shown</small></label>
+              </div>
+              <div id="workingHint" class="working-hint">Watch the substitution update as you change the setup.</div>
+            </div>
+          </div>
+          <div class="coach-actions">
+            <button id="testChallenge" class="ui-button primary" type="button">Test setup</button>
+            <button id="resetChallenge" class="ui-button" type="button">Restore reference</button>
+            <span id="challengeLive" class="live-line">Change at least one variable, then test your setup.</span>
+          </div>
+          <div id="challengeFeedback" class="feedback-card" hidden></div>
+        </section>
+      </div>
+
+      <aside class="evidence" aria-label="Evidence from the investigations">
+        <div class="evidence-head"><strong>Evidence kept</strong><span>change → consequence</span></div>
+        <div class="evidence-list">
+          <div id="evidenceGap" class="evidence-row current"><strong>1 Narrow the gap <span>current</span></strong><p id="evidenceGapText">Prediction not recorded.</p></div>
+          <div id="evidenceWave" class="evidence-row"><strong>2 Increase wavelength <span>waiting</span></strong><p id="evidenceWaveText">Gap will be held constant.</p></div>
+          <div id="evidenceCompare" class="evidence-row"><strong>3 Wider-gap counterexample <span>waiting</span></strong><p id="evidenceCompareText">Compare two gap-to-wavelength ratios.</p></div>
+        </div>
+        <p class="model-note">The animated field is a schematic ripple-tank model. It preserves the syllabus relationship between gap size, wavelength and spreading.</p>
+      </aside>
+    </div>
+  </div>
+</section>
+</main>
+<script src="./lab-kit.js" data-lab-resource="lab-kit.js"></script>
+<script>
+(() => {
+  "use strict";
+
+  const $ = id => document.getElementById(id);
+  const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+  const round = (value, places = 1) => Number(value.toFixed(places));
+  const fmt = (value, places = 1) => Number(value).toFixed(places);
+  const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  const STAGE_W = 900;
+  const STAGE_H = 430;
+  const BARRIER_X = 350;
+  const CENTRE_Y = 215;
+  const PX_PER_CM = 42;
+  const MIN_GAP = 0.5;
+  const MAX_GAP = 5.5;
+  const MIN_LAMBDA = 0.4;
+  const MAX_LAMBDA = 2.8;
+
+  const usedProblems = new Set();
+  const pick = values => values[Math.floor(Math.random() * values.length)];
+  const signature = (kind, gap, lambda) => `${kind}:${gap.toFixed(1)}:${lambda.toFixed(1)}`;
+
+  function rememberProblem(kind, gap, lambda) {
+    const key = signature(kind, gap, lambda);
+    usedProblems.add(key);
+    if (usedProblems.size > 80) {
+      const keep = [...usedProblems].slice(-35);
+      usedProblems.clear();
+      keep.forEach(item => usedProblems.add(item));
+    }
+    return { gap, lambda };
+  }
+
+  function generateProblem(kind) {
+    for (let attempt = 0; attempt < 120; attempt += 1) {
+      let gap;
+      let lambda;
+      if (kind === "gap") {
+        lambda = pick([0.6, 0.7, 0.8, 0.9]);
+        gap = round(lambda * pick([4.8, 5.2, 5.6, 6.0]), 1);
+        if (gap > MAX_GAP || gap < 3.0) continue;
+      } else if (kind === "wave") {
+        gap = pick([2.2, 2.4, 2.6, 2.8, 3.0, 3.2]);
+        lambda = pick([0.5, 0.6, 0.7]);
+        if (gap / lambda < 3.7) continue;
+      } else {
+        gap = pick([1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0, 2.1, 2.2, 2.3]);
+        lambda = pick([0.4, 0.5, 0.6, 0.7, 0.8, 0.9]);
+        const r = gap / lambda;
+        if (r < 2.45 || r > 3.75) continue;
+        if (gap + 0.2 > MAX_GAP) continue;
+      }
+      const key = signature(kind, gap, lambda);
+      if (usedProblems.has(key)) continue;
+      return rememberProblem(kind, gap, lambda);
+    }
+    // Safe fallbacks preserve the same causal relationship even after many practice rounds.
+    const fallback = kind === "gap" ? { gap: 4.2, lambda: 0.7 } : kind === "wave" ? { gap: 2.6, lambda: 0.6 } : { gap: 1.8, lambda: 0.6 };
+    return rememberProblem(kind, fallback.gap, fallback.lambda);
+  }
+
+  let REFERENCE = generateProblem("compare");
+  let presets = {
+    gap: generateProblem("gap"),
+    wave: generateProblem("wave"),
+    compare: { gap: REFERENCE.gap, lambda: REFERENCE.lambda }
+  };
+
+  const state = {
+    phase: "gap",
+    gap: presets.gap.gap,
+    lambda: presets.gap.lambda,
+    gapPrediction: null,
+    wavePrediction: null,
+    gapDone: false,
+    waveDone: false,
+    gapSnapshot: null,
+    waveSnapshot: null,
+    challengeSnapshot: null,
+    challengeTested: false,
+    challengeSuccess: false,
+    practiceRound: 1,
+    practiceSolved: 0,
+    workingLevel: 0,
+    workingAnswers: { gap: "", lambda: "", ratio: "" },
+    workingChecked: false,
+    workingChecks: { gap: false, lambda: false, ratio: false },
+    touchedGap: false,
+    touchedWave: false,
+    paused: reduceMotion,
+    drag: null,
+    fieldDirty: true,
+    animationPhase: 0,
+    lastFrame: 0,
+    userStageScrolled: false
+  };
+
+  const canvas = $("waveCanvas");
+  const ctx = canvas.getContext("2d", { alpha: false });
+  const simCanvas = document.createElement("canvas");
+  const SIM_W = 360;
+  const SIM_H = 172;
+  simCanvas.width = SIM_W;
+  simCanvas.height = SIM_H;
+  const simCtx = simCanvas.getContext("2d", { alpha: false });
+  const image = simCtx.createImageData(SIM_W, SIM_H);
+  const phases = new Float32Array(SIM_W * SIM_H);
+  const amplitudes = new Float32Array(SIM_W * SIM_H);
+  const SIM_BARRIER_X = BARRIER_X / STAGE_W * SIM_W;
+  const SIM_PX_PER_CM = PX_PER_CM / STAGE_W * SIM_W;
+
+  function ratio(gap = state.gap, lambda = state.lambda) { return gap / lambda; }
+  function spreadAngle(gap = state.gap, lambda = state.lambda) {
+    return Math.asin(Math.min(0.999, lambda / gap)) * 180 / Math.PI;
+  }
+  function spreadLabel(angle = spreadAngle()) {
+    if (angle >= 70) return "almost semicircular";
+    if (angle >= 45) return "strong";
+    if (angle >= 25) return "moderate";
+    return "slight";
+  }
+  function spreadSentence() {
+    const r = ratio();
+    if (r >= 4) return "The gap is several wavelengths wide, so the wavefronts remain nearly straight.";
+    if (r >= 2) return "The gap is only a few wavelengths wide, so the wavefronts spread noticeably.";
+    if (r > 1.05) return "The gap is close to one wavelength wide, so the wavefronts curve strongly.";
+    return "The gap is about one wavelength or less, so the wavefronts are almost semicircular.";
+  }
+  function smoothstep(min, max, value) {
+    const t = clamp((value - min) / (max - min || 1), 0, 1);
+    return t * t * (3 - 2 * t);
+  }
+
+  function computeField() {
+    const k = Math.PI * 2 / state.lambda;
+    const curvature = clamp(state.lambda / state.gap * 1.08, 0.08, 1);
+    const thetaZero = Math.asin(Math.min(0.999, state.lambda / state.gap));
+    let index = 0;
+    for (let py = 0; py < SIM_H; py += 1) {
+      const yCm = (py - SIM_H / 2) / SIM_PX_PER_CM;
+      for (let px = 0; px < SIM_W; px += 1, index += 1) {
+        const xCm = (px - SIM_BARRIER_X) / SIM_PX_PER_CM;
+        if (px <= SIM_BARRIER_X) {
+          phases[index] = k * xCm;
+          amplitudes[index] = 0.9;
+          continue;
+        }
+        const xSafe = Math.max(0.025, xCm);
+        const theta = Math.atan2(yCm, xSafe + 0.16);
+        const z = Math.PI * state.gap * Math.sin(theta) / state.lambda;
+        const sinc = Math.abs(z) < 0.00001 ? 1 : Math.sin(z) / z;
+        let amplitude = Math.pow(Math.abs(sinc), 0.58);
+        const beyondMain = Math.max(0, Math.abs(theta) - thetaZero);
+        if (beyondMain > 0) amplitude *= 0.18 * Math.exp(-beyondMain * 2.4);
+        const outsideOpening = Math.max(0, Math.abs(yCm) - state.gap / 2);
+        if (outsideOpening > 0) {
+          amplitude *= 0.08 + 0.92 * smoothstep(0, outsideOpening * 1.35 + 0.38, xSafe);
+        }
+        const sourceOffset = 0.52;
+        const waveDistance = Math.sqrt((xSafe + sourceOffset) ** 2 + (curvature * yCm) ** 2) - sourceOffset;
+        phases[index] = k * waveDistance;
+        amplitudes[index] = clamp(amplitude, 0, 1);
+      }
+    }
+    state.fieldDirty = false;
+  }
+
+  function renderWaveField() {
+    if (state.fieldDirty) computeField();
+    const data = image.data;
+    const time = state.animationPhase;
+    for (let index = 0, p = 0; index < phases.length; index += 1, p += 4) {
+      const amp = amplitudes[index];
+      const wave = Math.cos(phases[index] - time);
+      const crest = Math.pow(Math.max(0, wave), 7) * amp;
+      const trough = Math.pow(Math.max(0, -wave), 4) * amp;
+      const texture = 0.8 * Math.sin(index * 0.071) + 0.55 * Math.sin(index * 0.019);
+      data[p] = clamp(226 + crest * 28 - trough * 26 + texture, 0, 255);
+      data[p + 1] = clamp(242 + crest * 12 - trough * 25 + texture, 0, 255);
+      data[p + 2] = clamp(248 + crest * 5 - trough * 15 + texture * 0.5, 0, 255);
+      data[p + 3] = 255;
+    }
+    simCtx.putImageData(image, 0, 0);
+    ctx.save();
+    ctx.imageSmoothingEnabled = true;
+    ctx.drawImage(simCanvas, 0, 0, STAGE_W, STAGE_H);
+    const gradient = ctx.createLinearGradient(0, 0, 0, STAGE_H);
+    gradient.addColorStop(0, "rgba(255,255,255,.13)");
+    gradient.addColorStop(.52, "rgba(255,255,255,0)");
+    gradient.addColorStop(1, "rgba(44,104,132,.08)");
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, STAGE_W, STAGE_H);
+    ctx.restore();
+  }
+
+  function animationFrame(now) {
+    if (!state.lastFrame) state.lastFrame = now;
+    const elapsed = Math.min(80, now - state.lastFrame);
+    state.lastFrame = now;
+    if (!state.paused && elapsed >= 0) state.animationPhase += elapsed * 0.0042;
+    renderWaveField();
+    requestAnimationFrame(animationFrame);
+  }
+
+  function fanGeometry(angleDegrees) {
+    const theta = angleDegrees * Math.PI / 180;
+    const tan = Math.tan(theta);
+    const rightX = 886;
+    const topLimit = 12;
+    const bottomLimit = STAGE_H - 12;
+    const dx = rightX - BARRIER_X;
+    let topX = rightX;
+    let topY = CENTRE_Y - tan * dx;
+    if (topY < topLimit) {
+      topY = topLimit;
+      topX = BARRIER_X + (CENTRE_Y - topLimit) / Math.max(tan, 0.0001);
+    }
+    let bottomX = rightX;
+    let bottomY = CENTRE_Y + tan * dx;
+    if (bottomY > bottomLimit) {
+      bottomY = bottomLimit;
+      bottomX = BARRIER_X + (bottomLimit - CENTRE_Y) / Math.max(tan, 0.0001);
+    }
+    const radius = 76;
+    const topArc = { x: BARRIER_X + radius * Math.cos(theta), y: CENTRE_Y - radius * Math.sin(theta) };
+    const bottomArc = { x: BARRIER_X + radius * Math.cos(theta), y: CENTRE_Y + radius * Math.sin(theta) };
+    return { topX, topY, bottomX, bottomY, topArc, bottomArc, radius };
+  }
+
+  function updateFan() {
+    const current = fanGeometry(spreadAngle());
+    $("fanFill").setAttribute("d", `M ${BARRIER_X} ${CENTRE_Y} L ${current.topX} ${current.topY} L ${current.bottomX} ${current.bottomY} Z`);
+    $("fanTop").setAttribute("d", `M ${BARRIER_X} ${CENTRE_Y} L ${current.topX} ${current.topY}`);
+    $("fanBottom").setAttribute("d", `M ${BARRIER_X} ${CENTRE_Y} L ${current.bottomX} ${current.bottomY}`);
+    $("fanArc").setAttribute("d", `M ${current.topArc.x} ${current.topArc.y} A ${current.radius} ${current.radius} 0 0 1 ${current.bottomArc.x} ${current.bottomArc.y}`);
+
+    if (state.phase === "compare") {
+      const reference = fanGeometry(spreadAngle(REFERENCE.gap, REFERENCE.lambda));
+      $("referenceFill").setAttribute("d", `M ${BARRIER_X} ${CENTRE_Y} L ${reference.topX} ${reference.topY} L ${reference.bottomX} ${reference.bottomY} Z`);
+      $("referenceTop").setAttribute("d", `M ${BARRIER_X} ${CENTRE_Y} L ${reference.topX} ${reference.topY}`);
+      $("referenceBottom").setAttribute("d", `M ${BARRIER_X} ${CENTRE_Y} L ${reference.bottomX} ${reference.bottomY}`);
+      $("referenceArc").setAttribute("d", `M ${reference.topArc.x} ${reference.topArc.y} A ${reference.radius} ${reference.radius} 0 0 1 ${reference.bottomArc.x} ${reference.bottomArc.y}`);
+    }
+  }
+
+  function updateBarrier() {
+    const half = state.gap * PX_PER_CM / 2;
+    const top = CENTRE_Y - half;
+    const bottom = CENTRE_Y + half;
+    $("barrierTop").setAttribute("height", Math.max(0, top));
+    $("barrierBottom").setAttribute("y", bottom);
+    $("barrierBottom").setAttribute("height", Math.max(0, STAGE_H - bottom));
+    for (const id of ["gapEdgeTop", "gapTopHandle"]) {
+      const node = $(id);
+      if (node.tagName.toLowerCase() === "line") { node.setAttribute("y1", top); node.setAttribute("y2", top); }
+      else node.querySelectorAll("circle").forEach(circle => circle.setAttribute("cy", top));
+    }
+    for (const id of ["gapEdgeBottom", "gapBottomHandle"]) {
+      const node = $(id);
+      if (node.tagName.toLowerCase() === "line") { node.setAttribute("y1", bottom); node.setAttribute("y2", bottom); }
+      else node.querySelectorAll("circle").forEach(circle => circle.setAttribute("cy", bottom));
+    }
+    $("gapTopHandle").setAttribute("aria-valuenow", fmt(state.gap, 1));
+    $("gapBottomHandle").setAttribute("aria-valuenow", fmt(state.gap, 1));
+    $("gapLabelBg").setAttribute("y", CENTRE_Y - 13);
+    $("gapLabel").setAttribute("y", CENTRE_Y + 4);
+    $("gapLabel").textContent = `gap ${fmt(state.gap, 1)} cm`;
+
+    const stripeHost = $("barrierStripes");
+    stripeHost.replaceChildren();
+    for (let y = 12; y < STAGE_H; y += 22) {
+      if (y > top - 9 && y < bottom + 9) continue;
+      const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      line.setAttribute("class", "barrier-stripe");
+      line.setAttribute("x1", 343);
+      line.setAttribute("x2", 357);
+      line.setAttribute("y1", y);
+      line.setAttribute("y2", y + 7);
+      stripeHost.appendChild(line);
+    }
+  }
+
+  function updateWavelengthMeasure() {
+    const startX = 84;
+    const endX = startX + state.lambda * PX_PER_CM;
+    $("lambdaLine").setAttribute("x2", endX);
+    $("lambdaCapEnd").setAttribute("x1", endX);
+    $("lambdaCapEnd").setAttribute("x2", endX);
+    $("lambdaHalo").setAttribute("cx", endX);
+    $("lambdaHandle").setAttribute("cx", endX);
+    $("lambdaMeasure").setAttribute("aria-valuenow", fmt(state.lambda, 1));
+    const outStart = 504;
+    const outEnd = outStart + state.lambda * PX_PER_CM;
+    $("outLambdaLine").setAttribute("x2", outEnd);
+    $("outLambdaCapEnd").setAttribute("x1", outEnd);
+    $("outLambdaCapEnd").setAttribute("x2", outEnd);
+  }
+
+  function gapUnlocked() {
+    if (state.phase === "gap") return Boolean(state.gapPrediction);
+    if (state.phase === "wave") return false;
+    return true;
+  }
+  function lambdaUnlocked() {
+    if (state.phase === "gap") return false;
+    if (state.phase === "wave") return Boolean(state.wavePrediction);
+    return true;
+  }
+
+  function setLockedVisuals() {
+    const gapOpen = gapUnlocked();
+    const waveOpen = lambdaUnlocked();
+    $("gapRange").disabled = !gapOpen;
+    $("lambdaRange").disabled = !waveOpen;
+    $("gapControl").classList.toggle("is-locked", !gapOpen);
+    $("lambdaControl").classList.toggle("is-locked", !waveOpen);
+    $("gapLock").textContent = gapOpen ? (state.phase === "compare" ? "Adjustable for the counterexample" : "Adjustable · wavelength is held constant") : (state.phase === "wave" ? "Held constant in this investigation" : "Make a prediction to unlock");
+    $("lambdaLock").textContent = waveOpen ? (state.phase === "compare" ? "Adjustable for the counterexample" : "Adjustable · gap width is held constant") : (state.phase === "gap" ? "Held constant in this investigation" : "Make a prediction to unlock");
+    document.querySelectorAll(".gap-handle,.gap-handle-halo").forEach(node => node.classList.toggle("locked", !gapOpen));
+    document.querySelectorAll(".lambda-handle,.lambda-handle-halo").forEach(node => node.classList.toggle("locked", !waveOpen));
+    $("gapTopHandle").setAttribute("aria-disabled", String(!gapOpen));
+    $("gapBottomHandle").setAttribute("aria-disabled", String(!gapOpen));
+    $("lambdaMeasure").setAttribute("aria-disabled", String(!waveOpen));
+  }
+
+  function renderMission() {
+    const copy = {
+      gap: ["Investigation 1 · generated values", "Find the gap width that makes the outgoing wavefronts curve strongly.", `This example holds wavelength at ${fmt(presets.gap.lambda,1)} cm while you change only the gap.`],
+      wave: ["Investigation 2 · generated values", "Hold the gap fixed. Increase wavelength until diffraction becomes strong.", `This example holds the gap at ${fmt(presets.wave.gap,1)} cm while you change only wavelength.`],
+      compare: [`Practice ${state.practiceRound} · fresh reference`, `Can a gap wider than ${fmt(REFERENCE.gap,1)} cm diffract more? Build a counterexample.`, state.workingLevel === 0 ? "Both controls are unlocked. The ratio calculation is shown so you can observe it first." : state.workingLevel === 1 ? "Both controls are unlocked. The values are given; you calculate their ratio." : "Both controls are unlocked. Read both values and show the complete ratio calculation."]
+    }[state.phase];
+    $("missionKicker").textContent = copy[0];
+    $("missionTitle").textContent = copy[1];
+    $("missionHint").textContent = copy[2];
+    for (const [id, phase] of [["stepGap","gap"],["stepWave","wave"],["stepCompare","compare"]]) {
+      const node = $(id);
+      const phaseIndex = ["gap","wave","compare"].indexOf(phase);
+      const currentIndex = ["gap","wave","compare"].indexOf(state.phase);
+      node.classList.toggle("current", phase === state.phase);
+      node.classList.toggle("done", phaseIndex < currentIndex || (phase === "compare" && state.challengeSuccess));
+    }
+    $("pauseButton").textContent = state.paused ? "Run waves" : "Pause waves";
+  }
+
+  function renderReadouts() {
+    $("gapChip").textContent = `${fmt(state.gap,1)} cm`;
+    $("lambdaChip").textContent = `${fmt(state.lambda,1)} cm`;
+    $("ratioChip").textContent = fmt(ratio(),2);
+    $("spreadChip").innerHTML = `diffraction <b>${spreadLabel()}</b>`;
+    $("gapValue").textContent = `${fmt(state.gap,1)} cm`;
+    $("lambdaValue").textContent = `${fmt(state.lambda,1)} cm`;
+    $("gapRange").value = fmt(state.gap,1);
+    $("lambdaRange").value = fmt(state.lambda,1);
+    $("relationText").textContent = spreadSentence();
+    $("relationBar").style.width = `${clamp(spreadAngle() / 87 * 100, 4, 100)}%`;
+  }
+
+  function predictionDescription(value) {
+    return value === "more" ? "more spreading" : value === "less" ? "less spreading" : "no change";
+  }
+
+  function renderGapPhase() {
+    $("gapPhase").classList.toggle("completed", state.gapDone);
+    const gapPredictionLabels = { more: "More spreading", less: "Less spreading", same: "No change" };
+    $("gapPredictionVisual").textContent = state.gapPrediction ? gapPredictionLabels[state.gapPrediction] : "Choose one";
+    $("gapHeldValue").textContent = `λ = ${fmt(presets.gap.lambda,1)} cm`;
+    $("gapPredictionMap").classList.toggle("has-choice", Boolean(state.gapPrediction));
+    document.querySelectorAll("[data-gap-prediction]").forEach(button => {
+      const selected = button.dataset.gapPrediction === state.gapPrediction;
+      button.classList.toggle("selected", selected);
+      button.setAttribute("aria-pressed", String(selected));
+    });
+    $("gapAction").hidden = !state.gapPrediction || state.gapDone;
+    $("gapGuide").hidden = !state.gapPrediction || state.touchedGap;
+    if (!state.gapPrediction) {
+      $("gapLive").textContent = "Make a prediction to unlock the gap.";
+    } else if (!state.gapDone) {
+      $("gapLive").textContent = `Current gap ÷ λ = ${fmt(ratio(),2)} · diffraction is ${spreadLabel()}.`;
+    }
+    if (state.gapDone && state.gapSnapshot) {
+      const supported = state.gapPrediction === "more";
+      $("gapResult").hidden = false;
+      $("gapResult").innerHTML = `<strong>${supported ? "Your prediction was supported." : "The wavefront evidence contradicts your prediction."}</strong>The gap fell from ${fmt(presets.gap.gap,1)} cm to ${fmt(state.gapSnapshot.gap,1)} cm while λ stayed ${fmt(presets.gap.lambda,1)} cm. The outgoing fronts changed from slight spreading to ${state.gapSnapshot.label}.`;
+      $("continueGap").hidden = false;
+      $("gapLive").textContent = "Change the gap again to test the reverse case, or continue.";
+    } else {
+      $("gapResult").hidden = true;
+      $("continueGap").hidden = true;
+    }
+  }
+
+  function renderWavePhase() {
+    $("wavePhase").classList.toggle("completed", state.waveDone);
+    const wavePredictionLabels = { more: "More spreading", less: "Less spreading", same: "No change" };
+    $("wavePredictionVisual").textContent = state.wavePrediction ? wavePredictionLabels[state.wavePrediction] : "Choose one";
+    $("waveHeldValue").textContent = `gap = ${fmt(presets.wave.gap,1)} cm`;
+    $("wavePredictionMap").classList.toggle("has-choice", Boolean(state.wavePrediction));
+    document.querySelectorAll("[data-wave-prediction]").forEach(button => {
+      const selected = button.dataset.wavePrediction === state.wavePrediction;
+      button.classList.toggle("selected", selected);
+      button.setAttribute("aria-pressed", String(selected));
+    });
+    $("waveAction").hidden = !state.wavePrediction || state.waveDone;
+    $("waveGuide").hidden = !state.wavePrediction || state.touchedWave;
+    if (!state.wavePrediction) {
+      $("waveLive").textContent = "Make a prediction to unlock wavelength.";
+    } else if (!state.waveDone) {
+      $("waveLive").textContent = `Current gap ÷ λ = ${fmt(ratio(),2)} · diffraction is ${spreadLabel()}.`;
+    }
+    if (state.waveDone && state.waveSnapshot) {
+      const supported = state.wavePrediction === "more";
+      $("waveResult").hidden = false;
+      $("waveResult").innerHTML = `<strong>${supported ? "Your prediction was supported." : "The wavefront evidence contradicts your prediction."}</strong>Wavelength rose from ${fmt(presets.wave.lambda,1)} cm to ${fmt(state.waveSnapshot.lambda,1)} cm while the gap stayed ${fmt(presets.wave.gap,1)} cm. The outgoing fronts changed from slight spreading to ${state.waveSnapshot.label}.`;
+      $("continueWave").hidden = false;
+      $("waveLive").textContent = "Change wavelength again to test the reverse case, or continue.";
+    } else {
+      $("waveResult").hidden = true;
+      $("continueWave").hidden = true;
+    }
+  }
+
+  function blankWorkingChecks() { return { gap: false, lambda: false, ratio: false }; }
+  function requiredWorkingKeys() {
+    if (state.workingLevel === 0) return [];
+    if (state.workingLevel === 1) return ["ratio"];
+    return ["gap", "lambda", "ratio"];
+  }
+  function setWorkingLevel(level) {
+    state.workingLevel = clamp(Number(level), 0, 2);
+    state.workingChecked = false;
+    state.workingChecks = blankWorkingChecks();
+    state.challengeTested = false;
+    state.challengeSuccess = false;
+    state.challengeSnapshot = null;
+    renderAll();
+  }
+  function clearWorkingCheck() {
+    state.workingChecked = false;
+    state.workingChecks = blankWorkingChecks();
+    state.challengeTested = false;
+    state.challengeSuccess = false;
+    state.challengeSnapshot = null;
+  }
+  function resetWorkingAnswers() {
+    state.workingAnswers = { gap: "", lambda: "", ratio: "" };
+    clearWorkingCheck();
+  }
+  function syncWorkingChecks() {
+    const values = {
+      gap: Number(state.workingAnswers.gap),
+      lambda: Number(state.workingAnswers.lambda),
+      ratio: Number(state.workingAnswers.ratio)
+    };
+    state.workingChecks = {
+      gap: state.workingAnswers.gap.trim() !== "" && Number.isFinite(values.gap) && Math.abs(values.gap - state.gap) <= 0.051,
+      lambda: state.workingAnswers.lambda.trim() !== "" && Number.isFinite(values.lambda) && Math.abs(values.lambda - state.lambda) <= 0.051,
+      ratio: state.workingAnswers.ratio.trim() !== "" && Number.isFinite(values.ratio) && Math.abs(values.ratio - ratio()) <= 0.025
+    };
+  }
+  function validateWorking() {
+    syncWorkingChecks();
+    state.workingChecked = true;
+    return requiredWorkingKeys().every(key => state.workingChecks[key]);
+  }
+  function renderWorking() {
+    syncWorkingChecks();
+    document.querySelectorAll("[data-work-level]").forEach(button => {
+      const active = Number(button.dataset.workLevel) === state.workingLevel;
+      button.classList.toggle("active", active);
+      button.setAttribute("aria-pressed", String(active));
+    });
+    const values = { gap: fmt(state.gap,1), lambda: fmt(state.lambda,1), ratio: fmt(ratio(),2) };
+    $("workGapAuto").textContent = values.gap;
+    $("workLambdaAuto").textContent = values.lambda;
+    $("workRatioAuto").textContent = values.ratio;
+    const ownedKeys = new Set(requiredWorkingKeys());
+    for (const key of ["gap","lambda","ratio"]) {
+      const cap = key === "lambda" ? "Lambda" : key[0].toUpperCase() + key.slice(1);
+      const field = $(`work${cap}Field`);
+      const input = $(`work${cap}Input`);
+      const status = $(`work${cap}State`);
+      const owned = ownedKeys.has(key);
+      const hasEntry = owned && state.workingAnswers[key].trim() !== "";
+      const correct = hasEntry && state.workingChecks[key];
+      const incorrect = hasEntry && !state.workingChecks[key];
+      field.classList.toggle("owned", owned);
+      field.classList.toggle("correct", correct);
+      field.classList.toggle("incorrect", incorrect);
+      if (input.value !== state.workingAnswers[key]) input.value = state.workingAnswers[key];
+      input.disabled = !owned;
+      input.setAttribute("aria-invalid", String(incorrect));
+      status.textContent = !owned ? (state.workingLevel === 0 ? "shown" : "given") : correct ? "✓ correct" : incorrect ? "× check" : "enter";
+    }
+    $("workingHint").textContent = state.workingLevel === 0
+      ? "Watch the substitution update as you move the sliders. Switch to Some or All when you are ready to take over."
+      : state.workingLevel === 1
+        ? "Gap and wavelength are supplied. Calculate g ÷ λ to two decimal places."
+        : "Read g and λ from the tank, enter both values, then calculate g ÷ λ to two decimal places.";
+  }
+
+  function challengeConditions() {
+    const currentRatio = ratio();
+    const referenceAngle = spreadAngle(REFERENCE.gap, REFERENCE.lambda);
+    const gapWide = state.gap >= REFERENCE.gap + 0.15;
+    const spreadWider = spreadAngle() >= referenceAngle + 8;
+    const workingCorrect = requiredWorkingKeys().every(key => state.workingChecks[key]);
+    return { currentRatio, referenceAngle, gapWide, spreadWider, workingCorrect };
+  }
+
+  function renderChallenge() {
+    const c = challengeConditions();
+    renderWorking();
+    $("compareEyebrow").textContent = `Counterexample · practice ${state.practiceRound}`;
+    $("compareTitle").textContent = `Make the gap wider than ${fmt(REFERENCE.gap,1)} cm, but produce more spreading than the reference.`;
+    $("targetGapLabel").textContent = `Gap is wider than ${fmt(REFERENCE.gap,1)} cm`;
+    $("referenceLabelText").textContent = `orange dashed reference · gap ${fmt(REFERENCE.gap,1)} cm · λ ${fmt(REFERENCE.lambda,1)} cm`;
+    $("testChallenge").hidden = state.challengeSuccess;
+    $("resetChallenge").textContent = state.challengeSuccess ? "Next example" : "Restore reference";
+    $("resetChallenge").classList.toggle("primary", state.challengeSuccess);
+    $("targetGap").classList.toggle("met", c.gapWide);
+    $("targetSpread").classList.toggle("met", c.spreadWider);
+    $("targetRatio").classList.toggle("met", c.workingCorrect && state.challengeTested);
+    $("targetGapValue").textContent = `${fmt(state.gap,1)} cm`;
+    $("targetSpreadValue").textContent = c.spreadWider ? "wider" : spreadAngle() < c.referenceAngle - 1 ? "narrower" : "same";
+    $("targetRatioLabel").textContent = state.workingLevel === 0 ? "Compare the current gap ÷ wavelength" : "Show the current gap ÷ wavelength";
+    $("targetRatioValue").textContent = state.challengeTested ? (c.workingCorrect ? fmt(c.currentRatio,2) : "recalculate") : (state.workingLevel === 0 ? `${fmt(c.currentRatio,2)} shown` : "not checked");
+    if (!state.challengeTested) {
+      $("challengeLive").textContent = state.workingLevel === 0
+        ? `Current g ÷ λ = ${fmt(c.currentRatio,2)}; the complete substitution is shown below.`
+        : `Current reference ratio is ${fmt(ratio(REFERENCE.gap,REFERENCE.lambda),2)}. Complete the working for your setup.`;
+      $("challengeFeedback").hidden = true;
+    }
+  }
+
+  function evidenceMarkup() {
+    const gapRow = $("evidenceGap");
+    const waveRow = $("evidenceWave");
+    const compareRow = $("evidenceCompare");
+    gapRow.className = `evidence-row ${state.phase === "gap" ? "current" : state.gapDone ? "done" : ""}`;
+    waveRow.className = `evidence-row ${state.phase === "wave" ? "current" : state.waveDone ? "done" : ""}`;
+    compareRow.className = `evidence-row ${state.phase === "compare" ? (state.challengeSuccess ? "done" : "current") : ""}`;
+    gapRow.querySelector("span").textContent = state.phase === "gap" ? "current" : state.gapDone ? "recorded" : "waiting";
+    waveRow.querySelector("span").textContent = state.phase === "wave" ? "current" : state.waveDone ? "recorded" : "waiting";
+    compareRow.querySelector("span").textContent = state.challengeSuccess ? "verified" : state.phase === "compare" ? "current" : "waiting";
+
+    if (!state.gapPrediction) $("evidenceGapText").textContent = "Prediction not recorded.";
+    else if (!state.gapDone) $("evidenceGapText").innerHTML = `Predicted <b>${predictionDescription(state.gapPrediction)}</b>. Gap ${fmt(presets.gap.gap,1)} → ${fmt(state.gap,1)} cm; λ fixed at ${fmt(state.lambda,1)} cm; spread now <b>${spreadLabel()}</b>.`;
+    else $("evidenceGapText").innerHTML = `Gap ${fmt(presets.gap.gap,1)} → <b>${fmt(state.gapSnapshot.gap,1)} cm</b>; λ fixed at ${fmt(presets.gap.lambda,1)} cm; spread slight → <b>${state.gapSnapshot.label}</b>.`;
+
+    if (state.phase === "gap" && !state.waveDone) $("evidenceWaveText").textContent = "Gap will be held constant.";
+    else if (!state.wavePrediction) $("evidenceWaveText").textContent = "Prediction not recorded.";
+    else if (!state.waveDone) $("evidenceWaveText").innerHTML = `Predicted <b>${predictionDescription(state.wavePrediction)}</b>. λ ${fmt(presets.wave.lambda,1)} → ${fmt(state.lambda,1)} cm; gap fixed at ${fmt(state.gap,1)} cm; spread now <b>${spreadLabel()}</b>.`;
+    else $("evidenceWaveText").innerHTML = `λ ${fmt(presets.wave.lambda,1)} → <b>${fmt(state.waveSnapshot.lambda,1)} cm</b>; gap fixed at ${fmt(presets.wave.gap,1)} cm; spread slight → <b>${state.waveSnapshot.label}</b>.`;
+
+    if (state.phase !== "compare") $("evidenceCompareText").textContent = "Compare two gap-to-wavelength ratios.";
+    else if (!state.challengeSuccess) $("evidenceCompareText").innerHTML = `Reference g ÷ λ = <b>${fmt(ratio(REFERENCE.gap,REFERENCE.lambda),2)}</b>. Current g ÷ λ = <b>${fmt(ratio(),2)}</b>; current spread is ${spreadLabel()}.`;
+    else $("evidenceCompareText").innerHTML = `Gap ${fmt(REFERENCE.gap,1)} → <b>${fmt(state.challengeSnapshot.gap,1)} cm</b>, but g ÷ λ ${fmt(ratio(REFERENCE.gap,REFERENCE.lambda),2)} → <b>${fmt(state.challengeSnapshot.ratio,2)}</b>; the wider gap spreads more.`;
+
+  }
+
+  function checkDiscovery() {
+    if (state.phase === "gap" && state.gapPrediction && !state.gapDone && state.touchedGap && ratio() <= 1.22) {
+      state.gapDone = true;
+      state.gapSnapshot = { gap: state.gap, lambda: state.lambda, ratio: ratio(), label: spreadLabel() };
+    }
+    if (state.phase === "wave" && state.wavePrediction && !state.waveDone && state.touchedWave && ratio() <= 1.35) {
+      state.waveDone = true;
+      state.waveSnapshot = { gap: state.gap, lambda: state.lambda, ratio: ratio(), label: spreadLabel() };
+    }
+  }
+
+  function positionStageForViewport() {
+    const shell = $("stageFrame").parentElement;
+    const maxScroll = Math.max(0, shell.scrollWidth - shell.clientWidth);
+    if (maxScroll <= 0 || state.userStageScrolled) return;
+    const scale = shell.scrollWidth / STAGE_W;
+    const focus = shell.clientWidth < 520 ? 0.58 : 0.43;
+    const target = BARRIER_X * scale - shell.clientWidth * focus;
+    shell.scrollLeft = clamp(target, 0, maxScroll);
+  }
+
+  function renderPhaseVisibility() {
+    $("gapPhase").hidden = state.phase !== "gap";
+    $("wavePhase").hidden = state.phase !== "wave";
+    $("comparePhase").hidden = state.phase !== "compare";
+    $("referenceFan").style.display = state.phase === "compare" ? "" : "none";
+    $("referenceLabel").style.display = state.phase === "compare" ? "" : "none";
+    $("referenceChip").hidden = state.phase !== "compare";
+    if (state.phase === "compare") $("referenceChip").innerHTML = `reference <b>${spreadLabel(spreadAngle(REFERENCE.gap,REFERENCE.lambda))}</b>`;
+    document.body.dataset.phase = state.phase;
+    document.body.dataset.complete = String(state.challengeSuccess);
+  }
+
+  function renderAll() {
+    checkDiscovery();
+    renderMission();
+    renderPhaseVisibility();
+    renderReadouts();
+    setLockedVisuals();
+    updateBarrier();
+    updateWavelengthMeasure();
+    updateFan();
+    renderGapPhase();
+    renderWavePhase();
+    renderChallenge();
+    evidenceMarkup();
+    requestAnimationFrame(positionStageForViewport);
+  }
+
+  function changeGap(value, source = "control") {
+    if (!gapUnlocked()) return;
+    state.gap = round(clamp(Number(value), MIN_GAP, MAX_GAP), 1);
+    state.touchedGap = true;
+    state.fieldDirty = true;
+    if (state.phase === "compare") clearWorkingCheck();
+    renderAll();
+  }
+
+  function changeLambda(value, source = "control") {
+    if (!lambdaUnlocked()) return;
+    state.lambda = round(clamp(Number(value), MIN_LAMBDA, MAX_LAMBDA), 1);
+    state.touchedWave = true;
+    state.fieldDirty = true;
+    if (state.phase === "compare") clearWorkingCheck();
+    renderAll();
+  }
+
+  function nextPracticeExample() {
+    REFERENCE = generateProblem("compare");
+    presets.compare = { gap: REFERENCE.gap, lambda: REFERENCE.lambda };
+    state.practiceRound += 1;
+    state.gap = REFERENCE.gap;
+    state.lambda = REFERENCE.lambda;
+    state.touchedGap = false;
+    state.touchedWave = false;
+    state.challengeTested = false;
+    state.challengeSuccess = false;
+    state.challengeSnapshot = null;
+    resetWorkingAnswers();
+    state.userStageScrolled = false;
+    state.fieldDirty = true;
+    renderAll();
+  }
+
+  function setPhase(phase) {
+    state.phase = phase;
+    state.drag = null;
+    state.userStageScrolled = false;
+    state.challengeTested = false;
+    state.challengeSuccess = false;
+    if (phase === "gap") {
+      state.gap = presets.gap.gap;
+      state.lambda = presets.gap.lambda;
+      state.touchedGap = false;
+    } else if (phase === "wave") {
+      state.gap = presets.wave.gap;
+      state.lambda = presets.wave.lambda;
+      state.touchedWave = false;
+    } else {
+      state.gap = presets.compare.gap;
+      state.lambda = presets.compare.lambda;
+      state.touchedGap = false;
+      state.touchedWave = false;
+      resetWorkingAnswers();
+    }
+    state.fieldDirty = true;
+    renderAll();
+  }
+
+  function resetCurrent() {
+    state.userStageScrolled = false;
+    if (state.phase === "gap") {
+      state.gap = presets.gap.gap;
+      state.lambda = presets.gap.lambda;
+      state.touchedGap = false;
+    } else if (state.phase === "wave") {
+      state.gap = presets.wave.gap;
+      state.lambda = presets.wave.lambda;
+      state.touchedWave = false;
+    } else {
+      state.gap = presets.compare.gap;
+      state.lambda = presets.compare.lambda;
+      state.touchedGap = false;
+      state.touchedWave = false;
+      state.challengeTested = false;
+      state.challengeSuccess = false;
+      resetWorkingAnswers();
+      $("challengeFeedback").hidden = true;
+    }
+    state.fieldDirty = true;
+    renderAll();
+  }
+
+  function stagePoint(event) {
+    const rect = $("overlay").getBoundingClientRect();
+    return { x: (event.clientX - rect.left) / rect.width * STAGE_W, y: (event.clientY - rect.top) / rect.height * STAGE_H };
+  }
+
+  function startGapDrag(event) {
+    if (!gapUnlocked()) return;
+    event.preventDefault();
+    state.drag = { type: "gap", pointerId: event.pointerId };
+    $("overlay").setPointerCapture(event.pointerId);
+  }
+  function startWaveDrag(event) {
+    if (!lambdaUnlocked()) return;
+    event.preventDefault();
+    state.drag = { type: "wave", pointerId: event.pointerId };
+    $("overlay").setPointerCapture(event.pointerId);
+  }
+  function moveDrag(event) {
+    if (!state.drag || state.drag.pointerId !== event.pointerId) return;
+    const point = stagePoint(event);
+    if (state.drag.type === "gap") changeGap(Math.abs(point.y - CENTRE_Y) * 2 / PX_PER_CM, "drag");
+    else changeLambda((point.x - 84) / PX_PER_CM, "drag");
+  }
+  function endDrag(event) {
+    if (!state.drag || state.drag.pointerId !== event.pointerId) return;
+    try { $("overlay").releasePointerCapture(event.pointerId); } catch (_) {}
+    state.drag = null;
+    renderAll();
+  }
+
+  function keyboardAdjust(event, type) {
+    if (!["ArrowUp","ArrowRight","ArrowDown","ArrowLeft","PageUp","PageDown","Home","End"].includes(event.key)) return;
+    event.preventDefault();
+    const increase = event.key === "ArrowUp" || event.key === "ArrowRight" || event.key === "PageUp";
+    const decrease = event.key === "ArrowDown" || event.key === "ArrowLeft" || event.key === "PageDown";
+    const step = event.key.startsWith("Page") ? 0.5 : 0.1;
+    if (type === "gap") {
+      if (!gapUnlocked()) return;
+      if (event.key === "Home") changeGap(MIN_GAP);
+      else if (event.key === "End") changeGap(MAX_GAP);
+      else changeGap(state.gap + (increase ? step : decrease ? -step : 0));
+    } else {
+      if (!lambdaUnlocked()) return;
+      if (event.key === "Home") changeLambda(MIN_LAMBDA);
+      else if (event.key === "End") changeLambda(MAX_LAMBDA);
+      else changeLambda(state.lambda + (increase ? step : decrease ? -step : 0));
+    }
+  }
+
+  document.querySelectorAll("[data-gap-prediction]").forEach(button => button.addEventListener("click", () => {
+    state.gapPrediction = button.dataset.gapPrediction;
+    renderAll();
+  }));
+  document.querySelectorAll("[data-wave-prediction]").forEach(button => button.addEventListener("click", () => {
+    state.wavePrediction = button.dataset.wavePrediction;
+    renderAll();
+  }));
+
+  $("gapRange").addEventListener("input", event => changeGap(event.target.value));
+  $("lambdaRange").addEventListener("input", event => changeLambda(event.target.value));
+  $("gapTopHandle").addEventListener("pointerdown", startGapDrag);
+  $("gapBottomHandle").addEventListener("pointerdown", startGapDrag);
+  $("lambdaMeasure").addEventListener("pointerdown", event => {
+    if (event.target.closest("#lambdaMeasure")) startWaveDrag(event);
+  });
+  $("overlay").addEventListener("pointermove", moveDrag);
+  $("overlay").addEventListener("pointerup", endDrag);
+  $("overlay").addEventListener("pointercancel", endDrag);
+  $("gapTopHandle").addEventListener("keydown", event => keyboardAdjust(event, "gap"));
+  $("gapBottomHandle").addEventListener("keydown", event => keyboardAdjust(event, "gap"));
+  $("lambdaMeasure").addEventListener("keydown", event => keyboardAdjust(event, "wave"));
+
+  $("continueGap").addEventListener("click", () => setPhase("wave"));
+  $("continueWave").addEventListener("click", () => setPhase("compare"));
+  $("resetButton").addEventListener("click", resetCurrent);
+  $("resetChallenge").addEventListener("click", () => {
+    if (state.challengeSuccess) nextPracticeExample();
+    else resetCurrent();
+  });
+  $("pauseButton").addEventListener("click", () => { state.paused = !state.paused; renderMission(); });
+  document.querySelectorAll("[data-work-level]").forEach(button => button.addEventListener("click", () => setWorkingLevel(button.dataset.workLevel)));
+  for (const [id,key] of [["workGapInput","gap"],["workLambdaInput","lambda"],["workRatioInput","ratio"]]) {
+    $(id).addEventListener("input", event => {
+      state.workingAnswers[key] = event.target.value;
+      clearWorkingCheck();
+      renderAll();
+    });
+  }
+
+  $("testChallenge").addEventListener("click", () => {
+    const workingCorrect = validateWorking();
+    const c = challengeConditions();
+    state.challengeTested = true;
+    state.challengeSuccess = c.gapWide && c.spreadWider && workingCorrect;
+    const feedback = $("challengeFeedback");
+    feedback.hidden = true;
+    feedback.className = "feedback-card";
+    if (state.challengeSuccess) {
+      state.practiceSolved += 1;
+      state.challengeSnapshot = { gap: state.gap, lambda: state.lambda, ratio: c.currentRatio, label: spreadLabel() };
+      feedback.classList.add("good");
+      const ownership = state.workingLevel === 0 ? " The complete calculation below shows why: switch to Some or All to take over the same working." : " Your working confirms the smaller gap-to-wavelength ratio.";
+      feedback.innerHTML = `<strong>Counterexample verified.</strong>The wider gap spreads more because wavelength increased by a larger factor, so g ÷ λ fell from ${fmt(ratio(REFERENCE.gap,REFERENCE.lambda),2)} to ${fmt(c.currentRatio,2)}.${ownership}`;
+      $("challengeLive").textContent = `Verified. Next example keeps your ${state.workingLevel === 0 ? "None" : state.workingLevel === 1 ? "Some" : "All"} working level.`;
+    } else if (!c.gapWide) {
+      feedback.classList.add("warn");
+      feedback.innerHTML = `<strong>The visual consequence is not yet a counterexample.</strong>The current gap must be wider than 1.6 cm.`;
+      $("challengeLive").textContent = "Not yet: make the gap wider than 1.6 cm, then compensate with wavelength.";
+    } else if (!c.spreadWider) {
+      feedback.classList.add("bad");
+      feedback.innerHTML = `<strong>The wider gap made the fan narrower.</strong>Increase wavelength enough that it grows by a larger factor than the gap. Watch for the current blue envelope to open beyond the dashed reference.`;
+      $("challengeLive").textContent = "Not yet: increase wavelength until the blue fan opens beyond the orange reference.";
+    } else {
+      feedback.classList.add("warn");
+      feedback.innerHTML = `<strong>The wave pattern works; some working does not.</strong>Correct the red field${state.workingLevel === 2 ? "s" : ""}. Green fields can stay as they are.`;
+      $("challengeLive").textContent = "Visual setup works. Repair the red field(s); green fields are correct.";
+    }
+    renderAll();
+  });
+
+  $("stageFrame").parentElement.addEventListener("pointerdown", () => { state.userStageScrolled = true; }, { passive: true });
+  $("stageFrame").parentElement.addEventListener("wheel", () => { state.userStageScrolled = true; }, { passive: true });
+  window.addEventListener("resize", () => { state.userStageScrolled = false; renderAll(); });
+  window.__diffractionLab = {
+    state,
+    setPhase,
+    setGap: value => changeGap(value),
+    setLambda: value => changeLambda(value),
+    setWorkingLevel,
+    setWorkingAnswers: answers => { Object.assign(state.workingAnswers, answers); clearWorkingCheck(); renderAll(); },
+    test: () => $("testChallenge").click(),
+    nextExample: nextPracticeExample,
+    render: renderAll
+  };
+
+  renderAll();
+  requestAnimationFrame(animationFrame);
+})();
+</script>
+</body>
+</html>

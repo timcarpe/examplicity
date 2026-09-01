@@ -1,5 +1,5 @@
 type SyllabusDefinition = {
-  subject: string;
+  subjects: readonly string[];
   title: string;
   officialPage: string;
   documentUrl: string;
@@ -14,7 +14,7 @@ type SyllabusDefinition = {
 
 export const syllabusRegistry = {
   '0478': {
-    subject: 'computer-science',
+    subjects: ['computer-science'],
     title: 'Cambridge IGCSE Computer Science',
     officialPage: 'https://www.cambridgeinternational.org/programmes-and-qualifications/cambridge-igcse-computer-science-0478/',
     documentUrl: 'https://www.cambridgeinternational.org/Images/697167-2026-2028-syllabus.pdf',
@@ -27,7 +27,7 @@ export const syllabusRegistry = {
     },
   },
   '9618': {
-    subject: 'computer-science',
+    subjects: ['computer-science'],
     title: 'Cambridge International AS & A Level Computer Science',
     officialPage: 'https://www.cambridgeinternational.org/programmes-and-qualifications/cambridge-international-as-and-a-level-computer-science-9618/',
     documentUrl: 'https://www.cambridgeinternational.org/Images/697372-2026-syllabus.pdf',
@@ -40,7 +40,7 @@ export const syllabusRegistry = {
     },
   },
   '0580': {
-    subject: 'mathematics',
+    subjects: ['mathematics'],
     title: 'Cambridge IGCSE Mathematics',
     officialPage: 'https://www.cambridgeinternational.org/programmes-and-qualifications/cambridge-igcse-mathematics-0580/',
     documentUrl: 'https://www.cambridgeinternational.org/Images/662466-2025-2027-syllabus.pdf',
@@ -50,6 +50,71 @@ export const syllabusRegistry = {
       border: '#91c4b0',
       text: '#235f4e',
       hover: '#dcf0e7',
+    },
+  },
+  '0610': {
+    subjects: ['biology'],
+    title: 'Cambridge IGCSE Biology',
+    officialPage: 'https://www.cambridgeinternational.org/programmes-and-qualifications/cambridge-igcse-biology-0610/',
+    documentUrl: 'https://www.cambridgeinternational.org/Images/697203-2026-2028-syllabus.pdf',
+    validFor: '2026–2028',
+    palette: {
+      background: '#f3f7e9',
+      border: '#aebf7e',
+      text: '#4b6221',
+      hover: '#e8f0d6',
+    },
+  },
+  '0625': {
+    subjects: ['physics'],
+    title: 'Cambridge IGCSE Physics',
+    officialPage: 'https://www.cambridgeinternational.org/programmes-and-qualifications/cambridge-igcse-physics-0625/',
+    documentUrl: 'https://www.cambridgeinternational.org/Images/697209-2026-2028-syllabus.pdf',
+    validFor: '2026–2028',
+    palette: {
+      background: '#edf5fb',
+      border: '#8fb6cf',
+      text: '#245a78',
+      hover: '#dcecf6',
+    },
+  },
+  '0654': {
+    subjects: ['biology', 'chemistry', 'physics'],
+    title: 'Cambridge IGCSE Co-ordinated Sciences',
+    officialPage: 'https://www.cambridgeinternational.org/programmes-and-qualifications/cambridge-igcse-co-ordinated-sciences-double-award-0654/',
+    documentUrl: 'https://www.cambridgeinternational.org/Images/664572-2025-2027-syllabus.pdf',
+    validFor: '2025–2027',
+    palette: {
+      background: '#f6f0fa',
+      border: '#b9a0cf',
+      text: '#5d3979',
+      hover: '#ece1f4',
+    },
+  },
+  '9700': {
+    subjects: ['biology'],
+    title: 'Cambridge International AS & A Level Biology',
+    officialPage: 'https://www.cambridgeinternational.org/programmes-and-qualifications/cambridge-international-as-and-a-level-biology-9700/',
+    documentUrl: 'https://www.cambridgeinternational.org/Images/664560-2025-2027-syllabus.pdf',
+    validFor: '2025–2027',
+    palette: {
+      background: '#f8eef4',
+      border: '#c8a0b7',
+      text: '#703b59',
+      hover: '#f0dee8',
+    },
+  },
+  '9702': {
+    subjects: ['physics'],
+    title: 'Cambridge International AS & A Level Physics',
+    officialPage: 'https://www.cambridgeinternational.org/programmes-and-qualifications/cambridge-international-as-and-a-level-physics-9702/',
+    documentUrl: 'https://www.cambridgeinternational.org/Images/664565-2025-2027-syllabus.pdf',
+    validFor: '2025–2027',
+    palette: {
+      background: '#eef3fa',
+      border: '#9eafd0',
+      text: '#354d78',
+      hover: '#e0e8f5',
     },
   },
 } as const satisfies Record<string, SyllabusDefinition>;
@@ -84,6 +149,10 @@ export const topics = [
   'Transformations and vectors',
   'Probability',
   'Statistics',
+  'Selection and evolution',
+  'Waves',
+  'Light',
+  'Thermal physics',
 ] as const;
 export type Topic = (typeof topics)[number];
 
@@ -97,6 +166,7 @@ export type SubjectDefinition = {
   }>>;
   qualificationViews: Partial<Record<QualificationLevel, {
     exam: ExamCode;
+    alignedExams?: readonly ExamCode[];
     headerLabel: string;
     intro: string;
     topicBriefings: Partial<Record<Topic, string>>;
@@ -192,6 +262,91 @@ const subjectDefinitions = [
           'Transformations and vectors': 'Construct transformations and programme vector routes to connect geometric change, displacement and magnitude for Cambridge IGCSE Mathematics 0580.',
           Probability: 'Run chance experiments and rebuild sample spaces to connect replacement, conditional probability, relative frequency and expected outcomes for Cambridge IGCSE Mathematics 0580.',
           Statistics: 'Build statistical representations and use them to reason about correlation, grouped distributions, cumulative frequency and spread for Cambridge IGCSE Mathematics 0580.',
+        } satisfies Partial<Record<Topic, string>>,
+      },
+    },
+  },
+  {
+    id: 'biology',
+    name: 'Biology',
+    exams: ['0610', '9700'],
+    views: {
+      '0610': {
+        href: '/biology/0610',
+        metaDescription: 'Interactive Cambridge IGCSE Biology 0610 and Co-ordinated Sciences 0654 biology labs for exam practice and visual concept explanations.',
+      },
+      '9700': {
+        href: '/biology/9700',
+        metaDescription: 'Interactive Cambridge International AS & A Level Biology 9700 labs for exam practice and visual concept explanations.',
+      },
+    },
+    qualificationViews: {
+      IGCSE: {
+        exam: '0610',
+        alignedExams: ['0610', '0654'],
+        headerLabel: 'Cambridge IGCSE Biology · 0610 / 0654',
+        intro: 'Interactive Cambridge IGCSE Biology labs aligned to Biology 0610 and the Biology objectives in Co-ordinated Sciences 0654.',
+        topicBriefings: {
+          'Selection and evolution': 'Change an environmental selection pressure and follow how survival and reproduction alter trait frequencies across generations.',
+        } satisfies Partial<Record<Topic, string>>,
+      },
+      AS: {
+        exam: '9700',
+        headerLabel: 'Cambridge International AS Level Biology · 9700',
+        intro: 'Interactive Cambridge International AS Level Biology 9700 labs grounded in the current syllabus outcomes.',
+        topicBriefings: {} satisfies Partial<Record<Topic, string>>,
+      },
+      A: {
+        exam: '9700',
+        headerLabel: 'Cambridge International A Level Biology · 9700',
+        intro: 'Interactive Cambridge International A Level Biology 9700 labs for investigating biological relationships through visible evidence.',
+        topicBriefings: {
+          'Selection and evolution': 'Manipulate selection pressures and follow their effects on survival, reproduction and trait-frequency distributions for Cambridge International A Level Biology 9700.',
+        } satisfies Partial<Record<Topic, string>>,
+      },
+    },
+  },
+  {
+    id: 'physics',
+    name: 'Physics',
+    exams: ['0625', '9702'],
+    views: {
+      '0625': {
+        href: '/physics/0625',
+        metaDescription: 'Interactive Cambridge IGCSE Physics 0625 and Co-ordinated Sciences 0654 physics labs for exam practice and visual concept explanations.',
+      },
+      '9702': {
+        href: '/physics/9702',
+        metaDescription: 'Interactive Cambridge International AS & A Level Physics 9702 labs for exam practice and visual concept explanations.',
+      },
+    },
+    qualificationViews: {
+      IGCSE: {
+        exam: '0625',
+        alignedExams: ['0625', '0654'],
+        headerLabel: 'Cambridge IGCSE Physics · 0625 / 0654',
+        intro: 'Interactive Cambridge IGCSE Physics labs aligned to Physics 0625 and the Physics objectives in Co-ordinated Sciences 0654.',
+        topicBriefings: {
+          Waves: 'Operate wave sources and boundaries to connect wavelength and gap size to diffraction in Cambridge IGCSE Physics.',
+          Light: 'Move rays, boundaries, lenses and screens to investigate critical angle, total internal reflection and image formation in Cambridge IGCSE Physics.',
+          'Thermal physics': 'Compress a fixed mass of gas and connect volume, particle collisions and pressure at constant temperature in Cambridge IGCSE Physics.',
+        } satisfies Partial<Record<Topic, string>>,
+      },
+      AS: {
+        exam: '9702',
+        headerLabel: 'Cambridge International AS Level Physics · 9702',
+        intro: 'Interactive Cambridge International AS Level Physics 9702 labs for investigating physical relationships through visible evidence.',
+        topicBriefings: {
+          Waves: 'Change wavelength and gap width in a ripple-tank model to investigate diffraction for Cambridge International AS Level Physics 9702.',
+        } satisfies Partial<Record<Topic, string>>,
+      },
+      A: {
+        exam: '9702',
+        headerLabel: 'Cambridge International A Level Physics · 9702',
+        intro: 'Interactive Cambridge International A Level Physics 9702 labs covering shared AS foundations and A Level relationships.',
+        topicBriefings: {
+          Waves: 'Investigate the shared AS wave foundations required within Cambridge International A Level Physics 9702.',
+          'Thermal physics': 'Connect gas volume, pressure and particle motion to the A Level ideal-gas model in Cambridge International A Level Physics 9702.',
         } satisfies Partial<Record<Topic, string>>,
       },
     },
@@ -1181,6 +1336,88 @@ export const labs: Lab[] = [
       { code: '9618', qualification: 'AS', sections: [{ id: '11.1', page: 29, primary: true }, { id: '11.2', page: 29 }, { id: '11.3', page: 30 }, { id: '10.2', page: 28 }] },
     ],
     href: '/labs/computer-science/python-programming-practice.html',
+  },
+  {
+    subject: 'biology',
+    slug: 'selection-pressure-and-trait-frequency',
+    title: 'Selection Pressure and Trait Frequency',
+    description: 'Change environmental selection pressures, run generations, and follow how survival and reproduction reshape a heritable trait distribution.',
+    metaDescription: 'Explore natural selection, selection pressure and changing trait frequencies for Cambridge IGCSE Biology 0610, Co-ordinated Sciences 0654 and A Level Biology 9700.',
+    subtitle: 'Reshape the food supply, observe which birds are most likely to reproduce, then follow the trait distribution across repeated generations.',
+    topic: 'Selection and evolution',
+    format: 'Population selection model',
+    kind: 'lab',
+    syllabuses: [
+      { code: '0610', qualification: 'IGCSE', sections: [{ id: '18.3', page: 41, primary: true }] },
+      { code: '0654', qualification: 'IGCSE', sections: [{ id: 'B17.2', page: 32, primary: true }] },
+      { code: '9700', qualification: 'A', sections: [{ id: '17.2', page: 43, primary: true }] },
+    ],
+    href: '/labs/biology/selection-pressure-and-trait-frequency.html',
+  },
+  {
+    subject: 'physics',
+    slug: 'converging-lens-imaging',
+    title: 'Converging Lens Imaging',
+    description: 'Move an object and screen along an optical bench, trace principal rays, and test when a converging lens forms real or virtual images.',
+    metaDescription: 'Explore converging lenses, focal length, real and virtual images, ray diagrams and magnification for Cambridge IGCSE Physics 0625 and Co-ordinated Sciences 0654.',
+    subtitle: 'Move the object through the focal regions, focus a screen where rays meet, and use backward extensions when the image becomes virtual.',
+    topic: 'Light',
+    format: 'Optical bench investigation',
+    kind: 'lab',
+    syllabuses: [
+      { code: '0625', qualification: 'IGCSE', sections: [{ id: '3.2.3', page: 24, primary: true }] },
+      { code: '0654', qualification: 'IGCSE', sections: [{ id: 'P3.2.3', page: 66, primary: true }] },
+    ],
+    href: '/labs/physics/converging-lens-imaging.html',
+  },
+  {
+    subject: 'physics',
+    slug: 'critical-angle-and-total-internal-reflection',
+    title: 'Critical Angle and Total Internal Reflection',
+    description: 'Rotate a ray inside a transparent block and observe the boundary between refraction, the critical angle and total internal reflection.',
+    metaDescription: 'Explore critical angle, refraction and total internal reflection for Cambridge IGCSE Physics 0625 and Co-ordinated Sciences 0654.',
+    subtitle: 'Rotate one ray towards the boundary, mark the transition where the refracted ray reaches 90°, then test what changes beyond it.',
+    topic: 'Light',
+    format: 'Ray-boundary investigation',
+    kind: 'lab',
+    syllabuses: [
+      { code: '0625', qualification: 'IGCSE', sections: [{ id: '3.2.2', page: 24, primary: true }] },
+      { code: '0654', qualification: 'IGCSE', sections: [{ id: 'P3.2.2', page: 66, primary: true }] },
+    ],
+    href: '/labs/physics/critical-angle-and-total-internal-reflection.html',
+  },
+  {
+    subject: 'physics',
+    slug: 'diffraction-through-a-gap',
+    title: 'Diffraction Through a Gap',
+    description: 'Change wavelength and gap width in a ripple tank, then compare how strongly the outgoing wavefront spreads.',
+    metaDescription: 'Explore diffraction and the relationship between wavelength and gap width for Cambridge IGCSE Physics 0625, Co-ordinated Sciences 0654 and AS & A Level Physics 9702.',
+    subtitle: 'Adjust the incoming wavelength and opening, predict the spread, then use the wavefront pattern to identify the controlling ratio.',
+    topic: 'Waves',
+    format: 'Ripple-tank investigation',
+    kind: 'lab',
+    syllabuses: [
+      { code: '0625', qualification: 'IGCSE', sections: [{ id: '3.1', page: 23, primary: true }] },
+      { code: '0654', qualification: 'IGCSE', sections: [{ id: 'P3.1', page: 65, primary: true }] },
+      { code: '9702', qualification: 'AS/A', sections: [{ id: '8.2', page: 22, primary: true }] },
+    ],
+    href: '/labs/physics/diffraction-through-a-gap.html',
+  },
+  {
+    subject: 'physics',
+    slug: 'gas-compression-at-constant-temperature',
+    title: 'Gas Compression at Constant Temperature',
+    description: 'Compress a fixed mass of gas, inspect particle collisions, and test the inverse pressure–volume relationship at constant temperature.',
+    metaDescription: 'Explore gas pressure, particle collisions and the pressure–volume relationship for Cambridge IGCSE Physics 0625 and Co-ordinated Sciences 0654.',
+    subtitle: 'Move the piston while temperature and particle count stay fixed, then connect collision frequency to pressure and the constant pressure–volume product.',
+    topic: 'Thermal physics',
+    format: 'Particle-pressure investigation',
+    kind: 'lab',
+    syllabuses: [
+      { code: '0625', qualification: 'IGCSE', sections: [{ id: '2.1.3', page: 19, primary: true }] },
+      { code: '0654', qualification: 'IGCSE', sections: [{ id: 'P2.1.3', page: 63, primary: true }] },
+    ],
+    href: '/labs/physics/gas-compression-at-constant-temperature.html',
   },
   translator,
 ];

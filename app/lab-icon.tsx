@@ -577,6 +577,49 @@ function IconDrawing({ slug }: LabIconProps) {
           <path d="m430 190 18 18 34-42M430 266h118" />
         </>
       );
+    case 'selection-pressure-and-trait-frequency':
+      return (
+        <>
+          <path d="M76 286h488M104 270c42-4 54-38 92-92s74-82 112-12 58 98 104 104" />
+          <path className="tone-one" d="M218 270c38-4 54-44 90-112s72-72 106 4 56 102 108 108" />
+          <path className="secondary-line" d="M106 92h112m-18-18 18 18-18 18" />
+        </>
+      );
+    case 'converging-lens-imaging':
+      return (
+        <>
+          <path d="M62 180h212M366 180h212M112 256V112m-18 22 18-22 18 22M520 244V136m-18 22 18-22 18 22" />
+          <path d="M112 112 274 156M366 156 520 136M112 112 274 204M366 204 520 136" />
+          <path className="is-solid tone-one" d="M320 70c-38 42-38 178 0 220 38-42 38-178 0-220z" />
+        </>
+      );
+    case 'critical-angle-and-total-internal-reflection':
+      return (
+        <>
+          <path d="M92 82h456v196H92zM92 180h456M320 104v152" />
+          <path d="M172 258 320 180M320 180l96-98" />
+          <path className="tone-one" d="M320 180 466 258" />
+        </>
+      );
+    case 'diffraction-through-a-gap':
+      return (
+        <>
+          <path d="M276 60v92M276 208v92M78 92v176M126 92v176M174 92v176" />
+          <path d="M320 154c48 4 88 44 92 92M320 206c20 2 38 20 40 40" />
+          <path className="tone-one" d="M320 102c76 6 138 68 144 144" />
+        </>
+      );
+    case 'gas-compression-at-constant-temperature':
+      return (
+        <>
+          <path d="M90 82v210h460V82M90 292h460" />
+          <circle cx="166" cy="156" r="14" /><circle cx="236" cy="232" r="14" />
+          <circle cx="324" cy="148" r="14" /><circle cx="414" cy="226" r="14" />
+          <circle cx="492" cy="154" r="14" />
+          <path d="M320 32v42m-18-18 18 18 18-18" />
+          <rect className="is-solid tone-one" height="30" rx="6" width="420" x="110" y="92" />
+        </>
+      );
     case 'translator':
       return (
         <>

@@ -1,7 +1,15 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Catalogue from '../../catalogue';
-import { labs, subjects, syllabusRegistry, type ExamCode, type SubjectDefinition, type SubjectId } from '../../labs';
+import {
+  labs,
+  subjects,
+  syllabusAlignmentIncludesLevel,
+  type ExamCode,
+  type QualificationLevel,
+  type SubjectDefinition,
+  type SubjectId,
+} from '../../labs';
 import { siteDescription, siteTitle, siteUrl } from '../../site';
 
 type PageProps = {
@@ -62,9 +70,16 @@ export default async function SubjectCatalogue({ params }: PageProps) {
 
   const { subject, exam, view } = match;
   const pageUrl = `${siteUrl}${view.href}`;
-  const educationalLevel = `${syllabusRegistry[exam].title} ${exam}`;
+  const level = (Object.entries(subject.qualificationViews).find(([, qualificationView]) => (
+    qualificationView && (qualificationView.alignedExams ?? [qualificationView.exam]).includes(exam)
+  ))?.[0] ?? 'IGCSE') as QualificationLevel;
+  const qualificationView = subject.qualificationViews[level]!;
+  const alignedExams = qualificationView.alignedExams ?? [qualificationView.exam];
+  const educationalLevel = qualificationView.headerLabel;
   const visibleLabs = labs.filter((lab) => (
-    lab.subject === subject.id && lab.syllabuses.some((syllabus) => syllabus.code === exam)
+    lab.subject === subject.id && lab.syllabuses.some((syllabus) => (
+      alignedExams.includes(syllabus.code) && syllabusAlignmentIncludesLevel(syllabus.qualification, level)
+    ))
   ));
   const structuredData = {
     '@context': 'https://schema.org',

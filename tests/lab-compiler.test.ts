@@ -98,10 +98,15 @@ test('publication profile is hash-pinned and matches its canonical release', asy
   const manifestContent = await readFile(path.join(profileRoot, 'manifest.json'));
   const manifest = JSON.parse(manifestContent.toString('utf8'));
   const profile = await readFile(path.join(profileRoot, 'profile.json'));
+  const kitManifest = JSON.parse(await readFile(path.join(
+    repositoryRoot,
+    publicationManifest.kit.vendorDirectory,
+    'manifest.json',
+  ), 'utf8'));
 
   assert.equal(publicationManifest.publicationProfile.name, manifest.name);
   assert.equal(publicationManifest.publicationProfile.version, manifest.version);
-  assert.equal(publicationManifest.kit.version, '0.2.0');
+  assert.equal(publicationManifest.kit.version, kitManifest.version);
   assert.equal(
     publicationManifest.publicationProfile.manifestSha256,
     createHash('sha256').update(manifestContent).digest('hex'),
@@ -118,6 +123,21 @@ test('publication manifest owns every live lab in stable order', async () => {
   assert.equal(keys.length, labs.length);
   assert.equal(new Set(keys).size, keys.length);
   assert.deepEqual(keys, expected);
+});
+
+test('publication manifest records every catalogue curriculum mapping', async () => {
+  const manifest = JSON.parse(await readFile(publicationManifestPath, 'utf8'));
+  const manifestLabs = new Map(manifest.labs.map((entry: {
+    subject: string;
+    slug: string;
+    syllabuses: unknown;
+  }) => [manifestKey(entry), entry]));
+
+  for (const lab of labs) {
+    const entry = manifestLabs.get(manifestKey(lab));
+    assert.ok(entry, `${lab.slug} is missing from the publication manifest`);
+    assert.deepEqual(entry.syllabuses, lab.syllabuses, `${lab.slug} curriculum mapping has drifted`);
+  }
 });
 
 test('registered sources and generated outputs satisfy the compiler-owned contract', async () => {

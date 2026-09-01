@@ -137,8 +137,8 @@ const renderSyllabusChips = (lab: Lab) => {
   const chips = lab.syllabuses.map((alignment) => {
     const syllabus = syllabusRegistry[alignment.code];
     if (!syllabus) throw new Error(`${lab.slug} references unknown syllabus ${alignment.code}`);
-    if (syllabus.subject !== lab.subject) {
-      throw new Error(`${lab.slug} belongs to ${lab.subject} but references a ${syllabus.subject} syllabus`);
+    if (!syllabus.subjects.some((subject) => subject === lab.subject)) {
+      throw new Error(`${lab.slug} belongs to ${lab.subject} but references a syllabus outside that subject`);
     }
     if (seenSyllabuses.has(alignment.code)) throw new Error(`${lab.slug} repeats syllabus ${alignment.code}`);
     seenSyllabuses.add(alignment.code);
@@ -154,7 +154,7 @@ const renderSyllabusChips = (lab: Lab) => {
     if (!primarySection) throw new Error(`${lab.slug} has no primary section for ${alignment.code}`);
     const hasMultipleSections = sections.length > 1;
     const sectionLinks = sections.map((section) => {
-      if (!/^[A-Z]?\d+(?:\.\d+)?$/.test(section.id) || !Number.isInteger(section.page) || section.page < 1) {
+      if (!/^[A-Z]?\d+(?:\.\d+)*$/.test(section.id) || !Number.isInteger(section.page) || section.page < 1) {
         throw new Error(`${lab.slug} has an invalid ${alignment.code} section reference`);
       }
       if (seenSections.has(section.id)) throw new Error(`${lab.slug} repeats ${alignment.code} section ${section.id}`);

@@ -41,11 +41,18 @@ body {
   background: var(--lab-canvas);
 }
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 body {
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
   align-content: start !important;
   font-family: var(--lab-font-sans);
+  margin: 0;
   padding-bottom: 0;
   padding-top: 0 !important;
   text-rendering: optimizeLegibility;
@@ -246,8 +253,10 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
   .lab-manifest-header {
     gap: 14px;
     grid-template-columns: minmax(0, 1fr) !important;
+    margin-left: 0;
     margin-bottom: 20px;
     padding-bottom: 18px;
+    width: 100%;
   }
 
   body[data-lab-layout="compact"] .lab-manifest-header {
@@ -279,6 +288,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 
   body > main {
     margin-top: 8px;
+    width: calc(100% - var(--lab-page-gutter) - var(--lab-page-gutter));
   }
 }
 
@@ -1121,28 +1131,38 @@ function stageLayout(){
 }
 const LEVEL_NAMES=['working shown','some working','all working'];
 const LEVEL_HELP=['Observe the full chain','You calculate the length factor','You calculate and apply every factor'];
-const SEQUENCES={
-  0:[
-    {id:'double',kind:'edge',targetN:4,predict:true,name:'Doubling trial'},
-    {id:'one-half',kind:'edge',targetN:3,predict:true,name:'Fractional trial'},
-    {id:'reduce',kind:'edge',targetN:1,name:'Reduction trial'},
-    {id:'five',kind:'edge',targetN:5,name:'Enlargement trial'}
-  ],
-  1:[
-    {id:'five',kind:'edge',targetN:5,name:'Scale-factor trial'},
-    {id:'reduce',kind:'edge',targetN:1,name:'Reduction trial'},
-    {id:'six',kind:'edge',targetN:6,name:'Large model trial'},
-    {id:'three',kind:'edge',targetN:3,name:'Fractional trial'}
-  ],
-  2:[
-    {id:'reverse-volume',kind:'volume',targetN:6,givenFactor:27,name:'Reverse volume trial'},
-    {id:'reverse-area',kind:'area',targetN:3,givenFactor:2.25,name:'Reverse area trial'},
-    {id:'reverse-reduce-volume',kind:'volume',targetN:1,givenFactor:.125,name:'Reverse reduction trial'},
-    {id:'reverse-area-large',kind:'area',targetN:5,givenFactor:6.25,name:'Reverse area trial'}
-  ]
-};
-const state={level:0,unlockedLevel:0,sequenceIndex:[0,0,0],solved:[0,0,0],problemNumber:1,n:2,stretch:false,stretchY:4,exploded:false,explodeT:0,predictions:{area:null,volume:null},firstPredictions:{area:null,volume:null},answers:{},phase:'predict',changed:false,drag:null,record:[],recorded:false,targetTimer:null,counterexampleSeen:false};
-const current=()=>SEQUENCES[state.level][state.sequenceIndex[state.level]%SEQUENCES[state.level].length];
+const MAX_EDGE=7;
+const TARGET_EDGES=[1,3,4,5,6,7];
+const practiceRng=LabKit.rng.create(`${Date.now()}-${Math.round(performance.now()*1000)}`);
+const practiceBags=[[],[],[]],generatedCount=[0,0,0],lastProblemKey=[null,null,null];
+function problemKey(p){return`${p.kind}:${p.targetN}`}
+function candidatesFor(level){
+  if(level<2)return TARGET_EDGES.map(targetN=>({kind:'edge',targetN}));
+  return TARGET_EDGES.flatMap(targetN=>['area','volume'].map(kind=>{const k=targetN/BASE;return{kind,targetN,givenFactor:kind==='area'?k*k:k*k*k}}));
+}
+function refillPracticeBag(level){
+  const bag=practiceRng.shuffle(candidatesFor(level));
+  if(bag.length>1&&problemKey(bag[0])===lastProblemKey[level]) [bag[0],bag[1]]=[bag[1],bag[0]];
+  practiceBags[level]=bag;
+}
+function buildProblem(level,base,serial){
+  const k=base.targetN/BASE;
+  const predict=level===0&&(serial===1||!Number.isInteger(k));
+  const name=level===2?`Reverse ${base.kind} trial`:'Scale trial';
+  return{...base,predict,id:`generated-${level}-${serial}-${base.kind}-${base.targetN}`,name};
+}
+function generateProblem(level){
+  if(!practiceBags[level].length)refillPracticeBag(level);
+  const base=practiceBags[level].shift(),serial=++generatedCount[level],problem=buildProblem(level,base,serial);
+  lastProblemKey[level]=problemKey(problem);
+  return problem;
+}
+function indexedProblem(level,index=0){
+  const pool=candidatesFor(level),base=pool[((Number(index)||0)%pool.length+pool.length)%pool.length];
+  return buildProblem(level,base,Math.max(1,Number(index)||0)+1);
+}
+const state={level:0,unlockedLevel:0,solved:[0,0,0],problem:null,problemNumber:1,n:2,stretch:false,stretchY:4,exploded:false,explodeT:0,predictions:{area:null,volume:null},firstPredictions:{area:null,volume:null},answers:{},phase:'predict',changed:false,drag:null,record:[],recorded:false,targetTimer:null,counterexampleSeen:false};
+const current=()=>state.problem;
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const fmt=(v,d=3)=>{if(Math.abs(v-Math.round(v))<1e-9)return String(Math.round(v));return Number(v.toFixed(d)).toString()};
 const close=(a,b,t=.006)=>Number.isFinite(a)&&Math.abs(a-b)<=Math.max(t,Math.abs(b)*t);
@@ -1164,7 +1184,7 @@ function drawBench(){
   const g=$('benchLayer'),L=stageLayout();g.replaceChildren();
   const addLabel=(p,title,caption,cls)=>{add(g,'text',{x:p.x,y:p.y,'text-anchor':'middle',class:cls},title);add(g,'text',{x:p.x,y:p.y+16,'text-anchor':'middle',class:'stage-caption'},caption)};
   addLabel(L.prototypeLabel,'prototype','fixed edge 2 units','prototype-label');
-  addLabel(L.productionLabel,state.stretch?'stretched solid':'similar production solid',state.stretch?'one dimension released':'one corner controls every edge','production-label');
+  if(!state.exploded)addLabel(L.productionLabel,state.stretch?'stretched solid':'similar production solid',state.stretch?'one dimension released':'one corner controls every edge','production-label');
 }
 function drawOuter(parent,dims,origin,opts={}){
   const{x,y,z}=dims,depth=opts.depth??1,p=(a,b,c)=>project(a,b,c,origin,depth);
@@ -1184,7 +1204,7 @@ function drawOuter(parent,dims,origin,opts={}){
 }
 function drawLayers(parent,n,origin,t){
   const depth=1+t*.78,op=.12+.88*t;
-  for(let z=n-1;z>=0;z--){const group=add(parent,'g',{opacity:op});for(let x=0;x<n;x++)for(let y=0;y<n;y++)facePolygon(group,[project(x,y,z,origin,depth),project(x+1,y,z,origin,depth),project(x+1,y+1,z,origin,depth),project(x,y+1,z,origin,depth)],'layer-cell');const b=project(n,n,z,origin,depth);if(z===n-1)add(group,'text',{x:b.x+8,y:b.y-10,class:'layer-label'},`each layer: ${n}² = ${n*n}`);if(t<.05&&z>0){const q1=project(0,0,z,origin,1),q2=project(n,0,z,origin,1),q3=project(n,n,z,origin,1),q4=project(0,n,z,origin,1);facePolygon(group,[q1,q2,q3,q4],'internal-plane')}}
+  for(let z=n-1;z>=0;z--){const group=add(parent,'g',{opacity:op});for(let x=0;x<n;x++)for(let y=0;y<n;y++)facePolygon(group,[project(x,y,z,origin,depth),project(x+1,y,z,origin,depth),project(x+1,y+1,z,origin,depth),project(x,y+1,z,origin,depth)],'layer-cell');const b=project(n,n,z,origin,depth);if(t<.05&&z>0){const q1=project(0,0,z,origin,1),q2=project(n,0,z,origin,1),q3=project(n,n,z,origin,1),q4=project(0,n,z,origin,1);facePolygon(group,[q1,q2,q3,q4],'internal-plane')}}
 }
 function drawTarget(){const g=$('targetLayer');g.replaceChildren();if(state.stretch||current().kind!=='edge'||state.exploded)return;const L=stageLayout(),origin=L.production,n=current().targetN;drawOuter(g,{x:n,y:n,z:n},origin,{target:true});const hp=project(n,n,0,origin);add(g,'text',{x:Math.min(L.w-18,hp.x+15),y:hp.y-13,'text-anchor':hp.x>L.w-90?'end':'start',class:'target-label'},`target edge ${n}`)}
 function drawPrototype(){const g=$('prototypeLayer'),L=stageLayout();g.replaceChildren();g.setAttribute('class','prototype');drawOuter(g,{x:2,y:2,z:2},L.prototype);const p=project(1,1,0,L.prototype);add(g,'text',{x:p.x,y:p.y+3,'text-anchor':'middle',class:'stage-caption'},'2 × 2 face');}
@@ -1194,10 +1214,10 @@ function drawProduction(){const g=$('productionLayer'),L=stageLayout();g.replace
 }
 function drawDimension(parent,a,b,label){line(parent,a,b,'edge-dimension');const dx=b.x-a.x,dy=b.y-a.y,Ln=Math.hypot(dx,dy)||1,nx=-dy/Ln*5,ny=dx/Ln*5;line(parent,{x:a.x+nx,y:a.y+ny},{x:a.x-nx,y:a.y-ny},'dimension-cap');line(parent,{x:b.x+nx,y:b.y+ny},{x:b.x-nx,y:b.y-ny},'dimension-cap');add(parent,'text',{x:(a.x+b.x)/2+nx*2.4,y:(a.y+b.y)/2+ny*2.4,class:'dimension-text','text-anchor':'middle'},label)}
 function drawAnnotations(){const g=$('annotationLayer'),L=stageLayout();g.replaceChildren();const m=metrics();drawDimension(g,project(0,0,0,L.prototype),project(2,0,0,L.prototype),'2 units');const origin=state.exploded?{x:L.production.x,y:L.production.y-(L.narrow?90:65)}:L.production,depth=1+state.explodeT*.78;drawDimension(g,project(0,0,0,origin,depth),project(m.x,0,0,origin,depth),`${m.x} units`);
-  if(!state.stretch){const{x,y,w,h}=L.factor;add(g,'rect',{x,y,width:w,height:h,rx:10,class:'factor-ribbon'});add(g,'text',{x:x+12,y:y+18,class:'factor-title'},'observed factors');add(g,'text',{x:x+12,y:y+43,class:'factor-formula'},`length ×${fmt(m.k)}   area ×${fmt(m.faceFactor)}   volume ×${fmt(m.volumeFactor)}`)}
+  if(!state.stretch){const{x,y,w,h}=L.factor;add(g,'rect',{x,y,width:w,height:h,rx:10,class:'factor-ribbon'});add(g,'text',{x:x+12,y:y+18,class:'factor-title'},'observed factors');[['L',m.k],['A',m.faceFactor],['V',m.volumeFactor]].forEach(([label,value],i)=>add(g,'text',{x:x+w*(i+.5)/3,y:y+44,'text-anchor':'middle',class:'factor-formula'},`${label} ×${fmt(value)}`))}
   else{const ratios=[m.rx,m.ry,m.rz],labels=['width','height','depth'],start=L.narrow?88:440,gap=L.narrow?112:116,y=L.factor.y+8;ratios.forEach((r,i)=>{const gg=add(g,'g',{class:`ratio-chip ${close(r,ratios[0])&&close(ratios[0],ratios[1])&&close(ratios[1],ratios[2])?'good':'bad'}`});const x=start+i*gap;add(gg,'rect',{x,y,width:105,height:30,rx:8});add(gg,'text',{x:x+52.5,y:y+19,'text-anchor':'middle'},`${labels[i]} ×${fmt(r)}`)});add(g,'text',{x:L.w/2,y:y+47,'text-anchor':'middle',class:'stage-value'},m.similar?'one common k':'no single scale factor')}
 }
-function drawHandle(){const g=$('handleLayer'),L=stageLayout();g.replaceChildren();const m=metrics(),origin=L.production;let p,label,aria;if(state.stretch){p=project(0,m.y,0,origin);label=`Production height ${m.y} units`;aria={role:'slider','aria-valuemin':2,'aria-valuemax':6,'aria-valuenow':m.y,'aria-label':'Production height'}}else{if(state.exploded)return;p=project(m.x,m.y,0,origin);label=`Production edge ${m.x} units`;aria={role:'slider','aria-valuemin':1,'aria-valuemax':6,'aria-valuenow':m.x,'aria-label':'Production cube edge length'}}const group=add(g,'g',{id:'handleGroup',tabindex:0,...aria,class:state.phase==='resize'?'guide-pulse':''});add(group,'circle',{cx:p.x,cy:p.y,r:16,class:'handle-halo'});add(group,'circle',{cx:p.x,cy:p.y,r:9,class:'scale-handle'});add(group,'line',{x1:p.x-4,y1:p.y,x2:p.x+4,y2:p.y,class:'handle-cross'});add(group,'line',{x1:p.x,y1:p.y-4,x2:p.x,y2:p.y+4,class:'handle-cross'});add(group,'circle',{cx:p.x,cy:p.y,r:22,class:'handle-hit'});add(group,'title',{},label)}
+function drawHandle(){const g=$('handleLayer'),L=stageLayout();g.replaceChildren();const m=metrics(),origin=L.production;let p,label,aria;if(state.stretch){p=project(0,m.y,0,origin);label=`Production height ${m.y} units`;aria={role:'slider','aria-valuemin':2,'aria-valuemax':6,'aria-valuenow':m.y,'aria-label':'Production height'}}else{if(state.exploded)return;p=project(m.x,m.y,0,origin);label=`Production edge ${m.x} units`;aria={role:'slider','aria-valuemin':1,'aria-valuemax':MAX_EDGE,'aria-valuenow':m.x,'aria-label':'Production cube edge length'}}const group=add(g,'g',{id:'handleGroup',tabindex:0,...aria,class:state.phase==='resize'?'guide-pulse':''});add(group,'circle',{cx:p.x,cy:p.y,r:16,class:'handle-halo'});add(group,'circle',{cx:p.x,cy:p.y,r:9,class:'scale-handle'});add(group,'line',{x1:p.x-4,y1:p.y,x2:p.x+4,y2:p.y,class:'handle-cross'});add(group,'line',{x1:p.x,y1:p.y-4,x2:p.x,y2:p.y+4,class:'handle-cross'});add(group,'circle',{cx:p.x,cy:p.y,r:22,class:'handle-hit'});add(group,'title',{},label)}
 function renderStage(){const L=stageLayout();stage.setAttribute('viewBox',`0 0 ${L.w} ${L.h}`);$('stageBg').setAttribute('width',L.w);$('stageBg').setAttribute('height',L.h);$('stageGround').setAttribute('width',L.w);$('stageGround').setAttribute('y',L.h);$('stageGround').setAttribute('height',0);drawBench();drawTarget();drawPrototype();drawProduction();drawAnnotations();drawHandle()}
 function flashEvidence(){document.querySelectorAll('.evidence-card').forEach(c=>{c.classList.remove('changed');void c.offsetWidth;c.classList.add('changed')})}
 function renderEvidence(){const m=metrics(),stack=$('evidenceStack');$('similarityState').textContent=m.similar?'one scale factor':'no single scale factor';$('similarityState').className=`similarity-state ${m.similar?'good':'bad'}`;
@@ -1225,7 +1245,7 @@ function predictionWork(){const p=current();if(!p.predict)return'';const k=p.tar
   const row=(type,label)=>{const chosen=state.predictions[type],observed=e[type],atTarget=targetMet(),rowState=!atTarget?'recorded':close(chosen,observed)?'correct':'mistake',first=state.firstPredictions[type],revised=atTarget&&first!==null&&!close(first,chosen),editable=state.phase==='predict'||(state.phase==='revise'&&rowState==='mistake');let compare='';if(chosen!==null&&!atTarget)compare=`<span class="prediction-compare">Prediction ×${fmt(chosen)}</span>`;if(chosen!==null&&atTarget){const firstText=revised?`first ×${fmt(first)} → ×${fmt(chosen)}`:`predicted ×${fmt(chosen)}`;compare=`<span class="prediction-compare ${rowState}">${rowState==='correct'?'✓':'×'} ${firstText} · observed ×${fmt(observed)}</span>`}return`<div class="prediction-row" data-state="${rowState}"><div><strong>${label}</strong>${compare}</div><div class="prediction-options">${opts.map(v=>`<button type="button" data-predict="${type}" data-value="${v}" class="${close(chosen,v)?'selected':''}" aria-pressed="${close(chosen,v)}" ${editable?'':'disabled'}>×${fmt(v)}</button>`).join('')}</div></div>`};
   const stateAttr=pst==='recorded'?'':` data-state="${pst}"`,status=pst==='needed'?stateWidget('needed'):pst==='correct'?stateWidget('correct'):pst==='mistake'?stateWidget('mistake'):`<span class="lab-kit-work-state"><span>Committed</span></span>`;let note='';if(pst==='needed')note='<div class="prediction-status">Choose both factors.</div>';else if(pst==='recorded')note='<div class="prediction-status">Now test the prediction in the model.</div>';else if(pst==='mistake')note='<div class="prediction-status">Revise the red factor from the observed evidence.</div>';return`<section class="work-step lab-kit-work-item prediction-work"${stateAttr}><div class="work-step-head"><div class="work-step-title"><span class="work-step-num">P</span><strong>${state.phase==='revise'?'Compare and revise':'Prediction'}</strong></div>${status}</div><div class="prediction-work-copy"><strong>k = ${fmt(k)}</strong> · choose area and volume factors.</div>${row('area','Area factor')}${row('volume','Volume factor')}${note}</section>`}
 function resultHTML(){if(state.phase!=='result')return'';if(state.stretch){const m=metrics();return`<section class="relationship-result warn"><span class="result-kicker">Similarity condition</span><strong>No single k: the corresponding length ratios are different.</strong><div class="result-comparison"><div><span>width</span><strong>×${fmt(m.rx)}</strong></div><div><span>height</span><strong>×${fmt(m.ry)}</strong></div><div><span>depth</span><strong>×${fmt(m.rz)}</strong></div></div><p>Without one common k, k² and k³ do not describe the whole solid.</p></section>`}const e=expected(),n=current().targetN,layer=state.exploded?`<p>${n*n} squares per layer × ${n} layers = ${n**3} unit cubes.</p>`:`<p>Two scaled directions give k²; three give k³.</p>`;return`<section class="relationship-result"><span class="result-kicker">Relationship confirmed</span><strong>One length factor gives k² for area and k³ for volume.</strong><div class="result-comparison"><div><span>length</span><strong>×${fmt(e.k)}</strong></div><div><span>area</span><strong>×${fmt(e.area)}</strong></div><div><span>volume</span><strong>×${fmt(e.volume)}</strong></div></div>${layer}</section>`}
-function renderWorkActions(){const host=$('workActions');host.replaceChildren();if(state.phase!=='result')return;const make=(label,action,primary=false)=>{const b=document.createElement('button');b.type='button';b.textContent=label;b.dataset.workAction=action;if(primary)b.className='primary';host.appendChild(b)};if(state.stretch){make('Restore a similar solid','restore',true);return}const willUpgrade=state.solved[state.level]+1>=2&&state.level<2&&state.unlockedLevel===state.level;if(willUpgrade){make('Another trial','next');make(state.level===0?'Take some working':'Take full ownership','upgrade',true)}else if(state.level===2&&state.solved[2]+1>=2){make('Another scale problem','next');make('Test the similarity condition','counterexample',true)}else make('Next problem','next',true)}
+function renderWorkActions(){const host=$('workActions');host.replaceChildren();if(state.phase!=='result')return;const make=(label,action,primary=false)=>{const b=document.createElement('button');b.type='button';b.textContent=label;b.dataset.workAction=action;if(primary)b.className='primary';host.appendChild(b)};if(state.stretch){make('Restore a similar solid','restore',true);return}const willUpgrade=state.solved[state.level]+1>=2&&state.level<2&&state.unlockedLevel===state.level;if(willUpgrade){make('Fresh problem','next');make(state.level===0?'Take some working':'Take full ownership','upgrade',true)}else if(state.level===2&&state.solved[2]+1>=2){make('Fresh problem','next');make('Test the similarity condition','counterexample',true)}else make('Fresh problem','next',true)}
 function renderRelationshipDock(){const host=$('relationshipDock'),hint=$('progressHint');if(state.phase==='result'){host.innerHTML=resultHTML();hint.textContent=state.stretch?'Restore similarity to continue.':'Choose the next trial when ready.';return}const m=metrics();if(state.stretch){host.innerHTML=`<div class="relationship-placeholder"><span>Similarity check</span><strong>Do width, height and depth still share one k?</strong><div class="relationship-mini"><b>width ×${fmt(m.rx)}</b><b>height ×${fmt(m.ry)}</b><b>depth ×${fmt(m.rz)}</b></div></div>`;hint.textContent='Change only the height.';return}if(targetMet()){host.innerHTML=`<div class="relationship-placeholder ready"><span>Target held</span><strong>Use the evidence at right to finish the trial.</strong><div class="relationship-mini"><b>k ×${fmt(m.k)}</b><b>area ×${fmt(m.faceFactor)}</b><b>volume ×${fmt(m.volumeFactor)}</b></div></div>`;hint.textContent=state.phase==='revise'?'Revise the red prediction.':'Complete the required working.';return}host.innerHTML=`<div class="relationship-placeholder"><span>Relationship</span><strong>Reach the target to compare the three factors.</strong></div>`;hint.textContent=predictionReady()?'Reach the target in the model.':'Make both predictions first.'}
 function renderWork(){const m=metrics(),p=current(),e=expected(),chain=$('workChain');$('workTitle').textContent=state.stretch?'Similarity check':state.level===0?'Prediction and working':state.level===1?'Your scale factor':'Your working';
   if(state.stretch){const same=m.similar,st=state.phase==='result'?'correct':'needed';$('workStatus').textContent=state.phase==='result'?'condition identified':'change one dimension';chain.innerHTML=workStep(same?'One common k':'No single k','C',`<div class="work-equation">width ×${fmt(m.rx)} · height ×${fmt(m.ry)} · depth ×${fmt(m.rz)}</div>`,st);renderWorkActions();return}
@@ -1255,11 +1275,12 @@ function renderAll(){let enteredRevise=false;if(!state.stretch&&current().predic
 function scheduleCompletion(){clearTimeout(state.targetTimer);state.targetTimer=setTimeout(()=>{if(problemComplete()&&state.phase!=='result'){state.phase='result';recordCurrent();renderAll()}},220)}
 function animateExplode(to){const from=state.explodeT,start=performance.now(),dur=matchMedia('(prefers-reduced-motion: reduce)').matches?0:700;state.exploded=to>0;function tick(now){const q=dur===0?1:clamp((now-start)/dur,0,1),ease=1-Math.pow(1-q,3);state.explodeT=from+(to-from)*ease;renderStage();renderVisualHead();if(q<1)requestAnimationFrame(tick);else{state.explodeT=to;renderAll()}}requestAnimationFrame(tick)}
 function recordCurrent(){if(state.recorded||state.stretch)return;const e=expected();state.record.push({k:e.k,area:e.area,volume:e.volume,predArea:state.firstPredictions.area,predVolume:state.firstPredictions.volume});state.recorded=true}
-function advance(upgrade=false){if(state.phase!=='result'||state.stretch)return;state.solved[state.level]++;if(upgrade&&state.level<2){state.unlockedLevel=Math.max(state.unlockedLevel,state.level+1);state.level++}else state.sequenceIndex[state.level]++;state.problemNumber++;startProblem()}
-function startProblem(){clearTimeout(state.targetTimer);state.n=2;state.stretch=false;state.stretchY=4;state.exploded=false;state.explodeT=0;state.predictions={area:null,volume:null};state.firstPredictions={area:null,volume:null};state.answers={};state.changed=false;state.drag=null;state.recorded=false;state.counterexampleSeen=false;state.phase=current().predict?'predict':'resize';renderAll();requestAnimationFrame(()=>{if(state.phase==='predict')$('workChain').querySelector('[data-predict]')?.focus({preventScroll:true});else $('handleGroup')?.focus({preventScroll:true})})}
-function resetProblem(){if(state.stretch){state.stretchY=4;state.phase='resize';state.counterexampleSeen=false;renderAll();$('handleGroup')?.focus({preventScroll:true});return}startProblem()}
+function advance(upgrade=false){if(state.phase!=='result'||state.stretch)return;state.solved[state.level]++;if(upgrade&&state.level<2){state.unlockedLevel=Math.max(state.unlockedLevel,state.level+1);state.level++}state.problemNumber++;startProblem(true)}
+function resetTrialState(){clearTimeout(state.targetTimer);state.n=BASE;state.stretch=false;state.stretchY=4;state.exploded=false;state.explodeT=0;state.predictions={area:null,volume:null};state.firstPredictions={area:null,volume:null};state.answers={};state.changed=false;state.drag=null;state.recorded=false;state.counterexampleSeen=false;state.phase=current().predict?'predict':'resize';renderAll();requestAnimationFrame(()=>{if(state.phase==='predict')$('workChain').querySelector('[data-predict]')?.focus({preventScroll:true});else $('handleGroup')?.focus({preventScroll:true})})}
+function startProblem(fresh=true){if(fresh||!state.problem)state.problem=generateProblem(state.level);resetTrialState()}
+function resetProblem(){if(state.stretch){state.stretchY=4;state.phase='resize';state.counterexampleSeen=false;renderAll();$('handleGroup')?.focus({preventScroll:true});return}startProblem(false)}
 function selectPrediction(type,value){state.predictions[type]=Number(value);if(state.phase==='predict'&&predictionReady()){state.firstPredictions={...state.predictions};state.phase='resize';renderAll();setTimeout(()=>$('handleGroup')?.focus({preventScroll:true}),40);return}if(state.phase==='revise'){if(predictionCorrect())state.phase='resize';renderAll();if(predictionCorrect())scheduleCompletion();return}renderAll()}
-function setScale(n,source='direct'){if(state.stretch)return;const next=clamp(Math.round(n),1,6);if(next===state.n)return;state.n=next;state.changed=true;if(state.phase==='result'||state.phase==='revise')state.phase='resize';renderAll()}
+function setScale(n,source='direct'){if(state.stretch)return;const next=clamp(Math.round(n),1,MAX_EDGE);if(next===state.n)return;state.n=next;state.changed=true;if(state.phase==='result'||state.phase==='revise')state.phase='resize';renderAll()}
 function setStretchHeight(y){if(!state.stretch)return;const next=clamp(Math.round(y),2,6);if(next===state.stretchY)return;state.stretchY=next;state.changed=true;if(state.phase==='result'||state.phase==='revise')state.phase='resize';renderAll()}
 function stagePoint(ev){return LabKit.svg.point(stage,ev)}
 function beginDrag(ev){const target=ev.target.closest?.('#handleGroup');if(!target||state.exploded)return;state.drag={id:ev.pointerId};stage.setPointerCapture?.(ev.pointerId);ev.preventDefault()}
@@ -1268,29 +1289,30 @@ function endDrag(ev){if(state.drag?.id===ev.pointerId){state.drag=null;try{stage
 function handleKey(ev){if(!ev.target.closest?.('#handleGroup')||!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(ev.key))return;ev.preventDefault();const d=ev.key==='ArrowRight'||ev.key==='ArrowUp'?1:-1;if(state.stretch)setStretchHeight(state.stretchY+d);else setScale(state.n+d)}
 function scheduleStretchResult(){if(state.counterexampleSeen)return;state.counterexampleSeen=true;setTimeout(()=>{if(state.stretch&&state.stretchY===5){state.phase='result';renderAll()}else state.counterexampleSeen=false},220)}
 function openCounterexample(){state.stretch=true;state.stretchY=4;state.exploded=false;state.explodeT=0;state.phase='resize';state.counterexampleSeen=false;state.changed=false;renderAll();setTimeout(()=>$('handleGroup')?.focus({preventScroll:true}),50)}
-function restoreSimilarity(){state.stretch=false;state.sequenceIndex[2]++;state.problemNumber++;startProblem()}
+function restoreSimilarity(){state.stretch=false;state.problemNumber++;startProblem(true)}
 $('workChain').addEventListener('click',ev=>{const pred=ev.target.closest?.('[data-predict]');if(pred)selectPrediction(pred.dataset.predict,pred.dataset.value)});
 $('workActions').addEventListener('click',ev=>{const b=ev.target.closest?.('[data-work-action]');if(!b)return;switch(b.dataset.workAction){case'next':advance(false);break;case'upgrade':advance(true);break;case'counterexample':openCounterexample();break;case'restore':restoreSimilarity();break;}});
 $('workChain').addEventListener('input',ev=>{const input=ev.target.closest?.('[data-answer]');if(!input)return;state.answers[input.dataset.answer]=input.value;renderWork();if(problemComplete()&&state.phase==='resize')scheduleCompletion()});
 $('workChain').addEventListener('keydown',ev=>{if(ev.key==='Enter'){ev.preventDefault();const inputs=[...$('workChain').querySelectorAll('input:not(:disabled)')],i=inputs.indexOf(ev.target);inputs[i+1]?.focus()}});
 stage.addEventListener('pointerdown',beginDrag);stage.addEventListener('pointermove',moveDrag);stage.addEventListener('pointerup',endDrag);stage.addEventListener('pointercancel',endDrag);stage.addEventListener('keydown',handleKey);
 $('resetProblem').addEventListener('click',resetProblem);$('layerButton').addEventListener('click',()=>{if(state.exploded)animateExplode(0);else animateExplode(1)});$('similarReset').addEventListener('click',restoreSimilarity);
-document.querySelectorAll('[data-work-level]').forEach(b=>b.addEventListener('click',()=>{const l=Number(b.dataset.workLevel);if(l>state.unlockedLevel||l===state.level)return;state.level=l;state.problemNumber++;startProblem()}));
+document.querySelectorAll('[data-work-level]').forEach(b=>b.addEventListener('click',()=>{const l=Number(b.dataset.workLevel);if(l>state.unlockedLevel||l===state.level)return;state.level=l;state.problemNumber++;startProblem(true)}));
 window.labTest={
  getState:()=>JSON.parse(JSON.stringify({...state,problem:current(),metrics:metrics(),complete:problemComplete()})),
  setScale:n=>setScale(n),
  setStretchHeight,
  fillCorrect:()=>{const e=expected();state.n=current().targetN;state.answers={k:String(e.k),area:String(e.area),volume:String(e.volume),face:String(e.face),solid:String(e.solid)};if(current().predict){state.predictions={area:e.area,volume:e.volume};state.firstPredictions={...state.predictions}}state.phase='resize';renderAll()},
  fillWrong:()=>{state.n=current().targetN;state.answers={k:'9',area:'9',volume:'9',face:'9',solid:'9'};if(current().predict){state.predictions={area:1,volume:1};state.firstPredictions={...state.predictions}}state.phase='resize';renderAll()},
- setLevel:l=>{state.unlockedLevel=2;state.level=clamp(Number(l)||0,0,2);state.problemNumber++;startProblem()},
- setProblem:(level,index=0)=>{state.unlockedLevel=2;state.level=clamp(Number(level)||0,0,2);state.sequenceIndex[state.level]=Math.max(0,Number(index)||0);state.problemNumber++;startProblem()},
+ setLevel:l=>{state.unlockedLevel=2;state.level=clamp(Number(l)||0,0,2);state.problemNumber++;startProblem(true)},
+ setProblem:(level,index=0)=>{state.unlockedLevel=2;state.level=clamp(Number(level)||0,0,2);state.problem=indexedProblem(state.level,index);state.problemNumber++;resetTrialState()},
+ newProblem:()=>{state.problemNumber++;startProblem(true)},
  setPrediction:(area,volume)=>{state.predictions={area:Number(area),volume:Number(volume)};state.firstPredictions={...state.predictions};state.phase='resize';renderAll()},
  openCounterexample,
  explode:()=>animateExplode(1),
  render:renderAll
 }
 new ResizeObserver(()=>renderStage()).observe(stage);
-drawBench();startProblem();
+drawBench();startProblem(true);
 })();
 </script>
 
@@ -1393,6 +1415,24 @@ drawBench();startProblem();
 .stage-record .record-list{height:100px}
 .stage-record .record-row{height:48px;overflow:hidden}
 @media(max-width:620px){.stage-record .record-list{height:46px}.stage-record .record-row{height:46px}}
+</style>
+<style data-dynamic-practice-fit>
+/* Generated factors can be wider; keep the retained observations fitted without creating a scroll surface. */
+.stage-record{display:grid;grid-template-columns:66px minmax(0,1fr);gap:7px;align-items:stretch}
+.stage-record .record-head{display:block;align-self:start}
+.stage-record .record-list{height:auto!important;min-height:0;margin:0!important;grid-template-rows:repeat(2,minmax(0,1fr))}
+.stage-record .record-row{height:auto!important;min-height:0;overflow:hidden}
+.stage-record .record-empty{grid-row:1/-1}
+.stage-record .record-note{display:none}
+@container lab-canvas (max-width:850px){
+  .stage-record{grid-template-columns:88px minmax(0,1fr)}
+  .stage-record .record-list{height:48px!important;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:1fr}
+  .stage-record .record-empty{grid-column:1/-1;grid-row:1}
+}
+@media(max-width:620px){
+  .stage-record{grid-template-columns:76px minmax(0,1fr)}
+  .stage-record .record-list{height:46px!important}
+}
 </style>
 </body>
 </html>

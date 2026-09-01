@@ -12,9 +12,12 @@ export const changelogEntries: readonly ChangelogEntry[] = [
     publicChanges: [
       'Added flip-flop feedback, recursive call-stack and artificial-neuron investigations for Cambridge International A Level Computer Science 9618.',
       'Added Cambridge IGCSE Mathematics 0580 investigations for similarity, relative frequency, expected frequency, replacement and conditional sample spaces.',
+      'Added Biology and Physics investigations for natural selection, converging lenses, total internal reflection, diffraction, and constant-temperature gas compression.',
+      'Expanded replacement and similarity practice with fresh generated problems while preserving each lab’s direct manipulation and evidence trail.',
     ],
     internalChanges: [
       'Updated the shared Lab Kit publication resource and compiled the six approved final artifacts into manifest-owned subject routes with syllabus metadata and standalone downloads.',
+      'Added Biology and Physics qualification views, including Co-ordinated Sciences 0654 alignment and verified AS/A routing for 9700 and 9702.',
     ],
   },
   {

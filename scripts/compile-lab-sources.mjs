@@ -102,6 +102,9 @@ const stale = [];
 for (const entry of manifest.labs) {
   const lab = labs.find((candidate) => candidate.subject === entry.subject && candidate.slug === entry.slug);
   if (!lab) throw new Error(`Unknown publication lab: ${entry.subject}/${entry.slug}.`);
+  if (!Array.isArray(entry.syllabuses) || JSON.stringify(entry.syllabuses) !== JSON.stringify(lab.syllabuses)) {
+    throw new Error(`Curriculum mapping mismatch for ${entry.subject}/${entry.slug}.`);
+  }
 
   const relativePath = path.join(entry.subject, `${entry.slug}.html`);
   const sourcePath = path.join(sourceRoot, relativePath);
