@@ -27,6 +27,18 @@ test('guided repeated-percentage problems start incomplete and require model int
   assert.match(source, /function enableGuidedReverseChoice\(\)/);
 });
 
+test('prime-factor pairing hands some-working learners to the required calculation', async () => {
+  const source = await readFile(
+    path.join(repositoryRoot, 'labs-src', 'mathematics', 'prime-factors-hcf-lcm.html'),
+    'utf8',
+  );
+
+  assert.match(source, /if\(answersRequired\(\)\)requestAnimationFrame/);
+  assert.match(source, /const input=\$\("hcfAnswer"\)/);
+  assert.match(source, /input\.focus\(\{preventScroll:true\}\)/);
+  assert.match(source, /input\.scrollIntoView\(/);
+});
+
 test('the translator dedicates the remaining desktop viewport height to its workspace', async () => {
   const source = await readFile(
     path.join(repositoryRoot, 'public', 'labs', 'computer-science', 'translator.html'),

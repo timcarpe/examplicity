@@ -734,6 +734,11 @@ button:focus-visible,.factor-token:focus-visible,.shared-chip:focus-visible{outl
     const left=possiblePrimes();
     if(left.length){session().confirmed=false;session().attentionPrime=left[0];session().message=`A ${left[0]} still appears on both sides.`;session().tone="warn";renderAll();return}
     session().confirmed=true;session().attentionPrime=null;session().message="";session().tone="";renderAll();
+    if(answersRequired())requestAnimationFrame(()=>{
+      const input=$("hcfAnswer");if(!input||input.disabled)return;
+      input.focus({preventScroll:true});
+      input.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"center"});
+    });
   }
 
   function suggestedWorkLevel(){return finalised()&&state.workingLevel<2&&state.solvedAtLevel[state.workingLevel]+1>=3?state.workingLevel+1:-1}
