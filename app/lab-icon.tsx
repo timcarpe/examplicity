@@ -509,6 +509,62 @@ function IconDrawing({ slug }: LabIconProps) {
           <path className="tone-one" d="M370 260 410 220 452 164 500 124 548 92" />
         </>
       );
+    case 'logic-circuit-flip-flop':
+      return (
+        <>
+          <rect height="76" rx="24" width="132" x="176" y="76" />
+          <rect height="76" rx="24" width="132" x="176" y="208" />
+          <path d="M72 114h104M72 246h104M308 114h94v64H308M308 246h94v-64H308M402 114h98" />
+          <circle className="is-solid tone-one" cx="524" cy="114" r="24" />
+        </>
+      );
+    case 'recursive-call-stack':
+      return (
+        <>
+          <rect height="54" rx="12" width="250" x="138" y="228" />
+          <rect height="54" rx="12" width="250" x="164" y="158" />
+          <rect className="is-solid tone-one" height="54" rx="12" width="250" x="190" y="88" />
+          <path d="M474 106c44 10 70 42 70 78s-26 68-70 78m12-18-12 18 20 7" />
+        </>
+      );
+    case 'single-neuron-threshold':
+      return (
+        <>
+          <circle cx="104" cy="118" r="24" />
+          <circle cx="104" cy="242" r="24" />
+          <path d="M128 126 258 168M128 234l130-42M382 180h106" />
+          <circle cx="320" cy="180" r="62" />
+          <circle className="is-solid tone-one" cx="516" cy="180" r="28" />
+        </>
+      );
+    case 'relative-frequency-bias-expected-frequency':
+      return (
+        <>
+          <circle cx="208" cy="180" r="108" />
+          <path d="M208 72v108l76-76M208 180l-94 54M208 180l38 101" />
+          <path className="is-solid tone-one" d="M208 180V72a108 108 0 0 1 76 32z" />
+          <path d="M360 276V168h44v108M432 276V118h44v158M504 276V86h44v190" />
+        </>
+      );
+    case 'replacement-conditional-sample-spaces':
+      return (
+        <>
+          <path d="M84 96h184l-18 182H102zM372 96h184l-18 182H390z" />
+          <circle cx="136" cy="160" r="18" />
+          <circle cx="190" cy="212" r="18" />
+          <circle cx="432" cy="162" r="18" />
+          <circle cx="490" cy="214" r="18" />
+          <path d="M276 180h76m-18-18 18 18-18 18" />
+          <circle className="is-solid tone-one" cx="302" cy="116" r="22" />
+        </>
+      );
+    case 'similarity-scale-effects':
+      return (
+        <>
+          <path d="M92 262 190 94l98 168z" />
+          <path className="is-solid tone-one" d="M338 282 462 68l124 214z" />
+        </>
+      );
     case 'python-programming-practice':
       return (
         <>

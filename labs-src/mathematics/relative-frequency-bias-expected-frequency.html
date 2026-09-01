@@ -1,0 +1,797 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- LAB_FRAME_STYLES_START -->
+<style data-lab-frame>
+:root {
+  --lab-canvas: #f3f5f7;
+  --lab-paper: #fbfbfd;
+  --lab-surface: #ffffff;
+  --lab-control: #ffffff;
+  --lab-ink: #1d1d1f;
+  --lab-muted: #6e6e73;
+  --lab-line: #d2d2d7;
+  --lab-line-strong: #a7a7ad;
+  --lab-accent: #5277b8;
+  --lab-accent-soft: #eef2fa;
+  --lab-good: #18794e;
+  --lab-good-soft: #edf8f1;
+  --lab-warn: #946200;
+  --lab-warn-soft: #fff6e7;
+  --lab-bad: #b42318;
+  --lab-bad-soft: #fff0ee;
+  --lab-focus: #1d1d1f;
+  --lab-focus-soft: rgba(29, 29, 31, 0.18);
+  --lab-font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+  --lab-panel-radius: 12px;
+  --lab-control-radius: 8px;
+  --lab-pill-radius: 999px;
+  --lab-control-height: 35px;
+  --lab-panel-shadow: 0 1px 2px rgba(29, 29, 31, 0.04);
+  --lab-header-max-width: 1200px;
+  --lab-header-gutter: max(28px, calc((100vw - var(--lab-header-max-width)) / 2));
+  --lab-page-gutter: var(--lab-header-gutter);
+  --lab-compact-workspace-max: 820px;
+}
+
+html,
+body {
+  background: var(--lab-canvas);
+}
+
+body {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  align-content: start !important;
+  font-family: var(--lab-font-sans);
+  padding-bottom: 0;
+  padding-top: 0 !important;
+  text-rendering: optimizeLegibility;
+}
+
+.lab-manifest-header {
+  align-items: start;
+  border-bottom: 0 !important;
+  display: grid;
+  gap: 18px 28px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  margin-left: calc(50% - 50vw + var(--lab-header-gutter));
+  margin-bottom: 26px;
+  max-width: var(--lab-header-max-width);
+  padding-bottom: 22px;
+  width: calc(100vw - var(--lab-header-gutter) - var(--lab-header-gutter));
+}
+
+.lab-manifest-heading {
+  min-width: 0;
+}
+
+.lab-manifest-header h1 {
+  color: var(--ink, var(--lab-ink));
+  font-family: var(--lab-font-sans);
+  font-size: clamp(25px, 3.2vw, 40px);
+  font-weight: 650;
+  letter-spacing: -0.045em;
+  line-height: 1.02;
+  margin: 0;
+  max-width: 24ch;
+  padding: 0;
+  text-align: left;
+}
+
+.lab-manifest-subtitle {
+  color: var(--muted, var(--lab-muted));
+  font-family: var(--lab-font-sans);
+  font-size: 13px;
+  letter-spacing: 0;
+  line-height: 1.5;
+  margin: 10px 0 0;
+  max-width: 72ch;
+  padding: 0;
+  text-align: left;
+}
+
+.lab-authored-title-slot {
+  min-width: 0;
+}
+
+.lab-syllabus-chips {
+  align-items: center;
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+  margin: 0 0 0 auto;
+  max-width: 100%;
+}
+
+.lab-syllabus-chip {
+  align-items: center;
+  background: var(--syllabus-chip-bg) !important;
+  border: 1px solid var(--syllabus-chip-border) !important;
+  border-radius: var(--lab-pill-radius);
+  color: var(--syllabus-chip-text) !important;
+  display: inline-flex;
+  font-size: 11px;
+  font-weight: 650;
+  gap: 4px;
+  line-height: 1;
+  min-height: 29px;
+  padding: 8px 10px;
+  position: relative;
+  transition: background-color 140ms ease, border-color 140ms ease;
+  white-space: nowrap;
+}
+
+.lab-syllabus-chip:hover {
+  background: var(--syllabus-chip-hover) !important;
+}
+
+.lab-syllabus-primary-link {
+  border-radius: inherit;
+  inset: 0;
+  position: absolute;
+  z-index: 0;
+}
+
+.lab-syllabus-primary-link:focus-visible {
+  outline: 2px solid var(--syllabus-chip-text);
+  outline-offset: 2px;
+}
+
+.lab-syllabus-name,
+.lab-syllabus-divider,
+.lab-syllabus-sections {
+  pointer-events: none;
+  position: relative;
+  z-index: 1;
+}
+
+.lab-syllabus-section {
+  border-radius: 4px;
+  color: inherit;
+  padding: 2px;
+  text-decoration: none;
+}
+
+a.lab-syllabus-section {
+  pointer-events: auto;
+}
+
+a.lab-syllabus-section:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+a.lab-syllabus-section:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 1px;
+}
+
+.lab-syllabus-name {
+  color: var(--syllabus-chip-text) !important;
+}
+
+.lab-syllabus-divider,
+.lab-syllabus-separator {
+  color: var(--muted, var(--lab-muted));
+}
+
+.lab-syllabus-prefix {
+  opacity: 0.72;
+  padding-left: 5px;
+}
+
+.lab-syllabus-sections {
+  align-items: center;
+  display: inline-flex;
+}
+
+.lab-syllabus-separator {
+  margin-inline: 0 2px;
+}
+
+html[data-theme="dark"] .lab-syllabus-name {
+  color: var(--syllabus-chip-border) !important;
+}
+
+html[data-theme="dark"] .lab-syllabus-chip:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+html[data-theme="dark"],
+html[data-theme="dark"] body {
+  background: var(--bg);
+}
+
+body > main {
+  container-name: lab-canvas;
+  container-type: inline-size;
+  margin-left: var(--lab-page-gutter);
+  margin-right: auto;
+  margin-top: 18px;
+  max-width: var(--lab-header-max-width);
+  width: calc(100vw - var(--lab-page-gutter) - var(--lab-page-gutter));
+}
+
+body[data-lab-layout="compact"] .lab-manifest-header {
+  margin-bottom: 17px;
+  padding-bottom: 13px;
+}
+
+body[data-lab-layout="compact"] [data-lab-workspace] {
+  margin-left: auto;
+  margin-right: auto;
+  width: min(var(--lab-compact-workspace-max), 100%);
+}
+
+:where(button, input, select, textarea, summary):focus-visible {
+  outline: 3px solid var(--lab-focus);
+  outline-offset: 4px;
+}
+
+@media (max-width: 620px) {
+  :root {
+    --lab-header-gutter: 18px;
+    --lab-page-gutter: 18px;
+  }
+
+  body {
+    padding-bottom: 0;
+    padding-top: 0 !important;
+  }
+
+  .lab-manifest-header {
+    gap: 14px;
+    grid-template-columns: minmax(0, 1fr) !important;
+    margin-bottom: 20px;
+    padding-bottom: 18px;
+  }
+
+  body[data-lab-layout="compact"] .lab-manifest-header {
+    margin-bottom: 16px;
+    padding-bottom: 14px;
+  }
+
+  .lab-manifest-header h1 {
+    font-size: clamp(24px, 8vw, 34px);
+  }
+
+  .lab-syllabus-chips {
+    gap: 4px;
+    justify-content: flex-start !important;
+    margin: 0 !important;
+  }
+
+  .lab-syllabus-chip {
+    font-size: 10px;
+    max-width: 100%;
+    min-height: 27px;
+    padding: 7px 8px;
+    white-space: normal;
+  }
+
+  .lab-syllabus-sections {
+    flex-wrap: wrap;
+  }
+
+  body > main {
+    margin-top: 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+</style>
+<!-- LAB_FRAME_STYLES_END -->
+<link rel="stylesheet" href="./lab-kit.css" data-lab-resource="lab-kit.css">
+<link rel="icon" href="data:,">
+<!-- LAB_MANIFEST_HEAD_START -->
+<title>Relative Frequency, Bias and Expected Frequency</title>
+<meta name="description" content="Audit a fairground spinner by comparing relative frequency with a fair probability, identifying bias and calculating expected frequency for Cambridge IGCSE Mathematics 0580.">
+<link rel="canonical" href="https://www.examplicity.org/labs/mathematics/relative-frequency-bias-expected-frequency.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Examplicity">
+<meta property="og:title" content="Relative Frequency, Bias and Expected Frequency">
+<meta property="og:description" content="Audit a fairground spinner by comparing relative frequency with a fair probability, identifying bias and calculating expected frequency for Cambridge IGCSE Mathematics 0580.">
+<meta property="og:url" content="https://www.examplicity.org/labs/mathematics/relative-frequency-bias-expected-frequency.html">
+<meta property="og:image" content="https://www.examplicity.org/opengraph-image">
+<meta property="og:image:alt" content="Examplicity — Make complex ideas click">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Relative Frequency, Bias and Expected Frequency">
+<meta name="twitter:description" content="Audit a fairground spinner by comparing relative frequency with a fair probability, identifying bias and calculating expected frequency for Cambridge IGCSE Mathematics 0580.">
+<meta name="twitter:image" content="https://www.examplicity.org/opengraph-image">
+<script type="application/ld+json" data-lab-manifest="structured-data">{"@context":"https://schema.org","@type":"LearningResource","@id":"https://www.examplicity.org/labs/mathematics/relative-frequency-bias-expected-frequency.html#learning-resource","url":"https://www.examplicity.org/labs/mathematics/relative-frequency-bias-expected-frequency.html","name":"Relative Frequency, Bias and Expected Frequency","description":"Audit a fairground spinner by comparing relative frequency with a fair probability, identifying bias and calculating expected frequency for Cambridge IGCSE Mathematics 0580.","inLanguage":"en-GB","isAccessibleForFree":true,"interactivityType":"active","learningResourceType":"Spinner audit and forecast","teaches":"Probability","educationalLevel":["IGCSE"],"educationalAlignment":[{"@type":"AlignmentObject","alignmentType":"educationalSubject","educationalFramework":"Cambridge IGCSE Mathematics","targetName":"IGCSE 0580 section C8.2, E8.2","targetUrl":"https://www.cambridgeinternational.org/Images/662466-2025-2027-syllabus.pdf#page=29"}],"about":{"@type":"Thing","name":"Mathematics"},"audience":{"@type":"EducationalAudience","educationalRole":"student"},"provider":{"@type":"Organization","name":"Examplicity","url":"https://www.examplicity.org"},"isPartOf":{"@type":"WebSite","@id":"https://www.examplicity.org/#website","name":"Examplicity","url":"https://www.examplicity.org"}}</script>
+<!-- LAB_MANIFEST_HEAD_END -->
+<style>
+:root{
+  --lab-canvas:#f3f5f7;--lab-paper:#fbfbfd;--lab-surface:#fff;--lab-control:#fff;
+  --lab-ink:#1d1d1f;--lab-muted:#6e6e73;--lab-line:#d2d2d7;--lab-line-strong:#a7a7ad;
+  --lab-accent:#5277b8;--lab-accent-soft:#eef2fa;--lab-good:#18794e;--lab-good-soft:#edf8f1;
+  --lab-warn:#946200;--lab-warn-soft:#fff6e7;--lab-bad:#b42318;--lab-bad-soft:#fff0ee;
+  --lab-focus:#1d1d1f;--lab-focus-soft:rgba(29,29,31,.18);--lab-font-sans:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif;
+  --lab-panel-radius:12px;--lab-control-radius:8px;--lab-pill-radius:999px;--lab-panel-shadow:0 1px 2px rgba(29,29,31,.04);
+  --prize:#c9782c;--prize-soft:#fff2e6;--other:#5f7789;--other-soft:#edf2f5;--fair:#287970;--fair-soft:#e9f7f4;
+  --booth:#7664aa;--booth-soft:#f1eef9;--trace:#5277b8;--ghost:#a8b4bd;--grid:#e5ebef;--axis:#66747d;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{min-height:100%;background:var(--lab-canvas)}
+body{margin:0;color:var(--lab-ink);font-family:var(--lab-font-sans);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+body>main{container-name:lab-canvas;container-type:inline-size;margin:10px auto 32px;width:min(1200px,calc(100% - 22px))}
+button,input{font:inherit}
+button{min-height:34px;padding:0 10px;border:1px solid var(--lab-line);border-radius:var(--lab-control-radius);background:var(--lab-control);color:var(--lab-ink);cursor:pointer}
+button:hover:not(:disabled){border-color:var(--lab-line-strong)}button:disabled{opacity:.44;cursor:not-allowed}
+button.primary{background:var(--lab-accent);border-color:var(--lab-accent);color:#fff;font-weight:800}
+button.good{background:var(--lab-good);border-color:var(--lab-good);color:#fff;font-weight:800}
+button.quiet{background:transparent}
+:where(button,input,[tabindex]):focus-visible{outline:3px solid var(--lab-focus);outline-offset:4px}
+.panel{background:var(--lab-surface);border:1px solid var(--lab-line);border-radius:var(--lab-panel-radius);box-shadow:var(--lab-panel-shadow)}
+.lab-manifest-header{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px 24px;align-items:start;border-bottom:1px solid var(--lab-line);margin-bottom:9px;padding-bottom:11px}
+.lab-manifest-header h1{margin:0;max-width:45ch;font-size:clamp(24px,2.7vw,34px);font-weight:650;letter-spacing:-.043em;line-height:1.03}
+.lab-manifest-subtitle{margin:6px 0 0;max-width:82ch;color:var(--lab-muted);font-size:12px;line-height:1.42}
+.lab-syllabus-chips{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.lab-syllabus-chip{position:relative;display:inline-flex;align-items:center;gap:4px;min-height:29px;padding:8px 10px;border:1px solid #91c4b0;border-radius:999px;background:#edf8f3;color:#235f4e;font-size:10px;font-weight:700;white-space:nowrap}
+.lab-syllabus-primary-link{position:absolute;inset:0;border-radius:inherit}.lab-syllabus-name,.lab-syllabus-divider,.lab-syllabus-sections{pointer-events:none;position:relative;z-index:1}.lab-syllabus-section{position:relative;z-index:2;color:inherit;text-decoration:none;padding:2px;border-radius:4px;pointer-events:auto}.lab-syllabus-section:hover{text-decoration:underline;text-underline-offset:2px}.lab-syllabus-divider,.lab-syllabus-separator{color:#628879}.lab-syllabus-separator{margin-right:2px}
+
+.mission{padding:8px 10px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 12px;align-items:center}
+.mission-copy{min-width:0}.mission-kicker{display:flex;align-items:center;gap:6px;color:var(--lab-accent);font-size:8px;font-weight:900;letter-spacing:.075em;text-transform:uppercase}.mission-copy strong{display:block;margin-top:3px;font-size:15px;line-height:1.28}.mission-copy span:last-child{display:block;margin-top:2px;color:var(--lab-muted);font-size:9px;line-height:1.34}
+.mission-tools{display:flex;align-items:center;gap:9px;justify-content:flex-end}.progress-rail{display:flex;align-items:center;gap:4px}.progress-step{display:flex;align-items:center;gap:4px;color:var(--lab-muted);font-size:7px;font-weight:850;white-space:nowrap}.progress-step i{display:block;width:8px;height:8px;border:1px solid #aeb8be;border-radius:50%;background:#fff}.progress-step.current{color:var(--lab-accent)}.progress-step.current i{border-color:var(--lab-accent);background:var(--lab-accent)}.progress-step.done{color:var(--lab-good)}.progress-step.done i{border-color:var(--lab-good);background:var(--lab-good)}.progress-line{width:12px;height:1px;background:var(--lab-line)}
+#resetLab{min-height:30px;padding:0 8px;font-size:8.5px}
+
+.lab{margin-top:8px;overflow:hidden}.workspace{display:grid;grid-template-columns:minmax(650px,1.7fr) minmax(300px,.72fr);align-items:start;min-height:548px}
+.stage-side{min-width:0;border-right:1px solid var(--lab-line);background:linear-gradient(180deg,#fff,#fbfcfd)}
+.visual-head{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;padding:7px 9px;border-bottom:1px solid var(--lab-line);background:#fff}.visual-copy strong{display:block;font-size:12px}.visual-copy span{display:block;margin-top:2px;color:var(--lab-muted);font-size:8.5px;line-height:1.3}.legend{display:flex;gap:8px 11px;align-items:center;flex-wrap:wrap;justify-content:flex-end;color:var(--lab-muted);font-size:7.5px;font-weight:750}.legend span{display:inline-flex;align-items:center;gap:4px;white-space:nowrap}.legend i{display:block;width:16px;height:3px;border-radius:4px}.legend .fair i{background:repeating-linear-gradient(90deg,var(--fair) 0 5px,transparent 5px 8px)}.legend .trace i{background:var(--trace)}.legend .ghost i{background:var(--ghost)}
+.stage-shell{position:relative;overflow-x:auto;background:#f8fbfd;overscroll-behavior-x:contain}.stage{display:block;width:100%;min-width:730px;height:auto;background:#f8fbfd;touch-action:none;user-select:none}.stage text{font-family:var(--lab-font-sans)}
+.phase-dock{padding:8px 9px;border-top:1px solid var(--lab-line);background:#f5f8fa}.phase-modal{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(270px,.92fr);gap:10px 14px;align-items:center;width:100%;padding:10px 11px;border:1px solid #9eb4d1;border-radius:11px;background:#fafcff;text-align:left}.phase-modal[hidden],.phase-dock[hidden]{display:none!important}.modal-copy,.modal-work{min-width:0}.phase-modal[data-tone="good"]{border-color:#98c5a8;background:#f8fdf9}.phase-modal[data-tone="warn"]{border-color:#d8bd82;background:#fffaf0}.phase-modal[data-tone="bad"]{border-color:#d5a29b;background:#fff8f7}.modal-kicker{color:var(--lab-accent);font-size:8px;font-weight:900;letter-spacing:.075em;text-transform:uppercase}.phase-modal[data-tone="good"] .modal-kicker{color:var(--lab-good)}.phase-modal[data-tone="warn"] .modal-kicker{color:var(--lab-warn)}.phase-modal[data-tone="bad"] .modal-kicker{color:var(--lab-bad)}.phase-modal h2{margin:3px 0 0;font-size:15px;line-height:1.24}.phase-modal p{margin:5px 0 0;color:#53636d;font-size:10px;line-height:1.42}.modal-evidence{padding:8px 9px;border:1px solid var(--lab-line);border-radius:8px;background:#fff}.modal-evidence strong{display:block;font:900 15px/1.2 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.modal-evidence span{display:block;margin-top:3px;color:var(--lab-muted);font-size:8.5px;line-height:1.35}.modal-control{margin:0}.modal-control label,.forecast-control label{display:flex;justify-content:space-between;gap:8px;align-items:center;color:#52616b;font-size:9px;font-weight:800}.modal-control output{font:900 12px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:var(--booth)}input[type="range"]{width:100%;margin:7px 0 0;accent-color:var(--lab-accent)}.modal-scale{display:flex;justify-content:space-between;color:#7a878f;font-size:7.5px}.modal-actions{display:flex;gap:7px;justify-content:flex-start;flex-wrap:wrap;margin-top:8px}.modal-actions button{min-height:33px;padding:0 11px;font-size:9.5px;font-weight:850}.modal-actions .primary{flex:1 1 170px}.modal-actions .choice{flex:1 1 112px}.run-progress{margin-top:8px;height:8px;overflow:hidden;border-radius:999px;background:#e7edf1}.run-progress i{display:block;height:100%;border-radius:inherit;background:var(--lab-accent);transition:width .08s linear}.run-readout{display:flex;justify-content:space-between;gap:8px;margin-top:5px;color:#61717b;font-size:8.5px}.formula{display:grid;grid-template-columns:auto auto auto auto auto auto minmax(58px,1fr);gap:5px;align-items:center;margin-top:8px}.formula .cell{min-height:33px;display:grid;place-items:center;padding:3px 6px;border:1px solid var(--lab-line);border-radius:7px;background:#fff;font:850 11px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.formula b{font-size:11px}.formula input{width:100%;height:33px;border:1px solid var(--lab-line);border-radius:7px;padding:0 6px;background:#fff;font:850 12px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.formula input.invalid{border-color:var(--lab-bad);background:var(--lab-bad-soft)}.formula input.valid{border-color:var(--lab-good);background:var(--lab-good-soft)}.formula.short{grid-template-columns:auto auto auto auto minmax(70px,1fr)}.feedback-line{margin-top:7px;padding:7px 8px;border-radius:7px;background:var(--lab-warn-soft);color:#785b24;font-size:8.8px;line-height:1.35}.feedback-line.bad{background:var(--lab-bad-soft);color:#8f3029}.feedback-line.good{background:var(--lab-good-soft);color:#216544}
+.stage .chart-grid{stroke:var(--grid);stroke-width:1}.stage .axis{stroke:var(--axis);stroke-width:1.2}.stage .axis-text{fill:#73818a;font-size:9px}.stage .chart-title{fill:#34434d;font-size:11px;font-weight:850}.stage .fair-line{stroke:var(--fair);stroke-width:2;stroke-dasharray:7 5}.stage .fair-label{fill:var(--fair);font-size:9px;font-weight:850}.stage .trace-path{fill:none;stroke:var(--trace);stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round}.stage .ghost-path{fill:none;stroke:var(--ghost);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;opacity:.8}.stage .current-point{fill:var(--trace);stroke:#fff;stroke-width:3}.stage .prediction-line{stroke:var(--booth);stroke-width:1.5;stroke-dasharray:4 4;opacity:.8}.stage .prediction-point{fill:var(--booth);stroke:#fff;stroke-width:2}.stage .prediction-label{fill:#66588f;font-size:8px;font-weight:850}
+.wheel-platform{fill:#e7ecef;stroke:#aab5bc;stroke-width:1}.wheel-shadow{fill:rgba(36,49,58,.12)}.wheel-sector{stroke:#fff;stroke-width:2}.wheel-sector.prize{fill:var(--prize)}.wheel-sector.other-a{fill:#7a91a0}.wheel-sector.other-b{fill:#60798a}.wheel-sector.other-c{fill:#94a6b1}.wheel-rim{fill:none;stroke:#35454f;stroke-width:4}.wheel-hub{fill:#fff;stroke:#536772;stroke-width:3}.wheel-label{fill:#fff;font-size:10px;font-weight:900;text-anchor:middle}.wheel-label.dark{fill:#25343d}.pointer{fill:#263944;stroke:#fff;stroke-width:2}.wheel-group{transform-origin:160px 132px;transition:transform .42s cubic-bezier(.2,.8,.2,1)}
+.device-label{fill:#35454f;font-size:11px;font-weight:850;text-anchor:middle}.device-sub{fill:#71808a;font-size:8px;text-anchor:middle}.mechanism-box{fill:#fff;stroke:var(--lab-line);stroke-width:1}.mechanism-sealed{fill:#7a8790;font-size:8px;font-weight:850;text-anchor:middle}.mechanism-revealed{fill:var(--booth);font-size:8px;font-weight:900;text-anchor:middle}
+.bin{fill:#fff;stroke:var(--lab-line);stroke-width:1.3}.bin.prize{fill:var(--prize-soft);stroke:#d6a16f}.bin.other{fill:var(--other-soft);stroke:#aebdc6}.bin-label{font-size:8px;font-weight:850;text-anchor:middle}.bin-count{font:900 18px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;text-anchor:middle}.bin-fraction{fill:#697780;font-size:8px;text-anchor:middle}.outcome-dot{stroke:#fff;stroke-width:1.5}.outcome-dot.prize{fill:var(--prize)}.outcome-dot.other{fill:var(--other)}.outcome-letter{fill:#fff;font-size:6px;font-weight:900;text-anchor:middle}.travel-token{opacity:0;pointer-events:none}.travel-token.prize{fill:var(--prize)}.travel-token.other{fill:var(--other)}
+.forecast-bg{fill:#fff;stroke:var(--lab-line);stroke-width:1}.forecast-title{fill:#34434d;font-size:10px;font-weight:900}.forecast-sub{fill:#70808a;font-size:8px}.forecast-bar-bg{fill:#edf1f4}.forecast-stock{fill:var(--fair)}.forecast-actual{fill:var(--prize)}.forecast-gap{fill:var(--bad)}.forecast-label{fill:#4b5a64;font-size:8px;font-weight:800}.forecast-value{font:900 11px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.shortfall-label{fill:var(--bad);font-size:8px;font-weight:900}.leftover-label{fill:var(--fair);font-size:8px;font-weight:900}
+
+
+.guide-target{animation:guidePulse .9s ease-in-out infinite alternate}@keyframes guidePulse{from{box-shadow:0 0 0 0 rgba(82,119,184,.12)}to{box-shadow:0 0 0 4px rgba(82,119,184,.24)}}input[type="range"].guide-target{filter:drop-shadow(0 0 4px rgba(82,119,184,.35))}
+
+.stage-note{padding:6px 9px;border-top:1px solid var(--lab-line);background:#fff;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center}.stage-note-copy{font-size:8.5px;line-height:1.3;color:#58656d}.stage-note-copy strong{color:var(--lab-ink)}.stage-note-state{min-height:24px;padding:4px 7px;border:1px solid var(--lab-line);border-radius:999px;background:var(--lab-paper);font-size:8px;font-weight:850;white-space:nowrap}.stage-note-state.good{border-color:#acd2b9;background:var(--lab-good-soft);color:var(--lab-good)}.stage-note-state.warn{border-color:#e5d29f;background:var(--lab-warn-soft);color:var(--lab-warn)}
+
+.workbench{min-width:0;padding:9px;display:flex;flex-direction:column;gap:8px;background:#fbfcfd}.work-section{padding:8px;border:1px solid var(--lab-line);border-radius:9px;background:#fff}.eyebrow{color:var(--lab-muted);font-size:7px;font-weight:900;letter-spacing:.075em;text-transform:uppercase}.claim-equation{display:flex;align-items:baseline;gap:5px;margin-top:3px;flex-wrap:wrap}.claim-equation strong{font:900 19px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:var(--fair)}.claim-equation span{color:var(--lab-muted);font-size:8px}.claim-copy{margin-top:5px;color:#5e6c75;font-size:8px;line-height:1.34}.mechanism-chip{display:inline-flex;align-items:center;gap:5px;margin-top:6px;padding:4px 6px;border:1px solid var(--lab-line);border-radius:999px;background:var(--lab-paper);color:#687780;font-size:7px;font-weight:850}.mechanism-chip.revealed{border-color:#b9acd9;background:var(--booth-soft);color:#665192}.mechanism-chip i{display:block;width:7px;height:7px;border-radius:50%;background:#9aa7af}.mechanism-chip.revealed i{background:var(--booth)}
+.live-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:5px}.live-stat{padding:6px 7px;border:1px solid var(--lab-line);border-radius:8px;background:var(--lab-paper)}.live-stat span{display:block;color:var(--lab-muted);font-size:6.8px;font-weight:850;text-transform:uppercase}.live-stat strong{display:block;margin-top:2px;font:900 14px/1.1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.live-stat.prize strong{color:var(--prize)}.relative-box{margin-top:6px;padding:7px;border:1px solid #a8c9c1;border-radius:8px;background:var(--fair-soft)}.relative-box span{display:block;color:#487069;font-size:7px;font-weight:850}.relative-box strong{display:block;margin-top:2px;font:900 16px/1.1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:var(--fair)}.relative-box small{display:block;margin-top:2px;color:#5b7772;font-size:7px}
+.evidence-log{display:grid;gap:5px;margin-top:5px}.evidence-empty{color:#8a969d;font-size:7.5px;line-height:1.35}.evidence-entry{display:grid;grid-template-columns:17px minmax(0,1fr);gap:6px;align-items:start}.evidence-entry i{width:17px;height:17px;display:grid;place-items:center;border-radius:50%;background:var(--lab-accent-soft);color:var(--lab-accent);font-size:7px;font-style:normal;font-weight:900}.evidence-entry strong{display:block;font-size:8px;line-height:1.25}.evidence-entry span{display:block;margin-top:1px;color:var(--lab-muted);font-size:7px;line-height:1.28}
+.comparison-work[hidden]{display:none!important}.comparison-strip{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:6px;align-items:center;margin-top:5px}.comparison-stat{min-width:0;padding:6px 7px;border:1px solid var(--lab-line);border-radius:8px;background:var(--lab-paper)}.comparison-stat span{display:block;color:var(--lab-muted);font-size:6.8px;font-weight:850;text-transform:uppercase}.comparison-stat strong{display:block;margin-top:2px;font:900 14px/1.1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.comparison-stat:first-child strong{color:var(--booth)}.comparison-stat:last-child strong{color:var(--trace)}.comparison-arrow{color:#8b969d;font-size:13px;font-weight:900}.comparison-note{margin-top:5px;color:#5e6d76;font-size:7.5px;line-height:1.32}.comparison-note strong{color:var(--lab-ink)}.forecast-work{display:none}.forecast-work.visible{display:block}.forecast-equation{margin-top:5px;padding:7px;border:1px solid var(--lab-line);border-radius:8px;background:var(--lab-paper);font:850 10px/1.35 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.forecast-equation strong{color:var(--booth)}.forecast-result{display:flex;justify-content:space-between;gap:8px;align-items:baseline;margin-top:5px}.forecast-result span{color:var(--lab-muted);font-size:7px}.forecast-result strong{font:900 16px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:var(--fair)}
+
+@container lab-canvas (max-width:920px){.workspace{grid-template-columns:1fr;min-height:0}.stage-side{border-right:0;border-bottom:1px solid var(--lab-line)}.workbench{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}.work-section.log-section{grid-column:1/-1}.phase-modal{grid-template-columns:minmax(0,1fr) minmax(260px,.9fr)}}
+@media(max-width:720px){body>main{width:min(100% - 12px,1200px);margin-top:7px}.lab-manifest-header{grid-template-columns:1fr;gap:9px}.lab-syllabus-chips{justify-content:flex-start}.lab-manifest-header h1{font-size:clamp(23px,8vw,31px)}.mission{grid-template-columns:1fr}.mission-tools{justify-content:space-between}.progress-step span{display:none}.progress-line{width:8px}.workbench{grid-template-columns:1fr}.work-section.log-section{grid-column:auto}.visual-head{grid-template-columns:1fr}.legend{justify-content:flex-start}.phase-modal{grid-template-columns:1fr;padding:9px}.formula{grid-template-columns:auto auto auto auto auto auto minmax(52px,1fr)}}
+@media(max-width:540px){.stage-shell{overflow:hidden}.stage{min-width:0}.phase-dock{padding:7px}.phase-modal h2{font-size:14px}.phase-modal p{font-size:9.5px}.modal-actions button{font-size:9px}.stage-note{grid-template-columns:1fr}.stage-note-state{justify-self:start}.comparison-strip{grid-template-columns:1fr auto 1fr}}
+@media(prefers-reduced-motion:reduce){.wheel-group{transition:none}.guide-target{animation:none}}
+</style>
+</head>
+<body data-lab-layout="standard">
+<main>
+<!-- LAB_MANIFEST_HEADER_START -->
+<header class="lab-manifest-header">
+  <div class="lab-manifest-heading">
+    <h1 data-lab-manifest="title">Relative Frequency, Bias and Expected Frequency</h1>
+    <p class="lab-manifest-subtitle" data-lab-manifest="subtitle">Audit a fairground spinner: predict its relative frequency, test whether it is biased, then use the evidence to stock prizes.</p>
+  </div>
+  <!-- LAB_SYLLABUS_CHIPS_START -->
+  <nav class="lab-syllabus-chips" aria-label="Syllabus alignment">
+    <section class="lab-syllabus-chip" style="--syllabus-chip-bg:#edf8f3;--syllabus-chip-border:#91c4b0;--syllabus-chip-text:#235f4e;--syllabus-chip-hover:#dcf0e7" aria-label="IGCSE 0580 syllabus alignment">
+      <a class="lab-syllabus-primary-link" href="https://www.cambridgeinternational.org/Images/662466-2025-2027-syllabus.pdf#page=29" target="_blank" rel="noopener noreferrer" aria-label="Open IGCSE 0580 syllabus section C8.2"></a>
+      <span class="lab-syllabus-name">IGCSE 0580</span>
+      <span class="lab-syllabus-divider" aria-hidden="true">·</span>
+      <span class="lab-syllabus-sections"><a class="lab-syllabus-section is-primary" href="https://www.cambridgeinternational.org/Images/662466-2025-2027-syllabus.pdf#page=29" target="_blank" rel="noopener noreferrer" aria-label="Open primary IGCSE 0580 syllabus section C8.2">C8.2</a><span class="lab-syllabus-separator" aria-hidden="true">,</span><a class="lab-syllabus-section" href="https://www.cambridgeinternational.org/Images/662466-2025-2027-syllabus.pdf#page=53" target="_blank" rel="noopener noreferrer" aria-label="Open IGCSE 0580 syllabus section E8.2">E8.2</a></span>
+    </section>
+  </nav>
+  <!-- LAB_SYLLABUS_CHIPS_END -->
+</header>
+<!-- LAB_MANIFEST_HEADER_END -->
+<span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span>
+<span data-lab-authored-subtitle-slot hidden></span>
+
+<section class="panel mission" aria-live="polite">
+  <div class="mission-copy">
+    <div class="mission-kicker"><span id="missionKicker">Audit 1 of 4</span></div>
+    <strong id="missionTitle">Predict what a fair spinner should look like in the data.</strong>
+    <span id="missionHint">The fairground claims one prize sector out of four, so the long-run prize probability should be 0.25.</span>
+  </div>
+  <div class="mission-tools">
+    <div id="progressRail" class="progress-rail" aria-label="Lab progress"></div>
+    <button id="resetLab" type="button">Reset</button>
+  </div>
+</section>
+
+<section class="panel lab" aria-label="Spinner audit lab">
+  <div class="workspace">
+    <div class="stage-side">
+      <div class="visual-head">
+        <div class="visual-copy"><strong>Spinner → outcomes → running relative frequency</strong><span>Each result stays visible in the bins and becomes the next point on the graph.</span></div>
+        <div class="legend" aria-label="Graph legend"><span class="fair"><i></i>fair claim 0.25</span><span class="trace"><i></i>current test</span><span id="ghostLegend" class="ghost" hidden><i></i>fair-spinner trace</span></div>
+      </div>
+      <div id="stageShell" class="stage-shell" aria-busy="false">
+        <svg id="stage" class="stage" viewBox="0 0 960 540" role="img" aria-label="A four-sector fairground spinner feeds prize and other result bins and a graph of relative frequency over repeated spins">
+          <rect id="stageBackground" x="0" y="0" width="960" height="455" fill="#f8fbfd"></rect>
+          <g id="spinnerLayer" aria-hidden="true">
+            <ellipse class="wheel-shadow" cx="160" cy="220" rx="94" ry="13"></ellipse>
+            <rect class="wheel-platform" x="91" y="205" width="138" height="20" rx="8"></rect>
+            <g id="wheelGroup" class="wheel-group">
+              <path class="wheel-sector prize" d="M160 132 L160 52 A80 80 0 0 1 240 132 Z"></path>
+              <path class="wheel-sector other-a" d="M160 132 L240 132 A80 80 0 0 1 160 212 Z"></path>
+              <path class="wheel-sector other-b" d="M160 132 L160 212 A80 80 0 0 1 80 132 Z"></path>
+              <path class="wheel-sector other-c" d="M160 132 L80 132 A80 80 0 0 1 160 52 Z"></path>
+              <circle class="wheel-rim" cx="160" cy="132" r="80"></circle>
+              <text class="wheel-label" x="191" y="91">PRIZE</text>
+              <text class="wheel-label" x="201" y="174">OTHER</text>
+              <text class="wheel-label" x="119" y="174">OTHER</text>
+              <text class="wheel-label" x="119" y="91">OTHER</text>
+              <circle class="wheel-hub" cx="160" cy="132" r="13"></circle>
+            </g>
+            <path class="pointer" d="M160 42 L148 18 L172 18 Z"></path>
+            <text id="spinnerName" class="device-label" x="160" y="244">Fair reference spinner</text>
+            <text id="spinnerSub" class="device-sub" x="160" y="258">4 equal sectors · 1 prize</text>
+            <rect class="mechanism-box" x="80" y="269" width="160" height="31" rx="8"></rect>
+            <text id="mechanismText" class="mechanism-sealed" x="160" y="288">mechanism: standard</text>
+          </g>
+
+          <g id="binLayer" aria-hidden="true">
+            <rect class="bin prize" x="58" y="321" width="98" height="73" rx="9"></rect>
+            <rect class="bin other" x="168" y="321" width="98" height="73" rx="9"></rect>
+            <text class="bin-label" x="107" y="339" fill="#89501d">PRIZE</text>
+            <text class="bin-label" x="217" y="339" fill="#526a79">OTHER</text>
+            <text id="prizeCountSvg" class="bin-count" x="107" y="365" fill="#a85f20">0</text>
+            <text id="otherCountSvg" class="bin-count" x="217" y="365" fill="#526a79">0</text>
+            <text id="prizeFractionSvg" class="bin-fraction" x="107" y="383">0 of 0</text>
+            <text id="otherFractionSvg" class="bin-fraction" x="217" y="383">0 of 0</text>
+            <text class="device-sub" x="162" y="414">most recent outcomes</text>
+            <g id="outcomeStrip"></g>
+            <circle id="travelToken" class="travel-token" cx="160" cy="47" r="8"></circle>
+          </g>
+
+          <g id="chart" aria-hidden="true">
+            <text class="chart-title" x="315" y="31">Running relative frequency of PRIZE</text>
+            <line class="chart-grid" x1="315" y1="58" x2="920" y2="58"></line>
+            <line class="chart-grid" x1="315" y1="131" x2="920" y2="131"></line>
+            <line class="chart-grid" x1="315" y1="204" x2="920" y2="204"></line>
+            <line class="chart-grid" x1="315" y1="277" x2="920" y2="277"></line>
+            <line class="chart-grid" x1="315" y1="350" x2="920" y2="350"></line>
+            <line class="chart-grid" x1="315" y1="58" x2="315" y2="350"></line>
+            <line class="chart-grid" x1="466.25" y1="58" x2="466.25" y2="350"></line>
+            <line class="chart-grid" x1="617.5" y1="58" x2="617.5" y2="350"></line>
+            <line class="chart-grid" x1="768.75" y1="58" x2="768.75" y2="350"></line>
+            <line class="chart-grid" x1="920" y1="58" x2="920" y2="350"></line>
+            <line class="axis" x1="315" y1="350" x2="920" y2="350"></line><line class="axis" x1="315" y1="58" x2="315" y2="350"></line>
+            <text class="axis-text" x="305" y="353" text-anchor="end">0</text><text class="axis-text" x="305" y="280" text-anchor="end">0.25</text><text class="axis-text" x="305" y="207" text-anchor="end">0.50</text><text class="axis-text" x="305" y="134" text-anchor="end">0.75</text><text class="axis-text" x="305" y="61" text-anchor="end">1.00</text>
+            <text class="axis-text" x="315" y="366" text-anchor="middle">0</text><text class="axis-text" x="466.25" y="366" text-anchor="middle">50</text><text class="axis-text" x="617.5" y="366" text-anchor="middle">100</text><text class="axis-text" x="768.75" y="366" text-anchor="middle">150</text><text class="axis-text" x="920" y="366" text-anchor="middle">200 spins</text>
+            <line class="fair-line" x1="315" y1="277" x2="920" y2="277"></line><text class="fair-label" x="913" y="271" text-anchor="end">fair claim = 0.25</text>
+            <path id="ghostPath" class="ghost-path" d=""></path><path id="tracePath" class="trace-path" d=""></path>
+            <g id="predictionGroup" hidden><line id="predictionLine" class="prediction-line"></line><circle id="predictionPoint" class="prediction-point" r="5"></circle><text id="predictionLabel" class="prediction-label"></text></g>
+            <circle id="currentPoint" class="current-point" r="5" cx="315" cy="350" hidden></circle>
+          </g>
+
+          <g id="forecastLayer" aria-hidden="true">
+            <rect class="forecast-bg" x="315" y="397" width="605" height="131" rx="10"></rect>
+            <text class="forecast-title" x="331" y="417">Prize stock forecast</text>
+            <text id="forecastSubtitleSvg" class="forecast-sub" x="331" y="431">Complete the audit before stocking the booth.</text>
+            <text class="forecast-label" x="331" y="456">stocked from expected frequency</text>
+            <rect class="forecast-bar-bg" x="331" y="463" width="500" height="18" rx="5"></rect><rect id="stockBar" class="forecast-stock" x="331" y="463" width="0" height="18" rx="5"></rect><text id="stockValueSvg" class="forecast-value" x="844" y="477">—</text>
+            <text class="forecast-label" x="331" y="500">actual prize winners</text>
+            <rect class="forecast-bar-bg" x="331" y="507" width="500" height="18" rx="5"></rect><rect id="actualBar" class="forecast-actual" x="331" y="507" width="0" height="18" rx="5"></rect><rect id="gapBar" class="forecast-gap" x="331" y="507" width="0" height="18" rx="2"></rect><text id="actualValueSvg" class="forecast-value" x="844" y="521">—</text>
+            <text id="stockConsequenceSvg" class="shortfall-label" x="909" y="477" text-anchor="end"></text>
+          </g>
+        </svg>
+      </div>
+      <div id="phaseDock" class="phase-dock"><section id="phaseModal" class="phase-modal" role="region" aria-label="Current audit step" aria-live="polite" tabindex="-1"></section></div>
+      <div class="stage-note" role="status" aria-live="polite"><div id="stageNoteCopy" class="stage-note-copy"><strong>Next:</strong> set a prediction below the visual, then run the test.</div><div id="stageNoteState" class="stage-note-state">No spins yet</div></div>
+    </div>
+
+    <aside class="workbench" aria-label="Persistent evidence and working area">
+      <section class="work-section">
+        <div class="eyebrow">Fair claim</div>
+        <div class="claim-equation"><strong>1 ÷ 4 = 0.25</strong><span>probability of PRIZE</span></div>
+        <div class="claim-copy">If the spinner is fair, each equal sector is equally likely. The graph should settle near 0.25 over many spins.</div>
+        <div id="mechanismChip" class="mechanism-chip"><i></i><span>Reference mechanism</span></div>
+      </section>
+      <section class="work-section">
+        <div class="eyebrow">Live evidence</div>
+        <div class="live-grid"><div class="live-stat prize"><span>Prize outcomes</span><strong id="prizeCount">0</strong></div><div class="live-stat"><span>Total spins</span><strong id="trialCount">0</strong></div></div>
+        <div class="relative-box"><span>relative frequency = prize outcomes ÷ total spins</span><strong id="relativeFraction">0 ÷ 0</strong><small id="relativeDecimal">No estimate yet</small></div>
+      </section>
+      <section id="comparisonWork" class="work-section comparison-work">
+        <div class="eyebrow">Prediction and comparison</div>
+        <div class="comparison-strip"><div class="comparison-stat"><span id="comparisonLeftLabel">Prediction</span><strong id="comparisonLeftValue">0.25</strong></div><div class="comparison-arrow" aria-hidden="true">→</div><div class="comparison-stat"><span id="comparisonRightLabel">Observed</span><strong id="comparisonRightValue">—</strong></div></div>
+        <div id="comparisonNote" class="comparison-note">Your prediction stays visible while the outcomes accumulate.</div>
+      </section>
+      <section id="forecastWork" class="work-section forecast-work">
+        <div class="eyebrow">Expected frequency working</div>
+        <div id="forecastEquation" class="forecast-equation">0.400 × 180 = ?</div>
+        <div class="forecast-result"><span>prizes to stock</span><strong id="forecastResult">—</strong></div>
+      </section>
+      <section class="work-section log-section">
+        <div class="eyebrow">Evidence log</div>
+        <div id="evidenceLog" class="evidence-log"><div class="evidence-empty">Your observations will stay here as the audit progresses.</div></div>
+      </section>
+    </aside>
+  </div>
+</section>
+</main>
+<script src="./lab-kit.js" data-lab-resource="lab-kit.js"></script>
+<script>
+(() => {
+  "use strict";
+  const $ = id => document.getElementById(id);
+  const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function seededShuffle(values, seed){
+    let s = seed >>> 0;
+    const next = () => { s = (1664525 * s + 1013904223) >>> 0; return s / 4294967296; };
+    for(let i=values.length-1;i>0;i--){ const j=Math.floor(next()*(i+1)); [values[i],values[j]]=[values[j],values[i]]; }
+    return values;
+  }
+  function exactSequence(total, successes, prefix, seed){
+    const head = prefix.slice();
+    const used = head.reduce((a,b)=>a+b,0);
+    const tail = Array(successes-used).fill(1).concat(Array(total-head.length-(successes-used)).fill(0));
+    return head.concat(seededShuffle(tail,seed));
+  }
+  const FAIR_PREFIX=[1,0,1,0,0,1,0,1,0,0,1,0];
+  const BIAS_PREFIX=[1,0,1,1,0,0,1,0,1,0,0,1,0,1,0,0,1,0,0,0];
+  const fairSequence=exactSequence(200,52,FAIR_PREFIX,5802);
+  const biasSequence=exactSequence(200,80,BIAS_PREFIX,8204);
+  const futureFirst=exactSequence(180,75,[],1187);
+  const futureTail=exactSequence(220,87,[],4621);
+  const futureSequence=futureFirst.concat(futureTail);
+
+  const state={
+    phase:"predictSmall",mode:"fair",results:[],fairResults:[],busy:false,runTarget:0,
+    prediction:.25,smallPrediction:.25,largePrediction:.25,wheelRotation:0,
+    mechanismRevealed:false,smallFeedback:"",judgementFeedback:"",earlyFeedback:"",futureN:180,
+    expected:null,actual:null,forecastFeedback:"",answer:"",logs:[],eventBusy:false,runKind:""
+  };
+
+  const phaseInfo={
+    predictSmall:["Audit 1 of 4","Predict a small fair test.","Move the prediction, then run 12 spins and compare it with what actually happens."],
+    smallResult:["Audit 1 of 4","Decide what the short sample proves.","Compare the observed line with the known fair mechanism before moving on."],
+    predictLarge:["Audit 2 of 4","Predict the longer fair test.","Keep the same spinner and change only the number of spins."],
+    fairResult:["Audit 2 of 4","Use repeated trials to judge the fair claim.","The spinner stayed the same; the larger sample made the estimate more stable."],
+    biasIntro:["Audit 3 of 4","Test an identical-looking booth spinner.","The fair trace remains as a reference while a new set of outcomes is collected."],
+    biasSmallResult:["Audit 3 of 4","Decide whether 20 spins are enough evidence.","A result can look suspicious by chance, so the sample size still matters."],
+    biasNeedMore:["Audit 3 of 4","Collect a longer booth sample.","Keep the mechanism unchanged and extend the same test to 200 spins."],
+    biasDecision:["Audit 3 of 4","Judge the booth spinner from the evidence.","Compare 80 observed prizes with the 50 expected from a fair 200-spin test."],
+    biasReveal:["Audit 3 of 4","The evidence exposed a biased mechanism.","The long-run relative frequency estimates the hidden probability."],
+    forecast:["Audit 4 of 4","Use the estimate to stock the next event.","Show the multiplication that turns probability into expected frequency."],
+    forecastReady:["Audit 4 of 4","Turn the expected frequency into stock.","The stock bay now shows the calculated number of prize tickets."],
+    complete:["Audit complete","Compare expected frequency with an actual event.","Expected frequency is a planning value, not a guarantee for one future sample."]
+  };
+
+  function successes(results=state.results){return results.reduce((a,b)=>a+b,0)}
+  function rf(results=state.results){return results.length?successes(results)/results.length:0}
+  function fmt(value,d=3){return Number(value).toFixed(d)}
+  function addLog(title,text){state.logs.push({title,text});renderLog()}
+  function delay(ms){return new Promise(resolve=>setTimeout(resolve,reducedMotion?0:ms))}
+  function phaseGroup(){
+    if(["predictSmall","smallResult"].includes(state.phase))return 0;
+    if(["predictLarge","fairResult"].includes(state.phase))return 1;
+    if(["biasIntro","biasSmallResult","biasNeedMore","biasDecision","biasReveal"].includes(state.phase))return 2;
+    if(state.phase==="complete")return 4;
+    return 3;
+  }
+
+  function renderProgress(){
+    const labels=["12 spins","200 fair","200 booth","0.40 × n"],active=phaseGroup();
+    $("progressRail").innerHTML=labels.map((label,i)=>`${i?'<span class="progress-line" aria-hidden="true"></span>':''}<span class="progress-step ${i<active?'done':i===active?'current':''}" aria-label="${label}: ${i<active?'complete':i===active?'current':'not started'}"><i></i><span>${label}</span></span>`).join("");
+  }
+  function renderMission(){
+    const [k,t,h]=phaseInfo[state.phase]||phaseInfo.predictSmall;
+    $("missionKicker").textContent=k;$("missionTitle").textContent=t;$("missionHint").textContent=h;renderProgress();
+  }
+  function chartPoint(trial,value){const x=315+(trial/200)*605,y=350-value*292;return{x,y}}
+  function tracePath(results){
+    let wins=0;return results.map((v,i)=>{wins+=v;const p=chartPoint(i+1,wins/(i+1));return`${i?'L':'M'}${p.x.toFixed(1)} ${p.y.toFixed(1)}`}).join(" ");
+  }
+  const narrowStage=matchMedia("(max-width: 540px)");
+  function applyStageLayout(forecastVisible=["forecast","forecastReady","complete"].includes(state.phase)){
+    const mobile=narrowStage.matches,stage=$("stage"),background=$("stageBackground");
+    const height=mobile?(forecastVisible?950:800):(forecastVisible?540:455);
+    stage.setAttribute("viewBox",mobile?`0 0 680 ${height}`:`0 0 960 ${height}`);
+    background.setAttribute("width",mobile?680:960);background.setAttribute("height",height);
+    const transforms=mobile?{spinnerLayer:"translate(180 4)",binLayer:"translate(180 4)",chart:"translate(-277 410)",forecastLayer:"translate(-277 410)"}:{};
+    ["spinnerLayer","binLayer","chart","forecastLayer"].forEach(id=>{const node=$(id);if(transforms[id])node.setAttribute("transform",transforms[id]);else node.removeAttribute("transform")});
+  }
+  function renderChart(){
+    $("tracePath").setAttribute("d",tracePath(state.results));
+    const showGhost=state.mode==="biased"&&state.fairResults.length;
+    $("ghostPath").setAttribute("d",showGhost?tracePath(state.fairResults):"");$("ghostLegend").hidden=!showGhost;
+    if(state.results.length){const p=chartPoint(state.results.length,rf());$("currentPoint").hidden=false;$("currentPoint").setAttribute("cx",p.x);$("currentPoint").setAttribute("cy",p.y)}else $("currentPoint").hidden=true;
+    const predictionPhase=["predictSmall","smallResult","predictLarge"].includes(state.phase);
+    const target=state.phase==="predictSmall"||state.phase==="smallResult"?12:200;
+    if(predictionPhase){const p=chartPoint(target,state.prediction);$("predictionGroup").hidden=false;$("predictionLine").setAttribute("x1",p.x);$("predictionLine").setAttribute("x2",p.x);$("predictionLine").setAttribute("y1",350);$("predictionLine").setAttribute("y2",p.y);$("predictionPoint").setAttribute("cx",p.x);$("predictionPoint").setAttribute("cy",p.y);$("predictionLabel").setAttribute("x",Math.min(875,p.x+7));$("predictionLabel").setAttribute("y",Math.max(69,p.y-7));$("predictionLabel").textContent=`prediction ${fmt(state.prediction,2)}`}
+    else $("predictionGroup").hidden=true;
+  }
+  function renderOutcomes(){
+    const recent=state.results.slice(-12),g=$("outcomeStrip");g.innerHTML="";
+    recent.forEach((v,i)=>{const x=73+i*16,y=438;g.insertAdjacentHTML("beforeend",`<circle class="outcome-dot ${v?'prize':'other'}" cx="${x}" cy="${y}" r="7"></circle><text class="outcome-letter" x="${x}" y="${y+2.5}">${v?'P':'O'}</text>`)})
+  }
+  function renderSpinner(){
+    $("wheelGroup").style.transform=`rotate(${state.wheelRotation}deg)`;
+    const biased=state.mode==="biased";
+    $("spinnerName").textContent=biased?"Booth spinner":"Fair reference spinner";
+    $("spinnerSub").textContent=biased?"same visible sectors · unknown mechanism":"4 equal sectors · 1 prize";
+    const mech=$("mechanismText");
+    if(biased&&state.mechanismRevealed){mech.textContent="revealed mechanism: P(PRIZE) = 0.40";mech.setAttribute("class","mechanism-revealed")}
+    else if(biased){mech.textContent="mechanism: sealed during the audit";mech.setAttribute("class","mechanism-sealed")}
+    else{mech.textContent="mechanism: standard";mech.setAttribute("class","mechanism-sealed")}
+  }
+  function renderCounts(){
+    const win=successes(),n=state.results.length,other=n-win;
+    $("prizeCountSvg").textContent=win;$("otherCountSvg").textContent=other;$("prizeFractionSvg").textContent=`${win} of ${n}`;$("otherFractionSvg").textContent=`${other} of ${n}`;
+    $("prizeCount").textContent=win;$("trialCount").textContent=n;$("relativeFraction").textContent=n?`${win} ÷ ${n}`:"0 ÷ 0";$("relativeDecimal").textContent=n?`= ${fmt(win/n)} (estimate of P(PRIZE))`:"No estimate yet";
+    renderOutcomes();
+  }
+  function renderComparison(){
+    const section=$("comparisonWork"),forecastPhase=["forecast","forecastReady","complete"].includes(state.phase);
+    section.hidden=forecastPhase;if(forecastPhase)return;
+    const n=state.results.length,observed=n?fmt(rf()):"—";
+    let leftLabel="Prediction",leftValue=fmt(state.prediction,2),rightLabel=n?`Observed (${n})`:"Observed",note="Your prediction stays visible while the outcomes accumulate.";
+    if(state.mode==="biased"){
+      leftLabel="Fair claim";leftValue="0.250";rightLabel=n?`Booth (${n})`:"Booth result";
+      note=n?`The booth estimate is <strong>${observed}</strong>; compare its distance from 0.250 as the sample grows.`:"The grey fair trace stays fixed while you collect a new booth sample.";
+    }else{
+      const large=["predictLarge","fairResult"].includes(state.phase),target=large?200:12;
+      const prediction=large?(state.phase==="predictLarge"?state.prediction:state.largePrediction):(state.phase==="predictSmall"?state.prediction:state.smallPrediction);
+      leftLabel=`Prediction (${target})`;leftValue=fmt(prediction,2);
+      note=n?`Observed − predicted = <strong>${fmt(rf()-prediction)}</strong>. The mechanism stayed fair; only the sample size changed.`:"Your prediction stays visible while the outcomes accumulate.";
+    }
+    $("comparisonLeftLabel").textContent=leftLabel;$("comparisonLeftValue").textContent=leftValue;$("comparisonRightLabel").textContent=rightLabel;$("comparisonRightValue").textContent=observed;$("comparisonNote").innerHTML=note;
+  }
+  function renderMechanismChip(){
+    const chip=$("mechanismChip");
+    if(state.mode==="biased"&&state.mechanismRevealed){chip.className="mechanism-chip revealed";chip.innerHTML="<i></i><span>Bias revealed: 0.40 prize probability</span>"}
+    else if(state.mode==="biased"){chip.className="mechanism-chip";chip.innerHTML="<i></i><span>Booth mechanism sealed</span>"}
+    else{chip.className="mechanism-chip";chip.innerHTML="<i></i><span>Reference mechanism</span>"}
+  }
+  function renderLog(){
+    const root=$("evidenceLog");
+    if(!state.logs.length){root.innerHTML='<div class="evidence-empty">Your observations will stay here as the audit progresses.</div>';return}
+    root.innerHTML=state.logs.map((e,i)=>`<div class="evidence-entry"><i>${i+1}</i><div><strong>${e.title}</strong><span>${e.text}</span></div></div>`).join("");
+  }
+  function forecastActual(n){return successes(futureSequence.slice(0,n))}
+  function renderForecast(){
+    const visible=["forecast","forecastReady","complete"].includes(state.phase);$("forecastWork").classList.toggle("visible",visible);$("forecastLayer").style.display=visible?"":"none";$("forecastLayer").setAttribute("aria-hidden",visible?"false":"true");applyStageLayout(visible);
+    $("forecastEquation").innerHTML=`<strong>0.400</strong> × ${state.futureN} = ${state.expected===null?'?':state.expected}`;$("forecastResult").textContent=state.expected===null?'—':state.expected;
+    const max=120,scale=500/max;$("stockBar").setAttribute("width",state.expected===null?0:Math.min(500,state.expected*scale));$("stockValueSvg").textContent=state.expected===null?'—':state.expected;
+    const hasActual=state.actual!==null;$("actualBar").setAttribute("width",hasActual?Math.min(500,state.actual*scale):0);$("actualValueSvg").textContent=hasActual?state.actual:'—';$("gapBar").setAttribute("width",0);$("stockConsequenceSvg").textContent="";
+    if(!visible){$("forecastSubtitleSvg").textContent="Complete the audit before stocking the booth."}
+    else if(state.expected===null){$("forecastSubtitleSvg").textContent=`Use the booth estimate for ${state.futureN} future spins.`}
+    else if(!hasActual){$("forecastSubtitleSvg").textContent=`The expected frequency stocks ${state.expected} prize tickets.`}
+    else{
+      const diff=state.actual-state.expected;$("forecastSubtitleSvg").textContent=`One simulated event produced ${state.actual} prize winners.`;
+      if(diff>0){const start=331+Math.min(500,state.expected*scale),w=Math.min(500-start+331,diff*scale);$("gapBar").setAttribute("x",start);$("gapBar").setAttribute("width",Math.max(2,w));$("stockConsequenceSvg").setAttribute("class","shortfall-label");$("stockConsequenceSvg").textContent=`short by ${diff}`}
+      else if(diff<0){$("stockConsequenceSvg").setAttribute("class","leftover-label");$("stockConsequenceSvg").textContent=`${-diff} left over`}
+      else{$("stockConsequenceSvg").setAttribute("class","leftover-label");$("stockConsequenceSvg").textContent="exactly enough"}
+    }
+  }
+  function renderStageNote(){
+    const n=state.results.length;
+    let copy="",stateText="",tone="";
+    if(state.busy){const context=state.runKind==="future"?"future event":state.mode==="fair"?"fair test":"booth test";copy=`<strong>Running ${context}:</strong> ${n} of ${state.runTarget} outcomes recorded. The prediction stays fixed while the fraction and graph change.`;stateText=`${n}/${state.runTarget}`}
+    else if(state.phase==="complete"&&state.actual!==null){const diff=state.actual-state.expected;copy=`<strong>Visible consequence:</strong> expected ${state.expected}, actual ${state.actual}${diff===0?" — an exact match this time":diff>0?` — short by ${diff}`:` — ${-diff} left over`}.`;stateText="Expected ≠ guaranteed";tone="warn"}
+    else if(!n){copy=state.mode==="fair"?"<strong>Next:</strong> set a prediction below the visual, then run the 12-spin fair test.":"<strong>Next:</strong> collect booth outcomes while the fair trace remains for comparison.";stateText="No spins yet"}
+    else{copy=`<strong>Visible consequence:</strong> ${successes()} prize outcomes from ${n} spins gives a relative frequency of ${fmt(rf())}.`;stateText=state.mode==="fair"?"Reference test":"Booth test";tone=n>=200?(state.mode==="fair"?"good":"warn"):""}
+    $("stageNoteCopy").innerHTML=copy;$("stageNoteState").textContent=stateText;$("stageNoteState").className=`stage-note-state ${tone}`;
+  }
+  function slider(value,target){return `<div class="modal-control"><label><span>Predicted relative frequency after ${target} spins</span><output id="predictionOutput">${fmt(value,2)}</output></label><input id="predictionSlider" class="guide-target" type="range" min="0" max="1" step="0.01" value="${value}" aria-label="Predicted relative frequency after ${target} spins"><div class="modal-scale"><span>0</span><span>fair claim 0.25</span><span>1</span></div></div>`}
+  function modal(kicker,title,copy,inner,actions,tone=""){
+    const root=$("phaseModal"),dock=$("phaseDock");dock.hidden=false;root.hidden=false;root.dataset.tone=tone;root.innerHTML=`<div class="modal-copy"><div class="modal-kicker">${kicker}</div><h2>${title}</h2><p>${copy}</p></div><div class="modal-work">${inner||""}<div class="modal-actions">${actions||""}</div></div>`;
+  }
+  function renderModal(){
+    if(state.busy){const root=$("phaseModal"),dock=$("phaseDock");root.hidden=true;root.innerHTML="";dock.hidden=true;return}
+    const n=state.results.length,w=successes(),value=n?w/n:0;
+    if(state.phase==="predictSmall")modal("Prediction → action → evidence","Where will the first 12 spins finish?","A fair probability of 0.25 does not force every short run to contain exactly three prizes.",slider(state.prediction,12),'<button class="primary guide-target" data-action="run-small">Run 12 spins</button>');
+    else if(state.phase==="smallResult")modal("Observed consequence","Does 5 prizes from 12 prove bias?",`The relative frequency is ${w}/12 = ${fmt(value)}. The mechanism is known to be fair, so judge what this short sample can establish.`, `<div class="modal-evidence"><strong>${w} ÷ ${n} = ${fmt(value)}</strong><span>${state.smallFeedback||'The result is above 0.25, but the sample contains only 12 spins.'}</span></div>`, '<button class="choice" data-action="small-proves-bias">It proves bias</button><button class="primary choice guide-target" data-action="small-not-enough">Not enough evidence</button>',state.smallFeedback?"bad":"warn");
+    else if(state.phase==="predictLarge")modal("Keep the mechanism fixed","What will happen by 200 spins?","Only the number of trials changes. Predict where the same fair spinner's relative frequency will finish.",slider(state.prediction,200),'<button class="primary guide-target" data-action="run-large">Run to 200 spins</button>');
+    else if(state.phase==="fairResult")modal("Observed consequence","The estimate moved close to 0.25",`This run produced ${w}/200 = ${fmt(value)}. More trials did not make every outcome predictable; they made the overall proportion more stable.`,`<div class="modal-evidence"><strong>${w} ÷ ${n} = ${fmt(value)}</strong><span>Close to the fair probability 0.25, but not forced to equal it exactly.</span></div>`, '<button class="primary guide-target" data-action="test-booth">Compare with the booth spinner</button>',"good");
+    else if(state.phase==="biasIntro")modal("Same appearance, new mechanism","Can the outcomes reveal hidden bias?","The booth spinner has the same four visible sectors. Its mechanism stays sealed while you collect evidence.",'<div class="modal-evidence"><strong>fair reference: 52 ÷ 200 = 0.260</strong><span>The grey trace remains on the graph for comparison.</span></div>','<button class="primary guide-target" data-action="run-bias-small">Collect 20 booth spins</button>');
+    else if(state.phase==="biasSmallResult")modal("Evidence first","20 spins finished at 0.400","That is suspicious, but 20 trials can still vary. Is it responsible to make a final judgement now?",`<div class="modal-evidence"><strong>${w} ÷ ${n} = ${fmt(value)}</strong><span>${state.earlyFeedback||'Choose whether to stop or strengthen the evidence.'}</span></div>`, '<button class="choice" data-action="judge-early">Call it biased now</button><button class="primary choice guide-target" data-action="collect-more">Collect more evidence</button>',state.earlyFeedback?"warn":"");
+    else if(state.phase==="biasNeedMore")modal("Larger sample","Extend the same booth test to 200 spins","The spinner and mechanism stay unchanged. Only the amount of evidence increases.",'<div class="modal-evidence"><strong>20 spins → 200 spins</strong><span>A long run makes persistent bias easier to distinguish from short-run variation.</span></div>','<button class="primary guide-target" data-action="run-bias-large">Run to 200 spins</button>');
+    else if(state.phase==="biasDecision")modal("Judge from the consequence","Which claim does the 200-spin evidence support?",`The booth produced ${w} prizes. A fair spinner would have an expected frequency of 0.25 × 200 = 50.`,`<div class="modal-evidence"><strong>observed ${w} · fair expectation 50</strong><span>${state.judgementFeedback||'Choose the explanation supported by the long-run evidence.'}</span></div>`,'<button class="choice" data-action="choose-fair">Fair</button><button class="primary choice guide-target" data-action="choose-biased">Biased</button>',state.judgementFeedback?"bad":"");
+    else if(state.phase==="biasReveal")modal("Relationship revealed","The long-run outcomes exposed the bias","The hidden mechanism was set to P(PRIZE) = 0.40. The experimental relative frequency 80/200 = 0.400 estimated it.",'<div class="modal-evidence"><strong>relative frequency ≈ probability</strong><span>Repeated trials provide an estimate; they do not reveal a mechanism from one result.</span></div>','<button class="primary guide-target" data-action="start-forecast">Use the estimate</button>',"good");
+    else if(state.phase==="forecast"){
+      const expected=Math.round(.4*state.futureN),valid=state.answer!==""&&Number(state.answer)===expected;
+      modal("Show your working","How many prize tickets should be stocked?","Use expected frequency = probability × number of trials. The booth estimate is 0.400.",`<div class="forecast-control"><label><span>Expected visitors / spins</span><output id="futureOutput">${state.futureN}</output></label><input id="futureSlider" class="guide-target" type="range" min="50" max="200" step="10" value="${state.futureN}" aria-label="Number of future spins"></div><div class="formula"><span class="cell">80</span><b>÷</b><span class="cell">200</span><b>×</b><span id="futureCell" class="cell">${state.futureN}</span><b>=</b><input id="expectedAnswer" class="${state.forecastFeedback?'invalid':''}" type="number" inputmode="numeric" value="${state.answer}" aria-label="Expected number of prizes"></div>${state.forecastFeedback?`<div class="feedback-line bad">${state.forecastFeedback}</div>`:''}`,'<button class="primary guide-target" data-action="check-forecast">Check forecast</button>');
+    }
+    else if(state.phase==="forecastReady")modal("Calculated consequence",`Stock ${state.expected} prize tickets`,`0.400 × ${state.futureN} = ${state.expected}. The stock bar now represents the expected frequency, not a guaranteed result.`,`<div class="modal-evidence"><strong>0.400 × ${state.futureN} = ${state.expected}</strong><span>Run one future event to see whether the actual frequency is identical.</span></div>`,'<button class="primary guide-target" data-action="run-event">Run the event</button>',"good");
+    else if(state.phase==="complete"){
+      const trialForm=`<div class="forecast-control"><label><span>Try another crowd size</span><output id="futureOutput">${state.futureN}</output></label><input id="futureSlider" type="range" min="50" max="200" step="10" value="${state.futureN}" aria-label="Another number of future spins"></div><div class="formula short"><span class="cell">0.400</span><b>×</b><span id="futureCell" class="cell">${state.futureN}</span><b>=</b><input id="expectedAnswer" type="number" inputmode="numeric" value="${state.answer}" aria-label="New expected number of prizes"></div>${state.forecastFeedback?`<div class="feedback-line ${state.forecastFeedback.startsWith('Correct')?'good':'bad'}">${state.forecastFeedback}</div>`:''}`;
+      if(state.expected===null){
+        modal("Counterexample","Build another forecast","Change the crowd size. Expected frequency scales with the number of trials, but the next actual result can still vary.",trialForm,'<button class="primary" data-action="check-counter">Check new forecast</button>',"good");
+      }else if(state.actual===null){
+        modal("New stock plan",`Stock ${state.expected} prize tickets`,`0.400 × ${state.futureN} = ${state.expected}. Now generate another actual event without changing the probability.`,`<div class="modal-evidence"><strong>expected ${state.expected}</strong><span>The expected frequency is fixed by the model; the actual result is not.</span></div>`,'<button class="primary" data-action="run-counter">Run another event</button>',"good");
+      }else{
+        const diff=state.actual-state.expected,consequence=diff>0?`The booth is short by ${diff} prize tickets.`:diff<0?`${-diff} prize tickets are left over.`:"The stock happened to match exactly.";
+        modal("Counterexample","Expected does not mean guaranteed",`You stocked ${state.expected}; the event produced ${state.actual} prize winners. ${consequence}`,`<div class="modal-evidence"><strong>expected ${state.expected} · actual ${state.actual}</strong><span>Change the crowd size and forecast again. The expected frequency scales exactly; an actual run can still vary.</span></div>${trialForm}`,'<button data-action="check-counter">Check new forecast</button>',"good");
+      }
+    }
+    bindModalControls();
+  }
+  function bindModalControls(){
+    const ps=$("predictionSlider");if(ps)ps.addEventListener("input",e=>{state.prediction=Number(e.target.value);$("predictionOutput").textContent=fmt(state.prediction,2);renderChart();renderComparison()});
+    const fs=$("futureSlider");if(fs){
+      fs.addEventListener("input",e=>{state.futureN=Number(e.target.value);state.answer="";state.forecastFeedback="";const out=$("futureOutput"),cell=$("futureCell"),ans=$("expectedAnswer");if(out)out.textContent=state.futureN;if(cell)cell.textContent=state.futureN;if(ans)ans.value="";renderForecast()});
+      fs.addEventListener("change",()=>{state.expected=null;state.actual=null;renderAll()});
+    }
+    const ans=$("expectedAnswer");if(ans){ans.addEventListener("input",e=>{state.answer=e.target.value;state.forecastFeedback="";$("forecastEquation").innerHTML=`<strong>0.400</strong> × ${state.futureN} = ${state.answer||'?'}`})}
+  }
+  function renderAll(){renderMission();renderSpinner();renderCounts();renderChart();renderComparison();renderMechanismChip();renderForecast();renderLog();renderStageNote();renderModal();$("stageShell").setAttribute("aria-busy",state.busy?"true":"false");$("resetLab").disabled=state.busy}
+
+  function spinVisual(outcome){
+    const target=outcome?-45:[45,135,225][state.results.length%3],current=((state.wheelRotation%360)+360)%360,desired=((target%360)+360)%360,delta=(desired-current+360)%360;
+    state.wheelRotation+=720+delta;renderSpinner();
+    const token=$("travelToken");token.setAttribute("class",`travel-token ${outcome?'prize':'other'}`);token.style.opacity="1";
+    if(!reducedMotion&&token.animate){const dest=outcome?{x:-53,y:303}:{x:57,y:303};token.animate([{transform:"translate(0,0)",opacity:1},{transform:`translate(${dest.x}px,${dest.y}px)`,opacity:.9},{transform:`translate(${dest.x}px,${dest.y}px)`,opacity:0}],{duration:420,easing:"ease-in-out"})}
+    setTimeout(()=>token.style.opacity="0",reducedMotion?0:430);
+  }
+  async function runTo(target,sequence,kind){
+    state.busy=true;state.runTarget=target;state.runKind=kind;renderAll();
+    const remaining=target-state.results.length,detailed=remaining<=24,chunk=detailed?1:3;
+    while(state.results.length<target){
+      const take=Math.min(chunk,target-state.results.length);let last=0;
+      for(let i=0;i<take;i++){last=sequence[state.results.length];state.results.push(last)}
+      spinVisual(last);renderCounts();renderChart();renderComparison();renderStageNote();renderModal();
+      await delay(detailed?125:24);
+    }
+    state.busy=false;
+  }
+  async function runFuture(){
+    state.busy=true;state.runTarget=state.futureN;state.runKind="future";state.results=[];renderAll();
+    const seq=futureSequence.slice(0,state.futureN),chunk=4;
+    while(state.results.length<state.futureN){const take=Math.min(chunk,state.futureN-state.results.length);let last=0;for(let i=0;i<take;i++){last=seq[state.results.length];state.results.push(last)}spinVisual(last);renderCounts();renderChart();renderComparison();renderStageNote();renderModal();await delay(18)}
+    state.actual=successes(state.results);state.busy=false;state.phase="complete";addLog("Future event",`Expected ${state.expected}; actual ${state.actual}. Expected frequency was a plan, not a guarantee.`);state.answer="";state.forecastFeedback="";renderAll();
+  }
+  function checkForecast(counter=false){
+    const expected=Math.round(.4*state.futureN),answer=Number(state.answer);
+    if(state.answer===""||!Number.isFinite(answer)){state.forecastFeedback="Enter the expected number of prize outcomes.";renderModal();return false}
+    if(answer!==expected){
+      state.forecastFeedback=answer===Math.round(.25*state.futureN)?"That uses the fair claim 0.25. Use the booth evidence: 80 ÷ 200 = 0.400.":`Multiply 0.400 by ${state.futureN}; do not add the values.`;renderModal();return false
+    }
+    state.expected=expected;state.actual=null;state.forecastFeedback=counter?`Correct: 0.400 × ${state.futureN} = ${expected}.`:"";
+    if(!counter){state.phase="forecastReady";addLog("Expected frequency",`0.400 × ${state.futureN} = ${expected} prize tickets to stock.`)}
+    renderAll();return true
+  }
+  function reset(){Object.assign(state,{phase:"predictSmall",mode:"fair",results:[],fairResults:[],busy:false,runTarget:0,prediction:.25,smallPrediction:.25,largePrediction:.25,wheelRotation:0,mechanismRevealed:false,smallFeedback:"",judgementFeedback:"",earlyFeedback:"",futureN:180,expected:null,actual:null,forecastFeedback:"",answer:"",logs:[],runKind:""});renderAll()}
+
+  $("phaseModal").addEventListener("click",async e=>{
+    const button=e.target.closest("button[data-action]");if(!button||state.busy)return;const action=button.dataset.action;
+    if(action==="run-small"){state.smallPrediction=state.prediction;state.smallFeedback="";await runTo(12,fairSequence,"fair");state.phase="smallResult";addLog("12-spin fair test",`Predicted ${fmt(state.smallPrediction,2)}; observed 5 ÷ 12 = 0.417. A short fair sample did not equal 0.25.`);renderAll()}
+    else if(action==="small-proves-bias"){state.smallFeedback="This spinner is known to be fair. The gap came from short-run variation, so 12 outcomes cannot prove bias.";renderAll()}
+    else if(action==="small-not-enough"){state.phase="predictLarge";state.prediction=.25;state.smallFeedback="";renderAll()}
+    else if(action==="run-large"){state.largePrediction=state.prediction;await runTo(200,fairSequence,"fair");state.fairResults=state.results.slice();state.phase="fairResult";addLog("200-spin fair test",`Predicted ${fmt(state.largePrediction,2)}; observed 52 ÷ 200 = 0.260, close to the fair probability 0.25.`);renderAll()}
+    else if(action==="test-booth"){state.mode="biased";state.results=[];state.phase="biasIntro";state.prediction=.25;state.earlyFeedback="";renderAll()}
+    else if(action==="run-bias-small"){await runTo(20,biasSequence,"booth");state.phase="biasSmallResult";addLog("20-spin booth test",`8 ÷ 20 = 0.400. Suspicious, but still a short sample.`);renderAll()}
+    else if(action==="judge-early"){state.earlyFeedback="A 20-spin result is evidence, but not enough to separate persistent bias confidently from short-run fluctuation. Strengthen the sample.";renderAll()}
+    else if(action==="collect-more"){state.phase="biasNeedMore";state.earlyFeedback="";renderAll()}
+    else if(action==="run-bias-large"){await runTo(200,biasSequence,"booth");state.phase="biasDecision";addLog("200-spin booth test",`80 ÷ 200 = 0.400, well above the fair claim 0.25 and the fair trace.`);renderAll()}
+    else if(action==="choose-fair"){state.judgementFeedback="Fair would predict about 50 prizes, but 80 occurred and the trace stayed far above the fair reference. The evidence does not support fair.";renderAll()}
+    else if(action==="choose-biased"){state.mechanismRevealed=true;state.phase="biasReveal";state.judgementFeedback="";addLog("Audit judgement",`The long-run booth evidence supports bias: 0.400 stayed far above 0.250.`);renderAll()}
+    else if(action==="start-forecast"){state.phase="forecast";state.futureN=180;state.answer="";state.expected=null;state.actual=null;renderAll()}
+    else if(action==="check-forecast"){checkForecast(false)}
+    else if(action==="run-event"){await runFuture()}
+    else if(action==="check-counter"){checkForecast(true)}
+    else if(action==="run-counter"){if(state.expected===Math.round(.4*state.futureN))await runFuture()}
+  });
+  $("resetLab").addEventListener("click",reset);
+  if(narrowStage.addEventListener)narrowStage.addEventListener("change",()=>applyStageLayout());else if(narrowStage.addListener)narrowStage.addListener(()=>applyStageLayout());
+  renderAll();
+})();
+</script>
+</body>
+</html>

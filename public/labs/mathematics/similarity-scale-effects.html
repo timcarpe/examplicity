@@ -1,0 +1,1398 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- LAB_FRAME_STYLES_START -->
+<style data-lab-frame>
+:root {
+  --lab-canvas: #f3f5f7;
+  --lab-paper: #fbfbfd;
+  --lab-surface: #ffffff;
+  --lab-control: #ffffff;
+  --lab-ink: #1d1d1f;
+  --lab-muted: #6e6e73;
+  --lab-line: #d2d2d7;
+  --lab-line-strong: #a7a7ad;
+  --lab-accent: #5277b8;
+  --lab-accent-soft: #eef2fa;
+  --lab-good: #18794e;
+  --lab-good-soft: #edf8f1;
+  --lab-warn: #946200;
+  --lab-warn-soft: #fff6e7;
+  --lab-bad: #b42318;
+  --lab-bad-soft: #fff0ee;
+  --lab-focus: #1d1d1f;
+  --lab-focus-soft: rgba(29, 29, 31, 0.18);
+  --lab-font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+  --lab-panel-radius: 12px;
+  --lab-control-radius: 8px;
+  --lab-pill-radius: 999px;
+  --lab-control-height: 35px;
+  --lab-panel-shadow: 0 1px 2px rgba(29, 29, 31, 0.04);
+  --lab-header-max-width: 1200px;
+  --lab-header-gutter: max(28px, calc((100vw - var(--lab-header-max-width)) / 2));
+  --lab-page-gutter: var(--lab-header-gutter);
+  --lab-compact-workspace-max: 820px;
+}
+
+html,
+body {
+  background: var(--lab-canvas);
+}
+
+body {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  align-content: start !important;
+  font-family: var(--lab-font-sans);
+  padding-bottom: 0;
+  padding-top: 0 !important;
+  text-rendering: optimizeLegibility;
+}
+
+.lab-manifest-header {
+  align-items: start;
+  border-bottom: 0 !important;
+  display: grid;
+  gap: 18px 28px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  margin-left: calc(50% - 50vw + var(--lab-header-gutter));
+  margin-bottom: 26px;
+  max-width: var(--lab-header-max-width);
+  padding-bottom: 22px;
+  width: calc(100vw - var(--lab-header-gutter) - var(--lab-header-gutter));
+}
+
+.lab-manifest-heading {
+  min-width: 0;
+}
+
+.lab-manifest-header h1 {
+  color: var(--ink, var(--lab-ink));
+  font-family: var(--lab-font-sans);
+  font-size: clamp(25px, 3.2vw, 40px);
+  font-weight: 650;
+  letter-spacing: -0.045em;
+  line-height: 1.02;
+  margin: 0;
+  max-width: 24ch;
+  padding: 0;
+  text-align: left;
+}
+
+.lab-manifest-subtitle {
+  color: var(--muted, var(--lab-muted));
+  font-family: var(--lab-font-sans);
+  font-size: 13px;
+  letter-spacing: 0;
+  line-height: 1.5;
+  margin: 10px 0 0;
+  max-width: 72ch;
+  padding: 0;
+  text-align: left;
+}
+
+.lab-authored-title-slot {
+  min-width: 0;
+}
+
+.lab-syllabus-chips {
+  align-items: center;
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+  margin: 0 0 0 auto;
+  max-width: 100%;
+}
+
+.lab-syllabus-chip {
+  align-items: center;
+  background: var(--syllabus-chip-bg) !important;
+  border: 1px solid var(--syllabus-chip-border) !important;
+  border-radius: var(--lab-pill-radius);
+  color: var(--syllabus-chip-text) !important;
+  display: inline-flex;
+  font-size: 11px;
+  font-weight: 650;
+  gap: 4px;
+  line-height: 1;
+  min-height: 29px;
+  padding: 8px 10px;
+  position: relative;
+  transition: background-color 140ms ease, border-color 140ms ease;
+  white-space: nowrap;
+}
+
+.lab-syllabus-chip:hover {
+  background: var(--syllabus-chip-hover) !important;
+}
+
+.lab-syllabus-primary-link {
+  border-radius: inherit;
+  inset: 0;
+  position: absolute;
+  z-index: 0;
+}
+
+.lab-syllabus-primary-link:focus-visible {
+  outline: 2px solid var(--syllabus-chip-text);
+  outline-offset: 2px;
+}
+
+.lab-syllabus-name,
+.lab-syllabus-divider,
+.lab-syllabus-sections {
+  pointer-events: none;
+  position: relative;
+  z-index: 1;
+}
+
+.lab-syllabus-section {
+  border-radius: 4px;
+  color: inherit;
+  padding: 2px;
+  text-decoration: none;
+}
+
+a.lab-syllabus-section {
+  pointer-events: auto;
+}
+
+a.lab-syllabus-section:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+a.lab-syllabus-section:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 1px;
+}
+
+.lab-syllabus-name {
+  color: var(--syllabus-chip-text) !important;
+}
+
+.lab-syllabus-divider,
+.lab-syllabus-separator {
+  color: var(--muted, var(--lab-muted));
+}
+
+.lab-syllabus-prefix {
+  opacity: 0.72;
+  padding-left: 5px;
+}
+
+.lab-syllabus-sections {
+  align-items: center;
+  display: inline-flex;
+}
+
+.lab-syllabus-separator {
+  margin-inline: 0 2px;
+}
+
+html[data-theme="dark"] .lab-syllabus-name {
+  color: var(--syllabus-chip-border) !important;
+}
+
+html[data-theme="dark"] .lab-syllabus-chip:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+html[data-theme="dark"],
+html[data-theme="dark"] body {
+  background: var(--bg);
+}
+
+body > main {
+  container-name: lab-canvas;
+  container-type: inline-size;
+  margin-left: var(--lab-page-gutter);
+  margin-right: auto;
+  margin-top: 18px;
+  max-width: var(--lab-header-max-width);
+  width: calc(100vw - var(--lab-page-gutter) - var(--lab-page-gutter));
+}
+
+body[data-lab-layout="compact"] .lab-manifest-header {
+  margin-bottom: 17px;
+  padding-bottom: 13px;
+}
+
+body[data-lab-layout="compact"] [data-lab-workspace] {
+  margin-left: auto;
+  margin-right: auto;
+  width: min(var(--lab-compact-workspace-max), 100%);
+}
+
+:where(button, input, select, textarea, summary):focus-visible {
+  outline: 3px solid var(--lab-focus);
+  outline-offset: 4px;
+}
+
+@media (max-width: 620px) {
+  :root {
+    --lab-header-gutter: 18px;
+    --lab-page-gutter: 18px;
+  }
+
+  body {
+    padding-bottom: 0;
+    padding-top: 0 !important;
+  }
+
+  .lab-manifest-header {
+    gap: 14px;
+    grid-template-columns: minmax(0, 1fr) !important;
+    margin-bottom: 20px;
+    padding-bottom: 18px;
+  }
+
+  body[data-lab-layout="compact"] .lab-manifest-header {
+    margin-bottom: 16px;
+    padding-bottom: 14px;
+  }
+
+  .lab-manifest-header h1 {
+    font-size: clamp(24px, 8vw, 34px);
+  }
+
+  .lab-syllabus-chips {
+    gap: 4px;
+    justify-content: flex-start !important;
+    margin: 0 !important;
+  }
+
+  .lab-syllabus-chip {
+    font-size: 10px;
+    max-width: 100%;
+    min-height: 27px;
+    padding: 7px 8px;
+    white-space: normal;
+  }
+
+  .lab-syllabus-sections {
+    flex-wrap: wrap;
+  }
+
+  body > main {
+    margin-top: 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+</style>
+<!-- LAB_FRAME_STYLES_END -->
+<!-- LAB_RESOURCE_START id="lab-kit.css" type="stylesheet" -->
+<style data-lab-resource="lab-kit.css" data-lab-resource-type="stylesheet" data-lab-resource-bytes="5395">
+:root {
+  --lab-kit-ink: var(--lab-ink, #20303a);
+  --lab-kit-muted: var(--lab-muted, #687780);
+  --lab-kit-line: var(--lab-line, #cbd6dc);
+  --lab-kit-surface: var(--lab-surface, #ffffff);
+  --lab-kit-panel: var(--lab-paper, #f6f9fb);
+  --lab-kit-accent: var(--lab-accent, #2b7ac3);
+  --lab-kit-accent-soft: var(--lab-accent-soft, #e9f3fb);
+  --lab-kit-good: var(--lab-good, #23794d);
+  --lab-kit-good-soft: var(--lab-good-soft, #e9f7ef);
+  --lab-kit-warn: var(--lab-warn, #8b6419);
+  --lab-kit-warn-soft: var(--lab-warn-soft, #fff7d9);
+  --lab-kit-bad: var(--lab-bad, #a3443d);
+  --lab-kit-bad-soft: var(--lab-bad-soft, #fff0ef);
+  --lab-kit-focus: var(--lab-focus, #1f6fb4);
+  --lab-kit-focus-ring: rgba(31, 111, 180, .28);
+  --lab-kit-canvas: var(--lab-paper, #fbfbfd);
+  --lab-kit-canvas-grid: #e7ebee;
+  --lab-kit-canvas-grid-size: 24px;
+  --lab-kit-radius: var(--lab-panel-radius, 12px);
+  --lab-kit-control-radius: var(--lab-control-radius, 8px);
+  --lab-kit-shadow: var(--lab-panel-shadow, 0 5px 16px rgba(32, 48, 58, .08));
+}
+
+.lab-kit-visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.lab-kit-panel {
+  color: var(--lab-kit-ink);
+  background: var(--lab-kit-surface);
+  border: 1px solid var(--lab-kit-line);
+  border-radius: var(--lab-kit-radius);
+  box-shadow: var(--lab-kit-shadow);
+}
+
+.lab-kit-stack { display: flex; flex-direction: column; gap: var(--lab-kit-stack-gap, 1rem); }
+.lab-kit-cluster { display: flex; flex-wrap: wrap; align-items: center; gap: var(--lab-kit-cluster-gap, .5rem); }
+.lab-kit-grid { display: grid; gap: var(--lab-kit-grid-gap, 1rem); grid-template-columns: repeat(var(--lab-kit-grid-columns, 1), minmax(0, 1fr)); }
+.lab-kit-scroll { max-width: 100%; overflow: auto; }
+.lab-kit-svg { display: block; width: 100%; max-width: 100%; height: auto; }
+
+.lab-kit-canvas {
+  box-sizing: border-box;
+  min-width: 0;
+  color: var(--lab-kit-ink);
+  background-color: var(--lab-kit-canvas);
+  border: 1px solid var(--lab-kit-line);
+  border-radius: var(--lab-kit-radius);
+  box-shadow: inset 0 0 0 1px rgba(32, 48, 58, .025);
+}
+
+.lab-kit-canvas[data-grid="square"] {
+  background-image:
+    linear-gradient(var(--lab-kit-canvas-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--lab-kit-canvas-grid) 1px, transparent 1px);
+  background-size: var(--lab-kit-canvas-grid-size) var(--lab-kit-canvas-grid-size);
+}
+
+.lab-kit-field { display: grid; gap: .35rem; color: var(--lab-kit-ink); }
+.lab-kit-field > label { font-weight: 700; }
+.lab-kit-field > small { color: var(--lab-kit-muted); line-height: 1.4; }
+.lab-kit-output { color: var(--lab-kit-ink); font-variant-numeric: tabular-nums; }
+
+.lab-kit-button,
+.lab-kit-input {
+  min-height: 2.5rem;
+  border: 1px solid var(--lab-kit-line);
+  border-radius: var(--lab-kit-control-radius);
+  background: var(--lab-kit-surface);
+  color: var(--lab-kit-ink);
+  font: inherit;
+}
+
+.lab-kit-button { padding: 0 .8rem; cursor: pointer; }
+.lab-kit-button[data-variant="primary"] { border-color: var(--lab-kit-accent); background: var(--lab-kit-accent); color: #fff; font-weight: 700; }
+.lab-kit-input { width: 100%; padding: 0 .6rem; }
+.lab-kit-button:focus-visible,
+.lab-kit-input:focus-visible,
+[data-lab-kit-focus]:focus-visible {
+  outline: 3px solid var(--lab-kit-focus-ring);
+  outline-offset: 2px;
+}
+
+.lab-kit-status { padding: .65rem .8rem; border-left: 3px solid var(--lab-kit-accent); background: var(--lab-kit-accent-soft); color: var(--lab-kit-ink); }
+.lab-kit-status[data-state="good"] { border-color: var(--lab-kit-good); background: var(--lab-kit-good-soft); }
+.lab-kit-status[data-state="warn"] { border-color: var(--lab-kit-warn); background: var(--lab-kit-warn-soft); }
+.lab-kit-status[data-state="bad"] { border-color: var(--lab-kit-bad); background: var(--lab-kit-bad-soft); }
+
+.lab-kit-work { display: grid; min-width: 0; gap: var(--lab-kit-work-gap, .5rem); }
+.lab-kit-work-item { min-width: 0; padding: .55rem .65rem; border-left: 3px solid var(--lab-kit-line); background: var(--lab-kit-surface); }
+.lab-kit-work-item[data-state="needed"] { border-color: var(--lab-kit-warn); background: var(--lab-kit-warn-soft); }
+.lab-kit-work-item[data-state="mistake"] { border-color: var(--lab-kit-bad); background: var(--lab-kit-bad-soft); }
+.lab-kit-work-item[data-state="correct"] { border-color: var(--lab-kit-good); background: var(--lab-kit-good-soft); }
+.lab-kit-work-state { display: inline-flex; align-items: center; gap: .35rem; font-weight: 700; }
+.lab-kit-work-item[data-state="needed"] .lab-kit-work-state { color: var(--lab-kit-warn); }
+.lab-kit-work-item[data-state="mistake"] .lab-kit-work-state { color: var(--lab-kit-bad); }
+.lab-kit-work-item[data-state="correct"] .lab-kit-work-state { color: var(--lab-kit-good); }
+.lab-kit-work-mark::before { display: inline-block; width: 1em; text-align: center; font-weight: 900; }
+.lab-kit-work-item[data-state="mistake"] .lab-kit-work-mark::before { content: "×"; }
+.lab-kit-work-item[data-state="correct"] .lab-kit-work-mark::before { content: "✓"; }
+
+@media (prefers-reduced-motion: reduce) {
+  .lab-kit-motion { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
+}
+
+</style>
+<!-- LAB_RESOURCE_END id="lab-kit.css" type="stylesheet" -->
+<link rel="icon" href="data:,">
+<!-- LAB_MANIFEST_HEAD_START -->
+<title>Similarity and Scale Effects</title>
+<meta name="description" content="Explore similar shapes and the effects of scale factor on length, area and volume for Cambridge IGCSE Mathematics 0580.">
+<link rel="canonical" href="https://www.examplicity.org/labs/mathematics/similarity-scale-effects.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Examplicity">
+<meta property="og:title" content="Similarity and Scale Effects">
+<meta property="og:description" content="Explore similar shapes and the effects of scale factor on length, area and volume for Cambridge IGCSE Mathematics 0580.">
+<meta property="og:url" content="https://www.examplicity.org/labs/mathematics/similarity-scale-effects.html">
+<meta property="og:image" content="https://www.examplicity.org/opengraph-image">
+<meta property="og:image:alt" content="Examplicity — Make complex ideas click">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Similarity and Scale Effects">
+<meta name="twitter:description" content="Explore similar shapes and the effects of scale factor on length, area and volume for Cambridge IGCSE Mathematics 0580.">
+<meta name="twitter:image" content="https://www.examplicity.org/opengraph-image">
+<script type="application/ld+json" data-lab-manifest="structured-data">{"@context":"https://schema.org","@type":"LearningResource","@id":"https://www.examplicity.org/labs/mathematics/similarity-scale-effects.html#learning-resource","url":"https://www.examplicity.org/labs/mathematics/similarity-scale-effects.html","name":"Similarity and Scale Effects","description":"Explore similar shapes and the effects of scale factor on length, area and volume for Cambridge IGCSE Mathematics 0580.","inLanguage":"en-GB","isAccessibleForFree":true,"interactivityType":"active","learningResourceType":"Scale model","teaches":"Geometry","educationalLevel":["IGCSE"],"educationalAlignment":[{"@type":"AlignmentObject","alignmentType":"educationalSubject","educationalFramework":"Cambridge IGCSE Mathematics","targetName":"IGCSE 0580 section C4.4, E4.4","targetUrl":"https://www.cambridgeinternational.org/Images/662466-2025-2027-syllabus.pdf#page=23"}],"about":{"@type":"Thing","name":"Mathematics"},"audience":{"@type":"EducationalAudience","educationalRole":"student"},"provider":{"@type":"Organization","name":"Examplicity","url":"https://www.examplicity.org"},"isPartOf":{"@type":"WebSite","@id":"https://www.examplicity.org/#website","name":"Examplicity","url":"https://www.examplicity.org"}}</script>
+<!-- LAB_MANIFEST_HEAD_END -->
+
+<style>
+:root{
+  --length:#5277b8;--length-soft:#eaf0f8;--area:#c6782d;--area-soft:#fff3e5;
+  --volume:#7865a8;--volume-soft:#f1edf8;--prototype:#78858e;--prototype-soft:#eef1f3;
+  --grid:#d9e1e6;--stage:#f8fafc;--similar:#18794e;--similar-soft:#edf8f1;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{min-height:100%;background:var(--lab-canvas)}
+body{margin:0;color:var(--lab-ink);font-family:var(--lab-font-sans);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+body>main{container-name:lab-canvas;container-type:inline-size;margin:12px auto 38px;width:min(1200px,calc(100% - 22px))}
+button,input{font:inherit}
+button{min-height:34px;padding:0 10px;border:1px solid var(--lab-line);border-radius:var(--lab-control-radius);background:var(--lab-control);color:var(--lab-ink);cursor:pointer}
+button:hover:not(:disabled){border-color:var(--lab-line-strong)}button:disabled{opacity:.42;cursor:not-allowed}
+button.primary{border-color:var(--lab-accent);background:var(--lab-accent);color:#fff;font-weight:780}
+button.good{border-color:var(--lab-good);background:var(--lab-good);color:#fff;font-weight:780}
+button.quiet{background:transparent}
+:where(button,input,[tabindex]):focus-visible{outline:3px solid var(--lab-focus);outline-offset:3px}
+.panel{background:var(--lab-surface);border:1px solid var(--lab-line);border-radius:var(--lab-panel-radius);box-shadow:var(--lab-panel-shadow)}
+.lab-manifest-header{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px 24px;align-items:start;margin-bottom:10px;padding-bottom:12px;border-bottom:1px solid var(--lab-line)}
+.lab-manifest-header h1{margin:0;max-width:28ch;font-size:clamp(24px,3vw,36px);font-weight:650;letter-spacing:-.043em;line-height:1.03}
+.lab-manifest-subtitle{margin:6px 0 0;max-width:78ch;color:var(--lab-muted);font-size:12px;line-height:1.42}
+.lab-syllabus-chips{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.lab-syllabus-chip{position:relative;display:inline-flex;align-items:center;gap:4px;min-height:29px;padding:8px 10px;border:1px solid #91c4b0;border-radius:999px;background:#edf8f3;color:#235f4e;font-size:10px;font-weight:700;white-space:nowrap}
+.lab-syllabus-primary-link{position:absolute;inset:0;border-radius:inherit}.lab-syllabus-name,.lab-syllabus-divider,.lab-syllabus-sections{position:relative;z-index:1;pointer-events:none}.lab-syllabus-section{position:relative;z-index:2;color:inherit;text-decoration:none;padding:2px;border-radius:4px;pointer-events:auto}.lab-syllabus-section:hover{text-decoration:underline;text-underline-offset:2px}
+.mission{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px 16px;align-items:center;padding:9px 10px}
+.mission-kicker{display:flex;gap:6px;flex-wrap:wrap;color:var(--lab-accent);font-size:8px;font-weight:900;letter-spacing:.065em;text-transform:uppercase}.mission-kicker span+span::before{content:"·";margin-right:6px;color:#a4aaaf}
+.mission-copy strong{display:block;margin-top:3px;font-size:15px;line-height:1.3}.mission-copy>span{display:block;margin-top:2px;color:var(--lab-muted);font-size:9.5px;line-height:1.36}
+.mission-tools{display:flex;align-items:center;gap:8px;justify-content:flex-end;flex-wrap:wrap}.complexity{display:flex;align-items:center;gap:7px}.complexity-copy{text-align:right}.complexity-copy strong{display:block;color:#52606a;font-size:8px;font-weight:900;letter-spacing:.05em;text-transform:uppercase}.complexity-copy span{display:block;margin-top:1px;color:var(--lab-muted);font-size:7px}.complexity-switch{display:flex;padding:3px;border:1px solid var(--lab-line);border-radius:999px;background:#f6f8f9}.complexity-switch button{min-height:27px;border:0;border-radius:999px;background:transparent;padding:0 8px;color:#67737b;font-size:8px;font-weight:850}.complexity-switch button.active{background:#fff;color:var(--lab-ink);box-shadow:0 1px 4px rgba(29,29,31,.14)}
+.lab{margin-top:8px;overflow:hidden}.workspace{display:grid;grid-template-columns:minmax(650px,1.68fr) minmax(300px,.72fr);align-items:start}.stage-side{min-width:0;border-right:1px solid var(--lab-line);background:var(--stage)}
+.visual-head{min-height:49px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;padding:7px 9px;border-bottom:1px solid var(--lab-line);background:#fff}.visual-copy strong{display:block;font-size:11.5px}.visual-copy span{display:block;margin-top:1px;color:var(--lab-muted);font-size:8.5px;line-height:1.32}.visual-actions{display:flex;gap:5px}.visual-actions button{min-height:29px;font-size:8.5px}
+.stage-shell{position:relative;overflow:hidden;background:var(--stage)}
+.stage{display:block;width:100%;min-width:0;height:auto;background:var(--stage);touch-action:none;user-select:none}.stage text{font-family:var(--lab-font-sans)}
+.stage-bg{fill:#f8fafc}.stage-ground{fill:#eef2f4}.bench-line{stroke:#ced8de;stroke-width:2}.bench-mark{stroke:#dce3e7;stroke-width:1}
+.prototype-label,.production-label{font-size:10px;font-weight:900;letter-spacing:.055em;text-transform:uppercase}.prototype-label{fill:#65737c}.production-label{fill:#365f91}.stage-caption{fill:#6c7982;font-size:8px;font-weight:720}.stage-value{fill:#273740;font-size:11px;font-weight:900}.stage-value.length{fill:#315e95}.stage-value.area{fill:#9a5c20}.stage-value.volume{fill:#665292}
+.face-top{fill:#edf3fa;stroke:#70869a;stroke-width:1.2}.face-front{fill:#f7eadb;stroke:#70869a;stroke-width:1.2}.face-side{fill:#e9e4f3;stroke:#70869a;stroke-width:1.2}.prototype .face-top,.prototype .face-front,.prototype .face-side{fill:#eef1f3;stroke:#86939b}
+.face-cell{fill:rgba(198,120,45,.18);stroke:rgba(149,93,38,.48);stroke-width:.7}.prototype .face-cell{fill:rgba(120,133,142,.12);stroke:rgba(105,118,126,.35)}
+.face-grid{fill:none;stroke:#7f919d;stroke-width:.75;opacity:.78}.prototype .face-grid{stroke:#93a0a8}.outer-edge{fill:none;stroke:#435866;stroke-width:2;stroke-linejoin:round}.prototype .outer-edge{stroke:#66757e}
+.internal-plane{fill:rgba(120,101,168,.08);stroke:rgba(120,101,168,.38);stroke-width:1;stroke-dasharray:4 4}.layer-cell{fill:rgba(120,101,168,.26);stroke:rgba(96,75,145,.58);stroke-width:.65}.layer-label{fill:#6b5797;font-size:7px;font-weight:900;paint-order:stroke;stroke:#fff;stroke-width:3px}
+.target-face{fill:rgba(82,119,184,.035);stroke:#7294c4;stroke-width:2;stroke-dasharray:8 7}.target-label{fill:#5277b8;font-size:9px;font-weight:850;paint-order:stroke;stroke:#fff;stroke-width:4px}
+.edge-dimension{stroke:var(--length);stroke-width:2}.dimension-cap{stroke:var(--length);stroke-width:2}.dimension-text{fill:#315f96;font-size:9px;font-weight:900;paint-order:stroke;stroke:#fff;stroke-width:4px}
+.handle-halo{fill:rgba(82,119,184,.14);stroke:rgba(82,119,184,.35);stroke-width:1.5}.scale-handle{fill:#fff;stroke:var(--length);stroke-width:3;cursor:grab}.scale-handle:active{cursor:grabbing}.handle-hit{fill:transparent;stroke:transparent;stroke-width:25;cursor:grab}.handle-cross{stroke:var(--length);stroke-width:2;pointer-events:none}
+.guide-pulse{animation:guidePulse .85s ease-in-out infinite alternate}@keyframes guidePulse{to{filter:drop-shadow(0 0 8px rgba(82,119,184,.9));transform:scale(1.08);transform-box:fill-box;transform-origin:center}}
+.matched .target-face{stroke:var(--lab-good);fill:rgba(24,121,78,.05)}.matched .scale-handle{stroke:var(--lab-good)}
+.factor-ribbon{fill:#fff;stroke:#d5dee4;stroke-width:1}.factor-title{fill:#6d7981;font-size:8px;font-weight:900;letter-spacing:.05em;text-transform:uppercase}.factor-formula{fill:#2f4049;font:900 13px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.factor-power{fill:#5a478c;font-size:13px}
+.ratio-chip rect{fill:#fff;stroke:#d3dce2}.ratio-chip text{font-size:8px;font-weight:900}.ratio-chip.good rect{fill:var(--similar-soft);stroke:#9bc7aa}.ratio-chip.bad rect{fill:var(--lab-bad-soft);stroke:#e0aaa4}.ratio-chip.good text{fill:var(--similar)}.ratio-chip.bad text{fill:var(--lab-bad)}
+
+
+.prediction-context{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:7px 8px;border:1px solid var(--lab-line);border-radius:8px;background:#fff}.prediction-context strong{font:900 14px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.prediction-context span{color:var(--lab-muted);font-size:8px}.prediction-grid{display:grid;gap:7px;margin-top:8px}.prediction-row{display:grid;grid-template-columns:minmax(110px,1fr) auto;gap:8px;align-items:center;padding:7px 8px;border:1px solid var(--lab-line);border-radius:8px;background:#fff}.prediction-row>div>strong{display:block;font-size:9.5px}.prediction-row>div>span{display:block;margin-top:1px;color:var(--lab-muted);font-size:7.5px}.prediction-options{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}.prediction-options button{min-height:29px;padding:0 8px;font:850 9px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.prediction-options button.selected{border-color:var(--lab-accent);background:var(--lab-accent-soft);color:#365f91}
+.consequence-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:8px}.consequence{padding:7px;border:1px solid var(--lab-line);border-radius:8px;background:#fff;text-align:center}.consequence span{display:block;color:var(--lab-muted);font-size:7px;font-weight:850;text-transform:uppercase;letter-spacing:.04em}.consequence strong{display:block;margin-top:3px;font:900 12px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.consequence.length strong{color:var(--length)}.consequence.area strong{color:var(--area)}.consequence.volume strong{color:var(--volume)}.prediction-verdict{margin-top:7px;padding:7px 8px;border-left:3px solid var(--lab-accent);background:var(--lab-accent-soft);font-size:8.5px;line-height:1.4}.prediction-verdict.good{border-color:var(--lab-good);background:var(--lab-good-soft)}.prediction-verdict.bad{border-color:var(--lab-warn);background:var(--lab-warn-soft)}
+.evidence-side{min-width:0;padding:10px;background:#fff}.side-head{display:flex;justify-content:space-between;gap:8px;align-items:flex-start;margin-bottom:7px}.side-head strong{display:block;font-size:12px}.side-head span{display:block;margin-top:1px;color:var(--lab-muted);font-size:8px;line-height:1.3}.similarity-state{flex:0 0 auto;min-height:25px;padding:4px 7px;border:1px solid var(--lab-line);border-radius:999px;background:#f7f9fa;color:#64717a;font-size:7px;font-weight:900}.similarity-state.good{border-color:#a2cbb0;background:var(--similar-soft);color:var(--similar)}.similarity-state.bad{border-color:#e0aaa4;background:var(--lab-bad-soft);color:var(--lab-bad)}
+.evidence-stack{display:grid;gap:6px}.evidence-card{position:relative;display:grid;grid-template-columns:28px minmax(0,1fr);gap:7px;align-items:center;padding:7px 8px;border:1px solid var(--lab-line);border-radius:9px;background:#fbfcfd;overflow:hidden}.evidence-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--card-color)}.evidence-card.length{--card-color:var(--length)}.evidence-card.area{--card-color:var(--area)}.evidence-card.volume{--card-color:var(--volume)}.evidence-icon{width:27px;height:27px;display:grid;place-items:center;border-radius:7px;background:var(--card-soft);color:var(--card-color);font-weight:900}.evidence-card.length{--card-soft:var(--length-soft)}.evidence-card.area{--card-soft:var(--area-soft)}.evidence-card.volume{--card-soft:var(--volume-soft)}.evidence-icon.line::before{content:"";width:17px;border-top:3px solid currentColor}.evidence-icon.square::before{content:"";width:14px;height:14px;border:2px solid currentColor}.evidence-icon.cube::before{content:"◇";font-size:22px;line-height:1}.evidence-copy{min-width:0}.evidence-copy>span{display:block;color:var(--lab-muted);font-size:7px;font-weight:850;text-transform:uppercase;letter-spacing:.045em}.evidence-main{display:flex;align-items:baseline;justify-content:space-between;gap:7px;margin-top:1px}.evidence-main strong{font:900 11px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.evidence-main output{font:900 12px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:var(--card-color)}.evidence-formula{margin-top:2px;color:#68757e;font:750 7.5px/1.35 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.evidence-card.changed{animation:evidenceFlash .44s ease}@keyframes evidenceFlash{50%{background:#fffbe9;transform:translateX(2px)}}
+.work-dock{margin-top:8px;padding-top:8px;border-top:1px solid var(--lab-line)}.work-head{display:flex;justify-content:space-between;gap:7px;align-items:center;margin-bottom:6px}.work-head strong{font-size:11px}.work-head span{color:var(--lab-muted);font-size:7.5px}.work-chain{display:grid;gap:5px}.work-step{padding:6px 7px;border:1px solid var(--lab-line);border-radius:8px;background:#f9fafb}.work-step.pending{border-color:#dfc36d;background:#fffdf3}.work-step.good{border-color:#9fc8ad;background:var(--lab-good-soft)}.work-step.bad{border-color:#e0aaa4;background:var(--lab-bad-soft)}.work-step.locked{opacity:.55}.work-step-head{display:flex;align-items:center;gap:5px}.work-step-num{width:17px;height:17px;display:grid;place-items:center;border-radius:50%;background:#e9eef2;color:#52616b;font-size:7px;font-weight:900}.work-step.good .work-step-num{background:#cfe7d8;color:var(--lab-good)}.work-step-head strong{font-size:8.5px}.work-equation{margin-top:4px;color:#394a54;font:800 8.5px/1.4 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.work-entry{display:grid;grid-template-columns:minmax(0,1fr) 58px auto;gap:5px;align-items:center;margin-top:4px}.work-entry label{color:#5f6e77;font-size:7.5px}.work-entry input{width:58px;height:29px;padding:0 6px;border:1.5px solid #d8bc62;border-radius:6px;background:#fffef7;color:var(--lab-ink);font:850 9px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.work-entry input.good{border-color:var(--lab-good);background:#fff}.work-entry input.bad{border-color:var(--lab-bad);background:#fff}.work-mark{width:15px;text-align:center;font-size:10px;font-weight:900}.work-mark.good{color:var(--lab-good)}.work-mark.bad{color:var(--lab-bad)}.work-note{margin-top:4px;color:#68757e;font-size:7.5px;line-height:1.32}.work-gate{padding:7px 8px;border:1px solid #d7e0e7;border-radius:8px;background:#f7f9fb;color:#63717a;font-size:8px;line-height:1.36}.work-gate strong{color:#3e596b}.auto-result{display:flex;justify-content:space-between;gap:6px;margin-top:4px;padding:4px 5px;border-radius:6px;background:#fff}.auto-result span{color:#6e7a82;font-size:7px}.auto-result strong{font:900 9px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#2e6c4b}
+.record{margin-top:8px;padding-top:8px;border-top:1px solid var(--lab-line)}.record-head{display:flex;justify-content:space-between;gap:8px;align-items:center}.record-head strong{font-size:10.5px}.record-head span{color:var(--lab-muted);font-size:7px}.record-list{display:grid;gap:4px;margin-top:5px;max-height:140px;overflow:auto}.record-empty{padding:7px;border:1px dashed var(--lab-line);border-radius:7px;color:var(--lab-muted);font-size:8px;line-height:1.35}.record-row{display:grid;grid-template-columns:auto 1fr;gap:6px;align-items:center;padding:5px 6px;border:1px solid var(--lab-line);border-radius:7px;background:#fbfcfd}.record-num{width:18px;height:18px;display:grid;place-items:center;border-radius:50%;background:var(--lab-accent-soft);color:var(--lab-accent);font-size:7px;font-weight:900}.record-values{display:flex;gap:5px;flex-wrap:wrap;font:800 7.5px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.record-values b:nth-child(1){color:var(--length)}.record-values b:nth-child(2){color:var(--area)}.record-values b:nth-child(3){color:var(--volume)}
+@container lab-canvas (max-width:980px){.workspace{grid-template-columns:minmax(570px,1.45fr) minmax(275px,.75fr)}.consequence-grid{grid-template-columns:1fr}}
+@container lab-canvas (max-width:850px){.workspace{grid-template-columns:1fr}.stage-side{border-right:0;border-bottom:1px solid var(--lab-line)}.evidence-side{display:grid;grid-template-columns:1fr 1fr;gap:9px}.evidence-side>.side-head{grid-column:1/-1}.work-dock{margin-top:0;padding-top:0;border-top:0}.record{grid-column:1/-1}.record-list{grid-template-columns:repeat(2,minmax(0,1fr));max-height:none}}
+@media(max-width:620px){body>main{width:min(100% - 12px,1200px);margin-top:7px}.lab-manifest-header{grid-template-columns:1fr;gap:9px}.lab-syllabus-chips{justify-content:flex-start}.lab-manifest-header h1{font-size:clamp(23px,8vw,31px)}.mission{grid-template-columns:1fr}.mission-tools{justify-content:space-between}.complexity-copy{text-align:left}.evidence-side{grid-template-columns:1fr}.record{grid-column:auto}.record-list{grid-template-columns:1fr}.prediction-row{grid-template-columns:1fr}.prediction-options{justify-content:flex-start}}
+@media(prefers-reduced-motion:reduce){.guide-pulse{animation:none}.evidence-card.changed{animation:none}}
+</style>
+
+
+<style data-guidance-correction>
+/* Persistent working/evidence correction: overlays are cues only; learner work stays here. */
+.work-chain{gap:6px}
+.work-step{position:relative}
+.work-step[data-state="needed"]{border-color:#d8bd65;background:var(--lab-warn-soft)}
+.work-step[data-state="mistake"]{border-color:#dfaaa4;background:var(--lab-bad-soft)}
+.work-step[data-state="correct"]{border-color:#9fc8ad;background:var(--lab-good-soft)}
+.work-step[data-state="locked"]{opacity:.62;background:#f7f9fa}
+.work-step-head{justify-content:space-between}
+.work-step-title{display:flex;align-items:center;gap:5px;min-width:0}
+.work-step .lab-kit-work-state{font-size:7.2px;white-space:nowrap}
+.work-step[data-state="locked"] .lab-kit-work-state{color:var(--lab-muted)}
+.work-entry{grid-template-columns:minmax(0,1fr) 64px minmax(54px,auto)}
+.work-entry .lab-kit-work-state{justify-self:end;font-size:7px}
+.work-entry input[data-state="correct"]{border-color:var(--lab-good);background:#fff}
+.work-entry input[data-state="mistake"]{border-color:var(--lab-bad);background:#fff}
+.work-entry input[data-state="needed"]{border-color:#d8bc62;background:#fffef7}
+.prediction-work{display:grid;gap:6px}
+.prediction-work-copy{color:#55656f;font-size:8px;line-height:1.36}
+.prediction-work-copy strong{color:var(--lab-ink)}
+.prediction-row{grid-template-columns:minmax(0,1fr) auto;padding:6px 7px}
+.prediction-options button{min-height:28px}
+.prediction-status{margin-top:4px;color:var(--lab-muted);font-size:7.5px;line-height:1.35}
+.relationship-result{padding:8px 9px;border:1px solid #9fc8ad;border-radius:9px;background:var(--lab-good-soft)}
+.relationship-result.warn{border-color:#dfc07e;background:var(--lab-warn-soft)}
+.relationship-result .result-kicker{display:block;color:var(--lab-good);font-size:7px;font-weight:900;letter-spacing:.06em;text-transform:uppercase}
+.relationship-result.warn .result-kicker{color:var(--lab-warn)}
+.relationship-result>strong{display:block;margin-top:2px;font-size:10px;line-height:1.3}
+.relationship-result p{margin:4px 0 0;color:#53636d;font-size:8px;line-height:1.4}
+.result-comparison{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;margin-top:6px}
+.result-comparison div{padding:5px 6px;border:1px solid rgba(82,119,184,.18);border-radius:7px;background:#fff;text-align:center}
+.result-comparison span{display:block;color:var(--lab-muted);font-size:6.5px;font-weight:850;text-transform:uppercase}
+.result-comparison strong{display:block;margin-top:2px;font:900 10px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.work-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
+.work-actions:empty{display:none}
+.work-actions button{min-height:31px;font-size:8.5px;font-weight:800}
+@media(max-width:900px){.result-comparison{grid-template-columns:1fr}.work-entry{grid-template-columns:minmax(0,1fr) 64px auto}}
+@media(max-width:620px){.work-entry{grid-template-columns:minmax(0,1fr) 62px}.work-entry .lab-kit-work-state{grid-column:1/-1;justify-self:start}}
+#handleGroup:focus-visible{outline:none}
+#handleGroup:focus-visible .handle-halo{stroke:var(--lab-focus);stroke-width:3;fill:rgba(82,119,184,.2)}
+</style>
+
+<style data-polish-pass>
+/* Final composition polish: fit the model natively and keep the next success action visible. */
+.stage-shell{min-height:0}
+.stage{max-height:none}
+.work-actions{margin:0 0 7px;padding:0 0 7px;border-bottom:1px solid var(--lab-line)}
+.work-actions:empty{display:none;padding:0;margin:0;border:0}
+.work-actions button.primary{box-shadow:0 1px 3px rgba(29,29,31,.08)}
+.prediction-options button:disabled{opacity:1;cursor:default}
+.prediction-options button:disabled:not(.selected){opacity:.48}
+.prediction-options button.selected:disabled{border-color:var(--lab-accent);background:var(--lab-accent-soft);color:#365f91}
+@container lab-canvas (max-width:850px){.stage-side{background:#f8fafc}.evidence-side{align-items:start}}
+@media(max-width:620px){.visual-head{grid-template-columns:1fr}.visual-actions{justify-content:flex-start}.stage-caption{font-size:9px}.prototype-label,.production-label{font-size:11px}.target-label,.dimension-text{font-size:10px}}
+</style>
+
+<style data-bottom-dock-polish>
+/* Stable bottom dock: relationship + retained observations + progression never grow the lab when they appear. */
+.workspace{align-items:stretch;height:580px}
+.stage-side{display:grid;grid-template-rows:auto minmax(0,1fr) 126px;align-self:stretch;min-height:0;height:100%}
+.stage-shell{min-height:0;display:grid;place-items:center;overflow:hidden}
+.stage{width:100%;height:100%;max-height:100%;object-fit:contain}
+.stage-footer{height:126px;min-height:126px;display:grid;grid-template-columns:minmax(0,1.48fr) minmax(225px,.9fr) minmax(132px,.42fr);gap:9px;padding:8px 9px;border-top:1px solid var(--lab-line);background:#fff;overflow:hidden}
+.relationship-dock,.stage-record,.progress-dock{min-width:0;min-height:0}
+.relationship-dock{overflow:hidden}
+.relationship-placeholder{height:100%;padding:7px 8px;border:1px solid var(--lab-line);border-radius:9px;background:#f8fafb;overflow:hidden}
+.relationship-placeholder.ready{border-color:#b8cbe1;background:#f4f7fb}
+.relationship-placeholder>span{display:block;color:var(--lab-muted);font-size:6.8px;font-weight:900;letter-spacing:.055em;text-transform:uppercase}
+.relationship-placeholder>strong{display:block;margin-top:2px;font-size:9px;line-height:1.25}
+.relationship-mini{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;margin-top:6px}
+.relationship-mini b{min-width:0;padding:4px 5px;border:1px solid #dbe2e7;border-radius:6px;background:#fff;color:#42545f;font:850 7.5px/1.2 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.relationship-mini.muted b{color:#6f7c84}
+.relationship-result{height:100%;padding:7px 8px;overflow:hidden}
+.relationship-result>strong{font-size:9px;line-height:1.22}
+.relationship-result p{margin-top:3px;font-size:7px;line-height:1.28;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.relationship-result .result-kicker{font-size:6.5px}
+.result-comparison{gap:4px;margin-top:5px}
+.result-comparison div{padding:3px 4px}
+.result-comparison span{font-size:6px}
+.result-comparison strong{font-size:8.5px}
+.stage-record{margin:0;padding:6px 7px;border:1px solid var(--lab-line);border-radius:9px;background:#fbfcfd;overflow:hidden}
+.stage-record .record-head{height:18px}
+.stage-record .record-head strong{font-size:9px}
+.stage-record .record-list{display:flex;gap:4px;margin-top:4px;max-height:none;height:78px;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin}
+.stage-record .record-empty{min-width:100%;height:100%;padding:6px;display:grid;place-items:center;text-align:center}
+.stage-record .record-row{flex:0 0 min(210px,92%);height:100%;align-items:start;padding:5px}
+.stage-record .record-values{display:grid;grid-template-columns:1fr;gap:2px}
+.stage-record .record-note{font-size:6.5px;line-height:1.22}
+.progress-dock{display:grid;grid-template-rows:auto 1fr;padding:6px 7px;border:1px solid var(--lab-line);border-radius:9px;background:#fbfcfd;overflow:hidden}
+.progress-copy strong{display:block;font-size:9px}.progress-copy span{display:block;margin-top:1px;color:var(--lab-muted);font-size:6.8px;line-height:1.25}
+.stage-footer .work-actions{align-self:end;display:grid;gap:4px;margin:5px 0 0!important;padding:0!important;border:0!important}
+.stage-footer .work-actions:empty{display:block;height:31px;margin:5px 0 0!important;padding:0!important;border:0!important}
+.stage-footer .work-actions button{width:100%;min-height:29px;padding:0 7px;font-size:7.8px;white-space:normal;line-height:1.1}
+.evidence-side{align-self:stretch;height:100%;overflow-y:auto;overscroll-behavior:contain}
+.evidence-side{scrollbar-width:thin;scrollbar-color:#c9d1d7 transparent}.evidence-side::-webkit-scrollbar{width:7px}.evidence-side::-webkit-scrollbar-track{background:transparent}.evidence-side::-webkit-scrollbar-thumb{background:#c9d1d7;border-radius:999px}
+@container lab-canvas (max-width:980px){
+  .workspace{height:560px}
+  .stage-footer{grid-template-columns:minmax(0,1.35fr) minmax(190px,.85fr) minmax(116px,.42fr)}
+  .stage-record .record-row{flex-basis:92%}
+}
+@container lab-canvas (max-width:850px){
+  .workspace{height:auto}
+  .stage-side{grid-template-rows:auto auto 142px;min-height:0;height:auto}
+  .stage-shell{height:auto;display:block;aspect-ratio:1020/500}
+  .stage{height:100%;max-height:none}
+  .stage-footer{height:142px;min-height:142px;grid-template-columns:minmax(0,1fr) 108px;grid-template-rows:72px 48px;grid-template-areas:"relationship progress" "record record";gap:7px;padding:7px 8px}
+  .relationship-dock{grid-area:relationship}.progress-dock{grid-area:progress}.stage-record{grid-area:record}
+  .relationship-result p{display:none}
+  .relationship-result .result-comparison{margin-top:4px}
+  .relationship-placeholder>strong{font-size:8.5px}
+  .relationship-mini{margin-top:4px}
+  .stage-record{display:grid;grid-template-columns:auto 1fr;gap:6px;align-items:center;padding:4px 6px}
+  .stage-record .record-head{display:block;height:auto;min-width:58px}.stage-record .record-head span{margin-top:2px}
+  .stage-record .record-list{height:36px;margin-top:0}
+  .stage-record .record-row{flex-basis:min(220px,86%);height:36px;grid-template-columns:auto 1fr;align-items:center;padding:3px 5px}
+  .stage-record .record-values{display:flex;gap:4px}.stage-record .record-note{display:none}
+  .stage-record .record-empty{height:36px;min-width:100%;padding:3px;font-size:7px}
+  .progress-dock{padding:5px}.progress-copy span{font-size:6.3px}
+  .stage-footer .work-actions{gap:3px;margin-top:3px!important}.stage-footer .work-actions button{min-height:27px;font-size:7px}
+}
+@media(max-width:620px){
+  .mission{min-height:144px}
+  .visual-actions{min-height:29px}
+  .stage-footer{height:142px;min-height:142px}
+  .relationship-mini b{font-size:7px;padding:3px}
+  .relationship-result>strong{font-size:8.2px}
+  .result-comparison strong{font-size:8px}
+}
+</style>
+
+</head>
+
+<body data-lab-layout="standard">
+<main>
+<!-- LAB_MANIFEST_HEADER_START -->
+<header class="lab-manifest-header">
+  <div class="lab-manifest-heading">
+    <h1 data-lab-manifest="title">Similarity and Scale Effects</h1>
+  <p class="lab-manifest-subtitle" data-lab-manifest="subtitle">Change one linear scale factor, test the resulting models, and discover why area and volume grow at different rates.</p>
+  </div>
+  <!-- LAB_SYLLABUS_CHIPS_START -->
+<nav class="lab-syllabus-chips" aria-label="Syllabus alignment">
+  <section class="lab-syllabus-chip" style="--syllabus-chip-bg:#edf8f3;--syllabus-chip-border:#91c4b0;--syllabus-chip-text:#235f4e;--syllabus-chip-hover:#dcf0e7" aria-label="IGCSE 0580 syllabus alignment">
+    <a class="lab-syllabus-primary-link" href="https://www.cambridgeinternational.org/Images/662466-2025-2027-syllabus.pdf#page=23" target="_blank" rel="noopener noreferrer" aria-label="Open IGCSE 0580 syllabus section C4.4"></a>
+    <span class="lab-syllabus-name">IGCSE 0580</span>
+    <span class="lab-syllabus-divider" aria-hidden="true">·</span>
+    <span class="lab-syllabus-sections"><a class="lab-syllabus-section is-primary" href="https://www.cambridgeinternational.org/Images/662466-2025-2027-syllabus.pdf#page=23" target="_blank" rel="noopener noreferrer" aria-label="Open primary IGCSE 0580 syllabus section C4.4">C4.4</a><span class="lab-syllabus-separator" aria-hidden="true">,</span><a class="lab-syllabus-section" href="https://www.cambridgeinternational.org/Images/662466-2025-2027-syllabus.pdf#page=47" target="_blank" rel="noopener noreferrer" aria-label="Open IGCSE 0580 syllabus section E4.4">E4.4</a></span>
+  </section>
+</nav>
+<!-- LAB_SYLLABUS_CHIPS_END -->
+</header>
+<!-- LAB_MANIFEST_HEADER_END -->
+<span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span><span data-lab-authored-subtitle-slot hidden></span>
+
+<section class="panel mission" aria-live="polite">
+  <div class="mission-copy">
+    <div class="mission-kicker"><span id="problemLabel">Experiment 1</span><span id="workLabel">working shown</span></div>
+    <strong id="missionTitle">Predict what doubling every edge does.</strong>
+    <span id="missionHint">Make a prediction before moving the production corner.</span>
+  </div>
+  <div class="mission-tools">
+    <div class="complexity">
+      <div class="complexity-copy"><strong>Working required</strong><span id="workingHelp">Unlocks after two observations</span></div>
+      <div class="complexity-switch" role="group" aria-label="Working required">
+        <button type="button" data-work-level="0" class="active" aria-pressed="true">Shown</button>
+        <button type="button" data-work-level="1" aria-pressed="false" disabled>Some</button>
+        <button type="button" data-work-level="2" aria-pressed="false" disabled>All</button>
+      </div>
+    </div>
+    <button id="resetProblem" type="button">Reset</button>
+  </div>
+</section>
+
+<section class="panel lab" data-lab-workspace>
+  <div class="workspace">
+    <div class="stage-side">
+      <div class="visual-head">
+        <div class="visual-copy"><strong id="visualTitle">Prototype and production solid</strong><span id="visualHint">The prototype edge stays 2 units. Dragging one production corner scales all three edges together.</span></div>
+        <div class="visual-actions"><button id="layerButton" type="button" hidden>Separate layers</button><button id="similarReset" type="button" hidden>Restore similarity</button></div>
+      </div>
+      <div class="stage-shell" id="stageShell">
+        <svg id="stage" class="stage" viewBox="0 0 1020 500" role="img" aria-label="A two-unit prototype cube and a resizable similar production cube built from unit cubes">
+          <rect id="stageBg" class="stage-bg" width="1020" height="500"></rect><rect id="stageGround" class="stage-ground" y="500" width="1020" height="0"></rect>
+          <g id="benchLayer"></g><g id="targetLayer"></g><g id="prototypeLayer"></g><g id="productionLayer"></g><g id="annotationLayer"></g><g id="handleLayer"></g>
+        </svg>
+      </div>
+      <footer class="stage-footer" aria-label="Relationship, observations and progression">
+        <section id="relationshipDock" class="relationship-dock" aria-live="polite"></section>
+        <section class="record stage-record" aria-label="Test record"><div class="record-head"><strong>Observations</strong><span id="recordCount">0 observations</span></div><div id="recordList" class="record-list"><div class="record-empty">Completed trials stay here for comparison.</div></div></section>
+        <section class="progress-dock" aria-label="Problem progression"><div class="progress-copy"><strong>Continue</strong><span id="progressHint">Finish the current trial.</span></div><div id="workActions" class="work-actions" aria-label="Progression actions"></div></section>
+      </footer>
+    </div>
+    <aside class="evidence-side" aria-label="Live evidence, prediction and working">
+      <div class="side-head"><div><strong>Live evidence</strong></div><span id="similarityState" class="similarity-state good">one scale factor</span></div>
+      <div id="evidenceStack" class="evidence-stack"></div>
+      <section class="work-dock" aria-label="Working and prediction"><div class="work-head"><strong id="workTitle">Calculation chain</strong><span id="workStatus">watch it update</span></div><div id="workChain" class="work-chain lab-kit-work"></div></section>
+    </aside>
+  </div>
+</section>
+</main>
+
+<!-- LAB_RESOURCE_START id="lab-kit.js" type="script" -->
+<script data-lab-resource="lab-kit.js" data-lab-resource-type="script" data-lab-resource-bytes="13750">
+(() => {
+  "use strict";
+
+  const host = globalThis;
+  const VERSION = "0.2.1";
+
+  function documentFor(root) {
+    return root || host.document || null;
+  }
+
+  function resolve(target, root) {
+    if (typeof target !== "string") return target || null;
+    const scope = documentFor(root);
+    return scope?.querySelector?.(target) || null;
+  }
+
+  function all(selector, root) {
+    const scope = documentFor(root);
+    return [...(scope?.querySelectorAll?.(selector) || [])];
+  }
+
+  function byId(id, root) {
+    const scope = documentFor(root);
+    return scope?.getElementById?.(id) || null;
+  }
+
+  function required(target, root) {
+    const node = resolve(target, root);
+    if (!node) throw new Error(`LabKit could not find ${typeof target === "string" ? target : "the requested node"}.`);
+    return node;
+  }
+
+  const dom = Object.freeze({
+    get: resolve,
+    all,
+    byId,
+    require: required,
+    on(target, eventName, handler, options) {
+      const node = required(target);
+      node.addEventListener(eventName, handler, options);
+      return () => node.removeEventListener(eventName, handler, options);
+    }
+  });
+
+  function parseNumber(value, fallback = null) {
+    if (typeof value === "string" && value.trim() === "") return fallback;
+    const number = typeof value === "number" ? value : Number(value);
+    return Number.isFinite(number) ? number : fallback;
+  }
+
+  function clamp(value, minimum, maximum) {
+    if (minimum > maximum) throw new RangeError("LabKit clamp minimum cannot exceed maximum.");
+    const number = parseNumber(value, minimum);
+    return Math.min(maximum, Math.max(minimum, number));
+  }
+
+  function lerp(start, end, amount) {
+    return start + (end - start) * amount;
+  }
+
+  function inverseLerp(start, end, value) {
+    if (start === end) return 0;
+    return (value - start) / (end - start);
+  }
+
+  function round(value, decimals = 0) {
+    const number = parseNumber(value, 0);
+    const factor = 10 ** decimals;
+    return Math.round((number + Number.EPSILON) * factor) / factor;
+  }
+
+  function format(value, options = {}) {
+    const number = parseNumber(value, 0);
+    const decimals = options.decimals ?? 0;
+    const suffix = options.suffix ?? "";
+    return `${number.toFixed(decimals)}${suffix}`;
+  }
+
+  const numeric = Object.freeze({ parse: parseNumber, clamp, lerp, inverseLerp, round, format });
+
+  function hashSeed(seed) {
+    if (typeof seed === "number" && Number.isFinite(seed)) return (seed >>> 0) || 0x6d2b79f5;
+    const text = String(seed ?? "lab-kit");
+    let hash = 2166136261;
+    for (let index = 0; index < text.length; index += 1) {
+      hash ^= text.charCodeAt(index);
+      hash = Math.imul(hash, 16777619);
+    }
+    return hash >>> 0 || 0x6d2b79f5;
+  }
+
+  function createRng(seed = Date.now()) {
+    const originalSeed = hashSeed(seed);
+    let state = originalSeed;
+    const next = () => {
+      state = (state + 0x6d2b79f5) >>> 0;
+      let value = state;
+      value = Math.imul(value ^ (value >>> 15), value | 1);
+      value ^= value + Math.imul(value ^ (value >>> 7), value | 61);
+      return ((value ^ (value >>> 14)) >>> 0) / 4294967296;
+    };
+    return Object.freeze({
+      seed: originalSeed,
+      next,
+      float: next,
+      int(minimum, maximum) {
+        if (!Number.isFinite(minimum) || !Number.isFinite(maximum) || maximum < minimum) {
+          throw new RangeError("LabKit RNG bounds are invalid.");
+        }
+        const low = Math.ceil(minimum);
+        const high = Math.floor(maximum);
+        return low + Math.floor(next() * (high - low + 1));
+      },
+      pick(items) {
+        if (!items?.length) return undefined;
+        return items[this.int(0, items.length - 1)];
+      },
+      shuffle(items) {
+        const copy = [...items];
+        for (let index = copy.length - 1; index > 0; index -= 1) {
+          const other = this.int(0, index);
+          [copy[index], copy[other]] = [copy[other], copy[index]];
+        }
+        return copy;
+      }
+    });
+  }
+
+  const rng = Object.freeze({ create: createRng, hashSeed });
+
+  function setStatus(target, message, options = {}) {
+    const node = required(target, options.root);
+    const politeness = options.politeness || "polite";
+    node.setAttribute?.("role", options.role || "status");
+    node.setAttribute?.("aria-live", politeness);
+    node.setAttribute?.("aria-atomic", "true");
+    if (options.busy === true) node.setAttribute?.("aria-busy", "true");
+    else node.removeAttribute?.("aria-busy");
+    node.textContent = message == null ? "" : String(message);
+    return node;
+  }
+
+  function ensureStatus(options = {}) {
+    const root = documentFor(options.root);
+    if (!root) throw new Error("LabKit status.ensure needs a document or root.");
+    const existing = options.id ? byId(options.id, root) : root.querySelector?.("[data-lab-kit-status]");
+    if (existing) return existing;
+    if (!root.createElement) throw new Error("LabKit status.ensure needs a document-like root.");
+    const node = root.createElement("div");
+    if (options.id) node.id = options.id;
+    if (node.dataset) node.dataset.labKitStatus = "true";
+    node.className = options.className || "lab-kit-visually-hidden";
+    if (root.body?.appendChild) root.body.appendChild(node);
+    else root.appendChild?.(node);
+    return setStatus(node, options.initialMessage || "", options);
+  }
+
+  const status = Object.freeze({ set: setStatus, announce: setStatus, ensure: ensureStatus });
+
+  function snapshot(value, clone) {
+    return clone ? clone(value) : value;
+  }
+
+  function createHistory(options = {}) {
+    const limit = Math.max(1, Math.floor(options.limit ?? 20));
+    const clone = options.clone;
+    let past = [];
+    let future = [];
+    let presentSet = Object.hasOwn(options, "initial");
+    let present = presentSet ? snapshot(options.initial, clone) : undefined;
+
+    const trim = () => {
+      if (past.length > limit) past = past.slice(-limit);
+    };
+    const api = {
+      record(value) {
+        if (presentSet) past.push(present);
+        present = snapshot(value, clone);
+        presentSet = true;
+        future = [];
+        trim();
+        return present;
+      },
+      undo() {
+        if (!past.length) return present;
+        future.unshift(present);
+        present = past.pop();
+        return present;
+      },
+      redo() {
+        if (!future.length) return present;
+        past.push(present);
+        present = future.shift();
+        trim();
+        return present;
+      },
+      clear(value) {
+        past = [];
+        future = [];
+        presentSet = arguments.length > 0;
+        present = presentSet ? snapshot(value, clone) : undefined;
+        return present;
+      },
+      current() { return present; },
+      canUndo() { return past.length > 0; },
+      canRedo() { return future.length > 0; },
+      size() { return past.length + (presentSet ? 1 : 0) + future.length; },
+      entries() { return [...past, ...(presentSet ? [present] : []), ...future]; }
+    };
+    return Object.freeze(api);
+  }
+
+  const history = Object.freeze({ create: createHistory });
+
+  function clientCoordinates(event) {
+    const source = event?.touches?.[0] || event?.changedTouches?.[0] || event;
+    const x = Number(source?.clientX);
+    const y = Number(source?.clientY);
+    if (!Number.isFinite(x) || !Number.isFinite(y)) throw new TypeError("LabKit SVG events need clientX and clientY.");
+    return { x, y };
+  }
+
+  function svgPoint(svg, event) {
+    if (!svg) throw new TypeError("LabKit svg.point needs an SVG element.");
+    const client = clientCoordinates(event);
+    const matrix = svg.getScreenCTM?.();
+    if (svg.createSVGPoint && matrix?.inverse) {
+      const point = svg.createSVGPoint();
+      point.x = client.x;
+      point.y = client.y;
+      return point.matrixTransform(matrix.inverse());
+    }
+    const rect = svg.getBoundingClientRect?.();
+    const viewBox = svg.viewBox?.baseVal;
+    if (!rect || !viewBox || !rect.width || !rect.height) return client;
+    return {
+      x: viewBox.x + (client.x - rect.left) * viewBox.width / rect.width,
+      y: viewBox.y + (client.y - rect.top) * viewBox.height / rect.height
+    };
+  }
+
+  const svg = Object.freeze({ point: svgPoint, clientPoint: clientCoordinates });
+
+  function now() {
+    return host.performance?.now?.() ?? Date.now();
+  }
+
+  function createAnimation(options = {}) {
+    const onFrame = options.onFrame || (() => {});
+    const onComplete = options.onComplete || (() => {});
+    const duration = options.reducedMotion ? 0 : (options.duration ?? null);
+    const requestFrame = options.requestFrame || host.requestAnimationFrame?.bind(host) || ((callback) => host.setTimeout(() => callback(now()), 16));
+    const cancelFrame = options.cancelFrame || host.cancelAnimationFrame?.bind(host) || host.clearTimeout?.bind(host);
+    let frameId = null;
+    let running = false;
+    let completed = false;
+    let elapsed = 0;
+    let startedAt = null;
+
+    const progressFor = (milliseconds) => duration === null ? null : duration === 0 ? 1 : clamp(milliseconds / duration, 0, 1);
+    const api = {
+      start() {
+        if (running) return api;
+        if (completed) {
+          completed = false;
+          elapsed = 0;
+          startedAt = null;
+        }
+        running = true;
+        frameId = requestFrame(tick);
+        return api;
+      },
+      pause() {
+        if (!running) return api;
+        running = false;
+        if (frameId !== null) cancelFrame?.(frameId);
+        frameId = null;
+        startedAt = null;
+        return api;
+      },
+      stop() {
+        running = false;
+        if (frameId !== null) cancelFrame?.(frameId);
+        frameId = null;
+        startedAt = null;
+        return api;
+      },
+      reset() {
+        api.stop();
+        completed = false;
+        elapsed = 0;
+        startedAt = null;
+        return api;
+      },
+      seek(milliseconds) {
+        elapsed = Math.max(0, Number(milliseconds) || 0);
+        startedAt = running ? now() - elapsed : null;
+        completed = duration !== null && elapsed >= duration;
+        return api;
+      },
+      isRunning() { return running; },
+      isComplete() { return completed; },
+      elapsed() { return elapsed; },
+      progress() { return progressFor(elapsed); },
+      duration
+    };
+
+    function tick(time) {
+      if (!running) return;
+      const timestamp = Number.isFinite(time) ? time : now();
+      if (startedAt === null) startedAt = timestamp - elapsed;
+      elapsed = Math.max(0, timestamp - startedAt);
+      const progress = progressFor(elapsed);
+      const done = progress !== null && progress >= 1;
+      onFrame({ elapsed, progress, done });
+      if (done) {
+        running = false;
+        completed = true;
+        frameId = null;
+        onComplete({ elapsed, progress: 1 });
+      } else {
+        frameId = requestFrame(tick);
+      }
+    }
+
+    return Object.freeze(api);
+  }
+
+  const animation = Object.freeze({ create: createAnimation });
+
+  function bindKeyboardAdjustable(target, options = {}) {
+    const node = required(target);
+    const minimum = options.min ?? -Infinity;
+    const maximum = options.max ?? Infinity;
+    const step = Math.abs(options.step ?? 1) || 1;
+    let value = parseNumber(options.value, 0);
+    if (options.getValue) value = parseNumber(options.getValue(), value);
+
+    const setAria = () => {
+      if (options.role !== false && !node.getAttribute?.("role")) node.setAttribute?.("role", options.role || "slider");
+      if (options.tabIndex !== false && !node.hasAttribute?.("tabindex")) node.setAttribute?.("tabindex", String(options.tabIndex ?? 0));
+      if (Number.isFinite(minimum)) node.setAttribute?.("aria-valuemin", String(minimum));
+      if (Number.isFinite(maximum)) node.setAttribute?.("aria-valuemax", String(maximum));
+      node.setAttribute?.("aria-valuenow", String(value));
+      if (options.formatAriaValue) node.setAttribute?.("aria-valuetext", String(options.formatAriaValue(value)));
+    };
+
+    const update = () => {
+      if (options.getValue) value = parseNumber(options.getValue(), value);
+      setAria();
+      return value;
+    };
+
+    const set = (nextValue, event) => {
+      const next = clamp(nextValue, minimum, maximum);
+      const changed = next !== value;
+      value = next;
+      options.setValue?.(value, event);
+      setAria();
+      if (changed) options.onChange?.(value, event);
+      return changed;
+    };
+
+    const onKeyDown = (event) => {
+      if (event.defaultPrevented || event.ctrlKey || event.metaKey || event.altKey) return;
+      const multiplier = event.shiftKey ? 10 : 1;
+      let delta = 0;
+      if (event.key === "ArrowRight" || event.key === "ArrowUp") delta = step * multiplier;
+      if (event.key === "ArrowLeft" || event.key === "ArrowDown") delta = -step * multiplier;
+      if (event.key === "PageUp") delta = step * 10;
+      if (event.key === "PageDown") delta = -step * 10;
+      if (event.key === "Home") {
+        event.preventDefault?.();
+        set(minimum, event);
+        return;
+      }
+      if (event.key === "End") {
+        event.preventDefault?.();
+        set(maximum, event);
+        return;
+      }
+      if (!delta) return;
+      event.preventDefault?.();
+      set((options.getValue ? parseNumber(options.getValue(), value) : value) + delta, event);
+    };
+
+    node.addEventListener("keydown", onKeyDown);
+    update();
+    return Object.freeze({
+      set,
+      value: () => value,
+      update,
+      destroy: () => node.removeEventListener("keydown", onKeyDown)
+    });
+  }
+
+  const direct = Object.freeze({ keyboardAdjustable: bindKeyboardAdjustable });
+
+  const api = Object.freeze({ version: VERSION, dom, numeric, rng, status, history, svg, animation, direct });
+  host.LabKit = api;
+})();
+
+</script>
+<!-- LAB_RESOURCE_END id="lab-kit.js" type="script" -->
+
+<script>
+(()=>{
+'use strict';
+const $=LabKit.dom.byId,SVG='http://www.w3.org/2000/svg',stage=$('stage');
+const BASE=2;
+function stageLayout(){
+  const narrow=stage.getBoundingClientRect().width<560;
+  return narrow?{
+    narrow:true,w:520,h:720,iso:{sx:28,sy:25,sz:14},
+    prototype:{x:260,y:230},production:{x:260,y:555},
+    prototypeLabel:{x:260,y:310},productionLabel:{x:260,y:700},
+    factor:{x:70,y:22,w:380,h:62}
+  }:{
+    narrow:false,w:1020,h:500,iso:{sx:34,sy:30,sz:17},
+    prototype:{x:185,y:350},production:{x:700,y:320},
+    prototypeLabel:{x:185,y:470},productionLabel:{x:700,y:470},
+    factor:{x:370,y:24,w:350,h:62}
+  };
+}
+const LEVEL_NAMES=['working shown','some working','all working'];
+const LEVEL_HELP=['Observe the full chain','You calculate the length factor','You calculate and apply every factor'];
+const SEQUENCES={
+  0:[
+    {id:'double',kind:'edge',targetN:4,predict:true,name:'Doubling trial'},
+    {id:'one-half',kind:'edge',targetN:3,predict:true,name:'Fractional trial'},
+    {id:'reduce',kind:'edge',targetN:1,name:'Reduction trial'},
+    {id:'five',kind:'edge',targetN:5,name:'Enlargement trial'}
+  ],
+  1:[
+    {id:'five',kind:'edge',targetN:5,name:'Scale-factor trial'},
+    {id:'reduce',kind:'edge',targetN:1,name:'Reduction trial'},
+    {id:'six',kind:'edge',targetN:6,name:'Large model trial'},
+    {id:'three',kind:'edge',targetN:3,name:'Fractional trial'}
+  ],
+  2:[
+    {id:'reverse-volume',kind:'volume',targetN:6,givenFactor:27,name:'Reverse volume trial'},
+    {id:'reverse-area',kind:'area',targetN:3,givenFactor:2.25,name:'Reverse area trial'},
+    {id:'reverse-reduce-volume',kind:'volume',targetN:1,givenFactor:.125,name:'Reverse reduction trial'},
+    {id:'reverse-area-large',kind:'area',targetN:5,givenFactor:6.25,name:'Reverse area trial'}
+  ]
+};
+const state={level:0,unlockedLevel:0,sequenceIndex:[0,0,0],solved:[0,0,0],problemNumber:1,n:2,stretch:false,stretchY:4,exploded:false,explodeT:0,predictions:{area:null,volume:null},firstPredictions:{area:null,volume:null},answers:{},phase:'predict',changed:false,drag:null,record:[],recorded:false,targetTimer:null,counterexampleSeen:false};
+const current=()=>SEQUENCES[state.level][state.sequenceIndex[state.level]%SEQUENCES[state.level].length];
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const fmt=(v,d=3)=>{if(Math.abs(v-Math.round(v))<1e-9)return String(Math.round(v));return Number(v.toFixed(d)).toString()};
+const close=(a,b,t=.006)=>Number.isFinite(a)&&Math.abs(a-b)<=Math.max(t,Math.abs(b)*t);
+const parseMath=v=>{const s=String(v??'').trim().replace(/÷/g,'/');if(!s)return NaN;if(/^[-+]?\d*\.?\d+(?:\/[-+]?\d*\.?\d+)?$/.test(s)){const [a,b]=s.split('/').map(Number);return b===undefined?a:b? a/b:NaN}return NaN};
+const metrics=()=>{
+  const x=state.stretch?4:state.n,y=state.stretch?state.stretchY:state.n,z=state.stretch?4:state.n;
+  const rx=x/BASE,ry=y/BASE,rz=z/BASE,similar=close(rx,ry,.0001)&&close(ry,rz,.0001);
+  return {x,y,z,rx,ry,rz,similar,k:similar?rx:null,face:x*y,faceFactor:x*y/(BASE*BASE),surface:2*(x*y+x*z+y*z),surfaceFactor:2*(x*y+x*z+y*z)/24,volume:x*y*z,volumeFactor:x*y*z/8};
+};
+const targetMet=()=>state.stretch?state.stretchY===5:state.n===current().targetN;
+function node(name,attrs={},text=''){const e=document.createElementNS(SVG,name);for(const[k,v]of Object.entries(attrs)){if(v!==null&&v!==undefined)e.setAttribute(k,String(v))}if(text!==undefined&&text!==null)e.textContent=text;return e}
+function add(parent,name,attrs={},text=''){const e=node(name,attrs,text);parent.appendChild(e);return e}
+function clear(id){$(id).replaceChildren()}
+function project(x,y,z,origin,depth=1){const ISO=stageLayout().iso;return{x:origin.x+(x-z*depth)*ISO.sx,y:origin.y-y*ISO.sy+(x+z*depth)*ISO.sz}}
+const points=arr=>arr.map(p=>`${p.x.toFixed(2)},${p.y.toFixed(2)}`).join(' ');
+function facePolygon(parent,pts,cls){return add(parent,'polygon',{points:points(pts),class:cls})}
+function line(parent,a,b,cls,extra={}){return add(parent,'line',{x1:a.x,y1:a.y,x2:b.x,y2:b.y,class:cls,...extra})}
+function drawBench(){
+  const g=$('benchLayer'),L=stageLayout();g.replaceChildren();
+  const addLabel=(p,title,caption,cls)=>{add(g,'text',{x:p.x,y:p.y,'text-anchor':'middle',class:cls},title);add(g,'text',{x:p.x,y:p.y+16,'text-anchor':'middle',class:'stage-caption'},caption)};
+  addLabel(L.prototypeLabel,'prototype','fixed edge 2 units','prototype-label');
+  addLabel(L.productionLabel,state.stretch?'stretched solid':'similar production solid',state.stretch?'one dimension released':'one corner controls every edge','production-label');
+}
+function drawOuter(parent,dims,origin,opts={}){
+  const{x,y,z}=dims,depth=opts.depth??1,p=(a,b,c)=>project(a,b,c,origin,depth);
+  facePolygon(parent,[p(0,y,0),p(x,y,0),p(x,y,z),p(0,y,z)],opts.target?'target-face':'face-top');
+  facePolygon(parent,[p(0,0,0),p(x,0,0),p(x,y,0),p(0,y,0)],opts.target?'target-face':'face-front');
+  facePolygon(parent,[p(0,0,0),p(0,y,0),p(0,y,z),p(0,0,z)],opts.target?'target-face':'face-side');
+  if(opts.target)return;
+  if(opts.cells!==false){for(let i=0;i<x;i++)for(let j=0;j<y;j++)facePolygon(parent,[p(i,j,0),p(i+1,j,0),p(i+1,j+1,0),p(i,j+1,0)],'face-cell')}
+  for(let i=0;i<=x;i++)line(parent,p(i,0,0),p(i,y,0),'face-grid');
+  for(let j=0;j<=y;j++)line(parent,p(0,j,0),p(x,j,0),'face-grid');
+  for(let k=0;k<=z;k++)line(parent,p(0,y,k),p(x,y,k),'face-grid');
+  for(let i=0;i<=x;i++)line(parent,p(i,y,0),p(i,y,z),'face-grid');
+  for(let k=0;k<=z;k++)line(parent,p(0,0,k),p(0,y,k),'face-grid');
+  for(let j=0;j<=y;j++)line(parent,p(0,j,0),p(0,j,z),'face-grid');
+  const outline=[p(0,0,0),p(x,0,0),p(x,y,0),p(x,y,z),p(0,y,z),p(0,0,z),p(0,0,0),p(0,y,0),p(x,y,0)];
+  add(parent,'polyline',{points:points(outline),class:'outer-edge'});line(parent,p(0,y,z),p(0,y,0),'outer-edge');line(parent,p(0,0,z),p(0,y,z),'outer-edge');
+}
+function drawLayers(parent,n,origin,t){
+  const depth=1+t*.78,op=.12+.88*t;
+  for(let z=n-1;z>=0;z--){const group=add(parent,'g',{opacity:op});for(let x=0;x<n;x++)for(let y=0;y<n;y++)facePolygon(group,[project(x,y,z,origin,depth),project(x+1,y,z,origin,depth),project(x+1,y+1,z,origin,depth),project(x,y+1,z,origin,depth)],'layer-cell');const b=project(n,n,z,origin,depth);if(z===n-1)add(group,'text',{x:b.x+8,y:b.y-10,class:'layer-label'},`each layer: ${n}² = ${n*n}`);if(t<.05&&z>0){const q1=project(0,0,z,origin,1),q2=project(n,0,z,origin,1),q3=project(n,n,z,origin,1),q4=project(0,n,z,origin,1);facePolygon(group,[q1,q2,q3,q4],'internal-plane')}}
+}
+function drawTarget(){const g=$('targetLayer');g.replaceChildren();if(state.stretch||current().kind!=='edge'||state.exploded)return;const L=stageLayout(),origin=L.production,n=current().targetN;drawOuter(g,{x:n,y:n,z:n},origin,{target:true});const hp=project(n,n,0,origin);add(g,'text',{x:Math.min(L.w-18,hp.x+15),y:hp.y-13,'text-anchor':hp.x>L.w-90?'end':'start',class:'target-label'},`target edge ${n}`)}
+function drawPrototype(){const g=$('prototypeLayer'),L=stageLayout();g.replaceChildren();g.setAttribute('class','prototype');drawOuter(g,{x:2,y:2,z:2},L.prototype);const p=project(1,1,0,L.prototype);add(g,'text',{x:p.x,y:p.y+3,'text-anchor':'middle',class:'stage-caption'},'2 × 2 face');}
+function drawProduction(){const g=$('productionLayer'),L=stageLayout();g.replaceChildren();g.setAttribute('class',targetMet()?'production matched':'production');const m=metrics(),origin=state.exploded?{x:L.production.x,y:L.production.y-(L.narrow?90:65)}:L.production;if(state.exploded&&!state.stretch){drawOuter(g,{x:m.x,y:m.y,z:m.z},origin,{cells:false,depth:1+state.explodeT*.78});drawLayers(g,m.x,origin,state.explodeT)}else{drawOuter(g,{x:m.x,y:m.y,z:m.z},origin);for(let z=1;z<m.z;z++){const a=project(0,0,z,origin),b=project(m.x,0,z,origin),c=project(m.x,m.y,z,origin),d=project(0,m.y,z,origin);facePolygon(g,[a,b,c,d],'internal-plane')}}
+  const centre=project(m.x/2,m.y/2,0,origin,1+state.explodeT*.78);if(!state.exploded)add(g,'text',{x:centre.x,y:centre.y+3,'text-anchor':'middle',class:'stage-value area'},`${m.x} × ${m.y} = ${m.face}`);
+  const below=project(m.x,0,0,origin,1+state.explodeT*.78),vy=Math.min(L.productionLabel.y-24,below.y+26);const volX=state.exploded&&L.narrow?L.w-18:Math.min(L.w-16,below.x+10),volAnchor=state.exploded&&L.narrow?'end':below.x>L.w-100?'end':'start';add(g,'text',{x:volX,y:vy,'text-anchor':volAnchor,class:'stage-value volume'},state.exploded?`${m.z} layers × ${m.x*m.y} = ${m.volume} cubes`:`${m.volume} unit cubes`);
+}
+function drawDimension(parent,a,b,label){line(parent,a,b,'edge-dimension');const dx=b.x-a.x,dy=b.y-a.y,Ln=Math.hypot(dx,dy)||1,nx=-dy/Ln*5,ny=dx/Ln*5;line(parent,{x:a.x+nx,y:a.y+ny},{x:a.x-nx,y:a.y-ny},'dimension-cap');line(parent,{x:b.x+nx,y:b.y+ny},{x:b.x-nx,y:b.y-ny},'dimension-cap');add(parent,'text',{x:(a.x+b.x)/2+nx*2.4,y:(a.y+b.y)/2+ny*2.4,class:'dimension-text','text-anchor':'middle'},label)}
+function drawAnnotations(){const g=$('annotationLayer'),L=stageLayout();g.replaceChildren();const m=metrics();drawDimension(g,project(0,0,0,L.prototype),project(2,0,0,L.prototype),'2 units');const origin=state.exploded?{x:L.production.x,y:L.production.y-(L.narrow?90:65)}:L.production,depth=1+state.explodeT*.78;drawDimension(g,project(0,0,0,origin,depth),project(m.x,0,0,origin,depth),`${m.x} units`);
+  if(!state.stretch){const{x,y,w,h}=L.factor;add(g,'rect',{x,y,width:w,height:h,rx:10,class:'factor-ribbon'});add(g,'text',{x:x+12,y:y+18,class:'factor-title'},'observed factors');add(g,'text',{x:x+12,y:y+43,class:'factor-formula'},`length ×${fmt(m.k)}   area ×${fmt(m.faceFactor)}   volume ×${fmt(m.volumeFactor)}`)}
+  else{const ratios=[m.rx,m.ry,m.rz],labels=['width','height','depth'],start=L.narrow?88:440,gap=L.narrow?112:116,y=L.factor.y+8;ratios.forEach((r,i)=>{const gg=add(g,'g',{class:`ratio-chip ${close(r,ratios[0])&&close(ratios[0],ratios[1])&&close(ratios[1],ratios[2])?'good':'bad'}`});const x=start+i*gap;add(gg,'rect',{x,y,width:105,height:30,rx:8});add(gg,'text',{x:x+52.5,y:y+19,'text-anchor':'middle'},`${labels[i]} ×${fmt(r)}`)});add(g,'text',{x:L.w/2,y:y+47,'text-anchor':'middle',class:'stage-value'},m.similar?'one common k':'no single scale factor')}
+}
+function drawHandle(){const g=$('handleLayer'),L=stageLayout();g.replaceChildren();const m=metrics(),origin=L.production;let p,label,aria;if(state.stretch){p=project(0,m.y,0,origin);label=`Production height ${m.y} units`;aria={role:'slider','aria-valuemin':2,'aria-valuemax':6,'aria-valuenow':m.y,'aria-label':'Production height'}}else{if(state.exploded)return;p=project(m.x,m.y,0,origin);label=`Production edge ${m.x} units`;aria={role:'slider','aria-valuemin':1,'aria-valuemax':6,'aria-valuenow':m.x,'aria-label':'Production cube edge length'}}const group=add(g,'g',{id:'handleGroup',tabindex:0,...aria,class:state.phase==='resize'?'guide-pulse':''});add(group,'circle',{cx:p.x,cy:p.y,r:16,class:'handle-halo'});add(group,'circle',{cx:p.x,cy:p.y,r:9,class:'scale-handle'});add(group,'line',{x1:p.x-4,y1:p.y,x2:p.x+4,y2:p.y,class:'handle-cross'});add(group,'line',{x1:p.x,y1:p.y-4,x2:p.x,y2:p.y+4,class:'handle-cross'});add(group,'circle',{cx:p.x,cy:p.y,r:22,class:'handle-hit'});add(group,'title',{},label)}
+function renderStage(){const L=stageLayout();stage.setAttribute('viewBox',`0 0 ${L.w} ${L.h}`);$('stageBg').setAttribute('width',L.w);$('stageBg').setAttribute('height',L.h);$('stageGround').setAttribute('width',L.w);$('stageGround').setAttribute('y',L.h);$('stageGround').setAttribute('height',0);drawBench();drawTarget();drawPrototype();drawProduction();drawAnnotations();drawHandle()}
+function flashEvidence(){document.querySelectorAll('.evidence-card').forEach(c=>{c.classList.remove('changed');void c.offsetWidth;c.classList.add('changed')})}
+function renderEvidence(){const m=metrics(),stack=$('evidenceStack');$('similarityState').textContent=m.similar?'one scale factor':'no single scale factor';$('similarityState').className=`similarity-state ${m.similar?'good':'bad'}`;
+  if(m.similar)stack.innerHTML=`
+  <article class="evidence-card length"><span class="evidence-icon line"></span><div class="evidence-copy"><span>Length</span><div class="evidence-main"><strong>2 → ${m.x} units</strong><output>×${fmt(m.k)}</output></div><div class="evidence-formula">${m.x} ÷ 2 = ${fmt(m.k)}</div></div></article>
+  <article class="evidence-card area"><span class="evidence-icon square"></span><div class="evidence-copy"><span>Face area</span><div class="evidence-main"><strong>4 → ${m.face} square units</strong><output>×${fmt(m.faceFactor)}</output></div><div class="evidence-formula">${m.x} × ${m.y} = ${m.face}</div></div></article>
+  <article class="evidence-card volume"><span class="evidence-icon cube"></span><div class="evidence-copy"><span>Volume</span><div class="evidence-main"><strong>8 → ${m.volume} unit cubes</strong><output>×${fmt(m.volumeFactor)}</output></div><div class="evidence-formula">${m.z} layers × ${m.face} = ${m.volume}</div></div></article>`;
+  else stack.innerHTML=`
+  <article class="evidence-card length"><span class="evidence-icon line"></span><div class="evidence-copy"><span>Length ratios</span><div class="evidence-main"><strong>×${fmt(m.rx)}, ×${fmt(m.ry)}, ×${fmt(m.rz)}</strong><output>unequal</output></div><div class="evidence-formula">width · height · depth</div></div></article>
+  <article class="evidence-card area"><span class="evidence-icon square"></span><div class="evidence-copy"><span>Face area</span><div class="evidence-main"><strong>4 → ${m.face}</strong><output>×${fmt(m.faceFactor)}</output></div><div class="evidence-formula">No single k² fits every face.</div></div></article>
+  <article class="evidence-card volume"><span class="evidence-icon cube"></span><div class="evidence-copy"><span>Volume</span><div class="evidence-main"><strong>8 → ${m.volume}</strong><output>×${fmt(m.volumeFactor)}</output></div><div class="evidence-formula">${fmt(m.rx)} × ${fmt(m.ry)} × ${fmt(m.rz)} = ${fmt(m.volumeFactor)}</div></div></article>`;
+  if(state.changed){flashEvidence();state.changed=false}}
+function expected(){const p=current(),k=p.targetN/BASE;return{k,area:k*k,volume:k*k*k,face:p.targetN*p.targetN,solid:p.targetN**3}}
+function incompleteMath(raw){const s=String(raw??'').trim();return s===''||/^[+-]?$/.test(s)||/^[+-]?\d+\.$/.test(s)||/^[+-]?\d*\.?\d+\/[+-]?$/.test(s)}
+function answerState(key,expectedValue){const raw=state.answers[key]??'';if(incompleteMath(raw))return'needed';const v=parseMath(raw);return close(v,expectedValue)?'correct':'mistake'}
+function stateLabel(st){return st==='correct'?'Correct':st==='mistake'?'Check this value':st==='locked'?'Evidence needed':'Work needed'}
+function stateWidget(st){if(st==='locked')return`<span class="lab-kit-work-state"><span>Evidence needed</span></span>`;if(st==='observed')return`<span class="lab-kit-work-state observed-state"><span>Observed</span></span>`;return`<span class="lab-kit-work-state"><span class="lab-kit-work-mark" aria-hidden="true"></span><span>${stateLabel(st)}</span></span>`}
+function entry(key,label,value,unit='',disabled=false){const st=disabled?'locked':answerState(key,value);return`<div class="work-entry"><label for="ans-${key}">${label}</label><input id="ans-${key}" data-answer="${key}" inputmode="decimal" autocomplete="off" value="${state.answers[key]??''}" data-state="${st}" ${disabled?'disabled':''} aria-label="${label}">${stateWidget(st)}${unit?`<small>${unit}</small>`:''}</div>`}
+function stepState(keys=[],locked=false){if(locked)return'locked';if(!keys.length)return'correct';const states=keys.map(k=>answerState(k,expected()[k]));if(states.some(s=>s==='mistake'))return'mistake';if(states.every(s=>s==='correct'))return'correct';return'needed'}
+function workStep(title,num,body,st='correct'){const attr=['needed','mistake','correct'].includes(st)?` data-state="${st}"`:'';return`<section class="work-step lab-kit-work-item"${attr}><div class="work-step-head"><div class="work-step-title"><span class="work-step-num">${num}</span><strong>${title}</strong></div>${stateWidget(st)}</div>${body}</section>`}
+function predictionReady(){const p=current();return !p.predict||(state.predictions.area!==null&&state.predictions.volume!==null)}
+function predictionCorrect(){if(!current().predict)return true;if(!predictionReady()||!targetMet())return false;const e=expected();return close(state.predictions.area,e.area)&&close(state.predictions.volume,e.volume)}
+function predictionState(){if(!current().predict)return null;if(!predictionReady())return'needed';if(!targetMet())return'recorded';return predictionCorrect()?'correct':'mistake'}
+function predictionWork(){const p=current();if(!p.predict)return'';const k=p.targetN/2,e=expected(),opts=[...new Set([k,k*k,k*k*k].map(v=>fmt(v)))].map(Number),pst=predictionState();
+  const row=(type,label)=>{const chosen=state.predictions[type],observed=e[type],atTarget=targetMet(),rowState=!atTarget?'recorded':close(chosen,observed)?'correct':'mistake',first=state.firstPredictions[type],revised=atTarget&&first!==null&&!close(first,chosen),editable=state.phase==='predict'||(state.phase==='revise'&&rowState==='mistake');let compare='';if(chosen!==null&&!atTarget)compare=`<span class="prediction-compare">Prediction ×${fmt(chosen)}</span>`;if(chosen!==null&&atTarget){const firstText=revised?`first ×${fmt(first)} → ×${fmt(chosen)}`:`predicted ×${fmt(chosen)}`;compare=`<span class="prediction-compare ${rowState}">${rowState==='correct'?'✓':'×'} ${firstText} · observed ×${fmt(observed)}</span>`}return`<div class="prediction-row" data-state="${rowState}"><div><strong>${label}</strong>${compare}</div><div class="prediction-options">${opts.map(v=>`<button type="button" data-predict="${type}" data-value="${v}" class="${close(chosen,v)?'selected':''}" aria-pressed="${close(chosen,v)}" ${editable?'':'disabled'}>×${fmt(v)}</button>`).join('')}</div></div>`};
+  const stateAttr=pst==='recorded'?'':` data-state="${pst}"`,status=pst==='needed'?stateWidget('needed'):pst==='correct'?stateWidget('correct'):pst==='mistake'?stateWidget('mistake'):`<span class="lab-kit-work-state"><span>Committed</span></span>`;let note='';if(pst==='needed')note='<div class="prediction-status">Choose both factors.</div>';else if(pst==='recorded')note='<div class="prediction-status">Now test the prediction in the model.</div>';else if(pst==='mistake')note='<div class="prediction-status">Revise the red factor from the observed evidence.</div>';return`<section class="work-step lab-kit-work-item prediction-work"${stateAttr}><div class="work-step-head"><div class="work-step-title"><span class="work-step-num">P</span><strong>${state.phase==='revise'?'Compare and revise':'Prediction'}</strong></div>${status}</div><div class="prediction-work-copy"><strong>k = ${fmt(k)}</strong> · choose area and volume factors.</div>${row('area','Area factor')}${row('volume','Volume factor')}${note}</section>`}
+function resultHTML(){if(state.phase!=='result')return'';if(state.stretch){const m=metrics();return`<section class="relationship-result warn"><span class="result-kicker">Similarity condition</span><strong>No single k: the corresponding length ratios are different.</strong><div class="result-comparison"><div><span>width</span><strong>×${fmt(m.rx)}</strong></div><div><span>height</span><strong>×${fmt(m.ry)}</strong></div><div><span>depth</span><strong>×${fmt(m.rz)}</strong></div></div><p>Without one common k, k² and k³ do not describe the whole solid.</p></section>`}const e=expected(),n=current().targetN,layer=state.exploded?`<p>${n*n} squares per layer × ${n} layers = ${n**3} unit cubes.</p>`:`<p>Two scaled directions give k²; three give k³.</p>`;return`<section class="relationship-result"><span class="result-kicker">Relationship confirmed</span><strong>One length factor gives k² for area and k³ for volume.</strong><div class="result-comparison"><div><span>length</span><strong>×${fmt(e.k)}</strong></div><div><span>area</span><strong>×${fmt(e.area)}</strong></div><div><span>volume</span><strong>×${fmt(e.volume)}</strong></div></div>${layer}</section>`}
+function renderWorkActions(){const host=$('workActions');host.replaceChildren();if(state.phase!=='result')return;const make=(label,action,primary=false)=>{const b=document.createElement('button');b.type='button';b.textContent=label;b.dataset.workAction=action;if(primary)b.className='primary';host.appendChild(b)};if(state.stretch){make('Restore a similar solid','restore',true);return}const willUpgrade=state.solved[state.level]+1>=2&&state.level<2&&state.unlockedLevel===state.level;if(willUpgrade){make('Another trial','next');make(state.level===0?'Take some working':'Take full ownership','upgrade',true)}else if(state.level===2&&state.solved[2]+1>=2){make('Another scale problem','next');make('Test the similarity condition','counterexample',true)}else make('Next problem','next',true)}
+function renderRelationshipDock(){const host=$('relationshipDock'),hint=$('progressHint');if(state.phase==='result'){host.innerHTML=resultHTML();hint.textContent=state.stretch?'Restore similarity to continue.':'Choose the next trial when ready.';return}const m=metrics();if(state.stretch){host.innerHTML=`<div class="relationship-placeholder"><span>Similarity check</span><strong>Do width, height and depth still share one k?</strong><div class="relationship-mini"><b>width ×${fmt(m.rx)}</b><b>height ×${fmt(m.ry)}</b><b>depth ×${fmt(m.rz)}</b></div></div>`;hint.textContent='Change only the height.';return}if(targetMet()){host.innerHTML=`<div class="relationship-placeholder ready"><span>Target held</span><strong>Use the evidence at right to finish the trial.</strong><div class="relationship-mini"><b>k ×${fmt(m.k)}</b><b>area ×${fmt(m.faceFactor)}</b><b>volume ×${fmt(m.volumeFactor)}</b></div></div>`;hint.textContent=state.phase==='revise'?'Revise the red prediction.':'Complete the required working.';return}host.innerHTML=`<div class="relationship-placeholder"><span>Relationship</span><strong>Reach the target to compare the three factors.</strong></div>`;hint.textContent=predictionReady()?'Reach the target in the model.':'Make both predictions first.'}
+function renderWork(){const m=metrics(),p=current(),e=expected(),chain=$('workChain');$('workTitle').textContent=state.stretch?'Similarity check':state.level===0?'Prediction and working':state.level===1?'Your scale factor':'Your working';
+  if(state.stretch){const same=m.similar,st=state.phase==='result'?'correct':'needed';$('workStatus').textContent=state.phase==='result'?'condition identified':'change one dimension';chain.innerHTML=workStep(same?'One common k':'No single k','C',`<div class="work-equation">width ×${fmt(m.rx)} · height ×${fmt(m.ry)} · depth ×${fmt(m.rz)}</div>`,st);renderWorkActions();return}
+  const pred=predictionWork(),liveK=m.k,liveArea=m.faceFactor,liveVol=m.volumeFactor,workReady=state.level===0||targetMet();
+  if(state.level===0){$('workStatus').textContent=!predictionReady()?'prediction needed':state.phase==='revise'?'revise prediction':state.phase==='result'?'confirmed':'working shown';const observedWorking=predictionReady()?workStep('Working shown','1',`<div class="worked-lines"><div><span>length</span><strong>k = ${m.x} ÷ 2 = ${fmt(liveK)}</strong></div><div><span>area</span><strong>k² = ${fmt(liveK)}² = ${fmt(liveArea)}</strong></div><div><span>volume</span><strong>k³ = ${fmt(liveK)}³ = ${fmt(liveVol)}</strong></div></div>`,'observed'):'';chain.innerHTML=pred+observedWorking;renderWorkActions();return}
+  $('workStatus').textContent=!targetMet()?'target needed':requiredCorrect()?(state.phase==='result'?'confirmed':'working complete'):'complete the yellow fields';
+  if(!workReady){chain.innerHTML=workStep('Reach the target first','E',`<div class="work-note">The calculation opens when the target evidence is visible.</div>`,'needed');renderWorkActions();return}
+  const kGood=answerState('k',e.k)==='correct';
+  if(state.level===1){chain.innerHTML=workStep('Find k','1',`<div class="work-equation">production edge ÷ 2</div>${entry('k','k =',e.k)}`,stepState(['k']))+workStep('Use the powers of k','2',kGood?`<div class="auto-result"><span>area k²</span><strong>×${fmt(e.area)}</strong></div><div class="auto-result"><span>volume k³</span><strong>×${fmt(e.volume)}</strong></div>`:`<div class="work-note">A correct k reveals both factors.</div>`,kGood?'correct':'locked');renderWorkActions();return}
+  const areaGood=answerState('area',e.area)==='correct',volGood=answerState('volume',e.volume)==='correct';
+  chain.innerHTML=workStep('Find k','1',`<div class="work-equation">production edge ÷ 2</div>${entry('k','k =',e.k)}`,stepState(['k']))+workStep('Find the powers','2',`${entry('area','area factor k² =',e.area,'',!kGood)}${entry('volume','volume factor k³ =',e.volume,'',!kGood)}`,stepState(['area','volume'],!kGood))+workStep('Apply the factors','3',`${entry('face','new face area =',e.face,'',!(areaGood&&volGood))}${entry('solid','new volume =',e.solid,'',!(areaGood&&volGood))}`,stepState(['face','solid'],!(areaGood&&volGood)));renderWorkActions();
+}
+function requiredCorrect(){if(state.level===0)return true;const e=expected();if(answerState('k',e.k)!=='correct')return false;if(state.level===1)return true;return['area','volume','face','solid'].every(k=>answerState(k,e[k])==='correct')}
+function problemComplete(){return targetMet()&&requiredCorrect()&&predictionCorrect()&&!state.stretch}
+function renderRecord(){const list=$('recordList'),count=state.record.length;$('recordCount').textContent=count?`${count} completed`:'none yet';if(!count){list.innerHTML='<div class="record-empty">No completed trial yet.</div>';return}const recent=state.record.slice(-2),offset=count-recent.length;list.innerHTML=recent.map((r,j)=>{const i=offset+j,revised=r.predArea!==null&&(!close(r.predArea,r.area)||!close(r.predVolume,r.volume));return`<div class="record-row"><span class="record-num">${i+1}</span><div><div class="record-values"><b>k ×${fmt(r.k)}</b><b>A ×${fmt(r.area)}</b><b>V ×${fmt(r.volume)}</b></div>${r.predArea===null?'':`<span class="record-note">prediction ${revised?'revised':'matched'}</span>`}</div></div>`}).join('')}
+function renderMission(){const p=current();$('problemLabel').textContent=state.stretch?'Rule test':`Experiment ${state.problemNumber}`;$('workLabel').textContent=state.stretch?'similarity condition':LEVEL_NAMES[state.level];document.querySelectorAll('[data-work-level]').forEach(b=>{const l=Number(b.dataset.workLevel);b.disabled=l>state.unlockedLevel;b.classList.toggle('active',l===state.level);b.setAttribute('aria-pressed',String(l===state.level))});$('workingHelp').textContent=state.unlockedLevel<1?'Unlocks after two completed trials':LEVEL_HELP[state.level];
+  if(state.stretch){$('missionTitle').textContent=state.phase==='result'?'The three length ratios are no longer equal.':'Change only the height. Does one scale factor still describe the solid?';$('missionHint').textContent=state.phase==='result'?'Compare the unequal ratios in the model with the relationship summary below the canvas.':state.stretchY===4?'Width, height and depth begin at ×2. Move only the height to 5.':`Width and depth remain 4 while height is ${state.stretchY}.`;return}
+  if(state.phase==='predict'&&!predictionReady()){$('missionTitle').textContent=`Predict the area and volume factors for edge 2 → ${p.targetN}.`;$('missionHint').textContent='Choose both factors, then test them in the model.';return}
+  if(state.phase==='revise'&&targetMet()){$('missionTitle').textContent='Compare your prediction with what the model actually produced.';$('missionHint').textContent='Use the observed factors to revise the red prediction.';return}
+  if(state.phase==='result'){$('missionTitle').textContent='The model and working show the same scale relationship.';$('missionHint').textContent='Inspect the layers or continue below the canvas.';return}
+  if(targetMet()&&state.level>0){$('missionTitle').textContent='The target evidence is visible. Explain the relationship with the yellow working.';$('missionHint').textContent='Use the visible evidence to complete the working.';return}
+  if(p.kind==='edge'){$('missionTitle').textContent=`Resize the production cube until its edge is ${p.targetN} unit${p.targetN===1?'':'s'}.`;$('missionHint').textContent='Drag the blue corner; all three edges scale together.'}
+  else{$('missionTitle').textContent=`Resize until the ${p.kind} factor is ×${fmt(p.givenFactor)}.`;$('missionHint').textContent=`Use the live ${p.kind} consequence to work backwards to the length scale factor.`}
+}
+function renderVisualHead(){const targetHeld=!state.stretch&&targetMet();$('layerButton').hidden=state.stretch||state.phase!=='result';$('layerButton').textContent=state.exploded?'Rebuild solid':'Separate layers';$('similarReset').hidden=!state.stretch;$('visualTitle').textContent=state.stretch?'One dimension released':state.exploded?'Volume as equal area layers':targetHeld?'Target solid held':'Prototype and production solid';$('visualHint').textContent=state.stretch?'Width and depth stay fixed; change only height.':state.exploded?'Each layer contains the same square area.':targetHeld?'Keep this result visible while you work.':'Drag the blue corner; all three production edges scale together.'}
+function renderAll(){let enteredRevise=false;if(!state.stretch&&current().predict&&predictionReady()&&targetMet()&&!predictionCorrect()&&state.phase==='resize'){state.phase='revise';enteredRevise=true}renderMission();renderVisualHead();renderStage();renderEvidence();renderWork();renderRecord();renderRelationshipDock();if(enteredRevise)requestAnimationFrame(()=>$('workChain').querySelector('[data-predict]:not(:disabled)')?.focus({preventScroll:true}));if(problemComplete()&&state.phase!=='result')scheduleCompletion();if(state.stretch&&targetMet()&&state.phase!=='result')scheduleStretchResult()}
+function scheduleCompletion(){clearTimeout(state.targetTimer);state.targetTimer=setTimeout(()=>{if(problemComplete()&&state.phase!=='result'){state.phase='result';recordCurrent();renderAll()}},220)}
+function animateExplode(to){const from=state.explodeT,start=performance.now(),dur=matchMedia('(prefers-reduced-motion: reduce)').matches?0:700;state.exploded=to>0;function tick(now){const q=dur===0?1:clamp((now-start)/dur,0,1),ease=1-Math.pow(1-q,3);state.explodeT=from+(to-from)*ease;renderStage();renderVisualHead();if(q<1)requestAnimationFrame(tick);else{state.explodeT=to;renderAll()}}requestAnimationFrame(tick)}
+function recordCurrent(){if(state.recorded||state.stretch)return;const e=expected();state.record.push({k:e.k,area:e.area,volume:e.volume,predArea:state.firstPredictions.area,predVolume:state.firstPredictions.volume});state.recorded=true}
+function advance(upgrade=false){if(state.phase!=='result'||state.stretch)return;state.solved[state.level]++;if(upgrade&&state.level<2){state.unlockedLevel=Math.max(state.unlockedLevel,state.level+1);state.level++}else state.sequenceIndex[state.level]++;state.problemNumber++;startProblem()}
+function startProblem(){clearTimeout(state.targetTimer);state.n=2;state.stretch=false;state.stretchY=4;state.exploded=false;state.explodeT=0;state.predictions={area:null,volume:null};state.firstPredictions={area:null,volume:null};state.answers={};state.changed=false;state.drag=null;state.recorded=false;state.counterexampleSeen=false;state.phase=current().predict?'predict':'resize';renderAll();requestAnimationFrame(()=>{if(state.phase==='predict')$('workChain').querySelector('[data-predict]')?.focus({preventScroll:true});else $('handleGroup')?.focus({preventScroll:true})})}
+function resetProblem(){if(state.stretch){state.stretchY=4;state.phase='resize';state.counterexampleSeen=false;renderAll();$('handleGroup')?.focus({preventScroll:true});return}startProblem()}
+function selectPrediction(type,value){state.predictions[type]=Number(value);if(state.phase==='predict'&&predictionReady()){state.firstPredictions={...state.predictions};state.phase='resize';renderAll();setTimeout(()=>$('handleGroup')?.focus({preventScroll:true}),40);return}if(state.phase==='revise'){if(predictionCorrect())state.phase='resize';renderAll();if(predictionCorrect())scheduleCompletion();return}renderAll()}
+function setScale(n,source='direct'){if(state.stretch)return;const next=clamp(Math.round(n),1,6);if(next===state.n)return;state.n=next;state.changed=true;if(state.phase==='result'||state.phase==='revise')state.phase='resize';renderAll()}
+function setStretchHeight(y){if(!state.stretch)return;const next=clamp(Math.round(y),2,6);if(next===state.stretchY)return;state.stretchY=next;state.changed=true;if(state.phase==='result'||state.phase==='revise')state.phase='resize';renderAll()}
+function stagePoint(ev){return LabKit.svg.point(stage,ev)}
+function beginDrag(ev){const target=ev.target.closest?.('#handleGroup');if(!target||state.exploded)return;state.drag={id:ev.pointerId};stage.setPointerCapture?.(ev.pointerId);ev.preventDefault()}
+function moveDrag(ev){if(!state.drag||state.drag.id!==ev.pointerId)return;const p=stagePoint(ev),L=stageLayout(),origin=L.production,ISO=L.iso;if(state.stretch){setStretchHeight((origin.y-p.y)/ISO.sy)}else{const v={x:ISO.sx,y:-ISO.sy+ISO.sz},dx=p.x-origin.x,dy=p.y-origin.y,n=(dx*v.x+dy*v.y)/(v.x*v.x+v.y*v.y);setScale(n)}ev.preventDefault()}
+function endDrag(ev){if(state.drag?.id===ev.pointerId){state.drag=null;try{stage.releasePointerCapture?.(ev.pointerId)}catch{}}}
+function handleKey(ev){if(!ev.target.closest?.('#handleGroup')||!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(ev.key))return;ev.preventDefault();const d=ev.key==='ArrowRight'||ev.key==='ArrowUp'?1:-1;if(state.stretch)setStretchHeight(state.stretchY+d);else setScale(state.n+d)}
+function scheduleStretchResult(){if(state.counterexampleSeen)return;state.counterexampleSeen=true;setTimeout(()=>{if(state.stretch&&state.stretchY===5){state.phase='result';renderAll()}else state.counterexampleSeen=false},220)}
+function openCounterexample(){state.stretch=true;state.stretchY=4;state.exploded=false;state.explodeT=0;state.phase='resize';state.counterexampleSeen=false;state.changed=false;renderAll();setTimeout(()=>$('handleGroup')?.focus({preventScroll:true}),50)}
+function restoreSimilarity(){state.stretch=false;state.sequenceIndex[2]++;state.problemNumber++;startProblem()}
+$('workChain').addEventListener('click',ev=>{const pred=ev.target.closest?.('[data-predict]');if(pred)selectPrediction(pred.dataset.predict,pred.dataset.value)});
+$('workActions').addEventListener('click',ev=>{const b=ev.target.closest?.('[data-work-action]');if(!b)return;switch(b.dataset.workAction){case'next':advance(false);break;case'upgrade':advance(true);break;case'counterexample':openCounterexample();break;case'restore':restoreSimilarity();break;}});
+$('workChain').addEventListener('input',ev=>{const input=ev.target.closest?.('[data-answer]');if(!input)return;state.answers[input.dataset.answer]=input.value;renderWork();if(problemComplete()&&state.phase==='resize')scheduleCompletion()});
+$('workChain').addEventListener('keydown',ev=>{if(ev.key==='Enter'){ev.preventDefault();const inputs=[...$('workChain').querySelectorAll('input:not(:disabled)')],i=inputs.indexOf(ev.target);inputs[i+1]?.focus()}});
+stage.addEventListener('pointerdown',beginDrag);stage.addEventListener('pointermove',moveDrag);stage.addEventListener('pointerup',endDrag);stage.addEventListener('pointercancel',endDrag);stage.addEventListener('keydown',handleKey);
+$('resetProblem').addEventListener('click',resetProblem);$('layerButton').addEventListener('click',()=>{if(state.exploded)animateExplode(0);else animateExplode(1)});$('similarReset').addEventListener('click',restoreSimilarity);
+document.querySelectorAll('[data-work-level]').forEach(b=>b.addEventListener('click',()=>{const l=Number(b.dataset.workLevel);if(l>state.unlockedLevel||l===state.level)return;state.level=l;state.problemNumber++;startProblem()}));
+window.labTest={
+ getState:()=>JSON.parse(JSON.stringify({...state,problem:current(),metrics:metrics(),complete:problemComplete()})),
+ setScale:n=>setScale(n),
+ setStretchHeight,
+ fillCorrect:()=>{const e=expected();state.n=current().targetN;state.answers={k:String(e.k),area:String(e.area),volume:String(e.volume),face:String(e.face),solid:String(e.solid)};if(current().predict){state.predictions={area:e.area,volume:e.volume};state.firstPredictions={...state.predictions}}state.phase='resize';renderAll()},
+ fillWrong:()=>{state.n=current().targetN;state.answers={k:'9',area:'9',volume:'9',face:'9',solid:'9'};if(current().predict){state.predictions={area:1,volume:1};state.firstPredictions={...state.predictions}}state.phase='resize';renderAll()},
+ setLevel:l=>{state.unlockedLevel=2;state.level=clamp(Number(l)||0,0,2);state.problemNumber++;startProblem()},
+ setProblem:(level,index=0)=>{state.unlockedLevel=2;state.level=clamp(Number(level)||0,0,2);state.sequenceIndex[state.level]=Math.max(0,Number(index)||0);state.problemNumber++;startProblem()},
+ setPrediction:(area,volume)=>{state.predictions={area:Number(area),volume:Number(volume)};state.firstPredictions={...state.predictions};state.phase='resize';renderAll()},
+ openCounterexample,
+ explode:()=>animateExplode(1),
+ render:renderAll
+}
+new ResizeObserver(()=>renderStage()).observe(stage);
+drawBench();startProblem();
+})();
+</script>
+
+<!-- v4 polish pass: responsive SVG composition, visible success actions and repaired completion logic. -->
+<!-- v3 guidance correction: predictions, working, validation, retained evidence, relationship explanations and progression actions remain in the persistent evidence region; direct-model emphasis replaces routine overlays. -->
+
+<style>
+/* v5 evidence/prediction polish */
+#handleGroup{outline:none!important}
+.work-actions{margin:8px 0 0!important;padding:8px 0 0!important;border-top:1px solid var(--lab-line)!important;border-bottom:0!important}
+.observed-state{color:#5f6e78;font-weight:800}
+.prediction-row[data-state="recorded"]{background:#fbfcfd}
+.prediction-row[data-state="mistake"]{border-color:#e4aea8;background:var(--lab-bad-soft)}
+.prediction-row[data-state="correct"]{border-color:#a7d1b5;background:var(--lab-good-soft)}
+.prediction-compare{display:block;margin-top:2px;color:#67757e;font-size:7.5px;line-height:1.35}
+.prediction-compare.mistake{color:var(--lab-bad);font-weight:750}
+.prediction-compare.correct{color:var(--lab-good);font-weight:750}
+.prediction-row[data-state="mistake"] .prediction-options button:not(:disabled){background:#fff}
+.prediction-row[data-state="mistake"] .prediction-options button.selected{border-color:var(--lab-bad);background:var(--lab-bad-soft);color:var(--lab-bad)}
+.prediction-row[data-state="correct"] .prediction-options button.selected{border-color:var(--lab-good);background:var(--lab-good-soft);color:var(--lab-good)}
+.record-note{display:block;margin-top:2px;color:var(--lab-muted);font-size:7px;line-height:1.3}
+.evidence-main output::before{content:"observed ";font:750 6.5px var(--lab-font-sans);color:var(--lab-muted)}
+@media(max-width:620px){.evidence-main{align-items:flex-start}.evidence-main output{white-space:nowrap}.prediction-compare{font-size:8px}}
+</style>
+
+<!-- v5 polish: prediction is committed, tested against observed model evidence, and revised before success. -->
+<!-- v6 layout polish: live evidence/prediction/working stay beside the model; relationship, retained observations and progression occupy a fixed-height dock below the canvas. -->
+
+<style data-no-scroll-readable-polish>
+/* No internal scrolling. Space is made by simplifying and recomposing content, never by shrinking instructions. */
+.mission-kicker{font-size:10px}
+.mission-copy>span{font-size:11px;line-height:1.35}
+.complexity-copy strong{font-size:9.5px}.complexity-copy span{font-size:9px}.complexity-switch button{font-size:10px;min-height:30px}
+.visual-copy strong{font-size:13px}.visual-copy span{font-size:10.5px;line-height:1.32}.visual-actions button{font-size:10px;min-height:31px}
+.workspace{height:640px;align-items:stretch}
+.stage-side{grid-template-rows:auto minmax(0,1fr) 150px}
+.stage-footer{height:150px;min-height:150px;grid-template-columns:minmax(0,1.5fr) minmax(230px,.88fr) minmax(150px,.46fr);gap:9px;padding:9px;overflow:hidden}
+.stage-shell,.relationship-dock,.stage-record,.progress-dock,.evidence-side,.record-list{overflow:hidden!important;overscroll-behavior:none!important}
+.evidence-side{height:100%;padding:10px 11px;display:flex;flex-direction:column;min-height:0}
+.side-head{margin-bottom:7px;align-items:center}.side-head strong{font-size:13px}.similarity-state{min-height:27px;padding:5px 8px;font-size:9px}
+.evidence-stack{gap:6px}.evidence-card{grid-template-columns:30px minmax(0,1fr);gap:8px;padding:7px 9px}.evidence-icon{width:29px;height:29px}
+.evidence-copy>span{font-size:9px;letter-spacing:.035em}.evidence-main strong{font-size:11.5px}.evidence-main output{font-size:12px}.evidence-main output::before{content:""}.evidence-formula{font-size:9.5px;line-height:1.28}
+.work-dock{margin-top:8px;padding-top:7px;min-height:0}.work-head{margin-bottom:6px}.work-head strong{font-size:12px}.work-head span{font-size:9px}.work-chain{gap:6px}
+.work-step{padding:7px 8px}.work-step-num{width:20px;height:20px;font-size:9px}.work-step-head strong{font-size:10.5px}.work-step .lab-kit-work-state,.work-entry .lab-kit-work-state{font-size:9px}.work-equation{font-size:10.5px;line-height:1.32}.work-note{font-size:9.5px;line-height:1.32}.work-gate{font-size:10px}.auto-result span{font-size:9.5px}.auto-result strong{font-size:11px}
+.work-entry{grid-template-columns:minmax(0,1fr) 72px minmax(68px,auto);gap:6px}.work-entry label{font-size:10px}.work-entry input{width:72px;height:32px;font-size:11px}
+.prediction-work{gap:5px}.prediction-work-copy{font-size:10px;line-height:1.3}.prediction-row{padding:6px 7px;gap:6px}.prediction-row>div>strong{font-size:10.5px}.prediction-options button{min-height:30px;padding:0 8px;font-size:10px}.prediction-compare{font-size:9px;line-height:1.25}.prediction-status{font-size:9.5px;line-height:1.3}
+.worked-lines{display:grid;gap:4px;margin-top:5px}.worked-lines>div{display:grid;grid-template-columns:54px 1fr;gap:7px;align-items:baseline}.worked-lines span{color:var(--lab-muted);font-size:9px;font-weight:800;text-transform:uppercase}.worked-lines strong{font:850 10.5px/1.28 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.relationship-placeholder,.relationship-result{padding:8px 9px}.relationship-placeholder>span,.relationship-result .result-kicker{font-size:8.5px}.relationship-placeholder>strong,.relationship-result>strong{font-size:11px;line-height:1.25}.relationship-mini{margin-top:6px;gap:5px}.relationship-mini b{font-size:9px;padding:5px}.result-comparison{margin-top:6px;gap:5px}.result-comparison div{padding:4px 5px}.result-comparison span{font-size:8px}.result-comparison strong{font-size:10.5px}.relationship-result p{display:block;margin:5px 0 0;font-size:9.5px;line-height:1.3;-webkit-line-clamp:1}
+.stage-record{padding:7px 8px}.stage-record .record-head{height:auto}.stage-record .record-head strong{font-size:10.5px}.record-head span{font-size:9px}.stage-record .record-list{display:grid;grid-template-rows:repeat(2,minmax(0,1fr));gap:4px;height:100px;margin-top:5px;max-height:none}.stage-record .record-row{height:auto;min-height:0;padding:5px 6px}.record-num{width:20px;height:20px;font-size:9px}.record-values{gap:7px;font-size:9.5px}.record-note{font-size:8.5px;margin-top:2px}.record-empty{height:100%;display:grid;place-items:center;padding:6px;font-size:9.5px;text-align:center}
+.progress-dock{padding:7px 8px}.progress-copy strong{font-size:10.5px}.progress-copy span{font-size:9px;line-height:1.3}.stage-footer .work-actions{margin-top:6px!important;gap:5px}.stage-footer .work-actions:empty{height:32px}.stage-footer .work-actions button{min-height:32px;font-size:9.5px;line-height:1.15}
+/* SVG text is instructional, so keep it comfortably legible after viewBox scaling. */
+.prototype-label,.production-label{font-size:13px}.stage-caption{font-size:10.5px}.stage-value{font-size:13px}.layer-label{font-size:9px}.target-label,.dimension-text{font-size:11px}.factor-title{font-size:9.5px}.factor-formula{font-size:14px}.factor-power{font-size:12px}.ratio-chip text{font-size:10px}
+@container lab-canvas (max-width:980px){.workspace{height:640px}.stage-footer{grid-template-columns:minmax(0,1.35fr) minmax(205px,.85fr) minmax(140px,.45fr)}}
+@container lab-canvas (max-width:850px){
+  .workspace{height:auto;display:block}
+  .stage-side{height:auto;grid-template-rows:auto auto 178px;border-right:0;border-bottom:1px solid var(--lab-line)}
+  .stage-footer{height:178px;min-height:178px;grid-template-columns:minmax(0,1fr) 132px;grid-template-rows:92px 66px;grid-template-areas:"relationship progress" "record record";gap:8px;padding:8px}
+  .relationship-dock{grid-area:relationship}.progress-dock{grid-area:progress}.stage-record{grid-area:record;display:grid;grid-template-columns:88px 1fr;gap:7px;align-items:center}.stage-record .record-head{display:block}.stage-record .record-list{height:48px;margin:0;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:1fr}.stage-record .record-row{height:48px}.record-values{display:flex;flex-wrap:wrap}.record-note{display:none}
+  .evidence-side{height:auto;display:grid;grid-template-columns:1fr 1fr;gap:9px 10px;padding:11px}.evidence-side>.side-head{grid-column:1/-1}.evidence-stack{grid-column:1}.work-dock{grid-column:2;margin-top:0;padding-top:0;border-top:0}
+}
+@media(max-width:620px){
+  body>main{width:min(100% - 12px,1200px)}
+  .mission{min-height:0}.mission-copy strong{font-size:16px}.mission-copy>span{font-size:11px}.mission-tools{gap:8px}.complexity{flex-wrap:wrap}.complexity-copy{display:none}
+  .visual-head{grid-template-columns:1fr auto}.visual-copy span{font-size:10.5px}
+  .stage-shell{aspect-ratio:520/720!important;height:auto!important;display:block!important}
+  .stage{width:100%;height:100%;max-height:none}
+  .stage-side{grid-template-rows:auto auto 188px}
+  .stage-footer{height:188px;min-height:188px;grid-template-columns:1fr 126px;grid-template-rows:100px 68px}
+  .relationship-placeholder>strong,.relationship-result>strong{font-size:10.5px}.relationship-result p{font-size:9px}.relationship-mini b{font-size:8.5px}.result-comparison strong{font-size:10px}
+  .stage-record{grid-template-columns:76px 1fr}.stage-record .record-list{grid-template-columns:1fr 1fr}.record-values{font-size:8.5px;gap:5px}.record-num{width:18px;height:18px;font-size:8px}
+  .progress-copy span{font-size:8.5px}.stage-footer .work-actions button{font-size:9px}
+  .evidence-side{display:block;height:auto;padding:10px}.side-head strong{font-size:14px}.evidence-stack{margin-top:0}.work-dock{margin-top:10px;padding-top:9px;border-top:1px solid var(--lab-line)}
+  .evidence-card{padding:8px 9px}.evidence-copy>span{font-size:9.5px}.evidence-main strong{font-size:12px}.evidence-main output{font-size:12.5px}.evidence-formula{font-size:10px}
+  .prediction-row{grid-template-columns:1fr auto}.prediction-options{justify-content:flex-end}.prediction-options button{font-size:10px}
+  .prototype-label,.production-label{font-size:15px}.stage-caption{font-size:12px}.stage-value{font-size:15px}.layer-label{font-size:11px}.target-label,.dimension-text{font-size:13px}.factor-title{font-size:11px}.factor-formula{font-size:16px}.factor-power{font-size:14px}.ratio-chip text{font-size:11px}
+}
+</style>
+
+
+<style data-mobile-footer-fix>
+.stage-footer .result-comparison{grid-template-columns:repeat(3,minmax(0,1fr))}
+.stage-record .record-head strong,.stage-record .record-head span{display:block}
+.stage-record .record-head span{margin-top:2px}
+@media(max-width:620px){
+  .stage-footer .result-comparison{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .stage-footer .relationship-result p{white-space:normal}
+}
+</style>
+
+<style data-final-fit-fix>
+.stage-record .record-list{height:105px}
+@media(max-width:620px){
+  .stage-footer{grid-template-rows:97px 66px}
+  .stage-record{padding:4px 6px}
+  .stage-record .record-list{height:46px}
+}
+</style>
+
+<style data-record-fit-fix>
+.stage-record .record-list{height:100px}
+.stage-record .record-row{height:48px;overflow:hidden}
+@media(max-width:620px){.stage-record .record-list{height:46px}.stage-record .record-row{height:46px}}
+</style>
+</body>
+</html>

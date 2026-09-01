@@ -375,7 +375,7 @@ button:hover:not(:disabled){border-color:var(--lab-line-strong)}button:disabled{
 @media(max-width:620px){.mission{padding:8px}.complexity{display:block}.complexity-switch{margin-top:6px}.stage{min-width:680px}.stage-shell{overflow-x:auto}.calc-panel{padding:11px}.next-card{left:50%;top:10px;right:auto;bottom:auto;width:min(310px,calc(100% - 20px))}.reference-strip strong{font-size:11px}}
 </style>
 <!-- LAB_RESOURCE_START id="lab-kit.css" type="stylesheet" -->
-<style data-lab-resource="lab-kit.css" data-lab-resource-type="stylesheet" data-lab-resource-bytes="4164">
+<style data-lab-resource="lab-kit.css" data-lab-resource-type="stylesheet" data-lab-resource-bytes="5395">
 :root {
   --lab-kit-ink: var(--lab-ink, #20303a);
   --lab-kit-muted: var(--lab-muted, #687780);
@@ -473,6 +473,19 @@ button:hover:not(:disabled){border-color:var(--lab-line-strong)}button:disabled{
 .lab-kit-status[data-state="warn"] { border-color: var(--lab-kit-warn); background: var(--lab-kit-warn-soft); }
 .lab-kit-status[data-state="bad"] { border-color: var(--lab-kit-bad); background: var(--lab-kit-bad-soft); }
 
+.lab-kit-work { display: grid; min-width: 0; gap: var(--lab-kit-work-gap, .5rem); }
+.lab-kit-work-item { min-width: 0; padding: .55rem .65rem; border-left: 3px solid var(--lab-kit-line); background: var(--lab-kit-surface); }
+.lab-kit-work-item[data-state="needed"] { border-color: var(--lab-kit-warn); background: var(--lab-kit-warn-soft); }
+.lab-kit-work-item[data-state="mistake"] { border-color: var(--lab-kit-bad); background: var(--lab-kit-bad-soft); }
+.lab-kit-work-item[data-state="correct"] { border-color: var(--lab-kit-good); background: var(--lab-kit-good-soft); }
+.lab-kit-work-state { display: inline-flex; align-items: center; gap: .35rem; font-weight: 700; }
+.lab-kit-work-item[data-state="needed"] .lab-kit-work-state { color: var(--lab-kit-warn); }
+.lab-kit-work-item[data-state="mistake"] .lab-kit-work-state { color: var(--lab-kit-bad); }
+.lab-kit-work-item[data-state="correct"] .lab-kit-work-state { color: var(--lab-kit-good); }
+.lab-kit-work-mark::before { display: inline-block; width: 1em; text-align: center; font-weight: 900; }
+.lab-kit-work-item[data-state="mistake"] .lab-kit-work-mark::before { content: "×"; }
+.lab-kit-work-item[data-state="correct"] .lab-kit-work-mark::before { content: "✓"; }
+
 @media (prefers-reduced-motion: reduce) {
   .lab-kit-motion { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
 }
@@ -537,7 +550,7 @@ button:hover:not(:disabled){border-color:var(--lab-line-strong)}button:disabled{
   "use strict";
 
   const host = globalThis;
-  const VERSION = "0.2.0";
+  const VERSION = "0.2.1";
 
   function documentFor(root) {
     return root || host.document || null;

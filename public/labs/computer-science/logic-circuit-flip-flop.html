@@ -1,0 +1,2387 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="data:,">
+<!-- LAB_MANIFEST_HEAD_START -->
+<title>Flip-Flops and Sequential Logic</title>
+<meta name="description" content="Explore SR and JK flip-flops, feedback and stored state for Cambridge International A Level Computer Science 9618.">
+<link rel="canonical" href="https://www.examplicity.org/labs/computer-science/logic-circuit-flip-flop.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Examplicity">
+<meta property="og:title" content="Flip-Flops and Sequential Logic">
+<meta property="og:description" content="Explore SR and JK flip-flops, feedback and stored state for Cambridge International A Level Computer Science 9618.">
+<meta property="og:url" content="https://www.examplicity.org/labs/computer-science/logic-circuit-flip-flop.html">
+<meta property="og:image" content="https://www.examplicity.org/opengraph-image">
+<meta property="og:image:alt" content="Examplicity — Make complex ideas click">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Flip-Flops and Sequential Logic">
+<meta name="twitter:description" content="Explore SR and JK flip-flops, feedback and stored state for Cambridge International A Level Computer Science 9618.">
+<meta name="twitter:image" content="https://www.examplicity.org/opengraph-image">
+<script type="application/ld+json" data-lab-manifest="structured-data">{"@context":"https://schema.org","@type":"LearningResource","@id":"https://www.examplicity.org/labs/computer-science/logic-circuit-flip-flop.html#learning-resource","url":"https://www.examplicity.org/labs/computer-science/logic-circuit-flip-flop.html","name":"Flip-Flops and Sequential Logic","description":"Explore SR and JK flip-flops, feedback and stored state for Cambridge International A Level Computer Science 9618.","inLanguage":"en-GB","isAccessibleForFree":true,"interactivityType":"active","learningResourceType":"Sequential circuit model","teaches":"Logic circuits","educationalLevel":["A Level"],"educationalAlignment":[{"@type":"AlignmentObject","alignmentType":"educationalSubject","educationalFramework":"Cambridge International AS & A Level Computer Science","targetName":"A 9618 section 15.2","targetUrl":"https://www.cambridgeinternational.org/Images/697372-2026-syllabus.pdf#page=34"}],"about":{"@type":"Thing","name":"Computer Science"},"audience":{"@type":"EducationalAudience","educationalRole":"student"},"provider":{"@type":"Organization","name":"Examplicity","url":"https://www.examplicity.org"},"isPartOf":{"@type":"WebSite","@id":"https://www.examplicity.org/#website","name":"Examplicity","url":"https://www.examplicity.org"}}</script>
+<!-- LAB_MANIFEST_HEAD_END -->
+<!-- LAB_FRAME_STYLES_START -->
+<style data-lab-frame>
+:root {
+  --lab-canvas: #f3f5f7;
+  --lab-paper: #fbfbfd;
+  --lab-surface: #ffffff;
+  --lab-control: #ffffff;
+  --lab-ink: #1d1d1f;
+  --lab-muted: #6e6e73;
+  --lab-line: #d2d2d7;
+  --lab-line-strong: #a7a7ad;
+  --lab-accent: #5277b8;
+  --lab-accent-soft: #eef2fa;
+  --lab-good: #18794e;
+  --lab-good-soft: #edf8f1;
+  --lab-warn: #946200;
+  --lab-warn-soft: #fff6e7;
+  --lab-bad: #b42318;
+  --lab-bad-soft: #fff0ee;
+  --lab-focus: #1d1d1f;
+  --lab-focus-soft: rgba(29, 29, 31, 0.18);
+  --lab-font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+  --lab-panel-radius: 12px;
+  --lab-control-radius: 8px;
+  --lab-pill-radius: 999px;
+  --lab-control-height: 35px;
+  --lab-panel-shadow: 0 1px 2px rgba(29, 29, 31, 0.04);
+  --lab-header-max-width: 1200px;
+  --lab-header-gutter: max(28px, calc((100vw - var(--lab-header-max-width)) / 2));
+  --lab-page-gutter: var(--lab-header-gutter);
+  --lab-compact-workspace-max: 820px;
+}
+
+html,
+body {
+  background: var(--lab-canvas);
+}
+
+body {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  align-content: start !important;
+  font-family: var(--lab-font-sans);
+  padding-bottom: 0;
+  padding-top: 0 !important;
+  text-rendering: optimizeLegibility;
+}
+
+.lab-manifest-header {
+  align-items: start;
+  border-bottom: 0 !important;
+  display: grid;
+  gap: 18px 28px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  margin-left: calc(50% - 50vw + var(--lab-header-gutter));
+  margin-bottom: 26px;
+  max-width: var(--lab-header-max-width);
+  padding-bottom: 22px;
+  width: calc(100vw - var(--lab-header-gutter) - var(--lab-header-gutter));
+}
+
+.lab-manifest-heading {
+  min-width: 0;
+}
+
+.lab-manifest-header h1 {
+  color: var(--ink, var(--lab-ink));
+  font-family: var(--lab-font-sans);
+  font-size: clamp(25px, 3.2vw, 40px);
+  font-weight: 650;
+  letter-spacing: -0.045em;
+  line-height: 1.02;
+  margin: 0;
+  max-width: 24ch;
+  padding: 0;
+  text-align: left;
+}
+
+.lab-manifest-subtitle {
+  color: var(--muted, var(--lab-muted));
+  font-family: var(--lab-font-sans);
+  font-size: 13px;
+  letter-spacing: 0;
+  line-height: 1.5;
+  margin: 10px 0 0;
+  max-width: 72ch;
+  padding: 0;
+  text-align: left;
+}
+
+.lab-authored-title-slot {
+  min-width: 0;
+}
+
+.lab-syllabus-chips {
+  align-items: center;
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+  margin: 0 0 0 auto;
+  max-width: 100%;
+}
+
+.lab-syllabus-chip {
+  align-items: center;
+  background: var(--syllabus-chip-bg) !important;
+  border: 1px solid var(--syllabus-chip-border) !important;
+  border-radius: var(--lab-pill-radius);
+  color: var(--syllabus-chip-text) !important;
+  display: inline-flex;
+  font-size: 11px;
+  font-weight: 650;
+  gap: 4px;
+  line-height: 1;
+  min-height: 29px;
+  padding: 8px 10px;
+  position: relative;
+  transition: background-color 140ms ease, border-color 140ms ease;
+  white-space: nowrap;
+}
+
+.lab-syllabus-chip:hover {
+  background: var(--syllabus-chip-hover) !important;
+}
+
+.lab-syllabus-primary-link {
+  border-radius: inherit;
+  inset: 0;
+  position: absolute;
+  z-index: 0;
+}
+
+.lab-syllabus-primary-link:focus-visible {
+  outline: 2px solid var(--syllabus-chip-text);
+  outline-offset: 2px;
+}
+
+.lab-syllabus-name,
+.lab-syllabus-divider,
+.lab-syllabus-sections {
+  pointer-events: none;
+  position: relative;
+  z-index: 1;
+}
+
+.lab-syllabus-section {
+  border-radius: 4px;
+  color: inherit;
+  padding: 2px;
+  text-decoration: none;
+}
+
+a.lab-syllabus-section {
+  pointer-events: auto;
+}
+
+a.lab-syllabus-section:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+a.lab-syllabus-section:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 1px;
+}
+
+.lab-syllabus-name {
+  color: var(--syllabus-chip-text) !important;
+}
+
+.lab-syllabus-divider,
+.lab-syllabus-separator {
+  color: var(--muted, var(--lab-muted));
+}
+
+.lab-syllabus-prefix {
+  opacity: 0.72;
+  padding-left: 5px;
+}
+
+.lab-syllabus-sections {
+  align-items: center;
+  display: inline-flex;
+}
+
+.lab-syllabus-separator {
+  margin-inline: 0 2px;
+}
+
+html[data-theme="dark"] .lab-syllabus-name {
+  color: var(--syllabus-chip-border) !important;
+}
+
+html[data-theme="dark"] .lab-syllabus-chip:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+html[data-theme="dark"],
+html[data-theme="dark"] body {
+  background: var(--bg);
+}
+
+body > main {
+  container-name: lab-canvas;
+  container-type: inline-size;
+  margin-left: var(--lab-page-gutter);
+  margin-right: auto;
+  margin-top: 18px;
+  max-width: var(--lab-header-max-width);
+  width: calc(100vw - var(--lab-page-gutter) - var(--lab-page-gutter));
+}
+
+body[data-lab-layout="compact"] .lab-manifest-header {
+  margin-bottom: 17px;
+  padding-bottom: 13px;
+}
+
+body[data-lab-layout="compact"] [data-lab-workspace] {
+  margin-left: auto;
+  margin-right: auto;
+  width: min(var(--lab-compact-workspace-max), 100%);
+}
+
+:where(button, input, select, textarea, summary):focus-visible {
+  outline: 3px solid var(--lab-focus);
+  outline-offset: 4px;
+}
+
+@media (max-width: 620px) {
+  :root {
+    --lab-header-gutter: 18px;
+    --lab-page-gutter: 18px;
+  }
+
+  body {
+    padding-bottom: 0;
+    padding-top: 0 !important;
+  }
+
+  .lab-manifest-header {
+    gap: 14px;
+    grid-template-columns: minmax(0, 1fr) !important;
+    margin-bottom: 20px;
+    padding-bottom: 18px;
+  }
+
+  body[data-lab-layout="compact"] .lab-manifest-header {
+    margin-bottom: 16px;
+    padding-bottom: 14px;
+  }
+
+  .lab-manifest-header h1 {
+    font-size: clamp(24px, 8vw, 34px);
+  }
+
+  .lab-syllabus-chips {
+    gap: 4px;
+    justify-content: flex-start !important;
+    margin: 0 !important;
+  }
+
+  .lab-syllabus-chip {
+    font-size: 10px;
+    max-width: 100%;
+    min-height: 27px;
+    padding: 7px 8px;
+    white-space: normal;
+  }
+
+  .lab-syllabus-sections {
+    flex-wrap: wrap;
+  }
+
+  body > main {
+    margin-top: 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+</style>
+<!-- LAB_FRAME_STYLES_END -->
+<style>
+body{margin:0}
+:root{
+  --signal-on:#2b78c5;
+  --signal-off:#97a4ad;
+  --set:#2f7e66;
+  --set-soft:#eaf6f1;
+  --reset:#b26a34;
+  --reset-soft:#fff3e9;
+  --feedback:#6f5ba7;
+  --feedback-soft:#f1eef8;
+  --clock:#b07822;
+  --clock-soft:#fff5dd;
+  --unknown:#8c6386;
+  --grid:#e9edf0;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+button{font:inherit}
+button{cursor:pointer}
+button:disabled{opacity:.45;cursor:not-allowed}
+.panel{background:var(--lab-surface);border:1px solid var(--lab-line);border-radius:var(--lab-panel-radius);box-shadow:var(--lab-panel-shadow)}
+.mission{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:10px 18px;
+  align-items:center;
+  padding:10px 11px;
+}
+.mission-copy{min-width:0}
+.mission-kicker{display:block;color:var(--lab-accent);font-size:8px;font-weight:900;letter-spacing:.075em;text-transform:uppercase}
+.mission-copy strong{display:block;margin-top:3px;font-size:15px;line-height:1.3}
+.mission-copy>span:last-child{display:block;margin-top:3px;color:var(--lab-muted);font-size:9.5px;line-height:1.38}
+.mission-tools{display:flex;align-items:center;justify-content:flex-end;gap:7px;flex-wrap:wrap}
+.evidence-chip{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  min-height:28px;
+  padding:4px 8px;
+  border:1px solid var(--lab-line);
+  border-radius:999px;
+  background:var(--lab-paper);
+  color:var(--lab-muted);
+  font-size:8.5px;
+  font-weight:820;
+  white-space:nowrap;
+}
+.evidence-chip::before{content:"";width:8px;height:8px;border-radius:50%;background:#aab4ba;box-shadow:0 0 0 2px #fff,0 0 0 3px #cbd2d7}
+.evidence-chip.done{border-color:#a9cfb7;background:var(--lab-good-soft);color:var(--lab-good)}
+.evidence-chip.done::before{background:var(--lab-good);box-shadow:0 0 0 2px #fff,0 0 0 3px #9ac6aa}
+.quiet-button,.mode-button,.signal-switch,.prediction-choice,.action-button,.clock-button{
+  min-height:34px;
+  border:1px solid var(--lab-line);
+  border-radius:var(--lab-control-radius);
+  background:var(--lab-control);
+  color:var(--lab-ink);
+}
+.quiet-button{padding:0 9px;color:var(--lab-muted);font-size:9px;font-weight:750}
+.quiet-button:hover:not(:disabled),.mode-button:hover:not(:disabled),.signal-switch:hover:not(:disabled),.prediction-choice:hover:not(:disabled),.action-button:hover:not(:disabled),.clock-button:hover:not(:disabled){border-color:var(--lab-line-strong)}
+.lab{margin-top:9px;overflow:hidden}
+.workspace{display:grid;grid-template-columns:minmax(640px,1.72fr) minmax(300px,.72fr);align-items:stretch;min-height:665px}
+.stage-side{min-width:0;border-right:1px solid var(--lab-line);background:#fbfcfd}
+.visual-head{
+  position:relative;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:10px;
+  align-items:center;
+  min-height:55px;
+  padding:8px 10px;
+  border-bottom:1px solid var(--lab-line);
+  background:#fff;
+}
+.visual-copy strong{display:block;font-size:12px;line-height:1.3}
+.visual-copy span{display:block;margin-top:2px;color:var(--lab-muted);font-size:8.5px;line-height:1.34}
+.mode-switch{display:inline-flex;padding:3px;border:1px solid var(--lab-line);border-radius:9px;background:#f4f6f8}
+.mode-button{min-height:29px;padding:0 9px;border:0;border-radius:6px;background:transparent;color:var(--lab-muted);font-size:8.5px;font-weight:850}
+.mode-button.active{background:#fff;color:var(--lab-ink);box-shadow:0 1px 4px rgba(29,29,31,.14)}
+.mode-button.newly-unlocked{animation:unlockPulse 1.25s ease 2}
+@keyframes unlockPulse{50%{box-shadow:0 0 0 4px rgba(82,119,184,.18)}}
+.stage-shell{position:relative;overflow:auto;background:#f8fafb;overscroll-behavior:contain}
+.stage{display:block;width:100%;min-width:720px;height:auto;background:#f8fafb;touch-action:pan-x pan-y;user-select:none}
+.stage text{font-family:var(--lab-font-sans)}
+.grid-line{stroke:var(--grid);stroke-width:1}
+.cell-boundary{fill:#fff;stroke:#cbd4da;stroke-width:1.5}
+.cell-title{fill:#5f6d76;font-size:10px;font-weight:850;letter-spacing:.055em;text-transform:uppercase}
+.gate-shape{fill:#f7f9fa;stroke:#647782;stroke-width:2}
+.gate-bubble{fill:#fff;stroke:#647782;stroke-width:2}
+.gate-label{fill:#334650;font-size:11px;font-weight:900;letter-spacing:.06em;text-anchor:middle}
+.gate-formula{fill:#70808a;font:700 8px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;text-anchor:middle}
+.wire{fill:none;stroke:var(--signal-off);stroke-width:4;stroke-linecap:round;stroke-linejoin:round;transition:stroke .18s ease,opacity .18s ease,filter .18s ease}
+.wire.secondary{stroke-width:3.2}
+.wire.high{stroke:var(--signal-on)}
+.wire.invalid{stroke:var(--lab-bad)}
+.wire.unknown{stroke:var(--unknown);stroke-dasharray:7 7}
+.wire.pulse{stroke-width:6;stroke-dasharray:12 9;animation:wireFlow .55s linear infinite;filter:url(#wireGlow)}
+.wire.pulse.set-path{stroke:var(--set)}
+.wire.pulse.reset-path{stroke:var(--reset)}
+.wire.pulse.clock-path{stroke:var(--clock)}
+.wire.pulse.feedback-path{stroke:var(--feedback)}
+@keyframes wireFlow{to{stroke-dashoffset:-21}}
+.node{fill:#fff;stroke:#7a8992;stroke-width:2}
+.node.high{fill:var(--signal-on);stroke:#fff;filter:url(#nodeGlow)}
+.node.invalid{fill:var(--lab-bad);stroke:#fff}
+.node.unknown{fill:var(--unknown);stroke:#fff}
+.input-block{fill:#fff;stroke:#a8b3ba;stroke-width:1.5}
+.input-block.on{fill:var(--lab-accent-soft);stroke:var(--signal-on)}
+.input-label{fill:#394b55;font-size:12px;font-weight:900;text-anchor:middle}
+.input-role{fill:#78858d;font-size:8px;font-weight:750;text-anchor:middle}
+.value-pill{fill:#fff;stroke:#bdc7cd;stroke-width:1}
+.value-pill.high{fill:#e9f3fd;stroke:#75a7d7}
+.value-pill.invalid{fill:var(--lab-bad-soft);stroke:#dca7a1}
+.value-pill.unknown{fill:#f7eef6;stroke:#c3a2bd}
+.value-text{fill:#596a74;font:850 10px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;text-anchor:middle}
+.value-text.high{fill:#1f5e9d}.value-text.invalid{fill:var(--lab-bad)}.value-text.unknown{fill:var(--unknown)}
+.output-label{fill:#334650;font-size:13px;font-weight:900}
+.output-caption{fill:#75828a;font-size:8px;font-weight:750}
+.state-card{fill:#fff;stroke:#b8c3c9;stroke-width:1.5}
+.state-card.valid-one{fill:#edf8f2;stroke:#8fbea2}.state-card.valid-zero{fill:#eef4fb;stroke:#93afd1}.state-card.transient{fill:var(--lab-warn-soft);stroke:#d3ad72}.state-card.invalid{fill:var(--lab-bad-soft);stroke:#d59b94}.state-card.unknown{fill:#f7eef6;stroke:#c09bb8}
+.state-title{fill:#6a7780;font-size:8px;font-weight:900;letter-spacing:.06em;text-anchor:middle;text-transform:uppercase}
+.state-bit{fill:#263842;font:900 46px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;text-anchor:middle}
+.state-caption{fill:#65737c;font-size:8.5px;font-weight:750;text-anchor:middle}
+.feedback-label{fill:var(--feedback);font-size:8px;font-weight:850;letter-spacing:.04em}
+.steering-block{fill:#fff;stroke:#a9b5bd;stroke-width:1.5}
+.steering-block.active-set{fill:var(--set-soft);stroke:#7eb29f}.steering-block.active-reset{fill:var(--reset-soft);stroke:#d2a078}
+.steering-title{fill:#3e505a;font-size:10px;font-weight:900;text-anchor:middle}
+.steering-formula{fill:#71808a;font:750 8.5px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;text-anchor:middle}
+.clock-token{fill:var(--clock);filter:url(#nodeGlow)}
+.clock-token.running{animation:clockToken .55s ease-in-out}
+@keyframes clockToken{0%{transform:translateX(0);opacity:.2}50%{opacity:1}100%{transform:translateX(170px);opacity:.2}}
+.stage-caption{
+  position:relative;
+  z-index:6;
+  width:100%;
+  max-width:none;
+  margin:0;
+  padding:7px 10px;
+  border:0;
+  border-top:1px solid var(--lab-line);
+  border-radius:0;
+  background:#fff;
+  color:#53656f;
+  box-shadow:none;
+  font-size:8.5px;
+  line-height:1.35;
+  pointer-events:none;
+}
+.formula-band{display:grid;grid-template-columns:auto minmax(0,1fr) minmax(0,1fr);gap:7px;padding:8px 9px;border-top:1px solid var(--lab-line);background:#fff}
+.condition-card,.formula-card{min-width:0;padding:7px 8px;border:1px solid var(--lab-line);border-radius:8px;background:var(--lab-paper)}
+.condition-card{display:grid;align-content:center;min-width:115px}
+.condition-card span,.formula-card span{display:block;color:var(--lab-muted);font-size:7.5px;font-weight:850;letter-spacing:.05em;text-transform:uppercase}
+.condition-card strong{display:block;margin-top:3px;font-size:12px}
+.formula-card code{display:block;margin-top:3px;color:#344751;font:750 10px/1.35 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:normal;overflow-wrap:anywhere}
+.control-side{min-width:0;display:flex;flex-direction:column;background:#fff}
+.control-section{padding:11px;border-bottom:1px solid var(--lab-line)}
+.section-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:8px}
+.section-head strong{display:block;font-size:12px}
+.section-head span{display:block;margin-top:2px;color:var(--lab-muted);font-size:8.5px;line-height:1.3}
+.signal-controls{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.signal-switch{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:7px;min-width:0;padding:7px 8px;text-align:left}
+.signal-name{display:grid;gap:1px}.signal-name strong{font-size:13px}.signal-name small{color:var(--lab-muted);font-size:7.5px;font-weight:800;text-transform:uppercase}
+.switch-rail{position:relative;width:35px;height:20px;border-radius:999px;background:#dfe4e7;box-shadow:inset 0 0 0 1px #c5cdd2;justify-self:center;transition:.16s}
+.switch-rail::after{content:"";position:absolute;left:3px;top:3px;width:14px;height:14px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(29,29,31,.25);transition:transform .16s}
+.signal-switch[aria-pressed="true"]{border-color:#8db3d9;background:#f0f6fc}
+.signal-switch[aria-pressed="true"] .switch-rail{background:var(--signal-on);box-shadow:inset 0 0 0 1px #2f6da8}
+.signal-switch[aria-pressed="true"] .switch-rail::after{transform:translateX(15px)}
+.signal-value{min-width:20px;color:#566771;font:900 17px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;text-align:right}
+.signal-switch[aria-pressed="true"] .signal-value{color:#1f609e}
+.condition-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:8px}
+.condition-option{min-width:0;padding:5px 3px;border:1px solid var(--lab-line);border-radius:7px;background:var(--lab-paper);color:var(--lab-muted);text-align:center}
+.condition-option code{display:block;color:inherit;font:850 9px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.condition-option span{display:block;margin-top:1px;font-size:6.8px;font-weight:820;text-transform:uppercase}
+.condition-option.current{border-color:#8faed2;background:var(--lab-accent-soft);color:#315c91}
+.condition-option.current.bad{border-color:#d8a29a;background:var(--lab-bad-soft);color:var(--lab-bad)}
+.control-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.action-button,.clock-button{flex:1;min-width:120px;padding:0 9px;font-size:9px;font-weight:800}
+.action-button.primary,.clock-button.primary{border-color:var(--lab-accent);background:var(--lab-accent);color:#fff}
+.action-button.warn{border-color:#d3aa72;background:var(--lab-warn-soft);color:#7f5516}
+.clock-button{display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.clock-button svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.clock-button.pulsing{animation:clockButton .55s ease}
+@keyframes clockButton{50%{box-shadow:0 0 0 5px rgba(176,120,34,.18)}}
+.prediction-card,.proof-card{margin:9px 10px 0;padding:9px 10px;border:1px solid #a7bedc;border-radius:10px;background:#f6f9fe;box-shadow:0 5px 14px rgba(29,29,31,.07)}
+.prediction-card.nudge{animation:nudge .32s ease 2}
+@keyframes nudge{50%{transform:translateX(3px)}}
+.prediction-kicker,.proof-kicker{display:block;color:var(--lab-accent);font-size:7.5px;font-weight:900;letter-spacing:.07em;text-transform:uppercase}
+.prediction-card strong,.proof-card>strong{display:block;margin-top:3px;font-size:11px;line-height:1.3}
+.prediction-card p,.proof-card p{margin:3px 0 0;color:#647681;font-size:8.5px;line-height:1.36}
+.prediction-choices{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px}
+.prediction-choice{min-height:31px;padding:0 6px;font-size:8.5px;font-weight:820}
+.prediction-choice.selected{border-color:var(--lab-accent);background:var(--lab-accent-soft);color:#315f96}
+.prediction-submit{width:100%;margin-top:6px;min-height:32px;border:1px solid var(--lab-accent);border-radius:var(--lab-control-radius);background:var(--lab-accent);color:#fff;font-size:9px;font-weight:850}
+.prediction-result{margin-top:7px;padding:6px 7px;border-radius:7px;background:#fff;border:1px solid var(--lab-line);font-size:8px;line-height:1.35}
+.proof-card{border-color:#b8a8d7;background:#f8f6fc}
+.proof-kicker{color:var(--feedback)}
+.hold-proof{display:grid;grid-template-columns:1fr auto 1fr;gap:5px;align-items:stretch;margin-top:8px}
+.hold-state{padding:6px;border:1px solid #cfc5df;border-radius:8px;background:#fff;text-align:center}
+.hold-state code{display:block;color:#5f4b8c;font:850 10px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.hold-state strong{display:block;margin-top:2px;font-size:15px}.hold-state small{display:block;margin-top:1px;color:var(--lab-muted);font-size:7px}
+.same-input{display:grid;place-items:center;color:var(--feedback);font-size:14px;font-weight:900}
+.proof-choices{display:grid;gap:5px;margin-top:8px}
+.proof-choices button{min-height:32px;padding:5px 7px;border:1px solid var(--lab-line);border-radius:8px;background:#fff;color:var(--lab-ink);font-size:8.5px;font-weight:800;text-align:left}
+.proof-choices button:hover{border-color:#9882be}
+.proof-feedback{margin-top:7px!important;padding:6px 7px;border-radius:7px;background:#fff;border:1px solid #d5cde2;color:#584b6e!important}
+.proof-card.success{border-color:#9bc3aa;background:var(--lab-good-soft)}
+.proof-card.success .proof-kicker{color:var(--lab-good)}
+.trace-section{display:flex;flex:1;min-height:0;flex-direction:column;padding:10px 10px 11px}
+.trace-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:7px}
+.trace-head strong{font-size:11px}.trace-head span{color:var(--lab-muted);font-size:7.5px;text-align:right}
+.trace-list{flex:1;min-height:140px;max-height:270px;margin:0;padding:0;overflow:auto;border:1px solid var(--lab-line);border-radius:9px;background:var(--lab-paper);list-style:none;scrollbar-width:thin}
+.trace-row{display:grid;grid-template-columns:24px 48px minmax(68px,.9fr) minmax(72px,1fr);gap:5px;align-items:center;min-height:40px;padding:5px 6px;border-top:1px solid var(--lab-line);font-size:8px}
+.trace-row:first-child{border-top:0}
+.trace-row.current{background:#f1f6fc}
+.trace-row.evidence{background:#f2f8f4}
+.trace-row.invalid{background:var(--lab-bad-soft)}
+.trace-row.unknown{background:#f8f0f7}
+.trace-step{display:grid;place-items:center;width:20px;height:20px;border:1px solid #c8d0d5;border-radius:50%;background:#fff;color:var(--lab-muted);font:800 8px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.trace-input code{display:block;color:#334650;font:850 10px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.trace-input small{display:block;margin-top:1px;color:var(--lab-muted);font-size:6.5px}
+.trace-condition{min-width:0;font-size:7.5px;font-weight:900;letter-spacing:.025em;text-transform:uppercase;overflow-wrap:anywhere}
+.trace-change{display:flex;align-items:center;justify-content:flex-end;gap:4px;font:800 10px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.trace-change i{color:#919ca3;font-style:normal}.trace-change strong{font-size:12px}
+.trace-empty{padding:18px 12px;color:var(--lab-muted);font-size:8.5px;line-height:1.4;text-align:center}
+.trace-note{margin:7px 1px 0;color:var(--lab-muted);font-size:7.5px;line-height:1.35}
+.complete-note{margin-top:8px;padding:7px 8px;border:1px solid #9dc5ad;border-radius:8px;background:var(--lab-good-soft);color:#2c6446;font-size:8px;font-weight:760;line-height:1.35}
+.mobile-state-chip{display:none}
+.lab-kit-visually-hidden{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+@container lab-canvas (max-width:1030px){
+  .workspace{grid-template-columns:1fr;min-height:0}
+  .stage-side{border-right:0;border-bottom:1px solid var(--lab-line)}
+  .control-side{display:grid;grid-template-columns:minmax(260px,.8fr) minmax(320px,1.2fr);align-items:start}
+  .control-section{border-right:1px solid var(--lab-line)}
+  .prediction-card,.proof-card{grid-column:1;margin:9px 10px 0}
+  .trace-section{grid-column:2;grid-row:1/span 3;min-height:270px}
+  .trace-list{max-height:330px}
+}
+@container lab-canvas (max-width:620px){
+  .mission{grid-template-columns:1fr;padding:9px 10px}
+  .mission-tools{justify-content:flex-start}
+  .visual-head{grid-template-columns:1fr;align-items:start}
+  .mode-switch{justify-self:start}
+  .stage{min-width:520px}
+  .mobile-state-chip{
+    position:absolute;
+    z-index:12;
+    right:10px;
+    bottom:8px;
+    display:flex;
+    align-items:center;
+    gap:7px;
+    min-height:32px;
+    padding:5px 8px;
+    border:1px solid #a8b9c6;
+    border-radius:9px;
+    background:rgba(255,255,255,.96);
+    box-shadow:0 4px 12px rgba(29,29,31,.1);
+    color:#566771;
+    pointer-events:none;
+  }
+  .mobile-state-chip span{font-size:7px;font-weight:850;letter-spacing:.05em;text-transform:uppercase}
+  .mobile-state-chip strong{font:900 17px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#263842}
+  .mobile-state-chip.transient{border-color:#d3ad72;background:rgba(255,246,231,.97);color:var(--lab-warn)}
+  .mobile-state-chip.invalid{border-color:#d59b94;background:rgba(255,240,238,.97);color:var(--lab-bad)}
+  .mobile-state-chip.unknown{border-color:#c09bb8;background:rgba(247,238,246,.97);color:var(--unknown)}
+  .formula-band{grid-template-columns:1fr 1fr}
+  .condition-card{grid-column:1/-1}
+  .control-side{display:flex}
+  .control-section{border-right:0}
+  .prediction-card,.proof-card{margin:8px 9px 0}
+  .trace-section{min-height:240px}
+  .trace-list{max-height:320px}
+}
+@media(max-width:430px){
+  .evidence-chip{font-size:7.5px;padding-inline:6px}
+  .formula-card code{font-size:9px}
+  .signal-controls{grid-template-columns:1fr}
+  .condition-strip{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+<!-- LAB_RESOURCE_START id="lab-kit.css" type="stylesheet" -->
+<style data-lab-resource="lab-kit.css" data-lab-resource-type="stylesheet" data-lab-resource-bytes="5395">
+:root {
+  --lab-kit-ink: var(--lab-ink, #20303a);
+  --lab-kit-muted: var(--lab-muted, #687780);
+  --lab-kit-line: var(--lab-line, #cbd6dc);
+  --lab-kit-surface: var(--lab-surface, #ffffff);
+  --lab-kit-panel: var(--lab-paper, #f6f9fb);
+  --lab-kit-accent: var(--lab-accent, #2b7ac3);
+  --lab-kit-accent-soft: var(--lab-accent-soft, #e9f3fb);
+  --lab-kit-good: var(--lab-good, #23794d);
+  --lab-kit-good-soft: var(--lab-good-soft, #e9f7ef);
+  --lab-kit-warn: var(--lab-warn, #8b6419);
+  --lab-kit-warn-soft: var(--lab-warn-soft, #fff7d9);
+  --lab-kit-bad: var(--lab-bad, #a3443d);
+  --lab-kit-bad-soft: var(--lab-bad-soft, #fff0ef);
+  --lab-kit-focus: var(--lab-focus, #1f6fb4);
+  --lab-kit-focus-ring: rgba(31, 111, 180, .28);
+  --lab-kit-canvas: var(--lab-paper, #fbfbfd);
+  --lab-kit-canvas-grid: #e7ebee;
+  --lab-kit-canvas-grid-size: 24px;
+  --lab-kit-radius: var(--lab-panel-radius, 12px);
+  --lab-kit-control-radius: var(--lab-control-radius, 8px);
+  --lab-kit-shadow: var(--lab-panel-shadow, 0 5px 16px rgba(32, 48, 58, .08));
+}
+
+.lab-kit-visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.lab-kit-panel {
+  color: var(--lab-kit-ink);
+  background: var(--lab-kit-surface);
+  border: 1px solid var(--lab-kit-line);
+  border-radius: var(--lab-kit-radius);
+  box-shadow: var(--lab-kit-shadow);
+}
+
+.lab-kit-stack { display: flex; flex-direction: column; gap: var(--lab-kit-stack-gap, 1rem); }
+.lab-kit-cluster { display: flex; flex-wrap: wrap; align-items: center; gap: var(--lab-kit-cluster-gap, .5rem); }
+.lab-kit-grid { display: grid; gap: var(--lab-kit-grid-gap, 1rem); grid-template-columns: repeat(var(--lab-kit-grid-columns, 1), minmax(0, 1fr)); }
+.lab-kit-scroll { max-width: 100%; overflow: auto; }
+.lab-kit-svg { display: block; width: 100%; max-width: 100%; height: auto; }
+
+.lab-kit-canvas {
+  box-sizing: border-box;
+  min-width: 0;
+  color: var(--lab-kit-ink);
+  background-color: var(--lab-kit-canvas);
+  border: 1px solid var(--lab-kit-line);
+  border-radius: var(--lab-kit-radius);
+  box-shadow: inset 0 0 0 1px rgba(32, 48, 58, .025);
+}
+
+.lab-kit-canvas[data-grid="square"] {
+  background-image:
+    linear-gradient(var(--lab-kit-canvas-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--lab-kit-canvas-grid) 1px, transparent 1px);
+  background-size: var(--lab-kit-canvas-grid-size) var(--lab-kit-canvas-grid-size);
+}
+
+.lab-kit-field { display: grid; gap: .35rem; color: var(--lab-kit-ink); }
+.lab-kit-field > label { font-weight: 700; }
+.lab-kit-field > small { color: var(--lab-kit-muted); line-height: 1.4; }
+.lab-kit-output { color: var(--lab-kit-ink); font-variant-numeric: tabular-nums; }
+
+.lab-kit-button,
+.lab-kit-input {
+  min-height: 2.5rem;
+  border: 1px solid var(--lab-kit-line);
+  border-radius: var(--lab-kit-control-radius);
+  background: var(--lab-kit-surface);
+  color: var(--lab-kit-ink);
+  font: inherit;
+}
+
+.lab-kit-button { padding: 0 .8rem; cursor: pointer; }
+.lab-kit-button[data-variant="primary"] { border-color: var(--lab-kit-accent); background: var(--lab-kit-accent); color: #fff; font-weight: 700; }
+.lab-kit-input { width: 100%; padding: 0 .6rem; }
+.lab-kit-button:focus-visible,
+.lab-kit-input:focus-visible,
+[data-lab-kit-focus]:focus-visible {
+  outline: 3px solid var(--lab-kit-focus-ring);
+  outline-offset: 2px;
+}
+
+.lab-kit-status { padding: .65rem .8rem; border-left: 3px solid var(--lab-kit-accent); background: var(--lab-kit-accent-soft); color: var(--lab-kit-ink); }
+.lab-kit-status[data-state="good"] { border-color: var(--lab-kit-good); background: var(--lab-kit-good-soft); }
+.lab-kit-status[data-state="warn"] { border-color: var(--lab-kit-warn); background: var(--lab-kit-warn-soft); }
+.lab-kit-status[data-state="bad"] { border-color: var(--lab-kit-bad); background: var(--lab-kit-bad-soft); }
+
+.lab-kit-work { display: grid; min-width: 0; gap: var(--lab-kit-work-gap, .5rem); }
+.lab-kit-work-item { min-width: 0; padding: .55rem .65rem; border-left: 3px solid var(--lab-kit-line); background: var(--lab-kit-surface); }
+.lab-kit-work-item[data-state="needed"] { border-color: var(--lab-kit-warn); background: var(--lab-kit-warn-soft); }
+.lab-kit-work-item[data-state="mistake"] { border-color: var(--lab-kit-bad); background: var(--lab-kit-bad-soft); }
+.lab-kit-work-item[data-state="correct"] { border-color: var(--lab-kit-good); background: var(--lab-kit-good-soft); }
+.lab-kit-work-state { display: inline-flex; align-items: center; gap: .35rem; font-weight: 700; }
+.lab-kit-work-item[data-state="needed"] .lab-kit-work-state { color: var(--lab-kit-warn); }
+.lab-kit-work-item[data-state="mistake"] .lab-kit-work-state { color: var(--lab-kit-bad); }
+.lab-kit-work-item[data-state="correct"] .lab-kit-work-state { color: var(--lab-kit-good); }
+.lab-kit-work-mark::before { display: inline-block; width: 1em; text-align: center; font-weight: 900; }
+.lab-kit-work-item[data-state="mistake"] .lab-kit-work-mark::before { content: "×"; }
+.lab-kit-work-item[data-state="correct"] .lab-kit-work-mark::before { content: "✓"; }
+
+@media (prefers-reduced-motion: reduce) {
+  .lab-kit-motion { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
+}
+
+</style>
+<!-- LAB_RESOURCE_END id="lab-kit.css" type="stylesheet" -->
+
+<style data-modal-progression>
+/* Sparse progression modal and direct circuit interaction. */
+#prediction-card,#proof-card{display:none!important}
+.mode-button:disabled{cursor:default}
+.visual-input-target{cursor:pointer;transition:stroke .16s ease,stroke-width .16s ease,filter .16s ease,opacity .16s ease}
+.visual-input-target[aria-disabled="true"]{cursor:default}
+.visual-input-target.guide-target{
+  stroke:var(--lab-accent)!important;
+  stroke-width:3.5!important;
+  filter:url(#wireGlow);
+  animation:guideTargetPulse .82s ease-in-out infinite alternate;
+}
+@keyframes guideTargetPulse{to{filter:url(#wireGlow) drop-shadow(0 0 6px rgba(82,119,184,.7))}}
+.signal-switch.guide-control,.clock-button.guide-control{border-color:#8faed2;background:#f1f6fc;box-shadow:0 0 0 3px rgba(82,119,184,.12)}
+.phase-modal{
+  position:absolute;
+  z-index:30;
+  left:14px;
+  bottom:14px;
+  width:min(336px,calc(100% - 28px));
+  padding:12px 13px;
+  border:1px solid #a9bdd8;
+  border-radius:11px;
+  background:rgba(250,252,255,.985);
+  box-shadow:0 12px 28px rgba(29,29,31,.17);
+}
+.phase-modal[data-placement="top-left"]{top:14px;bottom:auto}
+.phase-modal[data-placement="bottom-left"]{top:auto;bottom:14px}
+.phase-modal[data-placement="top-right"]{left:auto;right:14px;top:14px;bottom:auto}
+.phase-modal[data-placement="bottom-right"]{left:auto;right:14px;top:auto;bottom:14px}
+.phase-modal.success{border-color:#94c2a5;background:rgba(247,252,248,.99)}
+.phase-modal.bad{border-color:#d4a19a;background:rgba(255,248,247,.99)}
+.phase-modal.complete{border-color:#91b6a0;background:rgba(247,252,248,.99)}
+.phase-kicker{display:block;color:var(--lab-accent);font-size:7px;font-weight:900;letter-spacing:.075em;text-transform:uppercase}
+.phase-modal.success .phase-kicker,.phase-modal.complete .phase-kicker{color:var(--lab-good)}
+.phase-modal.bad .phase-kicker{color:var(--lab-bad)}
+.phase-modal>strong{display:block;margin-top:3px;font-size:13px;line-height:1.28}
+.phase-modal>p{margin:5px 0 0;color:#5f7180;font-size:8.7px;line-height:1.42}
+.phase-evidence{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:9px}
+.phase-evidence>div{min-width:0;padding:7px 8px;border:1px solid var(--lab-line);border-radius:8px;background:#fff}
+.phase-evidence span{display:block;color:var(--lab-muted);font-size:6.5px;font-weight:850;letter-spacing:.05em;text-transform:uppercase}
+.phase-evidence b{display:block;margin-top:2px;color:#334650;font:850 10px/1.25 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;overflow-wrap:anywhere}
+.phase-relation{margin-top:8px;padding:8px 9px;border:1px solid #bed0e2;border-radius:8px;background:#fff;color:#365b82;font-size:8.5px;font-weight:760;line-height:1.4}
+.phase-modal.success .phase-relation,.phase-modal.complete .phase-relation{border-color:#a8cfb6;background:var(--lab-good-soft);color:#2d6948}
+.phase-modal.bad .phase-relation{border-color:#dfb3ad;background:var(--lab-bad-soft);color:#8b3b34}
+.phase-prediction{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:9px}
+.phase-prediction button{min-height:34px;padding:5px 7px;border:1px solid var(--lab-line);border-radius:8px;background:#fff;color:var(--lab-ink);font-size:8.5px;font-weight:820}
+.phase-prediction button.selected{border-color:var(--lab-accent);background:var(--lab-accent-soft);color:#315f96}
+.phase-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}
+.phase-actions:empty{display:none}
+.phase-actions button{flex:1 1 120px;min-height:33px;padding:0 9px;border:1px solid var(--lab-line);border-radius:8px;background:#fff;color:var(--lab-ink);font-size:8.5px;font-weight:850}
+.phase-actions button.primary{border-color:var(--lab-accent);background:var(--lab-accent);color:#fff}
+.phase-actions button.good{border-color:var(--lab-good);background:var(--lab-good);color:#fff}
+.phase-action-hint{display:flex;align-items:center;gap:6px;margin-top:9px;padding-top:8px;border-top:1px solid #d9e1e8;color:#4e6c89;font-size:7.8px;font-weight:820}
+.phase-action-hint::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--lab-accent);box-shadow:0 0 0 4px rgba(82,119,184,.13);animation:hintPulse .8s ease-in-out infinite alternate}
+@keyframes hintPulse{to{box-shadow:0 0 0 7px rgba(82,119,184,.06)}}
+.phase-modal.success .phase-action-hint,.phase-modal.bad .phase-action-hint,.phase-modal.complete .phase-action-hint{display:none}
+@container lab-canvas (max-width:620px){
+  .phase-modal,.phase-modal[data-placement]{position:relative;left:auto;right:auto;top:auto;bottom:auto;width:auto;margin:9px;padding:10px 11px;box-shadow:0 6px 16px rgba(29,29,31,.10)}
+  .phase-evidence{grid-template-columns:1fr 1fr}
+  .mission-tools{gap:5px}
+  .evidence-chip{font-size:7.5px;padding:4px 7px}
+}
+@media(prefers-reduced-motion:reduce){.visual-input-target.guide-target,.phase-action-hint::before{animation:none!important}}
+
+<style data-modal-visibility-refinement>
+/* Milestone modals appear between bouts of work rather than sitting over the working state. */
+.phase-modal[hidden]{display:none!important}
+.visual-input-target.guide-target{
+  animation:none;
+  filter:url(#wireGlow) drop-shadow(0 0 3px rgba(82,119,184,.35));
+}
+@container lab-canvas (max-width:1030px){
+  .phase-modal,.phase-modal[data-placement]{
+    position:relative;
+    left:auto;
+    right:auto;
+    top:auto;
+    bottom:auto;
+    width:min(720px,calc(100% - 18px));
+    margin:9px auto;
+    transform:none;
+    box-shadow:0 6px 16px rgba(29,29,31,.10);
+  }
+}
+</style>
+</style>
+</head>
+<body data-lab-layout="standard">
+<main>
+<!-- LAB_MANIFEST_HEADER_START -->
+<header class="lab-manifest-header">
+  <div class="lab-manifest-heading">
+    <h1 data-lab-manifest="title">Flip-Flops and Sequential Logic</h1>
+  <p class="lab-manifest-subtitle" data-lab-manifest="subtitle">Operate the feedback loop, release the input, and see why the stored output depends on earlier state; then test JK on a clock edge.</p>
+  </div>
+  <!-- LAB_SYLLABUS_CHIPS_START -->
+<nav class="lab-syllabus-chips" aria-label="Syllabus alignment">
+  <section class="lab-syllabus-chip" style="--syllabus-chip-bg:#f4effb;--syllabus-chip-border:#b9a2dc;--syllabus-chip-text:#4f2b77;--syllabus-chip-hover:#e8ddf6" aria-label="A 9618 syllabus alignment">
+    <a class="lab-syllabus-primary-link" href="https://www.cambridgeinternational.org/Images/697372-2026-syllabus.pdf#page=34" target="_blank" rel="noopener noreferrer" aria-label="Open A 9618 syllabus section 15.2"></a>
+    <span class="lab-syllabus-name">A 9618</span>
+    <span class="lab-syllabus-divider" aria-hidden="true">·</span>
+    <span class="lab-syllabus-sections"><span class="lab-syllabus-section is-primary">15.2</span></span>
+  </section>
+</nav>
+<!-- LAB_SYLLABUS_CHIPS_END -->
+</header>
+<!-- LAB_MANIFEST_HEADER_END -->
+<span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span>
+<span data-lab-authored-subtitle-slot hidden></span>
+
+<section class="mission panel" aria-labelledby="mission-title">
+  <div class="mission-copy">
+    <span id="mission-kicker" class="mission-kicker">Investigation</span>
+    <strong id="mission-title">Find what feedback stores, where SR fails, and how JK changes the same 11 input.</strong>
+    <span id="mission-hint">Work directly on the circuit. The next modal appears only when the state trace contains new evidence.</span>
+  </div>
+  <div class="mission-tools" aria-label="Relationships established">
+    <span id="evidence-one" class="evidence-chip">Feedback</span>
+    <span id="evidence-zero" class="evidence-chip">Memory</span>
+    <span id="evidence-invalid" class="evidence-chip">SR 11</span>
+    <span id="evidence-jk" class="evidence-chip">JK toggle</span>
+    <button id="reset-lab" class="quiet-button" type="button">Reset lab</button>
+  </div>
+</section>
+
+<section class="lab panel" data-lab-workspace aria-label="Flip-flop investigation">
+  <div class="workspace">
+    <section class="stage-side" aria-labelledby="visual-title">
+      <div class="visual-head">
+        <div class="visual-copy">
+          <strong id="visual-title">One storage cell, with every live signal visible</strong>
+          <span id="visual-subtitle">The two NOR outputs feed back into each other. Current inputs alone do not determine the stored bit.</span>
+        </div>
+        <div class="mode-switch" role="group" aria-label="Current circuit type">
+          <button id="mode-sr" class="mode-button active" type="button" aria-pressed="true" disabled>SR latch</button>
+          <button id="mode-jk" class="mode-button" type="button" aria-pressed="false" disabled>JK flip-flop</button>
+        </div>
+        <div id="mobile-state-chip" class="mobile-state-chip"><span>Stored Q</span><strong id="mobile-state-bit">0</strong></div>
+      </div>
+
+      <div class="stage-shell">
+        <svg id="circuit-stage" class="stage" viewBox="0 0 900 520" role="img" aria-labelledby="stage-title stage-desc">
+          <title id="stage-title">Cross-coupled NOR flip-flop circuit</title>
+          <desc id="stage-desc">S and R or J and K control a cross-coupled pair of NOR gates. Live wires, gate outputs, feedback and the stored bit are shown.</desc>
+          <defs>
+            <pattern id="stageGrid" width="26" height="26" patternUnits="userSpaceOnUse">
+              <path d="M26 0H0V26" fill="none" stroke="#e9edf0" stroke-width="1"/>
+            </pattern>
+            <filter id="wireGlow" x="-30%" y="-30%" width="160%" height="160%">
+              <feGaussianBlur stdDeviation="2.3" result="blur"/>
+              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+            <filter id="nodeGlow" x="-80%" y="-80%" width="260%" height="260%">
+              <feGaussianBlur stdDeviation="2.8" result="blur"/>
+              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+          <rect width="900" height="520" fill="#f8fafb"/>
+          <rect width="900" height="520" fill="url(#stageGrid)" opacity=".82"/>
+
+          <g id="sr-input-layer">
+            <rect id="svg-r-block" class="input-block visual-input-target" x="34" y="114" width="84" height="62" rx="10" tabindex="0" role="button" aria-label="Reset input R, currently 0"/>
+            <text class="input-label" x="76" y="139">R</text>
+            <text class="input-role" x="76" y="156">RESET INPUT</text>
+            <circle id="svg-r-node" class="node" cx="128" cy="145" r="7"/>
+            <path id="wire-r-in" class="wire" d="M128 145H417"/>
+            <g transform="translate(252 132)"><rect id="pill-r" class="value-pill" width="32" height="22" rx="7"/><text id="value-r" class="value-text" x="16" y="15">0</text></g>
+
+            <rect id="svg-s-block" class="input-block visual-input-target" x="34" y="344" width="84" height="62" rx="10" tabindex="0" role="button" aria-label="Set input S, currently 0"/>
+            <text class="input-label" x="76" y="369">S</text>
+            <text class="input-role" x="76" y="386">SET INPUT</text>
+            <circle id="svg-s-node" class="node" cx="128" cy="375" r="7"/>
+            <path id="wire-s-in" class="wire" d="M128 375H417"/>
+            <g transform="translate(252 362)"><rect id="pill-s" class="value-pill" width="32" height="22" rx="7"/><text id="value-s" class="value-text" x="16" y="15">0</text></g>
+          </g>
+
+          <g id="jk-steering-layer" hidden>
+            <rect id="svg-j-block" class="input-block visual-input-target" x="25" y="62" width="70" height="55" rx="9" tabindex="0" role="button" aria-label="Input J, currently 0"/>
+            <text class="input-label" x="60" y="85">J</text>
+            <text class="input-role" x="60" y="101">SET</text>
+            <circle id="svg-j-node" class="node" cx="105" cy="89" r="7"/>
+            <path id="wire-j-in" class="wire secondary" d="M105 89H128V140H148"/>
+
+            <rect id="svg-k-block" class="input-block visual-input-target" x="25" y="402" width="70" height="55" rx="9" tabindex="0" role="button" aria-label="Input K, currently 0"/>
+            <text class="input-label" x="60" y="425">K</text>
+            <text class="input-role" x="60" y="441">RESET</text>
+            <circle id="svg-k-node" class="node" cx="105" cy="429" r="7"/>
+            <path id="wire-k-in" class="wire secondary" d="M105 429H128V360H148"/>
+
+            <rect id="svg-clock-block" class="input-block visual-input-target" x="25" y="233" width="88" height="54" rx="9" tabindex="0" role="button" aria-label="Rising clock edge"/>
+            <text class="input-label" x="69" y="255">CLK</text>
+            <text class="input-role" x="69" y="272">RISING EDGE</text>
+            <path id="wire-clock" class="wire secondary" d="M113 260H138M138 260V160H148M138 260V360H148"/>
+            <circle id="clock-token" class="clock-token" cx="119" cy="260" r="6" opacity="0"/>
+
+            <rect id="set-steering" class="steering-block" x="148" y="115" width="168" height="90" rx="11"/>
+            <text class="steering-title" x="232" y="143">SET STEERING</text>
+            <text class="steering-formula" x="232" y="162">S = J · Q̅ · ↑CLK</text>
+            <text id="set-steering-value" class="steering-formula" x="232" y="182">internal S = 0</text>
+            <path id="wire-jk-s" class="wire" d="M316 160H350V375H417"/>
+            <g transform="translate(352 362)"><rect id="pill-internal-s" class="value-pill" width="32" height="22" rx="7"/><text id="value-internal-s" class="value-text" x="16" y="15">0</text></g>
+
+            <rect id="reset-steering" class="steering-block" x="148" y="315" width="168" height="90" rx="11"/>
+            <text class="steering-title" x="232" y="343">RESET STEERING</text>
+            <text class="steering-formula" x="232" y="362">R = K · Q · ↑CLK</text>
+            <text id="reset-steering-value" class="steering-formula" x="232" y="382">internal R = 0</text>
+            <path id="wire-jk-r" class="wire" d="M316 360H336V145H417"/>
+            <g transform="translate(352 132)"><rect id="pill-internal-r" class="value-pill" width="32" height="22" rx="7"/><text id="value-internal-r" class="value-text" x="16" y="15">0</text></g>
+
+            <path id="wire-jk-qbar-feedback" class="wire secondary" d="M570 350H735V52H232V115" opacity=".72"/>
+            <path id="wire-jk-q-feedback" class="wire secondary" d="M570 170H718V462H232V405" opacity=".72"/>
+            <text class="feedback-label" x="420" y="46">Q̅ feeds SET steering</text>
+            <text class="feedback-label" x="515" y="456">Q feeds RESET steering</text>
+          </g>
+
+          <g id="storage-cell">
+            <rect class="cell-boundary" x="382" y="58" width="350" height="390" rx="16"/>
+            <text class="cell-title" x="401" y="82">Cross-coupled NOR storage cell</text>
+
+            <path id="upper-gate" class="gate-shape" d="M417 110C467 110 515 126 548 170C515 214 467 230 417 230C440 194 440 146 417 110Z"/>
+            <circle id="upper-bubble" class="gate-bubble" cx="559" cy="170" r="10"/>
+            <text class="gate-label" x="486" y="165">NOR</text>
+            <text class="gate-formula" x="486" y="184">Q = ¬(R ∨ Q̅)</text>
+
+            <path id="lower-gate" class="gate-shape" d="M417 290C467 290 515 306 548 350C515 394 467 410 417 410C440 374 440 326 417 290Z"/>
+            <circle id="lower-bubble" class="gate-bubble" cx="559" cy="350" r="10"/>
+            <text class="gate-label" x="486" y="345">NOR</text>
+            <text class="gate-formula" x="486" y="364">Q̅ = ¬(S ∨ Q)</text>
+
+            <path id="wire-q-out" class="wire" d="M569 170H714"/>
+            <path id="wire-q-feedback" class="wire" d="M569 170H664V430H392V325H417"/>
+            <path id="wire-qbar-out" class="wire" d="M569 350H714"/>
+            <path id="wire-qbar-feedback" class="wire" d="M569 350H692V103H392V195H417"/>
+
+            <circle id="q-node" class="node" cx="714" cy="170" r="8"/>
+            <circle id="qbar-node" class="node" cx="714" cy="350" r="8"/>
+            <text class="output-label" x="688" y="153">Q</text>
+            <text class="output-caption" x="677" y="187">STORED OUTPUT</text>
+            <text class="output-label" x="675" y="337">Q̅</text>
+            <text class="output-caption" x="662" y="369">COMPLEMENT</text>
+
+            <g transform="translate(520 92)"><rect id="pill-qbar-feedback" class="value-pill" width="32" height="22" rx="7"/><text id="value-qbar-feedback" class="value-text" x="16" y="15">1</text></g>
+            <g transform="translate(520 419)"><rect id="pill-q-feedback" class="value-pill" width="32" height="22" rx="7"/><text id="value-q-feedback" class="value-text" x="16" y="15">0</text></g>
+          </g>
+
+          <g id="stored-bit-card">
+            <rect id="state-card-shape" class="state-card valid-zero" x="750" y="182" width="124" height="156" rx="15"/>
+            <text class="state-title" x="812" y="208">Stored bit Q</text>
+            <text id="state-bit" class="state-bit" x="812" y="270">0</text>
+            <text id="state-caption" class="state-caption" x="812" y="298">valid state</text>
+            <text id="state-complement" class="state-caption" x="812" y="317">Q̅ = 1</text>
+          </g>
+        </svg>
+        <section id="phase-modal" class="phase-modal" data-placement="top-left" role="dialog" aria-labelledby="phase-title" aria-describedby="phase-body" aria-live="polite">
+          <span id="phase-kicker" class="phase-kicker">Build the first evidence</span>
+          <strong id="phase-title">Use S to create Q = 1, then return S to 0.</strong>
+          <p id="phase-body">Do both actions on the circuit so you can see whether feedback keeps the 1 when neither external input is active.</p>
+          <div id="phase-content"></div>
+          <div id="phase-actions" class="phase-actions"></div>
+        </section>
+        <div id="stage-caption" class="stage-caption" role="status" aria-live="polite">Both inputs are 0. Q begins at 0 and the feedback loop is holding that state.</div>
+      </div>
+
+      <div class="formula-band" aria-label="Live gate calculations">
+        <div class="condition-card">
+          <span>Current condition</span>
+          <strong id="condition-readout">HOLD · SR = 00</strong>
+        </div>
+        <div class="formula-card">
+          <span id="formula-one-label">Upper NOR</span>
+          <code id="formula-one">Q = ¬(0 ∨ 1) = 0</code>
+        </div>
+        <div class="formula-card">
+          <span id="formula-two-label">Lower NOR</span>
+          <code id="formula-two">Q̅ = ¬(0 ∨ 0) = 1</code>
+        </div>
+      </div>
+    </section>
+
+    <aside class="control-side" aria-label="Controls and evidence">
+      <section class="control-section" aria-labelledby="control-title">
+        <div class="section-head">
+          <div>
+            <strong id="control-title">SR inputs</strong>
+            <span id="control-copy">Change S and R directly. The circuit settles after each change.</span>
+          </div>
+        </div>
+
+        <div id="sr-controls">
+          <div class="signal-controls">
+            <button id="switch-s" class="signal-switch" type="button" aria-pressed="false" aria-label="Set input S, currently 0">
+              <span class="signal-name"><strong>S</strong><small>Set</small></span><span class="switch-rail" aria-hidden="true"></span><span class="signal-value">0</span>
+            </button>
+            <button id="switch-r" class="signal-switch" type="button" aria-pressed="false" aria-label="Reset input R, currently 0">
+              <span class="signal-name"><strong>R</strong><small>Reset</small></span><span class="switch-rail" aria-hidden="true"></span><span class="signal-value">0</span>
+            </button>
+          </div>
+          <div id="sr-condition-strip" class="condition-strip" aria-label="SR conditions">
+            <div class="condition-option current" data-condition="00"><code>00</code><span>Hold</span></div>
+            <div class="condition-option" data-condition="10"><code>10</code><span>Set</span></div>
+            <div class="condition-option" data-condition="01"><code>01</code><span>Reset</span></div>
+            <div class="condition-option" data-condition="11"><code>11</code><span>Invalid</span></div>
+          </div>
+          <div class="control-actions">
+            <button id="return-hold" class="action-button" type="button" disabled>Return to 00 · hold</button>
+            <button id="release-together" class="action-button warn" type="button" hidden>Release both together</button>
+          </div>
+        </div>
+
+        <div id="jk-controls" hidden>
+          <div class="signal-controls">
+            <button id="switch-j" class="signal-switch" type="button" aria-pressed="false" aria-label="Input J, currently 0">
+              <span class="signal-name"><strong>J</strong><small>Set</small></span><span class="switch-rail" aria-hidden="true"></span><span class="signal-value">0</span>
+            </button>
+            <button id="switch-k" class="signal-switch" type="button" aria-pressed="false" aria-label="Input K, currently 0">
+              <span class="signal-name"><strong>K</strong><small>Reset</small></span><span class="switch-rail" aria-hidden="true"></span><span class="signal-value">0</span>
+            </button>
+          </div>
+          <div id="jk-condition-strip" class="condition-strip" aria-label="JK conditions">
+            <div class="condition-option current" data-condition="00"><code>00</code><span>Hold</span></div>
+            <div class="condition-option" data-condition="10"><code>10</code><span>Set</span></div>
+            <div class="condition-option" data-condition="01"><code>01</code><span>Reset</span></div>
+            <div class="condition-option" data-condition="11"><code>11</code><span>Toggle</span></div>
+          </div>
+          <div class="control-actions">
+            <button id="pulse-clock" class="clock-button primary" type="button">
+              <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M2 13h4V7h4v6h4V7h4"/></svg>
+              Pulse rising clock edge
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section id="prediction-card" class="prediction-card" aria-labelledby="prediction-title" hidden>
+        <span class="prediction-kicker">Prediction before evidence</span>
+        <strong id="prediction-title">When S returns to 0, what will Q do?</strong>
+        <p id="prediction-copy">R is already 0, so the current inputs will become 00.</p>
+        <div class="prediction-choices">
+          <button id="predict-stay" class="prediction-choice" type="button">Stay at 1</button>
+          <button id="predict-return" class="prediction-choice" type="button">Return to 0</button>
+        </div>
+        <button id="prediction-submit" class="prediction-submit" type="button" disabled>Release S and observe</button>
+        <div id="prediction-result" class="prediction-result" hidden></div>
+      </section>
+
+      <section id="proof-card" class="proof-card" aria-labelledby="proof-title" hidden>
+        <span class="proof-kicker">Use the evidence</span>
+        <strong id="proof-title">The same current inputs produced two outputs.</strong>
+        <div class="hold-proof" aria-label="Two hold states with identical current inputs">
+          <div class="hold-state"><code>S R = 0 0</code><strong>Q = 1</strong><small>after SET</small></div>
+          <div class="same-input" aria-hidden="true">≠</div>
+          <div class="hold-state"><code>S R = 0 0</code><strong>Q = 0</strong><small>after RESET</small></div>
+        </div>
+        <p>What must Q depend on?</p>
+        <div id="proof-choices" class="proof-choices">
+          <button id="claim-current" type="button">Only the current values of S and R</button>
+          <button id="claim-history" type="button">The current inputs and the previous stored state</button>
+        </div>
+        <p id="proof-feedback" class="proof-feedback" hidden></p>
+      </section>
+
+      <section class="trace-section" aria-labelledby="trace-title">
+        <div class="trace-head">
+          <strong id="trace-title">Working evidence · state trace</strong>
+          <span>Inputs settle first; Q before → after remains visible.</span>
+        </div>
+        <ol id="trace-list" class="trace-list" aria-label="State history"></ol>
+        <p id="trace-note" class="trace-note">Each settled state remains here. HOLD rows after SET or RESET are the evidence used to compare stored states.</p>
+        <div id="complete-note" class="complete-note" hidden></div>
+      </section>
+    </aside>
+  </div>
+</section>
+</main>
+<div id="announcer" class="lab-kit-visually-hidden" role="status" aria-live="polite"></div>
+<!-- LAB_RESOURCE_START id="lab-kit.js" type="script" -->
+<script data-lab-resource="lab-kit.js" data-lab-resource-type="script" data-lab-resource-bytes="13750">
+(() => {
+  "use strict";
+
+  const host = globalThis;
+  const VERSION = "0.2.1";
+
+  function documentFor(root) {
+    return root || host.document || null;
+  }
+
+  function resolve(target, root) {
+    if (typeof target !== "string") return target || null;
+    const scope = documentFor(root);
+    return scope?.querySelector?.(target) || null;
+  }
+
+  function all(selector, root) {
+    const scope = documentFor(root);
+    return [...(scope?.querySelectorAll?.(selector) || [])];
+  }
+
+  function byId(id, root) {
+    const scope = documentFor(root);
+    return scope?.getElementById?.(id) || null;
+  }
+
+  function required(target, root) {
+    const node = resolve(target, root);
+    if (!node) throw new Error(`LabKit could not find ${typeof target === "string" ? target : "the requested node"}.`);
+    return node;
+  }
+
+  const dom = Object.freeze({
+    get: resolve,
+    all,
+    byId,
+    require: required,
+    on(target, eventName, handler, options) {
+      const node = required(target);
+      node.addEventListener(eventName, handler, options);
+      return () => node.removeEventListener(eventName, handler, options);
+    }
+  });
+
+  function parseNumber(value, fallback = null) {
+    if (typeof value === "string" && value.trim() === "") return fallback;
+    const number = typeof value === "number" ? value : Number(value);
+    return Number.isFinite(number) ? number : fallback;
+  }
+
+  function clamp(value, minimum, maximum) {
+    if (minimum > maximum) throw new RangeError("LabKit clamp minimum cannot exceed maximum.");
+    const number = parseNumber(value, minimum);
+    return Math.min(maximum, Math.max(minimum, number));
+  }
+
+  function lerp(start, end, amount) {
+    return start + (end - start) * amount;
+  }
+
+  function inverseLerp(start, end, value) {
+    if (start === end) return 0;
+    return (value - start) / (end - start);
+  }
+
+  function round(value, decimals = 0) {
+    const number = parseNumber(value, 0);
+    const factor = 10 ** decimals;
+    return Math.round((number + Number.EPSILON) * factor) / factor;
+  }
+
+  function format(value, options = {}) {
+    const number = parseNumber(value, 0);
+    const decimals = options.decimals ?? 0;
+    const suffix = options.suffix ?? "";
+    return `${number.toFixed(decimals)}${suffix}`;
+  }
+
+  const numeric = Object.freeze({ parse: parseNumber, clamp, lerp, inverseLerp, round, format });
+
+  function hashSeed(seed) {
+    if (typeof seed === "number" && Number.isFinite(seed)) return (seed >>> 0) || 0x6d2b79f5;
+    const text = String(seed ?? "lab-kit");
+    let hash = 2166136261;
+    for (let index = 0; index < text.length; index += 1) {
+      hash ^= text.charCodeAt(index);
+      hash = Math.imul(hash, 16777619);
+    }
+    return hash >>> 0 || 0x6d2b79f5;
+  }
+
+  function createRng(seed = Date.now()) {
+    const originalSeed = hashSeed(seed);
+    let state = originalSeed;
+    const next = () => {
+      state = (state + 0x6d2b79f5) >>> 0;
+      let value = state;
+      value = Math.imul(value ^ (value >>> 15), value | 1);
+      value ^= value + Math.imul(value ^ (value >>> 7), value | 61);
+      return ((value ^ (value >>> 14)) >>> 0) / 4294967296;
+    };
+    return Object.freeze({
+      seed: originalSeed,
+      next,
+      float: next,
+      int(minimum, maximum) {
+        if (!Number.isFinite(minimum) || !Number.isFinite(maximum) || maximum < minimum) {
+          throw new RangeError("LabKit RNG bounds are invalid.");
+        }
+        const low = Math.ceil(minimum);
+        const high = Math.floor(maximum);
+        return low + Math.floor(next() * (high - low + 1));
+      },
+      pick(items) {
+        if (!items?.length) return undefined;
+        return items[this.int(0, items.length - 1)];
+      },
+      shuffle(items) {
+        const copy = [...items];
+        for (let index = copy.length - 1; index > 0; index -= 1) {
+          const other = this.int(0, index);
+          [copy[index], copy[other]] = [copy[other], copy[index]];
+        }
+        return copy;
+      }
+    });
+  }
+
+  const rng = Object.freeze({ create: createRng, hashSeed });
+
+  function setStatus(target, message, options = {}) {
+    const node = required(target, options.root);
+    const politeness = options.politeness || "polite";
+    node.setAttribute?.("role", options.role || "status");
+    node.setAttribute?.("aria-live", politeness);
+    node.setAttribute?.("aria-atomic", "true");
+    if (options.busy === true) node.setAttribute?.("aria-busy", "true");
+    else node.removeAttribute?.("aria-busy");
+    node.textContent = message == null ? "" : String(message);
+    return node;
+  }
+
+  function ensureStatus(options = {}) {
+    const root = documentFor(options.root);
+    if (!root) throw new Error("LabKit status.ensure needs a document or root.");
+    const existing = options.id ? byId(options.id, root) : root.querySelector?.("[data-lab-kit-status]");
+    if (existing) return existing;
+    if (!root.createElement) throw new Error("LabKit status.ensure needs a document-like root.");
+    const node = root.createElement("div");
+    if (options.id) node.id = options.id;
+    if (node.dataset) node.dataset.labKitStatus = "true";
+    node.className = options.className || "lab-kit-visually-hidden";
+    if (root.body?.appendChild) root.body.appendChild(node);
+    else root.appendChild?.(node);
+    return setStatus(node, options.initialMessage || "", options);
+  }
+
+  const status = Object.freeze({ set: setStatus, announce: setStatus, ensure: ensureStatus });
+
+  function snapshot(value, clone) {
+    return clone ? clone(value) : value;
+  }
+
+  function createHistory(options = {}) {
+    const limit = Math.max(1, Math.floor(options.limit ?? 20));
+    const clone = options.clone;
+    let past = [];
+    let future = [];
+    let presentSet = Object.hasOwn(options, "initial");
+    let present = presentSet ? snapshot(options.initial, clone) : undefined;
+
+    const trim = () => {
+      if (past.length > limit) past = past.slice(-limit);
+    };
+    const api = {
+      record(value) {
+        if (presentSet) past.push(present);
+        present = snapshot(value, clone);
+        presentSet = true;
+        future = [];
+        trim();
+        return present;
+      },
+      undo() {
+        if (!past.length) return present;
+        future.unshift(present);
+        present = past.pop();
+        return present;
+      },
+      redo() {
+        if (!future.length) return present;
+        past.push(present);
+        present = future.shift();
+        trim();
+        return present;
+      },
+      clear(value) {
+        past = [];
+        future = [];
+        presentSet = arguments.length > 0;
+        present = presentSet ? snapshot(value, clone) : undefined;
+        return present;
+      },
+      current() { return present; },
+      canUndo() { return past.length > 0; },
+      canRedo() { return future.length > 0; },
+      size() { return past.length + (presentSet ? 1 : 0) + future.length; },
+      entries() { return [...past, ...(presentSet ? [present] : []), ...future]; }
+    };
+    return Object.freeze(api);
+  }
+
+  const history = Object.freeze({ create: createHistory });
+
+  function clientCoordinates(event) {
+    const source = event?.touches?.[0] || event?.changedTouches?.[0] || event;
+    const x = Number(source?.clientX);
+    const y = Number(source?.clientY);
+    if (!Number.isFinite(x) || !Number.isFinite(y)) throw new TypeError("LabKit SVG events need clientX and clientY.");
+    return { x, y };
+  }
+
+  function svgPoint(svg, event) {
+    if (!svg) throw new TypeError("LabKit svg.point needs an SVG element.");
+    const client = clientCoordinates(event);
+    const matrix = svg.getScreenCTM?.();
+    if (svg.createSVGPoint && matrix?.inverse) {
+      const point = svg.createSVGPoint();
+      point.x = client.x;
+      point.y = client.y;
+      return point.matrixTransform(matrix.inverse());
+    }
+    const rect = svg.getBoundingClientRect?.();
+    const viewBox = svg.viewBox?.baseVal;
+    if (!rect || !viewBox || !rect.width || !rect.height) return client;
+    return {
+      x: viewBox.x + (client.x - rect.left) * viewBox.width / rect.width,
+      y: viewBox.y + (client.y - rect.top) * viewBox.height / rect.height
+    };
+  }
+
+  const svg = Object.freeze({ point: svgPoint, clientPoint: clientCoordinates });
+
+  function now() {
+    return host.performance?.now?.() ?? Date.now();
+  }
+
+  function createAnimation(options = {}) {
+    const onFrame = options.onFrame || (() => {});
+    const onComplete = options.onComplete || (() => {});
+    const duration = options.reducedMotion ? 0 : (options.duration ?? null);
+    const requestFrame = options.requestFrame || host.requestAnimationFrame?.bind(host) || ((callback) => host.setTimeout(() => callback(now()), 16));
+    const cancelFrame = options.cancelFrame || host.cancelAnimationFrame?.bind(host) || host.clearTimeout?.bind(host);
+    let frameId = null;
+    let running = false;
+    let completed = false;
+    let elapsed = 0;
+    let startedAt = null;
+
+    const progressFor = (milliseconds) => duration === null ? null : duration === 0 ? 1 : clamp(milliseconds / duration, 0, 1);
+    const api = {
+      start() {
+        if (running) return api;
+        if (completed) {
+          completed = false;
+          elapsed = 0;
+          startedAt = null;
+        }
+        running = true;
+        frameId = requestFrame(tick);
+        return api;
+      },
+      pause() {
+        if (!running) return api;
+        running = false;
+        if (frameId !== null) cancelFrame?.(frameId);
+        frameId = null;
+        startedAt = null;
+        return api;
+      },
+      stop() {
+        running = false;
+        if (frameId !== null) cancelFrame?.(frameId);
+        frameId = null;
+        startedAt = null;
+        return api;
+      },
+      reset() {
+        api.stop();
+        completed = false;
+        elapsed = 0;
+        startedAt = null;
+        return api;
+      },
+      seek(milliseconds) {
+        elapsed = Math.max(0, Number(milliseconds) || 0);
+        startedAt = running ? now() - elapsed : null;
+        completed = duration !== null && elapsed >= duration;
+        return api;
+      },
+      isRunning() { return running; },
+      isComplete() { return completed; },
+      elapsed() { return elapsed; },
+      progress() { return progressFor(elapsed); },
+      duration
+    };
+
+    function tick(time) {
+      if (!running) return;
+      const timestamp = Number.isFinite(time) ? time : now();
+      if (startedAt === null) startedAt = timestamp - elapsed;
+      elapsed = Math.max(0, timestamp - startedAt);
+      const progress = progressFor(elapsed);
+      const done = progress !== null && progress >= 1;
+      onFrame({ elapsed, progress, done });
+      if (done) {
+        running = false;
+        completed = true;
+        frameId = null;
+        onComplete({ elapsed, progress: 1 });
+      } else {
+        frameId = requestFrame(tick);
+      }
+    }
+
+    return Object.freeze(api);
+  }
+
+  const animation = Object.freeze({ create: createAnimation });
+
+  function bindKeyboardAdjustable(target, options = {}) {
+    const node = required(target);
+    const minimum = options.min ?? -Infinity;
+    const maximum = options.max ?? Infinity;
+    const step = Math.abs(options.step ?? 1) || 1;
+    let value = parseNumber(options.value, 0);
+    if (options.getValue) value = parseNumber(options.getValue(), value);
+
+    const setAria = () => {
+      if (options.role !== false && !node.getAttribute?.("role")) node.setAttribute?.("role", options.role || "slider");
+      if (options.tabIndex !== false && !node.hasAttribute?.("tabindex")) node.setAttribute?.("tabindex", String(options.tabIndex ?? 0));
+      if (Number.isFinite(minimum)) node.setAttribute?.("aria-valuemin", String(minimum));
+      if (Number.isFinite(maximum)) node.setAttribute?.("aria-valuemax", String(maximum));
+      node.setAttribute?.("aria-valuenow", String(value));
+      if (options.formatAriaValue) node.setAttribute?.("aria-valuetext", String(options.formatAriaValue(value)));
+    };
+
+    const update = () => {
+      if (options.getValue) value = parseNumber(options.getValue(), value);
+      setAria();
+      return value;
+    };
+
+    const set = (nextValue, event) => {
+      const next = clamp(nextValue, minimum, maximum);
+      const changed = next !== value;
+      value = next;
+      options.setValue?.(value, event);
+      setAria();
+      if (changed) options.onChange?.(value, event);
+      return changed;
+    };
+
+    const onKeyDown = (event) => {
+      if (event.defaultPrevented || event.ctrlKey || event.metaKey || event.altKey) return;
+      const multiplier = event.shiftKey ? 10 : 1;
+      let delta = 0;
+      if (event.key === "ArrowRight" || event.key === "ArrowUp") delta = step * multiplier;
+      if (event.key === "ArrowLeft" || event.key === "ArrowDown") delta = -step * multiplier;
+      if (event.key === "PageUp") delta = step * 10;
+      if (event.key === "PageDown") delta = -step * 10;
+      if (event.key === "Home") {
+        event.preventDefault?.();
+        set(minimum, event);
+        return;
+      }
+      if (event.key === "End") {
+        event.preventDefault?.();
+        set(maximum, event);
+        return;
+      }
+      if (!delta) return;
+      event.preventDefault?.();
+      set((options.getValue ? parseNumber(options.getValue(), value) : value) + delta, event);
+    };
+
+    node.addEventListener("keydown", onKeyDown);
+    update();
+    return Object.freeze({
+      set,
+      value: () => value,
+      update,
+      destroy: () => node.removeEventListener("keydown", onKeyDown)
+    });
+  }
+
+  const direct = Object.freeze({ keyboardAdjustable: bindKeyboardAdjustable });
+
+  const api = Object.freeze({ version: VERSION, dom, numeric, rng, status, history, svg, animation, direct });
+  host.LabKit = api;
+})();
+
+</script>
+<!-- LAB_RESOURCE_END id="lab-kit.js" type="script" -->
+<script>
+(() => {
+  "use strict";
+
+  const $ = (selector) => document.querySelector(selector);
+  const $$ = (selector) => [...document.querySelectorAll(selector)];
+  const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+  const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const pace = (ms) => reducedMotion ? 1 : ms;
+
+  const elements = {
+    missionKicker: $("#mission-kicker"), missionTitle: $("#mission-title"), missionHint: $("#mission-hint"),
+    evidenceOne: $("#evidence-one"), evidenceZero: $("#evidence-zero"), evidenceInvalid: $("#evidence-invalid"), evidenceJK: $("#evidence-jk"), resetLab: $("#reset-lab"),
+    modeSR: $("#mode-sr"), modeJK: $("#mode-jk"), visualSubtitle: $("#visual-subtitle"), stage: $("#circuit-stage"),
+    srInputLayer: $("#sr-input-layer"), jkSteeringLayer: $("#jk-steering-layer"),
+    srControls: $("#sr-controls"), jkControls: $("#jk-controls"), controlTitle: $("#control-title"), controlCopy: $("#control-copy"),
+    switchS: $("#switch-s"), switchR: $("#switch-r"), switchJ: $("#switch-j"), switchK: $("#switch-k"),
+    returnHold: $("#return-hold"), releaseTogether: $("#release-together"), pulseClock: $("#pulse-clock"),
+    predictionCard: $("#prediction-card"), predictionTitle: $("#prediction-title"), predictionCopy: $("#prediction-copy"),
+    predictStay: $("#predict-stay"), predictReturn: $("#predict-return"), predictionSubmit: $("#prediction-submit"), predictionResult: $("#prediction-result"),
+    proofCard: $("#proof-card"), proofChoices: $("#proof-choices"), claimCurrent: $("#claim-current"), claimHistory: $("#claim-history"), proofFeedback: $("#proof-feedback"),
+    traceList: $("#trace-list"), traceNote: $("#trace-note"), completeNote: $("#complete-note"),
+    conditionReadout: $("#condition-readout"), formulaOneLabel: $("#formula-one-label"), formulaTwoLabel: $("#formula-two-label"), formulaOne: $("#formula-one"), formulaTwo: $("#formula-two"),
+    stageCaption: $("#stage-caption"), announcer: $("#announcer"), mobileStateChip: $("#mobile-state-chip"), mobileStateBit: $("#mobile-state-bit"),
+    stateCardShape: $("#state-card-shape"), stateBit: $("#state-bit"), stateCaption: $("#state-caption"), stateComplement: $("#state-complement"),
+    upperGate: $("#upper-gate"), lowerGate: $("#lower-gate"), upperBubble: $("#upper-bubble"), lowerBubble: $("#lower-bubble"),
+    qNode: $("#q-node"), qbarNode: $("#qbar-node"),
+    svgSBlock: $("#svg-s-block"), svgRBlock: $("#svg-r-block"), svgJBlock: $("#svg-j-block"), svgKBlock: $("#svg-k-block"), svgClockBlock: $("#svg-clock-block"),
+    svgSNode: $("#svg-s-node"), svgRNode: $("#svg-r-node"), svgJNode: $("#svg-j-node"), svgKNode: $("#svg-k-node"),
+    wireS: $("#wire-s-in"), wireR: $("#wire-r-in"), wireJ: $("#wire-j-in"), wireK: $("#wire-k-in"), wireClock: $("#wire-clock"),
+    wireQOut: $("#wire-q-out"), wireQFeedback: $("#wire-q-feedback"), wireQbarOut: $("#wire-qbar-out"), wireQbarFeedback: $("#wire-qbar-feedback"),
+    wireJKS: $("#wire-jk-s"), wireJKR: $("#wire-jk-r"), wireJKQ: $("#wire-jk-q-feedback"), wireJKQbar: $("#wire-jk-qbar-feedback"),
+    setSteering: $("#set-steering"), resetSteering: $("#reset-steering"), setSteeringValue: $("#set-steering-value"), resetSteeringValue: $("#reset-steering-value"),
+    clockToken: $("#clock-token"),
+    valueS: $("#value-s"), valueR: $("#value-r"), valueInternalS: $("#value-internal-s"), valueInternalR: $("#value-internal-r"),
+    pillS: $("#pill-s"), pillR: $("#pill-r"), pillInternalS: $("#pill-internal-s"), pillInternalR: $("#pill-internal-r"),
+    valueQFeedback: $("#value-q-feedback"), valueQbarFeedback: $("#value-qbar-feedback"), pillQFeedback: $("#pill-q-feedback"), pillQbarFeedback: $("#pill-qbar-feedback"),
+    phaseModal: $("#phase-modal"), phaseKicker: $("#phase-kicker"), phaseTitle: $("#phase-title"), phaseBody: $("#phase-body"), phaseContent: $("#phase-content"), phaseActions: $("#phase-actions")
+  };
+
+  const wires = {
+    s: elements.wireS, r: elements.wireR, j: elements.wireJ, k: elements.wireK, clock: elements.wireClock,
+    qOut: elements.wireQOut, qFeedback: elements.wireQFeedback, qbarOut: elements.wireQbarOut, qbarFeedback: elements.wireQbarFeedback,
+    jkS: elements.wireJKS, jkR: elements.wireJKR, jkQ: elements.wireJKQ, jkQbar: elements.wireJKQbar
+  };
+
+  const state = {
+    mode: "sr", s: 0, r: 0, j: 0, k: 0, q: 0, qbar: 1,
+    visualQ: 0, visualQbar: 1, internalS: 0, internalR: 0, clockHigh: false,
+    busy: false, transitionCondition: null, activeSegments: new Set(), activeTone: "", caption: "Both inputs are 0. Q begins at 0 and the feedback loop is holding that state.",
+    history: [], nextStep: 0, lastCommand: null,
+    holdAfterSet: null, holdAfterReset: null, predictionChoice: null, predictionResolved: false, predictionCorrect: null,
+    interpretationCorrect: false, proofWrong: false, invalidSeen: false, recoverySeen: false, unresolvedSeen: false, jkUnlocked: false,
+    jkPrediction: null, jkPredictionResolved: false, jkToggleCount: 0, jkLastToggleOutput: null, complete: false,
+    phase: "sr_store_one", modalOpen: true
+  };
+
+  function bitText(value) { return value === null ? "?" : String(value); }
+  function validState() { return (state.q === 0 || state.q === 1) && state.qbar === 1 - state.q; }
+  function srCode() { return `${state.s}${state.r}`; }
+  function jkCode() { return `${state.j}${state.k}`; }
+  function srCondition(s = state.s, r = state.r) {
+    if (s === 0 && r === 0) return "HOLD";
+    if (s === 1 && r === 0) return "SET";
+    if (s === 0 && r === 1) return "RESET";
+    return "INVALID";
+  }
+  function jkCondition(j = state.j, k = state.k) {
+    if (j === 0 && k === 0) return "HOLD";
+    if (j === 1 && k === 0) return "SET";
+    if (j === 0 && k === 1) return "RESET";
+    return "TOGGLE";
+  }
+  function announce(message) {
+    elements.announcer.textContent = "";
+    requestAnimationFrame(() => { elements.announcer.textContent = message; });
+  }
+  function setCaption(message, announceIt = false) {
+    state.caption = message;
+    elements.stageCaption.textContent = message;
+    if (announceIt) announce(message);
+  }
+
+  function setWireState(element, value, activeName) {
+    if (!element) return;
+    element.classList.toggle("high", value === 1);
+    element.classList.toggle("invalid", value === "invalid");
+    element.classList.toggle("unknown", value === null);
+    const active = state.activeSegments.has(activeName);
+    element.classList.toggle("pulse", active);
+    element.classList.toggle("set-path", active && state.activeTone === "set");
+    element.classList.toggle("reset-path", active && state.activeTone === "reset");
+    element.classList.toggle("clock-path", active && state.activeTone === "clock");
+    element.classList.toggle("feedback-path", active && state.activeTone === "feedback");
+  }
+
+  function setNodeState(element, value) {
+    if (!element) return;
+    element.classList.toggle("high", value === 1);
+    element.classList.toggle("invalid", value === "invalid");
+    element.classList.toggle("unknown", value === null);
+  }
+
+  function setPill(rect, text, value) {
+    if (!rect || !text) return;
+    rect.classList.toggle("high", value === 1);
+    rect.classList.toggle("invalid", value === "invalid");
+    rect.classList.toggle("unknown", value === null);
+    text.classList.toggle("high", value === 1);
+    text.classList.toggle("invalid", value === "invalid");
+    text.classList.toggle("unknown", value === null);
+    text.textContent = value === "invalid" ? "0" : bitText(value);
+  }
+
+  function updateSwitch(button, value, name) {
+    button.setAttribute("aria-pressed", String(value === 1));
+    button.setAttribute("aria-label", `${name}, currently ${value}`);
+    button.querySelector(".signal-value").textContent = value;
+  }
+
+  function currentVisualType() {
+    if (state.visualQ === null || state.visualQbar === null) return "unknown";
+    if (state.visualQ === state.visualQbar) {
+      if (state.busy && state.transitionCondition !== "INVALID") return "transient";
+      return "invalid";
+    }
+    return "valid";
+  }
+
+  function renderCircuit() {
+    const inputS = state.mode === "sr" ? state.s : state.internalS;
+    const inputR = state.mode === "sr" ? state.r : state.internalR;
+    const visualType = currentVisualType();
+    const qSignal = visualType === "invalid" ? "invalid" : state.visualQ;
+    const qbarSignal = visualType === "invalid" ? "invalid" : state.visualQbar;
+
+    elements.srInputLayer.toggleAttribute("hidden", state.mode !== "sr");
+    elements.jkSteeringLayer.toggleAttribute("hidden", state.mode !== "jk");
+
+    if (state.mode === "sr") {
+      elements.svgSBlock.classList.toggle("on", state.s === 1);
+      elements.svgRBlock.classList.toggle("on", state.r === 1);
+      setNodeState(elements.svgSNode, state.s);
+      setNodeState(elements.svgRNode, state.r);
+      setWireState(wires.s, state.s, "s");
+      setWireState(wires.r, state.r, "r");
+      setPill(elements.pillS, elements.valueS, state.s);
+      setPill(elements.pillR, elements.valueR, state.r);
+    } else {
+      elements.svgJBlock.classList.toggle("on", state.j === 1);
+      elements.svgKBlock.classList.toggle("on", state.k === 1);
+      setNodeState(elements.svgJNode, state.j);
+      setNodeState(elements.svgKNode, state.k);
+      setWireState(wires.j, state.j, "j");
+      setWireState(wires.k, state.k, "k");
+      setWireState(wires.clock, state.clockHigh ? 1 : 0, "clock");
+      setWireState(wires.jkS, state.internalS, "jkS");
+      setWireState(wires.jkR, state.internalR, "jkR");
+      setWireState(wires.jkQ, qSignal, "jkQ");
+      setWireState(wires.jkQbar, qbarSignal, "jkQbar");
+      setPill(elements.pillInternalS, elements.valueInternalS, state.internalS);
+      setPill(elements.pillInternalR, elements.valueInternalR, state.internalR);
+      elements.setSteering.classList.toggle("active-set", state.internalS === 1);
+      elements.resetSteering.classList.toggle("active-reset", state.internalR === 1);
+      elements.setSteeringValue.textContent = `internal S = ${state.internalS}`;
+      elements.resetSteeringValue.textContent = `internal R = ${state.internalR}`;
+    }
+
+    setWireState(wires.qOut, qSignal, "qOut");
+    setWireState(wires.qFeedback, qSignal, "qFeedback");
+    setWireState(wires.qbarOut, qbarSignal, "qbarOut");
+    setWireState(wires.qbarFeedback, qbarSignal, "qbarFeedback");
+    setNodeState(elements.qNode, qSignal);
+    setNodeState(elements.qbarNode, qbarSignal);
+    setPill(elements.pillQFeedback, elements.valueQFeedback, qSignal);
+    setPill(elements.pillQbarFeedback, elements.valueQbarFeedback, qbarSignal);
+
+    const upperActive = state.activeSegments.has("upperGate");
+    const lowerActive = state.activeSegments.has("lowerGate");
+    elements.upperGate.style.filter = upperActive ? "url(#wireGlow)" : "";
+    elements.lowerGate.style.filter = lowerActive ? "url(#wireGlow)" : "";
+    elements.upperBubble.style.filter = upperActive ? "url(#nodeGlow)" : "";
+    elements.lowerBubble.style.filter = lowerActive ? "url(#nodeGlow)" : "";
+
+    elements.stateCardShape.setAttribute("class", "state-card");
+    elements.mobileStateChip.classList.remove("transient", "invalid", "unknown");
+    if (visualType === "transient") {
+      elements.mobileStateChip.classList.add("transient");
+      elements.mobileStateBit.textContent = "…";
+      elements.stateCardShape.classList.add("transient");
+      elements.stateBit.textContent = "…";
+      elements.stateCaption.textContent = "signal propagating";
+      elements.stateComplement.textContent = "not settled yet";
+    } else if (visualType === "invalid") {
+      elements.mobileStateChip.classList.add("invalid");
+      elements.mobileStateBit.textContent = "—";
+      elements.stateCardShape.classList.add("invalid");
+      elements.stateBit.textContent = "—";
+      elements.stateCaption.textContent = "no valid bit";
+      elements.stateComplement.textContent = "Q = Q̅ = 0";
+    } else if (visualType === "unknown") {
+      elements.mobileStateChip.classList.add("unknown");
+      elements.mobileStateBit.textContent = "?";
+      elements.stateCardShape.classList.add("unknown");
+      elements.stateBit.textContent = "?";
+      elements.stateCaption.textContent = "release is unresolved";
+      elements.stateComplement.textContent = "gate delay decides";
+    } else {
+      elements.mobileStateBit.textContent = String(state.visualQ);
+      elements.stateCardShape.classList.add(state.visualQ === 1 ? "valid-one" : "valid-zero");
+      elements.stateBit.textContent = String(state.visualQ);
+      elements.stateCaption.textContent = "valid state";
+      elements.stateComplement.textContent = `Q̅ = ${state.visualQbar}`;
+    }
+    elements.stageCaption.textContent = state.caption;
+  }
+
+  function controlAllowed(name) {
+    if (state.busy || state.modalOpen) return false;
+    if (state.mode === "sr") return name === "s" || name === "r";
+    if (state.mode === "jk") return name === "j" || name === "k" || name === "clock";
+    return false;
+  }
+
+  function setVisualControlState(element, value, name) {
+    if (!element) return;
+    const allowed = controlAllowed(name);
+    element.setAttribute("aria-disabled", String(!allowed));
+    if (name !== "clock") {
+      element.setAttribute("aria-pressed", String(value === 1));
+      element.setAttribute("aria-label", `${name.toUpperCase()} input, currently ${value}${allowed ? ". Select to toggle." : "."}`);
+    } else {
+      element.setAttribute("aria-label", allowed ? "Rising clock edge. Select to pulse the clock." : "Rising clock edge.");
+    }
+  }
+
+  function taskTargets() {
+    if (state.modalOpen || state.phase === "free") return [];
+    if (state.phase === "sr_store_one") return ["s"];
+    if (state.phase === "sr_store_zero") return ["r"];
+    if (state.phase === "sr_invalid" || state.phase === "sr_recover") return ["s", "r"];
+    if (state.phase === "jk_toggle") return ["j", "k", "clock"];
+    return [];
+  }
+
+  function renderGuideTargets() {
+    const targets = new Set(taskTargets());
+    const map = {s:elements.svgSBlock,r:elements.svgRBlock,j:elements.svgJBlock,k:elements.svgKBlock,clock:elements.svgClockBlock};
+    Object.entries(map).forEach(([name, element]) => {
+      if (!element) return;
+      element.classList.toggle("guide-target", targets.has(name));
+    });
+    [[elements.switchS,"s"],[elements.switchR,"r"],[elements.switchJ,"j"],[elements.switchK,"k"],[elements.pulseClock,"clock"]].forEach(([el]) => {
+      if (el) el.classList.remove("guide-control");
+    });
+  }
+
+  function renderControls() {
+    elements.modeSR.classList.toggle("active", state.mode === "sr");
+    elements.modeJK.classList.toggle("active", state.mode === "jk");
+    elements.modeSR.setAttribute("aria-pressed", String(state.mode === "sr"));
+    elements.modeJK.setAttribute("aria-pressed", String(state.mode === "jk"));
+    const freeMode = state.phase === "free";
+    elements.modeJK.disabled = state.busy || !freeMode;
+    elements.modeSR.disabled = state.busy || !freeMode;
+    elements.resetLab.disabled = state.busy;
+
+    elements.srControls.hidden = state.mode !== "sr";
+    elements.jkControls.hidden = state.mode !== "jk";
+    updateSwitch(elements.switchS, state.s, "Set input S");
+    updateSwitch(elements.switchR, state.r, "Reset input R");
+    updateSwitch(elements.switchJ, state.j, "Input J");
+    updateSwitch(elements.switchK, state.k, "Input K");
+    elements.switchS.disabled = !freeMode || !controlAllowed("s");
+    elements.switchR.disabled = !freeMode || !controlAllowed("r");
+    elements.switchJ.disabled = !freeMode || !controlAllowed("j");
+    elements.switchK.disabled = !freeMode || !controlAllowed("k");
+
+    elements.returnHold.hidden = state.phase !== "free";
+    elements.returnHold.disabled = state.busy || (state.s === 0 && state.r === 0);
+    elements.returnHold.textContent = state.s === 1 && state.r === 1 ? "Release one input first" : "Return to 00 · hold";
+    elements.releaseTogether.hidden = state.phase !== "free" || !(state.mode === "sr" && state.s === 1 && state.r === 1);
+    elements.releaseTogether.disabled = state.busy;
+    elements.pulseClock.disabled = !freeMode || !controlAllowed("clock");
+
+    $$("#sr-condition-strip .condition-option").forEach((option) => {
+      const current = option.dataset.condition === srCode();
+      option.classList.toggle("current", current);
+      option.classList.toggle("bad", current && srCode() === "11");
+    });
+    $$("#jk-condition-strip .condition-option").forEach((option) => option.classList.toggle("current", option.dataset.condition === jkCode()));
+
+    if (state.mode === "sr") {
+      elements.controlTitle.textContent = "SR inputs";
+      elements.controlCopy.textContent = state.phase === "free" ? "Select the inputs on the circuit or use these mirrored controls." : "Operate the inputs on the circuit. These controls mirror the current values while the investigation is running.";
+      elements.visualSubtitle.textContent = "The two NOR outputs feed back into each other. Current inputs alone do not determine the stored bit.";
+    } else {
+      elements.controlTitle.textContent = "JK inputs and clock";
+      elements.controlCopy.textContent = state.phase === "free" ? "Select J, K and the clock on the circuit or use these mirrored controls." : "Operate J, K and the clock on the circuit. These controls mirror the current values while the investigation is running.";
+      elements.visualSubtitle.textContent = "The storage cell stays in place. J, K, the clock and the previous Q steer a safe internal S or R pulse.";
+    }
+
+    setVisualControlState(elements.svgSBlock, state.s, "s");
+    setVisualControlState(elements.svgRBlock, state.r, "r");
+    setVisualControlState(elements.svgJBlock, state.j, "j");
+    setVisualControlState(elements.svgKBlock, state.k, "k");
+    setVisualControlState(elements.svgClockBlock, 0, "clock");
+    renderGuideTargets();
+  }
+
+  function renderFormula() {
+    if (state.mode === "sr") {
+      const condition = state.q === null && state.s === 0 && state.r === 0 ? "UNRESOLVED" : srCondition();
+      elements.conditionReadout.textContent = `${condition} · SR = ${srCode()}`;
+      elements.formulaOneLabel.textContent = "Upper NOR";
+      elements.formulaTwoLabel.textContent = "Lower NOR";
+      if (state.visualQ === null || state.visualQbar === null) {
+        elements.formulaOne.textContent = "Q = ¬(0 ∨ ?) = ?";
+        elements.formulaTwo.textContent = "Q̅ = ¬(0 ∨ ?) = ?";
+      } else {
+        elements.formulaOne.textContent = `Q = ¬(${state.r} ∨ ${state.visualQbar}) = ${state.visualQ}`;
+        elements.formulaTwo.textContent = `Q̅ = ¬(${state.s} ∨ ${state.visualQ}) = ${state.visualQbar}`;
+      }
+    } else {
+      elements.conditionReadout.textContent = `${jkCondition()} · JK = ${jkCode()}${state.clockHigh ? " · ↑CLK" : ""}`;
+      elements.formulaOneLabel.textContent = "SET steering";
+      elements.formulaTwoLabel.textContent = "RESET steering";
+      const qbar = state.qbar === null ? "?" : state.qbar;
+      const q = state.q === null ? "?" : state.q;
+      elements.formulaOne.textContent = `S = ${state.j} · ${qbar} · ${state.clockHigh ? 1 : 0} = ${state.internalS}`;
+      elements.formulaTwo.textContent = `R = ${state.k} · ${q} · ${state.clockHigh ? 1 : 0} = ${state.internalR}`;
+    }
+  }
+
+  function deriveMission() {
+    let kicker = "Investigation";
+    let title = state.mode === "sr"
+      ? "Find what feedback stores and where the SR latch stops representing one valid bit."
+      : "Compare SR = 11 with clocked JK = 11 using the same storage cell.";
+    let hint = state.modalOpen
+      ? "Review the milestone, then continue on the circuit."
+      : "Work directly on the circuit. The next modal appears only when the trace contains the required new evidence.";
+    if (state.phase === "free") {
+      kicker = "Free exploration";
+      title = "Change the inputs and test counterexamples while the state trace remains visible.";
+      hint = "SR responds directly to S and R. JK prepares with J and K, then changes only on a rising clock edge.";
+    }
+    elements.missionKicker.textContent = kicker;
+    elements.missionTitle.textContent = title;
+    elements.missionHint.textContent = hint;
+  }
+
+  function renderPrediction() { elements.predictionCard.hidden = true; }
+
+  function renderProof() { elements.proofCard.hidden = true; }
+
+  function renderTrace() {
+    if (!state.history.length) {
+      elements.traceList.innerHTML = '<li class="trace-empty">Operate the inputs. Each settled state will remain here for comparison.</li>';
+      return;
+    }
+    elements.traceList.innerHTML = state.history.map((row, index) => {
+      const classes = ["trace-row"];
+      if (index === state.history.length - 1) classes.push("current");
+      if (row.evidence) classes.push("evidence");
+      if (row.condition === "INVALID") classes.push("invalid");
+      if (row.condition === "UNRESOLVED") classes.push("unknown");
+      const before = bitText(row.before);
+      const after = row.afterLabel || bitText(row.after);
+      return `<li class="${classes.join(" ")}" data-step="${row.step}">
+        <span class="trace-step">${row.step}</span>
+        <span class="trace-input"><code>${row.inputs}</code><small>${row.inputLabel}</small></span>
+        <span class="trace-condition">${row.condition}</span>
+        <span class="trace-change"><span>${before}</span><i>→</i><strong>${after}</strong></span>
+      </li>`;
+    }).join("");
+    requestAnimationFrame(() => requestAnimationFrame(() => { elements.traceList.scrollTop = elements.traceList.scrollHeight; }));
+  }
+
+
+  function phaseEvidence(items) {
+    return `<div class="phase-evidence">${items.map(([label,value]) => `<div><span>${label}</span><b>${value}</b></div>`).join("")}</div>`;
+  }
+
+  function phaseRelation(text) { return `<div class="phase-relation">${text}</div>`; }
+  function actionHint(text) { return `<div class="phase-action-hint">${text}</div>`; }
+
+  function phaseConfig() {
+    const p = state.phase;
+    if (p === "sr_store_one") return {
+      k:"First investigation",
+      t:"Use S to set Q = 1, then release S so you can test whether feedback stores the bit at S R = 00.",
+      b:"The state trace will keep both the driven SET state and the later HOLD state. The next modal appears only when that stored-state evidence exists.",
+      a:[["work","Test the feedback","primary"]]
+    };
+    if (p === "sr_store_zero") return {
+      kind:"success",
+      k:"Milestone evidence",
+      t:"Q = 1 survived after S returned to 0.",
+      b:"Feedback is preserving the bit with no active input. Use R to create Q = 0, then release R so you can compare two HOLD states with the same current inputs.",
+      c:phaseEvidence([["after SET","S R = 00 → Q = 1"],["external drive","S = R = 0"]])+
+        phaseRelation("The stored bit survives after the input that created it has been removed."),
+      a:[["work","Build the comparison","primary"]]
+    };
+    if (p === "sr_invalid") return {
+      kind:"success",
+      k:"Relationship observed",
+      t:"The same S R = 00 inputs have now held Q = 1 and Q = 0.",
+      b:"The circuit therefore depends on previous state as well as current inputs. Make S = R = 1 so you can test where the SR latch stops representing one valid bit.",
+      c:phaseEvidence([["after SET","00 → Q = 1"],["after RESET","00 → Q = 0"]])+
+        phaseRelation("Current inputs alone are not enough to determine Q; the feedback loop carries history."),
+      a:[["work","Test S R = 11","primary"]]
+    };
+    if (p === "sr_recover") return {
+      kind:"bad",
+      k:"Limit found",
+      t:"S R = 11 forced Q = Q̅ = 0.",
+      b:"The outputs are no longer complements. Release one input and then the other so you can see how a valid stored state is recovered. The release order decides which side wins.",
+      c:phaseEvidence([["upper output","Q = 0"],["lower output","Q̅ = 0"]])+
+        phaseRelation("SR = 11 does not encode one stored bit. Sequential release gives one side priority and restores a valid state."),
+      a:[["work","Recover the latch","primary"]]
+    };
+    if (p === "jk_toggle") return {
+      kind:"success",
+      k:"Recovery complete",
+      t:`The SR latch is valid again at Q = ${bitText(state.q)}.`,
+      b:"Set J = K = 1 and pulse the rising clock edge twice so you can compare controlled toggling with the invalid SR = 11 case.",
+      c:phaseEvidence([["recovered hold",`S R = 00 → Q = ${bitText(state.q)}`],["comparison target","J K = 11 + two clock edges"]])+
+        phaseRelation("In JK, J and K prepare the change; the rising edge and previous Q decide which internal path acts."),
+      a:[["work","Test J K = 11","primary"]]
+    };
+    if (p === "complete") return {
+      kind:"complete",
+      k:"Relationship established",
+      t:"The same external 11 has a different consequence in SR and JK.",
+      b:"The working trace now contains the causal evidence from both circuits.",
+      c:phaseEvidence([["SR = 11","Q = Q̅ = 0 · invalid"],["JK = 11 + edges","Q toggles each edge"]])+
+        phaseRelation("JK uses the clock and previous Q to activate only one internal path at a time, turning the unsafe SR 11 case into a controlled toggle."),
+      a:[["explore","Explore freely","good"]]
+    };
+    return null;
+  }
+
+  function setPhase(next) {
+    state.phase = next;
+    render();
+  }
+
+  function handlePhaseAction(action) {
+    if (state.busy) return;
+    if (action === "work") {
+      if (state.phase === "sr_store_zero" && state.holdAfterReset) {
+        state.phase = "sr_invalid";
+        state.modalOpen = true;
+        render();
+        return;
+      }
+      if (state.phase === "sr_invalid" && state.invalidSeen) {
+        state.phase = "sr_recover";
+        state.modalOpen = true;
+        render();
+        return;
+      }
+      if (state.phase === "sr_recover" && state.recoverySeen) {
+        state.jkUnlocked = true;
+        state.phase = "jk_toggle";
+        switchMode("jk", true);
+        state.modalOpen = true;
+        render();
+        return;
+      }
+      state.modalOpen = false;
+      setCaption("Work directly on the circuit. The next modal will appear when the trace contains new milestone evidence.");
+      render();
+      return;
+    }
+    if (action === "explore") {
+      state.phase = "free";
+      state.modalOpen = false;
+      state.complete = true;
+      setCaption("Free exploration unlocked. Change inputs directly and use the trace to test more cases.", true);
+      render();
+    }
+  }
+
+  function renderPhaseModal() {
+    const cfg = phaseConfig();
+    const visible = Boolean(cfg && state.modalOpen);
+    elements.phaseModal.hidden = !visible;
+    if (!visible) return;
+    elements.phaseModal.className = `phase-modal ${cfg.kind || ""}`.trim();
+    const placements = {
+      sr_store_one:"top-left",
+      sr_store_zero:"bottom-left",
+      sr_invalid:"top-right",
+      sr_recover:"top-right",
+      jk_toggle:"top-right",
+      complete:"bottom-right"
+    };
+    elements.phaseModal.dataset.placement = placements[state.phase] || "top-left";
+    elements.phaseKicker.textContent = cfg.k;
+    elements.phaseTitle.textContent = cfg.t;
+    elements.phaseBody.textContent = cfg.b;
+    elements.phaseContent.innerHTML = cfg.c || "";
+    elements.phaseActions.innerHTML = (cfg.a || []).map(([action,label,kind]) => `<button type="button" class="${kind || ""}" data-phase-action="${action}">${label}</button>`).join("");
+    elements.phaseModal.querySelectorAll("[data-phase-action]").forEach((button) => button.addEventListener("click", () => handlePhaseAction(button.dataset.phaseAction)));
+  }
+
+  function advancePhaseAfterSR(condition, evidence) {
+    let advanced = false;
+    if (state.phase === "sr_store_one" && evidence === "one") {
+      state.phase = "sr_store_zero";
+      advanced = true;
+    } else if (state.phase === "sr_store_zero" && evidence === "zero") {
+      state.phase = "sr_invalid";
+      advanced = true;
+    } else if (state.phase === "sr_invalid" && condition === "INVALID") {
+      state.phase = "sr_recover";
+      advanced = true;
+    } else if (state.phase === "sr_recover" && state.recoverySeen && state.s === 0 && state.r === 0 && validState()) {
+      state.jkUnlocked = true;
+      state.phase = "jk_toggle";
+      switchMode("jk", true);
+      advanced = true;
+    }
+    if (advanced) state.modalOpen = true;
+  }
+
+  function advancePhaseAfterClock(beforeQ, afterQ, action) {
+    if (state.phase === "jk_toggle" && action === "TOGGLE" && afterQ !== beforeQ && state.jkToggleCount >= 2) {
+      state.phase = "complete";
+      state.modalOpen = true;
+    }
+  }
+
+  function renderProgress() {
+    elements.evidenceOne.classList.toggle("done", Boolean(state.holdAfterSet));
+    elements.evidenceZero.classList.toggle("done", Boolean(state.holdAfterSet && state.holdAfterReset));
+    elements.evidenceInvalid.classList.toggle("done", Boolean(state.invalidSeen));
+    elements.evidenceJK.classList.toggle("done", state.jkToggleCount >= 2 || state.phase === "complete" || state.phase === "free");
+  }
+
+  function renderCompletion() {
+    elements.completeNote.hidden = !state.complete;
+    if (state.complete) {
+      elements.completeNote.textContent = "Same 11 input, different consequence: SR forces an invalid output pair; JK uses the clock and previous Q to toggle one stored bit.";
+    }
+  }
+
+  function render() {
+    renderCircuit();
+    renderControls();
+    renderFormula();
+    deriveMission();
+    renderPrediction();
+    renderProof();
+    renderTrace();
+    renderCompletion();
+    renderProgress();
+    renderPhaseModal();
+  }
+
+  function addTrace({ inputs, inputLabel, condition, before, after, afterLabel = "", evidence = "", note = "" }) {
+    const row = { step: state.nextStep++, inputs, inputLabel, condition, before, after, afterLabel, evidence, note };
+    state.history.push(row);
+    if (state.history.length > 14) state.history.shift();
+    if (evidence === "one") state.holdAfterSet = row;
+    if (evidence === "zero") state.holdAfterReset = row;
+    renderTrace();
+    return row;
+  }
+
+  function setActive(names, tone, caption) {
+    state.activeSegments = new Set(names);
+    state.activeTone = tone || "";
+    if (caption) setCaption(caption);
+    renderCircuit();
+    renderFormula();
+  }
+
+  function clearActive() {
+    state.activeSegments.clear();
+    state.activeTone = "";
+    renderCircuit();
+  }
+
+  function targetForSR(s, r) {
+    if (s === 1 && r === 0) return { q: 1, qbar: 0, condition: "SET" };
+    if (s === 0 && r === 1) return { q: 0, qbar: 1, condition: "RESET" };
+    if (s === 1 && r === 1) return { q: 0, qbar: 0, condition: "INVALID" };
+    return { q: state.q, qbar: state.qbar, condition: state.q === null ? "UNRESOLVED" : "HOLD" };
+  }
+
+  async function transitionSR(nextS, nextR, source = "input") {
+    if (state.busy || state.mode !== "sr") return;
+    const oldS = state.s, oldR = state.r, beforeQ = state.q, beforeQbar = state.qbar;
+    if (nextS === oldS && nextR === oldR) return;
+
+    state.busy = true;
+    state.s = nextS;
+    state.r = nextR;
+    const target = targetForSR(nextS, nextR);
+    state.transitionCondition = target.condition;
+    const changedInputNames = [];
+    if (nextS !== oldS) changedInputNames.push("s");
+    if (nextR !== oldR) changedInputNames.push("r");
+    const tone = target.condition === "SET" ? "set" : target.condition === "RESET" ? "reset" : target.condition === "INVALID" ? "reset" : "feedback";
+    setActive(changedInputNames, tone, `${changedInputNames.map((name) => name.toUpperCase()).join(" and ")} changed. The new signal has reached the NOR input.`);
+    render();
+    await wait(pace(170));
+
+    if (target.condition === "SET") {
+      state.visualQbar = 0;
+      setActive(["s", "lowerGate", "qbarOut"], "set", "S = 1 forces the lower NOR output Q̅ to 0.");
+      await wait(pace(210));
+      state.visualQ = 1;
+      setActive(["qbarFeedback", "upperGate", "qOut"], "set", "Q̅ = 0 feeds the upper NOR gate, so Q becomes 1.");
+      state.lastCommand = "set";
+    } else if (target.condition === "RESET") {
+      state.visualQ = 0;
+      setActive(["r", "upperGate", "qOut"], "reset", "R = 1 forces the upper NOR output Q to 0.");
+      await wait(pace(210));
+      state.visualQbar = 1;
+      setActive(["qFeedback", "lowerGate", "qbarOut"], "reset", "Q = 0 feeds the lower NOR gate, so Q̅ becomes 1.");
+      state.lastCommand = "reset";
+    } else if (target.condition === "HOLD") {
+      state.visualQ = target.q;
+      state.visualQbar = target.qbar;
+      setActive(["qFeedback", "qbarFeedback", "upperGate", "lowerGate"], "feedback", `S = R = 0. The feedback values Q = ${bitText(target.q)} and Q̅ = ${bitText(target.qbar)} keep both NOR calculations unchanged.`);
+    } else if (target.condition === "UNRESOLVED") {
+      state.visualQ = null;
+      state.visualQbar = null;
+      setActive(["qFeedback", "qbarFeedback", "upperGate", "lowerGate"], "feedback", "With both inputs released at the same instant, tiny gate delays decide which output rises first.");
+    } else {
+      state.visualQ = 0;
+      state.visualQbar = 0;
+      setActive(["s", "r", "upperGate", "lowerGate", "qOut", "qbarOut"], "reset", "S = R = 1 forces both NOR outputs to 0. Q̅ is no longer the complement of Q.");
+      state.invalidSeen = true;
+    }
+    await wait(pace(230));
+
+    state.q = target.q;
+    state.qbar = target.qbar;
+    const condition = target.condition;
+    let evidence = "";
+    if (condition === "HOLD" && state.lastCommand === "set" && state.q === 1 && !state.holdAfterSet) evidence = "one";
+    if (condition === "HOLD" && state.lastCommand === "reset" && state.q === 0 && !state.holdAfterReset) evidence = "zero";
+    const afterLabel = condition === "INVALID" ? "invalid" : condition === "UNRESOLVED" ? "?" : "";
+    addTrace({ inputs: `${nextS}${nextR}`, inputLabel: "S R", condition, before: beforeQ, after: state.q, afterLabel, evidence });
+    if (condition === "HOLD" && state.invalidSeen && state.s === 0 && state.r === 0 && validState()) {
+      state.recoverySeen = true;
+    }
+
+    if (evidence === "one") {
+      state.predictionResolved = true;
+      state.predictionCorrect = state.predictionChoice === "stay";
+      setCaption("Q stayed at 1 after S returned to 0. The high Q signal is now feeding the lower gate, which keeps Q̅ low and Q high.", true);
+    } else if (evidence === "zero") {
+      setCaption("Q stayed at 0 after R returned to 0. The opposite feedback state now preserves the same current inputs 00.", true);
+    } else if (condition === "INVALID") {
+      setCaption("Both outputs are 0. This is not a valid stored bit because Q and Q̅ are supposed to be complements.", true);
+    } else if (condition === "UNRESOLVED") {
+      state.unresolvedSeen = true;
+      setCaption("The model shows an unresolved release: either valid state could win depending on tiny propagation delays.", true);
+    } else if (condition === "SET") {
+      setCaption("SET complete: Q = 1 and Q̅ = 0. Return the inputs to 00 to test whether the bit is retained.", true);
+    } else if (condition === "RESET") {
+      setCaption("RESET complete: Q = 0 and Q̅ = 1. Return the inputs to 00 to test whether the bit is retained.", true);
+    } else {
+      setCaption(`HOLD complete: Q remains ${bitText(state.q)} because the outputs are still feeding the gate inputs.`, true);
+    }
+
+    maybeUnlockJK();
+
+    state.transitionCondition = null;
+    state.busy = false;
+    advancePhaseAfterSR(condition, evidence);
+    clearActive();
+    render();
+  }
+
+  async function releaseInvalidTogether() {
+    if (state.busy || state.mode !== "sr" || state.s !== 1 || state.r !== 1) return;
+    const beforeQ = state.q;
+    state.busy = true;
+    state.transitionCondition = "UNRESOLVED";
+    state.s = 0; state.r = 0;
+    setActive(["s", "r"], "feedback", "S and R fell to 0 together. Both gates are now trying to leave the forced 0,0 output pair.");
+    render();
+    await wait(pace(190));
+    state.visualQ = null; state.visualQbar = null;
+    state.q = null; state.qbar = null;
+    setActive(["qFeedback", "qbarFeedback", "upperGate", "lowerGate"], "feedback", "The two feedback paths race. A real circuit settles according to tiny gate-delay differences.");
+    await wait(pace(260));
+    addTrace({ inputs: "00", inputLabel: "S R", condition: "UNRESOLVED", before: beforeQ, after: null, afterLabel: "?" });
+    state.unresolvedSeen = true;
+    state.transitionCondition = null;
+    state.busy = false;
+    setCaption("Released together: the final stored bit cannot be predicted from ideal logic alone. Apply SET or RESET to recover.", true);
+    clearActive();
+    render();
+  }
+
+  function choosePrediction(choice) {
+    if (state.mode === "jk") {
+      state.jkPrediction = choice === "stay" ? 0 : 1;
+    } else {
+      state.predictionChoice = choice;
+    }
+    renderPrediction();
+    deriveMission();
+  }
+
+  function addInitialTrace() {
+    addTrace({ inputs: "00", inputLabel: "S R", condition: "INITIAL HOLD", before: null, after: 0 });
+  }
+
+  function maybeUnlockJK() {
+    if (!state.interpretationCorrect || !state.invalidSeen || !validState() || state.s !== 0 || state.r !== 0 || state.jkUnlocked) return;
+    state.jkUnlocked = true;
+    elements.modeJK.classList.add("newly-unlocked");
+    setTimeout(() => elements.modeJK.classList.remove("newly-unlocked"), reducedMotion ? 1 : 2700);
+    announce("JK flip-flop control is now unlocked.");
+  }
+
+  function switchMode(mode, force = false) {
+    if (state.busy || mode === state.mode) return;
+    if (!force && state.phase !== "free") return;
+    if (mode === "jk" && !state.jkUnlocked) return;
+    state.mode = mode;
+    state.s = 0; state.r = 0; state.internalS = 0; state.internalR = 0; state.clockHigh = false;
+    state.j = 0; state.k = 0;
+    state.activeSegments.clear();
+    if (mode === "jk") {
+      setCaption(`JK steering connected without changing the stored bit: Q is still ${bitText(state.q)}. Set J and K, then use a clock edge.`, true);
+    } else {
+      setCaption(`SR inputs reconnected. The stored bit remains Q = ${bitText(state.q)} and both inputs are 0.`, true);
+    }
+    render();
+  }
+
+  async function pulseClock() {
+    if (state.busy || state.mode !== "jk" || !validState()) return;
+    if (!controlAllowed("clock")) return;
+
+    const beforeQ = state.q;
+    const beforeQbar = state.qbar;
+    const action = jkCondition();
+    const pulseS = state.j === 1 && beforeQbar === 1 ? 1 : 0;
+    const pulseR = state.k === 1 && beforeQ === 1 ? 1 : 0;
+    state.busy = true;
+    state.transitionCondition = action;
+    state.clockHigh = true;
+    elements.pulseClock.classList.add("pulsing");
+    elements.clockToken.style.opacity = "1";
+    elements.clockToken.classList.add("running");
+    setActive(["clock", "j", "k", "jkQ", "jkQbar"], "clock", "The rising clock edge enters both steering paths. The previous Q and Q̅ decide which path can pass it.");
+    render();
+    await wait(pace(190));
+
+    state.internalS = pulseS;
+    state.internalR = pulseR;
+    const activeSteering = [];
+    if (pulseS) activeSteering.push("jkS");
+    if (pulseR) activeSteering.push("jkR");
+    if (!activeSteering.length) activeSteering.push("jkS", "jkR");
+    setActive(activeSteering, pulseS ? "set" : pulseR ? "reset" : "feedback", pulseS
+      ? `J · Q̅ · clock = 1, so a SET pulse reaches the storage cell.`
+      : pulseR ? `K · Q · clock = 1, so a RESET pulse reaches the storage cell.`
+      : "Neither steering path is enabled, so internal S = R = 0 and the stored bit holds.");
+    await wait(pace(210));
+
+    let afterQ = beforeQ;
+    let afterQbar = beforeQbar;
+    if (pulseS) {
+      state.visualQbar = 0;
+      setActive(["jkS", "lowerGate", "qbarOut"], "set", "The internal SET pulse forces Q̅ low.");
+      await wait(pace(170));
+      state.visualQ = 1;
+      afterQ = 1; afterQbar = 0;
+      setActive(["qbarFeedback", "upperGate", "qOut"], "set", "Feedback completes the new stored state Q = 1.");
+    } else if (pulseR) {
+      state.visualQ = 0;
+      setActive(["jkR", "upperGate", "qOut"], "reset", "The internal RESET pulse forces Q low.");
+      await wait(pace(170));
+      state.visualQbar = 1;
+      afterQ = 0; afterQbar = 1;
+      setActive(["qFeedback", "lowerGate", "qbarOut"], "reset", "Feedback completes the new stored state Q = 0.");
+    } else {
+      setActive(["qFeedback", "qbarFeedback", "upperGate", "lowerGate"], "feedback", `No internal pulse was produced. Feedback keeps Q = ${beforeQ}.`);
+    }
+    await wait(pace(210));
+
+    state.q = afterQ; state.qbar = afterQbar;
+    state.clockHigh = false; state.internalS = 0; state.internalR = 0;
+    elements.clockToken.style.opacity = "0";
+    elements.clockToken.classList.remove("running");
+    elements.pulseClock.classList.remove("pulsing");
+    addTrace({ inputs: `${state.j}${state.k}↑`, inputLabel: "J K CLK", condition: action, before: beforeQ, after: afterQ });
+
+    if (action === "TOGGLE" && afterQ !== beforeQ) {
+      state.jkToggleCount += 1;
+      state.jkLastToggleOutput = afterQ;
+      if (state.jkToggleCount === 1 && state.jkPrediction !== null) {
+        state.jkPredictionResolved = true;
+        const correct = state.jkPrediction === afterQ;
+        setCaption(`Q toggled from ${beforeQ} to ${afterQ}. ${correct ? "Your prediction matches" : "The circuit shows"}: previous Q = ${beforeQ} enabled the ${pulseS ? "SET" : "RESET"} steering path.`, true);
+      } else {
+        setCaption(`The same J = K = 1 toggled Q from ${beforeQ} to ${afterQ} on this clock edge.`, true);
+      }
+      if (state.jkToggleCount >= 2) {
+        state.complete = true;
+        setCaption("Two clock edges produced two opposite states. JK input 11 toggles; it does not create the SR invalid output pair.", true);
+      }
+    } else if (action === "HOLD") {
+      setCaption(`JK 00 held Q = ${afterQ}; the clock edge produced no internal S or R pulse.`, true);
+    } else {
+      setCaption(`JK ${state.j}${state.k} performed ${action.toLowerCase()} on the clock edge, leaving Q = ${afterQ}.`, true);
+    }
+
+    state.transitionCondition = null;
+    state.busy = false;
+    advancePhaseAfterClock(beforeQ, afterQ, action);
+    clearActive();
+    render();
+  }
+
+  function resetLab() {
+    Object.assign(state, {
+      mode: "sr", s: 0, r: 0, j: 0, k: 0, q: 0, qbar: 1, visualQ: 0, visualQbar: 1,
+      internalS: 0, internalR: 0, clockHigh: false, busy: false, transitionCondition: null, activeSegments: new Set(), activeTone: "",
+      caption: "Both inputs are 0. Q begins at 0 and the feedback loop is holding that state.", history: [], nextStep: 0,
+      lastCommand: null, holdAfterSet: null, holdAfterReset: null, predictionChoice: null, predictionResolved: false,
+      predictionCorrect: null, interpretationCorrect: false, proofWrong: false, invalidSeen: false, recoverySeen: false, unresolvedSeen: false,
+      jkUnlocked: false, jkPrediction: null, jkPredictionResolved: false, jkToggleCount: 0, jkLastToggleOutput: null, complete: false, phase: "sr_store_one", modalOpen: true
+    });
+    addInitialTrace();
+    render();
+    announce("Lab reset. Q starts at 0 with S and R both 0.");
+  }
+
+  function toggleJKInput(name) {
+    if (state.busy || state.mode !== "jk" || !controlAllowed(name)) return;
+    if (name === "j") state.j = Number(!state.j);
+    if (name === "k") state.k = Number(!state.k);
+    setCaption(`${name.toUpperCase()} changed to ${name === "j" ? state.j : state.k}. Q remains ${bitText(state.q)} until a rising clock edge.`);
+    render();
+  }
+
+  function handleVisualControl(name) {
+    if (!controlAllowed(name)) return;
+    if (name === "s") transitionSR(Number(!state.s), state.r, "visual S");
+    else if (name === "r") transitionSR(state.s, Number(!state.r), "visual R");
+    else if (name === "j" || name === "k") toggleJKInput(name);
+    else if (name === "clock") pulseClock();
+  }
+
+  elements.switchS.addEventListener("click", () => { if (controlAllowed("s")) transitionSR(Number(!state.s), state.r, "S"); });
+  elements.switchR.addEventListener("click", () => { if (controlAllowed("r")) transitionSR(state.s, Number(!state.r), "R"); });
+  elements.returnHold.addEventListener("click", () => {
+    if (state.phase !== "free" || state.s === 1 && state.r === 1) return;
+    transitionSR(0, 0, "hold");
+  });
+  elements.releaseTogether.addEventListener("click", releaseInvalidTogether);
+  elements.switchJ.addEventListener("click", () => toggleJKInput("j"));
+  elements.switchK.addEventListener("click", () => toggleJKInput("k"));
+  elements.pulseClock.addEventListener("click", pulseClock);
+  elements.modeSR.addEventListener("click", () => switchMode("sr"));
+  elements.modeJK.addEventListener("click", () => switchMode("jk"));
+  elements.resetLab.addEventListener("click", resetLab);
+
+  const visualMap = new Map([[elements.svgSBlock,"s"],[elements.svgRBlock,"r"],[elements.svgJBlock,"j"],[elements.svgKBlock,"k"],[elements.svgClockBlock,"clock"]]);
+  elements.stage.addEventListener("pointerup", (event) => {
+    if (event.button !== 0 || state.busy) return;
+    for (const [element,name] of visualMap) {
+      if (!element || element.closest("[hidden]")) continue;
+      const rect = element.getBoundingClientRect();
+      if (event.clientX >= rect.left && event.clientX <= rect.right && event.clientY >= rect.top && event.clientY <= rect.bottom) {
+        handleVisualControl(name);
+        break;
+      }
+    }
+  });
+  visualMap.forEach((name, element) => element?.addEventListener("keydown", (event) => {
+    if (event.key !== "Enter" && event.key !== " ") return;
+    event.preventDefault();
+    handleVisualControl(name);
+  }));
+
+  addInitialTrace();
+  render();
+})();
+</script>
+</body>
+</html>

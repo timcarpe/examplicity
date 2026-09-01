@@ -1,0 +1,694 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="data:,">
+<!-- LAB_MANIFEST_HEAD_START -->
+<title>Move the Decision Boundary</title>
+<meta name="description" content="Explore how one artificial neuron combines weighted inputs, compares the sum with a threshold and moves a linear decision boundary for Cambridge International A Level Computer Science 9618.">
+<link rel="canonical" href="https://www.examplicity.org/labs/computer-science/single-neuron-threshold.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Examplicity">
+<meta property="og:title" content="Move the Decision Boundary">
+<meta property="og:description" content="Explore how one artificial neuron combines weighted inputs, compares the sum with a threshold and moves a linear decision boundary for Cambridge International A Level Computer Science 9618.">
+<meta property="og:url" content="https://www.examplicity.org/labs/computer-science/single-neuron-threshold.html">
+<meta property="og:image" content="https://www.examplicity.org/opengraph-image">
+<meta property="og:image:alt" content="Examplicity — Make complex ideas click">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Move the Decision Boundary">
+<meta name="twitter:description" content="Explore how one artificial neuron combines weighted inputs, compares the sum with a threshold and moves a linear decision boundary for Cambridge International A Level Computer Science 9618.">
+<meta name="twitter:image" content="https://www.examplicity.org/opengraph-image">
+<script type="application/ld+json" data-lab-manifest="structured-data">{"@context":"https://schema.org","@type":"LearningResource","@id":"https://www.examplicity.org/labs/computer-science/single-neuron-threshold.html#learning-resource","url":"https://www.examplicity.org/labs/computer-science/single-neuron-threshold.html","name":"Move the Decision Boundary","description":"Explore how one artificial neuron combines weighted inputs, compares the sum with a threshold and moves a linear decision boundary for Cambridge International A Level Computer Science 9618.","inLanguage":"en-GB","isAccessibleForFree":true,"interactivityType":"active","learningResourceType":"Neural decision-boundary experiment","teaches":"Artificial intelligence","educationalLevel":["A Level"],"educationalAlignment":[{"@type":"AlignmentObject","alignmentType":"educationalSubject","educationalFramework":"Cambridge International AS & A Level Computer Science","targetName":"A 9618 section 18.1","targetUrl":"https://www.cambridgeinternational.org/Images/697372-2026-syllabus.pdf#page=36"}],"about":{"@type":"Thing","name":"Computer Science"},"audience":{"@type":"EducationalAudience","educationalRole":"student"},"provider":{"@type":"Organization","name":"Examplicity","url":"https://www.examplicity.org"},"isPartOf":{"@type":"WebSite","@id":"https://www.examplicity.org/#website","name":"Examplicity","url":"https://www.examplicity.org"}}</script>
+<!-- LAB_MANIFEST_HEAD_END -->
+<!-- LAB_FRAME_STYLES_START -->
+<style data-lab-frame>
+:root {
+  --lab-canvas: #f3f5f7;
+  --lab-paper: #fbfbfd;
+  --lab-surface: #ffffff;
+  --lab-control: #ffffff;
+  --lab-ink: #1d1d1f;
+  --lab-muted: #6e6e73;
+  --lab-line: #d2d2d7;
+  --lab-line-strong: #a7a7ad;
+  --lab-accent: #5277b8;
+  --lab-accent-soft: #eef2fa;
+  --lab-good: #18794e;
+  --lab-good-soft: #edf8f1;
+  --lab-warn: #946200;
+  --lab-warn-soft: #fff6e7;
+  --lab-bad: #b42318;
+  --lab-bad-soft: #fff0ee;
+  --lab-focus: #1d1d1f;
+  --lab-focus-soft: rgba(29, 29, 31, 0.18);
+  --lab-font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+  --lab-panel-radius: 12px;
+  --lab-control-radius: 8px;
+  --lab-pill-radius: 999px;
+  --lab-control-height: 35px;
+  --lab-panel-shadow: 0 1px 2px rgba(29, 29, 31, 0.04);
+  --lab-header-max-width: 1200px;
+  --lab-header-gutter: max(28px, calc((100vw - var(--lab-header-max-width)) / 2));
+  --lab-page-gutter: var(--lab-header-gutter);
+  --lab-compact-workspace-max: 820px;
+}
+
+html,
+body {
+  background: var(--lab-canvas);
+}
+
+body {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  align-content: start !important;
+  font-family: var(--lab-font-sans);
+  padding-bottom: 0;
+  padding-top: 0 !important;
+  text-rendering: optimizeLegibility;
+}
+
+.lab-manifest-header {
+  align-items: start;
+  border-bottom: 0 !important;
+  display: grid;
+  gap: 18px 28px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  margin-left: calc(50% - 50vw + var(--lab-header-gutter));
+  margin-bottom: 26px;
+  max-width: var(--lab-header-max-width);
+  padding-bottom: 22px;
+  width: calc(100vw - var(--lab-header-gutter) - var(--lab-header-gutter));
+}
+
+.lab-manifest-heading {
+  min-width: 0;
+}
+
+.lab-manifest-header h1 {
+  color: var(--ink, var(--lab-ink));
+  font-family: var(--lab-font-sans);
+  font-size: clamp(25px, 3.2vw, 40px);
+  font-weight: 650;
+  letter-spacing: -0.045em;
+  line-height: 1.02;
+  margin: 0;
+  max-width: 24ch;
+  padding: 0;
+  text-align: left;
+}
+
+.lab-manifest-subtitle {
+  color: var(--muted, var(--lab-muted));
+  font-family: var(--lab-font-sans);
+  font-size: 13px;
+  letter-spacing: 0;
+  line-height: 1.5;
+  margin: 10px 0 0;
+  max-width: 72ch;
+  padding: 0;
+  text-align: left;
+}
+
+.lab-authored-title-slot {
+  min-width: 0;
+}
+
+.lab-syllabus-chips {
+  align-items: center;
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+  margin: 0 0 0 auto;
+  max-width: 100%;
+}
+
+.lab-syllabus-chip {
+  align-items: center;
+  background: var(--syllabus-chip-bg) !important;
+  border: 1px solid var(--syllabus-chip-border) !important;
+  border-radius: var(--lab-pill-radius);
+  color: var(--syllabus-chip-text) !important;
+  display: inline-flex;
+  font-size: 11px;
+  font-weight: 650;
+  gap: 4px;
+  line-height: 1;
+  min-height: 29px;
+  padding: 8px 10px;
+  position: relative;
+  transition: background-color 140ms ease, border-color 140ms ease;
+  white-space: nowrap;
+}
+
+.lab-syllabus-chip:hover {
+  background: var(--syllabus-chip-hover) !important;
+}
+
+.lab-syllabus-primary-link {
+  border-radius: inherit;
+  inset: 0;
+  position: absolute;
+  z-index: 0;
+}
+
+.lab-syllabus-primary-link:focus-visible {
+  outline: 2px solid var(--syllabus-chip-text);
+  outline-offset: 2px;
+}
+
+.lab-syllabus-name,
+.lab-syllabus-divider,
+.lab-syllabus-sections {
+  pointer-events: none;
+  position: relative;
+  z-index: 1;
+}
+
+.lab-syllabus-section {
+  border-radius: 4px;
+  color: inherit;
+  padding: 2px;
+  text-decoration: none;
+}
+
+a.lab-syllabus-section {
+  pointer-events: auto;
+}
+
+a.lab-syllabus-section:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+a.lab-syllabus-section:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 1px;
+}
+
+.lab-syllabus-name {
+  color: var(--syllabus-chip-text) !important;
+}
+
+.lab-syllabus-divider,
+.lab-syllabus-separator {
+  color: var(--muted, var(--lab-muted));
+}
+
+.lab-syllabus-prefix {
+  opacity: 0.72;
+  padding-left: 5px;
+}
+
+.lab-syllabus-sections {
+  align-items: center;
+  display: inline-flex;
+}
+
+.lab-syllabus-separator {
+  margin-inline: 0 2px;
+}
+
+html[data-theme="dark"] .lab-syllabus-name {
+  color: var(--syllabus-chip-border) !important;
+}
+
+html[data-theme="dark"] .lab-syllabus-chip:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+html[data-theme="dark"],
+html[data-theme="dark"] body {
+  background: var(--bg);
+}
+
+body > main {
+  container-name: lab-canvas;
+  container-type: inline-size;
+  margin-left: var(--lab-page-gutter);
+  margin-right: auto;
+  margin-top: 18px;
+  max-width: var(--lab-header-max-width);
+  width: calc(100vw - var(--lab-page-gutter) - var(--lab-page-gutter));
+}
+
+body[data-lab-layout="compact"] .lab-manifest-header {
+  margin-bottom: 17px;
+  padding-bottom: 13px;
+}
+
+body[data-lab-layout="compact"] [data-lab-workspace] {
+  margin-left: auto;
+  margin-right: auto;
+  width: min(var(--lab-compact-workspace-max), 100%);
+}
+
+:where(button, input, select, textarea, summary):focus-visible {
+  outline: 3px solid var(--lab-focus);
+  outline-offset: 4px;
+}
+
+@media (max-width: 620px) {
+  :root {
+    --lab-header-gutter: 18px;
+    --lab-page-gutter: 18px;
+  }
+
+  body {
+    padding-bottom: 0;
+    padding-top: 0 !important;
+  }
+
+  .lab-manifest-header {
+    gap: 14px;
+    grid-template-columns: minmax(0, 1fr) !important;
+    margin-bottom: 20px;
+    padding-bottom: 18px;
+  }
+
+  body[data-lab-layout="compact"] .lab-manifest-header {
+    margin-bottom: 16px;
+    padding-bottom: 14px;
+  }
+
+  .lab-manifest-header h1 {
+    font-size: clamp(24px, 8vw, 34px);
+  }
+
+  .lab-syllabus-chips {
+    gap: 4px;
+    justify-content: flex-start !important;
+    margin: 0 !important;
+  }
+
+  .lab-syllabus-chip {
+    font-size: 10px;
+    max-width: 100%;
+    min-height: 27px;
+    padding: 7px 8px;
+    white-space: normal;
+  }
+
+  .lab-syllabus-sections {
+    flex-wrap: wrap;
+  }
+
+  body > main {
+    margin-top: 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+</style>
+<!-- LAB_FRAME_STYLES_END -->
+<link rel="stylesheet" href="./lab-kit.css" data-lab-resource="lab-kit.css">
+<style data-lab-source>
+:root{
+  --bg:var(--lab-canvas);--panel:var(--lab-surface);--paper:var(--lab-paper);--ink:var(--lab-ink);--muted:var(--lab-muted);--line:var(--lab-line);--line-strong:var(--lab-line-strong);
+  --accent:var(--lab-accent);--accent-soft:var(--lab-accent-soft);--good:var(--lab-good);--good-soft:var(--lab-good-soft);--warn:var(--lab-warn);--warn-soft:var(--lab-warn-soft);--bad:var(--lab-bad);--bad-soft:var(--lab-bad-soft);
+  --one:#476fb2;--one-soft:#e8eff9;--target-one:#26796f;--target-one-soft:#e7f5f2;--target-zero:#a16828;--target-zero-soft:#fff3e5;--grid:#e8edf1;--axis:#6d7982;
+  --calc:#755ca7;--calc-soft:#f0edf8;--w1:#4b75b1;--w1-soft:#e9f0f9;--w2:#a66f32;--w2-soft:#fff2e6;--theta:#765fa8;--theta-soft:#f1edf8;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{min-height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--lab-font-sans);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+button{font:inherit;min-height:34px;padding:0 10px;border:1px solid var(--line);border-radius:var(--lab-control-radius);background:var(--lab-control);color:var(--ink);cursor:pointer}
+button:hover:not(:disabled){border-color:var(--line-strong)}button:disabled{opacity:.45;cursor:not-allowed}
+button.primary{border-color:var(--accent);background:var(--accent);color:#fff;font-weight:800}
+button.good{border-color:var(--good);background:var(--good);color:#fff;font-weight:800}
+button.quiet{background:#fff}
+:where(button,[role="slider"],[tabindex]):focus-visible{outline:3px solid var(--lab-focus);outline-offset:3px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--lab-panel-radius);box-shadow:var(--lab-panel-shadow)}
+
+.lab{overflow:hidden}
+.workspace{position:relative;display:grid;grid-template-columns:minmax(620px,1.55fr) minmax(330px,.77fr);align-items:stretch;min-height:665px}
+.stage-side{min-width:0;border-right:1px solid var(--line);background:#fbfcfd}
+.visual-head{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;min-height:58px;padding:8px 10px;border-bottom:1px solid var(--line);background:#fff}
+.relationship-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:2px;color:var(--accent);font-size:7px;font-weight:900;letter-spacing:.07em;text-transform:uppercase}
+.visual-copy strong{display:block;font-size:12px;line-height:1.28}.visual-copy>span:last-child{display:block;margin-top:2px;color:var(--muted);font-size:8.5px;line-height:1.32}
+.visual-actions{display:flex;align-items:center;justify-content:flex-end;gap:7px;flex-wrap:wrap}.visual-actions button{min-height:30px;font-size:8px;font-weight:760}
+.progress-rail{display:flex;gap:4px;align-items:center}
+.progress-step{display:inline-flex;align-items:center;gap:4px;min-height:25px;padding:4px 7px;border:1px solid var(--line);border-radius:999px;background:#f7f8f9;color:#7a848b;font-size:7px;font-weight:850;white-space:nowrap}
+.progress-step b{display:grid;place-items:center;width:14px;height:14px;border-radius:50%;background:#e4e8eb;color:#66727a;font-size:7px}
+.progress-step.current{border-color:#9db7d9;background:#f0f5fb;color:#355f91}.progress-step.current b{background:var(--accent);color:#fff}.progress-step.done{border-color:#a8ceb5;background:var(--good-soft);color:#2d704d}.progress-step.done b{background:var(--good);color:#fff}
+
+.stage-shell{position:relative;overflow:hidden;background:#fbfcfd;min-height:590px}.stage-scroll{max-width:100%;overflow:auto;overscroll-behavior-x:contain}.stage{display:block;width:100%;min-width:650px;height:auto;background:#fbfcfd;touch-action:none;user-select:none}.stage text{font-family:var(--lab-font-sans)}
+.plot-bg{fill:#fff;stroke:var(--line);stroke-width:1}.output-one-region{fill:var(--one-soft);stroke:none}.grid-line{stroke:var(--grid);stroke-width:1}.grid-line.major{stroke:#d5dee5}.axis{stroke:var(--axis);stroke-width:1.5}.tick{fill:#71808a;font-size:10px;font-weight:700}.axis-title{fill:#4d5e69;font-size:12px;font-weight:850}
+.boundary{fill:none;stroke:var(--one);stroke-width:4;stroke-linecap:round;filter:drop-shadow(0 1px 2px rgba(71,111,178,.22))}.boundary.offscreen{stroke-dasharray:8 7;opacity:.5}.normal-arrow{stroke:var(--one);stroke-width:2.3;stroke-linecap:round;marker-end:url(#arrowHead)}
+.boundary-label-bg{fill:rgba(255,255,255,.95);stroke:#c7d2dc}.boundary-label{fill:#315a92;font:850 11px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.boundary-sub{fill:#657784;font-size:9px;font-weight:720}.output-side-label{fill:#315a92;font-size:9px;font-weight:850}
+.point{cursor:pointer;outline:none}.point .select-halo{fill:none;stroke:var(--accent);stroke-width:3;opacity:0}.point.selected .select-halo{opacity:.9}.point .mismatch-ring{fill:none;stroke:var(--bad);stroke-width:3;stroke-dasharray:5 4;opacity:0}.point.mismatch .mismatch-ring{opacity:1}.point .insight-halo{fill:none;stroke:var(--good);stroke-width:4;opacity:0}.point.insight .insight-halo{opacity:.82;stroke-dasharray:8 5;animation:insightPulse .8s ease-in-out infinite alternate}@keyframes insightPulse{to{stroke-width:6;opacity:1}}
+.point .actual{stroke:#fff;stroke-width:3}.point.actual-one .actual{fill:var(--one)}.point.actual-zero .actual{fill:#fff;stroke:#687782}.point .actual-text{font-size:14px;font-weight:900;text-anchor:middle;dominant-baseline:middle;pointer-events:none}.point.actual-one .actual-text{fill:#fff}.point.actual-zero .actual-text{fill:#354550}.point .point-name{fill:#253640;font-size:11px;font-weight:900;text-anchor:middle}.point .point-coordinate{fill:#71808a;font:720 9px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;text-anchor:middle}.point .target-badge{stroke-width:1}.point.target-one .target-badge{fill:var(--target-one-soft);stroke:#8ac0b7}.point.target-zero .target-badge{fill:var(--target-zero-soft);stroke:#d7b182}.point .target-text{font-size:8px;font-weight:900;text-anchor:middle}.point.target-one .target-text{fill:#21665e}.point.target-zero .target-text{fill:#82551f}.point:focus .select-halo{opacity:1;stroke-width:4}
+.proof-line.zero{stroke:var(--target-zero);stroke-width:5;stroke-linecap:round;opacity:.76}.proof-line.one{stroke:var(--target-one);stroke-width:5;stroke-linecap:round;opacity:.8}.proof-cross{fill:#fff;stroke:var(--bad);stroke-width:3}.proof-label-bg{fill:rgba(255,255,255,.97);stroke:#d5b4ae}.proof-label{fill:#8e3028;font-size:9px;font-weight:850}
+.plot-note{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:7px 9px;border-top:1px solid var(--line);background:#fff;color:var(--muted);font-size:8px;line-height:1.35}.plot-note strong{color:var(--ink)}.plot-note .formula{font:760 8.5px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#4f6170;white-space:nowrap}
+
+.micro-modal-layer{position:absolute;z-index:70;inset:0;pointer-events:none;overflow:visible}.micro-modal-layer[hidden]{display:none!important}.micro-modal-arrow{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}.micro-modal-arrow-path{fill:none;stroke:#84939d;stroke-width:1.25;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:3 3}
+.phase-modal{position:absolute;z-index:72;width:min(222px,calc(100% - 16px));padding:8px 9px;border:1px solid #9db5d3;border-radius:9px;background:rgba(251,253,255,.99);box-shadow:0 7px 17px rgba(35,50,61,.14);text-align:left;pointer-events:auto}.phase-modal.success{border-color:#91c1a2;background:rgba(248,252,249,.99)}.phase-modal.limit{border-color:#d5bc86;background:rgba(255,251,243,.99)}.phase-modal.proof{border-color:#caa39d;background:rgba(255,250,250,.99)}.phase-modal.interaction{border-color:#88a9cf;background:rgba(248,251,255,.995)}
+.modal-kicker{display:block;color:var(--accent);font-size:6px;font-weight:900;letter-spacing:.07em;text-transform:uppercase}.phase-modal.success .modal-kicker{color:var(--good)}.phase-modal.limit .modal-kicker{color:var(--warn)}.phase-modal.proof .modal-kicker{color:#8d463e}.phase-modal>strong{display:block;margin-top:2px;font-size:10.5px;line-height:1.25}.modal-copy{margin:3px 0 0;color:#5e6d77;font-size:7.6px;line-height:1.34}.modal-equation{margin-top:5px;padding:5px 6px;border:1px solid #d2dbe3;border-radius:6px;background:#fff;color:#3f5260;font:850 8px/1.3 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.modal-equation.good{border-color:#afd0ba;background:var(--good-soft);color:#286c49}.modal-equation.warn{border-color:#ddc79a;background:var(--warn-soft);color:#775722}.modal-question{margin-top:5px;color:#344e6d;font-size:8px;font-weight:850;line-height:1.3}.modal-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;margin-top:5px}.modal-options button{min-height:29px;padding:3px 4px;font-size:7px;font-weight:850;line-height:1.2;white-space:normal}.modal-options button:hover{background:var(--accent-soft)}.modal-actions{display:flex;gap:5px;justify-content:flex-end;margin-top:6px}.modal-actions button{min-height:29px;padding:0 8px;font-size:7.3px;font-weight:850}.modal-actions button:only-child{margin-left:auto}.modal-note{display:block;margin-top:4px;color:#77838b;font-size:6.6px;line-height:1.28}.interaction-cue{display:flex;align-items:center;gap:5px;margin-top:5px;padding-top:5px;border-top:1px solid #dce4ea;color:#3e6089;font-size:7px;font-weight:850}.interaction-cue::before{content:"↔";display:grid;place-items:center;width:18px;height:18px;border:1px solid #a8bdd8;border-radius:50%;background:#fff;color:var(--accent);font-size:9px}
+.modal-focus:not(.point){position:relative;z-index:69!important;box-shadow:0 0 0 2px rgba(82,119,184,.42),0 0 0 6px rgba(82,119,184,.10)!important}.stage .modal-focus{filter:drop-shadow(0 0 5px rgba(82,119,184,.55))}.point.modal-focus .select-halo{opacity:1;stroke:var(--accent);stroke-width:6}.point.modal-focus .actual{filter:drop-shadow(0 0 6px rgba(82,119,184,.45))}.phase-modal.interaction+.unused{display:none}
+
+
+.side-panel{min-width:0;display:flex;flex-direction:column;background:#fff}.side-section{padding:10px 11px;border-bottom:1px solid var(--line)}.side-section:last-child{border-bottom:0}.side-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:9px;margin-bottom:8px}.side-heading strong{display:block;font-size:11px;line-height:1.3}.side-heading span{display:block;margin-top:1px;color:var(--muted);font-size:8px;line-height:1.3}.point-chip{flex:0 0 auto;display:inline-flex;align-items:center;gap:5px;min-height:25px;padding:4px 7px;border:1px solid var(--line);border-radius:999px;background:var(--paper);font-size:8px;font-weight:850}.point-chip b{font:900 11px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.neuron-flow{display:grid;gap:6px}.input-terms{display:grid;grid-template-columns:1fr 1fr;gap:6px}.term{min-width:0;padding:7px 8px;border:1px solid var(--line);border-radius:9px;background:#fbfcfd}.term-head{display:flex;justify-content:space-between;gap:6px;color:var(--muted);font-size:7.5px;font-weight:800;text-transform:uppercase;letter-spacing:.04em}.term-equation{display:block;margin-top:4px;color:#344651;font:800 11px/1.3 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:nowrap}.term-product{display:block;margin-top:2px;color:var(--calc);font:900 16px/1.15 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.flow-arrow{height:10px;position:relative}.flow-arrow::before{content:"";position:absolute;left:50%;top:0;bottom:2px;width:2px;background:#b6c0c8;transform:translateX(-50%)}.flow-arrow::after{content:"";position:absolute;left:50%;bottom:0;width:7px;height:7px;border-right:2px solid #8d9aa3;border-bottom:2px solid #8d9aa3;transform:translateX(-50%) rotate(45deg)}.sum-gate{display:grid;grid-template-columns:1fr 1fr;gap:6px}.flow-node{min-width:0;padding:8px;border:1px solid var(--line);border-radius:9px;background:var(--calc-soft)}.flow-node span{display:block;color:#6b6181;font-size:7.5px;font-weight:850;text-transform:uppercase;letter-spacing:.04em}.flow-node strong{display:block;margin-top:3px;font:900 17px/1.1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.flow-node small{display:block;margin-top:3px;color:#6a7580;font-size:7.5px;line-height:1.3}.flow-node.gate{background:#f7f9fb}.flow-node.gate.pass{border-color:#9ab9dd;background:var(--one-soft)}.flow-node.gate.fail{border-color:#cbd4da;background:#f7f9fb}.output-node{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;padding:8px 9px;border:1px solid var(--line);border-radius:9px;background:#fbfcfd}.output-node span{display:block;color:var(--muted);font-size:8px;font-weight:800}.output-node small{display:block;margin-top:2px;color:var(--muted);font-size:7.5px;line-height:1.3}.output-value{display:grid;place-items:center;width:39px;height:39px;border-radius:50%;border:2px solid #657681;background:#fff;font:900 19px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.output-node.one .output-value{border-color:var(--one);background:var(--one);color:#fff}
+
+.param-intro{margin:-2px 0 8px;color:var(--muted);font-size:7.8px;line-height:1.35}.param-stack{display:grid;gap:7px}.param-control{--param-color:var(--w1);--param-soft:var(--w1-soft);padding:7px 8px 8px;border:1px solid var(--line);border-radius:9px;background:#fbfcfd;transition:background .15s,border-color .15s,box-shadow .15s}.param-control[data-key="w2"]{--param-color:var(--w2);--param-soft:var(--w2-soft)}.param-control[data-key="theta"]{--param-color:var(--theta);--param-soft:var(--theta-soft)}.param-control.active{border-color:color-mix(in srgb,var(--param-color) 45%,var(--line));background:var(--param-soft)}.param-control.locked{background:#f5f6f7;color:#6e777d}.param-control.compact{padding-bottom:7px}.param-control.compact .param-track{display:none}.param-meta{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:7px;align-items:center}.param-copy strong{display:block;font-size:9px}.param-copy span{display:block;margin-top:1px;color:var(--muted);font-size:7px}.param-state{min-width:40px;padding:3px 6px;border:1px solid var(--line);border-radius:999px;background:#fff;color:#6d777e;font-size:6.5px;font-weight:900;text-align:center;text-transform:uppercase;letter-spacing:.04em}.param-control.active .param-state{border-color:color-mix(in srgb,var(--param-color) 50%,#fff);color:var(--param-color);background:#fff}.param-value{min-width:38px;color:var(--param-color);font:900 11px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;text-align:right}
+.param-track{position:relative;height:44px;margin-top:6px;border:1px solid #d8dee3;border-radius:8px;background:#fff;touch-action:none;user-select:none;cursor:ew-resize}.param-track[aria-disabled="true"]{cursor:default}.track-line{position:absolute;left:9px;right:9px;top:20px;height:3px;border-radius:999px;background:#d9e0e5}.track-zero{position:absolute;top:9px;bottom:9px;width:1px;background:#9aa6ae}.vector-span{position:absolute;top:19px;height:5px;border-radius:999px;background:var(--param-color);opacity:.9}.param-control[data-key="theta"] .vector-span{height:3px;top:20px;opacity:.42}.param-handle{position:absolute;top:8px;width:18px;height:25px;border:2px solid var(--param-color);border-radius:6px;background:#fff;box-shadow:0 2px 5px rgba(29,29,31,.13);transform:translateX(-50%);pointer-events:none}.param-control[data-key="theta"] .param-handle{width:9px;height:29px;top:6px;border-radius:3px;background:var(--param-color)}.param-handle::after{content:"";position:absolute;left:50%;top:50%;width:4px;height:9px;border-left:1px solid color-mix(in srgb,var(--param-color) 65%,#fff);border-right:1px solid color-mix(in srgb,var(--param-color) 65%,#fff);transform:translate(-50%,-50%)}.param-control[data-key="theta"] .param-handle::after{display:none}.track-label{position:absolute;bottom:2px;color:#8a959c;font:750 6.5px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;pointer-events:none}.track-label.min{left:7px}.track-label.zero{transform:translateX(-50%)}.track-label.max{right:7px}.param-track.dragging{box-shadow:0 0 0 3px color-mix(in srgb,var(--param-color) 18%,transparent)}
+.param-note{margin-top:7px;padding:6px 7px;border-left:3px solid var(--accent);background:#f5f8fb;color:#61717d;font-size:7.5px;line-height:1.35}.param-note strong{color:#3e5f83}
+
+.evidence-head-summary{flex:0 0 auto;min-height:24px;padding:4px 7px;border:1px solid var(--line);border-radius:999px;background:var(--paper);color:#66727a;font-size:7px;font-weight:850;transition:.16s}.evidence-table-wrap{overflow:auto;border:1px solid var(--line);border-radius:9px;transition:.16s}.evidence-table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:8px}.evidence-table th{padding:5px 6px;border-bottom:1px solid var(--line);background:#f6f8f9;color:#697680;font-size:7px;font-weight:850;text-align:left;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}.evidence-table td{padding:6px;border-bottom:1px solid #e8ecef;vertical-align:middle}.evidence-table tr:last-child td{border-bottom:0}.evidence-table tbody tr{cursor:pointer;transition:background-color .16s,box-shadow .16s}.evidence-table tbody tr:hover{background:#fafbfd}.evidence-table tbody tr.selected{background:var(--accent-soft)}.evidence-table tbody tr.mismatch{box-shadow:inset 3px 0 0 var(--bad)}.evidence-table tbody tr.insight{background:#f2faf5;box-shadow:inset 3px 0 0 var(--good)}.evidence-section.working-emphasis .evidence-table-wrap{border-color:#9fc7ad;box-shadow:0 0 0 3px rgba(24,121,78,.07)}.evidence-section.working-emphasis .evidence-head-summary{border-color:#9fc7ad;background:var(--good-soft);color:var(--good)}.flow-node.evidence-flash,.output-node.evidence-flash{box-shadow:0 0 0 3px rgba(24,121,78,.10),inset 0 0 0 1px rgba(24,121,78,.35)}.point-button{min-height:24px;padding:0 5px;border:0;background:transparent;font-size:8px;font-weight:900}.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-variant-numeric:tabular-nums}.output-pill,.target-pill,.match-pill{display:inline-flex;align-items:center;justify-content:center;min-width:23px;min-height:20px;padding:2px 5px;border:1px solid var(--line);border-radius:999px;font-size:7.5px;font-weight:900}.output-pill.one{border-color:#91aed2;background:var(--one-soft);color:#315b93}.target-pill.one{border-color:#8ac0b7;background:var(--target-one-soft);color:#21665e}.target-pill.zero{border-color:#d7b182;background:var(--target-zero-soft);color:#82551f}.match-pill.good{border-color:#a9d2b8;background:var(--good-soft);color:var(--good)}.match-pill.bad{border-color:#e1b2aa;background:var(--bad-soft);color:var(--bad)}
+
+
+.model-note{margin-top:8px;padding:8px 10px;color:var(--muted);font-size:8px;line-height:1.4}.model-note strong{color:var(--ink)}
+
+@container lab-canvas (max-width:980px){.workspace{grid-template-columns:1fr;min-height:0}.stage-side{border-right:0;border-bottom:1px solid var(--line)}.side-panel{display:grid;grid-template-columns:1fr 1fr}.side-section{border-right:1px solid var(--line)}.evidence-section{border-right:0}.controls-section{border-right:0}.stage-shell{min-height:540px}}
+@container lab-canvas (max-width:700px){.visual-head{grid-template-columns:1fr}.visual-actions{justify-content:flex-start}.progress-step{padding:4px 5px;font-size:6.5px}.side-panel{display:block}.side-section{border-right:0}.phase-modal{width:min(210px,calc(100% - 14px))}.modal-options{gap:3px}.modal-options button{min-height:31px}.plot-note{display:block}.plot-note .formula{display:block;margin-top:3px;white-space:normal}.input-terms,.sum-gate{grid-template-columns:1fr}.stage-shell{min-height:510px}.stage{min-width:590px}.tick{font-size:13px}.axis-title{font-size:15px}.boundary-label{font-size:13px}.boundary-sub,.output-side-label{font-size:11px}.point .point-name{font-size:13px}.point .point-coordinate{font-size:11px}.point .target-text{font-size:10px}}
+@media(max-width:520px){.visual-actions{align-items:flex-start}.visual-actions button{width:100%}.progress-rail{width:100%}.progress-step{flex:1;justify-content:center}.stage{min-width:560px}.phase-modal{max-height:none;overflow:visible}.micro-modal-arrow-path{stroke-width:1.4}.param-meta{grid-template-columns:minmax(0,1fr) auto}.param-state{grid-column:2}.param-value{grid-column:2;grid-row:1}.evidence-table{min-width:330px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.001ms!important}}
+
+/* v9 patch: persistent work/evidence, bottom-docked guided progression, open experiment */
+.visual-actions{position:relative}
+.mode-switch{display:inline-flex;padding:2px;border:1px solid var(--line);border-radius:999px;background:#f6f8f9}
+.mode-button{min-height:25px!important;padding:0 7px!important;border:0!important;border-radius:999px!important;background:transparent!important;color:#6d7880!important;font-size:7px!important;font-weight:850!important}
+.mode-button.active{background:#fff!important;color:var(--accent)!important;box-shadow:0 1px 3px rgba(29,29,31,.12)}
+.mode-button:disabled{opacity:.38}
+button.progress-step{min-height:25px;padding:4px 7px;border:1px solid var(--line);border-radius:999px;background:#f7f8f9;color:#7a848b;font-size:7px;font-weight:850}
+button.progress-step:disabled{opacity:1;cursor:default}
+button.progress-step:not(:disabled){cursor:pointer}
+button.progress-step:not(:disabled):hover{border-color:#9db7d9}
+.working-region{margin-bottom:8px;--lab-kit-work-gap:6px}
+.prediction-work,.relationship-work,.explore-work{border-radius:7px;padding:7px 8px!important}
+.work-head{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.work-head>div{min-width:0}.work-head strong{display:block;font-size:8.5px;line-height:1.25}.work-head>div>span{display:block;margin-top:2px;color:var(--muted);font-size:7.2px;line-height:1.3}
+.lab-kit-work-state{flex:0 0 auto;font-size:6.8px;line-height:1.2;white-space:nowrap}
+.prediction-choices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;margin-top:6px}
+.prediction-choices button{min-height:28px;padding:3px 5px;font-size:7px;font-weight:800;line-height:1.2;white-space:normal}
+.prediction-choices button.selected{border-color:var(--accent);background:var(--accent-soft);color:#315b93}
+.prediction-choices button:disabled{opacity:.72}
+.work-feedback{margin:5px 0 0;color:#5f6e77;font-size:7px;line-height:1.32}
+.work-action{display:flex;justify-content:flex-end;margin-top:6px}.work-action button{min-height:28px;font-size:7px;font-weight:850}
+.explore-work{border-left-color:var(--accent)!important;background:#f5f8fc!important}
+@keyframes workPulse{0%,100%{box-shadow:0 0 0 0 rgba(82,119,184,0)}50%{box-shadow:0 0 0 4px rgba(82,119,184,.13)}}
+@keyframes controlPulse{0%,100%{box-shadow:0 0 0 0 rgba(82,119,184,0)}50%{box-shadow:0 0 0 4px rgba(82,119,184,.16)}}
+.prediction-work.action-pulse{animation:workPulse 1.15s ease-in-out infinite}
+.param-control.action-pulse{animation:controlPulse 1.15s ease-in-out infinite}
+.controls-section.action-pulse-group{box-shadow:inset 3px 0 0 rgba(82,119,184,.55)}
+.phase-dock{padding:7px 9px;border-top:1px solid var(--line);background:#f5f8fa}.phase-dock[hidden]{display:none!important}
+.micro-modal-layer{position:static!important;inset:auto!important;width:100%;overflow:visible;pointer-events:none;transform:none!important}
+.phase-modal{position:static!important;display:grid;grid-template-columns:minmax(0,1.28fr) minmax(185px,.72fr);gap:8px 12px;align-items:center;width:100%!important;max-width:none!important;padding:8px 9px!important;border-radius:9px!important;box-shadow:none!important;pointer-events:auto}
+.modal-main,.modal-side{min-width:0}.phase-modal .modal-kicker{font-size:6px}.phase-modal .modal-main>strong{display:block;margin-top:2px;font-size:9.6px;line-height:1.24}.phase-modal .modal-copy{margin-top:3px;font-size:7.4px;line-height:1.32}.phase-modal .modal-equation{margin-top:0;padding:5px 6px;font-size:7.5px}.phase-modal .modal-actions{justify-content:flex-start;margin-top:5px}.phase-modal .modal-actions button{min-height:27px;padding:0 8px;font-size:7px}.phase-modal .modal-actions button:only-child{margin-left:0}.phase-modal.instruction{border-color:#9db5d3;background:#fafcff}.phase-modal.success{border-color:#98c4a7;background:#f8fdf9}.phase-modal.limit{border-color:#d5bc86;background:#fffaf1}.phase-modal.proof{border-color:#caa39d;background:#fff9f8}
+.micro-modal-arrow{display:none!important}
+body[data-mode="explore"] .modal-focus{box-shadow:none!important;filter:none!important}
+@container lab-canvas (max-width:980px){.side-panel{grid-template-columns:1fr 1fr}.evidence-section{grid-column:1/-1}.micro-modal-layer{width:100%}}
+@container lab-canvas (max-width:700px){.mode-switch{order:1}.progress-rail{order:2}.visual-actions>#resetTask{order:3}.phase-modal{grid-template-columns:1fr}.prediction-choices{grid-template-columns:1fr 1fr 1fr}.work-head{display:block}.lab-kit-work-state{margin-top:4px}}
+@media(max-width:520px){.mode-switch{width:100%}.mode-button{flex:1}.visual-actions>#resetTask{width:auto}.prediction-choices{grid-template-columns:1fr}.prediction-choices button{min-height:34px}.phase-dock{padding:6px}.phase-modal{padding:7px 8px!important}}
+/* Keep the guided dock visible close to the perceptron while preserving readable labels. */
+.stage{width:min(100%,560px);margin-inline:auto}.stage-shell{min-height:509px}
+.side-section{padding:8px 10px}.neuron-flow{gap:4px}.term{padding:6px 7px}.flow-arrow{height:7px}.flow-node{padding:6px 7px}.output-node{padding:6px 8px}.param-intro{margin-bottom:6px}.param-stack{gap:5px}.param-control{padding:6px 7px 7px}.param-track{height:40px;margin-top:5px}.track-line{top:18px}.vector-span{top:17px}.param-control[data-key="theta"] .vector-span{top:18px}.param-handle{top:6px;height:24px}.param-control[data-key="theta"] .param-handle{top:5px;height:27px}.track-zero{top:7px;bottom:7px}.param-note{margin-top:5px;padding:5px 7px}.evidence-table td{padding:5px 6px}
+@container lab-canvas (max-width:700px){.stage{width:100%;min-width:560px;margin:0}.stage-shell{min-height:509px}.side-section{padding:9px 10px}.param-track{height:44px}.track-line{top:20px}.vector-span{top:19px}.param-control[data-key="theta"] .vector-span{top:20px}.param-handle{top:8px;height:25px}.param-control[data-key="theta"] .param-handle{top:6px;height:29px}.track-zero{top:9px;bottom:9px}}
+
+</style></head>
+<body data-lab-layout="standard">
+<main>
+<!-- LAB_MANIFEST_HEADER_START -->
+<header class="lab-manifest-header">
+  <div class="lab-manifest-heading">
+    <h1 data-lab-manifest="title">Move the Decision Boundary</h1>
+    <p class="lab-manifest-subtitle" data-lab-manifest="subtitle">Manipulate one threshold neuron, retain the evidence, then unlock an unguided experiment with every parameter live.</p>
+  </div>
+  <!-- LAB_SYLLABUS_CHIPS_START -->
+  <nav class="lab-syllabus-chips" aria-label="Syllabus alignment">
+    <section class="lab-syllabus-chip" style="--syllabus-chip-bg:#f1ecfa;--syllabus-chip-border:#b9a2dc;--syllabus-chip-text:#4f2b77;--syllabus-chip-hover:#e8ddf6" aria-label="A Level 9618 syllabus alignment">
+      <a class="lab-syllabus-primary-link" href="https://www.cambridgeinternational.org/Images/697372-2026-syllabus.pdf#page=36" target="_blank" rel="noopener noreferrer" aria-label="Open A Level 9618 syllabus section 18.1"></a>
+      <span class="lab-syllabus-name">A Level 9618</span><span class="lab-syllabus-divider" aria-hidden="true">·</span><span class="lab-syllabus-sections"><span class="lab-syllabus-section is-primary">18.1</span></span>
+    </section>
+  </nav>
+  <!-- LAB_SYLLABUS_CHIPS_END -->
+</header>
+<!-- LAB_MANIFEST_HEADER_END -->
+<span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span><span data-lab-authored-subtitle-slot hidden></span>
+
+<div data-lab-workspace>
+  <section class="panel lab" aria-label="Single neuron experiment">
+    <div id="workspace" class="workspace">
+      <section class="stage-side" aria-labelledby="plotHeading">
+        <div class="visual-head">
+          <div class="visual-copy">
+            <div class="relationship-meta"><span id="relationshipStage">Relationship 1 of 3</span><span aria-hidden="true">·</span><span id="relationshipName">threshold</span></div>
+            <strong id="plotHeading">Threshold shifts a fixed rule</strong>
+            <span id="plotHint">Use θ to lower the activation threshold so B, C and D output 1 while A stays 0. Watch what changes — and what does not.</span>
+          </div>
+          <div class="visual-actions">
+            <div id="modeSwitch" class="mode-switch" role="group" aria-label="Lab mode">
+              <button id="guidedMode" type="button" class="mode-button active" aria-pressed="true">Guided</button>
+              <button id="exploreMode" type="button" class="mode-button" aria-pressed="false" disabled title="Complete all three relationships to unlock open experiment mode">Explore</button>
+            </div>
+            <div id="progressRail" class="progress-rail" aria-label="Relationship set">
+              <button type="button" class="progress-step current" data-progress="threshold" disabled><b>1</b><span>Threshold</span></button>
+              <button type="button" class="progress-step" data-progress="weights" disabled><b>2</b><span>Weight</span></button>
+              <button type="button" class="progress-step" data-progress="xor" disabled><b>3</b><span>XOR limit</span></button>
+            </div>
+            <button id="resetTask" type="button">Reset relationship</button>
+          </div>
+        </div>
+        <div id="stageShell" class="stage-shell">
+          <div class="stage-scroll">
+            <svg id="plot" class="stage" viewBox="0 0 650 590" role="img" aria-labelledby="plotTitle plotDesc">
+              <title id="plotTitle">Single neuron decision boundary</title><desc id="plotDesc">Four input points and a straight decision boundary. The shaded side produces output one.</desc>
+            </svg>
+          </div>
+        </div>
+        <div id="phaseDock" class="phase-dock" hidden>
+          <div id="modalLayer" class="micro-modal-layer" aria-live="polite">
+            <section id="phaseModal" class="phase-modal" role="region" aria-label="Current guided step" aria-live="polite"></section>
+          </div>
+        </div>
+        <div class="plot-note"><span><strong>Invariant:</strong> the four input coordinates and their target outputs stay fixed.</span><span id="formulaNote" class="formula">z = w₁x₁ + w₂x₂; output 1 when z ≥ θ</span></div>
+      </section>
+
+      <aside class="side-panel" aria-label="Neuron calculation and direct controls">
+        <section id="calculationSection" class="side-section calculation-section" aria-labelledby="calcHeading">
+          <div class="side-heading"><div><strong id="calcHeading">Selected point through the neuron</strong><span>Click a point or table row to follow its calculation.</span></div><div id="selectedChip" class="point-chip"><b>B</b><span>(0, 1)</span></div></div>
+          <div id="neuronFlow" class="neuron-flow">
+            <div class="input-terms">
+              <div id="term1Card" class="term"><div class="term-head"><span>input x₁</span><span>weight w₁</span></div><span id="term1Equation" class="term-equation">0 × 1.0</span><output id="term1Product" class="term-product">0.0</output></div>
+              <div id="term2Card" class="term"><div class="term-head"><span>input x₂</span><span>weight w₂</span></div><span id="term2Equation" class="term-equation">1 × 1.0</span><output id="term2Product" class="term-product">1.0</output></div>
+            </div>
+            <div class="flow-arrow" aria-hidden="true"></div>
+            <div class="sum-gate"><div id="sumNode" class="flow-node"><span>weighted sum z</span><strong id="sumValue">1.0</strong><small id="sumEquation">0.0 + 1.0</small></div><div id="gateNode" class="flow-node gate fail"><span>threshold activation</span><strong id="gateComparison">1.0 ≥ 1.5</strong><small id="gateTruth">false</small></div></div>
+            <div class="flow-arrow" aria-hidden="true"></div>
+            <div id="outputNode" class="output-node"><div><span>neuron output</span><small id="outputReason">The weighted sum has not reached θ.</small></div><strong id="outputValue" class="output-value">0</strong></div>
+          </div>
+        </section>
+
+        <section id="controlsSection" class="side-section controls-section" aria-labelledby="controlsHeading">
+          <div class="side-heading"><div><strong id="controlsHeading">Manipulate the calculation</strong><span id="controlHint">The relevant bar unlocks after your prediction.</span></div></div>
+          <p id="paramIntro" class="param-intro">Drag the bar itself. The value and every downstream consequence update continuously.</p>
+          <div class="param-stack">
+            <div id="w1Control" class="param-control compact locked" data-key="w1">
+              <div class="param-meta"><div class="param-copy"><strong>Weight w₁</strong><span>x₁ influence</span></div><span id="w1State" class="param-state">fixed</span><output id="w1Output" class="param-value">1.0</output></div>
+              <div id="w1Track" class="param-track" data-param="w1" role="slider" aria-label="Weight w1" aria-valuemin="-2" aria-valuemax="3" aria-valuenow="1" tabindex="-1"><span class="track-line"></span><span class="track-zero"></span><span class="vector-span"></span><span class="param-handle"></span><span class="track-label min">−2</span><span class="track-label zero">0</span><span class="track-label max">3</span></div>
+            </div>
+            <div id="w2Control" class="param-control compact locked" data-key="w2">
+              <div class="param-meta"><div class="param-copy"><strong>Weight w₂</strong><span>x₂ influence</span></div><span id="w2State" class="param-state">fixed</span><output id="w2Output" class="param-value">1.0</output></div>
+              <div id="w2Track" class="param-track" data-param="w2" role="slider" aria-label="Weight w2" aria-valuemin="-2" aria-valuemax="3" aria-valuenow="1" tabindex="-1"><span class="track-line"></span><span class="track-zero"></span><span class="vector-span"></span><span class="param-handle"></span><span class="track-label min">−2</span><span class="track-label zero">0</span><span class="track-label max">3</span></div>
+            </div>
+            <div id="thetaControl" class="param-control locked" data-key="theta">
+              <div class="param-meta"><div class="param-copy"><strong>Threshold θ</strong><span>activation barrier</span></div><span id="thetaState" class="param-state">predict</span><output id="thetaOutput" class="param-value">1.5</output></div>
+              <div id="thetaTrack" class="param-track" data-param="theta" role="slider" aria-label="Threshold theta" aria-valuemin="-1" aria-valuemax="3" aria-valuenow="1.5" tabindex="-1"><span class="track-line"></span><span class="track-zero"></span><span class="vector-span"></span><span class="param-handle"></span><span class="track-label min">−1</span><span class="track-label zero">0</span><span class="track-label max">3</span></div>
+            </div>
+          </div>
+          <div id="paramNote" class="param-note"><strong>What stays constant:</strong> w₁ and w₂ remain 1.0, so only the activation barrier can move.</div>
+        </section>
+
+        <section id="evidenceSection" class="side-section evidence-section" aria-labelledby="evidenceHeading">
+          <div class="side-heading"><div><strong id="evidenceHeading">Working and evidence</strong><span>Your prediction, the live outputs and the relationship stay together here.</span></div><span id="matchSummary" class="evidence-head-summary">2 of 4 match</span></div>
+          <div id="workingRegion" class="lab-kit-work working-region" aria-label="Prediction and retained evidence">
+            <div id="predictionWork" class="lab-kit-work-item prediction-work" data-state="needed">
+              <div class="work-head">
+                <div><strong id="predictionWorkTitle">Prediction</strong><span id="predictionQuestion"></span></div>
+                <span id="predictionState" class="lab-kit-work-state" role="status"><span class="lab-kit-work-mark" aria-hidden="true"></span><span id="predictionStateText">Prediction needed</span></span>
+              </div>
+              <div id="predictionChoices" class="prediction-choices"></div>
+              <p id="predictionFeedback" class="work-feedback"></p>
+            </div>
+            <div id="relationshipWork" class="lab-kit-work-item relationship-work" hidden>
+              <div class="work-head">
+                <div><strong id="relationshipWorkTitle">Observed relationship</strong><span id="relationshipWorkText"></span></div>
+                <span id="relationshipState" class="lab-kit-work-state" role="status"><span class="lab-kit-work-mark" aria-hidden="true"></span><span id="relationshipStateText"></span></span>
+              </div>
+              <div id="relationshipWorkAction" class="work-action"></div>
+            </div>
+            <div id="exploreWork" class="lab-kit-work-item explore-work" hidden>
+              <div class="work-head"><div><strong>Open experiment</strong><span id="exploreWorkText">All three parameters are live. Change any bar and inspect the boundary, calculation and outputs.</span></div></div>
+            </div>
+          </div>
+          <div class="evidence-table-wrap"><table class="evidence-table"><thead><tr><th style="width:28%">point</th><th style="width:16%">z</th><th style="width:16%">output</th><th style="width:16%">target</th><th style="width:24%">evidence</th></tr></thead><tbody id="evidenceBody"></tbody></table></div>
+        </section>
+      </aside>
+
+    </div>
+  </section>
+  <p class="panel model-note"><strong>Core model:</strong> one threshold neuron exposes weighted inputs → weighted sum → threshold comparison → binary output. XOR is the linear-separability limit. After all three relationships are established, Explore mode unlocks all parameters with no guidance cues or completion checks.</p>
+</div>
+</main>
+<script src="./lab-kit.js" data-lab-resource="lab-kit.js"></script>
+<script data-lab-source>
+(() => {
+  "use strict";
+  const $=id=>document.getElementById(id), NS="http://www.w3.org/2000/svg", EPS=1e-9;
+  const DOMAIN={xmin:-.15,xmax:1.15,ymin:-.15,ymax:1.15}, BOX={x:76,y:54,w:500,h:470};
+  const RANGES={w1:{min:-2,max:3,step:.1},w2:{min:-2,max:3,step:.1},theta:{min:-1,max:3,step:.1}};
+  const POINTS={A:{id:"A",x:0,y:0},B:{id:"B",x:0,y:1},C:{id:"C",x:1,y:0},D:{id:"D",x:1,y:1}};
+  const TASKS=[
+    {id:"threshold",stage:"Relationship 1 of 3",name:"threshold",plotTitle:"Threshold shifts a fixed rule",plotHint:"Use θ to lower the activation threshold so B, C and D output 1 while A stays 0. Watch what changes — and what does not.",title:"Move only the threshold.",text:"The weights are fixed. Lower θ until B, C and D are inside the shaded output-1 region while A stays outside.",targets:{A:0,B:1,C:1,D:1},defaults:{w1:1,w2:1,theta:1.5},selected:"B",prediction:{question:"Which points will switch to output 1 together first?",correct:"BC",options:[{id:"BC",label:"B and C"},{id:"AD",label:"A and D"},{id:"none",label:"No pair"}]},lock:{w1:true,w2:true,theta:false},guide:{target:"thetaControl",kicker:"Direct manipulation",title:"Drag the threshold barrier",copy:"Move the purple bar left. The weighted sums stay fixed while the comparison z ≥ θ changes."}},
+    {id:"weights",stage:"Relationship 2 of 3",name:"weight influence",plotTitle:"A weight changes influence and line angle",plotHint:"Use w₁ to increase x₁ influence so C joins D in output 1 while B stays 0. Compare x₁ = 1 with x₁ = 0.",title:"Make x₁ matter more than x₂.",text:"Keep w₂ = 1.0 and θ = 1.2. Increase w₁ until C joins D in output 1 while B remains output 0.",targets:{A:0,B:0,C:1,D:1},defaults:{w1:1,w2:1,theta:1.2},selected:"C",prediction:{question:"If w₁ increases, which points get a larger weighted sum?",correct:"CD",options:[{id:"CD",label:"C and D"},{id:"BD",label:"B and D"},{id:"all",label:"All four"}]},lock:{w1:false,w2:true,theta:true},guide:{target:"w1Control",kicker:"Direct manipulation",title:"Drag the w₁ influence arrow",copy:"Move the blue handle right. Only terms multiplied by x₁ = 1 should grow."}},
+    {id:"xor",stage:"Relationship 3 of 3",name:"single-neuron limit",plotTitle:"Can one straight separator represent XOR?",plotHint:"Your goal is to test whether any straight boundary can match the fixed XOR targets — not to find a hidden correct setting.",title:"Test whether one separator can represent XOR.",text:"B and C target 1; A and D target 0. Shift and tilt the same straight boundary, then use the geometry to decide whether any setting can match all four.",targets:{A:0,B:1,C:1,D:0},defaults:{w1:1,w2:1,theta:1},selected:"B",prediction:{question:"Can one straight decision boundary separate this XOR target pattern?",correct:"no",options:[{id:"yes",label:"Yes"},{id:"no",label:"No"},{id:"unsure",label:"Not sure yet"}]},lock:{w1:false,w2:false,theta:false},guide:{target:"controlsSection",kicker:"Test a claim",title:"Shift or tilt the same separator",copy:"Change θ or a weight and watch which mismatch moves. You are testing whether a solution exists, not hunting for one."}}
+  ];
+  const task=()=>TASKS.find(t=>t.id===state.taskId), session=()=>state.sessions.get(state.taskId);
+  const clamp=(v,a,b)=>Math.max(a,Math.min(b,Number.isFinite(Number(v))?Number(v):a)), cleanZero=v=>Math.abs(v)<5e-10?0:v;
+  const fmt=(v,d=1)=>cleanZero(Number(v)).toFixed(d).replace(/\.0+$/,'').replace(/(\.\d*?)0+$/,'$1');
+  function signature(p){return `${Number(p.w1).toFixed(1)}|${Number(p.w2).toFixed(1)}|${Number(p.theta).toFixed(1)}`}
+  function valueAt(point,p=session()){return p.w1*point.x+p.w2*point.y}
+  function outputAt(point,p=session()){return valueAt(point,p)+EPS>=p.theta?1:0}
+  function patternFor(p=session()){return Object.values(POINTS).map(pt=>outputAt(pt,p)).join("")}
+  function fresh(t){const d=t.defaults,s={w1:d.w1,w2:d.w2,theta:d.theta,selected:t.selected,prediction:null,moved:false,patterns:new Set(),proof:false,completed:false,modalKind:null,observationSeen:false,best:0,changedKeys:new Set(),insightsSeen:new Set(),lastKey:null,settling:null,settleToken:0};s.patterns.add(patternFor(s));s.initialPattern=patternFor(s);return s}
+  const state={taskId:TASKS[0].id,sessions:new Map(TASKS.map(t=>[t.id,fresh(t)])),completed:new Set(),drag:null,lastModal:null,mode:"guided",exploreUnlocked:false};
+  function evidence(){const t=task(),s=session();return Object.values(POINTS).map(p=>{const z=valueAt(p,s),out=outputAt(p,s),target=t.targets[p.id];return {...p,z,out,target,match:out===target}})}
+  function matchCount(){return evidence().filter(e=>e.match).length}
+  function currentSuccess(){return task().id!=="xor"&&matchCount()===4}
+  function locks(){const t=task(),s=session();if(state.mode==="explore")return {w1:false,w2:false,theta:false};if(!s.prediction)return {w1:true,w2:true,theta:true};return t.lock}
+  function svg(tag,attrs={},text){const n=document.createElementNS(NS,tag);for(const [k,v] of Object.entries(attrs))n.setAttribute(k,String(v));if(text!==undefined)n.textContent=text;return n}
+  function add(root,tag,attrs={},text){const n=svg(tag,attrs,text);root.appendChild(n);return n}
+  function sx(x){return BOX.x+(x-DOMAIN.xmin)/(DOMAIN.xmax-DOMAIN.xmin)*BOX.w} function sy(y){return BOX.y+BOX.h-(y-DOMAIN.ymin)/(DOMAIN.ymax-DOMAIN.ymin)*BOX.h}
+  function clipHalfPlane(poly,p){const f=q=>p.w1*q.x+p.w2*q.y-p.theta,out=[];for(let i=0;i<poly.length;i++){const a=poly[i],b=poly[(i+1)%poly.length],fa=f(a),fb=f(b),ina=fa>=-EPS,inb=fb>=-EPS;if(ina&&inb)out.push(b);else if(ina&&!inb){const u=fa/(fa-fb);out.push({x:a.x+(b.x-a.x)*u,y:a.y+(b.y-a.y)*u})}else if(!ina&&inb){const u=fa/(fa-fb);out.push({x:a.x+(b.x-a.x)*u,y:a.y+(b.y-a.y)*u},b)}}return out}
+  function regionPolygon(p){const rect=[{x:DOMAIN.xmin,y:DOMAIN.ymin},{x:DOMAIN.xmax,y:DOMAIN.ymin},{x:DOMAIN.xmax,y:DOMAIN.ymax},{x:DOMAIN.xmin,y:DOMAIN.ymax}];if(Math.abs(p.w1)<EPS&&Math.abs(p.w2)<EPS)return p.theta<=0?rect:[];return clipHalfPlane(rect,p)}
+  function boundaryIntersections(p){const pts=[],push=(x,y)=>{if(x>=DOMAIN.xmin-EPS&&x<=DOMAIN.xmax+EPS&&y>=DOMAIN.ymin-EPS&&y<=DOMAIN.ymax+EPS&&!pts.some(q=>Math.hypot(q.x-x,q.y-y)<1e-6))pts.push({x,y})};if(Math.abs(p.w2)>EPS){push(DOMAIN.xmin,(p.theta-p.w1*DOMAIN.xmin)/p.w2);push(DOMAIN.xmax,(p.theta-p.w1*DOMAIN.xmax)/p.w2)}if(Math.abs(p.w1)>EPS){push((p.theta-p.w2*DOMAIN.ymin)/p.w1,DOMAIN.ymin);push((p.theta-p.w2*DOMAIN.ymax)/p.w1,DOMAIN.ymax)}if(pts.length<=2)return pts;let best=[pts[0],pts[1]],dist=-1;for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++){const d=Math.hypot(pts[i].x-pts[j].x,pts[i].y-pts[j].y);if(d>dist){dist=d;best=[pts[i],pts[j]]}}return best}
+  function addTextBox(root,x,y,w,h,lines,kind="boundary"){add(root,"rect",{x,y,width:w,height:h,rx:8,class:kind==="proof"?"proof-label-bg":"boundary-label-bg"});lines.forEach((line,i)=>add(root,"text",{x:x+10,y:y+16+i*14,class:kind==="proof"?"proof-label":i?"boundary-sub":"boundary-label"},line))}
+  function pointLabelOffset(id){return {A:{dx:-44,dy:38},B:{dx:-44,dy:-38},C:{dx:44,dy:38},D:{dx:44,dy:-38}}[id]}
+  function insightIds(){const t=task(),s=session(),show=state.mode==="guided"&&s.completed;if(t.id==="threshold"&&show)return ["B","C"];if(t.id==="weights"&&show)return ["B","C"];return []}
+  function renderPlot(){
+    const root=$("plot"),t=task(),s=session(),ev=evidence(),mobile=window.matchMedia("(max-width:520px)").matches,insights=insightIds();root.setAttribute("viewBox",mobile?"42 0 576 570":"0 0 650 590");root.replaceChildren();add(root,"title",{id:"plotTitle"},"Single neuron decision boundary");add(root,"desc",{id:"plotDesc"},"Four input points and a straight decision boundary. The shaded side produces output one.");
+    const defs=add(root,"defs"),marker=add(defs,"marker",{id:"arrowHead",viewBox:"0 0 10 10",refX:9,refY:5,markerWidth:5,markerHeight:5,orient:"auto-start-reverse"});add(marker,"path",{d:"M 0 0 L 10 5 L 0 10 z",fill:"#476fb2"});
+    add(root,"rect",{x:BOX.x,y:BOX.y,width:BOX.w,height:BOX.h,rx:11,class:"plot-bg"});const region=regionPolygon(s);if(region.length)add(root,"polygon",{points:region.map(p=>`${sx(p.x)},${sy(p.y)}`).join(" "),class:"output-one-region"});
+    for(let v=0;v<=1.0001;v+=.25){const major=Math.abs(v%.5)<1e-6;add(root,"line",{x1:sx(v),x2:sx(v),y1:BOX.y,y2:BOX.y+BOX.h,class:`grid-line${major?" major":""}`});add(root,"line",{x1:BOX.x,x2:BOX.x+BOX.w,y1:sy(v),y2:sy(v),class:`grid-line${major?" major":""}`})}
+    add(root,"line",{x1:BOX.x,y1:sy(0),x2:BOX.x+BOX.w,y2:sy(0),class:"axis"});add(root,"line",{x1:sx(0),y1:BOX.y,x2:sx(0),y2:BOX.y+BOX.h,class:"axis"});
+    const tickY=mobile?BOX.y+BOX.h+12:BOX.y+BOX.h+23,yTickX=mobile?72:BOX.x-13;for(const v of[0,.5,1]){add(root,"text",{x:sx(v),y:tickY,class:"tick","text-anchor":"middle"},fmt(v));add(root,"text",{x:yTickX,y:sy(v)+4,class:"tick","text-anchor":"end"},fmt(v))}
+    const xTitleY=mobile?BOX.y+BOX.h+36:BOX.y+BOX.h+53,yTitleX=mobile?50:22;add(root,"text",{x:BOX.x+BOX.w/2,y:xTitleY,class:"axis-title","text-anchor":"middle"},"input x₁");add(root,"text",{x:yTitleX,y:BOX.y+BOX.h/2,class:"axis-title","text-anchor":"middle",transform:`rotate(-90 ${yTitleX} ${BOX.y+BOX.h/2})`},"input x₂");
+    const eq=`${fmt(s.w1)}x₁ ${s.w2<0?"−":"+"} ${fmt(Math.abs(s.w2))}x₂ = ${fmt(s.theta)}`;addTextBox(root,82,8,220,40,[eq,"shaded side outputs 1"]);const ints=boundaryIntersections(s);
+    if(ints.length>=2){add(root,"line",{x1:sx(ints[0].x),y1:sy(ints[0].y),x2:sx(ints[1].x),y2:sy(ints[1].y),class:"boundary",id:"boundaryLine"});const mx=(ints[0].x+ints[1].x)/2,my=(ints[0].y+ints[1].y)/2,norm=Math.hypot(s.w1,s.w2)||1,len=.13,ex=mx+s.w1/norm*len,ey=my+s.w2/norm*len;add(root,"line",{x1:sx(mx),y1:sy(my),x2:sx(ex),y2:sy(ey),class:"normal-arrow"});add(root,"text",{x:sx(ex)+5,y:sy(ey)-6,class:"output-side-label"},"output 1")}
+    else if(Math.abs(s.w1)>EPS||Math.abs(s.w2)>EPS){const y=133;add(root,"line",{x1:330,y1:y,x2:559,y2:y,class:"boundary offscreen"});add(root,"text",{x:445,y:y-8,class:"boundary-sub","text-anchor":"middle"},"boundary is outside this input window")}
+    if(t.id==="xor"&&s.proof&&state.mode==="guided"){add(root,"line",{x1:sx(0),y1:sy(0),x2:sx(1),y2:sy(1),class:"proof-line zero"});add(root,"line",{x1:sx(0),y1:sy(1),x2:sx(1),y2:sy(0),class:"proof-line one"});add(root,"circle",{cx:sx(.5),cy:sy(.5),r:10,class:"proof-cross",id:"xorProofCross"});if(mobile){add(root,"rect",{x:sx(.5)-120,y:sy(.5)-48,width:240,height:27,rx:8,class:"proof-label-bg"});add(root,"text",{x:sx(.5),y:sy(.5)-30,class:"proof-label","text-anchor":"middle"},"same-class segments cross")}else addTextBox(root,327,449,224,48,["same-class segments cross","one separating line cannot exist"],"proof")}
+    for(const p of ev){const x=sx(p.x),y=sy(p.y),off=pointLabelOffset(p.id),g=add(root,"g",{class:`point target-${p.target?"one":"zero"} actual-${p.out?"one":"zero"}${p.match?"":" mismatch"}${s.selected===p.id?" selected":""}${insights.includes(p.id)?" insight":""}`,transform:`translate(${x} ${y})`,id:`plotPoint-${p.id}`,tabindex:"0",role:"button","data-point":p.id,"aria-label":`Point ${p.id}, inputs ${p.x}, ${p.y}, target ${p.target}, current output ${p.out}${p.match?", match":", mismatch"}`});add(g,"circle",{r:37,class:"insight-halo"});add(g,"circle",{r:34,class:"select-halo"});add(g,"circle",{r:29,class:"mismatch-ring"});add(g,"circle",{r:22,class:"actual"});add(g,"text",{x:0,y:1,class:"actual-text"},String(p.out));add(g,"rect",{x:-28,y:-48,width:56,height:18,rx:9,class:"target-badge"});add(g,"text",{x:0,y:-36,class:"target-text"},`target ${p.target}`);add(g,"text",{x:off.dx,y:off.dy-4,class:"point-name"},p.id);add(g,"text",{x:off.dx,y:off.dy+10,class:"point-coordinate"},`(${p.x}, ${p.y})`)}
+    $("plotDesc").textContent=`${t.stage}. Decision boundary ${eq}. ${matchCount()} of 4 points match their targets.`;
+  }
+  function allCompleted(){return TASKS.every(t=>state.completed.has(t.id))}
+  function renderHeader(){
+    const t=task(),explore=state.mode==="explore";
+    document.body.dataset.mode=state.mode;
+    $("guidedMode").classList.toggle("active",!explore);$("guidedMode").setAttribute("aria-pressed",String(!explore));
+    $("exploreMode").classList.toggle("active",explore);$("exploreMode").setAttribute("aria-pressed",String(explore));$("exploreMode").disabled=!state.exploreUnlocked;
+    $("relationshipStage").textContent=explore?"Open experiment":t.stage;$("relationshipName").textContent=explore?`${t.name} target set`:t.name;
+    $("plotHeading").textContent=explore?"Explore one separator freely":t.plotTitle;
+    $("plotHint").textContent=explore?"All three parameters are live. Change any bar, select any point and inspect how the same straight boundary changes.":t.plotHint;
+    $("resetTask").textContent=explore?"Reset experiment":"Reset relationship";
+    document.querySelectorAll("[data-progress]").forEach((el)=>{const id=el.dataset.progress;el.classList.toggle("current",id===t.id);el.classList.toggle("done",state.completed.has(id));el.disabled=!state.exploreUnlocked;});
+  }
+  function renderCalculation(){const s=session(),p=POINTS[s.selected]||POINTS.A,z1=p.x*s.w1,z2=p.y*s.w2,z=z1+z2,out=z+EPS>=s.theta?1:0,flash=insightIds().includes(p.id);$("selectedChip").innerHTML=`<b>${p.id}</b><span>(${p.x}, ${p.y})</span>`;$("term1Equation").textContent=`${p.x} × ${fmt(s.w1)}`;$("term1Product").textContent=fmt(z1);$("term2Equation").textContent=`${p.y} × ${fmt(s.w2)}`;$("term2Product").textContent=fmt(z2);$("sumValue").textContent=fmt(z);$("sumEquation").textContent=`${fmt(z1)} + ${fmt(z2)}`;$("sumNode").classList.toggle("evidence-flash",flash);$("gateComparison").textContent=`${fmt(z)} ≥ ${fmt(s.theta)}`;$("gateTruth").textContent=out?"true":"false";$("gateNode").className=`flow-node gate ${out?"pass":"fail"}${flash?" evidence-flash":""}`;$("outputNode").className=`output-node${out?" one":""}${flash?" evidence-flash":""}`;$("outputValue").textContent=String(out);$("outputReason").textContent=out?"The weighted sum reached or exceeded θ.":"The weighted sum has not reached θ."}
+  function renderEvidence(){const body=$("evidenceBody"),s=session(),ev=evidence(),insights=insightIds(),emphasis=s.completed||s.observationSeen||s.proof;body.replaceChildren();ev.forEach(e=>{const tr=document.createElement("tr");tr.id=`evidenceRow-${e.id}`;tr.dataset.point=e.id;tr.className=`${s.selected===e.id?"selected ":""}${e.match?"":"mismatch "}${insights.includes(e.id)?"insight":""}`.trim();tr.innerHTML=`<td><button type="button" class="point-button" data-select-point="${e.id}">${e.id} <span class="mono">(${e.x},${e.y})</span></button></td><td class="mono">${fmt(e.z)}</td><td><span class="output-pill ${e.out?"one":""}">${e.out}</span></td><td><span class="target-pill ${e.target?"one":"zero"}">${e.target}</span></td><td><span class="match-pill ${e.match?"good":"bad"}">${e.match?"match":"mismatch"}</span></td>`;body.appendChild(tr)});$("matchSummary").textContent=`${ev.filter(e=>e.match).length} of 4 match`;$("evidenceSection").classList.toggle("working-emphasis",emphasis)}
+  function percent(key,value){const r=RANGES[key];return (value-r.min)/(r.max-r.min)*100}
+  function renderParam(key){const s=session(),t=task(),locked=!canManipulate(key),baseFixed=state.mode==="guided"&&!!t.lock[key],control=$(key+"Control"),track=$(key+"Track"),out=$(key+"Output"),stateEl=$(key+"State"),r=RANGES[key],p=clamp(percent(key,s[key]),0,100),z=clamp(percent(key,0),0,100),span=control.querySelector(".vector-span"),handle=control.querySelector(".param-handle"),zero=control.querySelector(".track-zero"),zeroLabel=control.querySelector(".track-label.zero");out.textContent=Number(s[key]).toFixed(1);track.setAttribute("aria-valuenow",String(Number(s[key]).toFixed(1)));track.setAttribute("aria-disabled",String(locked));track.tabIndex=locked?-1:0;control.classList.toggle("locked",locked);control.classList.toggle("active",!locked&&!baseFixed);control.classList.toggle("settling",false);control.classList.toggle("compact",baseFixed&&t.id!=="xor");const actionKey=t.id==="threshold"?"theta":t.id==="weights"?"w1":null;control.classList.toggle("action-pulse",state.mode==="guided"&&!!s.prediction&&!s.moved&&!s.completed&&actionKey===key);stateEl.textContent=state.mode==="explore"?"free":baseFixed?"fixed":!s.prediction?"predict":!locked?"drag":"fixed";zero.style.left=`${z}%`;zeroLabel.style.left=`${z}%`;handle.style.left=`${p}%`;if(key==="theta"){span.style.left="0%";span.style.width=`${p}%`}else{span.style.left=`${Math.min(p,z)}%`;span.style.width=`${Math.abs(p-z)}%`}}
+  function renderControls(){const t=task(),s=session();for(const key of["w1","w2","theta"])renderParam(key);$("controlsSection").classList.toggle("action-pulse-group",state.mode==="guided"&&t.id==="xor"&&!!s.prediction&&!s.moved&&!s.completed);if(state.mode==="explore"){$("controlHint").textContent="Open experiment: every parameter is live.";$("paramIntro").textContent="Change any bar directly. The boundary, weighted sum, comparison and outputs update together."}else if(!s.prediction){$("controlHint").textContent="Commit the prediction below to unlock the live control.";$("paramIntro").textContent="Keep the model visible while you predict what its next change should do."}else if(t.id==="threshold"){$("controlHint").textContent="Use θ to lower the barrier until B and C switch together.";$("paramIntro").textContent="The weighted sums stay fixed while the comparison z ≥ θ changes."}else if(t.id==="weights"){$("controlHint").textContent="Use w₁ to increase x₁ influence until C crosses while B does not.";$("paramIntro").textContent="Compare x₁ = 1 with x₁ = 0 as you drag."}else{$("controlHint").textContent="Use any bar to test several straight separators.";$("paramIntro").textContent=`Distinct separators tested: ${s.patterns.size}. Keep comparing which mismatch moves.`}$("paramNote").innerHTML=state.mode==="explore"?"<strong>Experiment:</strong> all parameters can move; the four input coordinates and current target badges remain fixed.":t.id==="threshold"?"<strong>What stays constant:</strong> w₁ = w₂ = 1.0, so the line can only shift parallel.":t.id==="weights"?"<strong>What stays constant:</strong> w₂ = 1.0 and θ = 1.2; only x₁ influence changes.":"<strong>What stays constant:</strong> every parameter setting still creates one straight boundary; the XOR target badges never move."}
+  function predictionResultText(t,s){
+    const supported=s.prediction===t.prediction.correct;
+    if(t.id==="threshold")return supported?"B and C both kept z = 1.0, so they crossed the same threshold together.":"The evidence shows B and C share z = 1.0, so they switch together as θ passes 1.0.";
+    if(t.id==="weights")return supported?"Only the x₁ = 1 cases gained contribution from increasing w₁.":"C and D have x₁ = 1, so only they gain the extra w₁ contribution.";
+    return supported?"The geometric proof confirms that no single straight boundary separates XOR.":"The geometric proof shows why a single straight separator cannot represent XOR.";
+  }
+  function renderWorking(){
+    const t=task(),s=session(),explore=state.mode==="explore",pw=$("predictionWork"),rw=$("relationshipWork"),ew=$("exploreWork");
+    pw.hidden=explore;rw.hidden=true;ew.hidden=!explore;
+    if(explore){$("exploreWorkText").textContent=`No guidance, proof overlay or completion checks are active. Current target set: ${t.name}. Change any bar and use the plot, selected-point calculation and evidence table to investigate.`;return}
+    $("predictionWorkTitle").textContent="Prediction";$("predictionQuestion").textContent=t.prediction.question;const choices=$("predictionChoices");choices.replaceChildren();
+    for(const o of t.prediction.options){const b=document.createElement("button");b.type="button";b.textContent=o.label;b.dataset.prediction=o.id;b.classList.toggle("selected",s.prediction===o.id);b.setAttribute("aria-pressed",String(s.prediction===o.id));b.disabled=!!s.moved||s.completed;b.addEventListener("click",()=>setPrediction(o.id));choices.appendChild(b)}
+    pw.classList.toggle("action-pulse",!s.prediction);const checked=s.completed||s.proof;
+    if(!s.prediction){pw.dataset.state="needed";$("predictionStateText").textContent="Prediction needed";$("predictionFeedback").textContent="Choose one prediction. The relevant direct control will then unlock."}
+    else if(!checked){pw.removeAttribute("data-state");$("predictionStateText").textContent="Prediction recorded";$("predictionFeedback").textContent=s.moved?"Keep your prediction visible while you compare it with the live evidence.":"Now test the prediction by operating the highlighted control."}
+    else{const supported=s.prediction===t.prediction.correct;pw.dataset.state=supported?"correct":"mistake";$("predictionStateText").textContent=supported?"Prediction supported":"Prediction revised";$("predictionFeedback").textContent=predictionResultText(t,s)}
+    const showRelationship=s.moved||s.observationSeen||s.completed||s.proof;if(!showRelationship)return;rw.hidden=false;const action=$("relationshipWorkAction");action.replaceChildren();
+    if(t.id==="threshold"){
+      rw.dataset.state=s.completed?"correct":"needed";$("relationshipStateText").textContent=s.completed?"Relationship found":"Evidence building";$("relationshipWorkTitle").textContent=s.completed?"Threshold relationship":"Live observation";$("relationshipWorkText").textContent=s.completed?`B and C kept z = 1.0. Lowering θ to ${fmt(s.theta)} changed their comparison and shifted the boundary without rotating it.`:`B and C both still have z = 1.0. As θ moves, their weighted sums stay fixed while their output comparison can change.`;
+    }else if(t.id==="weights"){
+      rw.dataset.state=s.completed?"correct":"needed";$("relationshipStateText").textContent=s.completed?"Relationship found":"Evidence building";$("relationshipWorkTitle").textContent=s.completed?"Weight relationship":"Live observation";$("relationshipWorkText").textContent=s.completed?`Increasing w₁ changed the x₁ = 1 cases while B stayed unchanged because 0 × w₁ remains 0. The boundary tilted.`:`C and D have x₁ = 1, so changing w₁ changes their z values; A and B do not gain that contribution.`;
+    }else if(s.proof){
+      rw.dataset.state="correct";$("relationshipStateText").textContent="Limit established";$("relationshipWorkTitle").textContent="Single-neuron limit";$("relationshipWorkText").textContent="The same-class diagonals cross. One straight line cannot put A and D on one side while B and C lie on the other, so XOR is not linearly separable by one threshold neuron.";
+    }else if(s.observationSeen){
+      rw.dataset.state="needed";$("relationshipStateText").textContent="Decision needed";$("relationshipWorkTitle").textContent="Retained evidence";$("relationshipWorkText").textContent=`You tested ${s.patterns.size} distinct straight separators. Best match so far: ${s.best} of 4; at least one mismatch remains. Use the guided dock below the perceptron to inspect the geometric reason.`;
+    }else{
+      rw.dataset.state="needed";$("relationshipStateText").textContent="Evidence building";$("relationshipWorkTitle").textContent="Test several separators";$("relationshipWorkText").textContent=`Distinct separators tested: ${s.patterns.size}. Best match so far: ${s.best} of 4. Keep changing a weight or θ and watch which mismatch moves.`;
+    }
+  }
+  function guidanceKind(){
+    if(state.mode!=="guided")return null;
+    const t=task(),s=session();
+    if(t.id==="threshold")return s.completed?"threshold-insight":"threshold-action";
+    if(t.id==="weights")return s.completed?"weights-insight":"weights-action";
+    if(t.id==="xor")return s.proof?"xor-proof":s.observationSeen?"xor-evidence":"xor-action";
+    return null;
+  }
+  function modalShell(kicker,title,copy,side="",actions=""){return `<div class="modal-main"><span class="modal-kicker">${kicker}</span><strong>${title}</strong>${copy?`<p class="modal-copy">${copy}</p>`:""}</div><div class="modal-side">${side}${actions?`<div class="modal-actions">${actions}</div>`:""}</div>`}
+  function modalMarkup(kind){const t=task(),s=session();
+    if(kind==="threshold-action")return modalShell("Predict → manipulate","Use θ to change the cutoff.",s.prediction?"Now lower the threshold until B and C switch to output 1 together.":"Choose your prediction in Working and evidence, then lower θ so B and C switch together.",'<div class="modal-equation">Use θ → change z ≥ θ; keep w₁ = w₂ = 1</div>');
+    if(kind==="threshold-insight")return modalShell("Key relationship","Threshold moved the boundary without rotating it.",`B and C kept z = 1.0. Lowering θ to ${fmt(s.theta)} changed only the comparison, so both outputs switched together.`, '<div class="modal-equation good">same z · lower θ → parallel boundary shift</div>','<button class="primary" type="button" data-modal-action="next">Continue to weight influence</button>');
+    if(kind==="weights-action")return modalShell("Predict → manipulate","Use w₁ to change x₁ influence.",s.prediction?"Increase w₁ until C crosses the threshold while B stays at output 0.":"Choose your prediction, then increase w₁ so C crosses while B does not.",'<div class="modal-equation">Use w₁ → change terms where x₁ = 1</div>');
+    if(kind==="weights-insight")return modalShell("Key relationship","A weight changed influence and tilted the boundary.",`C and D gained more weighted input because x₁ = 1. B did not, because 0 × w₁ stays 0.`, '<div class="modal-equation good">larger w₁ → larger x₁ contribution → boundary tilt</div>','<button class="primary" type="button" data-modal-action="next">Continue to the single-neuron limit</button>');
+    if(kind==="xor-action")return modalShell("Test a limit","Use the same one separator to test XOR.",s.prediction?"Change θ or either weight and test several straight boundaries. Watch which mismatch moves.":"Predict whether one straight boundary can work, then test several settings.",`<div class="modal-equation">${s.patterns.size} separator${s.patterns.size===1?'':'s'} tested · best ${s.best} of 4</div>`);
+    if(kind==="xor-evidence")return modalShell("Evidence → explanation","Every tested separator still leaves a mismatch.",`You have tested ${s.patterns.size} distinct straight boundaries; the best matches ${s.best} of 4. Check whether the failure comes from the geometry, not from a missed setting.`, '<div class="modal-equation warn">one straight boundary · XOR targets on opposite diagonals</div>','<button class="primary" type="button" data-modal-action="proof">Reveal geometric reason</button>');
+    if(kind==="xor-proof")return modalShell("Single-neuron limit","XOR is not linearly separable by one threshold neuron.","The two same-class diagonals cross, so no single straight line can place A and D on one side while B and C are on the other.",'<div class="modal-equation good">one perceptron = one linear separator</div>','<button class="primary" type="button" data-modal-action="explore">Open unguided experiment</button>');
+    return "";
+  }
+  function clearModalFocusTargets(){document.querySelectorAll('.modal-focus').forEach(el=>el.classList.remove('modal-focus'))}
+  function positionModal(){}
+  function renderModal(){const dock=$("phaseDock"),layer=$("modalLayer"),card=$("phaseModal"),kind=guidanceKind();clearModalFocusTargets();dock.hidden=!kind;layer.hidden=!kind;if(!kind){card.innerHTML="";return}card.className=`phase-modal ${kind.includes("proof")?"proof":kind.includes("insight")?"success":kind.includes("evidence")?"limit":"instruction"}`;card.innerHTML=modalMarkup(kind);card.querySelectorAll('[data-modal-action]').forEach(b=>b.addEventListener('click',()=>modalAction(b.dataset.modalAction,b.dataset.value)))}
+  function canManipulate(key){const s=session();if(state.mode==="explore")return true;return !s.settling&&!locks()[key]}
+  function renderAll(){const s=session();s.best=Math.max(s.best,matchCount());renderHeader();renderPlot();renderCalculation();renderControls();renderEvidence();renderWorking();renderModal()}
+  function setPrediction(id){const t=task(),s=session();if(state.mode!=="guided"||s.moved||s.completed||!t.prediction.options.some(o=>o.id===id))return;s.prediction=id;s.modalKind=null;renderAll()}
+  function completeCurrent(){const t=task(),s=session();if(s.completed)return;s.completed=true;state.completed.add(t.id);s.modalKind=t.id==="threshold"?"threshold-insight":t.id==="weights"?"weights-insight":null;renderAll()}
+  function evaluateProgress(key=null){const t=task(),s=session();s.best=Math.max(s.best,matchCount());if(state.mode==="explore")return renderAll();if((t.id==="threshold"||t.id==="weights")&&currentSuccess()&&!s.completed)return completeCurrent();if(t.id==="xor"&&!s.proof&&s.patterns.size>=3){s.observationSeen=true}renderAll()}
+  function setParamValue(key,value){const s=session(),r=RANGES[key];if(!canManipulate(key))return;const v=Math.round(clamp(value,r.min,r.max)/r.step)*r.step;s[key]=Math.round(v*10)/10;s.lastKey=key;s.moved=true;s.changedKeys.add(key);s.patterns.add(patternFor(s));renderAll()}
+  function commitParam(key=null){if(state.mode==="guided"&&!session().prediction)return;evaluateProgress(key||session().lastKey)}
+  function valueFromClient(key,clientX){const track=$(key+"Track"),r=RANGES[key],rect=track.getBoundingClientRect(),f=clamp((clientX-rect.left)/Math.max(1,rect.width),0,1);return r.min+f*(r.max-r.min)}
+  function pointerDown(e){const track=e.target.closest?.('.param-track[data-param]');if(!track)return;const key=track.dataset.param;if(!canManipulate(key))return;e.preventDefault();state.drag={key,id:e.pointerId};track.classList.add('dragging');track.setPointerCapture?.(e.pointerId);setParamValue(key,valueFromClient(key,e.clientX))}
+  function pointerMove(e){if(!state.drag||state.drag.id!==e.pointerId)return;e.preventDefault();setParamValue(state.drag.key,valueFromClient(state.drag.key,e.clientX))}
+  function pointerUp(e){if(!state.drag)return;const {key,id}=state.drag,track=$(key+'Track');try{track.releasePointerCapture?.(id)}catch{}track.classList.remove('dragging');state.drag=null;commitParam(key)}
+  function keyAdjust(e){const track=e.target.closest?.('.param-track[data-param]');if(!track)return;const key=track.dataset.param,r=RANGES[key];if(!canManipulate(key))return;let next=session()[key],handled=true;if(e.key==='ArrowLeft'||e.key==='ArrowDown')next-=e.shiftKey?.5:r.step;else if(e.key==='ArrowRight'||e.key==='ArrowUp')next+=e.shiftKey?.5:r.step;else if(e.key==='Home')next=r.min;else if(e.key==='End')next=r.max;else handled=false;if(!handled)return;e.preventDefault();setParamValue(key,next);commitParam(key);requestAnimationFrame(()=>$(key+'Track')?.focus())}
+  function selectPoint(id){if(!POINTS[id])return;session().selected=id;renderAll()}
+  function chooseTask(id){if(!TASKS.some(t=>t.id===id))return;if(!state.exploreUnlocked&&id!==state.taskId)return;state.taskId=id;session().modalKind=null;state.lastModal=null;renderAll()}
+  function nextTask(){const i=TASKS.findIndex(t=>t.id===state.taskId);if(i<TASKS.length-1){state.taskId=TASKS[i+1].id;session().modalKind=null;state.lastModal=null;renderAll()}}
+  function resetTask(){const t=task(),freshSession=fresh(t);state.sessions.set(t.id,freshSession);if(!state.exploreUnlocked)state.completed.delete(t.id);state.lastModal=null;renderAll()}
+  function restartLab(){state.completed.clear();state.sessions=new Map(TASKS.map(t=>[t.id,fresh(t)]));state.taskId=TASKS[0].id;state.mode="guided";state.exploreUnlocked=false;state.lastModal=null;renderAll()}
+  function setMode(mode){if(mode!=="guided"&&mode!=="explore")return;if(mode==="explore"&&!state.exploreUnlocked)return;state.mode=mode;session().modalKind=null;session().settling=null;state.lastModal=null;renderAll()}
+  function revealProof(){const s=session();if(task().id!=="xor"||!s.observationSeen)return;s.proof=true;s.completed=true;state.completed.add("xor");state.exploreUnlocked=true;s.modalKind="xor-proof";state.lastModal=null;renderAll()}
+  function modalAction(action,value){if(action==='next')return nextTask();if(action==='proof')return revealProof();if(action==='explore')return setMode("explore")}
+
+
+  $("workspace").addEventListener("pointerdown",pointerDown);$("workspace").addEventListener("pointermove",pointerMove);$("workspace").addEventListener("pointerup",pointerUp);$("workspace").addEventListener("pointercancel",pointerUp);$("workspace").addEventListener("keydown",keyAdjust);
+  $("resetTask").addEventListener("click",resetTask);$("guidedMode").addEventListener("click",()=>setMode("guided"));$("exploreMode").addEventListener("click",()=>setMode("explore"));$("progressRail").addEventListener("click",e=>{const b=e.target.closest("[data-progress]");if(b&&!b.disabled)chooseTask(b.dataset.progress)});$("plot").addEventListener("click",e=>{const g=e.target.closest?.("[data-point]");if(g)selectPoint(g.dataset.point)});$("plot").addEventListener("keydown",e=>{const g=e.target.closest?.("[data-point]");if(g&&(e.key==="Enter"||e.key===" ")){e.preventDefault();selectPoint(g.dataset.point)}});$("evidenceBody").addEventListener("click",e=>{const row=e.target.closest("tr[data-point]");if(row)selectPoint(row.dataset.point)});
+  window.addEventListener("resize",()=>{renderPlot()});
+  window.labTest={getState:()=>{const t=task(),s=session();return{taskId:t.id,mode:state.mode,exploreUnlocked:state.exploreUnlocked,params:{w1:s.w1,w2:s.w2,theta:s.theta},selected:s.selected,prediction:s.prediction,moved:s.moved,patterns:[...s.patterns],proof:s.proof,modalKind:s.modalKind,matches:matchCount(),best:s.best,success:t.id==="xor"?s.proof:currentSuccess(),completed:[...state.completed],evidence:evidence()}},setTask:chooseTask,setMode,reset:resetTask,restart:restartLab,setPrediction,setParam:(k,v,commit=true)=>{setParamValue(k,v);if(commit)commitParam(k)},selectPoint,revealProof,modalAction,positionModal,render:renderAll};
+  renderAll();
+})();
+</script>
+<!-- v9: guided progression and key insights are docked below the perceptron; persistent working remains at right; Explore removes guidance after all three relationships. -->
+</body>
+</html>

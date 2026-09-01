@@ -1,0 +1,2606 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="data:,">
+<!-- LAB_FRAME_STYLES_START -->
+<style data-lab-frame></style>
+<!-- LAB_FRAME_STYLES_END -->
+<link rel="stylesheet" href="./lab-kit.css" data-lab-resource="lab-kit.css">
+
+<!-- LAB_MANIFEST_HEAD_START -->
+<title>Recursive Call Stack</title>
+<meta name="description" content="Trace recursive calls, stack frames, base cases and return values for Cambridge International A Level Computer Science 9618.">
+<!-- LAB_MANIFEST_HEAD_END -->
+<style>
+:root{
+  --lab-canvas:#f3f5f7;
+  --lab-paper:#fbfbfd;
+  --lab-surface:#fff;
+  --lab-control:#fff;
+  --lab-ink:#1d1d1f;
+  --lab-muted:#6e6e73;
+  --lab-line:#d2d2d7;
+  --lab-line-strong:#a7a7ad;
+  --lab-accent:#5277b8;
+  --lab-accent-soft:#eef2fa;
+  --lab-good:#18794e;
+  --lab-good-soft:#edf8f1;
+  --lab-warn:#946200;
+  --lab-warn-soft:#fff6e7;
+  --lab-bad:#b42318;
+  --lab-bad-soft:#fff0ee;
+  --lab-focus:#1d1d1f;
+  --lab-font-sans:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif;
+  --lab-panel-radius:12px;
+  --lab-control-radius:8px;
+  --lab-pill-radius:999px;
+  --lab-panel-shadow:0 1px 2px rgba(29,29,31,.04);
+  --call:#5277b8;
+  --call-soft:#eef2fa;
+  --wait:#6f7d87;
+  --wait-soft:#f2f4f5;
+  --return:#b56b2d;
+  --return-soft:#fff3e8;
+  --base:#18794e;
+  --base-soft:#edf8f1;
+  --stack-rail:#768892;
+  --code-bg:#111923;
+  --code-ink:#e9f1f7;
+  --code-muted:#8ea0ac;
+  --code-active:#203954;
+  --code-keyword:#8fc6ff;
+  --code-number:#ffd28d;
+  --code-name:#a9e2c1;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{min-height:100%;background:var(--lab-canvas)}
+body{margin:0;color:var(--lab-ink);font-family:var(--lab-font-sans);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+button,input{font:inherit}
+button{min-height:34px;padding:0 10px;border:1px solid var(--lab-line);border-radius:var(--lab-control-radius);background:var(--lab-control);color:var(--lab-ink);cursor:pointer}
+button:hover:not(:disabled){border-color:var(--lab-line-strong)}
+button:disabled{opacity:.43;cursor:not-allowed}
+button.primary{background:var(--lab-accent);border-color:var(--lab-accent);color:#fff;font-weight:760}
+button.good{background:var(--lab-good);border-color:var(--lab-good);color:#fff;font-weight:760}
+button.quiet{background:transparent}
+:where(button,input,[tabindex]):focus-visible{outline:3px solid var(--lab-focus);outline-offset:3px}
+body>main{container-name:lab-canvas;container-type:inline-size;width:min(1200px,calc(100% - 24px));margin:14px auto 34px}
+.panel{background:var(--lab-surface);border:1px solid var(--lab-line);border-radius:var(--lab-panel-radius);box-shadow:var(--lab-panel-shadow)}
+.lab-manifest-header{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px 24px;align-items:start;margin-bottom:10px;padding-bottom:12px;border-bottom:1px solid var(--lab-line)}
+.lab-manifest-heading{min-width:0}
+.lab-manifest-header h1{margin:0;max-width:26ch;font-size:clamp(25px,3.1vw,38px);font-weight:650;letter-spacing:-.045em;line-height:1.03}
+.lab-manifest-subtitle{margin:7px 0 0;max-width:79ch;color:var(--lab-muted);font-size:12px;line-height:1.45}
+.lab-syllabus-chips{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px;margin:0}
+.lab-syllabus-chip{display:inline-flex;align-items:center;min-height:29px;padding:7px 10px;border:1px solid #91c4b0;border-radius:var(--lab-pill-radius);background:#edf8f3;color:#235f4e;font-size:10px;font-weight:700;white-space:nowrap}
+
+.mission{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px 14px;align-items:center;padding:9px 10px}
+.mission-copy{min-width:0}
+.mission-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:2px;color:var(--lab-muted);font-size:8px;font-weight:850;letter-spacing:.07em;text-transform:uppercase}
+.mission-meta span+span::before{content:"·";margin-right:6px;color:#9ea6ac}
+.mission-meta .mode{color:#486a99}
+#missionTitle{display:block;font-size:14px;line-height:1.32}
+#missionHint{display:block;margin-top:2px;color:var(--lab-muted);font-size:9px;line-height:1.38}
+.mission-actions{display:flex;align-items:center;justify-content:flex-end;gap:6px;flex-wrap:wrap}
+.mission-actions button{min-height:31px;font-size:9px;font-weight:760}
+.play-button{display:inline-flex;align-items:center;gap:6px}
+.play-button svg{width:12px;height:12px;fill:currentColor}
+
+.rule-controls{display:grid;grid-template-columns:minmax(150px,1fr) auto auto;gap:8px;align-items:end;margin-top:8px;padding-top:8px;border-top:1px solid var(--lab-line)}
+.rule-field{min-width:0}
+.rule-field>span{display:block;margin-bottom:4px;color:var(--lab-muted);font-size:8px;font-weight:800;letter-spacing:.05em;text-transform:uppercase}
+.start-control{display:grid;grid-template-columns:auto minmax(90px,1fr) 30px;gap:7px;align-items:center}
+.start-control label{font:750 10px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.start-control input[type="range"]{width:100%;accent-color:var(--lab-accent)}
+.start-readout{height:28px;display:grid;place-items:center;border:1px solid var(--lab-line);border-radius:7px;background:var(--lab-paper);font:850 11px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.segmented{display:inline-flex;padding:3px;border:1px solid var(--lab-line);border-radius:9px;background:#f6f8f9}
+.segmented button{min-height:26px;border:0;border-radius:6px;background:transparent;padding:0 8px;color:var(--lab-muted);font-size:9px;font-weight:800}
+.segmented button.active{background:#fff;color:var(--lab-ink);box-shadow:0 1px 3px rgba(29,29,31,.13)}
+
+.lab{margin-top:8px;overflow:hidden}
+.workspace{position:relative;display:grid;grid-template-columns:minmax(330px,.72fr) 56px minmax(0,1.28fr);min-height:540px;background:linear-gradient(180deg,#fff,#fbfcfd)}
+.code-side{min-width:0;padding:10px;border-right:1px solid var(--lab-line);background:#f8fafb}
+.stack-side{position:relative;min-width:0;padding:9px 10px 10px;background:#fbfcfd}
+.section-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:7px}
+.section-head strong{font-size:12px}
+.section-head span{display:block;margin-top:2px;color:var(--lab-muted);font-size:8px;line-height:1.32}
+.section-chip{flex:0 0 auto;min-height:25px;display:inline-flex;align-items:center;padding:4px 7px;border:1px solid var(--lab-line);border-radius:var(--lab-pill-radius);background:var(--lab-surface);color:var(--lab-muted);font:800 8px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+
+.code-panel{overflow:hidden;border:1px solid #283541;border-radius:11px;background:var(--code-bg);box-shadow:0 8px 20px rgba(17,25,35,.12)}
+.code-titlebar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:7px 9px;border-bottom:1px solid #2c3945;background:#17222d;color:#aebbc4;font-size:8px;font-weight:800;letter-spacing:.05em;text-transform:uppercase}
+.code-lights{display:flex;gap:4px}.code-lights i{width:7px;height:7px;border-radius:50%;background:#53636f}.code-lights i:nth-child(2){background:#5c7890}.code-lights i:nth-child(3){background:#5f8a75}
+.code-list{list-style:none;margin:0;padding:8px 0 9px;counter-reset:line}
+.code-line{position:relative;display:grid;grid-template-columns:29px minmax(0,1fr);min-height:27px;padding:4px 9px 4px 0;color:var(--code-ink);font:650 11px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;transition:background .16s,color .16s}
+.code-line::before{counter-increment:line;content:counter(line);color:#607483;text-align:right;padding-right:8px;font-size:9px;line-height:1.9}
+.code-line.active{background:var(--code-active);box-shadow:inset 3px 0 0 #73a9df}
+.code-line.active::before{color:#a8c9e8}
+.code-line .indent-1{padding-left:13px}.code-line .indent-2{padding-left:26px}
+.kw{color:var(--code-keyword)}.num{color:var(--code-number)}.name{color:var(--code-name)}.op{color:#d5e3ec}
+.code-test{display:inline-flex;align-items:center;gap:4px;margin-left:7px;padding:1px 5px;border-radius:999px;background:rgba(255,255,255,.08);color:#b5c3cc;font-size:8px;font-weight:850;vertical-align:1px}
+.code-test.true{background:rgba(75,177,116,.18);color:#9ce0b6}.code-test.false{background:rgba(207,139,64,.18);color:#ffd09c}
+.expression-panel{margin-top:8px;min-height:88px;padding:9px 10px;border:1px solid var(--lab-line);border-radius:10px;background:var(--lab-surface)}
+.expression-kicker{color:var(--lab-muted);font-size:7px;font-weight:900;letter-spacing:.07em;text-transform:uppercase}
+#expressionMain{display:block;margin-top:4px;font:850 16px/1.25 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:-.025em}
+#expressionSub{display:block;margin-top:4px;color:var(--lab-muted);font-size:9px;line-height:1.38}
+.code-note{margin-top:8px;padding:8px 9px;border:1px solid var(--lab-line);border-radius:9px;background:#fff;color:var(--lab-muted);font-size:8.5px;line-height:1.4}
+.code-note strong{color:var(--lab-ink)}
+
+.flow-bridge{position:relative;display:grid;place-items:center;background:#f6f8fa;border-right:1px solid var(--lab-line)}
+.flow-bridge::before{content:"";position:absolute;top:0;bottom:0;left:50%;width:1px;background:linear-gradient(transparent,#d9e0e5 18%,#d9e0e5 82%,transparent)}
+.bridge-svg{position:relative;z-index:1;width:46px;height:165px;overflow:visible}
+.bridge-track{fill:none;stroke:#bcc8cf;stroke-width:3;stroke-linecap:round}
+.bridge-arrow{fill:#80919c}
+.bridge-token{fill:var(--call);filter:drop-shadow(0 1px 2px rgba(20,40,60,.25));transition:transform .35s ease,fill .2s}
+.bridge-label-bg{fill:#fff;stroke:#ccd5db}
+.bridge-label{fill:#5e6b74;font:850 8px var(--lab-font-sans);text-anchor:middle;text-transform:uppercase}
+.flow-bridge.returning .bridge-token{fill:var(--return)}
+.flow-bridge.returning .bridge-token-wrap{transform:translateY(112px) rotate(180deg)}
+.bridge-token-wrap{transform-origin:23px 82px;transition:transform .35s ease}
+
+.stack-toolbar{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;margin-bottom:7px}
+.stack-title strong{display:block;font-size:12px}.stack-title span{display:block;margin-top:2px;color:var(--lab-muted);font-size:8px;line-height:1.32}
+.output-box{min-width:126px;padding:6px 8px;border:1px solid var(--lab-line);border-radius:9px;background:#fff;text-align:right}
+.output-box span{display:block;color:var(--lab-muted);font-size:7px;font-weight:850;letter-spacing:.06em;text-transform:uppercase}
+#outputValue{display:block;margin-top:2px;font:900 16px/1.1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.output-box.complete{border-color:#a9d2b8;background:var(--lab-good-soft);color:var(--lab-good)}
+.output-box.error{border-color:#e2b5ae;background:var(--lab-bad-soft);color:var(--lab-bad)}
+
+.stack-workspace{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:9px;min-height:407px}
+.stack-memory{position:relative;min-width:0;height:407px;padding:34px 12px 21px;border:1px solid var(--lab-line);border-radius:11px;background:
+  linear-gradient(rgba(255,255,255,.94),rgba(255,255,255,.94)),
+  repeating-linear-gradient(0deg,transparent 0 31px,#edf1f4 32px),
+  repeating-linear-gradient(90deg,transparent 0 31px,#edf1f4 32px);
+  overflow:hidden
+}
+.stack-cap{position:absolute;left:11px;right:11px;top:16px;height:2px;border-radius:2px;background:var(--stack-rail)}
+.stack-cap::before,.stack-cap::after{content:"";position:absolute;top:-4px;width:2px;height:10px;background:var(--stack-rail)}.stack-cap::before{left:0}.stack-cap::after{right:0}
+.stack-cap-label{position:absolute;top:5px;left:50%;transform:translateX(-50%);padding:2px 6px;background:#fff;color:var(--lab-muted);font-size:7px;font-weight:850;letter-spacing:.05em;text-transform:uppercase;white-space:nowrap}
+.stack-floor{position:absolute;left:11px;right:11px;bottom:14px;height:5px;border-radius:2px;background:#83939d;box-shadow:0 2px 0 #c4cdd2}
+.stack-floor-label{position:absolute;right:15px;bottom:2px;color:var(--lab-muted);font-size:7px;font-weight:850;text-transform:uppercase}
+.stack-frames{position:absolute;left:15px;right:15px;top:37px;bottom:21px;display:flex;flex-direction:column-reverse;justify-content:flex-start;gap:4px}
+.stack-frame{position:relative;min-height:var(--frame-height,60px);display:grid;grid-template-columns:42px minmax(0,1fr) auto;gap:7px;align-items:center;padding:5px 7px 5px 0;border:1px solid #aebbc3;border-radius:8px;background:#fff;box-shadow:0 2px 5px rgba(33,48,58,.07);overflow:hidden;transition:border-color .18s,background .18s,transform .18s,opacity .18s}
+.stack-frame::before{content:"";align-self:stretch;border-radius:7px 0 0 7px;background:#9aa8b1}
+.frame-id{position:absolute;left:4px;top:50%;transform:translateY(-50%);width:34px;color:#fff;font:900 8px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;text-align:center;z-index:1}
+.frame-main{min-width:0}
+.frame-call{display:flex;align-items:center;gap:5px;min-width:0}
+.frame-call strong{font:900 11px/1.15 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:nowrap}
+.frame-state{display:flex;align-items:center;gap:4px;flex-wrap:wrap;margin-top:3px}
+.state-chip{display:inline-flex;align-items:center;min-height:17px;padding:2px 5px;border:1px solid #d6dde1;border-radius:999px;background:#f8fafb;color:#596872;font:750 7.5px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:nowrap}
+.state-chip.slot{min-width:78px}.state-chip.slot.filled{border-color:#d5b690;background:var(--return-soft);color:#8a541f}
+.frame-status{margin-left:auto;color:#73818a;font-size:7px;font-weight:850;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
+.return-prediction{display:grid;grid-template-columns:auto 48px;gap:4px;align-items:center;padding-left:4px;border-left:1px solid #e3e7ea}
+.return-prediction label{color:#687780;font-size:7px;font-weight:850;line-height:1.1;text-align:right}
+.return-prediction input{width:48px;height:29px;padding:0 5px;border:1px solid #aab9c2;border-radius:6px;background:#fff;color:var(--lab-ink);font:850 11px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;text-align:center}
+.return-prediction input.filled{border-color:var(--lab-accent);background:var(--lab-accent-soft)}
+.stack-frame.waiting{border-color:#b5c0c7;background:#fbfcfd}.stack-frame.waiting::before{background:var(--wait)}
+.stack-frame.waiting .frame-status{color:#6e7c85}
+.stack-frame.active{border-color:#7da4d5;background:#f8fbff;box-shadow:0 0 0 2px rgba(82,119,184,.14),0 4px 10px rgba(47,83,124,.12)}.stack-frame.active::before{background:var(--call)}
+.stack-frame.active .frame-status{color:#3f6797}
+.stack-frame.base{border-color:#8fc2a1;background:var(--base-soft)}.stack-frame.base::before{background:var(--base)}.stack-frame.base .frame-status{color:var(--base)}
+.stack-frame.resumed{border-color:#d5aa7e;background:var(--return-soft)}.stack-frame.resumed::before{background:var(--return)}.stack-frame.resumed .frame-status{color:#8d5726}
+.stack-frame.dense{grid-template-columns:38px minmax(0,1fr) auto;padding-block:3px}.stack-frame.dense .frame-call strong{font-size:9px}.stack-frame.dense .frame-state{margin-top:1px}.stack-frame.dense .state-chip{min-height:14px;font-size:6.5px;padding:1px 4px}.stack-frame.dense .frame-id{font-size:7px}.stack-frame.dense .frame-status{font-size:6px}
+.overflow-attempt{position:absolute;z-index:4;left:22px;right:22px;top:4px;height:30px;display:flex;align-items:center;justify-content:center;gap:6px;border:2px dashed var(--lab-bad);border-radius:8px;background:rgba(255,240,238,.96);color:var(--lab-bad);font:850 9px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;box-shadow:0 4px 12px rgba(180,35,24,.16);animation:collision .7s ease both}
+.overflow-attempt::before{content:"next frame";font:850 7px var(--lab-font-sans);letter-spacing:.05em;text-transform:uppercase}
+@keyframes collision{0%{transform:translateY(-28px);opacity:0}65%{transform:translateY(3px);opacity:1}82%{transform:translateY(-2px)}100%{transform:translateY(0)}}
+
+.return-ledger{min-width:0;height:407px;display:flex;flex-direction:column;padding:8px;border:1px solid var(--lab-line);border-radius:10px;background:#fff;overflow:hidden}
+.ledger-head{display:flex;justify-content:space-between;gap:7px;align-items:flex-start;padding-bottom:6px;border-bottom:1px solid #e3e7ea}
+.ledger-head strong{font-size:9px}.ledger-head span{color:var(--lab-muted);font-size:7px;line-height:1.28;text-align:right}
+#ledgerList{min-height:0;flex:1;display:grid;align-content:start;gap:5px;margin-top:6px;overflow:auto}
+.ledger-empty{min-height:92px;display:grid;place-items:center;color:#87939b;font-size:8px;line-height:1.35;text-align:center}
+.ledger-row{display:grid;grid-template-columns:26px minmax(0,1fr);gap:5px;align-items:start;padding:5px;border:1px solid #dce3e7;border-radius:7px;background:#fafcfd}
+.ledger-frame{display:grid;place-items:center;min-height:27px;border-radius:6px;background:var(--return);color:#fff;font:900 7px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.ledger-copy{min-width:0}
+.ledger-copy strong{display:block;font:850 8px/1.2 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.ledger-copy span{display:block;margin-top:2px;color:var(--lab-muted);font-size:6.8px;line-height:1.25}
+.ledger-row.correct{border-color:#acd5b8;background:var(--lab-good-soft)}.ledger-row.wrong{border-color:#e4c59e;background:var(--lab-warn-soft)}
+.ledger-row.correct .ledger-frame{background:var(--lab-good)}.ledger-row.wrong .ledger-frame{background:var(--lab-warn)}
+
+.phase-card{position:relative;z-index:2;flex:0 0 auto;width:100%;margin-top:7px;padding:9px 10px;border:1px solid #9db5d2;border-radius:9px;background:rgba(250,252,255,.985);box-shadow:0 5px 14px rgba(29,29,31,.11)}
+.phase-card.success{border-color:#91c4a4;background:rgba(248,253,249,.99)}
+.phase-card.error{border-color:#dfaba4;background:rgba(255,248,247,.99)}
+.phase-kicker{color:var(--lab-accent);font-size:7px;font-weight:900;letter-spacing:.075em;text-transform:uppercase}
+.phase-card.success .phase-kicker{color:var(--lab-good)}.phase-card.error .phase-kicker{color:var(--lab-bad)}
+#phaseTitle{display:block;margin-top:3px;font-size:12px;line-height:1.28}
+#phaseCopy{display:block;margin-top:3px;color:#5e6d77;font-size:8.5px;line-height:1.4}
+.phase-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.phase-actions button{min-height:29px;font-size:8px;font-weight:800}
+.prediction-count{display:inline-flex;align-items:center;min-height:25px;margin-top:7px;padding:3px 7px;border:1px solid var(--lab-line);border-radius:999px;background:#fff;color:var(--lab-muted);font:800 7px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.phase-feedback{margin-top:7px;padding:6px 7px;border-radius:7px;background:#fff;color:#54636d;font-size:8px;line-height:1.35}
+
+.timeline{display:grid;grid-template-columns:auto minmax(130px,1fr) auto;gap:8px;align-items:center;margin-top:8px;padding:7px 8px;border:1px solid var(--lab-line);border-radius:9px;background:#fff}
+.timeline label{color:var(--lab-muted);font-size:7px;font-weight:850;text-transform:uppercase;letter-spacing:.05em}
+.timeline input[type="range"]{width:100%;accent-color:var(--lab-accent)}
+#timelineValue{min-width:42px;color:#50606a;font:850 8px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;text-align:right}
+
+.status-bar{min-height:34px;display:flex;align-items:center;gap:8px 12px;flex-wrap:wrap;padding:7px 9px;border-top:1px solid var(--lab-line);background:#fff;color:var(--lab-muted);font-size:8px;line-height:1.35}
+#statusText{color:var(--lab-ink);font-weight:650}
+.status-key{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.status-key span{display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
+.status-key i{width:8px;height:8px;border-radius:3px;background:#999}.status-key .call i{background:var(--call)}.status-key .wait i{background:var(--wait)}.status-key .ret i{background:var(--return)}.status-key .base i{background:var(--base)}
+
+.fly-token{position:fixed;z-index:9999;display:grid;place-items:center;width:36px;height:27px;border:1px solid #b87538;border-radius:999px;background:var(--return);color:#fff;box-shadow:0 7px 17px rgba(98,58,23,.25);font:900 11px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;pointer-events:none}
+.call-pulse{animation:callPulse .5s ease both}@keyframes callPulse{0%{transform:translateY(14px);opacity:0}100%{transform:translateY(0);opacity:1}}
+
+
+@container lab-canvas (min-width:1100px){
+  .mission:has(#ruleControls:not([hidden])) .mission-copy{
+    display:grid;
+    grid-template-columns:minmax(270px,.72fr) minmax(600px,1.28fr);
+    grid-template-areas:"meta rules" "title rules" "hint rules";
+    column-gap:14px;
+    align-items:center;
+  }
+  .mission:has(#ruleControls:not([hidden])) .mission-meta{grid-area:meta;align-self:end}
+  .mission:has(#ruleControls:not([hidden])) #missionTitle{grid-area:title}
+  .mission:has(#ruleControls:not([hidden])) #missionHint{grid-area:hint;align-self:start}
+  .mission:has(#ruleControls:not([hidden])) .rule-controls{
+    grid-area:rules;
+    grid-template-columns:minmax(230px,1fr) auto auto;
+    align-self:stretch;
+    margin-top:0;
+    padding:0 0 0 14px;
+    border-top:0;
+    border-left:1px solid var(--lab-line);
+  }
+}
+@container lab-canvas (max-width:920px){
+  .workspace{grid-template-columns:minmax(275px,.72fr) 44px minmax(0,1.28fr)}
+  .stack-workspace{grid-template-columns:minmax(0,1fr) 190px}
+  .code-line{font-size:9.5px;min-height:25px}.expression-panel{min-height:82px}.stack-frame{grid-template-columns:38px minmax(0,1fr) auto}.state-chip.slot{min-width:66px}.return-prediction{grid-template-columns:auto 43px}.return-prediction input{width:43px}
+}
+@container lab-canvas (max-width:820px){
+  .lab-manifest-header{grid-template-columns:1fr;gap:9px}.lab-syllabus-chips{justify-content:flex-start}
+  .mission{grid-template-columns:1fr}.mission-actions{justify-content:flex-start}
+  .rule-controls{grid-template-columns:1fr 1fr}.rule-controls .start-field{grid-column:1/-1}
+  .workspace{display:block;min-height:0}.code-side{border-right:0;border-bottom:1px solid var(--lab-line)}
+  .flow-bridge{display:none}
+  .stack-side{padding-bottom:9px}.stack-workspace{grid-template-columns:minmax(0,1fr) 210px}.stack-memory{height:390px}.return-ledger{height:390px}
+  .status-key{margin-left:0}
+}
+@media(max-width:560px){
+  body>main{width:min(100% - 12px,1200px);margin-top:7px}
+  .lab-manifest-header{margin-bottom:7px;padding-bottom:9px}.lab-manifest-header h1{font-size:clamp(24px,8vw,33px)}
+  .mission{padding:8px}.mission-actions{gap:5px}.mission-actions button{flex:1 1 auto}
+  .rule-controls{grid-template-columns:1fr}.rule-controls .start-field{grid-column:auto}.segmented{width:100%}.segmented button{flex:1}
+  .code-side{padding:7px}.stack-side{padding:7px}.code-panel{border-radius:9px}.code-line{font-size:9px;grid-template-columns:25px minmax(0,1fr);padding-right:5px}.code-line .indent-1{padding-left:9px}.code-line .indent-2{padding-left:18px}
+  .stack-workspace{display:block;min-height:0}.stack-memory{height:405px}.return-ledger{height:auto;margin-top:7px;max-height:none}.return-ledger #ledgerList{max-height:170px}.ledger-empty{min-height:55px}
+  .phase-card{width:100%;margin-top:7px;box-shadow:0 6px 16px rgba(29,29,31,.11)}
+  .stack-toolbar{grid-template-columns:1fr}.output-box{width:100%;text-align:left}
+  .timeline{grid-template-columns:auto minmax(90px,1fr) auto}.status-bar{align-items:flex-start}.status-key{width:100%}
+  .return-prediction label{display:none}.return-prediction{grid-template-columns:45px}.stack-frame{grid-template-columns:38px minmax(0,1fr) auto;gap:5px}.frame-state{gap:3px}.state-chip{font-size:7px}.state-chip.slot{min-width:63px}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.001ms!important}
+}
+
+
+/* Modal-led progression and interaction guidance */
+body.modal-open{overflow:hidden}
+.return-ledger{padding-bottom:8px}
+#ledgerList{padding-bottom:2px}
+.lab-modal-layer{position:fixed;z-index:1200;inset:0;display:block}
+.lab-modal-layer[hidden]{display:none}
+.lab-modal-backdrop{position:absolute;inset:0;background:rgba(242,246,249,.38);backdrop-filter:blur(1.4px)}
+.progress-modal{position:fixed;z-index:3;width:min(430px,calc(100vw - 28px));max-height:min(78vh,650px);overflow:auto;padding:15px 16px 14px;border:1px solid #91aaca;border-radius:13px;background:rgba(252,253,255,.985);box-shadow:0 22px 60px rgba(26,42,54,.23);color:var(--lab-ink)}
+.progress-modal[data-placement="center"]{left:50%;top:50%;transform:translate(-50%,-50%)}
+.progress-modal[data-placement="left"]{left:clamp(14px,4vw,52px);bottom:clamp(14px,4vh,38px)}
+.progress-modal[data-placement="right"]{right:clamp(14px,4vw,52px);bottom:clamp(14px,4vh,38px)}
+.progress-modal[data-tone="success"]{border-color:#82b897;background:rgba(249,253,250,.99)}
+.progress-modal[data-tone="warn"]{border-color:#d6b06f;background:rgba(255,252,246,.99)}
+.progress-modal[data-tone="error"]{border-color:#d89d95;background:rgba(255,250,249,.99)}
+.modal-topline{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.modal-kicker{color:var(--lab-accent);font-size:8px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+.progress-modal[data-tone="success"] .modal-kicker{color:var(--lab-good)}
+.progress-modal[data-tone="warn"] .modal-kicker{color:var(--lab-warn)}
+.progress-modal[data-tone="error"] .modal-kicker{color:var(--lab-bad)}
+.modal-progress{display:inline-flex;align-items:center;min-height:23px;padding:3px 7px;border:1px solid var(--lab-line);border-radius:999px;background:#fff;color:var(--lab-muted);font:800 8px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.progress-modal h2{margin:7px 0 0;font-size:19px;line-height:1.18;letter-spacing:-.025em}
+#modalCopy{margin:6px 0 0;color:#566671;font-size:11px;line-height:1.48}
+.modal-facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:11px}
+.modal-fact{min-width:0;padding:8px 9px;border:1px solid #d9e1e6;border-radius:9px;background:#fff}
+.modal-fact span{display:block;color:var(--lab-muted);font-size:7px;font-weight:900;letter-spacing:.065em;text-transform:uppercase}
+.modal-fact strong{display:block;margin-top:3px;font:850 11px/1.28 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;overflow-wrap:anywhere}
+.modal-fact.good{border-color:#abd2b8;background:var(--lab-good-soft)}
+.modal-fact.warn{border-color:#e2c596;background:var(--lab-warn-soft)}
+.modal-fact.bad{border-color:#e2b3ad;background:var(--lab-bad-soft)}
+.modal-realisation{margin-top:11px;padding:9px 10px;border-left:3px solid var(--lab-accent);border-radius:0 8px 8px 0;background:var(--lab-accent-soft);color:#3e5877;font-size:10px;font-weight:650;line-height:1.45}
+.progress-modal[data-tone="success"] .modal-realisation{border-left-color:var(--lab-good);background:var(--lab-good-soft);color:#315f46}
+.progress-modal[data-tone="warn"] .modal-realisation{border-left-color:var(--lab-warn);background:var(--lab-warn-soft);color:#75551d}
+.progress-modal[data-tone="error"] .modal-realisation{border-left-color:var(--lab-bad);background:var(--lab-bad-soft);color:#7b3832}
+.modal-feedback{margin-top:9px;padding:8px 9px;border:1px solid #e1c18e;border-radius:8px;background:var(--lab-warn-soft);color:#74531c;font-size:9px;line-height:1.42}
+.modal-actions{display:flex;justify-content:flex-end;gap:7px;flex-wrap:wrap;margin-top:13px;padding-top:11px;border-top:1px solid #e1e6e9}
+.modal-actions button{min-height:34px;font-size:10px;font-weight:780}
+.modal-actions button.primary{order:2}
+.modal-evidence-layer{position:fixed;z-index:2;inset:0;pointer-events:none}
+.modal-evidence-outline{position:fixed;border:3px solid #4776b2;border-radius:11px;box-shadow:0 0 0 4px rgba(255,255,255,.92),0 0 0 8px rgba(82,119,184,.2),0 10px 24px rgba(30,51,72,.16);animation:evidencePulse 1.1s ease-in-out infinite alternate}
+.modal-evidence-outline.good{border-color:var(--lab-good);box-shadow:0 0 0 4px rgba(255,255,255,.92),0 0 0 8px rgba(24,121,78,.18),0 10px 24px rgba(30,70,49,.14)}
+.modal-evidence-outline.warn{border-color:var(--lab-warn);box-shadow:0 0 0 4px rgba(255,255,255,.92),0 0 0 8px rgba(148,98,0,.17),0 10px 24px rgba(85,64,25,.14)}
+.modal-evidence-label{position:absolute;left:8px;top:-12px;max-width:210px;padding:3px 7px;border-radius:999px;background:#355f91;color:#fff;font-size:7px;font-weight:850;letter-spacing:.035em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.modal-evidence-outline.good .modal-evidence-label{background:var(--lab-good)}
+.modal-evidence-outline.warn .modal-evidence-label{background:var(--lab-warn)}
+@keyframes evidencePulse{from{filter:brightness(.98)}to{filter:brightness(1.08)}}
+
+.interaction-guide{position:fixed;z-index:1050;inset:0;pointer-events:none}
+.interaction-guide[hidden]{display:none}
+.guide-arrow-layer{position:fixed;inset:0;width:100%;height:100%;overflow:visible}
+.guide-arrow{fill:none;stroke:#5277b8;stroke-width:2.2;stroke-linecap:round;stroke-dasharray:5 5;animation:guideDash .8s linear infinite}
+.guide-arrow-layer marker path{fill:#5277b8}
+@keyframes guideDash{to{stroke-dashoffset:-10}}
+.guide-card{position:fixed;width:min(230px,calc(100vw - 20px));padding:9px 10px;border:1px solid #8da9cd;border-radius:10px;background:rgba(249,252,255,.98);box-shadow:0 12px 30px rgba(35,54,70,.18)}
+.guide-kicker{display:block;color:var(--lab-accent);font-size:7px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+.guide-card strong{display:block;margin-top:2px;color:#315780;font-size:11px;line-height:1.25}
+.guide-card>span:last-child{display:block;margin-top:3px;color:#5c6f82;font-size:8.5px;line-height:1.38}
+.lab-guide-target{position:relative;z-index:2!important;outline:3px solid rgba(82,119,184,.8)!important;outline-offset:4px!important;box-shadow:0 0 0 8px rgba(82,119,184,.16),0 6px 18px rgba(45,76,111,.17)!important;animation:guideTargetPulse .86s ease-in-out infinite alternate!important}
+@keyframes guideTargetPulse{from{filter:brightness(.98)}to{filter:brightness(1.08)}}
+
+.ledger-row[data-ledger-frame]{scroll-margin:10px}
+#experimentButton{border-color:#8fb1a0;background:var(--lab-good-soft);color:#285f43}
+@media(max-width:760px){
+  .progress-modal[data-placement]{left:8px;right:8px;top:auto;bottom:8px;width:auto;max-height:min(70vh,620px);transform:none}
+  .modal-facts{grid-template-columns:1fr 1fr}
+  .modal-evidence-label{font-size:6.5px;max-width:150px}
+  .guide-card{left:8px!important;right:8px!important;top:8px!important;width:auto}
+}
+@media(max-width:440px){.modal-facts{grid-template-columns:1fr}.modal-actions button{flex:1 1 100%}}
+
+
+
+/* Evidence-preserving modal sequence and persistent learner working */
+.phase-rail{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;margin-top:7px}
+.phase-rail span{min-width:0;display:flex;align-items:center;gap:4px;padding:4px 5px;border:1px solid var(--lab-line);border-radius:7px;background:#f8fafb;color:#78858d;font-size:7px;font-weight:800;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.phase-rail b{flex:0 0 auto;width:15px;height:15px;display:grid;place-items:center;border-radius:50%;background:#e4e9ec;color:#65727b;font:850 7px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.phase-rail span.complete{border-color:#b8d7c3;background:var(--lab-good-soft);color:#35614a}.phase-rail span.complete b{background:var(--lab-good);color:#fff}
+.phase-rail span.active{border-color:#8facd0;background:var(--lab-accent-soft);color:#355d8e;box-shadow:inset 0 0 0 1px rgba(82,119,184,.08)}.phase-rail span.active b{background:var(--lab-accent);color:#fff}
+
+.working-panel{padding:8px;gap:0}
+.ledger-head>div{min-width:0}.ledger-head>div>span{display:block;margin-top:2px;text-align:left}
+.working-state{flex:0 0 auto;display:inline-flex;align-items:center;min-height:22px;padding:3px 6px;border:1px solid var(--lab-line);border-radius:999px;background:var(--lab-paper);color:var(--lab-muted);font:850 7px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;text-transform:uppercase;white-space:nowrap}
+.working-state.ready{border-color:#9fc7ad;background:var(--lab-good-soft);color:var(--lab-good)}
+.working-state.active{border-color:#a9bdd8;background:var(--lab-accent-soft);color:#3b6394}
+.working-intro{margin-top:7px;padding:7px 8px;border:1px dashed #c9d3d9;border-radius:8px;background:#fafcfd;color:#6a7881;font-size:7.7px;line-height:1.38}
+#ledgerList{padding-bottom:2px}
+.working-row{display:grid;grid-template-columns:27px minmax(0,1fr);gap:6px;align-items:start;padding:6px;border:1px solid #dce3e7;border-radius:8px;background:#fafcfd;transition:border-color .18s,background .18s,box-shadow .18s}
+.working-row+.working-row{margin-top:5px}
+.working-row.current{border-color:#8fadd1;background:var(--lab-accent-soft);box-shadow:inset 0 0 0 1px rgba(82,119,184,.08)}
+.working-row.returned{background:#fff}.working-row.correct{border-color:#a6cfb4;background:var(--lab-good-soft)}.working-row.wrong{border-color:#dfbe8d;background:var(--lab-warn-soft)}
+.working-frame{display:grid;place-items:center;min-height:28px;border-radius:6px;background:#7d8b94;color:#fff;font:900 7px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.working-row.current .working-frame{background:var(--lab-accent)}.working-row.returned .working-frame{background:var(--return)}.working-row.correct .working-frame{background:var(--lab-good)}.working-row.wrong .working-frame{background:var(--lab-warn)}
+.working-body{min-width:0}.working-top{display:flex;align-items:center;gap:4px;min-width:0}.working-top strong{font:850 8px/1.2 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.working-tag{margin-left:auto;color:#73818a;font-size:6.5px;font-weight:850;text-transform:uppercase;white-space:nowrap}
+.working-saved{display:block;margin-top:2px;color:#687780;font:750 6.8px/1.3 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.working-prediction{display:grid;grid-template-columns:minmax(0,1fr) 47px;gap:5px;align-items:center;margin-top:5px}.working-prediction label{color:#66747d;font-size:6.8px;font-weight:800;line-height:1.2}.working-prediction input{width:47px;height:27px;padding:0 4px;border:1px solid #9eafb9;border-radius:6px;background:#fff;color:var(--lab-ink);font:850 10px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;text-align:center}.working-prediction input.filled{border-color:var(--lab-accent);background:#fff}.working-prediction input:disabled{opacity:1;border-color:#c5ced3;background:#f3f5f6;color:#5f6b73}
+.working-note{display:block;margin-top:5px;padding:5px 6px;border:1px solid #dce3e7;border-radius:6px;background:#fff;color:#66747d;font-size:6.8px;line-height:1.3}.working-note strong{color:var(--lab-ink);font:850 7px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.working-actual{margin-top:4px;padding-top:4px;border-top:1px solid #e1e6e9;color:#6c7880;font-size:6.8px;line-height:1.3}.working-actual strong{color:var(--lab-ink);font:850 7px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.working-row.correct .working-actual strong{color:var(--lab-good)}.working-row.wrong .working-actual strong{color:var(--lab-warn)}
+.working-ready{flex:0 0 auto;width:100%;margin-top:7px;min-height:31px;font-size:8px;font-weight:850}
+.working-ready:not(:disabled){box-shadow:0 0 0 3px rgba(82,119,184,.13)}
+
+.lab-modal-layer{pointer-events:auto}
+.lab-modal-backdrop{background:rgba(242,246,249,.18);backdrop-filter:none}
+.lab-modal-layer[data-evidence="true"] .lab-modal-backdrop{background:rgba(242,246,249,.06)}
+.progress-modal{width:min(420px,calc(100vw - 24px));max-height:min(58vh,560px);padding:14px 15px 13px;border-width:1px;box-shadow:0 18px 48px rgba(26,42,54,.2)}
+.progress-modal[data-placement]{right:auto;bottom:auto;transform:none}
+.modal-evidence-outline{animation:evidencePulse 1.1s ease-in-out 2 alternate;background:rgba(255,255,255,.025)}
+.modal-evidence-label{top:5px;left:7px;max-width:min(210px,calc(100% - 14px));box-shadow:0 1px 4px rgba(30,50,65,.16)}
+.modal-facts{grid-template-columns:repeat(2,minmax(0,1fr))}
+
+@container lab-canvas (max-width:920px){.stack-workspace{grid-template-columns:minmax(0,1fr) 215px}}
+@container lab-canvas (max-width:820px){.stack-workspace{grid-template-columns:minmax(0,1fr) 230px}}
+@media(max-width:620px){
+  .phase-rail{grid-template-columns:repeat(5,1fr);gap:3px}.phase-rail span{display:grid;justify-items:center;gap:2px;padding:4px 2px;text-align:center;white-space:normal;font-size:6px}.phase-rail b{width:14px;height:14px}
+  .progress-modal,.progress-modal[data-placement]{width:calc(100vw - 16px);max-height:40vh;padding:12px 13px}.progress-modal h2{font-size:17px}.modal-facts{grid-template-columns:1fr 1fr}
+  .modal-actions{margin-top:10px;padding-top:9px}.modal-actions button{min-height:32px}
+  .modal-evidence-label{font-size:6px;max-width:125px}
+  .working-panel #ledgerList{max-height:340px}
+}
+@media(max-width:440px){.modal-facts{grid-template-columns:1fr}.working-prediction{grid-template-columns:minmax(0,1fr) 44px}.working-prediction input{width:44px}}
+
+
+/* Outcome-led guidance: evidence remains visible; prompts occupy the working area. */
+:root{--work:#b77b10;--work-soft:#fff8df;--work-line:#d5a442}
+body.modal-open{overflow:auto}
+.lab-modal-layer{display:none!important}
+.interaction-guide{display:none!important}
+.phase-rail{grid-template-columns:repeat(4,minmax(0,1fr));margin-top:7px}
+.phase-rail span{justify-content:flex-start;padding:5px 7px;white-space:normal;line-height:1.2}
+.phase-rail b{width:8px;height:8px;font-size:0;background:#d7dde1}
+.phase-rail span.observed{border-color:#b8d7c3;background:var(--lab-good-soft);color:#35614a}
+.phase-rail span.observed b{background:var(--lab-good)}
+.phase-rail span.active{border-color:#a7bdd7;background:#f4f7fb;color:#486783;box-shadow:none}
+.phase-rail span.active b{background:var(--lab-accent)}
+
+.lab-guide-target{position:relative;z-index:3!important;outline:3px solid var(--work-line)!important;outline-offset:4px!important;box-shadow:0 0 0 7px rgba(213,164,66,.14)!important;animation:workPulse 1.05s ease-in-out infinite alternate!important}
+@keyframes workPulse{from{filter:brightness(.99)}to{filter:brightness(1.06)}}
+.relationship-evidence{box-shadow:0 0 0 2px rgba(82,119,184,.22),0 4px 12px rgba(46,78,112,.08)!important}
+.relationship-evidence.good{box-shadow:0 0 0 2px rgba(24,121,78,.24),0 4px 12px rgba(38,91,61,.08)!important}
+.work-needed{border-color:var(--work-line)!important;background:var(--work-soft)!important;box-shadow:0 0 0 2px rgba(213,164,66,.14)!important}
+.working-prediction input.work-needed{border:2px solid var(--work-line)!important;background:#fffdf5!important;box-shadow:0 0 0 3px rgba(213,164,66,.12)}
+.rule-controls.work-needed{border-color:var(--work-line)!important;box-shadow:inset 0 0 0 1px rgba(213,164,66,.18)}
+
+.inline-insight{flex:0 0 auto;margin:7px 0;padding:8px 9px;border:1px solid #a9bdd4;border-radius:9px;background:#f8fbff;color:#455d75}
+.inline-insight[hidden]{display:none!important}
+.inline-insight.attention{border-color:var(--work-line);background:var(--work-soft);color:#70531f}
+.inline-insight.success{border-color:#9ec8ad;background:var(--lab-good-soft);color:#315f46}
+.inline-insight.error{border-color:#dea7a0;background:var(--lab-bad-soft);color:#793c36}
+.insight-kicker{display:block;font-size:6.8px;font-weight:900;letter-spacing:.075em;text-transform:uppercase;color:var(--lab-accent)}
+.inline-insight.attention .insight-kicker{color:var(--work)}
+.inline-insight.success .insight-kicker{color:var(--lab-good)}
+.inline-insight.error .insight-kicker{color:var(--lab-bad)}
+.inline-insight>strong{display:block;margin-top:2px;color:var(--lab-ink);font-size:9.5px;line-height:1.28}
+.insight-copy{display:block;margin-top:3px;font-size:7.8px;line-height:1.38;color:inherit}
+.insight-facts{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.insight-fact{display:inline-flex;align-items:center;min-height:20px;padding:3px 5px;border:1px solid rgba(92,111,126,.2);border-radius:6px;background:rgba(255,255,255,.72);font:800 6.8px/1.2 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#52626d}
+.insight-feedback{margin-top:6px;padding:5px 6px;border-left:2px solid var(--work-line);background:rgba(255,255,255,.66);font-size:7.4px;line-height:1.34}
+.insight-actions{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}
+.insight-actions button{min-height:27px;padding:0 7px;font-size:7.5px;font-weight:800}
+.insight-actions button.primary{background:var(--lab-accent);border-color:var(--lab-accent);color:#fff}
+.insight-actions button.success{background:var(--lab-good);border-color:var(--lab-good);color:#fff}
+.working-ready.attention{border-color:var(--work-line);box-shadow:0 0 0 4px rgba(213,164,66,.12);animation:workPulse 1.05s ease-in-out infinite alternate}
+
+@media(max-width:560px){
+  .phase-rail{grid-template-columns:1fr 1fr}
+  .inline-insight{padding:8px}
+  .insight-actions button{flex:1 1 auto}
+}
+
+</style>
+
+<style>
+/* Larger causal call-stack and working model. */
+body>main{width:min(1200px,calc(100% - 24px))}
+.workspace{grid-template-columns:minmax(300px,.60fr) 44px minmax(0,1.40fr)}
+.stack-side{padding:10px 12px 12px}
+.stack-toolbar{margin-bottom:9px}
+.stack-title strong{font-size:14px}.stack-title span{font-size:10px;line-height:1.35}
+.output-box{min-width:145px;padding:8px 10px}.output-box span{font-size:8px}#outputValue{font-size:19px}
+
+.stack-workspace{grid-template-columns:minmax(360px,1fr) minmax(330px,.82fr);gap:12px;min-height:540px}
+.stack-memory{height:540px;padding:43px 14px 24px;border-radius:12px}
+.stack-cap{left:14px;right:14px;top:20px}.stack-cap-label{top:7px;font-size:8px}.stack-floor{left:14px;right:14px;bottom:15px}.stack-floor-label{font-size:8px}
+.stack-frames{left:16px;right:16px;top:44px;bottom:24px;gap:6px}
+.stack-frame{min-height:var(--frame-height,72px);grid-template-columns:52px minmax(0,1fr);gap:10px;padding:8px 10px 8px 0;border-radius:10px;overflow:hidden}
+.stack-frame::before{border-radius:9px 0 0 9px}
+.frame-id{left:5px;width:42px;font-size:10px}
+.frame-call{gap:8px}.frame-call strong{font-size:13px;line-height:1.15}.frame-status{font-size:9px;letter-spacing:.045em}
+.frame-state{display:grid;grid-template-columns:minmax(70px,.72fr) minmax(112px,1fr) minmax(150px,1.35fr);gap:6px;margin-top:7px}
+.state-cell{min-width:0;display:grid;gap:2px;padding:5px 7px;border:1px solid #d8e0e5;border-radius:7px;background:#f8fafb}
+.state-cell small{color:#71808a;font:800 7.5px/1.1 var(--lab-font-sans);letter-spacing:.04em;text-transform:uppercase}
+.state-cell strong{min-width:0;color:#34444f;font:850 10px/1.22 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:normal;overflow-wrap:anywhere}
+.state-cell.slot.filled{border-color:#d6b48a;background:var(--return-soft)}.state-cell.slot.filled strong{color:#84511f}
+.state-cell.return-cell.ready{border-color:#d6aa75;background:var(--return-soft)}.state-cell.return-cell.ready strong{color:#8a541f;font-size:11px}
+.state-cell.return-cell.base-value{border-color:#9bc8aa;background:var(--base-soft)}.state-cell.return-cell.base-value strong{color:var(--base);font-size:12px}
+.state-cell.return-cell.waiting strong{color:#7a8790;font-weight:750}
+.stack-frame.resumed .state-cell.return-cell{box-shadow:inset 0 0 0 1px rgba(181,107,45,.13)}
+.stack-frame.dense{grid-template-columns:46px minmax(0,1fr);padding-block:5px}.stack-frame.dense .frame-id{font-size:8.5px}.stack-frame.dense .frame-call strong{font-size:11px}.stack-frame.dense .frame-status{font-size:8px}.stack-frame.dense .frame-state{gap:4px;margin-top:4px}.stack-frame.dense .state-cell{padding:3px 5px}.stack-frame.dense .state-cell small{font-size:6.5px}.stack-frame.dense .state-cell strong{font-size:8.5px}
+
+.return-ledger{height:540px;padding:11px 12px;border-radius:12px}
+.ledger-head{padding-bottom:9px}.ledger-head strong{font-size:13px}.ledger-head span{font-size:9px;line-height:1.3}
+.working-state{min-height:25px;padding:4px 7px;font-size:8.5px}
+.working-intro{margin-top:9px;padding:9px 10px;font-size:9.5px;line-height:1.42}
+.working-rule{display:grid;grid-template-columns:1.45fr .75fr;gap:6px;margin-top:8px;padding:6px;border:1px solid #d8e0e5;border-radius:9px;background:#f8fafb}
+.working-rule span{min-width:0;padding:5px 7px;border-radius:7px;background:#fff}
+.working-rule small{display:block;color:#74828b;font-size:7.5px;font-weight:850;letter-spacing:.05em;text-transform:uppercase}
+.working-rule strong{display:block;margin-top:2px;color:#34444f;font:850 10.5px/1.25 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+#ledgerList{margin-top:8px;gap:7px}
+.working-row{grid-template-columns:38px minmax(0,1fr);gap:9px;padding:9px;border-radius:9px}
+.working-row+.working-row{margin-top:0}.working-frame{min-height:38px;border-radius:7px;font-size:9px}
+.working-top strong{font-size:10.5px}.working-tag{font-size:8px}.working-saved{margin-top:3px;font-size:8.5px}
+.working-equation{display:grid;grid-template-columns:minmax(54px,.65fr) 14px minmax(74px,.88fr) 14px minmax(72px,.8fr);gap:4px;align-items:stretch;margin-top:7px}
+.eq-term,.eq-result{min-width:0;display:grid;align-content:center;gap:2px;padding:6px 7px;border:1px solid #d8e0e5;border-radius:7px;background:#fff}
+.eq-term small,.eq-result small{color:#71808a;font-size:7px;font-weight:850;letter-spacing:.04em;text-transform:uppercase}
+.eq-term strong,.eq-result strong{min-width:0;color:#34444f;font:850 11px/1.16 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;overflow:hidden;text-overflow:ellipsis}
+.eq-op{display:grid;place-items:center;color:#7a8790;font:850 14px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.eq-term.child-ready{border-color:#d5b58d;background:var(--return-soft)}.eq-term.child-ready strong{color:#855321}
+.eq-result.actual{border-color:#a8cfb5;background:var(--lab-good-soft)}.eq-result.actual strong{color:var(--lab-good)}
+.eq-result.pending{border-style:dashed;background:#fafcfd}.eq-result.pending strong{color:#7d8991;font-size:9px}
+.working-link{display:block;margin-top:5px;color:#687780;font-size:8.5px;line-height:1.32}
+.working-link strong{color:#43545f;font-weight:800}
+.working-prediction{display:block;margin:0}.working-prediction label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}.working-prediction input{width:100%;height:36px;padding:0 7px;border-radius:7px;font-size:13px}
+.working-row.blocked{opacity:.62}.working-row.blocked .eq-result{background:#f3f5f6}.working-row.needs-work{border-color:var(--work-line);background:#fffdf7;box-shadow:0 0 0 2px rgba(213,164,66,.12)}
+.working-note{margin-top:7px;padding:7px 8px;font-size:8.5px}.working-note strong{font-size:9px}
+.working-actual{margin-top:6px;padding-top:6px;font-size:8.5px;line-height:1.35}.working-actual strong{font-size:9px}
+.working-ready{margin-top:9px;min-height:36px;font-size:9.5px}
+
+.inline-insight{font-size:9.5px}.inline-insight strong{font-size:12px}
+
+@container lab-canvas (max-width:1050px){
+  .workspace{display:block;min-height:0}.code-side{border-right:0;border-bottom:1px solid var(--lab-line)}.flow-bridge{display:none}
+  .stack-workspace{grid-template-columns:minmax(390px,1fr) minmax(315px,.78fr)}
+}
+@container lab-canvas (max-width:760px){
+  .stack-workspace{display:block}.stack-memory{height:500px}.return-ledger{height:auto;max-height:none;margin-top:10px}.return-ledger #ledgerList{max-height:430px}
+}
+@media(max-width:560px){
+  body>main{width:min(100% - 12px,1200px)}
+  .stack-memory{height:500px;padding-inline:8px}.stack-frames{left:9px;right:9px}.stack-frame{grid-template-columns:46px minmax(0,1fr);gap:7px}.frame-state{grid-template-columns:minmax(48px,.58fr) minmax(72px,.82fr) minmax(98px,1.12fr);gap:3px}.state-cell{padding:3px 4px}.state-cell small{font-size:6.2px}.state-cell strong{font-size:8.2px}.state-cell.return-cell{grid-column:auto}.frame-call strong{font-size:11.5px}.frame-status{font-size:7.5px}
+  .working-rule{grid-template-columns:1fr}.working-equation{grid-template-columns:minmax(48px,.65fr) 12px minmax(62px,.9fr) 12px minmax(64px,.8fr)}
+}
+
+/* Step-driven return processing sequence: read inputs → calculate → pop → deliver → resume. */
+.stack-frame.sequence-processing{
+  z-index:12;
+  overflow:visible;
+  border-color:#d2a64b;
+  background:#fffdf7;
+  box-shadow:0 0 0 3px rgba(210,166,75,.16),0 9px 22px rgba(50,59,66,.13);
+}
+.stack-frame.sequence-processing .frame-status{color:#8b641b}
+.stack-frame.sequence-processing .frame-state{position:relative;overflow:visible}
+.stack-frame.sequence-processing .state-cell{
+  position:relative;
+  transition:opacity .14s ease,border-color .14s ease,background .14s ease,transform .14s ease,box-shadow .14s ease;
+}
+.stack-frame.sequence-processing .state-cell:not(.sequence-focus):not(.sequence-held):not(.sequence-result){opacity:.46}
+.stack-frame.sequence-processing .state-cell.sequence-focus{
+  opacity:1;
+  transform:translateY(-2px);
+  border-color:#d2a64b;
+  background:#fff7dc;
+  box-shadow:0 0 0 3px rgba(210,166,75,.16);
+}
+.stack-frame.sequence-processing .state-cell.sequence-held{
+  opacity:1;
+  border-color:#d8c183;
+  background:#fffaf0;
+}
+.stack-frame.sequence-processing .state-cell.sequence-result{
+  opacity:1;
+  transform:translateY(-2px);
+  border-color:#c48443;
+  background:var(--return-soft);
+  box-shadow:0 0 0 3px rgba(181,107,45,.14);
+}
+.stack-frame.sequence-processing.sequence-show-operators .frame-state>.state-cell:first-child::after,
+.stack-frame.sequence-processing.sequence-show-operators .frame-state>.state-cell.slot::after{
+  position:absolute;
+  z-index:8;
+  top:50%;
+  transform:translate(50%,-50%);
+  display:grid;
+  place-items:center;
+  width:20px;
+  height:20px;
+  border:1px solid #d6dde1;
+  border-radius:999px;
+  background:#fff;
+  color:#6d7880;
+  box-shadow:0 2px 5px rgba(42,55,64,.10);
+  font:900 13px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+.stack-frame.sequence-processing.sequence-show-operators .frame-state>.state-cell:first-child::after{content:"+";right:-13px}
+.stack-frame.sequence-processing.sequence-show-operators .frame-state>.state-cell.slot::after{content:"=";right:-13px}
+.return-equation-ribbon{
+  position:absolute;
+  z-index:14;
+  inset:-3px;
+  display:grid;
+  place-items:center;
+  align-content:center;
+  gap:2px;
+  border:1px solid #c99255;
+  border-radius:8px;
+  background:rgba(255,247,237,.985);
+  box-shadow:0 5px 15px rgba(103,67,31,.14);
+  pointer-events:none;
+}
+.return-equation-ribbon small{
+  color:#8d5a28;
+  font-size:7.5px;
+  font-weight:900;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+}
+.return-equation-ribbon strong{
+  color:#663f1d;
+  font:900 17px/1.1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  letter-spacing:-.02em;
+}
+.return-equation-ribbon.base strong{color:var(--base)}
+.stack-frame.sequence-resumed{
+  border-color:#d8a56f;
+  background:#fffaf4;
+  box-shadow:0 0 0 3px rgba(181,107,45,.10),0 5px 13px rgba(61,71,79,.10);
+}
+.stack-frame.sequence-resumed .state-cell.sequence-ready-input,
+.stack-frame.sequence-resumed .state-cell.slot.sequence-arrival{
+  border-color:#d5ad78;
+  background:var(--return-soft);
+  box-shadow:0 0 0 3px rgba(181,107,45,.12);
+}
+.stack-frame.sequence-resumed .state-cell.return-cell.sequence-next{
+  border-color:#9eb6d1;
+  background:var(--lab-accent-soft);
+  box-shadow:0 0 0 3px rgba(82,119,184,.10);
+}
+.state-cell.sequence-arrival{animation:valueArrival .34s cubic-bezier(.2,.8,.2,1) both}
+@keyframes valueArrival{
+  0%{transform:scale(.92);box-shadow:0 0 0 0 rgba(181,107,45,.28)}
+  55%{transform:scale(1.06);box-shadow:0 0 0 7px rgba(181,107,45,.12)}
+  100%{transform:scale(1);box-shadow:0 0 0 3px rgba(181,107,45,.10)}
+}
+.working-row.sequence-checked{
+  border-color:#d1a05f!important;
+  background:#fffaf2!important;
+  box-shadow:0 0 0 3px rgba(181,107,45,.10)!important;
+}
+.fly-token{
+  width:56px;
+  height:38px;
+  grid-template-rows:auto auto;
+  align-content:center;
+  padding:3px 8px;
+  border-radius:10px;
+  font-size:14px;
+  line-height:1;
+}
+.fly-token::before{
+  content:"return";
+  color:rgba(255,255,255,.78);
+  font:850 6.5px/1 var(--lab-font-sans);
+  letter-spacing:.06em;
+  text-transform:uppercase;
+}
+@media(max-width:560px){
+  .stack-frame.sequence-processing.sequence-show-operators .frame-state>.state-cell:first-child::after,
+  .stack-frame.sequence-processing.sequence-show-operators .frame-state>.state-cell.slot::after{width:16px;height:16px;right:-10px;font-size:10px}
+  .return-equation-ribbon strong{font-size:14px}
+  .fly-token{width:50px;height:35px;font-size:13px}
+}
+
+</style>
+
+</head>
+<body data-lab-layout="standard">
+<main>
+<!-- LAB_MANIFEST_HEADER_START -->
+<header class="lab-manifest-header">
+  <div class="lab-manifest-heading">
+    <h1 data-lab-manifest="title">Recursive Call Stack</h1>
+    <p class="lab-manifest-subtitle" data-lab-manifest="subtitle">Step through a recursive total and watch each call preserve its own local state before return values unwind in reverse order.</p>
+  </div>
+  <!-- LAB_SYLLABUS_CHIPS_START -->
+  <div class="lab-syllabus-chips" aria-label="Syllabus alignment"></div>
+  <!-- LAB_SYLLABUS_CHIPS_END -->
+</header>
+<!-- LAB_MANIFEST_HEADER_END -->
+<span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span>
+<span data-lab-authored-subtitle-slot hidden></span>
+
+<section class="mission panel" aria-labelledby="missionTitle">
+  <div class="mission-copy">
+    <div class="mission-meta"><span class="mode" id="modeLabel">Example 1 · Observe</span><span id="phaseLabel">Observe calls</span></div>
+    <strong id="missionTitle">Trace <code>Total(4)</code> without losing any value of <code>n</code>.</strong>
+    <span id="missionHint">No working yet. Start with Step and watch what stays in memory when a recursive call is made.</span>
+    <div id="progressRail" class="phase-rail" aria-label="Relationships observed">
+      <span data-evidence="call"><b></b> call → push frame</span>
+      <span data-evidence="base"><b></b> base → return 0</span>
+      <span data-evidence="return"><b></b> return → pop + transfer</span>
+      <span data-evidence="termination"><b></b> reachability → termination</span>
+    </div>
+    <div id="ruleControls" class="rule-controls" hidden>
+      <div class="rule-field start-field">
+        <span>Starting argument</span>
+        <div class="start-control">
+          <label for="startInput">n</label>
+          <input id="startInput" type="range" min="1" max="7" step="1" value="5">
+          <output id="startReadout" class="start-readout" for="startInput">5</output>
+        </div>
+      </div>
+      <div class="rule-field">
+        <span>Recursive call</span>
+        <div class="segmented" role="group" aria-label="Amount subtracted on each recursive call">
+          <button type="button" data-decrement="1">n − 1</button>
+          <button type="button" data-decrement="2">n − 2</button>
+        </div>
+      </div>
+      <div class="rule-field">
+        <span>Base test</span>
+        <div class="segmented" role="group" aria-label="Base case condition">
+          <button type="button" data-base="eq">n = 0</button>
+          <button type="button" data-base="le">n ≤ 0</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="mission-actions">
+    <button id="stepButton" class="primary" type="button">Step</button>
+    <button id="runButton" class="play-button" type="button" disabled>
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.7v10.6L13 8z"></path></svg>
+      <span>Run</span>
+    </button>
+    <button id="experimentButton" type="button" hidden>Test a base-case rule</button>
+    <button id="resetButton" type="button">Reset</button>
+  </div>
+</section>
+
+<section class="lab panel" aria-label="Recursive execution model">
+  <div class="workspace">
+    <section class="code-side" aria-labelledby="codeHeading">
+      <div class="section-head">
+        <div><strong id="codeHeading">Recursive function</strong><span>The highlighted line belongs to the active frame.</span></div>
+        <span class="section-chip" id="activeFrameChip">frame F1</span>
+      </div>
+      <div class="code-panel" aria-label="Pseudocode for the recursive Total function">
+        <div class="code-titlebar"><span>Total.pseudo</span><span class="code-lights" aria-hidden="true"><i></i><i></i><i></i></span></div>
+        <ol class="code-list" id="codeList">
+          <li class="code-line" data-line="1"><span><span class="kw">FUNCTION</span> <span class="name">Total</span>(n : INTEGER) RETURNS INTEGER</span></li>
+          <li class="code-line" data-line="2"><span class="indent-1"><span class="kw">IF</span> <span id="baseExpression">n ≤ 0</span> <span class="kw">THEN</span><span id="baseTestBadge" class="code-test">not tested</span></span></li>
+          <li class="code-line" data-line="3"><span class="indent-2"><span class="kw">RETURN</span> <span class="num">0</span></span></li>
+          <li class="code-line" data-line="4"><span class="indent-1"><span class="kw">ENDIF</span></span></li>
+          <li class="code-line" data-line="5"><span class="indent-1">smallerTotal ← <span class="name">Total</span>(n <span class="op">−</span> <span id="decrementLiteral" class="num">1</span>)</span></li>
+          <li class="code-line" data-line="6"><span class="indent-1"><span class="kw">RETURN</span> n <span class="op">+</span> smallerTotal</span></li>
+          <li class="code-line" data-line="7"><span><span class="kw">ENDFUNCTION</span></span></li>
+        </ol>
+      </div>
+      <div class="expression-panel" aria-live="polite">
+        <span class="expression-kicker">Current consequence</span>
+        <strong id="expressionMain">Total(4) begins</strong>
+        <span id="expressionSub">Frame F1 stores n = 4 and tests the base case.</span>
+      </div>
+      <div class="code-note"><strong>Why a stack?</strong> The caller pauses at line 5. Its parameter and return address must survive while the recursive call runs.</div>
+      <div id="timeline" class="timeline" hidden>
+        <label for="timelineInput">Scrub trace</label>
+        <input id="timelineInput" type="range" min="0" max="1" value="0" step="1">
+        <output id="timelineValue" for="timelineInput">0 / 0</output>
+      </div>
+    </section>
+
+    <div id="flowBridge" class="flow-bridge" aria-hidden="true">
+      <svg class="bridge-svg" viewBox="0 0 46 165">
+        <path class="bridge-track" d="M23 24V139"></path>
+        <path class="bridge-arrow" d="M17 133l6 8 6-8z"></path>
+        <g class="bridge-token-wrap">
+          <circle class="bridge-token" cx="23" cy="47" r="6"></circle>
+        </g>
+        <rect class="bridge-label-bg" x="5" y="72" width="36" height="21" rx="10.5"></rect>
+        <text id="bridgeLabel" class="bridge-label" x="23" y="85">call</text>
+      </svg>
+    </div>
+
+    <section class="stack-side" aria-labelledby="stackHeading">
+      <div class="stack-toolbar">
+        <div class="stack-title"><strong id="stackHeading">Call stack</strong><span>New calls push frames. Returns pop them.</span></div>
+        <div id="outputBox" class="output-box"><span>Program output</span><strong id="outputValue">waiting</strong></div>
+      </div>
+
+      <div class="stack-workspace">
+        <div id="stackMemory" class="stack-memory" role="region" aria-label="Call stack frames">
+          <div class="stack-cap"></div><span id="stackCapLabel" class="stack-cap-label">stack limit · 8 frames</span>
+          <div id="stackFrames" class="stack-frames"></div>
+          <div class="stack-floor"></div><span class="stack-floor-label">bottom</span>
+          <div id="overflowAttempt" class="overflow-attempt" hidden></div>
+        </div>
+        <aside id="workingPanel" class="return-ledger working-panel" aria-labelledby="ledgerHeading">
+          <div class="ledger-head">
+            <div><strong id="ledgerHeading">Return explanation &amp; evidence</strong><span id="ledgerSubtitle">Watch the actual arithmetic remain visible after each frame leaves.</span></div>
+            <span id="workingState" class="working-state">waiting</span>
+          </div>
+          <div id="workingIntro" class="working-intro">No working yet. Use the stack and return explanations to build the relationship first.</div>
+          <div id="workingRule" class="working-rule" aria-label="Return calculation rule">
+            <span><small>ordinary return</small><strong>saved n + smallerTotal</strong></span>
+            <span><small>base case</small><strong>return 0</strong></span>
+          </div>
+          <div id="inlineInsight" class="inline-insight" hidden aria-live="polite">
+            <span id="insightKicker" class="insight-kicker"></span>
+            <strong id="insightTitle"></strong>
+            <span id="insightCopy" class="insight-copy"></span>
+            <div id="insightFacts" class="insight-facts" hidden></div>
+            <div id="insightFeedback" class="insight-feedback" hidden></div>
+            <div id="insightActions" class="insight-actions" hidden></div>
+          </div>
+          <div id="ledgerList"></div>
+          <button id="readyUnwindButton" class="working-ready primary" type="button" hidden disabled>Check return values</button>
+        </aside>
+      </div>
+    </section>
+  </div>
+  <div class="status-bar" role="status" aria-live="polite">
+    <span id="statusText">Frame F1 is active.</span>
+    <span id="statusDetail">The stack contains one frame.</span>
+    <span class="status-key" aria-label="Frame state key"><span class="call"><i></i>active call</span><span class="wait"><i></i>waiting caller</span><span class="ret"><i></i>resumed return</span><span class="base"><i></i>base case</span></span>
+  </div>
+</section>
+</main>
+
+<div id="interactionGuide" class="interaction-guide" hidden aria-live="polite" aria-atomic="true">
+  <svg class="guide-arrow-layer" aria-hidden="true">
+    <defs><marker id="guideArrowHead" markerWidth="8" markerHeight="8" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z"></path></marker></defs>
+    <path id="guideArrow" class="guide-arrow" marker-end="url(#guideArrowHead)"></path>
+  </svg>
+  <div id="guideCard" class="guide-card">
+    <span id="guideKicker" class="guide-kicker">Next interaction</span>
+    <strong id="guideTitle"></strong>
+    <span id="guideCopy"></span>
+  </div>
+</div>
+
+<div id="progressModalLayer" class="lab-modal-layer" hidden>
+  <div class="lab-modal-backdrop" aria-hidden="true"></div>
+  <div id="modalEvidenceLayer" class="modal-evidence-layer" aria-hidden="true"></div>
+  <section id="progressModal" class="progress-modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalCopy modalRealisation modalFeedback" tabindex="-1">
+    <div class="modal-topline"><span id="modalKicker" class="modal-kicker"></span><span id="modalProgress" class="modal-progress"></span></div>
+    <h2 id="modalTitle"></h2>
+    <p id="modalCopy"></p>
+    <div id="modalFacts" class="modal-facts" hidden></div>
+    <div id="modalRealisation" class="modal-realisation" hidden></div>
+    <div id="modalFeedback" class="modal-feedback" hidden></div>
+    <div id="modalActions" class="modal-actions"></div>
+  </section>
+</div>
+
+<script src="./lab-kit.js" data-lab-resource="lab-kit.js"></script>
+
+<script>
+(() => {
+  "use strict";
+
+  const byId = (id) => document.getElementById(id);
+  const prefersReducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const STACK_LIMIT = 8;
+  const main = document.querySelector("main");
+
+  const els = {
+    modeLabel: byId("modeLabel"), phaseLabel: byId("phaseLabel"), missionTitle: byId("missionTitle"), missionHint: byId("missionHint"),
+    ruleControls: byId("ruleControls"), startInput: byId("startInput"), startReadout: byId("startReadout"),
+    stepButton: byId("stepButton"), runButton: byId("runButton"), experimentButton: byId("experimentButton"), resetButton: byId("resetButton"),
+    codeLines: [...document.querySelectorAll(".code-line")], baseExpression: byId("baseExpression"), baseTestBadge: byId("baseTestBadge"), decrementLiteral: byId("decrementLiteral"),
+    expressionMain: byId("expressionMain"), expressionSub: byId("expressionSub"), activeFrameChip: byId("activeFrameChip"),
+    flowBridge: byId("flowBridge"), bridgeLabel: byId("bridgeLabel"),
+    outputBox: byId("outputBox"), outputValue: byId("outputValue"), stackCapLabel: byId("stackCapLabel"), stackFrames: byId("stackFrames"), stackMemory: byId("stackMemory"), overflowAttempt: byId("overflowAttempt"),
+    progressRail: byId("progressRail"), workingPanel: byId("workingPanel"), ledgerHeading: byId("ledgerHeading"), ledgerSubtitle: byId("ledgerSubtitle"), workingState: byId("workingState"), workingIntro: byId("workingIntro"), inlineInsight: byId("inlineInsight"), insightKicker: byId("insightKicker"), insightTitle: byId("insightTitle"), insightCopy: byId("insightCopy"), insightFacts: byId("insightFacts"), insightFeedback: byId("insightFeedback"), insightActions: byId("insightActions"), ledgerList: byId("ledgerList"), readyUnwindButton: byId("readyUnwindButton"), timeline: byId("timeline"), timelineInput: byId("timelineInput"), timelineValue: byId("timelineValue"),
+    statusText: byId("statusText"), statusDetail: byId("statusDetail"),
+    guide: byId("interactionGuide"), guideCard: byId("guideCard"), guideKicker: byId("guideKicker"), guideTitle: byId("guideTitle"), guideCopy: byId("guideCopy"), guideArrow: byId("guideArrow"),
+    modalLayer: byId("progressModalLayer"), modalCard: byId("progressModal"), modalEvidence: byId("modalEvidenceLayer"), modalKicker: byId("modalKicker"), modalProgress: byId("modalProgress"), modalTitle: byId("modalTitle"), modalCopy: byId("modalCopy"), modalFacts: byId("modalFacts"), modalRealisation: byId("modalRealisation"), modalFeedback: byId("modalFeedback"), modalActions: byId("modalActions")
+  };
+
+  const settings = { start: 4, decrement: 1, baseMode: "le" };
+  const ruleSignature = () => `${settings.start}|${settings.decrement}|${settings.baseMode}`;
+  const state = {
+    mode: "guided",
+    workingLevel: "observe",
+    guideStage: "build",
+    trace: [],
+    index: 0,
+    running: false,
+    busy: false,
+    manualSteps: 0,
+    baseChoice: null,
+    predictions: new Map(),
+    sawOverflow: false,
+    overflowSignature: null,
+    ruleChangedAfterOverflow: false,
+    repairedAfterOverflow: false,
+    modal: null,
+    modalOrigin: null,
+    guide: null,
+    seen: new Set(),
+    predictionCheckpointShown: false,
+    explorePrediction: null,
+    repairPrediction: null,
+    repairPromptedSignature: null,
+    lastRunPrediction: null,
+    patternModalShown: false,
+    unwindOrderChoice: null,
+    inspectedTrace: false,
+    scrubInsightShown: false,
+    completionModalShown: false,
+    askingReturnOrder: false,
+    orderFeedback: "",
+    insightKind: null
+  };
+
+  const cloneFrames = (frames) => frames.map((frame) => ({ ...frame }));
+  const baseReached = (n) => settings.baseMode === "le" ? n <= 0 : n === 0;
+  const baseText = () => settings.baseMode === "le" ? "n ≤ 0" : "n = 0";
+  const expressionForReturn = (frame, value) => `${frame.n} + ${frame.childResult} = ${value}`;
+  const delay = (ms) => new Promise((resolve) => setTimeout(resolve, prefersReducedMotion ? Math.min(ms, 30) : ms));
+
+  function makeFrame(id, n) {
+    return { id, n, status: "checking", childResult: null, returnValue: null, returnAddress: "line 6" };
+  }
+
+  function buildTrace() {
+    const frames = [makeFrame(1, settings.start)];
+    const completed = [];
+    const snapshots = [];
+    let nextId = 2;
+    let output = null;
+
+    const pushSnapshot = (event) => snapshots.push({
+      frames: cloneFrames(frames),
+      completed: completed.map((item) => ({ ...item })),
+      output,
+      event: { ...event }
+    });
+
+    pushSnapshot({ kind: "initial", line: 2, frameId: 1, n: settings.start, title: `Total(${settings.start}) begins` });
+
+    let guard = 0;
+    while (guard++ < 40) {
+      const top = frames[frames.length - 1];
+      if (!top) break;
+
+      if (baseReached(top.n)) {
+        const value = 0;
+        top.returnValue = value;
+        const returned = { id: top.id, n: top.n, value, kind: "base", expression: "base case → 0" };
+        frames.pop();
+        completed.push(returned);
+        if (frames.length === 0) {
+          output = value;
+          pushSnapshot({ kind: "complete", line: 3, fromId: top.id, value, n: top.n, title: `Total(${settings.start}) returns ${value}` });
+          break;
+        }
+        const parent = frames[frames.length - 1];
+        parent.childResult = value;
+        parent.status = "resumed";
+        pushSnapshot({ kind: "base-return", line: 6, fromId: top.id, toId: parent.id, value, n: parent.n, title: `0 returns to frame F${parent.id}` });
+        continue;
+      }
+
+      if (top.status === "resumed") {
+        const value = top.n + top.childResult;
+        top.returnValue = value;
+        const returned = { id: top.id, n: top.n, value, kind: "return", expression: expressionForReturn(top, value), childResult: top.childResult };
+        frames.pop();
+        completed.push(returned);
+        if (frames.length === 0) {
+          output = value;
+          pushSnapshot({ kind: "complete", line: 6, fromId: top.id, value, n: top.n, childResult: top.childResult, title: `Total(${settings.start}) returns ${value}` });
+          break;
+        }
+        const parent = frames[frames.length - 1];
+        parent.childResult = value;
+        parent.status = "resumed";
+        pushSnapshot({ kind: "return", line: 6, fromId: top.id, toId: parent.id, value, n: parent.n, childResult: parent.childResult, returnedN: top.n, title: `${value} returns to frame F${parent.id}` });
+        continue;
+      }
+
+      if (frames.length >= STACK_LIMIT) {
+        const attemptedN = top.n - settings.decrement;
+        pushSnapshot({ kind: "overflow", line: 5, frameId: top.id, n: top.n, attemptedN, title: `Cannot push Total(${attemptedN})` });
+        break;
+      }
+
+      top.status = "waiting";
+      const childN = top.n - settings.decrement;
+      const child = makeFrame(nextId++, childN);
+      frames.push(child);
+      pushSnapshot({ kind: "call", line: 2, fromId: top.id, toId: child.id, n: childN, callerN: top.n, title: `Frame F${top.id} calls Total(${childN})` });
+    }
+    return snapshots;
+  }
+
+  function current() { return state.trace[state.index]; }
+  function topFrame(snapshot = current()) { return snapshot?.frames?.[snapshot.frames.length - 1] || null; }
+  function isBaseState(snapshot = current()) {
+    const top = topFrame(snapshot);
+    return Boolean(top && baseReached(top.n) && snapshot.event.kind !== "base-return" && snapshot.event.kind !== "complete");
+  }
+  function predictionCount() {
+    return [...state.predictions.values()].filter((value) => String(value).trim() !== "").length;
+  }
+  function guidedExampleConfig(level = state.workingLevel) {
+    return {
+      observe: { number: 1, label: "Observe", start: 4 },
+      some: { number: 2, label: "Some working", start: 5 },
+      all: { number: 3, label: "All working", start: 6 }
+    }[level] || { number: 1, label: "Observe", start: 4 };
+  }
+  function workingTargetRecords() {
+    if (state.mode !== "guided" || state.workingLevel === "observe") return [];
+    const records = frameCatalogue().filter((record) => !baseReached(record.n));
+    return state.workingLevel === "some" ? records.slice(0, 2) : records;
+  }
+  function workingTargetIds() { return new Set(workingTargetRecords().map((record) => record.id)); }
+  function requiredPredictionCount() { return workingTargetRecords().length; }
+  function completedRequiredPredictions() {
+    const ids = workingTargetIds();
+    return [...state.predictions.entries()].filter(([id, value]) => ids.has(Number(id)) && String(value).trim() !== "").length;
+  }
+  function matchedRequiredPredictions(snapshot = current()) {
+    const completed = new Map((snapshot?.completed || []).map((item) => [item.id, item.value]));
+    return workingTargetRecords().filter((record) => {
+      const raw = state.predictions.get(record.id);
+      return String(raw ?? "").trim() !== "" && completed.has(record.id) && Number(raw) === completed.get(record.id);
+    }).length;
+  }
+  function workingSucceeded(snapshot = current()) {
+    const required = requiredPredictionCount();
+    return required > 0 && completedRequiredPredictions() === required && matchedRequiredPredictions(snapshot) === required;
+  }
+  function canMoveForward() { return state.index < state.trace.length - 1; }
+
+  function setActiveLine(line) {
+    els.codeLines.forEach((node) => node.classList.toggle("active", Number(node.dataset.line) === line));
+  }
+
+  function frameCatalogue() {
+    const catalogue = new Map();
+    state.trace.forEach((snapshot) => {
+      snapshot.frames.forEach((frame) => catalogue.set(frame.id, { id: frame.id, n: frame.n }));
+      snapshot.completed.forEach((frame) => catalogue.set(frame.id, { id: frame.id, n: frame.n }));
+    });
+    return [...catalogue.values()].sort((a, b) => b.id - a.id);
+  }
+
+  function frameClass(frame) {
+    if (baseReached(frame.n) && frame.status === "checking") return "base";
+    if (frame.status === "resumed") return "resumed";
+    if (frame.status === "waiting") return "waiting";
+    return "active";
+  }
+
+  function renderFrame(frame, frameCount) {
+    const statusClass = frameClass(frame);
+    const dense = frameCount >= 7 ? " dense" : "";
+    const status = statusClass === "base" ? "base case" : statusClass === "resumed" ? "ready to calculate" : statusClass === "waiting" ? "waiting for child" : "active";
+    const isBase = baseReached(frame.n) && frame.status === "checking";
+    const childReady = frame.childResult !== null;
+    const slotValue = childReady ? frame.childResult : (isBase ? "not needed" : "waiting");
+    const slotFilled = childReady ? " filled" : "";
+    let nextValue = "test base case";
+    let nextClass = "waiting";
+    if (isBase) {
+      nextValue = "RETURN 0";
+      nextClass = "base-value";
+    } else if (frame.status === "resumed") {
+      nextValue = `${frame.n} + ${frame.childResult}`;
+      nextClass = "ready";
+    } else if (frame.status === "waiting") {
+      nextValue = "return blocked";
+    } else {
+      nextValue = `call Total(${frame.n - settings.decrement})`;
+    }
+    return `<article class="stack-frame ${statusClass}${dense}" data-frame-id="${frame.id}" data-frame-n="${frame.n}" data-frame-status="${statusClass}" aria-label="Frame F${frame.id}, Total of ${frame.n}, ${status}">
+      <span class="frame-id">F${frame.id}</span>
+      <div class="frame-main">
+        <div class="frame-call"><strong>Total(${frame.n})</strong><span class="frame-status">${status}</span></div>
+        <div class="frame-state">
+          <span class="state-cell"><small>saved n</small><strong>${frame.n}</strong></span>
+          <span class="state-cell slot${slotFilled}" data-slot-frame="${frame.id}"><small>smallerTotal</small><strong>${slotValue}</strong></span>
+          <span class="state-cell return-cell ${nextClass}"><small>${isBase ? "return value" : frame.status === "resumed" ? "return expression" : "next"}</small><strong>${nextValue}</strong></span>
+        </div>
+      </div>
+    </article>`;
+  }
+
+  function renderLedger(snapshot) {
+    const guidedReturning = state.mode === "guided" && ["working", "unwind", "complete"].includes(state.guideStage);
+    els.readyUnwindButton.hidden = true;
+
+    if (state.mode === "guided") {
+      const config = guidedExampleConfig();
+      const observeOnly = state.workingLevel === "observe";
+      const allWorking = state.workingLevel === "all";
+      els.ledgerHeading.textContent = observeOnly ? "Return calculation" : allWorking ? "All return working" : "Some return working";
+      els.ledgerSubtitle.textContent = observeOnly
+        ? "Watch saved n combine with the child's return, one frame at a time."
+        : allWorking
+          ? "Work upward from the base. Each answer becomes smallerTotal in the caller above."
+          : "Work the first two returns. Your first answer feeds the second calculation.";
+      els.workingIntro.hidden = guidedReturning || Boolean(state.insightKind);
+      if (!guidedReturning) {
+        els.workingState.textContent = isBaseState(snapshot) ? "base reached" : `example ${config.number}`;
+        els.workingState.className = `working-state${isBaseState(snapshot) ? " ready" : ""}`;
+        els.workingIntro.textContent = observeOnly
+          ? "No working yet. First watch how a returned value fills smallerTotal, then how saved n + smallerTotal produces the next return."
+          : state.workingLevel === "some"
+            ? "Reach the base case first. Then calculate two linked return values."
+            : "Reach the base case first. Then build the complete return chain yourself.";
+        els.ledgerList.innerHTML = "";
+        return;
+      }
+
+      const completedById = new Map(snapshot.completed.map((item) => [item.id, item]));
+      const liveById = new Map(snapshot.frames.map((item) => [item.id, item]));
+      const targetIds = workingTargetIds();
+      const catalogue = frameCatalogue();
+      const catalogueById = new Map(catalogue.map((record) => [record.id, record]));
+      const displayRecords = catalogue;
+      const locked = state.guideStage !== "working";
+
+      const childValueFor = (record) => {
+        const child = catalogueById.get(record.id + 1);
+        if (!child) return null;
+        if (baseReached(child.n)) return 0;
+        const predicted = state.predictions.get(child.id);
+        if (targetIds.has(child.id) && String(predicted ?? "").trim() !== "") return Number(predicted);
+        const completedChild = completedById.get(child.id);
+        if (completedChild) return completedChild.value;
+        return null;
+      };
+
+      els.ledgerList.innerHTML = displayRecords.map((record) => {
+        const completed = completedById.get(record.id);
+        const live = liveById.get(record.id);
+        const isBase = baseReached(record.n);
+        const isTarget = targetIds.has(record.id);
+        const rawPrediction = state.predictions.get(record.id) ?? "";
+        const hasPrediction = String(rawPrediction).trim() !== "";
+        const correct = completed && isTarget && hasPrediction && Number(rawPrediction) === completed.value;
+        const wrong = completed && isTarget && hasPrediction && !correct;
+        const currentFrame = live && snapshot.frames.at(-1)?.id === record.id;
+        const childRecord = catalogueById.get(record.id + 1);
+        const childValue = isBase ? null : childValueFor(record);
+        const dependencyReady = isBase || childValue !== null;
+        const inputDisabled = locked || completed || !dependencyReady;
+        const needsWork = state.guideStage === "working" && isTarget && !hasPrediction && dependencyReady;
+        const classes = ["working-row", completed ? "returned" : "", currentFrame ? "current" : "", correct ? "correct" : "", wrong ? "wrong" : "", needsWork ? "needs-work" : "", isTarget && !dependencyReady ? "blocked" : ""].filter(Boolean).join(" ");
+        const tag = completed ? (correct ? "matched" : wrong ? "corrected" : "returned") : currentFrame ? (live?.status === "resumed" ? "ready to calculate" : "next to run") : isBase ? "base" : "waiting";
+
+        let equation = "";
+        let link = "";
+        let learnerWorking = "";
+        if (isBase) {
+          equation = `<div class="working-equation"><span class="eq-term child-ready" style="grid-column:1/5"><small>base case</small><strong>${baseText()} is true</strong></span><span class="eq-op">=</span><span class="eq-result actual"><small>return</small><strong>0</strong></span></div>`;
+          link = `<span class="working-link"><strong>Starting value for the unwind:</strong> the base frame returns 0.</span>`;
+        } else {
+          const childLabel = childValue === null ? (childRecord ? `from F${childRecord.id}` : "waiting") : String(childValue);
+          let resultMarkup = `<span class="eq-result pending"><small>return</small><strong>${completed ? completed.value : "?"}</strong></span>`;
+          if (isTarget) {
+            resultMarkup = `<span class="eq-result ${needsWork ? "work-needed" : ""}"><small>your return</small><span class="working-prediction"><label for="working-prediction-${record.id}">Return value for frame F${record.id}</label><input id="working-prediction-${record.id}" inputmode="numeric" autocomplete="off" aria-label="Calculated return value for frame F${record.id}" data-working-prediction="${record.id}" data-working-child-id="${childRecord?.id ?? ""}" value="${escapeHtml(rawPrediction)}" class="${needsWork ? "work-needed" : ""}" ${inputDisabled ? "disabled" : ""}></span></span>`;
+          } else if (completed) {
+            resultMarkup = `<span class="eq-result actual"><small>return</small><strong>${completed.value}</strong></span>`;
+          } else if (observeOnly && live?.status === "resumed" && childValue !== null) {
+            resultMarkup = `<span class="eq-result pending"><small>next return</small><strong>${record.n} + ${childValue}</strong></span>`;
+          }
+          equation = `<div class="working-equation"><span class="eq-term"><small>saved n</small><strong>${record.n}</strong></span><span class="eq-op">+</span><span class="eq-term ${childValue !== null ? "child-ready" : ""}"><small>smallerTotal</small><strong data-working-child-value="${record.id}">${childLabel}</strong></span><span class="eq-op">=</span>${resultMarkup}</div>`;
+          link = childRecord ? `<span class="working-link">smallerTotal comes from <strong>Total(${childRecord.n}) / F${childRecord.id}</strong>${childValue !== null ? ` and is now ${childValue}.` : "."}</span>` : "";
+          if (!isTarget && !observeOnly && state.workingLevel === "some") learnerWorking = `<span class="working-note">Worked context — your two yellow rows feed into this part later.</span>`;
+        }
+
+        let actual = "";
+        if (completed && !isBase) actual = `<div class="working-actual">Observed calculation: <strong>${escapeHtml(completed.expression)}</strong></div>`;
+        else if (isTarget && !isBase) actual = `<div class="working-actual" data-working-status="${record.id}">${childValue !== null ? `Your chain now has both numbers: <strong>${record.n} + ${childValue}</strong>. It will be checked during the actual unwind.` : "Waiting for the return below before this calculation can be attempted."}</div>`;
+        else if (live?.status === "resumed" && childValue !== null) actual = `<div class="working-actual">Both inputs now exist. The next line can calculate <strong>${record.n} + ${childValue}</strong>.</div>`;
+        else if (!isBase && childValue === null) actual = `<div class="working-actual">Cannot calculate yet: smallerTotal has not returned from the child frame.</div>`;
+
+        return `<article class="${classes}" data-ledger-frame="${record.id}">
+          <span class="working-frame">F${record.id}</span>
+          <div class="working-body"><div class="working-top"><strong>Total(${record.n})</strong><span class="working-tag">${tag}</span></div><span class="working-saved">saved n = ${record.n}</span>${equation}${link}${learnerWorking}${actual}</div>
+        </article>`;
+      }).join("");
+      updateWorkingReadiness();
+      return;
+    }
+
+    els.ledgerHeading.textContent = "Termination evidence";
+    els.ledgerSubtitle.textContent = "The argument path and returned frames stay visible.";
+    els.workingIntro.hidden = true;
+    els.readyUnwindButton.hidden = true;
+    if (snapshot.event.kind === "overflow") {
+      els.workingState.textContent = "no base";
+      els.workingState.className = "working-state";
+      els.ledgerList.innerHTML = snapshot.frames.slice().reverse().map((frame, index) => `<article class="working-row${index === 0 ? " current" : ""}"><span class="working-frame">F${frame.id}</span><div class="working-body"><div class="working-top"><strong>Total(${frame.n})</strong><span class="working-tag">waiting</span></div><span class="working-saved">${baseText()} → false</span><div class="working-actual">No return value exists, so this frame cannot leave.</div></div></article>`).join("");
+      return;
+    }
+    if (snapshot.completed.length) {
+      els.workingState.textContent = snapshot.output !== null ? "unwound" : `${snapshot.completed.length} returned`;
+      els.workingState.className = `working-state${snapshot.output !== null ? " ready" : " active"}`;
+      els.ledgerList.innerHTML = snapshot.completed.map((item) => `<article class="working-row returned" data-ledger-frame="${item.id}"><span class="working-frame">F${item.id}</span><div class="working-body"><div class="working-top"><strong>Total(${item.n}) → ${item.value}</strong><span class="working-tag">returned</span></div><div class="working-actual">Actual evidence: <strong>${escapeHtml(item.expression)}</strong></div></div></article>`).join("");
+    } else {
+      els.workingState.textContent = `${snapshot.frames.length} live`;
+      els.workingState.className = "working-state active";
+      els.ledgerList.innerHTML = snapshot.frames.slice().reverse().map((frame, index) => `<article class="working-row${index === 0 ? " current" : ""}"><span class="working-frame">F${frame.id}</span><div class="working-body"><div class="working-top"><strong>Total(${frame.n})</strong><span class="working-tag">${index === 0 ? "active" : "waiting"}</span></div><span class="working-saved">test ${baseText()}</span><div class="working-actual">${baseReached(frame.n) ? "Base condition reached." : "The call path has not returned yet."}</div></div></article>`).join("");
+    }
+  }
+
+  function renderCode(snapshot) {
+    const event = snapshot.event;
+    const top = topFrame(snapshot);
+    setActiveLine(event.line || 2);
+    els.baseExpression.textContent = baseText();
+    els.decrementLiteral.textContent = String(settings.decrement);
+    const tested = top && event.line === 2;
+    if (tested) {
+      const passed = baseReached(top.n);
+      els.baseTestBadge.textContent = passed ? "true" : "false";
+      els.baseTestBadge.className = `code-test ${passed ? "true" : "false"}`;
+    } else {
+      els.baseTestBadge.textContent = "not active";
+      els.baseTestBadge.className = "code-test";
+    }
+
+    if (event.kind === "initial") {
+      els.expressionMain.textContent = `Total(${event.n}) begins`;
+      els.expressionSub.textContent = `Frame F1 stores n = ${event.n} and tests ${baseText()}.`;
+    } else if (event.kind === "call") {
+      els.expressionMain.textContent = `Total(${event.callerN}) pauses → Total(${event.n})`;
+      els.expressionSub.textContent = `The caller keeps n = ${event.callerN} and the return address. Frame F${event.toId} stores its own n = ${event.n}.`;
+    } else if (event.kind === "base-return") {
+      els.expressionMain.textContent = `base case returns 0`;
+      els.expressionSub.textContent = `Frame F${event.fromId} is popped. The value 0 fills smallerTotal in frame F${event.toId}.`;
+    } else if (event.kind === "return") {
+      const returned = snapshot.completed[snapshot.completed.length - 1];
+      els.expressionMain.textContent = `${returned.expression}`;
+      els.expressionSub.textContent = `Frame F${event.fromId} is popped. ${event.value} becomes smallerTotal in frame F${event.toId}.`;
+    } else if (event.kind === "complete") {
+      const returned = snapshot.completed[snapshot.completed.length - 1];
+      els.expressionMain.textContent = returned?.kind === "base" ? `base case → ${event.value}` : `${returned.expression}`;
+      els.expressionSub.textContent = `The final frame is popped, so the program can output ${event.value}.`;
+    } else if (event.kind === "overflow") {
+      els.expressionMain.textContent = `Total(${event.n}) tries Total(${event.attemptedN})`;
+      els.expressionSub.textContent = `No base case has returned. The next frame has nowhere to go.`;
+    }
+  }
+
+  function renderOutput(snapshot) {
+    els.outputBox.classList.remove("complete", "error");
+    if (snapshot.event.kind === "overflow") {
+      els.outputValue.textContent = "unresolved";
+      els.outputBox.classList.add("error");
+    } else if (snapshot.output !== null) {
+      els.outputValue.textContent = snapshot.output;
+      els.outputBox.classList.add("complete");
+    } else {
+      els.outputValue.textContent = "waiting";
+    }
+  }
+
+  function renderBridge(snapshot) {
+    const returning = ["base-return", "return", "complete"].includes(snapshot.event.kind) && snapshot.completed.length > 0;
+    els.flowBridge.classList.toggle("returning", returning);
+    els.bridgeLabel.textContent = returning ? "return" : snapshot.event.kind === "overflow" ? "blocked" : "call";
+  }
+
+  function renderStatus(snapshot) {
+    const top = topFrame(snapshot);
+    const count = snapshot.frames.length;
+    if (snapshot.event.kind === "overflow") {
+      els.statusText.textContent = "Stack overflow: every frame is still waiting.";
+      els.statusDetail.textContent = `${snapshot.event.attemptedN} is not caught by the base test ${baseText()}.`;
+      return;
+    }
+    if (snapshot.output !== null) {
+      els.statusText.textContent = `Execution complete: output ${snapshot.output}.`;
+      els.statusDetail.textContent = `${snapshot.completed.length} frames returned in last-in, first-out order.`;
+      return;
+    }
+    if (top) {
+      const topDescription = frameClass(top) === "base" ? "has reached the base case" : top.status === "resumed" ? "has resumed with its child result" : top.status === "waiting" ? "is waiting" : "is active";
+      els.statusText.textContent = `Frame F${top.id} ${topDescription}.`;
+      els.statusDetail.textContent = `The stack contains ${count} ${count === 1 ? "frame" : "frames"}.`;
+    }
+  }
+
+  function renderPhaseRail() {
+    const snapshot = current();
+    const ordinaryReturned = snapshot?.completed?.some((item) => item.kind === "return") || false;
+    const observed = {
+      call: state.index >= 1 || state.guideStage !== "build" || state.mode === "explore",
+      base: ["baseChoice", "working", "unwind", "complete"].includes(state.guideStage) || snapshot?.completed?.some((item) => item.kind === "base") || false,
+      return: ordinaryReturned || state.guideStage === "complete" || (state.mode === "explore" && snapshot?.output !== null),
+      termination: state.mode === "explore" && (state.sawOverflow || state.repairedAfterOverflow)
+    };
+    let active = state.mode === "explore" ? "termination" : state.guideStage === "build" ? "call" : state.guideStage === "baseChoice" ? "base" : ["working", "unwind"].includes(state.guideStage) ? "return" : null;
+    [...els.progressRail.querySelectorAll("[data-evidence]")].forEach((node) => {
+      const key = node.dataset.evidence;
+      node.classList.toggle("observed", Boolean(observed[key]));
+      node.classList.toggle("active", key === active && !observed[key]);
+    });
+  }
+
+  function updateMission() {
+    if (state.mode === "guided") {
+      const config = guidedExampleConfig();
+      const observeOnly = state.workingLevel === "observe";
+      const someWorking = state.workingLevel === "some";
+      els.modeLabel.textContent = `Example ${config.number} · ${config.label}`;
+      const labels = { build: observeOnly ? "Observe calls" : "Trace calls", baseChoice: "Base reached", working: someWorking ? "Some working" : "All working", unwind: observeOnly ? "Observe returns" : "Check working", complete: "Example complete" };
+      els.phaseLabel.textContent = labels[state.guideStage] || "Trace";
+      els.missionTitle.innerHTML = `Trace <code>Total(${settings.start})</code> without losing any value of <code>n</code>.`;
+      const required = requiredPredictionCount();
+      const recorded = completedRequiredPredictions();
+      const hints = {
+        build: state.index === 0
+          ? (observeOnly ? "No working yet. Start with Step and watch what stays in memory when a recursive call is made." : "Trace the same stack relationship to the base case. Your working appears only after the return path is available.")
+          : state.index === 1 ? "Compare the waiting caller with the new active frame. Continue when you have noticed what changed." : "The push relationship is repeating. Continue at your own pace until the base condition becomes true.",
+        baseChoice: "The base test is true, so this invocation returns 0. Step when you are ready to watch the return path begin.",
+        working: recorded < required ? (someWorking ? "The two yellow boxes are your working. Use the saved n values to predict those returns." : "Every yellow return box is now your working. Fill all of them before checking the unwind.") : "Your working is recorded. Check it against the actual unwind when ready.",
+        unwind: observeOnly ? "Watch each calculation use its saved n, pop its frame, and transfer the value to the caller below." : "Compare your working with the actual arithmetic as the stack unwinds.",
+        complete: state.inspectedTrace ? "The push/pop relationship remains visible across the saved trace." : "The full example is complete. Use the invitation in the evidence panel when you are ready for the next level of working."
+      };
+      els.missionHint.textContent = state.guide?.copy || hints[state.guideStage] || hints.build;
+      els.ruleControls.hidden = true;
+    } else {
+      els.modeLabel.textContent = "Base-case experiment";
+      els.phaseLabel.textContent = current()?.event.kind === "overflow" ? "No reachable base" : state.repairedAfterOverflow ? "Termination restored" : state.sawOverflow ? (state.ruleChangedAfterOverflow ? "Changed rule" : "Repair the rule") : "Predict termination";
+      els.missionTitle.innerHTML = `Test whether <code>Total(${settings.start})</code> can actually reach its base case.`;
+      const needsPrediction = !state.sawOverflow ? !state.explorePrediction : state.ruleChangedAfterOverflow && !state.repairPrediction;
+      els.missionHint.textContent = state.guide?.copy || (needsPrediction ? "Commit to a prediction in the working panel, then let the stack provide the evidence." : current()?.event.kind === "overflow" ? "Change one part of the rule and compare the new argument path." : "Run the rule and watch for a visible base frame before any return begins.");
+      els.ruleControls.hidden = false;
+    }
+  }
+
+  function updateControls() {
+    const blockedByWorking = state.mode === "guided" && state.guideStage === "working";
+    const needsExplorePrediction = state.mode === "explore" && ((!state.sawOverflow && !state.explorePrediction) || (state.sawOverflow && state.ruleChangedAfterOverflow && !state.repairPrediction));
+    const waitingForRepair = state.mode === "explore" && state.sawOverflow && !state.ruleChangedAfterOverflow && current()?.event.kind === "overflow";
+    const atEnd = !canMoveForward();
+    els.stepButton.disabled = state.busy || state.running || blockedByWorking || needsExplorePrediction || waitingForRepair || atEnd;
+    els.runButton.disabled = state.busy || blockedByWorking || needsExplorePrediction || waitingForRepair || atEnd || (state.mode === "guided" && state.guideStage === "build" && state.index < 2);
+    els.resetButton.disabled = state.busy;
+    els.runButton.querySelector("span").textContent = state.running ? "Pause" : "Run";
+    els.runButton.classList.toggle("primary", state.running);
+    els.experimentButton.hidden = !(state.mode === "guided" && state.workingLevel === "all" && state.guideStage === "complete" && workingSucceeded());
+    updateWorkingReadiness();
+  }
+
+  function updateTimeline() {
+    const show = state.mode === "explore" || state.guideStage === "complete";
+    els.timeline.hidden = !show;
+    els.timelineInput.max = Math.max(0, state.trace.length - 1);
+    els.timelineInput.value = state.index;
+    els.timelineValue.textContent = `${state.index} / ${Math.max(0, state.trace.length - 1)}`;
+  }
+
+  function setInsight({ kind = "", kicker = "Observation", title = "", copy = "", facts = [], feedback = "", actions = [] } = {}) {
+    state.insightKind = title ? kind || "note" : null;
+    els.inlineInsight.hidden = !title;
+    if (!title) {
+      els.insightActions.replaceChildren();
+      return;
+    }
+    els.inlineInsight.className = `inline-insight${kind ? ` ${kind}` : ""}`;
+    els.insightKicker.textContent = kicker;
+    els.insightTitle.textContent = title;
+    els.insightCopy.textContent = copy;
+    els.insightFacts.replaceChildren(...facts.map((value) => {
+      const span = document.createElement("span");
+      span.className = "insight-fact";
+      span.textContent = value;
+      return span;
+    }));
+    els.insightFacts.hidden = facts.length === 0;
+    els.insightFeedback.textContent = feedback;
+    els.insightFeedback.hidden = !feedback;
+    els.insightActions.replaceChildren();
+    actions.forEach((action) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.textContent = action.label;
+      if (action.primary) button.classList.add("primary");
+      if (action.success) button.classList.add("success");
+      button.addEventListener("click", action.onClick);
+      els.insightActions.append(button);
+    });
+    els.insightActions.hidden = actions.length === 0;
+  }
+
+  function chooseBasePrediction(choice) {
+    if (choice === "push") {
+      state.baseChoice = "push";
+      render();
+      return;
+    }
+    state.baseChoice = "return";
+    state.orderFeedback = "";
+    render();
+    delay(220).then(() => stepForward({ manual: false, suppressModal: true }));
+  }
+
+  function chooseReturnOrder(frameId) {
+    const top = topFrame();
+    if (!top) return;
+    if (Number(frameId) !== top.id) {
+      state.orderFeedback = `F${frameId} is deeper in the stack. Every frame above it must leave first.`;
+      renderInsight(current());
+      return;
+    }
+    state.unwindOrderChoice = top.id;
+    state.askingReturnOrder = false;
+    state.orderFeedback = "";
+    state.guideStage = "unwind";
+    clearGuide();
+    render();
+    delay(220).then(() => stepForward({ manual: false, suppressModal: true }));
+  }
+
+  function recordExplorePredictionInline(choice) {
+    state.explorePrediction = choice;
+    state.lastRunPrediction = null;
+    render();
+    showGuide("run", "", "Prediction recorded. Run the rule and watch whether a base frame appears before the stack fills.");
+  }
+
+  function recordRepairPredictionInline(choice) {
+    state.repairPrediction = choice;
+    render();
+    showGuide("run", "", "Prediction recorded. Run the changed rule and look for a visible base frame.");
+  }
+
+  function renderInsight(snapshot) {
+    setInsight();
+    if (state.mode === "guided") {
+      const observeOnly = state.workingLevel === "observe";
+      const someWorking = state.workingLevel === "some";
+      const config = guidedExampleConfig();
+      if (state.guideStage === "build" && state.index === 1) {
+        const event = snapshot.event;
+        setInsight({ kind: "success", kicker: "Relationship observed", title: "The caller stayed while the new call became active.", copy: `F${event.fromId} still stores n = ${event.callerN}; F${event.toId} now stores n = ${event.n}. Recursion added a frame instead of overwriting local state.`, facts: [`F${event.fromId} waiting · n = ${event.callerN}`, `F${event.toId} active · n = ${event.n}`] });
+      } else if (state.guideStage === "build" && state.index >= 2 && !isBaseState(snapshot)) {
+        setInsight({ kicker: "Pattern repeating", title: "Each non-base call adds one frame and leaves its caller waiting.", copy: "Only the top frame runs; every earlier n value remains available for the later return.", facts: [`${snapshot.frames.length} frames live`, "top frame active"] });
+      } else if (state.guideStage === "baseChoice") {
+        const top = topFrame(snapshot);
+        setInsight({ kind: "success", kicker: "Base case reached", title: `${baseText()} is true in F${top?.id}.`, copy: "This invocation does not make another recursive call. RETURN 0 completes the frame; the next visible change is a pop, followed by the value moving into its caller.", facts: [`F${top?.id} · n = ${top?.n}`, "next: return 0"] });
+      } else if (state.guideStage === "working") {
+        const event = snapshot.event;
+        const required = requiredPredictionCount();
+        const recorded = completedRequiredPredictions();
+        if (event.kind === "base-return") {
+          setInsight({ kind: recorded < required ? "attention" : "success", kicker: someWorking ? "Your turn · some working" : "Your turn · all working", title: someWorking ? "Calculate two linked return values." : "Build the whole linked return chain.", copy: someWorking ? "Start at the base return 0. The first yellow calculation uses it as smallerTotal; your answer then becomes smallerTotal in the next yellow row." : "Start at the base return 0 and work upward. Each return you calculate becomes smallerTotal for the caller immediately above it.", facts: [`pop F${event.fromId}`, `F${event.toId}.smallerTotal ← 0`, `${recorded} of ${required} recorded`] });
+        }
+      } else if (state.guideStage === "unwind" && snapshot.event.kind === "base-return") {
+        const event = snapshot.event;
+        setInsight({ kind: "success", kicker: "Return path begins", title: observeOnly ? `F${event.toId} now has both inputs: saved n = ${topFrame(snapshot)?.n ?? "?"} and smallerTotal = 0.` : `0 left F${event.fromId} and became smallerTotal in F${event.toId}.`, copy: observeOnly ? `No working is required here. The caller stayed on the stack so its n was preserved; now line 6 can calculate ${topFrame(snapshot)?.n ?? "?"} + 0.` : "The base value is now available to the caller, so the arithmetic can unwind upward.", facts: [`pop F${event.fromId}`, `F${event.toId}.smallerTotal ← 0`, observeOnly ? `next: ${topFrame(snapshot)?.n ?? "?"} + 0` : "return can resume"] });
+      } else if (state.guideStage === "unwind" && snapshot.event.kind === "return") {
+        const returned = snapshot.completed[snapshot.completed.length - 1];
+        const prediction = state.predictions.get(returned.id);
+        const isTarget = workingTargetIds().has(returned.id);
+        const hasPrediction = String(prediction ?? "").trim() !== "";
+        const matched = isTarget && hasPrediction && Number(prediction) === returned.value;
+        if (observeOnly || !isTarget) {
+          setInsight({ kind: "success", kicker: observeOnly ? "Worked return" : "Worked context", title: observeOnly ? `F${returned.id} used saved n + smallerTotal: ${returned.expression}.` : `${returned.expression}; F${returned.id} left the stack.`, copy: observeOnly ? `${returned.value} now becomes smallerTotal in F${snapshot.event.toId}. That caller combines the returned value with its own saved n next.` : `${returned.value} is now smallerTotal in F${snapshot.event.toId}. The caller can only finish because its own n was preserved while the child ran.`, facts: [`actual ${returned.value}`, `to F${snapshot.event.toId}`, observeOnly ? `next caller keeps n = ${topFrame(snapshot)?.n ?? "?"}` : "saved n preserved"] });
+        } else {
+          setInsight({ kind: matched ? "success" : "attention", kicker: "Working checked by evidence", title: `${returned.expression}; F${returned.id} left the stack.`, copy: `${returned.value} is now stored as smallerTotal in F${snapshot.event.toId}. Your original entry remains beside the actual arithmetic.`, facts: [`predicted ${prediction}`, `actual ${returned.value}`, `to F${snapshot.event.toId}`], feedback: matched ? "Your working matched the actual return." : "The actual arithmetic shows where this return differed from your working." });
+        }
+      } else if (state.guideStage === "complete") {
+        const returns = snapshot.completed.map((item) => `F${item.id}`).join(" → ");
+        if (observeOnly) {
+          setInsight({ kind: "success", kicker: "Worked example complete", title: "You have seen the whole call-and-return relationship without doing any working.", copy: "Each caller kept its own n, the base returned 0, and the stack then unwound in reverse order. Take on a small part of the next example when ready.", facts: [`output ${snapshot.output}`, `return order ${returns}`], actions: [
+            { label: "Take on some working", primary: true, onClick: startSomeWorking }
+          ] });
+        } else {
+          const required = requiredPredictionCount();
+          const matched = matchedRequiredPredictions(snapshot);
+          const success = workingSucceeded(snapshot);
+          if (someWorking) {
+            setInsight({ kind: success ? "success" : "attention", kicker: success ? "Some working complete" : "Use the checked evidence", title: success ? "Both return values matched the real unwind." : `${matched} of ${required} return values matched the real unwind.`, copy: success ? "You used the saved frame values successfully without taking on the whole calculation. The next example removes that support." : "The actual arithmetic remains beside your entries. Compare them, then try the same amount of working again.", facts: [`output ${snapshot.output}`, `${matched} of ${required} matched`], actions: success ? [
+              { label: "Take on all working", primary: true, onClick: startAllWorking }
+            ] : [
+              { label: "Try some working again", primary: true, onClick: startSomeWorking }
+            ] });
+          } else {
+            setInsight({ kind: success ? "success" : "attention", kicker: success ? "All working complete" : "Use the checked evidence", title: success ? "Every return value matched the real unwind." : `${matched} of ${required} return values matched the real unwind.`, copy: success ? "You supplied the entire return chain. The stack evidence confirms that each saved n was used at the correct moment." : "The checked arithmetic shows exactly which return values differed. Use it to rebuild the whole chain, then try again.", facts: [`output ${snapshot.output}`, `${matched} of ${required} matched`, `return order ${returns}`], actions: success ? [
+              { label: "Test a base-case rule", primary: true, onClick: enterExplore },
+              { label: "Replay all working", onClick: startAllWorking }
+            ] : [
+              { label: "Try all working again", primary: true, onClick: startAllWorking }
+            ] });
+          }
+        }
+      }
+      return;
+    }
+
+    if (!state.sawOverflow) {
+      if (!state.explorePrediction) {
+        setInsight({ kind: "attention", kicker: "Prediction before evidence", title: "Will 5 → 3 → 1 → −1 → … ever equal 0?", copy: "The recursive call subtracts 2, while the base test accepts only n = 0.", facts: ["start 5", "call n − 2", "base n = 0"], actions: [
+          { label: "It reaches 0", onClick: () => recordExplorePredictionInline("reach") },
+          { label: "It skips 0", primary: true, onClick: () => recordExplorePredictionInline("miss") }
+        ] });
+      } else {
+        setInsight({ kicker: "Prediction recorded", title: state.explorePrediction === "miss" ? "You expect the argument path to skip the base case." : "You expect the argument path to reach the base case.", copy: "Run the rule. The stack will provide the evidence: either a base frame appears or every caller keeps waiting.", facts: [state.explorePrediction === "miss" ? "prediction: skips 0" : "prediction: reaches 0"] });
+      }
+      return;
+    }
+
+    if (snapshot.event.kind === "overflow" && !state.ruleChangedAfterOverflow) {
+      setInsight({ kind: "error", kicker: "Observed consequence", title: "No base frame appeared; every caller is still waiting.", copy: `The visible argument path skipped ${baseText()}, so no return could begin. Change one part of the rule and compare the new path.`, facts: [`path ${snapshot.frames.map((frame) => frame.n).join(" → ")}`, `next ${snapshot.event.attemptedN} blocked`] });
+      return;
+    }
+
+    if (state.ruleChangedAfterOverflow && !state.repairPrediction) {
+      setInsight({ kind: "attention", kicker: "Changed variable → new prediction", title: "Will the changed argument path enter the base-case set?", copy: "Only the rule changed; the evidence required for termination is still a visible base frame.", facts: [`path starts ${previewArguments()}`, `base ${baseText()}`], actions: [
+        { label: "Base still skipped", onClick: () => recordRepairPredictionInline("miss") },
+        { label: "Base will appear", primary: true, onClick: () => recordRepairPredictionInline("reach") }
+      ] });
+      return;
+    }
+
+    if (state.ruleChangedAfterOverflow && state.repairPrediction && snapshot.output === null) {
+      setInsight({ kicker: "Prediction recorded", title: state.repairPrediction === "reach" ? "You expect a reachable base frame." : "You expect the changed path to miss the base again.", copy: "Run the changed rule and let the stack expose the consequence.", facts: [state.repairPrediction === "reach" ? "prediction: terminates" : "prediction: no base"] });
+      return;
+    }
+
+    if (snapshot.output !== null && state.repairedAfterOverflow) {
+      const baseItem = snapshot.completed.find((item) => item.kind === "base");
+      setInsight({ kind: "success", kicker: "Observed repair", title: "A reachable base frame restored the return path.", copy: `The call with n = ${baseItem?.n ?? "?"} returned 0; that allowed every waiting caller to resume and leave.`, facts: [`base n = ${baseItem?.n ?? "?"}`, `${snapshot.completed.length} frames returned`, `output ${snapshot.output}`], actions: [
+        { label: "Replay guided trace", onClick: resetGuided },
+        { label: "Try another rule", success: true, onClick: () => { state.repairPrediction = null; state.ruleChangedAfterOverflow = false; state.sawOverflow = false; state.repairedAfterOverflow = false; state.explorePrediction = null; rebuild(); } }
+      ] });
+    }
+  }
+
+  function applyEvidenceHighlights(snapshot) {
+    document.querySelectorAll(".relationship-evidence,.work-needed").forEach((node) => {
+      if (!node.matches(".working-row,.working-prediction input,.rule-controls")) node.classList.remove("relationship-evidence", "good", "work-needed");
+    });
+    if (state.mode === "guided" && snapshot.event.kind === "call") {
+      locateFrame(snapshot.event.fromId)?.classList.add("relationship-evidence");
+      locateFrame(snapshot.event.toId)?.classList.add("relationship-evidence", "good");
+    }
+    if (state.mode === "guided" && state.guideStage === "baseChoice") {
+      locateFrame(topFrame(snapshot)?.id)?.classList.add("relationship-evidence", "good");
+      document.querySelector('.code-line[data-line="3"]')?.classList.add("relationship-evidence", "good");
+    }
+    if (state.mode === "guided" && ["working", "unwind"].includes(state.guideStage) && ["base-return", "return"].includes(snapshot.event.kind)) {
+      locateLedger(snapshot.event.fromId)?.classList.add("relationship-evidence", "good");
+      locateSlot(snapshot.event.toId)?.classList.add("relationship-evidence", "good");
+    }
+    els.ruleControls.classList.toggle("work-needed", state.mode === "explore" && state.sawOverflow && !state.ruleChangedAfterOverflow && snapshot.event.kind === "overflow");
+  }
+
+  function render({ animatePush = false } = {}) {
+    const snapshot = current();
+    if (!snapshot) return;
+    const frameCount = snapshot.frames.length;
+    const frameHeight = Math.min(88, Math.max(48, Math.floor((454 - Math.max(0, frameCount - 1) * 6) / Math.max(1, frameCount))));
+    els.stackFrames.style.setProperty("--frame-height", `${frameHeight}px`);
+    els.stackFrames.innerHTML = snapshot.frames.map((frame) => renderFrame(frame, frameCount)).join("");
+    if (animatePush && !prefersReducedMotion) els.stackFrames.querySelector(".stack-frame.active:last-of-type")?.classList.add("call-pulse");
+    renderLedger(snapshot);
+    attachPredictionListeners();
+    renderCode(snapshot);
+    renderOutput(snapshot);
+    renderBridge(snapshot);
+    renderStatus(snapshot);
+    els.activeFrameChip.textContent = topFrame(snapshot) ? `frame F${topFrame(snapshot).id}` : "stack empty";
+    els.stackCapLabel.textContent = `stack limit · ${STACK_LIMIT} frames`;
+    if (snapshot.event.kind === "overflow") {
+      els.overflowAttempt.hidden = false;
+      els.overflowAttempt.textContent = `Total(${snapshot.event.attemptedN})`;
+    } else {
+      els.overflowAttempt.hidden = true;
+    }
+    renderInsight(snapshot);
+    updateMission();
+    renderPhaseRail();
+    updateControls();
+    updateTimeline();
+    syncRuleControls();
+    applyEvidenceHighlights(snapshot);
+    requestAnimationFrame(renderGuide);
+  }
+
+  function attachPredictionListeners() {
+    document.querySelectorAll("[data-working-prediction]").forEach((input) => {
+      input.addEventListener("input", (event) => {
+        const frameId = Number(event.currentTarget.dataset.workingPrediction);
+        const clean = event.currentTarget.value.replace(/[^0-9-]/g, "").slice(0, 5);
+        event.currentTarget.value = clean;
+        const targets = workingTargetRecords();
+        const index = targets.findIndex((record) => record.id === frameId);
+        state.predictions.set(frameId, clean);
+        if (index >= 0) {
+          targets.slice(index + 1).forEach((record) => state.predictions.set(record.id, ""));
+        }
+        event.currentTarget.classList.toggle("filled", clean.trim() !== "");
+        refreshWorkingDependencyViews();
+        refreshWorkingAttention();
+      });
+      input.addEventListener("keydown", (event) => {
+        if (event.key !== "Enter") return;
+        const next = [...document.querySelectorAll("[data-working-prediction]:not(:disabled)")].find((node) => !node.value.trim());
+        if (next) {
+          event.preventDefault();
+          next.focus();
+        } else if (completedRequiredPredictions() >= requiredPredictionCount()) {
+          event.preventDefault();
+          beginUnwind();
+        }
+      });
+      input.classList.toggle("filled", input.value.trim() !== "");
+    });
+    refreshWorkingDependencyViews();
+  }
+
+  function refreshWorkingDependencyViews() {
+    if (state.mode !== "guided" || state.guideStage !== "working") return;
+    const targets = workingTargetRecords();
+    const targetIds = new Set(targets.map((record) => record.id));
+    const catalogue = frameCatalogue();
+    const byId = new Map(catalogue.map((record) => [record.id, record]));
+    targets.forEach((record) => {
+      const child = byId.get(record.id + 1);
+      let childValue = null;
+      if (child && baseReached(child.n)) childValue = 0;
+      else if (child && targetIds.has(child.id)) {
+        const raw = state.predictions.get(child.id);
+        if (String(raw ?? "").trim() !== "") childValue = Number(raw);
+      }
+      const row = document.querySelector(`[data-ledger-frame="${record.id}"]`);
+      const input = row?.querySelector("[data-working-prediction]");
+      const childNode = row?.querySelector("[data-working-child-value]");
+      const statusNode = row?.querySelector("[data-working-status]");
+      if (childNode) childNode.textContent = childValue === null ? (child ? `from F${child.id}` : "waiting") : String(childValue);
+      if (input) input.disabled = childValue === null || state.busy;
+      row?.classList.toggle("blocked", childValue === null);
+      const link = row?.querySelector(".working-link");
+      if (link && child) link.innerHTML = `smallerTotal comes from <strong>Total(${child.n}) / F${child.id}</strong>${childValue === null ? "." : ` and is now ${childValue}.`}`;
+      if (statusNode) statusNode.innerHTML = childValue === null ? "Waiting for the return below before this calculation can be attempted." : `Your chain now has both numbers: <strong>${record.n} + ${childValue}</strong>. It will be checked during the actual unwind.`;
+    });
+  }
+
+  function refreshWorkingAttention() {
+    const required = requiredPredictionCount();
+    const total = completedRequiredPredictions();
+    document.querySelectorAll(".working-row.needs-work").forEach((row) => row.classList.remove("needs-work"));
+    document.querySelectorAll("[data-working-prediction]").forEach((input) => input.classList.remove("work-needed", "lab-guide-target"));
+    if (state.guideStage === "working" && total < required) {
+      refreshWorkingDependencyViews();
+      const nextReady = [...document.querySelectorAll("[data-working-prediction]:not(:disabled)")].find((input) => !input.value.trim());
+      if (nextReady) {
+        nextReady.classList.add("work-needed");
+        nextReady.closest(".working-row")?.classList.add("needs-work");
+        requestAnimationFrame(() => nextReady.closest(".working-row")?.scrollIntoView({ block: "nearest", behavior: prefersReducedMotion ? "auto" : "smooth" }));
+        clearGuide();
+        state.guide = { key: "predictions", copy: state.workingLevel === "some" ? "Calculate the yellow return. Its answer will become smallerTotal in the next row." : "Work upward from the yellow row. Each answer unlocks the caller above it." };
+        requestAnimationFrame(renderGuide);
+      }
+    } else if (state.guideStage === "working" && required > 0) {
+      clearGuide();
+      state.guide = { key: "ready", copy: "The whole linked return chain is recorded. Check it against the actual unwind when ready." };
+      requestAnimationFrame(renderGuide);
+    }
+    updateWorkingReadiness();
+    renderInsight(current());
+    updateMission();
+  }
+
+  function updateWorkingReadiness() {
+    if (!els.readyUnwindButton) return;
+    const required = requiredPredictionCount();
+    const total = completedRequiredPredictions();
+    const working = state.mode === "guided" && state.guideStage === "working" && required > 0;
+    els.readyUnwindButton.hidden = !working;
+    els.readyUnwindButton.disabled = !working || total < required || state.busy;
+    els.readyUnwindButton.textContent = total < required ? `${total} of ${required} return values recorded` : state.workingLevel === "some" ? "Check these two returns" : "Check all return values";
+    els.readyUnwindButton.classList.toggle("attention", working && total >= required);
+    if (working) {
+      els.workingState.textContent = total < required ? `${total} of ${required}` : "ready";
+      els.workingState.className = `working-state${total >= required ? " ready" : " active"}`;
+    } else if (state.mode === "guided" && state.workingLevel === "observe" && ["unwind", "complete"].includes(state.guideStage)) {
+      els.workingState.textContent = state.guideStage === "complete" ? "observed" : "worked";
+      els.workingState.className = `working-state${state.guideStage === "complete" ? " ready" : " active"}`;
+    }
+  }
+
+  function schedulePredictionCheckpoint() {
+    updateWorkingReadiness();
+  }
+
+  function escapeHtml(value) {
+    return String(value).replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[character]));
+  }
+
+  function locateFrame(frameId) { return document.querySelector(`[data-frame-id="${frameId}"]`); }
+  function locateSlot(frameId) { return document.querySelector(`[data-slot-frame="${frameId}"]`); }
+  function locateLedger(frameId) { return document.querySelector(`[data-ledger-frame="${frameId}"]`); }
+
+  function resolveEvidenceNode(spec) {
+    if (!spec) return null;
+    const value = typeof spec.target === "function" ? spec.target() : spec.target;
+    if (typeof value === "string") return document.querySelector(value);
+    return value || null;
+  }
+
+  function evidenceRects(config = state.modal) {
+    return (config?.targets || []).map((spec) => ({ spec, node: resolveEvidenceNode(spec) }))
+      .filter(({ node }) => node && !node.hidden && node.getClientRects().length)
+      .map(({ spec, node }) => ({ spec, node, rect: node.getBoundingClientRect() }))
+      .filter(({ rect }) => rect.width >= 2 && rect.height >= 2 && rect.bottom >= 0 && rect.top <= innerHeight);
+  }
+
+  function overlapArea(a, b) {
+    const width = Math.max(0, Math.min(a.right, b.right) - Math.max(a.left, b.left));
+    const height = Math.max(0, Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top));
+    return width * height;
+  }
+
+  function positionModal() {
+    if (!state.modal || els.modalLayer.hidden) return;
+    const margin = innerWidth <= 620 ? 8 : 12;
+    const gap = innerWidth <= 620 ? 8 : 14;
+    const cardRect = els.modalCard.getBoundingClientRect();
+    const width = Math.min(cardRect.width, innerWidth - margin * 2);
+    const height = Math.min(cardRect.height, innerHeight - margin * 2);
+    const evidence = evidenceRects();
+    const targetRects = evidence.map(({ rect }) => ({ left: rect.left - gap, top: rect.top - gap, right: rect.right + gap, bottom: rect.bottom + gap }));
+    if (!targetRects.length) {
+      els.modalCard.style.left = `${Math.round((innerWidth - width) / 2)}px`;
+      els.modalCard.style.top = `${Math.round((innerHeight - height) / 2)}px`;
+      els.modalCard.style.right = "auto";
+      els.modalCard.style.bottom = "auto";
+      els.modalCard.style.transform = "none";
+      return;
+    }
+    let candidates;
+    if (innerWidth <= 620) {
+      const centreY = targetRects.length ? targetRects.reduce((sum, rect) => sum + (rect.top + rect.bottom) / 2, 0) / targetRects.length : innerHeight / 2;
+      candidates = centreY > innerHeight / 2
+        ? [{ left: margin, top: margin }, { left: margin, top: innerHeight - height - margin }]
+        : [{ left: margin, top: innerHeight - height - margin }, { left: margin, top: margin }];
+    } else {
+      candidates = [
+        { left: margin, top: margin },
+        { left: innerWidth - width - margin, top: margin },
+        { left: margin, top: innerHeight - height - margin },
+        { left: innerWidth - width - margin, top: innerHeight - height - margin },
+        { left: Math.max(margin, (innerWidth - width) / 2), top: margin },
+        { left: Math.max(margin, (innerWidth - width) / 2), top: innerHeight - height - margin }
+      ];
+    }
+    const scored = candidates.map((candidate, index) => {
+      const rect = { left: candidate.left, top: candidate.top, right: candidate.left + width, bottom: candidate.top + height };
+      const overlap = targetRects.reduce((sum, target) => sum + overlapArea(rect, target), 0);
+      return { ...candidate, score: overlap * 1000 + index };
+    }).sort((a, b) => a.score - b.score)[0];
+    els.modalCard.style.left = `${Math.round(scored.left)}px`;
+    els.modalCard.style.top = `${Math.round(scored.top)}px`;
+    els.modalCard.style.right = "auto";
+    els.modalCard.style.bottom = "auto";
+    els.modalCard.style.transform = "none";
+  }
+
+  function renderEvidenceOutlines() {
+    els.modalEvidence.replaceChildren();
+    evidenceRects().forEach(({ spec, rect }) => {
+      const outline = document.createElement("div");
+      outline.className = `modal-evidence-outline${spec.tone ? ` ${spec.tone}` : ""}`;
+      const pad = spec.pad ?? 5;
+      const left = Math.max(2, rect.left - pad);
+      const top = Math.max(2, rect.top - pad);
+      outline.style.left = `${left}px`;
+      outline.style.top = `${top}px`;
+      outline.style.width = `${Math.min(innerWidth - left - 2, rect.width + pad * 2)}px`;
+      outline.style.height = `${Math.min(innerHeight - top - 2, rect.height + pad * 2)}px`;
+      if (spec.label) {
+        const label = document.createElement("span");
+        label.className = "modal-evidence-label";
+        label.textContent = spec.label;
+        outline.append(label);
+      }
+      els.modalEvidence.append(outline);
+    });
+    positionModal();
+  }
+
+  function createFact(fact) {
+    const node = document.createElement("div");
+    node.className = `modal-fact${fact.tone ? ` ${fact.tone}` : ""}`;
+    const label = document.createElement("span");
+    label.textContent = fact.label;
+    const value = document.createElement("strong");
+    value.textContent = fact.value;
+    node.append(label, value);
+    return node;
+  }
+
+  function openModal(config) {
+    clearGuide();
+    if (!state.modal) state.modalOrigin = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const primaryEvidence = (config.targets || []).map(resolveEvidenceNode).find((node) => node && node.getClientRects().length);
+    if (primaryEvidence) {
+      const rect = primaryEvidence.getBoundingClientRect();
+      if (rect.top < 8 || rect.bottom > innerHeight - 8) primaryEvidence.scrollIntoView({ block: "center", inline: "nearest", behavior: prefersReducedMotion ? "auto" : "smooth" });
+    }
+    state.modal = config;
+    els.modalLayer.hidden = false;
+    els.modalLayer.dataset.evidence = String(Boolean((config.targets || []).length));
+    document.body.classList.add("modal-open");
+    if (main) main.inert = true;
+    els.modalCard.dataset.placement = "auto";
+    els.modalCard.dataset.tone = config.tone || "";
+    els.modalKicker.textContent = config.kicker || "Observation";
+    els.modalProgress.textContent = config.progress || "";
+    els.modalProgress.hidden = !config.progress;
+    els.modalTitle.textContent = config.title;
+    els.modalCopy.textContent = config.copy || "";
+    els.modalFacts.replaceChildren(...(config.facts || []).map(createFact));
+    els.modalFacts.hidden = !(config.facts || []).length;
+    els.modalRealisation.textContent = config.realisation || "";
+    els.modalRealisation.hidden = !config.realisation;
+    els.modalFeedback.textContent = config.feedback || "";
+    els.modalFeedback.hidden = !config.feedback;
+    els.modalActions.replaceChildren();
+    (config.actions || []).forEach((action) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.textContent = action.label;
+      if (action.primary) button.classList.add("primary");
+      if (action.className) button.classList.add(action.className);
+      button.addEventListener("click", () => action.onClick?.());
+      els.modalActions.append(button);
+    });
+    updateControls();
+    requestAnimationFrame(() => {
+      renderEvidenceOutlines();
+      requestAnimationFrame(positionModal);
+      els.modalCard.scrollTop = 0;
+      els.modalCard.focus({ preventScroll: true });
+    });
+  }
+
+  function closeModal({ restoreFocus = false } = {}) {
+    if (!state.modal) return;
+    state.modal = null;
+    els.modalLayer.hidden = true;
+    delete els.modalLayer.dataset.evidence;
+    els.modalEvidence.replaceChildren();
+    els.modalCard.removeAttribute("style");
+    document.body.classList.remove("modal-open");
+    if (main) main.inert = false;
+    updateControls();
+    if (restoreFocus) state.modalOrigin?.focus?.();
+    state.modalOrigin = null;
+  }
+
+  function guideNodes(key) {
+    if (key === "step") return [els.stepButton];
+    if (key === "run") return [els.runButton];
+    if (key === "advance") return [els.stepButton, els.runButton].filter((node) => !node.disabled);
+    if (key === "predictions") return [...document.querySelectorAll("[data-working-prediction]:not(:disabled)")];
+    if (key === "ready") return [els.readyUnwindButton];
+    if (key === "rules") return [els.ruleControls];
+    if (key === "timeline") return [els.timeline];
+    if (key === "experiment") return [els.experimentButton];
+    return [];
+  }
+
+  function showGuide(key, title, copy, kicker = "Next interaction") {
+    state.guide = { key, title, copy, kicker };
+    updateMission();
+    requestAnimationFrame(renderGuide);
+  }
+
+  function clearGuide() {
+    document.querySelectorAll(".lab-guide-target").forEach((node) => node.classList.remove("lab-guide-target"));
+    state.guide = null;
+    els.guide.hidden = true;
+  }
+
+  function renderGuide() {
+    document.querySelectorAll(".lab-guide-target").forEach((node) => node.classList.remove("lab-guide-target"));
+    els.guide.hidden = true;
+    if (!state.guide) return;
+    const nodes = guideNodes(state.guide.key).filter((node) => node && !node.hidden && !node.disabled && node.getClientRects().length);
+    if (!nodes.length) return;
+    if (state.guide.key === "predictions") {
+      const firstMissing = nodes.find((node) => !node.value?.trim()) || nodes[0];
+      firstMissing?.classList.add("lab-guide-target");
+      return;
+    }
+    nodes[0]?.classList.add("lab-guide-target");
+  }
+
+  function showIntroModal() {
+    openModal({
+      id: "intro", kicker: "Guided trace", progress: "Push frames",
+      title: "Every unfinished call needs somewhere to wait.",
+      copy: "Trace Total(4). Before each action, predict what should change; then use the stack, saved values and return working as evidence.",
+      facts: [{ label: "Start", value: "Total(4)" }, { label: "Base case", value: "n ≤ 0 → 0" }],
+      realisation: "The central relationship is visible: a call pushes a new frame while its caller remains; a return pops a frame while its value moves to the caller.",
+      actions: [{ label: "Begin trace", primary: true, onClick: () => { closeModal(); showGuide("step", "Make the first recursive call", "Step once. Compare what stays in memory with what becomes active."); } }]
+    });
+  }
+
+  function showFirstCallModal() {
+    state.seen.add("first-call");
+    openModal({
+      id: "first-call", kicker: "Cause → visible change", progress: "Push frames", tone: "success",
+      title: "The caller stayed while a new frame became active.",
+      copy: "F1 paused at line 6. F2 now runs, and both values of n exist at the same time.",
+      facts: [{ label: "F1 · waiting", value: "n = 4 · resume line 6" }, { label: "F2 · active", value: "n = 3" }],
+      realisation: "A recursive call pushes a new frame; it does not overwrite the caller's local state.",
+      targets: [
+        { target: () => locateFrame(1), label: "caller preserved" },
+        { target: () => locateFrame(2), label: "new active call", tone: "good" }
+      ],
+      actions: [{ label: "Test whether it repeats", primary: true, onClick: () => { closeModal(); showGuide("step", "Push one more frame", "Step again. Ask what changes and what stays invariant."); } }]
+    });
+  }
+
+  function showRepeatedCallModal() {
+    state.patternModalShown = true;
+    openModal({
+      id: "repeated-call", kicker: "Repeated relationship", progress: "Push frames", tone: "success",
+      title: "The same cause produced the same stack change.",
+      copy: "F2 also paused and F3 became the only active frame. Earlier callers remain below it with their own saved n values.",
+      facts: [{ label: "Stack size", value: "2 → 3 frames" }, { label: "Invariant", value: "only the top frame runs" }],
+      realisation: "Each non-base invocation performs the same transformation: save local state, push Total(n − 1), then wait.",
+      targets: [
+        { target: () => locateFrame(1), label: "still waiting" },
+        { target: () => locateFrame(2), label: "new waiting caller" },
+        { target: () => locateFrame(3), label: "only active frame", tone: "good" }
+      ],
+      actions: [{ label: "Run this pattern to the base", primary: true, onClick: () => { closeModal(); render(); showGuide("run", "Continue to the base case", "Run repeats the observed push relationship and stops as soon as the base frame is visible."); } }]
+    });
+  }
+
+  function showBaseChoiceModal(feedback = "") {
+    const top = topFrame();
+    openModal({
+      id: "base-choice", kicker: "Predict before action", progress: "Reach base", tone: feedback ? "warn" : "",
+      title: feedback ? "Use the instruction that actually runs." : "The base test is true. What will the next Step show?",
+      copy: `Frame F${top?.id ?? "?"} has n = ${top?.n ?? "?"}. Line 3 is RETURN 0; line 5 is skipped.`,
+      facts: [{ label: "Condition", value: `${baseText()} is true`, tone: "good" }, { label: "Next instruction", value: "RETURN 0" }],
+      feedback,
+      realisation: feedback ? "A return completes this invocation; it cannot create another recursive call." : "Commit to the stack change before executing it.",
+      targets: [
+        { target: () => locateFrame(top?.id), label: "base frame", tone: "good" },
+        { target: () => document.querySelector('.code-line[data-line="3"]'), label: "instruction that runs", tone: "good" }
+      ],
+      actions: feedback ? [
+        { label: "It pops and returns 0", primary: true, onClick: prepareBaseReturn }
+      ] : [
+        { label: "It pushes another frame", onClick: () => { state.baseChoice = "push"; showBaseChoiceModal("That would require line 5, but the true base test sends control to RETURN 0 instead."); } },
+        { label: "It pops and returns 0", primary: true, onClick: prepareBaseReturn }
+      ]
+    });
+  }
+
+  function prepareBaseReturn() {
+    state.baseChoice = "return";
+    closeModal();
+    render();
+    showGuide("step", "Execute RETURN 0", "Step once. Watch the base frame leave and track where its value is stored.", "Prediction recorded");
+  }
+
+  function showBaseReturnedModal() {
+    const event = current().event;
+    openModal({
+      id: "base-returned", kicker: "Consequence → understanding", progress: "Show working", tone: "success",
+      title: "The base frame left; its value stayed in the computation.",
+      copy: `F${event.fromId} was popped. Its 0 now fills smallerTotal in F${event.toId}, which resumes at line 6.`,
+      facts: [{ label: "Stack change", value: `pop F${event.fromId}` }, { label: "Data change", value: `F${event.toId}.smallerTotal ← 0`, tone: "good" }],
+      realisation: "A completed frame disappears from the stack, but its return value becomes new local state in the caller.",
+      targets: [
+        { target: () => locateLedger(event.fromId), label: `base return recorded`, tone: "good" },
+        { target: () => innerWidth <= 620 ? locateLedger(event.toId) : locateSlot(event.toId), label: "0 stored for the resumed caller", tone: "good" }
+      ],
+      actions: [{ label: "Record return predictions", primary: true, onClick: () => { closeModal(); showGuide("predictions", "Use the saved n values", "Enter at least two predicted return values in the persistent working panel. They will stay visible after frames pop."); requestAnimationFrame(() => document.querySelector("[data-working-prediction]")?.focus()); } }]
+    });
+  }
+
+  function showPredictionCheckpoint(feedback = "", choice = null) {
+    if (state.guideStage !== "working" || predictionCount() < 2 || state.modal) return;
+    const top = topFrame();
+    const oldest = current().frames[0];
+    const facts = [...state.predictions.entries()]
+      .filter(([, value]) => String(value).trim() !== "")
+      .sort((a, b) => b[0] - a[0])
+      .slice(0, 3)
+      .map(([frameId, value]) => ({ label: `F${frameId} prediction`, value: `returns ${value}` }));
+    openModal({
+      id: "prediction-checkpoint", kicker: "Working → prediction", progress: "Show working", tone: choice === "correct" ? "success" : feedback ? "warn" : "",
+      title: choice === "correct" ? `F${top?.id} must return next.` : "Which unfinished frame returns next?",
+      copy: "The base frame has already returned. The remaining frames are all unfinished, but only one is at the top of the stack.",
+      facts,
+      feedback,
+      realisation: choice === "correct" ? "Last in, first out means the most recently created unfinished frame resumes before every caller beneath it." : "Use the physical stack order, not the order in which you first saw the calls.",
+      targets: [
+        { target: () => locateFrame(top?.id), label: "top unfinished frame", tone: "good" },
+        { target: els.workingPanel, label: "predictions persist here" }
+      ],
+      actions: choice === "correct" ? [
+        { label: "Use Step to reveal its return", primary: true, onClick: beginUnwind }
+      ] : [
+        { label: `F${oldest?.id ?? 1} returns next`, onClick: () => { closeModal(); requestAnimationFrame(() => showPredictionCheckpoint("F1 was created first, so it is deepest. It cannot resume until every frame above it has left.", "wrong")); } },
+        { label: `F${top?.id ?? "?"} returns next`, primary: true, onClick: () => { state.unwindOrderChoice = top?.id; closeModal(); requestAnimationFrame(() => showPredictionCheckpoint("Your choice matches the visible top of the stack.", "correct")); } }
+      ]
+    });
+  }
+
+  function beginUnwind() {
+    const required = requiredPredictionCount();
+    if (required > 0 && completedRequiredPredictions() < required || state.busy) return;
+    state.predictionCheckpointShown = true;
+    closeModal();
+    clearGuide();
+    state.askingReturnOrder = false;
+    state.guideStage = "unwind";
+    render();
+    showGuide("step", state.workingLevel === "observe" ? "Follow the first return" : "Check the first return", state.workingLevel === "observe" ? "Step once and watch saved n combine with the child's result before the frame leaves." : "Step once. Compare the actual arithmetic with the working preserved beside that frame.");
+  }
+
+  function showFirstOrdinaryReturnModal() {
+    const snapshot = current();
+    const event = snapshot.event;
+    const returned = snapshot.completed[snapshot.completed.length - 1];
+    if (event.kind !== "return" || !returned) return;
+    state.seen.add("first-ordinary-return");
+    const rawPrediction = state.predictions.get(returned.id);
+    const matched = String(rawPrediction ?? "").trim() !== "" && Number(rawPrediction) === returned.value;
+    openModal({
+      id: "first-return", kicker: "Prediction → actual evidence", progress: "Pop frames", placement: "auto", tone: matched ? "success" : "warn",
+      title: `${returned.expression}; then F${event.fromId} was popped.`,
+      copy: `The result ${event.value} became smallerTotal in F${event.toId}. The persistent row now compares your prediction with the actual calculation.`,
+      facts: [
+        { label: "Your prediction", value: String(rawPrediction ?? "not entered"), tone: matched ? "good" : "warn" },
+        { label: "Actual return", value: returned.expression, tone: "good" },
+        { label: "Transfer", value: `F${event.toId}.smallerTotal ← ${event.value}` }
+      ],
+      realisation: "Unwinding repeats one causal step: calculate with saved n → return value → pop frame → resume the caller below it.",
+      targets: [
+        { target: () => locateLedger(event.fromId), label: `prediction checked here`, tone: matched ? "good" : "warn" },
+        { target: () => innerWidth <= 620 ? locateLedger(event.toId) : locateSlot(event.toId), label: `${event.value} delivered to the caller`, tone: "good" }
+      ],
+      actions: [
+        { label: "Inspect one return at a time", onClick: () => { closeModal(); showGuide("step", "Step the next return", "Use the same evidence chain: saved n, actual arithmetic, popped frame, delivered value."); } },
+        { label: "Finish the repeated pattern", primary: true, onClick: () => { closeModal(); showGuide("run", "Run the remaining returns", "Run repeats the same pop-and-transfer relationship until the stack is empty."); } }
+      ]
+    });
+  }
+
+  function showCompletionModal() {
+    if (state.completionModalShown) return;
+    state.completionModalShown = true;
+    const snapshot = current();
+    const predictions = [...state.predictions.entries()].filter(([, value]) => String(value).trim() !== "");
+    const correct = predictions.filter(([id, value]) => snapshot.completed.some((item) => item.id === id && item.value === Number(value))).length;
+    openModal({
+      id: "complete", kicker: "Trace complete", progress: "Pop frames", placement: "center", tone: "success",
+      title: "Calls pushed in one order; returns popped in the reverse order.",
+      copy: "The stack is empty, but the returned values remain in the ledger and the final result is now available as program output.",
+      facts: [
+        { label: "Output", value: String(snapshot.output), tone: "good" },
+        { label: "Return order", value: snapshot.completed.map((item) => `F${item.id}`).join(" → ") },
+        { label: "Predictions checked", value: predictions.length ? `${correct} of ${predictions.length} matched` : "none entered" },
+        { label: "Invariant", value: "only the top frame runs" }
+      ],
+      realisation: "Each frame preserved its own n until its child returned. Last-in, first-out order made every saved value available at the correct moment.",
+      targets: [
+        { target: els.outputBox, label: "final output", tone: "good" },
+        { target: els.ledgerList, label: "frames left in LIFO order", tone: "good" }
+      ],
+      actions: [
+        { label: "Inspect the saved trace", onClick: () => { closeModal(); state.inspectedTrace = true; render(); showGuide("timeline", "Scrub through recorded states", "Move the trace control to compare stack growth with stack unwinding."); } },
+        { label: "Test a base-case rule", primary: true, onClick: enterExplore }
+      ]
+    });
+  }
+
+  function showScrubInsightModal() {
+    const snapshot = current();
+    openModal({
+      id: "scrub-insight", kicker: "Relationship across the trace", progress: "Review trace", placement: "right",
+      title: "Calls grow the stack; returns shrink it.",
+      copy: "Scrubbing changed the state you are observing, not the saved execution. The frame count and returned-frame count move in opposite directions after the base case.",
+      facts: [{ label: "Frames still live", value: String(snapshot.frames.length) }, { label: "Frames returned", value: String(snapshot.completed.length) }],
+      realisation: "The turning point is the first reachable base frame: before it, calls push; after it, returns pop.",
+      targets: [{ target: els.timeline, label: "same saved trace" }, { target: els.stackMemory, label: "frame count at this state" }],
+      actions: [
+        { label: "Continue inspecting", onClick: () => { closeModal(); showGuide("experiment", "Move to the counterexample", "When ready, open the base-case rule test."); } },
+        { label: "Test termination now", primary: true, onClick: enterExplore }
+      ]
+    });
+  }
+
+  function enterExplore() {
+    closeModal();
+    clearGuide();
+    settings.start = 5;
+    settings.decrement = 2;
+    settings.baseMode = "eq";
+    state.mode = "explore";
+    state.guideStage = "experiment";
+    state.predictions.clear();
+    state.sawOverflow = false;
+    state.overflowSignature = null;
+    state.ruleChangedAfterOverflow = false;
+    state.repairedAfterOverflow = false;
+    state.explorePrediction = null;
+    state.repairPrediction = null;
+    state.repairPromptedSignature = null;
+    state.lastRunPrediction = null;
+    state.askingReturnOrder = false;
+    state.orderFeedback = "";
+    rebuild();
+  }
+
+  function showExplorePredictionModal(feedback = "", chosen = null) {
+    openModal({
+      id: "explore-prediction", kicker: "Prediction before evidence", progress: "Test termination", tone: feedback ? (chosen === "miss" ? "success" : "warn") : "",
+      title: feedback ? "Prediction recorded. The stack must now supply the evidence." : "Will this argument sequence ever equal 0?",
+      copy: "The loaded rule starts at 5, subtracts 2 on every call, and stops only when n = 0.",
+      facts: [{ label: "Argument sequence", value: "5 → 3 → 1 → −1 → …" }, { label: "Base test", value: "n = 0" }],
+      feedback,
+      realisation: feedback ? "A visible base frame would allow returns; otherwise every caller will remain waiting." : "Commit to a prediction before running the rule.",
+      actions: feedback ? [
+        { label: "Use Run to test it", primary: true, onClick: () => { closeModal(); render(); showGuide("run", "Run the predicted rule", "Watch the argument sequence and look for a base frame before the stack fills."); } }
+      ] : [
+        { label: "Yes — it reaches 0", onClick: () => recordExplorePrediction("reach") },
+        { label: "No — it skips 0", primary: true, onClick: () => recordExplorePrediction("miss") }
+      ]
+    });
+  }
+
+  function recordExplorePrediction(choice) {
+    state.explorePrediction = choice;
+    const feedback = choice === "miss"
+      ? "You predicted that the odd-number sequence skips the even value 0."
+      : "You predicted that repeated subtraction will eventually land exactly on 0.";
+    showExplorePredictionModal(feedback, choice);
+  }
+
+  function argumentSequence(snapshot = current()) {
+    return snapshot.frames.map((frame) => frame.n).join(" → ");
+  }
+
+  function showOverflowModal() {
+    const snapshot = current();
+    const event = snapshot.event;
+    const predictedMiss = state.lastRunPrediction === "miss";
+    openModal({
+      id: "overflow", kicker: "Consequence before verdict", progress: "Test termination", tone: "error",
+      title: "No base frame appeared; every caller is still waiting.",
+      copy: `The next call, Total(${event.attemptedN}), cannot be pushed because the visible stack limit has been reached.`,
+      facts: [
+        { label: "Your prediction", value: state.lastRunPrediction === "reach" ? "base will appear" : state.lastRunPrediction === "miss" ? "base will be skipped" : "not recorded", tone: predictedMiss ? "good" : "warn" },
+        { label: "Observed", value: `${baseText()} was never true`, tone: "bad" },
+        { label: "Arguments reached", value: argumentSequence(snapshot), tone: "bad" },
+        { label: "Next call", value: `Total(${event.attemptedN}) · blocked` }
+      ],
+      realisation: "A written base case cannot stop recursion unless the recursive transformation makes its condition reachable from the allowed start value.",
+      targets: [
+        { target: els.overflowAttempt, label: "next push blocked", tone: "warn" },
+        { target: els.workingPanel, label: "every frame still waiting" }
+      ],
+      actions: [{ label: "Change one part of the rule", primary: true, onClick: () => { closeModal(); showGuide("rules", "Repair the argument path", "Change one variable at a time. Then use Run; you will predict the new outcome before it executes."); } }]
+    });
+  }
+
+  function previewArguments(count = 5) {
+    return Array.from({ length: count }, (_, index) => settings.start - index * settings.decrement).join(" → ");
+  }
+
+  function showRuleChangedModal(feedback = "", choice = null) {
+    if (state.modal || state.mode !== "explore" || !state.sawOverflow || !state.ruleChangedAfterOverflow) return;
+    openModal({
+      id: "rule-changed", kicker: "Changed variable → new prediction", progress: "Test termination", tone: choice === "reach" ? "success" : feedback ? "warn" : "",
+      title: feedback ? "Prediction recorded. Use the real Run control to test it." : "Will the changed argument path enter the base-case set?",
+      copy: "The stack has been reset. Only the rule changed; the requirement for termination stays the same.",
+      facts: [{ label: "New sequence begins", value: previewArguments() }, { label: "New base test", value: baseText() }],
+      feedback,
+      realisation: feedback ? "The next run must make the consequence visible: a base frame appears, or callers continue accumulating." : "Predict before running so the outcome tests your reasoning rather than merely displaying an answer.",
+      actions: feedback ? [
+        { label: "Keep editing", onClick: () => { closeModal(); showGuide("rules", "Change one variable", "Keep the causal comparison clear by changing only one control at a time."); } },
+        { label: "Use Run to test it", primary: true, onClick: () => { state.repairPromptedSignature = ruleSignature(); closeModal(); render(); showGuide("run", "Run the changed rule", "Look for a visible base frame before any return begins."); } }
+      ] : [
+        { label: "The base is still skipped", onClick: () => recordRepairPrediction("miss") },
+        { label: "A base frame will appear", primary: true, onClick: () => recordRepairPrediction("reach") }
+      ]
+    });
+  }
+
+  function recordRepairPrediction(choice) {
+    state.repairPrediction = choice;
+    const feedback = choice === "reach"
+      ? "You predict that the changed sequence now enters the base-case set."
+      : "You predict that the changed sequence still misses the base-case set.";
+    closeModal();
+    requestAnimationFrame(() => showRuleChangedModal(feedback, choice));
+  }
+
+  function showRepairedModal() {
+    const snapshot = current();
+    const baseItem = snapshot.completed.find((item) => item.kind === "base");
+    const predictionMatched = state.lastRunPrediction === "reach";
+    openModal({
+      id: "repaired", kicker: "Observed repair", progress: "Test termination", tone: "success",
+      title: "A reachable base frame restored the return path.",
+      copy: `The call with n = ${baseItem?.n ?? "?"} returned 0. That event allowed every waiting caller to resume and leave the stack.`,
+      facts: [
+        { label: "Your prediction", value: state.lastRunPrediction === "reach" ? "base will appear" : state.lastRunPrediction === "miss" ? "base will be skipped" : "not recorded", tone: predictionMatched ? "good" : "warn" },
+        { label: "Observed base", value: `n = ${baseItem?.n ?? "?"}`, tone: "good" },
+        { label: "Frames returned", value: String(snapshot.completed.length) },
+        { label: "Program output", value: String(snapshot.output), tone: "good" }
+      ],
+      realisation: "Termination depends on both parts of the relationship: arguments must progress toward a set that the base condition actually includes.",
+      targets: [
+        { target: () => locateLedger(baseItem?.id), label: "base return began the unwind", tone: "good" },
+        { target: els.outputBox, label: "all callers completed", tone: "good" }
+      ],
+      actions: [
+        { label: "Test another counterexample", onClick: () => { closeModal(); showGuide("rules", "Change one variable again", "Predict whether the new argument path still enters the base-case set."); } },
+        { label: "Replay the guided trace", primary: true, onClick: resetGuided }
+      ]
+    });
+  }
+
+  async function animateDelivery(previousSnapshot, nextSnapshot) {
+    const event = nextSnapshot.event;
+    if (!["base-return", "return", "complete"].includes(event.kind)) return;
+
+    if (prefersReducedMotion) {
+      render();
+      return;
+    }
+
+    const source = locateFrame(event.fromId);
+    if (!source) {
+      render();
+      return;
+    }
+
+    const returned = nextSnapshot.completed[nextSnapshot.completed.length - 1];
+    const stateCells = [...source.querySelectorAll(".frame-state > .state-cell")];
+    const savedCell = stateCells[0] || null;
+    const slotCell = source.querySelector(".state-cell.slot");
+    const returnCell = source.querySelector(".state-cell.return-cell");
+    const statusNode = source.querySelector(".frame-status");
+    const frameState = source.querySelector(".frame-state");
+    const pace = state.mode === "guided" && state.workingLevel === "observe" ? 1 : .82;
+    const seqMs = (ms) => Math.max(80, Math.round(ms * pace));
+    const seqWait = (ms) => delay(seqMs(ms));
+
+    source.classList.add("sequence-processing");
+    if (statusNode) statusNode.textContent = returned?.kind === "base" ? "processing base return" : "processing return";
+
+    if (returned?.kind === "base") {
+      returnCell?.classList.add("sequence-focus", "sequence-result");
+      const ribbon = document.createElement("div");
+      ribbon.className = "return-equation-ribbon base";
+      ribbon.innerHTML = `<small>base case is true</small><strong>RETURN 0</strong>`;
+      frameState?.append(ribbon);
+      await seqWait(330);
+      ribbon.remove();
+      returnCell?.classList.remove("sequence-focus");
+      await seqWait(90);
+    } else {
+      savedCell?.classList.add("sequence-focus");
+      await seqWait(150);
+      savedCell?.classList.remove("sequence-focus");
+      savedCell?.classList.add("sequence-held");
+
+      slotCell?.classList.add("sequence-focus");
+      await seqWait(165);
+      slotCell?.classList.remove("sequence-focus");
+      slotCell?.classList.add("sequence-held");
+
+      source.classList.add("sequence-show-operators");
+      returnCell?.classList.add("sequence-result");
+      const ribbon = document.createElement("div");
+      ribbon.className = "return-equation-ribbon";
+      ribbon.innerHTML = `<small>calculate return</small><strong>${escapeHtml(returned?.expression ?? String(event.value))}</strong>`;
+      frameState?.append(ribbon);
+      await seqWait(315);
+      const returnStrong = returnCell?.querySelector("strong");
+      if (returnStrong && returned?.expression) returnStrong.textContent = returned.expression;
+      await seqWait(105);
+      ribbon.remove();
+    }
+
+    const originRect = (returnCell || source).getBoundingClientRect();
+    const ledgerBeforePop = locateLedger(event.fromId);
+    ledgerBeforePop?.classList.add("sequence-checked");
+
+    const popAnimation = source.animate([
+      { transform: "translateY(0) scale(1)", opacity: 1 },
+      { transform: "translateY(-8px) scale(.985)", opacity: .62, offset: .62 },
+      { transform: "translateY(-16px) scale(.97)", opacity: 0 }
+    ], { duration: seqMs(190), easing: "cubic-bezier(.25,.72,.24,1)", fill: "forwards" });
+    await popAnimation.finished.catch(() => {});
+
+    // Commit the popped-frame state only after the learner has seen the calculation happen.
+    render();
+
+    const destination = event.toId ? locateSlot(event.toId) : els.outputValue;
+    const destinationRect = destination?.getBoundingClientRect();
+    if (!destinationRect) return;
+
+    const token = document.createElement("div");
+    token.className = "fly-token";
+    token.textContent = event.value;
+    document.body.append(token);
+    const tokenRect = token.getBoundingClientRect();
+    const originX = originRect.left + originRect.width / 2;
+    const originY = originRect.top + originRect.height / 2;
+    token.style.left = `${originX - tokenRect.width / 2}px`;
+    token.style.top = `${originY - tokenRect.height / 2}px`;
+
+    const dx = destinationRect.left + destinationRect.width / 2 - originX;
+    const dy = destinationRect.top + destinationRect.height / 2 - originY;
+    const travel = token.animate([
+      { transform: "translate(0,0) scale(.92)", opacity: 1 },
+      { transform: `translate(${dx * .48}px,${dy * .48 - 15}px) scale(1.05)`, opacity: 1, offset: .48 },
+      { transform: `translate(${dx}px,${dy}px) scale(.84)`, opacity: .12 }
+    ], { duration: seqMs(430), easing: "cubic-bezier(.22,.72,.2,1)", fill: "forwards" });
+    await travel.finished.catch(() => {});
+    token.remove();
+
+    destination.classList.add("sequence-arrival");
+    destination.animate([
+      { transform: "scale(.96)" },
+      { transform: "scale(1.08)", offset: .48 },
+      { transform: "scale(1)" }
+    ], { duration: seqMs(250), easing: "ease-out" });
+
+    const returnedRow = locateLedger(event.fromId);
+    returnedRow?.classList.add("sequence-checked");
+
+    if (event.toId) {
+      const parent = locateFrame(event.toId);
+      const parentSaved = parent?.querySelector(".frame-state > .state-cell:first-child");
+      const parentReturn = parent?.querySelector(".state-cell.return-cell");
+      const parentStatus = parent?.querySelector(".frame-status");
+      parent?.classList.add("sequence-resumed");
+      if (parentStatus) parentStatus.textContent = "resumed · inputs ready";
+      await seqWait(105);
+      parentSaved?.classList.add("sequence-ready-input");
+      await seqWait(115);
+      parentReturn?.classList.add("sequence-next");
+      await seqWait(190);
+    } else {
+      els.outputBox.classList.add("sequence-resumed");
+      await seqWait(170);
+    }
+  }
+
+  async function stepForward({ manual = true, suppressModal = false } = {}) {
+    if (state.busy || !canMoveForward()) return;
+    clearGuide();
+    const previous = current();
+    const next = state.trace[state.index + 1];
+    state.busy = true;
+    updateControls();
+    state.index += 1;
+    if (manual && state.mode === "guided" && state.guideStage === "build") state.manualSteps += 1;
+
+    if (["base-return", "return", "complete"].includes(next.event.kind)) await animateDelivery(previous, next);
+    else {
+      render({ animatePush: next.event.kind === "call" });
+      await delay(240);
+    }
+
+    state.busy = false;
+
+    if (state.mode === "guided" && state.guideStage === "build") {
+      if (state.index >= 2) state.patternModalShown = true;
+      if (isBaseState(next)) {
+        state.guideStage = "baseChoice";
+        state.baseChoice = "return";
+        state.running = false;
+      }
+    } else if (state.mode === "guided" && state.guideStage === "baseChoice" && next.event.kind === "base-return") {
+      state.guideStage = state.workingLevel === "observe" ? "unwind" : "working";
+      state.baseChoice = "return";
+      state.running = false;
+    } else if (state.mode === "guided" && state.guideStage === "unwind") {
+      if (next.event.kind === "return") state.seen.add("first-ordinary-return");
+      if (next.output !== null) {
+        state.guideStage = "complete";
+        state.running = false;
+        state.completionModalShown = true;
+      }
+    }
+
+    if (state.mode === "explore" && next.event.kind === "overflow") {
+      state.sawOverflow = true;
+      state.overflowSignature = ruleSignature();
+      state.ruleChangedAfterOverflow = false;
+      state.repairPromptedSignature = null;
+      state.running = false;
+    }
+
+    if (state.mode === "explore" && next.output !== null) {
+      if (state.sawOverflow) {
+        state.repairedAfterOverflow = true;
+        state.overflowSignature = ruleSignature();
+        state.ruleChangedAfterOverflow = false;
+      }
+      state.running = false;
+    }
+
+    render();
+    if (state.mode === "guided" && state.guideStage === "build") {
+      if (state.index === 1) showGuide("step", "", "Notice the preserved caller, then Step again when you are ready to test whether the same relationship repeats.");
+      else if (state.index >= 2 && !isBaseState(next)) showGuide("run", "", "The push relationship has repeated. Run can carry the same pattern to the base case, or keep using Step.");
+    } else if (state.mode === "guided" && state.guideStage === "baseChoice") {
+      showGuide("step", "", "The base case is complete. Step when you are ready to watch RETURN 0 remove this frame and resume its caller.");
+    } else if (state.mode === "guided" && state.guideStage === "working") {
+      refreshWorkingAttention();
+    } else if (state.mode === "guided" && state.guideStage === "unwind" && next.output === null) {
+      const ordinaryReturns = next.completed.filter((item) => item.kind === "return").length;
+      showGuide(ordinaryReturns >= 2 ? "run" : "step", "", ordinaryReturns >= 2 ? "The pop-and-transfer relationship is repeating. Run can finish the same pattern." : "Inspect the returned value and its destination, then Step when you want the next return.");
+    } else if (state.mode === "guided" && state.guideStage === "complete") {
+      clearGuide();
+    } else if (state.mode === "explore" && next.event.kind === "overflow") {
+      showGuide("rules", "", "The base was never reached. Change one part of the rule, then predict the changed path before running again.");
+    }
+  }
+
+  async function runTrace() {
+    if (state.busy) return;
+    if (state.running) {
+      state.running = false;
+      render();
+      return;
+    }
+    if (!canMoveForward()) return;
+    if (state.mode === "explore") state.lastRunPrediction = state.sawOverflow ? state.repairPrediction : state.explorePrediction;
+    clearGuide();
+    state.running = true;
+    render();
+    while (state.running && canMoveForward()) {
+      await stepForward({ manual: false, suppressModal: true });
+      if (!state.running) break;
+      await delay(460);
+      if (state.mode === "guided" && ["working", "complete"].includes(state.guideStage)) state.running = false;
+    }
+    state.running = false;
+    render();
+  }
+
+  function rebuild({ keepPredictions = false } = {}) {
+    state.running = false;
+    state.busy = false;
+    state.trace = buildTrace();
+    state.index = 0;
+    if (!keepPredictions) state.predictions.clear();
+    render();
+  }
+
+  function startGuidedExample(level = "observe") {
+    closeModal();
+    clearGuide();
+    const config = guidedExampleConfig(level);
+    settings.start = config.start;
+    settings.decrement = 1;
+    settings.baseMode = "le";
+    state.mode = "guided";
+    state.workingLevel = level;
+    state.guideStage = "build";
+    state.manualSteps = 0;
+    state.baseChoice = null;
+    state.predictions.clear();
+    state.sawOverflow = false;
+    state.overflowSignature = null;
+    state.ruleChangedAfterOverflow = false;
+    state.repairedAfterOverflow = false;
+    state.seen = new Set();
+    state.predictionCheckpointShown = false;
+    state.explorePrediction = null;
+    state.repairPrediction = null;
+    state.repairPromptedSignature = null;
+    state.lastRunPrediction = null;
+    state.patternModalShown = false;
+    state.unwindOrderChoice = null;
+    state.inspectedTrace = false;
+    state.scrubInsightShown = false;
+    state.completionModalShown = false;
+    state.askingReturnOrder = false;
+    state.orderFeedback = "";
+    state.insightKind = null;
+    rebuild();
+    showGuide("step", "", level === "observe" ? "No working yet. This first example is fully worked: start with Step and watch what stays in memory and what changes." : level === "some" ? "Start the next trace. No working is needed until the base return makes the return path visible." : "Trace to the base case. Then every unfinished return becomes your working.");
+  }
+
+  function resetGuided() { startGuidedExample("observe"); }
+  function startSomeWorking() { startGuidedExample("some"); }
+  function startAllWorking() { startGuidedExample("all"); }
+
+  function resetCurrent() {
+    if (state.mode === "guided") {
+      startGuidedExample(state.workingLevel);
+    } else {
+      closeModal();
+      clearGuide();
+      state.ruleChangedAfterOverflow = state.sawOverflow && ruleSignature() !== state.overflowSignature;
+      state.repairPrediction = null;
+      rebuild();
+    }
+  }
+
+  function syncRuleControls() {
+    els.startInput.value = settings.start;
+    els.startReadout.value = settings.start;
+    els.startReadout.textContent = settings.start;
+    document.querySelectorAll("[data-decrement]").forEach((node) => node.classList.toggle("active", Number(node.dataset.decrement) === settings.decrement));
+    document.querySelectorAll("[data-base]").forEach((node) => node.classList.toggle("active", node.dataset.base === settings.baseMode));
+  }
+
+  function ruleChanged() {
+    if (state.sawOverflow) state.ruleChangedAfterOverflow = ruleSignature() !== state.overflowSignature;
+    state.predictions.clear();
+    state.repairPrediction = null;
+    state.repairPromptedSignature = null;
+    rebuild();
+  }
+
+  function promptForChangedRule() {
+    if (state.sawOverflow && state.ruleChangedAfterOverflow) {
+      clearGuide();
+      render();
+    }
+  }
+
+  function handleRunRequest() {
+    if (state.busy) return;
+    runTrace();
+  }
+
+  els.stepButton.addEventListener("click", () => stepForward({ manual: true }));
+  els.runButton.addEventListener("click", handleRunRequest);
+  els.experimentButton.addEventListener("click", enterExplore);
+  els.readyUnwindButton.addEventListener("click", () => {
+    if (completedRequiredPredictions() < requiredPredictionCount() || state.busy) return;
+    beginUnwind();
+  });
+  els.resetButton.addEventListener("click", resetCurrent);
+
+  els.timelineInput.addEventListener("input", () => {
+    state.running = false;
+    state.index = Number(els.timelineInput.value);
+    render();
+  });
+  els.timelineInput.addEventListener("change", () => {
+    if (state.mode === "guided" && state.guideStage === "complete") {
+      state.inspectedTrace = true;
+      render();
+    }
+  });
+
+  els.startInput.addEventListener("input", () => {
+    settings.start = Number(els.startInput.value);
+    ruleChanged();
+  });
+  els.startInput.addEventListener("change", promptForChangedRule);
+
+  document.querySelectorAll("[data-decrement]").forEach((node) => node.addEventListener("click", () => {
+    const next = Number(node.dataset.decrement);
+    if (next === settings.decrement) return;
+    settings.decrement = next;
+    ruleChanged();
+    promptForChangedRule();
+  }));
+
+  document.querySelectorAll("[data-base]").forEach((node) => node.addEventListener("click", () => {
+    const next = node.dataset.base;
+    if (next === settings.baseMode) return;
+    settings.baseMode = next;
+    ruleChanged();
+    promptForChangedRule();
+  }));
+
+  els.modalLayer.addEventListener("keydown", (event) => {
+    if (event.key !== "Tab") return;
+    const focusable = [...els.modalCard.querySelectorAll("button:not(:disabled),[href],input:not(:disabled),[tabindex]:not([tabindex='-1'])")];
+    if (!focusable.length) { event.preventDefault(); els.modalCard.focus(); return; }
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+    else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.target instanceof HTMLInputElement) return;
+    if (event.key === "ArrowRight" && !els.stepButton.disabled) {
+      event.preventDefault();
+      stepForward({ manual: true });
+    }
+  });
+
+  addEventListener("resize", renderGuide);
+  addEventListener("scroll", renderGuide, { passive: true, capture: true });
+
+  window.labTest = {
+    getState: () => ({ mode: state.mode, workingLevel: state.workingLevel, guideStage: state.guideStage, index: state.index, modal: null, guide: state.guide?.key || null, insight: state.insightKind, askingReturnOrder: state.askingReturnOrder, predictions: Object.fromEntries(state.predictions), requiredPredictions: requiredPredictionCount(), matchedPredictions: matchedRequiredPredictions(), settings: { ...settings }, output: current()?.output ?? null, event: current()?.event?.kind || null }),
+    closeModal: () => closeModal(),
+    step: () => stepForward({ manual: true }),
+    run: () => handleRunRequest(),
+    setPrediction: (frameId, value) => { state.predictions.set(Number(frameId), String(value)); render(); },
+    enterExplore,
+    startSomeWorking,
+    startAllWorking,
+    setRule: ({ start = settings.start, decrement = settings.decrement, baseMode = settings.baseMode } = {}) => { settings.start = Number(start); settings.decrement = Number(decrement); settings.baseMode = baseMode; ruleChanged(); },
+    render
+  };
+
+  resetGuided();
+})();
+</script>
+</body>
+</html>

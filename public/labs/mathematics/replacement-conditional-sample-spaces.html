@@ -1,0 +1,1426 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- LAB_FRAME_STYLES_START -->
+<style data-lab-frame>
+:root {
+  --lab-canvas: #f3f5f7;
+  --lab-paper: #fbfbfd;
+  --lab-surface: #ffffff;
+  --lab-control: #ffffff;
+  --lab-ink: #1d1d1f;
+  --lab-muted: #6e6e73;
+  --lab-line: #d2d2d7;
+  --lab-line-strong: #a7a7ad;
+  --lab-accent: #5277b8;
+  --lab-accent-soft: #eef2fa;
+  --lab-good: #18794e;
+  --lab-good-soft: #edf8f1;
+  --lab-warn: #946200;
+  --lab-warn-soft: #fff6e7;
+  --lab-bad: #b42318;
+  --lab-bad-soft: #fff0ee;
+  --lab-focus: #1d1d1f;
+  --lab-focus-soft: rgba(29, 29, 31, 0.18);
+  --lab-font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+  --lab-panel-radius: 12px;
+  --lab-control-radius: 8px;
+  --lab-pill-radius: 999px;
+  --lab-control-height: 35px;
+  --lab-panel-shadow: 0 1px 2px rgba(29, 29, 31, 0.04);
+  --lab-header-max-width: 1200px;
+  --lab-header-gutter: max(28px, calc((100vw - var(--lab-header-max-width)) / 2));
+  --lab-page-gutter: var(--lab-header-gutter);
+  --lab-compact-workspace-max: 820px;
+}
+
+html,
+body {
+  background: var(--lab-canvas);
+}
+
+body {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  align-content: start !important;
+  font-family: var(--lab-font-sans);
+  padding-bottom: 0;
+  padding-top: 0 !important;
+  text-rendering: optimizeLegibility;
+}
+
+.lab-manifest-header {
+  align-items: start;
+  border-bottom: 0 !important;
+  display: grid;
+  gap: 18px 28px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  margin-left: calc(50% - 50vw + var(--lab-header-gutter));
+  margin-bottom: 26px;
+  max-width: var(--lab-header-max-width);
+  padding-bottom: 22px;
+  width: calc(100vw - var(--lab-header-gutter) - var(--lab-header-gutter));
+}
+
+.lab-manifest-heading {
+  min-width: 0;
+}
+
+.lab-manifest-header h1 {
+  color: var(--ink, var(--lab-ink));
+  font-family: var(--lab-font-sans);
+  font-size: clamp(25px, 3.2vw, 40px);
+  font-weight: 650;
+  letter-spacing: -0.045em;
+  line-height: 1.02;
+  margin: 0;
+  max-width: 24ch;
+  padding: 0;
+  text-align: left;
+}
+
+.lab-manifest-subtitle {
+  color: var(--muted, var(--lab-muted));
+  font-family: var(--lab-font-sans);
+  font-size: 13px;
+  letter-spacing: 0;
+  line-height: 1.5;
+  margin: 10px 0 0;
+  max-width: 72ch;
+  padding: 0;
+  text-align: left;
+}
+
+.lab-authored-title-slot {
+  min-width: 0;
+}
+
+.lab-syllabus-chips {
+  align-items: center;
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+  margin: 0 0 0 auto;
+  max-width: 100%;
+}
+
+.lab-syllabus-chip {
+  align-items: center;
+  background: var(--syllabus-chip-bg) !important;
+  border: 1px solid var(--syllabus-chip-border) !important;
+  border-radius: var(--lab-pill-radius);
+  color: var(--syllabus-chip-text) !important;
+  display: inline-flex;
+  font-size: 11px;
+  font-weight: 650;
+  gap: 4px;
+  line-height: 1;
+  min-height: 29px;
+  padding: 8px 10px;
+  position: relative;
+  transition: background-color 140ms ease, border-color 140ms ease;
+  white-space: nowrap;
+}
+
+.lab-syllabus-chip:hover {
+  background: var(--syllabus-chip-hover) !important;
+}
+
+.lab-syllabus-primary-link {
+  border-radius: inherit;
+  inset: 0;
+  position: absolute;
+  z-index: 0;
+}
+
+.lab-syllabus-primary-link:focus-visible {
+  outline: 2px solid var(--syllabus-chip-text);
+  outline-offset: 2px;
+}
+
+.lab-syllabus-name,
+.lab-syllabus-divider,
+.lab-syllabus-sections {
+  pointer-events: none;
+  position: relative;
+  z-index: 1;
+}
+
+.lab-syllabus-section {
+  border-radius: 4px;
+  color: inherit;
+  padding: 2px;
+  text-decoration: none;
+}
+
+a.lab-syllabus-section {
+  pointer-events: auto;
+}
+
+a.lab-syllabus-section:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+a.lab-syllabus-section:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 1px;
+}
+
+.lab-syllabus-name {
+  color: var(--syllabus-chip-text) !important;
+}
+
+.lab-syllabus-divider,
+.lab-syllabus-separator {
+  color: var(--muted, var(--lab-muted));
+}
+
+.lab-syllabus-prefix {
+  opacity: 0.72;
+  padding-left: 5px;
+}
+
+.lab-syllabus-sections {
+  align-items: center;
+  display: inline-flex;
+}
+
+.lab-syllabus-separator {
+  margin-inline: 0 2px;
+}
+
+html[data-theme="dark"] .lab-syllabus-name {
+  color: var(--syllabus-chip-border) !important;
+}
+
+html[data-theme="dark"] .lab-syllabus-chip:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+html[data-theme="dark"],
+html[data-theme="dark"] body {
+  background: var(--bg);
+}
+
+body > main {
+  container-name: lab-canvas;
+  container-type: inline-size;
+  margin-left: var(--lab-page-gutter);
+  margin-right: auto;
+  margin-top: 18px;
+  max-width: var(--lab-header-max-width);
+  width: calc(100vw - var(--lab-page-gutter) - var(--lab-page-gutter));
+}
+
+body[data-lab-layout="compact"] .lab-manifest-header {
+  margin-bottom: 17px;
+  padding-bottom: 13px;
+}
+
+body[data-lab-layout="compact"] [data-lab-workspace] {
+  margin-left: auto;
+  margin-right: auto;
+  width: min(var(--lab-compact-workspace-max), 100%);
+}
+
+:where(button, input, select, textarea, summary):focus-visible {
+  outline: 3px solid var(--lab-focus);
+  outline-offset: 4px;
+}
+
+@media (max-width: 620px) {
+  :root {
+    --lab-header-gutter: 18px;
+    --lab-page-gutter: 18px;
+  }
+
+  body {
+    padding-bottom: 0;
+    padding-top: 0 !important;
+  }
+
+  .lab-manifest-header {
+    gap: 14px;
+    grid-template-columns: minmax(0, 1fr) !important;
+    margin-bottom: 20px;
+    padding-bottom: 18px;
+  }
+
+  body[data-lab-layout="compact"] .lab-manifest-header {
+    margin-bottom: 16px;
+    padding-bottom: 14px;
+  }
+
+  .lab-manifest-header h1 {
+    font-size: clamp(24px, 8vw, 34px);
+  }
+
+  .lab-syllabus-chips {
+    gap: 4px;
+    justify-content: flex-start !important;
+    margin: 0 !important;
+  }
+
+  .lab-syllabus-chip {
+    font-size: 10px;
+    max-width: 100%;
+    min-height: 27px;
+    padding: 7px 8px;
+    white-space: normal;
+  }
+
+  .lab-syllabus-sections {
+    flex-wrap: wrap;
+  }
+
+  body > main {
+    margin-top: 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+</style>
+<!-- LAB_FRAME_STYLES_END -->
+<!-- LAB_RESOURCE_START id="lab-kit.css" type="stylesheet" -->
+<style data-lab-resource="lab-kit.css" data-lab-resource-type="stylesheet" data-lab-resource-bytes="5395">
+:root {
+  --lab-kit-ink: var(--lab-ink, #20303a);
+  --lab-kit-muted: var(--lab-muted, #687780);
+  --lab-kit-line: var(--lab-line, #cbd6dc);
+  --lab-kit-surface: var(--lab-surface, #ffffff);
+  --lab-kit-panel: var(--lab-paper, #f6f9fb);
+  --lab-kit-accent: var(--lab-accent, #2b7ac3);
+  --lab-kit-accent-soft: var(--lab-accent-soft, #e9f3fb);
+  --lab-kit-good: var(--lab-good, #23794d);
+  --lab-kit-good-soft: var(--lab-good-soft, #e9f7ef);
+  --lab-kit-warn: var(--lab-warn, #8b6419);
+  --lab-kit-warn-soft: var(--lab-warn-soft, #fff7d9);
+  --lab-kit-bad: var(--lab-bad, #a3443d);
+  --lab-kit-bad-soft: var(--lab-bad-soft, #fff0ef);
+  --lab-kit-focus: var(--lab-focus, #1f6fb4);
+  --lab-kit-focus-ring: rgba(31, 111, 180, .28);
+  --lab-kit-canvas: var(--lab-paper, #fbfbfd);
+  --lab-kit-canvas-grid: #e7ebee;
+  --lab-kit-canvas-grid-size: 24px;
+  --lab-kit-radius: var(--lab-panel-radius, 12px);
+  --lab-kit-control-radius: var(--lab-control-radius, 8px);
+  --lab-kit-shadow: var(--lab-panel-shadow, 0 5px 16px rgba(32, 48, 58, .08));
+}
+
+.lab-kit-visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.lab-kit-panel {
+  color: var(--lab-kit-ink);
+  background: var(--lab-kit-surface);
+  border: 1px solid var(--lab-kit-line);
+  border-radius: var(--lab-kit-radius);
+  box-shadow: var(--lab-kit-shadow);
+}
+
+.lab-kit-stack { display: flex; flex-direction: column; gap: var(--lab-kit-stack-gap, 1rem); }
+.lab-kit-cluster { display: flex; flex-wrap: wrap; align-items: center; gap: var(--lab-kit-cluster-gap, .5rem); }
+.lab-kit-grid { display: grid; gap: var(--lab-kit-grid-gap, 1rem); grid-template-columns: repeat(var(--lab-kit-grid-columns, 1), minmax(0, 1fr)); }
+.lab-kit-scroll { max-width: 100%; overflow: auto; }
+.lab-kit-svg { display: block; width: 100%; max-width: 100%; height: auto; }
+
+.lab-kit-canvas {
+  box-sizing: border-box;
+  min-width: 0;
+  color: var(--lab-kit-ink);
+  background-color: var(--lab-kit-canvas);
+  border: 1px solid var(--lab-kit-line);
+  border-radius: var(--lab-kit-radius);
+  box-shadow: inset 0 0 0 1px rgba(32, 48, 58, .025);
+}
+
+.lab-kit-canvas[data-grid="square"] {
+  background-image:
+    linear-gradient(var(--lab-kit-canvas-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--lab-kit-canvas-grid) 1px, transparent 1px);
+  background-size: var(--lab-kit-canvas-grid-size) var(--lab-kit-canvas-grid-size);
+}
+
+.lab-kit-field { display: grid; gap: .35rem; color: var(--lab-kit-ink); }
+.lab-kit-field > label { font-weight: 700; }
+.lab-kit-field > small { color: var(--lab-kit-muted); line-height: 1.4; }
+.lab-kit-output { color: var(--lab-kit-ink); font-variant-numeric: tabular-nums; }
+
+.lab-kit-button,
+.lab-kit-input {
+  min-height: 2.5rem;
+  border: 1px solid var(--lab-kit-line);
+  border-radius: var(--lab-kit-control-radius);
+  background: var(--lab-kit-surface);
+  color: var(--lab-kit-ink);
+  font: inherit;
+}
+
+.lab-kit-button { padding: 0 .8rem; cursor: pointer; }
+.lab-kit-button[data-variant="primary"] { border-color: var(--lab-kit-accent); background: var(--lab-kit-accent); color: #fff; font-weight: 700; }
+.lab-kit-input { width: 100%; padding: 0 .6rem; }
+.lab-kit-button:focus-visible,
+.lab-kit-input:focus-visible,
+[data-lab-kit-focus]:focus-visible {
+  outline: 3px solid var(--lab-kit-focus-ring);
+  outline-offset: 2px;
+}
+
+.lab-kit-status { padding: .65rem .8rem; border-left: 3px solid var(--lab-kit-accent); background: var(--lab-kit-accent-soft); color: var(--lab-kit-ink); }
+.lab-kit-status[data-state="good"] { border-color: var(--lab-kit-good); background: var(--lab-kit-good-soft); }
+.lab-kit-status[data-state="warn"] { border-color: var(--lab-kit-warn); background: var(--lab-kit-warn-soft); }
+.lab-kit-status[data-state="bad"] { border-color: var(--lab-kit-bad); background: var(--lab-kit-bad-soft); }
+
+.lab-kit-work { display: grid; min-width: 0; gap: var(--lab-kit-work-gap, .5rem); }
+.lab-kit-work-item { min-width: 0; padding: .55rem .65rem; border-left: 3px solid var(--lab-kit-line); background: var(--lab-kit-surface); }
+.lab-kit-work-item[data-state="needed"] { border-color: var(--lab-kit-warn); background: var(--lab-kit-warn-soft); }
+.lab-kit-work-item[data-state="mistake"] { border-color: var(--lab-kit-bad); background: var(--lab-kit-bad-soft); }
+.lab-kit-work-item[data-state="correct"] { border-color: var(--lab-kit-good); background: var(--lab-kit-good-soft); }
+.lab-kit-work-state { display: inline-flex; align-items: center; gap: .35rem; font-weight: 700; }
+.lab-kit-work-item[data-state="needed"] .lab-kit-work-state { color: var(--lab-kit-warn); }
+.lab-kit-work-item[data-state="mistake"] .lab-kit-work-state { color: var(--lab-kit-bad); }
+.lab-kit-work-item[data-state="correct"] .lab-kit-work-state { color: var(--lab-kit-good); }
+.lab-kit-work-mark::before { display: inline-block; width: 1em; text-align: center; font-weight: 900; }
+.lab-kit-work-item[data-state="mistake"] .lab-kit-work-mark::before { content: "×"; }
+.lab-kit-work-item[data-state="correct"] .lab-kit-work-mark::before { content: "✓"; }
+
+@media (prefers-reduced-motion: reduce) {
+  .lab-kit-motion { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
+}
+
+</style>
+<!-- LAB_RESOURCE_END id="lab-kit.css" type="stylesheet" -->
+<link rel="icon" href="data:,">
+<!-- LAB_MANIFEST_HEAD_START -->
+<title>Replacement and Conditional Sample Spaces</title>
+<meta name="description" content="Explore combined events, conditional probability and sampling with and without replacement for Cambridge IGCSE Mathematics 0580.">
+<link rel="canonical" href="https://www.examplicity.org/labs/mathematics/replacement-conditional-sample-spaces.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Examplicity">
+<meta property="og:title" content="Replacement and Conditional Sample Spaces">
+<meta property="og:description" content="Explore combined events, conditional probability and sampling with and without replacement for Cambridge IGCSE Mathematics 0580.">
+<meta property="og:url" content="https://www.examplicity.org/labs/mathematics/replacement-conditional-sample-spaces.html">
+<meta property="og:image" content="https://www.examplicity.org/opengraph-image">
+<meta property="og:image:alt" content="Examplicity — Make complex ideas click">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Replacement and Conditional Sample Spaces">
+<meta name="twitter:description" content="Explore combined events, conditional probability and sampling with and without replacement for Cambridge IGCSE Mathematics 0580.">
+<meta name="twitter:image" content="https://www.examplicity.org/opengraph-image">
+<script type="application/ld+json" data-lab-manifest="structured-data">{"@context":"https://schema.org","@type":"LearningResource","@id":"https://www.examplicity.org/labs/mathematics/replacement-conditional-sample-spaces.html#learning-resource","url":"https://www.examplicity.org/labs/mathematics/replacement-conditional-sample-spaces.html","name":"Replacement and Conditional Sample Spaces","description":"Explore combined events, conditional probability and sampling with and without replacement for Cambridge IGCSE Mathematics 0580.","inLanguage":"en-GB","isAccessibleForFree":true,"interactivityType":"active","learningResourceType":"Conditional sample-space model","teaches":"Probability","educationalLevel":["IGCSE"],"educationalAlignment":[{"@type":"AlignmentObject","alignmentType":"educationalSubject","educationalFramework":"Cambridge IGCSE Mathematics","targetName":"IGCSE 0580 section C8.3, E8.3, E8.4","targetUrl":"https://www.cambridgeinternational.org/Images/662466-2025-2027-syllabus.pdf#page=30"}],"about":{"@type":"Thing","name":"Mathematics"},"audience":{"@type":"EducationalAudience","educationalRole":"student"},"provider":{"@type":"Organization","name":"Examplicity","url":"https://www.examplicity.org"},"isPartOf":{"@type":"WebSite","@id":"https://www.examplicity.org/#website","name":"Examplicity","url":"https://www.examplicity.org"}}</script>
+<!-- LAB_MANIFEST_HEAD_END -->
+<style>
+:root{
+  --lab-canvas:#f3f5f7;--lab-paper:#fbfbfd;--lab-surface:#fff;--lab-control:#fff;
+  --lab-ink:#1d1d1f;--lab-muted:#6e6e73;--lab-line:#d2d2d7;--lab-line-strong:#a7a7ad;
+  --lab-accent:#5277b8;--lab-accent-soft:#eef2fa;--lab-good:#18794e;--lab-good-soft:#edf8f1;
+  --lab-warn:#946200;--lab-warn-soft:#fff6e7;--lab-bad:#b42318;--lab-bad-soft:#fff0ee;
+  --red:#c75c4f;--red-dark:#93463c;--blue:#6489bd;--blue-dark:#466b9e;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{min-height:100%;background:var(--lab-canvas)}
+body{margin:0;color:var(--lab-ink);font-family:var(--lab-font-sans);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+body>main{container-name:lab-canvas;container-type:inline-size;margin:14px auto 38px;width:min(920px,calc(100% - 24px))}
+button,input{font:inherit}
+button{min-height:36px;padding:0 12px;border:1px solid var(--lab-line);border-radius:var(--lab-control-radius);background:var(--lab-control);color:var(--lab-ink);cursor:pointer}
+button:hover:not(:disabled){border-color:var(--lab-line-strong)}button:disabled{opacity:.4;cursor:not-allowed}
+button.primary{background:var(--lab-accent);border-color:var(--lab-accent);color:#fff;font-weight:800}
+button.good{background:var(--lab-good);border-color:var(--lab-good);color:#fff;font-weight:800}
+:where(button,input):focus-visible{outline:3px solid var(--lab-focus);outline-offset:4px}
+.panel{background:var(--lab-surface);border:1px solid var(--lab-line);border-radius:var(--lab-panel-radius);box-shadow:var(--lab-panel-shadow)}
+.lab-manifest-header{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px 22px;align-items:start;margin-bottom:12px;padding-bottom:13px;border-bottom:1px solid var(--lab-line)}
+.lab-manifest-header h1{margin:0;max-width:30ch;font-size:clamp(24px,3.4vw,36px);font-weight:650;letter-spacing:-.043em;line-height:1.03}
+.lab-manifest-subtitle{margin:7px 0 0;max-width:72ch;color:var(--lab-muted);font-size:12px;line-height:1.45}
+.lab-syllabus-chips{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.lab-syllabus-chip{position:relative;display:inline-flex;align-items:center;gap:4px;min-height:29px;padding:8px 10px;border:1px solid #91c4b0;border-radius:999px;background:#edf8f3;color:#235f4e;font-size:10px;font-weight:700;white-space:nowrap}
+.lab-syllabus-primary-link{position:absolute;inset:0;border-radius:inherit}.lab-syllabus-name,.lab-syllabus-divider,.lab-syllabus-sections{pointer-events:none;position:relative;z-index:1}.lab-syllabus-section{position:relative;z-index:2;color:inherit;text-decoration:none;padding:2px;border-radius:4px;pointer-events:auto}.lab-syllabus-section:hover{text-decoration:underline;text-underline-offset:2px}.lab-syllabus-divider,.lab-syllabus-separator{color:#628879}.lab-syllabus-separator{margin-right:2px}
+
+.problem-bar{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px 14px;align-items:center;padding:11px 12px}
+.problem-meta{display:flex;align-items:center;gap:6px;margin-bottom:3px;color:var(--lab-accent);font-size:8px;font-weight:900;letter-spacing:.07em;text-transform:uppercase}
+.problem-bar strong{display:block;font-size:16px;line-height:1.32}.problem-bar p{margin:3px 0 0;color:var(--lab-muted);font-size:10px;line-height:1.38}.problem-bar button{min-height:31px;font-size:9px}
+
+.lab{margin-top:9px;padding:12px}
+.step-rail{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;margin-bottom:9px}
+.step{display:flex;align-items:center;justify-content:center;gap:5px;min-height:31px;padding:5px 7px;border:1px solid var(--lab-line);border-radius:8px;background:#f7f8f9;color:#7c858c;font-size:8px;font-weight:800;text-align:center}
+.step b{display:grid;place-items:center;width:17px;height:17px;flex:0 0 auto;border-radius:50%;background:#dfe3e6;color:#657079;font-size:7px}.step.current{border-color:#a6bed9;background:var(--lab-accent-soft);color:#355c8c}.step.current b{background:var(--lab-accent);color:#fff}.step.done{border-color:#acd1b8;background:var(--lab-good-soft);color:#397557}.step.done b{background:var(--lab-good);color:#fff}
+
+.next-action{min-height:82px;padding:10px 11px;border:1px solid #aac0da;border-radius:10px;background:#f7fbff;box-shadow:inset 3px 0 0 var(--lab-accent)}
+.next-action.good{border-color:#a6cfb4;background:var(--lab-good-soft);box-shadow:inset 3px 0 0 var(--lab-good)}
+.next-action.bad{border-color:#dfaba4;background:var(--lab-bad-soft);box-shadow:inset 3px 0 0 var(--lab-bad)}
+.action-kicker{color:var(--lab-accent);font-size:7px;font-weight:900;letter-spacing:.07em;text-transform:uppercase}.next-action.good .action-kicker{color:var(--lab-good)}.next-action.bad .action-kicker{color:var(--lab-bad)}
+.next-action strong{display:block;margin-top:2px;font-size:13px;line-height:1.3}.next-action p{margin:3px 0 0;max-width:78ch;color:#5e6c75;font-size:9px;line-height:1.42}.action-feedback{margin-top:5px;color:var(--lab-bad);font-size:8px;font-weight:750}.next-action.good .action-feedback{color:var(--lab-good)}
+
+.phenomenon{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 190px;gap:10px;margin-top:10px;align-items:stretch}
+.rule-coach{position:absolute;z-index:18;left:50%;top:10px;transform:translateX(-50%);width:min(330px,calc(100% - 28px));padding:8px 10px;border:1px solid #8faed1;border-radius:9px;background:rgba(249,252,255,.98);box-shadow:0 8px 20px rgba(29,29,31,.14);pointer-events:none;text-align:center}
+.rule-coach.return{border-color:#8faed1;background:rgba(247,251,255,.98)}.rule-coach.leave{border-color:#d2b36f;background:rgba(255,251,241,.98)}
+.rule-coach span{display:block;color:var(--lab-muted);font-size:7.2px;line-height:1.32}.rule-coach .coach-kicker{color:var(--lab-accent);font-size:6.5px;font-weight:900;letter-spacing:.07em;text-transform:uppercase}.rule-coach.leave .coach-kicker{color:#8a681f}.rule-coach strong{display:block;margin:2px 0 1px;font-size:10.5px;line-height:1.25}
+.bag-card,.draw-card{min-width:0;border:1px solid var(--lab-line);border-radius:11px;background:#fff;overflow:hidden}
+.card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:8px 10px;border-bottom:1px solid var(--lab-line);background:#fbfcfd}.card-head strong{font-size:11px}.card-head span{display:block;margin-top:2px;color:var(--lab-muted);font-size:8px;line-height:1.3}.bag-count{flex:0 0 auto;padding:4px 7px;border:1px solid var(--lab-line);border-radius:999px;background:#fff;color:#56636c;font-size:8px;font-weight:850;white-space:nowrap}
+.bag{position:relative;min-height:268px;margin:13px;padding:23px 18px 42px;display:flex;align-content:center;justify-content:center;align-items:center;gap:13px;flex-wrap:wrap;border:2px solid #9cafbb;border-radius:22px 22px 35px 35px;background:linear-gradient(180deg,#fafdff,#edf3f6)}
+.bag::before{content:"";position:absolute;left:7%;right:7%;top:-9px;height:17px;border:2px solid #9cafbb;border-radius:50%;background:#fafdff}.bag::after{content:"THE SAME BAG";position:absolute;left:0;right:0;bottom:13px;color:#73828c;font-size:7px;font-weight:900;letter-spacing:.09em;text-align:center}
+.bag.empty{color:#89959d;font-size:9px}.bag.changed{border-color:#d2a95c;box-shadow:0 0 0 4px rgba(210,169,92,.10)}.bag.restored{border-color:#8fbea0;box-shadow:0 0 0 4px rgba(24,121,78,.08)}
+.counter{--fill:#777;--edge:#555;position:relative;width:54px;height:54px;display:grid;place-items:center;padding:0;border:2px solid var(--edge);border-radius:50%;background:radial-gradient(circle at 34% 28%,rgba(255,255,255,.45),transparent 28%),var(--fill);color:#fff;box-shadow:inset 0 0 0 4px rgba(255,255,255,.15),0 3px 6px rgba(45,58,66,.16);font:850 10px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;transition:transform .15s ease,box-shadow .15s ease,opacity .15s ease}
+.counter:hover:not(:disabled){transform:translateY(-2px)}.counter:disabled{opacity:1;cursor:default}.counter.target-hint{animation:targetPulse 1.05s ease-in-out infinite}.counter.selected{box-shadow:inset 0 0 0 4px rgba(255,255,255,.35),0 0 0 5px rgba(24,121,78,.18);border-color:var(--lab-good)}.counter.wrong{box-shadow:inset 0 0 0 4px rgba(255,255,255,.25),0 0 0 5px rgba(180,35,24,.15);border-color:var(--lab-bad)}.counter.returned::after{content:"↺";position:absolute;right:-5px;top:-6px;width:20px;height:20px;display:grid;place-items:center;border:1px solid #8fc2a1;border-radius:50%;background:#eef9f2;color:var(--lab-good);font:900 10px/1 var(--lab-font-sans)}
+@keyframes targetPulse{50%{box-shadow:inset 0 0 0 4px rgba(255,255,255,.18),0 0 0 7px rgba(82,119,184,.14)}}
+
+.bag-evidence{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:0 13px 13px}.evidence{padding:7px 8px;border:1px solid var(--lab-line);border-radius:8px;background:#fafbfc}.evidence span{display:block;color:var(--lab-muted);font-size:7px;font-weight:800;letter-spacing:.045em;text-transform:uppercase}.evidence strong{display:block;margin-top:2px;font-size:11px}.evidence.changed{border-color:#d6bc89;background:#fff9ed}.evidence.good{border-color:#add0b8;background:var(--lab-good-soft)}
+
+.draw-card{display:grid;grid-template-rows:auto 1fr auto}.draw-slot{min-height:190px;display:grid;place-items:center;align-content:center;gap:8px;padding:16px;text-align:center}.draw-slot .counter{width:66px;height:66px;font-size:12px}.draw-placeholder{width:66px;height:66px;display:grid;place-items:center;border:2px dashed #c7d0d6;border-radius:50%;color:#89959d;font-size:8px}.draw-record{max-width:145px;color:#63717a;font-size:8px;line-height:1.35}.draw-record strong{display:block;color:var(--lab-ink);font-size:9px}.draw-state{margin:0 10px 10px;padding:7px 8px;border:1px solid var(--lab-line);border-radius:8px;background:#fafbfc;color:#63717a;font-size:8px;line-height:1.35}.draw-state.good{border-color:#add0b8;background:var(--lab-good-soft);color:#356f51}.draw-state.warn{border-color:#ddc690;background:#fffaf0;color:#755f2f}
+
+.rule-area,.working-area,.success-area{margin-top:10px;padding:10px 11px;border:1px solid var(--lab-line);border-radius:10px;background:#fbfcfd}.area-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.area-head strong{font-size:11px}.area-head span{display:block;margin-top:2px;color:var(--lab-muted);font-size:8px;line-height:1.35}.rule-buttons{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:8px}.rule-buttons.guided{grid-template-columns:1fr}.rule-btn{min-height:48px;height:auto;padding:7px 9px;text-align:left}.rule-btn b{display:block;font-size:10px}.rule-btn span{display:block;margin-top:2px;color:var(--lab-muted);font-size:8px;line-height:1.3}.rule-btn.chosen{border-color:var(--lab-accent);background:var(--lab-accent-soft)}.rule-btn.wrong{border-color:var(--lab-bad);background:var(--lab-bad-soft)}
+
+.fraction-row{display:flex;align-items:center;justify-content:center;gap:7px;flex-wrap:wrap;margin-top:8px;font:800 13px/1.2 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.frac{display:inline-grid;grid-template-rows:auto auto;min-width:44px;text-align:center}.frac span:first-child{padding:0 4px 3px;border-bottom:1.5px solid #3c4952}.frac span:last-child{padding:3px 4px 0}.frac-input{display:inline-grid;grid-template-rows:34px 34px;width:56px}.frac-input input{width:100%;min-width:0;border:1px solid var(--lab-line);background:#fff;text-align:center;font:850 12px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.frac-input input:first-child{border-radius:8px 8px 0 0;border-bottom:1.5px solid #53616a}.frac-input input:last-child{border-radius:0 0 8px 8px;border-top:0}.frac-input input.invalid{border-color:var(--lab-bad);background:var(--lab-bad-soft)}.working-actions{display:flex;justify-content:flex-end;margin-top:8px}.working-actions button{font-size:9px;font-weight:800}.work-feedback{margin-top:6px;color:var(--lab-bad);font-size:8px;font-weight:750;line-height:1.35}
+
+.success-area{border-color:#a7ceb4;background:var(--lab-good-soft)}.success-top{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:9px;align-items:center}.success-top strong{font-size:12px}.success-top p{margin:3px 0 0;color:#4f6f5e;font-size:8px;line-height:1.38}.success-top button{min-height:32px;font-size:9px}.answer{font:900 18px/1.15 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#245f42;white-space:nowrap}.compare{margin-top:8px;padding-top:8px;border-top:1px solid #bfdac8}.compare>strong{display:block;font-size:9px}.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px}.compare-cell{padding:7px 8px;border:1px solid #bad5c4;border-radius:8px;background:#fff}.compare-cell span{display:block;color:#60746a;font-size:7px;font-weight:800;text-transform:uppercase}.compare-cell b{display:block;margin-top:2px;font:900 13px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.compare-note{margin-top:6px;color:#4d6c5a;font-size:8px;line-height:1.38}.changed-number{padding:0 2px;border-radius:3px;background:#fff2c9;color:#7b5b12}
+
+@container lab-canvas (max-width:700px){.lab-manifest-header{grid-template-columns:1fr}.lab-syllabus-chips{justify-content:flex-start}.phenomenon{grid-template-columns:1fr}.draw-card{grid-template-rows:auto auto auto}.draw-slot{min-height:126px;grid-template-columns:auto 1fr;text-align:left}.draw-slot .counter,.draw-placeholder{width:56px;height:56px}.bag{min-height:245px}.problem-bar{grid-template-columns:1fr}.problem-bar>button{justify-self:start}}
+@container lab-canvas (max-width:460px){body>main{width:calc(100% - 12px);margin-top:8px}.lab{padding:8px}.step-rail{gap:3px}.step{padding:4px 2px;font-size:7px}.step b{display:none}.bag{margin:10px;min-height:230px;padding:20px 11px 39px;gap:9px}.counter{width:48px;height:48px}.bag-evidence{padding:0 10px 10px}.rule-buttons{grid-template-columns:1fr}.success-top{grid-template-columns:1fr}.success-top button{justify-self:start}.compare-grid{grid-template-columns:1fr}.fraction-row{font-size:11px}}
+@media(prefers-reduced-motion:reduce){.counter.target-hint{animation:none}.counter{transition:none}}
+</style>
+
+<style data-interaction-guidance>
+/* Interaction guidance: one active place at a time, with the evidence beside it. */
+.next-action{min-height:88px}
+.next-action strong{font-size:14px}
+.next-action p{font-size:10px;line-height:1.46;max-width:82ch}
+
+.bag-card,.draw-card,.rule-area,.working-area{transition:border-color .18s ease,box-shadow .18s ease,background-color .18s ease}
+.bag-card.attention,.rule-area.attention,.working-area.attention{
+  border-color:#86a8d0;
+  box-shadow:0 0 0 3px rgba(82,119,184,.11),0 1px 2px rgba(29,29,31,.04);
+  animation:areaGuide 1.35s ease-in-out infinite;
+}
+.bag-card.attention>.card-head{background:#f5f9ff}
+.rule-area.attention,.working-area.attention{background:#f8fbff}
+.draw-card.cause-focus{border-color:#d9bf8c;background:#fffdf8}
+.draw-card.cause-focus .draw-state{border-color:#dbc18e;background:#fff9ed;color:#705a2e}
+.draw-card.evidence-focus{border-color:#b7c6d1;background:#fcfdfe}
+
+.rule-btn.attention-choice{
+  border-color:#789bc6;
+  background:#f1f6fc;
+  box-shadow:0 0 0 3px rgba(82,119,184,.10);
+  animation:controlGuide 1.15s ease-in-out infinite;
+}
+.rule-btn.wrong{animation:none}
+.counter.target-hint{
+  outline:2px solid #789bc6;
+  outline-offset:3px;
+  animation:counterGuide 1.05s ease-in-out infinite;
+}
+
+.evidence-note{
+  grid-column:1/-1;
+  margin-top:1px;
+  padding:6px 8px;
+  border-left:3px solid #aebdca;
+  border-radius:5px;
+  background:#f7f9fa;
+  color:#5d6b74;
+  font-size:8px;
+  line-height:1.4;
+}
+.evidence-note.active{border-left-color:var(--lab-accent);background:#f4f8fd;color:#45617f}
+.evidence-note.changed{border-left-color:#c99a43;background:#fff9ed;color:#705a2e}
+
+.working-rule{
+  display:flex;
+  justify-content:center;
+  gap:6px 14px;
+  flex-wrap:wrap;
+  margin-top:7px;
+  color:#5f6d76;
+  font-size:8px;
+  line-height:1.35;
+}
+.working-rule b{color:var(--lab-ink)}
+.frac-input.labeled{display:grid;grid-template-rows:auto auto;width:78px;gap:4px}
+.frac-input.labeled label{display:grid;grid-template-columns:1fr;gap:2px}
+.frac-input.labeled small{color:#6a7780;font:800 7px/1 var(--lab-font-sans);letter-spacing:.04em;text-transform:uppercase;text-align:center}
+.frac-input.labeled input{height:32px;border:1px solid var(--lab-line)!important;border-radius:7px!important}
+.frac-input.labeled input.invalid{border-color:var(--lab-bad)!important;background:var(--lab-bad-soft)}
+
+.success-principle{
+  margin-top:7px;
+  padding:7px 8px;
+  border:1px solid #b9d6c3;
+  border-radius:8px;
+  background:#fff;
+  color:#466454;
+  font-size:8px;
+  line-height:1.42;
+}
+.success-principle b{color:#245f42}
+
+@keyframes areaGuide{
+  0%,100%{box-shadow:0 0 0 3px rgba(82,119,184,.08),0 1px 2px rgba(29,29,31,.04)}
+  50%{box-shadow:0 0 0 6px rgba(82,119,184,.14),0 1px 2px rgba(29,29,31,.04)}
+}
+@keyframes controlGuide{
+  0%,100%{box-shadow:0 0 0 2px rgba(82,119,184,.08)}
+  50%{box-shadow:0 0 0 5px rgba(82,119,184,.16)}
+}
+@keyframes counterGuide{
+  0%,100%{outline-offset:3px;box-shadow:inset 0 0 0 4px rgba(255,255,255,.18),0 0 0 3px rgba(82,119,184,.08)}
+  50%{outline-offset:6px;box-shadow:inset 0 0 0 4px rgba(255,255,255,.18),0 0 0 7px rgba(82,119,184,.15)}
+}
+
+@container lab-canvas (max-width:460px){
+  .next-action{min-height:0}
+  .next-action p{font-size:9px}
+  .evidence-note{font-size:7.5px}
+  .working-rule{justify-content:flex-start}
+  .frac-input.labeled{width:72px}
+}
+@media(prefers-reduced-motion:reduce){
+  .bag-card.attention,.rule-area.attention,.working-area.attention,.rule-btn.attention-choice,.counter.target-hint{animation:none}
+}
+</style>
+
+<style data-stable-workspace>
+/* Stable evidence/work strip: same footprint in every phase. */
+body>main{margin-top:9px;margin-bottom:16px;width:min(970px,calc(100% - 20px))}
+.lab-manifest-header{margin-bottom:8px;padding-bottom:9px;gap:10px 18px}
+.lab-manifest-header h1{font-size:clamp(23px,3vw,32px);max-width:34ch}
+.lab-manifest-subtitle{margin-top:5px;font-size:10.5px;line-height:1.35;max-width:76ch}
+.problem-bar{padding:8px 10px;gap:8px 12px}
+.problem-bar strong{font-size:14px;line-height:1.26}.problem-bar p{font-size:8.5px;margin-top:2px}.problem-bar button{min-height:29px}
+.lab{margin-top:7px;padding:9px}
+.step-rail{margin-bottom:7px}.step{min-height:28px;padding:4px 6px}
+.next-action{min-height:68px;padding:8px 10px}.next-action strong{font-size:12.5px}.next-action p{font-size:8.7px;line-height:1.36;margin-top:2px}.action-feedback{margin-top:3px}
+.phenomenon{grid-template-columns:minmax(0,1fr) 176px;gap:8px;margin-top:8px}
+.card-head{padding:6px 8px}.bag{min-height:205px;margin:9px;padding:18px 15px 32px;gap:11px}.bag::after{bottom:9px}
+.counter{width:50px;height:50px}.draw-slot{min-height:132px;padding:10px;gap:6px}.draw-slot .counter,.draw-placeholder{width:58px;height:58px}.draw-state{margin:0 8px 8px;padding:6px 7px}
+/* Evidence now lives in the stable work area, not in a second strip under the bag. */
+.bag-evidence{display:none!important}
+
+.work-area{
+  height:132px;min-height:132px;max-height:132px;overflow:hidden;
+  margin-top:8px;padding:9px 10px;border:1px solid var(--lab-line);border-radius:10px;background:#fbfcfd;
+  transition:border-color .18s ease,box-shadow .18s ease,background-color .18s ease;
+}
+.work-area.attention{border-color:#86a8d0;background:#f8fbff;box-shadow:0 0 0 3px rgba(82,119,184,.11);animation:areaGuide 1.35s ease-in-out infinite}
+.work-area.complete{border-color:#a7ceb4;background:var(--lab-good-soft);box-shadow:none;animation:none}
+.work-shell{height:100%;display:grid;grid-template-columns:188px minmax(0,1fr) auto;gap:10px;align-items:center}
+.work-evidence{align-self:stretch;display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:minmax(42px,1fr);gap:6px;align-content:center}
+.work-chip{min-width:0;padding:6px 7px;border:1px solid var(--lab-line);border-radius:8px;background:#fff}
+.work-chip.changed{border-color:#d6bc89;background:#fff9ed}.work-chip.good{border-color:#add0b8;background:#f0f9f3}.work-chip.bad{border-color:#dfaba4;background:var(--lab-bad-soft)}
+.work-chip span{display:block;color:var(--lab-muted);font-size:6.7px;font-weight:850;letter-spacing:.045em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.work-chip strong{display:block;margin-top:2px;font-size:11px;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.work-main{min-width:0;align-self:center}.work-kicker{display:block;color:var(--lab-accent);font-size:6.7px;font-weight:900;letter-spacing:.07em;text-transform:uppercase}.work-main>strong{display:block;margin-top:2px;font-size:11.5px;line-height:1.26}.work-main>p{margin:3px 0 0;color:#5c6a73;font-size:8px;line-height:1.36;max-width:72ch}
+.work-status{min-height:14px;margin-top:4px;color:#5f6d76;font-size:7.5px;font-weight:750;line-height:1.3}.work-status.bad{color:var(--lab-bad)}.work-status.good{color:var(--lab-good)}
+.work-control{min-width:0}.work-control>button{min-height:32px;font-size:8.5px;font-weight:800}
+.work-rule-buttons{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:6px}.work-rule-buttons.guided{grid-template-columns:1fr}.work-rule-buttons .rule-btn{min-height:41px;padding:6px 8px}.work-rule-buttons .rule-btn b{font-size:9px}.work-rule-buttons .rule-btn span{font-size:7.2px}
+.work-fraction{display:flex;align-items:center;gap:8px;margin-top:5px;flex-wrap:nowrap}.work-fraction .formula{font:800 10px/1.2 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:nowrap}.work-fraction .frac-input.labeled{width:132px;grid-template-columns:1fr 1fr;grid-template-rows:auto;gap:5px}.work-fraction .frac-input.labeled label{gap:2px}.work-fraction .frac-input.labeled input{height:28px}.work-fraction button{min-height:30px;font-size:8px;font-weight:800;white-space:nowrap}
+.work-answer{min-width:78px;text-align:right}.work-answer span{display:block;color:#587064;font-size:6.5px;font-weight:850;text-transform:uppercase}.work-answer strong{display:block;margin-top:2px;color:#245f42;font:900 18px/1.05 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.work-answer button{margin-top:6px;min-height:29px;font-size:8px}
+.compare-compact{display:flex;align-items:center;gap:5px;margin-top:5px;flex-wrap:wrap}.compare-compact span{padding:4px 6px;border:1px solid #bad5c4;border-radius:6px;background:#fff;color:#526b5c;font-size:7px;white-space:nowrap}.compare-compact b{font:900 9px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#245f42}
+
+/* Every selectable counter uses the same affordance; correctness changes the same ring. */
+.counter.selectable{cursor:pointer;outline:2px solid rgba(82,119,184,.32);outline-offset:2px}
+.counter.rule-drag{cursor:grab;touch-action:none;user-select:none;outline:3px solid rgba(82,119,184,.38);outline-offset:3px;animation:dragCounterPulse 1.15s ease-in-out infinite}
+.counter.rule-drag:hover{transform:none;outline-color:#5277b8}.counter.rule-drag.dragging{z-index:40;cursor:grabbing;animation:none;transition:none;box-shadow:inset 0 0 0 4px rgba(255,255,255,.25),0 10px 22px rgba(29,29,31,.25);outline-color:#5277b8}
+.bag.rule-drop{border-color:#6f97c6;background:linear-gradient(180deg,#f9fcff,#eaf2fa);box-shadow:0 0 0 5px rgba(82,119,184,.12);animation:dropTargetPulse 1.15s ease-in-out infinite}.bag.rule-drop.drag-over{box-shadow:0 0 0 7px rgba(24,121,78,.18);border-color:var(--lab-good);background:#f1f9f4}
+.draw-state.keepout-drop{min-height:48px;display:grid;place-items:center;border:2px dashed #c29b4c;background:#fffaf0;color:#765d26;font-weight:800;text-align:center;animation:dropTargetPulse 1.15s ease-in-out infinite}.draw-state.keepout-drop.drag-over{border-style:solid;border-color:var(--lab-good);background:#f0f9f3;color:#356f51;box-shadow:0 0 0 5px rgba(24,121,78,.12)}
+.keepout-held{display:flex;align-items:center;justify-content:center;gap:7px;text-align:left}.keepout-held .counter{width:32px;height:32px;flex:0 0 auto;font-size:7px}.keepout-held span{font-size:7.5px;line-height:1.25}.keepout-held b{display:block;font-size:8px}
+@keyframes dragCounterPulse{50%{outline-color:rgba(82,119,184,.75);outline-offset:5px}}
+@keyframes dropTargetPulse{50%{box-shadow:0 0 0 5px rgba(82,119,184,.12)}}
+.counter.selectable:hover{outline-color:#5277b8;outline-offset:4px;box-shadow:inset 0 0 0 4px rgba(255,255,255,.20),0 0 0 5px rgba(82,119,184,.12)}
+.counter.selectable:focus-visible{outline:3px solid var(--lab-focus);outline-offset:4px}
+.counter.selectable.selected{outline-color:rgba(24,121,78,.58)}
+.counter.selectable.wrong{outline-color:rgba(180,35,24,.62)}
+
+@container lab-canvas (max-width:700px){
+  body>main{margin-top:7px;width:calc(100% - 14px)}
+  .phenomenon{grid-template-columns:minmax(0,1fr) 150px}.draw-slot{min-height:116px;grid-template-columns:1fr;text-align:center}.bag{min-height:188px}
+  .work-area{height:154px;min-height:154px;max-height:154px}.work-shell{grid-template-columns:150px minmax(0,1fr) auto;gap:7px}.work-evidence{grid-template-columns:1fr}.work-chip:nth-child(n+3){display:none}.work-rule-buttons{grid-template-columns:1fr 1fr}.work-main>p{font-size:7.5px}
+}
+@container lab-canvas (max-width:520px){
+  .lab-manifest-header{grid-template-columns:1fr}.lab-syllabus-chips{justify-content:flex-start}.problem-bar{grid-template-columns:1fr}.problem-bar>button{justify-self:start}.phenomenon{grid-template-columns:1fr}.draw-card{display:grid;grid-template-columns:1fr 130px;grid-template-rows:auto auto}.draw-card .card-head{grid-column:1/-1}.draw-slot{min-height:94px}.draw-state{align-self:stretch;margin:7px 7px 7px 0;display:grid;place-items:center}.bag{min-height:170px}
+  .work-area{height:180px;min-height:180px;max-height:180px}.work-shell{grid-template-columns:1fr;grid-template-rows:auto 1fr auto;gap:5px;align-items:start}.work-evidence{grid-template-columns:1fr 1fr;grid-auto-rows:38px}.work-main>p{font-size:7.3px}.work-answer{text-align:left;display:flex;align-items:center;gap:8px}.work-answer button{margin-top:0}.work-rule-buttons{margin-top:4px}.work-fraction{margin-top:3px;flex-wrap:wrap}.work-control{justify-self:start}
+}
+@media(prefers-reduced-motion:reduce){.work-area.attention,.counter.rule-drag,.bag.rule-drop,.draw-state.keepout-drop{animation:none}}
+</style>
+
+
+<style data-drag-only-polish>
+/* Drag-only learning flow. The action tray changes role, but its footprint stays fixed. */
+body>main{margin-top:8px;margin-bottom:12px;width:min(1200px,calc(100% - 18px))}
+.lab-manifest-header{margin-bottom:7px;padding-bottom:8px}
+.lab-manifest-header h1{font-size:clamp(22px,2.8vw,30px)}
+.lab-manifest-subtitle{font-size:10px;line-height:1.33;margin-top:4px}
+.problem-bar{padding:7px 9px}.problem-bar strong{font-size:13.5px}.problem-bar p{font-size:8px}.problem-bar button{min-height:28px}
+.lab{margin-top:6px;padding:8px}.step-rail{margin-bottom:6px}.step{min-height:26px}
+.next-action{min-height:58px!important;padding:7px 9px!important}.next-action strong{font-size:11.5px!important}.next-action p{font-size:8.2px!important;line-height:1.32!important;margin-top:2px!important}.action-feedback{margin-top:2px}
+.phenomenon{grid-template-columns:minmax(0,1fr) 220px;gap:8px;margin-top:7px;overflow:visible}
+.rule-coach{display:none!important}
+.bag-card,.draw-card{height:236px;overflow:visible;position:relative}
+.card-head{min-height:43px;padding:6px 8px}.card-head strong{font-size:10.5px}.card-head span{font-size:7.5px}.bag-count{font-size:7.5px}
+.bag{min-height:0;height:150px;margin:9px;padding:18px 14px 28px;gap:11px;overflow:visible}
+.bag::after{bottom:7px}.counter{width:48px;height:48px;touch-action:none;user-select:none}
+.bag .counter.drag-source{cursor:grab;outline:2px solid rgba(82,119,184,.34);outline-offset:2px}
+.bag .counter.drag-source.guide{animation:dragSourcePulse 1.05s ease-in-out infinite}
+.bag .counter.marked{opacity:.48;outline:2px solid rgba(24,121,78,.48);outline-offset:2px}
+.bag .counter.marked::after{content:"✓";position:absolute;right:-4px;top:-5px;width:18px;height:18px;display:grid;place-items:center;border:1px solid #8fc2a1;border-radius:50%;background:#eef9f2;color:var(--lab-good);font:900 9px/1 var(--lab-font-sans)}
+.bag.drop-target,.action-drop.drop-target{border-color:#6f97c6!important;box-shadow:0 0 0 4px rgba(82,119,184,.11);animation:dropTargetPulse 1.05s ease-in-out infinite}
+.bag.drop-target.drag-over,.action-drop.drop-target.drag-over{border-color:var(--lab-good)!important;background:#f0f9f3!important;box-shadow:0 0 0 6px rgba(24,121,78,.14);animation:none}.action-drop.drag-invalid,.draw-state.drag-invalid,.bag.drag-invalid{border-color:var(--lab-bad)!important;background:var(--lab-bad-soft)!important;box-shadow:0 0 0 5px rgba(180,35,24,.10)!important;animation:none!important}
+.bag.drop-target::after{color:#436b9b}
+.draw-card{display:grid;grid-template-rows:auto 1fr auto}
+.draw-slot{min-height:0;height:auto;padding:8px;gap:5px;overflow:visible;position:relative}
+.draw-slot .counter{width:58px;height:58px;font-size:11px}
+.action-drop{width:100%;height:100%;min-height:92px;display:grid;place-items:center;align-content:center;gap:5px;padding:8px;border:2px dashed #a8bac7;border-radius:10px;background:#f8fafb;color:#63717a;text-align:center;transition:border-color .15s,background-color .15s,box-shadow .15s}
+.action-drop strong{font-size:9px}.action-drop span{max-width:18ch;font-size:7.4px;line-height:1.3}
+.action-drop .drop-icon{font-size:19px;line-height:1;color:#7690a2}
+.action-drop.favourable{border-color:#9ab4d1;background:#f6f9fd}.action-drop.keepout{border-color:#c9ad70;background:#fffaf0}.action-drop.keepout .drop-icon{color:#9a772d}
+.draw-state{min-height:42px;margin:0 7px 7px;padding:5px 6px;display:grid;place-items:center;text-align:center;font-size:7.5px;line-height:1.3}
+.draw-state.keepout-target{border:2px dashed #c29b4c;background:#fffaf0;color:#765d26}.draw-state.keepout-target.drop-target{animation:dropTargetPulse 1.05s ease-in-out infinite}.draw-state.keepout-target.drag-over{border-style:solid;border-color:var(--lab-good);background:#f0f9f3;color:#356f51;box-shadow:0 0 0 5px rgba(24,121,78,.12);animation:none}
+.drag-ghost{position:fixed!important;z-index:2147483000!important;pointer-events:none!important;margin:0!important;transform:translate(-50%,-50%) scale(1.08);box-shadow:inset 0 0 0 4px rgba(255,255,255,.2),0 12px 28px rgba(29,29,31,.30)!important;outline:3px solid rgba(82,119,184,.55)!important;outline-offset:3px!important;opacity:.98!important;transition:none!important}
+.drag-origin{opacity:.32!important}
+.work-area{height:116px!important;min-height:116px!important;max-height:116px!important;margin-top:7px!important;padding:8px 9px!important}
+.work-shell{grid-template-columns:176px minmax(0,1fr) 126px!important;gap:8px!important}
+.work-evidence{grid-auto-rows:minmax(36px,1fr)!important;gap:5px!important}.work-chip{padding:5px 6px!important}.work-chip span{font-size:6.4px!important}.work-chip strong{font-size:10.5px!important}
+.work-main>strong{font-size:10.5px!important}.work-main>p{font-size:7.6px!important;line-height:1.3!important}.work-status{font-size:7.2px!important}
+.live-prob{display:grid;justify-items:center;align-content:center;min-width:112px;height:86px;padding:7px;border:1px solid var(--lab-line);border-radius:9px;background:#fff}
+.live-prob .prob-label{color:var(--lab-muted);font-size:6.5px;font-weight:850;letter-spacing:.055em;text-transform:uppercase}
+.live-prob .prob-frac{display:grid;grid-template-rows:auto auto;min-width:48px;margin-top:4px;color:#30424d;text-align:center;font:900 16px/1.05 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.live-prob .prob-frac b:first-child{padding:0 5px 3px;border-bottom:1.5px solid #50616b}.live-prob .prob-frac b:last-child{padding:3px 5px 0}.live-prob .prob-simplified{min-height:13px;margin-top:3px;color:var(--lab-good);font:850 8px/1.2 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.live-prob.preview{border-color:#86a8d0;background:#f5f9ff}.live-prob.complete{height:98px;border-color:#9bc7aa;background:var(--lab-good-soft)}
+.favourable-list{display:flex;justify-content:center;align-items:center;gap:5px;min-height:55px;flex-wrap:wrap}.favourable-list .counter{width:34px;height:34px;font-size:7px;pointer-events:none}.favourable-empty{color:#72818a;font-size:7.5px;line-height:1.3}
+.next-problem{min-height:24px!important;padding:0 7px!important;font-size:7px!important;margin-top:3px}
+@keyframes dragSourcePulse{50%{outline-color:rgba(82,119,184,.8);outline-offset:5px;box-shadow:inset 0 0 0 4px rgba(255,255,255,.15),0 0 0 6px rgba(82,119,184,.12)}}
+@keyframes dropTargetPulse{50%{box-shadow:0 0 0 6px rgba(82,119,184,.13)}}
+@container lab-canvas (max-width:700px){
+  .phenomenon{grid-template-columns:minmax(0,1fr) 180px}.bag-card,.draw-card{height:226px}.bag{height:143px}.work-area{height:130px!important;min-height:130px!important;max-height:130px!important}.work-shell{grid-template-columns:145px minmax(0,1fr) 108px!important}
+}
+@container lab-canvas (max-width:520px){
+  body>main{width:calc(100% - 10px)}.phenomenon{grid-template-columns:1fr}.bag-card,.draw-card{height:auto}.bag{height:150px}.draw-card{grid-template-columns:1fr 125px;grid-template-rows:auto 105px}.draw-card .card-head{grid-column:1/-1}.draw-slot{height:105px}.draw-state{height:91px;margin:7px 7px 7px 0}.work-area{height:166px!important;min-height:166px!important;max-height:166px!important}.work-shell{grid-template-columns:1fr 96px!important;grid-template-rows:auto 1fr!important}.work-evidence{grid-column:1/-1;grid-template-columns:1fr 1fr!important;grid-auto-rows:34px!important}.live-prob{grid-column:2;grid-row:2;height:80px}.work-main{grid-column:1;grid-row:2}.problem-bar p{display:none}.step span{font-size:6.8px}
+}
+@media(prefers-reduced-motion:reduce){.bag .counter.drag-source.guide,.bag.drop-target,.action-drop.drop-target,.draw-state.keepout-target.drop-target{animation:none}}
+</style>
+
+
+<style data-mobile-fold-polish>
+@container lab-canvas (max-width:520px){
+  .lab-manifest-header{grid-template-columns:minmax(0,1fr) auto!important;gap:6px 8px!important;margin-bottom:5px!important;padding-bottom:6px!important;align-items:center!important}
+  .lab-manifest-header h1{font-size:21px!important;line-height:1.02!important;max-width:18ch!important}
+  .lab-manifest-subtitle{display:none!important}
+  .lab-syllabus-chips{justify-content:flex-end!important;margin:0!important;align-self:center!important}
+  .lab-syllabus-chip{min-height:24px!important;padding:5px 7px!important;font-size:8px!important;white-space:nowrap!important}
+  .problem-bar{grid-template-columns:minmax(0,1fr) auto!important;padding:6px 7px!important;gap:6px!important}
+  .problem-meta{font-size:6.5px!important;margin-bottom:2px!important}.problem-bar strong{font-size:11.5px!important;line-height:1.22!important}
+  .problem-bar>button{justify-self:end!important;align-self:start!important;min-width:42px!important;min-height:26px!important;padding:0 6px!important;font-size:0!important}
+  .problem-bar>button::after{content:"Reset";font-size:7.5px}
+  .lab{padding:6px!important;margin-top:5px!important}.step-rail{margin-bottom:5px!important}.step{min-height:23px!important;padding:3px 2px!important}
+  .next-action{min-height:49px!important;padding:6px 7px!important}.next-action strong{font-size:10.5px!important}.next-action p{font-size:7.2px!important;line-height:1.25!important}
+  .phenomenon{gap:5px!important;margin-top:5px!important}.bag-card{height:190px!important}.bag-card .card-head{min-height:36px!important;padding:5px 7px!important}.bag{height:132px!important;margin:8px!important;padding:15px 8px 24px!important;gap:8px!important}.counter{width:44px!important;height:44px!important}
+  .draw-card{height:90px!important;grid-template-columns:minmax(0,1fr) 120px!important;grid-template-rows:90px!important}.draw-card .card-head{display:none!important}.draw-slot{height:90px!important;padding:5px!important}.draw-slot .counter{width:48px!important;height:48px!important}.action-drop{min-height:74px!important;padding:5px!important}.draw-state{height:78px!important;min-height:78px!important;margin:6px 6px 6px 0!important;padding:4px!important}
+  .favourable-list{min-height:42px!important}.favourable-list .counter{width:29px!important;height:29px!important}
+  .work-area{height:148px!important;min-height:148px!important;max-height:148px!important;margin-top:5px!important;padding:6px 7px!important}.work-shell{grid-template-columns:1fr 88px!important;gap:5px!important}.work-evidence{grid-auto-rows:31px!important;gap:4px!important}.work-main>strong{font-size:9.5px!important}.work-main>p{font-size:6.8px!important}.work-status{font-size:6.5px!important}.live-prob{min-width:84px!important;width:84px!important;height:74px!important;padding:5px!important}.live-prob.complete{height:88px!important}.live-prob .prob-frac{font-size:14px!important}.next-problem{min-height:21px!important;font-size:6.5px!important}
+}
+</style>
+
+</head>
+<body data-lab-layout="standard">
+<main>
+<!-- LAB_MANIFEST_HEADER_START -->
+<header class="lab-manifest-header">
+  <div class="lab-manifest-heading">
+    <h1 data-lab-manifest="title">Replacement and Conditional Sample Spaces</h1>
+  <p class="lab-manifest-subtitle" data-lab-manifest="subtitle">Drag outcomes into a live two-draw model, compare replacement rules, and use the changing sample space to explain conditional probability.</p>
+  </div>
+  <!-- LAB_SYLLABUS_CHIPS_START -->
+<nav class="lab-syllabus-chips" aria-label="Syllabus alignment">
+  <section class="lab-syllabus-chip" style="--syllabus-chip-bg:#edf8f3;--syllabus-chip-border:#91c4b0;--syllabus-chip-text:#235f4e;--syllabus-chip-hover:#dcf0e7" aria-label="IGCSE 0580 syllabus alignment">
+    <a class="lab-syllabus-primary-link" href="https://www.cambridgeinternational.org/Images/662466-2025-2027-syllabus.pdf#page=30" target="_blank" rel="noopener noreferrer" aria-label="Open IGCSE 0580 syllabus section C8.3"></a>
+    <span class="lab-syllabus-name">IGCSE 0580</span>
+    <span class="lab-syllabus-divider" aria-hidden="true">·</span>
+    <span class="lab-syllabus-sections"><a class="lab-syllabus-section is-primary" href="https://www.cambridgeinternational.org/Images/662466-2025-2027-syllabus.pdf#page=30" target="_blank" rel="noopener noreferrer" aria-label="Open primary IGCSE 0580 syllabus section C8.3">C8.3</a><span class="lab-syllabus-separator" aria-hidden="true">,</span><a class="lab-syllabus-section" href="https://www.cambridgeinternational.org/Images/662466-2025-2027-syllabus.pdf#page=54" target="_blank" rel="noopener noreferrer" aria-label="Open IGCSE 0580 syllabus section E8.3">E8.3</a><span class="lab-syllabus-separator" aria-hidden="true">,</span><a class="lab-syllabus-section" href="https://www.cambridgeinternational.org/Images/662466-2025-2027-syllabus.pdf#page=54" target="_blank" rel="noopener noreferrer" aria-label="Open IGCSE 0580 syllabus section E8.4">E8.4</a></span>
+  </section>
+</nav>
+<!-- LAB_SYLLABUS_CHIPS_END -->
+</header>
+<!-- LAB_MANIFEST_HEADER_END -->
+<span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span>
+<span data-lab-authored-subtitle-slot hidden></span>
+
+<section class="panel problem-bar" aria-live="polite">
+  <div>
+    <div class="problem-meta"><span id="problemNumber">Problem 1 of 6</span><span>·</span><span id="supportLabel">Guided</span></div>
+    <strong id="problemText"></strong>
+    <p id="problemSub"></p>
+  </div>
+  <button id="resetButton" type="button">Reset this problem</button>
+</section>
+
+<section class="panel lab" data-lab-workspace>
+  <div id="stepRail" class="step-rail" aria-label="Problem progress"></div>
+  <section id="nextAction" class="next-action" aria-live="polite">
+    <span id="actionKicker" class="action-kicker"></span>
+    <strong id="actionTitle"></strong>
+    <p id="actionCopy"></p>
+    <div id="actionFeedback" class="action-feedback" hidden></div>
+  </section>
+
+  <div class="phenomenon">
+    <div id="ruleCoach" class="rule-coach" role="dialog" aria-modal="false" aria-live="polite" hidden>
+      <span id="coachKicker" class="coach-kicker"></span><strong id="coachTitle"></strong><span id="coachCopy"></span>
+    </div>
+    <section class="bag-card" aria-labelledby="bagHeading">
+      <div class="card-head"><div><strong id="bagHeading">The same bag</strong><span id="bagState"></span></div><span id="bagCount" class="bag-count"></span></div>
+      <div id="bag" class="bag" aria-label="Counters currently in the bag"></div>
+      <div id="bagEvidence" class="bag-evidence"></div>
+    </section>
+
+    <section class="draw-card" aria-labelledby="drawHeading">
+      <div class="card-head"><div><strong id="drawHeading">First draw</strong><span>the given event</span></div></div>
+      <div id="drawSlot" class="draw-slot"></div>
+      <div id="drawState" class="draw-state">Nothing has been drawn yet.</div>
+    </section>
+  </div>
+
+  <section id="workArea" class="work-area" aria-live="polite"></section>
+</section>
+</main>
+<!-- LAB_RESOURCE_START id="lab-kit.js" type="script" -->
+<script data-lab-resource="lab-kit.js" data-lab-resource-type="script" data-lab-resource-bytes="13750">
+(() => {
+  "use strict";
+
+  const host = globalThis;
+  const VERSION = "0.2.1";
+
+  function documentFor(root) {
+    return root || host.document || null;
+  }
+
+  function resolve(target, root) {
+    if (typeof target !== "string") return target || null;
+    const scope = documentFor(root);
+    return scope?.querySelector?.(target) || null;
+  }
+
+  function all(selector, root) {
+    const scope = documentFor(root);
+    return [...(scope?.querySelectorAll?.(selector) || [])];
+  }
+
+  function byId(id, root) {
+    const scope = documentFor(root);
+    return scope?.getElementById?.(id) || null;
+  }
+
+  function required(target, root) {
+    const node = resolve(target, root);
+    if (!node) throw new Error(`LabKit could not find ${typeof target === "string" ? target : "the requested node"}.`);
+    return node;
+  }
+
+  const dom = Object.freeze({
+    get: resolve,
+    all,
+    byId,
+    require: required,
+    on(target, eventName, handler, options) {
+      const node = required(target);
+      node.addEventListener(eventName, handler, options);
+      return () => node.removeEventListener(eventName, handler, options);
+    }
+  });
+
+  function parseNumber(value, fallback = null) {
+    if (typeof value === "string" && value.trim() === "") return fallback;
+    const number = typeof value === "number" ? value : Number(value);
+    return Number.isFinite(number) ? number : fallback;
+  }
+
+  function clamp(value, minimum, maximum) {
+    if (minimum > maximum) throw new RangeError("LabKit clamp minimum cannot exceed maximum.");
+    const number = parseNumber(value, minimum);
+    return Math.min(maximum, Math.max(minimum, number));
+  }
+
+  function lerp(start, end, amount) {
+    return start + (end - start) * amount;
+  }
+
+  function inverseLerp(start, end, value) {
+    if (start === end) return 0;
+    return (value - start) / (end - start);
+  }
+
+  function round(value, decimals = 0) {
+    const number = parseNumber(value, 0);
+    const factor = 10 ** decimals;
+    return Math.round((number + Number.EPSILON) * factor) / factor;
+  }
+
+  function format(value, options = {}) {
+    const number = parseNumber(value, 0);
+    const decimals = options.decimals ?? 0;
+    const suffix = options.suffix ?? "";
+    return `${number.toFixed(decimals)}${suffix}`;
+  }
+
+  const numeric = Object.freeze({ parse: parseNumber, clamp, lerp, inverseLerp, round, format });
+
+  function hashSeed(seed) {
+    if (typeof seed === "number" && Number.isFinite(seed)) return (seed >>> 0) || 0x6d2b79f5;
+    const text = String(seed ?? "lab-kit");
+    let hash = 2166136261;
+    for (let index = 0; index < text.length; index += 1) {
+      hash ^= text.charCodeAt(index);
+      hash = Math.imul(hash, 16777619);
+    }
+    return hash >>> 0 || 0x6d2b79f5;
+  }
+
+  function createRng(seed = Date.now()) {
+    const originalSeed = hashSeed(seed);
+    let state = originalSeed;
+    const next = () => {
+      state = (state + 0x6d2b79f5) >>> 0;
+      let value = state;
+      value = Math.imul(value ^ (value >>> 15), value | 1);
+      value ^= value + Math.imul(value ^ (value >>> 7), value | 61);
+      return ((value ^ (value >>> 14)) >>> 0) / 4294967296;
+    };
+    return Object.freeze({
+      seed: originalSeed,
+      next,
+      float: next,
+      int(minimum, maximum) {
+        if (!Number.isFinite(minimum) || !Number.isFinite(maximum) || maximum < minimum) {
+          throw new RangeError("LabKit RNG bounds are invalid.");
+        }
+        const low = Math.ceil(minimum);
+        const high = Math.floor(maximum);
+        return low + Math.floor(next() * (high - low + 1));
+      },
+      pick(items) {
+        if (!items?.length) return undefined;
+        return items[this.int(0, items.length - 1)];
+      },
+      shuffle(items) {
+        const copy = [...items];
+        for (let index = copy.length - 1; index > 0; index -= 1) {
+          const other = this.int(0, index);
+          [copy[index], copy[other]] = [copy[other], copy[index]];
+        }
+        return copy;
+      }
+    });
+  }
+
+  const rng = Object.freeze({ create: createRng, hashSeed });
+
+  function setStatus(target, message, options = {}) {
+    const node = required(target, options.root);
+    const politeness = options.politeness || "polite";
+    node.setAttribute?.("role", options.role || "status");
+    node.setAttribute?.("aria-live", politeness);
+    node.setAttribute?.("aria-atomic", "true");
+    if (options.busy === true) node.setAttribute?.("aria-busy", "true");
+    else node.removeAttribute?.("aria-busy");
+    node.textContent = message == null ? "" : String(message);
+    return node;
+  }
+
+  function ensureStatus(options = {}) {
+    const root = documentFor(options.root);
+    if (!root) throw new Error("LabKit status.ensure needs a document or root.");
+    const existing = options.id ? byId(options.id, root) : root.querySelector?.("[data-lab-kit-status]");
+    if (existing) return existing;
+    if (!root.createElement) throw new Error("LabKit status.ensure needs a document-like root.");
+    const node = root.createElement("div");
+    if (options.id) node.id = options.id;
+    if (node.dataset) node.dataset.labKitStatus = "true";
+    node.className = options.className || "lab-kit-visually-hidden";
+    if (root.body?.appendChild) root.body.appendChild(node);
+    else root.appendChild?.(node);
+    return setStatus(node, options.initialMessage || "", options);
+  }
+
+  const status = Object.freeze({ set: setStatus, announce: setStatus, ensure: ensureStatus });
+
+  function snapshot(value, clone) {
+    return clone ? clone(value) : value;
+  }
+
+  function createHistory(options = {}) {
+    const limit = Math.max(1, Math.floor(options.limit ?? 20));
+    const clone = options.clone;
+    let past = [];
+    let future = [];
+    let presentSet = Object.hasOwn(options, "initial");
+    let present = presentSet ? snapshot(options.initial, clone) : undefined;
+
+    const trim = () => {
+      if (past.length > limit) past = past.slice(-limit);
+    };
+    const api = {
+      record(value) {
+        if (presentSet) past.push(present);
+        present = snapshot(value, clone);
+        presentSet = true;
+        future = [];
+        trim();
+        return present;
+      },
+      undo() {
+        if (!past.length) return present;
+        future.unshift(present);
+        present = past.pop();
+        return present;
+      },
+      redo() {
+        if (!future.length) return present;
+        past.push(present);
+        present = future.shift();
+        trim();
+        return present;
+      },
+      clear(value) {
+        past = [];
+        future = [];
+        presentSet = arguments.length > 0;
+        present = presentSet ? snapshot(value, clone) : undefined;
+        return present;
+      },
+      current() { return present; },
+      canUndo() { return past.length > 0; },
+      canRedo() { return future.length > 0; },
+      size() { return past.length + (presentSet ? 1 : 0) + future.length; },
+      entries() { return [...past, ...(presentSet ? [present] : []), ...future]; }
+    };
+    return Object.freeze(api);
+  }
+
+  const history = Object.freeze({ create: createHistory });
+
+  function clientCoordinates(event) {
+    const source = event?.touches?.[0] || event?.changedTouches?.[0] || event;
+    const x = Number(source?.clientX);
+    const y = Number(source?.clientY);
+    if (!Number.isFinite(x) || !Number.isFinite(y)) throw new TypeError("LabKit SVG events need clientX and clientY.");
+    return { x, y };
+  }
+
+  function svgPoint(svg, event) {
+    if (!svg) throw new TypeError("LabKit svg.point needs an SVG element.");
+    const client = clientCoordinates(event);
+    const matrix = svg.getScreenCTM?.();
+    if (svg.createSVGPoint && matrix?.inverse) {
+      const point = svg.createSVGPoint();
+      point.x = client.x;
+      point.y = client.y;
+      return point.matrixTransform(matrix.inverse());
+    }
+    const rect = svg.getBoundingClientRect?.();
+    const viewBox = svg.viewBox?.baseVal;
+    if (!rect || !viewBox || !rect.width || !rect.height) return client;
+    return {
+      x: viewBox.x + (client.x - rect.left) * viewBox.width / rect.width,
+      y: viewBox.y + (client.y - rect.top) * viewBox.height / rect.height
+    };
+  }
+
+  const svg = Object.freeze({ point: svgPoint, clientPoint: clientCoordinates });
+
+  function now() {
+    return host.performance?.now?.() ?? Date.now();
+  }
+
+  function createAnimation(options = {}) {
+    const onFrame = options.onFrame || (() => {});
+    const onComplete = options.onComplete || (() => {});
+    const duration = options.reducedMotion ? 0 : (options.duration ?? null);
+    const requestFrame = options.requestFrame || host.requestAnimationFrame?.bind(host) || ((callback) => host.setTimeout(() => callback(now()), 16));
+    const cancelFrame = options.cancelFrame || host.cancelAnimationFrame?.bind(host) || host.clearTimeout?.bind(host);
+    let frameId = null;
+    let running = false;
+    let completed = false;
+    let elapsed = 0;
+    let startedAt = null;
+
+    const progressFor = (milliseconds) => duration === null ? null : duration === 0 ? 1 : clamp(milliseconds / duration, 0, 1);
+    const api = {
+      start() {
+        if (running) return api;
+        if (completed) {
+          completed = false;
+          elapsed = 0;
+          startedAt = null;
+        }
+        running = true;
+        frameId = requestFrame(tick);
+        return api;
+      },
+      pause() {
+        if (!running) return api;
+        running = false;
+        if (frameId !== null) cancelFrame?.(frameId);
+        frameId = null;
+        startedAt = null;
+        return api;
+      },
+      stop() {
+        running = false;
+        if (frameId !== null) cancelFrame?.(frameId);
+        frameId = null;
+        startedAt = null;
+        return api;
+      },
+      reset() {
+        api.stop();
+        completed = false;
+        elapsed = 0;
+        startedAt = null;
+        return api;
+      },
+      seek(milliseconds) {
+        elapsed = Math.max(0, Number(milliseconds) || 0);
+        startedAt = running ? now() - elapsed : null;
+        completed = duration !== null && elapsed >= duration;
+        return api;
+      },
+      isRunning() { return running; },
+      isComplete() { return completed; },
+      elapsed() { return elapsed; },
+      progress() { return progressFor(elapsed); },
+      duration
+    };
+
+    function tick(time) {
+      if (!running) return;
+      const timestamp = Number.isFinite(time) ? time : now();
+      if (startedAt === null) startedAt = timestamp - elapsed;
+      elapsed = Math.max(0, timestamp - startedAt);
+      const progress = progressFor(elapsed);
+      const done = progress !== null && progress >= 1;
+      onFrame({ elapsed, progress, done });
+      if (done) {
+        running = false;
+        completed = true;
+        frameId = null;
+        onComplete({ elapsed, progress: 1 });
+      } else {
+        frameId = requestFrame(tick);
+      }
+    }
+
+    return Object.freeze(api);
+  }
+
+  const animation = Object.freeze({ create: createAnimation });
+
+  function bindKeyboardAdjustable(target, options = {}) {
+    const node = required(target);
+    const minimum = options.min ?? -Infinity;
+    const maximum = options.max ?? Infinity;
+    const step = Math.abs(options.step ?? 1) || 1;
+    let value = parseNumber(options.value, 0);
+    if (options.getValue) value = parseNumber(options.getValue(), value);
+
+    const setAria = () => {
+      if (options.role !== false && !node.getAttribute?.("role")) node.setAttribute?.("role", options.role || "slider");
+      if (options.tabIndex !== false && !node.hasAttribute?.("tabindex")) node.setAttribute?.("tabindex", String(options.tabIndex ?? 0));
+      if (Number.isFinite(minimum)) node.setAttribute?.("aria-valuemin", String(minimum));
+      if (Number.isFinite(maximum)) node.setAttribute?.("aria-valuemax", String(maximum));
+      node.setAttribute?.("aria-valuenow", String(value));
+      if (options.formatAriaValue) node.setAttribute?.("aria-valuetext", String(options.formatAriaValue(value)));
+    };
+
+    const update = () => {
+      if (options.getValue) value = parseNumber(options.getValue(), value);
+      setAria();
+      return value;
+    };
+
+    const set = (nextValue, event) => {
+      const next = clamp(nextValue, minimum, maximum);
+      const changed = next !== value;
+      value = next;
+      options.setValue?.(value, event);
+      setAria();
+      if (changed) options.onChange?.(value, event);
+      return changed;
+    };
+
+    const onKeyDown = (event) => {
+      if (event.defaultPrevented || event.ctrlKey || event.metaKey || event.altKey) return;
+      const multiplier = event.shiftKey ? 10 : 1;
+      let delta = 0;
+      if (event.key === "ArrowRight" || event.key === "ArrowUp") delta = step * multiplier;
+      if (event.key === "ArrowLeft" || event.key === "ArrowDown") delta = -step * multiplier;
+      if (event.key === "PageUp") delta = step * 10;
+      if (event.key === "PageDown") delta = -step * 10;
+      if (event.key === "Home") {
+        event.preventDefault?.();
+        set(minimum, event);
+        return;
+      }
+      if (event.key === "End") {
+        event.preventDefault?.();
+        set(maximum, event);
+        return;
+      }
+      if (!delta) return;
+      event.preventDefault?.();
+      set((options.getValue ? parseNumber(options.getValue(), value) : value) + delta, event);
+    };
+
+    node.addEventListener("keydown", onKeyDown);
+    update();
+    return Object.freeze({
+      set,
+      value: () => value,
+      update,
+      destroy: () => node.removeEventListener("keydown", onKeyDown)
+    });
+  }
+
+  const direct = Object.freeze({ keyboardAdjustable: bindKeyboardAdjustable });
+
+  const api = Object.freeze({ version: VERSION, dom, numeric, rng, status, history, svg, animation, direct });
+  host.LabKit = api;
+})();
+
+</script>
+<!-- LAB_RESOURCE_END id="lab-kit.js" type="script" -->
+
+<script>
+(() => {
+'use strict';
+const $=id=>document.getElementById(id);
+const COLOURS={red:{label:'red',short:'R',fill:'var(--red)',edge:'var(--red-dark)'},blue:{label:'blue',short:'B',fill:'var(--blue)',edge:'var(--blue-dark)'}};
+const PROBLEMS=[
+ {rule:'leave',condition:'red',target:'blue',counts:{red:3,blue:2},guided:true,pair:0},
+ {rule:'return',condition:'red',target:'blue',counts:{red:3,blue:2},guided:true,pair:0},
+ {rule:'leave',condition:'blue',target:'blue',counts:{red:3,blue:2},guided:false,pair:1},
+ {rule:'return',condition:'blue',target:'blue',counts:{red:3,blue:2},guided:false,pair:1},
+ {rule:'leave',condition:'red',target:'red',counts:{red:2,blue:3},guided:false,pair:2},
+ {rule:'return',condition:'red',target:'red',counts:{red:2,blue:3},guided:false,pair:2}
+];
+const state={problemIndex:0,phase:'draw',drawnId:null,appliedRule:null,selected:new Set(),feedback:'',preview:null};
+let drag=null;
+const p=()=>PROBLEMS[state.problemIndex];
+const total=()=>p().counts.red+p().counts.blue;
+const phraseRule=r=>r==='return'?'with replacement':'without replacement';
+const tokens=()=>['red','blue'].flatMap(key=>Array.from({length:p().counts[key]},(_,i)=>({id:`${COLOURS[key].short}${i+1}`,key,index:i+1,label:`${COLOURS[key].short}${i+1}`})));
+const tokenById=id=>tokens().find(t=>t.id===id)||null;
+const drawn=()=>tokenById(state.drawnId);
+const inBag=(rule=state.appliedRule)=>tokens().filter(t=>!state.drawnId||t.id!==state.drawnId||rule==='return');
+const targetTokens=()=>inBag().filter(t=>t.key===p().target);
+const metrics=()=>({n:targetTokens().length,d:inBag().length});
+const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b){[a,b]=[b,a%b]}return a||1};
+const simplify=(n,d)=>{const g=gcd(n,d);return[n/g,d/g]};
+function counterStyle(t){const c=COLOURS[t.key];return`--fill:${c.fill};--edge:${c.edge}`}
+function counterMarkup(t,classes='',attrs=''){return `<button type="button" class="counter ${classes}" style="${counterStyle(t)}" ${attrs}>${t.label}</button>`}
+function staticCounter(t,classes=''){return `<span class="counter ${classes}" style="${counterStyle(t)}" aria-hidden="true">${t.label}</span>`}
+function selectedCount(extra=0){return [...state.selected].filter(id=>targetTokens().some(t=>t.id===id)).length+extra}
+function previewExtra(){return state.preview?.kind==='favourable'&&state.preview.valid?1:0}
+function phaseIndex(){return state.phase==='draw'?0:state.phase==='rule'?1:state.phase==='target'?2:3}
+function renderSteps(){
+ const labels=['First draw','Apply rule','Favourable outcomes','Probability'],idx=phaseIndex();
+ $('stepRail').innerHTML=labels.map((label,i)=>`<div class="step ${i<idx?'done':i===idx&&idx<3?'current':state.phase==='complete'?'done':''}"><b>${i<idx||state.phase==='complete'?'✓':i+1}</b><span>${label}</span></div>`).join('');
+}
+function renderProblem(){
+ const q=p(),c=COLOURS[q.condition].label,t=COLOURS[q.target].label;
+ $('problemNumber').textContent=`Problem ${state.problemIndex+1} of ${PROBLEMS.length}`;
+ $('supportLabel').textContent=q.guided?'Guided':'Independent';
+ $('problemText').textContent=`Two counters are drawn ${phraseRule(q.rule)}. Given that the first is ${c}, find P(second is ${t}).`;
+ $('problemSub').textContent='Drag the counters to make the condition, replacement rule and favourable outcomes visible.';
+}
+function renderAction(){
+ const q=p(),c=COLOURS[q.condition].label,t=COLOURS[q.target].label,d=drawn();
+ let kicker='',title='',copy='';
+ if(state.phase==='draw'){
+   kicker='1 · make the given condition visible'; title=`Drag a ${c} counter from the bag to First draw.`;
+   copy=`The first colour is given, so only ${c} counters can represent it. This is not a probability choice — it records what has already happened.`;
+ }else if(state.phase==='rule'){
+   kicker='2 · act out the wording';
+   title=q.rule==='return'?`Drag ${d?.label||'the counter'} back into the same bag.`:`Drag ${d?.label||'the counter'} into Keep out.`;
+   copy=q.rule==='return'?`With replacement restores the bag before draw 2, so the denominator returns from ${total()-1} to ${total()}.`:`Without replacement leaves that counter out, so draw 2 has ${total()-1} possible outcomes.`;
+ }else if(state.phase==='target'){
+   const m=metrics(),marked=selectedCount();
+   kicker='3 · build the numerator by dragging'; title=`Drag each ${t} draw-2 outcome into Favourable outcomes.`;
+   copy=`The denominator stays ${m.d} because all ${m.d} counters are still possible on draw 2. Each favourable counter you mark adds 1 to the numerator: ${marked}/${m.d}${marked<m.n?' → keep going.':''}`;
+ }else{
+   const m=metrics(),s=simplify(m.n,m.d);
+   kicker='Complete'; title=`The current draw-2 sample space gives ${m.n}/${m.d}${s[0]!==m.n||s[1]!==m.d?` = ${s[0]}/${s[1]}`:''}.`;
+   copy=`The condition fixes draw 1. The replacement rule changes what is available next. The probability is then favourable draw-2 outcomes ÷ all possible draw-2 outcomes.`;
+ }
+ $('actionKicker').textContent=kicker;$('actionTitle').textContent=title;$('actionCopy').textContent=copy;
+ $('actionFeedback').hidden=!state.feedback;$('actionFeedback').textContent=state.feedback;
+ $('nextAction').classList.toggle('bad',!!state.feedback);$('nextAction').classList.toggle('good',state.phase==='complete');
+}
+function bagTokenMarkup(t){
+ const q=p(); let active=false,guide=false,marked=state.selected.has(t.id),aria='';
+ if(state.phase==='draw'&&t.key===q.condition){active=true;guide=q.guided;aria=`data-drag-kind="draw" data-id="${t.id}" aria-label="Drag ${t.label}, a ${COLOURS[t.key].label} counter, to First draw"`}
+ else if(state.phase==='target'&&!marked){active=true;guide=q.guided&&t.key===q.target;aria=`data-drag-kind="favourable" data-id="${t.id}" aria-label="Drag ${t.label} to Favourable outcomes if it makes the second draw ${COLOURS[q.target].label}"`}
+ const cls=[active?'drag-source':'',guide?'guide':'',marked?'marked':''].filter(Boolean).join(' ');
+ return active?counterMarkup(t,cls,aria):`<span class="counter ${cls}" style="${counterStyle(t)}" aria-hidden="true">${t.label}</span>`;
+}
+function renderBag(){
+ const bag=inBag(),q=p(),d=drawn();
+ $('bag').className='bag';
+ if(state.phase==='rule'&&q.rule==='return')$('bag').classList.add('drop-target');
+ if(state.appliedRule==='return')$('bag').classList.add('restored');
+ else if(d)$('bag').classList.add('changed');
+ $('bagCount').textContent=`${bag.length} in bag`;
+ if(state.phase==='draw')$('bagState').textContent='before the known first draw';
+ else if(state.phase==='rule')$('bagState').textContent=`${total()-1} currently in bag`;
+ else $('bagState').textContent=`draw-2 sample space · ${phraseRule(state.appliedRule)}`;
+ $('bag').innerHTML=bag.map(bagTokenMarkup).join('');
+}
+function favourableTray(){
+ const q=p(),marked=[...state.selected].map(tokenById).filter(Boolean);
+ const copies=marked.map(t=>staticCounter(t)).join('');
+ return `<div id="favourableDrop" class="action-drop favourable drop-target"><div class="favourable-list">${copies||'<span class="favourable-empty">Drag favourable counters here.<br>The bag still keeps them as possible outcomes.</span>'}</div><strong>${marked.length} ${COLOURS[q.target].label} favourable</strong></div>`;
+}
+function renderDraw(){
+ const q=p(),d=drawn(),head=$('drawHeading'),sub=head.parentElement.querySelector('span');
+ if(state.phase==='draw'){
+   head.textContent='First draw';sub.textContent='drop the given outcome here';
+   $('drawSlot').innerHTML=`<div id="firstDrawDrop" class="action-drop drop-target"><div class="drop-icon">↓</div><strong>First draw</strong><span>Drop a ${COLOURS[q.condition].label} counter here.</span></div>`;
+   $('drawState').className='draw-state';$('drawState').textContent='The question has already fixed this colour.';
+ }else if(state.phase==='rule'){
+   head.textContent='First draw';sub.textContent='move the same counter again';
+   $('drawSlot').innerHTML=counterMarkup(d,'drag-source guide',`data-drag-kind="rule" data-id="${d.id}" aria-label="Drag ${d.label} to ${q.rule==='return'?'the same bag':'Keep out'}"`)+`<div class="draw-record"><strong>${d.label} drawn first</strong>${q.rule==='return'?'Return it before draw 2.':'Keep it out for draw 2.'}</div>`;
+   if(q.rule==='leave'){$('drawState').className='draw-state keepout-target drop-target';$('drawState').innerHTML='<strong>Keep out</strong><span>drop the drawn counter here</span>'}
+   else{$('drawState').className='draw-state';$('drawState').textContent=`Return it to the bag above. The bag will restore to ${total()}.`}
+ }else if(state.phase==='target'){
+   head.textContent='Favourable outcomes';sub.textContent='mark outcomes without removing possibility';
+   $('drawSlot').innerHTML=favourableTray();
+   $('drawState').className='draw-state';$('drawState').textContent=`Drag ${COLOURS[q.target].label} counters here. Their ghost in the bag stays counted in the denominator.`;
+ }else{
+   head.textContent='Favourable outcomes';sub.textContent='completed numerator';
+   $('drawSlot').innerHTML=favourableTray();$('favourableDrop')?.classList.remove('drop-target');
+   $('drawState').className='draw-state good';$('drawState').textContent='All favourable outcomes are marked.';
+ }
+}
+function currentEvidence(){
+ const q=p(),d=drawn(),preview=state.preview;
+ if(state.phase==='draw'){
+   const after=preview?.kind==='draw'&&preview.valid?total()-1:total();
+   return {chips:[['Given first draw',COLOURS[q.condition].label,'changed'],['Counters in bag',String(after),preview?.valid?'changed':'']],title:'The condition is information, not a branch to multiply.',copy:`Drag one ${COLOURS[q.condition].label} counter out to represent the event that is already known.`,status:preview?.valid?`Release: the bag will temporarily change ${total()} → ${total()-1}.`:'The uncertainty we care about is what can happen on draw 2.'};
+ }
+ if(state.phase==='rule'){
+   let bagNow=total()-1;
+   if(preview?.kind==='rule'&&preview.valid&&q.rule==='return')bagNow=total();
+   return {chips:[['Known first draw',d?.label||'', 'changed'],['Counters in bag',String(bagNow),preview?.valid?'changed':'']],title:`${phraseRule(q.rule)[0].toUpperCase()+phraseRule(q.rule).slice(1)} changes the draw-2 sample space.`,copy:q.rule==='return'?`Returning ${d?.label} makes it possible again on draw 2.`:`Keeping ${d?.label} out removes exactly one possible draw-2 outcome.`,status:preview?.valid?(q.rule==='return'?`Release: denominator becomes ${total()}.`:`Release: denominator stays ${total()-1}.`):`Drag the same physical counter to the highlighted destination.`};
+ }
+ const m=metrics(),extra=previewExtra(),marked=Math.min(m.n,selectedCount(extra)),complete=state.phase==='complete';
+ return {chips:[['Possible draw-2 outcomes',String(m.d),'changed'],['Favourable marked',`${marked} of ${m.n}`,'good']],title:complete?'The fraction is now read directly from the conditional sample space.':'Each correct drag builds the numerator while the denominator stays fixed.',copy:`Possible outcomes = ${m.d}. Favourable ${COLOURS[q.target].label} outcomes = ${marked}${complete?'.':'. Drag the next favourable counter.'}`,status:preview?.valid?`Release: probability becomes ${marked}/${m.d}.`:complete?'All favourable outcomes have been marked.':`Current probability evidence: ${marked}/${m.d}.`,fraction:{n:marked,d:m.d,complete,preview:!!preview?.valid}};
+}
+function pairResults(pair){
+ const rows=PROBLEMS.filter(x=>x.pair===pair).map(q=>{const all=q.counts.red+q.counts.blue,n0=q.counts[q.target],n=q.rule==='return'?n0:n0-(q.condition===q.target?1:0),d=q.rule==='return'?all:all-1;return{rule:q.rule,n,d}});return rows;
+}
+function renderWorkArea(){
+ const e=currentEvidence(),q=p();
+ const chips=e.chips.map(([label,value,tone])=>`<div class="work-chip ${tone||''}"><span>${label}</span><strong>${value}</strong></div>`).join('');
+ let control='';
+ if(e.fraction){
+   const s=e.fraction.d? simplify(e.fraction.n,e.fraction.d):[0,1];
+   const simp=e.fraction.complete&&e.fraction.n>0&&(s[0]!==e.fraction.n||s[1]!==e.fraction.d)?`= ${s[0]}/${s[1]}`:'';
+   control=`<div class="live-prob ${e.fraction.preview?'preview':''} ${e.fraction.complete?'complete':''}"><span class="prob-label">live probability</span><span class="prob-frac"><b>${e.fraction.n}</b><b>${e.fraction.d}</b></span><span class="prob-simplified">${simp}</span>${e.fraction.complete?`<button id="nextProblem" type="button" class="good next-problem">${state.problemIndex===PROBLEMS.length-1?'Start again':state.problemIndex%2===0?'Compare rule':'Next condition'}</button>`:''}</div>`;
+ }else control=`<div class="live-prob ${state.preview?.valid?'preview':''}"><span class="prob-label">draw-2 denominator</span><span class="prob-frac"><b>?</b><b>${state.phase==='draw'?(state.preview?.valid?total()-1:total()):(state.preview?.valid&&q.rule==='return'?total():total()-1)}</b></span><span class="prob-simplified">not ready yet</span></div>`;
+ let compare='';
+ if(state.phase==='complete'&&state.problemIndex%2===1){const rows=pairResults(q.pair),a=rows.find(r=>r.rule==='leave'),b=rows.find(r=>r.rule==='return');compare=`<div class="compare-compact"><span>without <b>${a.n}/${a.d}</b></span><span>with <b>${b.n}/${b.d}</b></span></div>`}
+ $('workArea').className=`work-area ${state.phase==='complete'?'complete':state.phase==='target'?'attention':''}`;
+ $('workArea').innerHTML=`<div class="work-shell"><div class="work-evidence">${chips}</div><div class="work-main"><span class="work-kicker">Current evidence</span><strong>${e.title}</strong><p>${e.copy}</p><div class="work-status ${state.feedback?'bad':state.phase==='complete'?'good':''}">${state.feedback||e.status}</div>${compare}</div>${control}</div>`;
+ $('nextProblem')?.addEventListener('click',nextProblem);
+}
+function clearDropStyles(){document.querySelectorAll('.drag-over,.drag-invalid').forEach(el=>el.classList.remove('drag-over','drag-invalid'))}
+function targetFor(kind){if(kind==='draw')return $('firstDrawDrop');if(kind==='rule')return p().rule==='return'?$('bag'):$('drawState');if(kind==='favourable')return $('favourableDrop');return null}
+function pointInside(el,x,y){if(!el)return false;const r=el.getBoundingClientRect();return x>=r.left&&x<=r.right&&y>=r.top&&y<=r.bottom}
+function setPreview(kind,id,valid){state.preview=valid?{kind,id,valid:true}:null;renderWorkArea()}
+function dragAllowed(kind,t){if(kind==='draw')return t.key===p().condition;if(kind==='rule')return t.id===state.drawnId;if(kind==='favourable')return t.key===p().target&&!state.selected.has(t.id);return false}
+function commitDrag(kind,id){
+ const t=tokenById(id);if(!t)return;
+ state.feedback='';state.preview=null;
+ if(kind==='draw'){
+   if(t.key!==p().condition)return;
+   state.drawnId=id;state.appliedRule=null;state.selected.clear();state.phase='rule';
+ }else if(kind==='rule'){
+   state.appliedRule=p().rule;state.phase='target';state.selected.clear();
+ }else if(kind==='favourable'){
+   if(t.key!==p().target){state.feedback=`${t.label} is ${COLOURS[t.key].label}, so it is possible but not favourable for “second is ${COLOURS[p().target].label}”.`;renderAll();return}
+   state.selected.add(id);
+   const m=metrics();if(selectedCount()===m.n)state.phase='complete';
+ }
+ renderAll();
+}
+function startDrag(el,e){
+ const kind=el.dataset.dragKind,id=el.dataset.id,t=tokenById(id);if(!kind||!t)return;
+ if(e.type==='pointerdown'&&e.button!==undefined&&e.button!==0)return;
+ const ghost=el.cloneNode(true);ghost.removeAttribute('id');ghost.removeAttribute('data-drag-kind');ghost.removeAttribute('data-id');ghost.className='counter drag-ghost';document.body.appendChild(ghost);
+ el.classList.add('drag-origin');drag={el,ghost,kind,id,pointerId:e.pointerId};moveDrag(e);e.preventDefault();
+}
+function moveDrag(e){
+ if(!drag)return;drag.ghost.style.left=`${e.clientX}px`;drag.ghost.style.top=`${e.clientY}px`;
+ const target=targetFor(drag.kind),inside=pointInside(target,e.clientX,e.clientY),t=tokenById(drag.id),valid=inside&&dragAllowed(drag.kind,t);
+ clearDropStyles();if(inside)target?.classList.add(valid?'drag-over':'drag-invalid');
+ const changed=(!!state.preview)!==valid||state.preview?.id!==drag.id||state.preview?.kind!==drag.kind;
+ if(changed)setPreview(drag.kind,drag.id,valid);
+ e.preventDefault();
+}
+function finishDrag(e,cancel=false){
+ if(!drag)return;const {el,ghost,kind,id}=drag,target=targetFor(kind),inside=!cancel&&pointInside(target,e.clientX,e.clientY),t=tokenById(id),valid=inside&&dragAllowed(kind,t);
+ el.classList.remove('drag-origin');ghost.remove();drag=null;clearDropStyles();state.preview=null;
+ if(valid)commitDrag(kind,id);else{renderWorkArea();if(inside&&kind==='favourable'&&t?.key!==p().target){state.feedback=`That ${COLOURS[t.key].label} counter remains possible, but it is not favourable for “second is ${COLOURS[p().target].label}”.`;renderAction();renderWorkArea()}}
+ e.preventDefault?.();
+}
+function bindDrags(){
+ document.querySelectorAll('[data-drag-kind]').forEach(el=>{
+   el.addEventListener('pointerdown',e=>startDrag(el,e));
+   el.addEventListener('keydown',e=>{if(e.key!=='Enter'&&e.key!==' ')return;e.preventDefault();const t=tokenById(el.dataset.id);if(dragAllowed(el.dataset.dragKind,t))commitDrag(el.dataset.dragKind,el.dataset.id)});
+ });
+}
+window.addEventListener('pointermove',e=>{if(drag)moveDrag(e)},{passive:false});
+window.addEventListener('pointerup',e=>{if(drag)finishDrag(e,false)},{passive:false});
+window.addEventListener('pointercancel',e=>{if(drag)finishDrag(e,true)},{passive:false});
+function renderGuidance(){
+ document.querySelector('.bag-card')?.classList.toggle('attention',state.phase==='draw'||(state.phase==='rule'&&p().rule==='return')||state.phase==='target');
+ document.querySelector('.draw-card')?.classList.toggle('cause-focus',state.phase==='rule');
+}
+function renderAll(){renderProblem();renderSteps();renderAction();renderBag();renderDraw();renderWorkArea();renderGuidance();bindDrags()}
+function resetProblem(){if(drag){drag.ghost?.remove();drag=null}state.phase='draw';state.drawnId=null;state.appliedRule=null;state.selected=new Set();state.feedback='';state.preview=null;renderAll()}
+function nextProblem(){state.problemIndex=(state.problemIndex+1)%PROBLEMS.length;resetProblem()}
+$('resetButton').addEventListener('click',resetProblem);
+window.labTest={
+ getState:()=>({problemIndex:state.problemIndex,phase:state.phase,drawnId:state.drawnId,appliedRule:state.appliedRule,selected:[...state.selected],metrics:state.appliedRule?metrics():null,problem:p(),feedback:state.feedback}),
+ setProblem:i=>{state.problemIndex=Math.max(0,Math.min(PROBLEMS.length-1,Number(i)||0));resetProblem()},
+ drawCorrect:()=>{const t=tokens().find(x=>x.key===p().condition);commitDrag('draw',t.id)},
+ applyRule:()=>commitDrag('rule',state.drawnId),
+ markOne:()=>{const t=targetTokens().find(x=>!state.selected.has(x.id));if(t)commitDrag('favourable',t.id)},
+ markAll:()=>{targetTokens().filter(x=>!state.selected.has(x.id)).forEach(t=>state.selected.add(t.id));state.phase='complete';renderAll()},
+ reset:resetProblem,next:nextProblem
+};
+renderAll();
+})();
+</script>
+
+</body>
+</html>

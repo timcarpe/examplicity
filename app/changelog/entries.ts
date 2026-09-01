@@ -7,6 +7,17 @@ export type ChangelogEntry = {
 
 export const changelogEntries: readonly ChangelogEntry[] = [
   {
+    date: '2026-09-01',
+    displayDate: '1 September 2026',
+    publicChanges: [
+      'Added flip-flop feedback, recursive call-stack and artificial-neuron investigations for Cambridge International A Level Computer Science 9618.',
+      'Added Cambridge IGCSE Mathematics 0580 investigations for similarity, relative frequency, expected frequency, replacement and conditional sample spaces.',
+    ],
+    internalChanges: [
+      'Updated the shared Lab Kit publication resource and compiled the six approved final artifacts into manifest-owned subject routes with syllabus metadata and standalone downloads.',
+    ],
+  },
+  {
     date: '2026-08-31',
     displayDate: '31 August 2026',
     publicChanges: [
