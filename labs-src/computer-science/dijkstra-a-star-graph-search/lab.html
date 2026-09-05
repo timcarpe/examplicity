@@ -428,6 +428,11 @@ button{min-height:42px;padding:0 13px;font-size:var(--lab-type-body,14px);font-w
 /* Task headings are quiet, readable anchors above the model. */
 .lab-activity-bar .lab-activity-task>strong,.lab-activity-bar .lab-activity-task h2,.lab-activity-bar .lab-activity-task h3,.lab-activity-bar .mission-copy>strong,.lab-activity-bar #goalTitle{margin:0;color:var(--lab-ink,#1d1d1f);font-family:var(--lab-font-sans,inherit);font-size:14px;font-weight:500;line-height:1.45;letter-spacing:normal;text-transform:none;text-wrap:balance}
 </style>
+<style data-working-refinements>.decision-card.needed:not([data-attention-used="true"]){animation:workingAttention 2s ease-in-out infinite}
+@keyframes workingAttention{0%,100%{border-color:var(--lab-needed-line,#d8c36a);box-shadow:none}50%{border-color:var(--lab-needed,#946200);box-shadow:0 0 0 3px rgba(216,195,106,.18)}}
+@media(prefers-reduced-motion:reduce){.decision-card.needed{animation:none!important}}
+#relax-equation{padding:3px 7px;border:0;border-radius:4px;background:color-mix(in srgb,var(--lab-concept-violet,#7563a7) 20%,white);box-shadow:none}
+</style>
 </head>
 <body data-lab-layout="standard">
 <main>
@@ -586,6 +591,7 @@ button{min-height:42px;padding:0 13px;font-size:var(--lab-type-body,14px);font-w
   }
 
   function startSearch(algorithm){
+    delete $("decision-card").dataset.attentionUsed;
     if(busy)return;
     inspected=null;activeEdge=null;activeNeighbour=null;scannedEdges=new Set();revealMinimum=false;selectedCostEdge=null;
     results[algorithm]=null;search=createSearch(algorithm);canReveal=false;
@@ -740,6 +746,20 @@ button{min-height:42px;padding:0 13px;font-size:var(--lab-type-body,14px);font-w
   $("run-dijkstra").addEventListener("click",()=>startSearch("dijkstra"));$("run-astar").addEventListener("click",()=>startSearch("astar"));$("reveal-button").addEventListener("click",reveal);$("cost-down").addEventListener("click",()=>adjustSelectedCost(-1));$("cost-up").addEventListener("click",()=>adjustSelectedCost(1));$("cost-close").addEventListener("click",()=>{selectedCostEdge=null;renderAll()});
   $("reset-button").addEventListener("click",()=>{if(busy)return;edgeCosts=Object.fromEntries(baseEdges.map(([a,b,w])=>[edgeKey(a,b),w]));costEditingUnlocked=false;selectedCostEdge=null;search=null;inspected=null;activeEdge=null;activeNeighbour=null;scannedEdges=new Set();revealMinimum=false;canReveal=false;results={dijkstra:null,astar:null};previousExperiment=null;$("status").className="status needed";$("status").textContent="Reset complete. Road costs are fixed until both searches are completed.";$("relax-card").className="relax-card idle";$("relax-equation").textContent="—";$("relax-result").textContent="After a town is settled, its outgoing roads are checked one at a time.";startSearch("dijkstra");$("run-dijkstra").focus()});
   startSearch("dijkstra");
+})();
+</script>
+<script data-working-attention>
+(()=>{
+ const cards=".decision-card";
+ function attention(event){
+  if(event.target.closest("#run-dijkstra,#run-astar,#reset-button")){document.querySelectorAll(cards).forEach(card=>delete card.dataset.attentionUsed);return}
+  if(!event.target.closest("#graph,.frontier-list button"))return;
+  const card=event.target.closest(cards);
+  if(card)card.dataset.attentionUsed='true';
+  else document.querySelectorAll(".decision-card").forEach(card=>card.dataset.attentionUsed='true');
+ }
+ document.addEventListener('pointerdown',attention);
+ document.addEventListener('focusin',attention);
 })();
 </script>
 </body>

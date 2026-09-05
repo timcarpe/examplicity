@@ -218,7 +218,7 @@ with redundant labels, helper paragraphs and numeric counters removed.
   `#f7f8fa` group, `#e7e8eb` boundary, dark grey `#424245` selected segment with white text and no visible
   border, regular 12px labels and an overall 42px control height. Use regular-weight labels without a bold microtitle or explanatory line.
   Buttons expose `aria-pressed` and retain a visible keyboard focus outline.
-- Place optional `.lab-stage-progress` directly to the right of the toggle in
+- Place optional `.lab-stage-progress` before the right-aligned toggle group in
   the right side of the activity top bar. Small empty circles denote upcoming stages,
   a blue inset dot marks the current stage, and a green check marks completion.
   The visible marker is 12px within a 24×40px target. Text in its accessible
@@ -377,3 +377,5 @@ Introduction targets use rounded containers and a restrained two-second interact
 Displayed terms and formulas may use approved concept violet #7563a7 at 20% over white, 4px corners and compact 3px vertical / 7px horizontal padding, without borders or shadows. Group a short expression such as “add 2” as one surface with only one padding layer. This identifies mathematical content, not correctness, and does not replace input feedback states.
 
 Available, unattempted working cards use a restrained two-second yellow border pulse until pointer or keyboard interaction with their input or associated model. Remember that interaction through rerenders; reset it with a fresh activity. Reference, locked, completed and incorrect cards stay static. Use static borders with reduced motion.
+
+The living HTML guide’s **Refined components and their uses** section groups the latest rules with interactive working-state and maths-surface specimens. Use it for purpose and appearance; the deployment copies are generated from this repository. Lab rollout scope remains in the site change record, not in this visual reference.

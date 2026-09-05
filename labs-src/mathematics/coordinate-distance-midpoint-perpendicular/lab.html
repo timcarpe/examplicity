@@ -428,6 +428,11 @@ button{font:inherit;min-height:34px;padding:0 10px;border:1px solid var(--lab-li
 /* Task headings are quiet, readable anchors above the model. */
 .lab-activity-bar .lab-activity-task>strong,.lab-activity-bar .lab-activity-task h2,.lab-activity-bar .lab-activity-task h3,.lab-activity-bar .mission-copy>strong,.lab-activity-bar #goalTitle{margin:0;color:var(--lab-ink,#1d1d1f);font-family:var(--lab-font-sans,inherit);font-size:14px;font-weight:500;line-height:1.45;letter-spacing:normal;text-transform:none;text-wrap:balance}
 </style>
+<style data-working-refinements>.readout-line.owned:not(.correct):not(.incorrect):not([data-attention-used="true"]),.work-progress:not([data-complete="true"]):not([data-attention-used="true"]){animation:workingAttention 2s ease-in-out infinite}
+@keyframes workingAttention{0%,100%{border-color:var(--lab-needed-line,#d8c36a);box-shadow:none}50%{border-color:var(--lab-needed,#946200);box-shadow:0 0 0 3px rgba(216,195,106,.18)}}
+@media(prefers-reduced-motion:reduce){.readout-line.owned:not(.correct):not(.incorrect),.work-progress:not([data-complete="true"]){animation:none!important}}
+.auto-value{padding:3px 7px;border:0;border-radius:4px;background:color-mix(in srgb,var(--lab-concept-violet,#7563a7) 20%,white);box-shadow:none}
+</style>
 </head>
 <body data-lab-layout="standard">
 <main>
@@ -581,7 +586,7 @@ function targetEquation(data=baseData()){if(Math.abs(data.dy)<1e-9)return{type:'
 function targetEquationText(data=baseData()){const e=targetEquation(data);if(e.type==='vertical')return `x = ${fractionApprox(e.x)}`;const m=fractionApprox(e.m),absC=fractionApprox(Math.abs(e.c));if(Math.abs(e.c)<1e-10)return `y = ${m}x`;return `y = ${m}x ${e.c>=0?'+':'−'} ${absC}`}
 function initGrid(){const g=$('gridLayer');let html=`<rect x="${plot.left}" y="${plot.top}" width="${plot.size}" height="${plot.size}" rx="4" fill="#fff" stroke="#d6dde2"/>`;for(let i=-10;i<=10;i++){const x=sx(i),y=sy(i),axis=i===0;html+=`<line x1="${x}" y1="${plot.top}" x2="${x}" y2="${plot.top+plot.size}" class="${axis?'axis':'grid-minor'}"/><line x1="${plot.left}" y1="${y}" x2="${plot.left+plot.size}" y2="${y}" class="${axis?'axis':'grid-minor'}"/>`;if(i!==0&&i%2===0){html+=`<text x="${x}" y="${sy(0)+16}" text-anchor="middle" class="tick-label">${i}</text><text x="${sx(0)-10}" y="${y+3}" text-anchor="end" class="tick-label">${i}</text>`}}html+=`<text x="${plot.left+plot.size+9}" y="${sy(0)+4}" class="axis-label">x</text><text x="${sx(0)-4}" y="${plot.top-12}" class="axis-label">y</text>`;g.innerHTML=html}
 function scenarioAngle(sc){const baseAng=Math.atan2(sc.B.y-sc.A.y,sc.B.x-sc.A.x)+Math.PI/2;return sc.angleAbsolute!=null?sc.angleAbsolute*Math.PI/180:baseAng+sc.angleOffset*Math.PI/180}
-function clearAnswers(){state.answers=blankAnswers();state.checks=blankChecks();state.pending=[]}
+function clearAnswers(){document.querySelectorAll(".readout-line,.work-progress").forEach(card=>delete card.dataset.attentionUsed);state.answers=blankAnswers();state.checks=blankChecks();state.pending=[]}
 function requiredKeys(){if(state.workLevel===0)return[];if(state.workLevel===1)return['gradient','midpoint','equation'];return['length','gradient','midpoint','equation']}
 function workingReady(){return requiredKeys().every(k=>state.checks[k])}
 function suggestedWorkLevel(){if(!phaseComplete())return-1;if(state.workLevel===0&&state.solvedAtLevel[0]+1>=2)return 1;if(state.workLevel===1&&state.solvedAtLevel[1]+1>=2)return 2;return-1}
@@ -728,6 +733,20 @@ function makeDraggableDialog(card, bounds) {
   new ResizeObserver(() => move(0, 0)).observe(card);
 }
 makeDraggableDialog(document.getElementById('nextCard'), document.querySelector('.lab'));
+</script>
+<script data-working-attention>
+(()=>{
+ const cards=".readout-line.owned,.work-progress";
+ function attention(event){
+  if(event.target.closest("#restoreBtn,.lab-working-toggle button")){document.querySelectorAll(cards).forEach(card=>delete card.dataset.attentionUsed);return}
+  if(!event.target.closest(".readout-line input,#map"))return;
+  const card=event.target.closest(cards);
+  if(card)card.dataset.attentionUsed='true';
+  else document.querySelectorAll(".work-progress").forEach(card=>card.dataset.attentionUsed='true');
+ }
+ document.addEventListener('pointerdown',attention);
+ document.addEventListener('focusin',attention);
+})();
 </script>
 </body>
 </html>

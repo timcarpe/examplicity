@@ -783,6 +783,11 @@ button:focus-visible,.factor-token:focus-visible,.shared-chip:focus-visible{outl
 /* Task headings are quiet, readable anchors above the model. */
 .lab-activity-bar .lab-activity-task>strong,.lab-activity-bar .lab-activity-task h2,.lab-activity-bar .lab-activity-task h3,.lab-activity-bar .mission-copy>strong,.lab-activity-bar #goalTitle{margin:0;color:var(--lab-ink,#1d1d1f);font-family:var(--lab-font-sans,inherit);font-size:14px;font-weight:500;line-height:1.45;letter-spacing:normal;text-transform:none;text-wrap:balance}
 </style>
+<style data-working-refinements>.output-card.working-required.in-progress:not([data-attention-used="true"]),.work-progress:not([data-complete="true"]):not([data-attention-used="true"]){animation:workingAttention 2s ease-in-out infinite}
+@keyframes workingAttention{0%,100%{border-color:var(--lab-needed-line,#d8c36a);box-shadow:none}50%{border-color:var(--lab-needed,#946200);box-shadow:0 0 0 3px rgba(216,195,106,.18)}}
+@media(prefers-reduced-motion:reduce){.output-card.working-required.in-progress,.work-progress:not([data-complete="true"]){animation:none!important}}
+.product-line:not(:has(input)){padding:3px 7px;border:0;border-radius:4px;background:color-mix(in srgb,var(--lab-concept-violet,#7563a7) 20%,white);box-shadow:none}
+</style>
 <!-- LAB_CONTRACT_START -->
 <script type="application/json" data-examplicity-lab-contract data-contract-version="1">
 {
@@ -1633,6 +1638,20 @@ function makeDraggableDialog(card, bounds) {
   new ResizeObserver(() => move(0, 0)).observe(card);
 }
 makeDraggableDialog(document.getElementById('nextCard'), document.querySelector('.board'));
+</script>
+<script data-working-attention>
+(()=>{
+ const cards=".output-card.working-required,.work-progress";
+ function attention(event){
+  if(event.target.closest("#resetProblem,.lab-working-toggle button")){document.querySelectorAll(cards).forEach(card=>delete card.dataset.attentionUsed);return}
+  if(!event.target.closest(".answer-entry,.factor-token,.prime-add,.merge-well,.shared-chip"))return;
+  const card=event.target.closest(cards);
+  if(card)card.dataset.attentionUsed='true';
+  else document.querySelectorAll(".work-progress").forEach(card=>card.dataset.attentionUsed='true');
+ }
+ document.addEventListener('pointerdown',attention);
+ document.addEventListener('focusin',attention);
+})();
 </script>
 </body>
 </html>

@@ -513,3 +513,14 @@ Grid previously used a -55% self-height transform while square positions subtrac
 ### Sequence working attention — 5 September 2026
 
 Unattempted, available calculation cards pulse their yellow border softly until pointer/keyboard interaction with an input. The construction-progress card pulses until model interaction, including None mode. Interaction state survives rerenders and resets with the activity state. Reference, locked, correct and incorrect cards remain static; reduced motion disables the pulse. Documented the reusable rule; validation skipped as requested.
+
+
+### Consolidated guide and reviewed-lab consistency — 5 September 2026
+
+- Canonical HTML: replaced the oversized toggle paragraph with eight focused component/use rules and interactive working-state / mathematical-surface specimens. Refreshed embedded Binary/Coordinate/Graph references and generated developer/bundle copies.
+- Binary: initial answer-card attention stops on input/button interaction and resets with a new question; no artificial working stages.
+- Coordinate: available owned cards and construction progress receive the attention cue; supplied calculations receive violet backing. Existing correctness classes remain authoritative.
+- Prime Factors: attention for available answer cards and factor construction; flat result backing, preserving meaningful factor colours and white number tokens.
+- Graph Search: attention on the pending decision until map/frontier interaction; latest relaxation calculation gets flat violet backing, without grading automatic calculations.
+- Histogram: current working cards remember interaction across rebuilt sidebar DOM; model interaction dismisses model-owned card attention. Displayed calculations get flat violet backing.
+- Sequence retains the refined implementation. No changes to other unreviewed labs. Reduced-motion fallbacks apply throughout. Validation skipped at user request; user review pending.

@@ -743,6 +743,10 @@ body[data-lab-layout="compact"]{align-content:start;min-height:auto;padding:18px
   border-color:var(--lab-line,#d2d2d7);background:var(--lab-surface-strong,#eef1f3);color:var(--lab-muted,#6e6e73);box-shadow:none;opacity:1;cursor:not-allowed;transform:none;
 }
 </style>
+<style data-working-refinements>#answerForm[data-work-state="current"]:not([data-attention-used="true"]){animation:workingAttention 2s ease-in-out infinite}
+@keyframes workingAttention{0%,100%{border-color:var(--lab-needed-line,#d8c36a);box-shadow:none}50%{border-color:var(--lab-needed,#946200);box-shadow:0 0 0 3px rgba(216,195,106,.18)}}
+@media(prefers-reduced-motion:reduce){#answerForm[data-work-state="current"]{animation:none!important}}
+</style>
 </head>
 <body data-lab-layout="compact">
 <main class="shell">
@@ -1690,6 +1694,7 @@ body[data-lab-layout="compact"]{align-content:start;min-height:auto;padding:18px
   }
 
   function renderQuestion(forcedKey=null){
+    delete $("answerForm").dataset.attentionUsed;
     state.question=generateQuestion(forcedKey);
     const feature=Object.keys(featureTemplates).find(id=>featureTemplates[id].includes(state.question.key));
     $("questionCard").setAttribute("data-lab-feature",feature);
@@ -1833,6 +1838,20 @@ body[data-lab-layout="compact"]{align-content:start;min-height:auto;padding:18px
   });
 
   renderQuestion();
+})();
+</script>
+<script data-working-attention>
+(()=>{
+ const cards="#answerForm";
+ function attention(event){
+  if(event.target.closest("#newButton")){document.querySelectorAll(cards).forEach(card=>delete card.dataset.attentionUsed);return}
+  if(!event.target.closest(".answer-block input,.answer-block button"))return;
+  const card=event.target.closest(cards);
+  if(card)card.dataset.attentionUsed='true';
+  else document.querySelectorAll(".work-progress").forEach(card=>card.dataset.attentionUsed='true');
+ }
+ document.addEventListener('pointerdown',attention);
+ document.addEventListener('focusin',attention);
 })();
 </script>
 </body>
