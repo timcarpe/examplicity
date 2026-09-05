@@ -471,3 +471,10 @@ Six reviewed labs: New question/New problem blue; Reset and other secondary top-
 ### Disabled action correction — 5 September 2026
 
 Six reviewed labs: disabled-action rules now override primary ID selectors and hover styling. Disabled New question/New problem and busy Graph Search modes use pale grey with muted grey text, neutral border and no shadow; native disabled behaviour is retained. White/blue remains an enabled secondary action only. Guide and generated copies updated; validation skipped as requested.
+
+
+### Toggle ordering — 5 September 2026
+
+Binary’s range toggle now aligns immediately left of its exam toggle, with New question left. Recorded the toggle priority in both guides: additional toggles, Working, exam from left to right; exam farthest right. No behaviour change. Validation skipped as requested.
+
+Graph Search now initializes Dijkstra through its existing startSearch function, so the selected toggle matches a ready search. Reset returns to that same default. No automatic search steps are performed.
