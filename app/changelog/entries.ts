@@ -10,7 +10,7 @@ export const changelogEntries: readonly ChangelogEntry[] = [
     date: '2026-09-05',
     displayDate: '5 September 2026',
     publicChanges: [
-      'Updated Binary Number Practice, Coordinate Geometry and Graph Search with clearer text and consistent feedback. Reorganised Coordinate and Graph Search around open working columns, removed redundant stage and progress displays, and improved responsive layouts and interaction guidance.',
+      'Updated Binary Number Practice, Coordinate Geometry and Graph Search with clearer text and consistent feedback. Reorganised Coordinate and Graph Search around open working columns, added a quieter Working control with stage evidence on demand, reduced repeated explanation, and improved responsive layouts and interaction guidance.',
       'Clarified AI remix guidance to preserve each lab’s learning relationships and curriculum, and made downloaded labs link consistently to their live versions with the correct MIT licence notice.',
     ],
     internalChanges: [

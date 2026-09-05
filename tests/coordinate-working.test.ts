@@ -36,6 +36,8 @@ test('Coordinate working follows the endpoints while the drawn line remains inde
   assert.equal(text('equationReadout'), lab.expected().equation);
   assert.notEqual(text('boundaryEquation'), text('equationReadout'));
   lab.setWorkLevel(2);
+  assert.match(text('stageWork0'), /Bisector: not entered/);
+  assert.equal(text('stageWork1'), '', 'upcoming stages must not reveal their working');
   assert.equal(elements.get('equationBox')!.classList.contains('owned'), true);
   assert.equal(text('equationFormula'), 'through midpoint M');
   for (const [key, value] of Object.entries({ length: '10', gradient: '3/4', midpoint: '(0, 2)', equation: 'y=-4/3x+2' })) {
@@ -45,6 +47,8 @@ test('Coordinate working follows the endpoints while the drawn line remains inde
   assert.equal(lab.getState().phaseComplete, false, 'answers alone cannot complete the construction');
   lab.solve();
   assert.equal(lab.getState().phaseComplete, true);
+  assert.equal(text('stageDot0'), '✓');
+  assert.match(text('stageWork0'), /Bisector: ✓ y=-4\/3x\+2/);
 
   lab.setPhase(1);
   assert.equal(lab.getState().phaseComplete, false);
@@ -53,4 +57,7 @@ test('Coordinate working follows the endpoints while the drawn line remains inde
   assert.deepEqual(lab.expected().midpoint, { x: 3, y: 3 });
   assert.equal(text('gradientFormula'), '-10 ÷ +12');
   assert.equal(text('equationFormula'), 'through midpoint M', 'working must not reveal an unanswered midpoint');
+  assert.match(text('stageWork0'), /Working: All\nLength AB:.*10/, 'completed stage retains its actual working');
+  assert.match(text('stageWork1'), /Gradient AB: -10 ÷ \+12 = not entered/, 'current stage follows new endpoints and required inputs');
+  assert.equal(text('stageWork2'), '');
 });

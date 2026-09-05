@@ -380,6 +380,90 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
   }
 }
 
+/* Opt-in working and learning-sequence controls; lab logic owns their state. */
+.lab-working-toggle {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--lab-line-subtle);
+  border-radius: var(--lab-control-radius);
+  background: var(--lab-surface-muted);
+}
+.lab-working-toggle button {
+  min-width: 40px;
+  min-height: 34px;
+  padding: 0 6px;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--lab-ink-secondary);
+  font-size: var(--lab-type-label);
+  font-weight: 400;
+  box-shadow: none;
+}
+.lab-working-toggle button:hover { background: var(--lab-line-subtle); }
+.lab-working-toggle button[aria-pressed="true"] {
+  border-color: var(--lab-line);
+  background: var(--lab-surface);
+  color: var(--lab-ink);
+  box-shadow: var(--lab-panel-shadow);
+}
+.lab-stage-progress { position: relative; display: flex; flex-shrink: 0; }
+.lab-stage-progress .stage-marker {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  min-height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  box-shadow: none;
+}
+.lab-stage-progress .stage-marker > span {
+  display: grid;
+  place-items: center;
+  width: 12px;
+  height: 12px;
+  border: 1px solid var(--lab-line-strong);
+  border-radius: 50%;
+  color: var(--lab-good-ink);
+  font-size: 11px;
+  line-height: 1;
+}
+.lab-stage-progress .stage-marker[aria-current="step"] > span {
+  border-color: var(--lab-accent);
+  background: var(--lab-accent);
+  box-shadow: inset 0 0 0 3px var(--lab-surface);
+}
+.lab-stage-progress .stage-marker.is-complete > span {
+  border-color: var(--lab-good-line);
+  background: var(--lab-good-soft);
+  box-shadow: none;
+}
+.lab-stage-progress .stage-detail {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 20;
+  display: none;
+  width: min(300px, calc(100vw - 84px));
+  padding: 16px;
+  border: 1px solid var(--lab-line);
+  border-radius: var(--lab-control-radius);
+  background: var(--lab-surface);
+  box-shadow: var(--lab-shadow-cue);
+  color: var(--lab-ink);
+  font-size: var(--lab-type-body);
+  line-height: var(--lab-leading-body);
+  text-align: left;
+}
+.lab-stage-progress .stage-detail strong { display: block; font-size: var(--lab-type-body); font-weight: 600; }
+.lab-stage-progress .stage-detail p { margin: 6px 0 0; color: var(--lab-ink-secondary); font-size: inherit; }
+.lab-stage-progress .stage-detail .stage-work { margin-top: 12px; white-space: pre-line; overflow-wrap: anywhere; }
+.lab-stage-progress .stage-detail .stage-work:empty { display: none; }
+.lab-stage-progress .stage-item:not(.is-dismissed):is(:hover, :focus-within, .is-open) .stage-detail { display: block; }
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -549,18 +633,18 @@ button{font:inherit;min-height:34px;padding:0 10px;border:1px solid var(--lab-li
 .lab{margin-top:0;padding:24px;overflow:hidden}.workspace{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:32px;min-height:0}.map-shell{padding:0;border:0;background:transparent}.map-head{min-height:40px;align-items:center;margin:0 0 16px}.map-title h2,.working-head h2{margin:0;color:var(--lab-ink);font-size:16px;font-weight:600;line-height:1.25}.map-tools{gap:12px}.legend{gap:10px;color:var(--lab-muted);font-size:var(--lab-type-label,12px);font-weight:400}.legend-key{gap:5px}.legend-key i{width:10px;height:10px}.map-frame{max-width:560px}.map-frame svg{border-color:var(--lab-line);border-radius:var(--lab-control-radius);background:var(--lab-surface)}
 .guide-cue{position:absolute;z-index:5;display:grid;grid-template-columns:minmax(0,1fr) 18px;align-items:center;gap:6px;max-width:190px;padding:8px 10px;border:1px solid var(--lab-cue-line,var(--lab-accent-line));border-radius:var(--lab-control-radius);background:var(--lab-cue-surface,rgba(250,252,255,.98));box-shadow:var(--lab-shadow-cue,0 10px 24px rgba(29,29,31,.16));color:var(--lab-cue-ink,var(--lab-accent-ink));font-size:var(--lab-type-label,12px);line-height:1.35;pointer-events:none}.guide-cue[hidden]{display:none}.guide-cue i{width:0;height:0;border-top:6px solid transparent;border-bottom:6px solid transparent;border-left:9px solid var(--lab-accent-line);transform:translateX(1px)}
 .model-evidence{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;margin-top:20px;padding-top:16px;border-top:1px solid var(--lab-line-subtle,#e7e8eb)}.model-evidence>div{min-width:0;display:grid;gap:3px}.evidence-label{color:var(--lab-muted);font-size:var(--lab-type-label,12px);font-weight:400}.model-evidence strong{color:var(--lab-ink);font-size:var(--lab-type-body,14px);font-weight:500}.model-evidence span:last-child{color:var(--lab-ink-secondary,#424245);font:400 var(--lab-type-body,14px)/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.caller-evidence span:last-child{font-family:var(--lab-font-sans)}.caller-evidence b{font-weight:500}
-.evidence{display:block;padding:0;background:var(--lab-surface)}.working-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:20px;border-bottom:1px solid var(--lab-line-subtle,#e7e8eb)}.difficulty-switch{display:inline-flex;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none}.difficulty-switch button,#restoreBtn{min-height:40px;padding:0 12px;border-color:var(--lab-line);border-radius:var(--lab-control-radius);background:var(--lab-control);color:var(--lab-ink-secondary,#424245);font-size:var(--lab-type-label,12px);font-weight:400}.difficulty-switch button+button{margin-left:6px}.difficulty-switch button.active{border-color:var(--lab-accent);background:var(--lab-accent);box-shadow:none;color:var(--lab-on-accent,#fff);font-weight:600}
+.evidence{display:block;padding:0;background:var(--lab-surface)}.working-head{display:flex;align-items:center;justify-content:space-between;gap:6px;padding-bottom:16px}.working-head h2{font-size:14px;font-weight:400;white-space:nowrap}#restoreBtn{min-height:40px;padding:0 12px;color:var(--lab-ink-secondary);font-size:var(--lab-type-label);font-weight:400}
 .working-chain{display:grid;gap:0;margin-top:8px}.readout-line{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 128px;grid-template-areas:"label value" "formula value" "state state";gap:3px 16px;min-width:0;padding:16px 0;border:0;border-bottom:1px solid var(--lab-line-subtle,#e7e8eb);border-radius:0;background:transparent;box-shadow:none}.readout-line>span:first-child{grid-area:label;color:var(--lab-ink-secondary,#424245);font-size:var(--lab-type-label,12px);font-weight:400}.calc-formula{grid-area:formula;color:var(--lab-ink-secondary,#424245);font:400 var(--lab-type-body,14px)/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;overflow-wrap:anywhere}.readout-line .auto-value{grid-area:value;align-self:center;color:var(--lab-ink);font:500 16px/1.35 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;text-align:right}.calc-input{grid-area:value;align-self:center;display:none;width:100%;min-width:128px;height:40px;margin:0;padding:0 28px 0 9px;border:1px solid var(--lab-line-strong);border-radius:var(--lab-control-radius);background:var(--lab-control);color:var(--lab-ink);font:500 var(--lab-type-body,14px) ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;text-align:right}.readout-line.owned .auto-value{display:none}.readout-line.owned .calc-input{display:block}.calc-state{grid-area:state;display:none;margin:1px 0 0;color:var(--lab-muted);font-size:var(--lab-type-annotation,11px);line-height:1.4}.readout-line.owned .calc-state{display:block}.readout-line.owned.correct,.readout-line.owned.in-progress,.readout-line.owned.incorrect,.readout-line.owned.needs-working{margin:8px -12px;padding:12px;border-width:1px;border-style:solid;border-radius:var(--lab-control-radius)}.readout-line.correct{border-color:var(--lab-good-line,#9cc7aa);background:var(--lab-good-surface,#f7fcf8)}.readout-line.in-progress,.readout-line.needs-working{border-color:var(--lab-needed-line,#d8c36a);background:var(--lab-needed-surface,#fffdf4)}.readout-line.incorrect{border-color:var(--lab-bad-line,#d99b93);background:var(--lab-bad-surface,#fff8f7)}.readout-line.correct::after,.readout-line.in-progress::after,.readout-line.needs-working::after,.readout-line.incorrect::after{position:absolute;right:15px;top:13px;font-size:16px;font-weight:700}.readout-line.correct::after{content:"✓";color:var(--lab-good-ink,#225f43)}.readout-line.in-progress::after,.readout-line.needs-working::after{content:"!";color:var(--lab-needed-ink,#735100)}.readout-line.incorrect::after{content:"✕";color:var(--lab-bad-ink,#8f2f27)}.readout-line.correct .calc-input{border-color:var(--lab-good-line,#9cc7aa);background:var(--lab-good-soft,#edf8f1)}.readout-line.in-progress .calc-input,.readout-line.needs-working .calc-input{border-color:var(--lab-needed-line,#d8c36a);background:var(--lab-needed-soft,#fff9db)}.readout-line.incorrect .calc-input{border-color:var(--lab-bad-line,#d99b93);background:var(--lab-bad-soft,#fff0ee)}.readout-line.correct .calc-state{color:var(--lab-good-ink,#225f43)}.readout-line.in-progress .calc-state,.readout-line.needs-working .calc-state{color:var(--lab-needed-ink,#735100)}.readout-line.incorrect .calc-state{color:var(--lab-bad-ink,#8f2f27)}
 .relationship{margin:20px 0 0;padding:0;border:0;border-radius:0;background:transparent;color:var(--lab-ink-secondary,#424245);font-size:var(--lab-type-body,14px);font-weight:400;line-height:1.5}.relationship.good{color:var(--lab-good-ink,#225f43)}.sr-status{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 .next-card{padding:16px;border-color:var(--lab-good-line,#9cc7aa);border-radius:var(--lab-panel-radius);background:var(--lab-good-surface,#f7fcf8)}.next-card>strong{color:var(--lab-good-ink,#225f43);font-size:16px;font-weight:600}.next-card>span,.next-upgrade span{color:var(--lab-ink-secondary,#424245);font-size:var(--lab-type-body,14px);line-height:1.5}.next-upgrade{border-color:var(--lab-accent-line,#9fb4d6);background:var(--lab-accent-surface,#f8fbff)}.next-upgrade strong{color:var(--lab-accent-ink,#315b91);font-size:var(--lab-type-body,14px);font-weight:600}.next-upgrade button,.next-card .next-stage{min-height:40px;font-size:var(--lab-type-label,12px);font-weight:600}
 @media(max-width:800px){.lab{padding:16px}.workspace{grid-template-columns:1fr;gap:28px}.model-evidence{max-width:560px}.evidence{padding-top:24px;border-top:1px solid var(--lab-line-subtle,#e7e8eb)}}
-@media(max-width:560px){.map-head{display:block}.map-tools{justify-content:space-between;margin-top:12px}.legend{justify-content:flex-start}.working-head{align-items:flex-start;flex-direction:column}.difficulty-switch{width:100%}.difficulty-switch button{flex:1}.model-evidence{grid-template-columns:1fr;gap:16px}.readout-line{grid-template-columns:minmax(0,1fr) 128px;gap:3px 10px}.readout-line.owned.correct,.readout-line.owned.in-progress,.readout-line.owned.incorrect,.readout-line.owned.needs-working{margin:8px -8px;padding:12px}.tick-label{font-size:14px}.axis-label{font-size:17px}.base-label{font-size:16px}.mid-label{font-size:14px}.delta-label{font-size:14px}.probe-caption,.beam-label{font-size:12px}.handle-label{font-size:11px}.sample{stroke-width:3}}
+@media(max-width:560px){.map-head{display:block}.map-tools{justify-content:space-between;margin-top:12px}.legend{justify-content:flex-start}.model-evidence{grid-template-columns:1fr;gap:16px}.readout-line{grid-template-columns:minmax(0,1fr) 128px;gap:3px 10px}.readout-line.owned.correct,.readout-line.owned.in-progress,.readout-line.owned.incorrect,.readout-line.owned.needs-working{margin:8px -8px;padding:12px}.tick-label{font-size:14px}.axis-label{font-size:17px}.base-label{font-size:16px}.mid-label{font-size:14px}.delta-label{font-size:14px}.probe-caption,.beam-label{font-size:12px}.handle-label{font-size:11px}.sample{stroke-width:3}}
 .map-frame svg{border:0}.calc-formula{color:var(--lab-ink)}.guide-cue{grid-template-columns:minmax(0,1fr)}.guide-cue i{display:none}
 
 .map-frame .cue-leader{background:transparent;position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}.cue-leader line{stroke:var(--lab-accent-line);stroke-width:1.5}.guide-cue{width:190px;max-width:calc(100% - 16px)}.guide-cue strong{display:block;font-weight:600}.guide-cue span{display:block;margin-top:4px;color:var(--lab-cue-copy)}
 .guide-svg-target,.handle-rotate:hover,.handle-slide:hover,.base-circle.unlocked:hover{filter:var(--lab-drag-halo)}
 .working-head{padding-bottom:16px;border-bottom:0}.evidence-label{color:var(--lab-ink-secondary)}.calc-formula{font-family:var(--lab-font-sans)}.readout-line .auto-value,.calc-input{font-family:var(--lab-font-sans);font-weight:400}.calc-input{animation:none;box-shadow:none}.readout-line.owned{padding:12px;border:1px solid var(--lab-needed-line);border-radius:8px;background:var(--lab-needed-surface);margin:8px -12px}.readout-line.owned.correct{border-color:var(--lab-good-line);background:var(--lab-good-surface)}.readout-line.owned.incorrect{border-color:var(--lab-bad-line);background:var(--lab-bad-surface)}
-@media(max-width:560px){.working-head{flex-direction:row;align-items:center}.difficulty-switch{width:auto}.difficulty-switch button{padding:0 10px}.readout-line.owned{margin:8px -8px}.model-evidence{grid-template-columns:1fr 1fr}.guide-cue{width:176px}}
+@media(max-width:560px){.readout-line.owned{margin:8px -8px}.model-evidence{grid-template-columns:1fr 1fr}.guide-cue{width:176px}}
 
 </style>
 <!-- LAB_CONTRACT_START -->
@@ -667,7 +751,14 @@ button{font:inherit;min-height:34px;padding:0 10px;border:1px solid var(--lab-li
     </div>
 
     <aside class="evidence" aria-label="Working">
-      <header class="working-head"><h2>Working</h2><div class="difficulty-switch" role="group" aria-label="Choose how much calculation working to complete"><button type="button" data-work-level="0" class="active" aria-pressed="true">Off</button><button type="button" data-work-level="1" aria-pressed="false">Some</button><button type="button" data-work-level="2" aria-pressed="false">All</button></div></header>
+      <header class="working-head"><h2>Working:</h2><div class="lab-working-toggle" role="group" aria-label="Working"><button type="button" data-work-level="0" class="active" aria-pressed="true">None</button><button type="button" data-work-level="1" aria-pressed="false">Some</button><button type="button" data-work-level="2" aria-pressed="false">All</button></div>
+        <div class="lab-stage-progress" role="group" aria-label="Learning stages">
+          <div id="stageItem0" class="stage-item"><button id="stageMarker0" class="stage-marker" type="button" aria-label="Construct the bisector" aria-describedby="stageDetail0"><span id="stageDot0" aria-hidden="true"></span></button><div id="stageDetail0" class="stage-detail" role="tooltip"><strong>Construct the bisector</strong><p id="stageStatus0"></p><div id="stageWork0" class="stage-work"></div></div></div>
+          <div id="stageItem1" class="stage-item"><button id="stageMarker1" class="stage-marker" type="button" aria-label="New endpoints" aria-describedby="stageDetail1"><span id="stageDot1" aria-hidden="true"></span></button><div id="stageDetail1" class="stage-detail" role="tooltip"><strong>New endpoints</strong><p id="stageStatus1"></p><div id="stageWork1" class="stage-work"></div></div></div>
+          <div id="stageItem2" class="stage-item"><button id="stageMarker2" class="stage-marker" type="button" aria-label="Horizontal AB" aria-describedby="stageDetail2"><span id="stageDot2" aria-hidden="true"></span></button><div id="stageDetail2" class="stage-detail" role="tooltip"><strong>Horizontal AB</strong><p id="stageStatus2"></p><div id="stageWork2" class="stage-work"></div></div></div>
+          <div id="stageItem3" class="stage-item"><button id="stageMarker3" class="stage-marker" type="button" aria-label="Move the endpoints" aria-describedby="stageDetail3"><span id="stageDot3" aria-hidden="true"></span></button><div id="stageDetail3" class="stage-detail" role="tooltip"><strong>Move the endpoints</strong><p id="stageStatus3"></p><div id="stageWork3" class="stage-work"></div></div></div>
+        </div>
+      </header>
       <section id="supportBand" class="working-chain" aria-label="Working chain">
         <div id="lengthBox" class="readout-line"><span>Length AB</span><small id="lengthFormula" class="calc-formula">—</small><strong id="segmentLength" class="auto-value">—</strong><input id="lengthInput" class="calc-input" inputmode="decimal" autocomplete="off" spellcheck="false" placeholder="number" aria-label="Calculate segment length"><small id="lengthState" class="calc-state"></small></div>
         <div id="gradientBox" class="readout-line"><span>Gradient AB</span><small id="gradientFormula" class="calc-formula">—</small><strong id="segmentGradient" class="auto-value">—</strong><input id="gradientInput" class="calc-input" inputmode="text" autocomplete="off" spellcheck="false" placeholder="e.g. 3/4" aria-label="Calculate gradient of AB"><small id="gradientState" class="calc-state"></small></div>
@@ -1106,7 +1197,7 @@ const scenarios=[
 ];
 const blankAnswers=()=>({length:'',gradient:'',midpoint:'',equation:''});
 const blankChecks=()=>({length:false,gradient:false,midpoint:false,equation:false});
-let state={phaseIndex:0,caseIndex:0,A:null,B:null,anchor:null,angle:0,complete:new Set(),discoveryUnlocked:false,endpointsUnlocked:false,baseMoved:false,finalComplete:false,transitioning:false,drag:null,clipped:null,samples:[],maxDiff:Infinity,probePhase:.5,interactionAt:0,visualSuccess:false,workLevel:0,solved:0,solvedAtLevel:[0,0,0],workNudges:[],completionDismissed:false,guideDismissed:false,answers:blankAnswers(),checks:blankChecks(),pending:[]};
+let state={phaseIndex:0,caseIndex:0,A:null,B:null,anchor:null,angle:0,complete:new Set(),stageWork:[],discoveryUnlocked:false,endpointsUnlocked:false,baseMoved:false,finalComplete:false,transitioning:false,drag:null,clipped:null,samples:[],maxDiff:Infinity,probePhase:.5,interactionAt:0,visualSuccess:false,workLevel:0,solved:0,solvedAtLevel:[0,0,0],workNudges:[],completionDismissed:false,guideDismissed:false,answers:blankAnswers(),checks:blankChecks(),pending:[]};
 const el={
  legH:$('legH'),legV:$('legV'),dxLabel:$('dxLabel'),dyLabel:$('dyLabel'),segment:$('segment'),midCrossH:$('midCrossH'),midCrossV:$('midCrossV'),rightAngle:$('rightAngle'),
  boundary:$('boundary'),boundaryHit:$('boundaryHit'),handleLink:$('handleLink'),samples:$('samples'),beamA:$('beamA'),beamB:$('beamB'),beamLabelA:$('beamLabelA'),beamLabelB:$('beamLabelB'),probeRing:$('probeRing'),probe:$('probe'),probeCaption:$('probeCaption'),
@@ -1160,7 +1251,38 @@ function endpointChanged(key,q){const other=key==='A'?state.B:state.A;if(dist(q,
 function endDrag(ev){if(!state.drag)return;try{svg.releasePointerCapture?.(state.drag.pointerId)}catch{}state.drag=null;render()}
 el.boundaryHit.addEventListener('pointerdown',e=>beginDrag('slide',e));el.slideHandle.addEventListener('pointerdown',e=>beginDrag('slide',e));el.rotateHandle.addEventListener('pointerdown',e=>beginDrag('rotate',e));el.baseA.addEventListener('pointerdown',e=>beginDrag('A',e));el.baseB.addEventListener('pointerdown',e=>beginDrag('B',e));svg.addEventListener('pointermove',dragMove);svg.addEventListener('pointerup',endDrag);svg.addEventListener('pointercancel',endDrag);
 el.rotateHandle.addEventListener('keydown',e=>keyMove('rotate',e));el.slideHandle.addEventListener('keydown',e=>keyMove('slide',e));el.baseA.addEventListener('keydown',e=>keyMove('A',e));el.baseB.addEventListener('keydown',e=>keyMove('B',e));
-function renderMission(){document.querySelectorAll('[data-work-level]').forEach(b=>{const on=Number(b.dataset.workLevel)===state.workLevel;b.classList.toggle('active',on);b.setAttribute('aria-pressed',String(on))});requestAnimationFrame(positionGuideCue)}
+function renderMission(){document.querySelectorAll('[data-work-level]').forEach(b=>{const on=Number(b.dataset.workLevel)===state.workLevel;b.classList.toggle('active',on);b.setAttribute('aria-pressed',String(on))});renderStages();requestAnimationFrame(positionGuideCue)}
+const stageNames=['Construct the bisector','New endpoints','Horizontal AB','Move the endpoints'];
+const stageTasks=['Rotate and slide the line until every sample is equally distant from A and B.','Apply the construction to a different pair of endpoints.','Construct a perpendicular bisector when AB is horizontal.','Move an endpoint, then repair the bisector.'];
+function currentStageWork(){
+  const fields=[['length','Length AB','lengthFormula','segmentLength'],['gradient','Gradient AB','gradientFormula','segmentGradient'],['midpoint','Midpoint M','midpointFormula','midpointReadout'],['equation','Bisector','equationFormula','equationReadout']];
+  const required=requiredKeys();
+  return fields.map(([key,label,formula,output])=>{
+    const value=required.includes(key)?(state.answers[key].trim()?`${state.checks[key]?'✓':'✕'} ${state.answers[key]}`:'not entered'):$(output).textContent;
+    return `${label}: ${key==='equation'?'':$(formula).textContent+' = '}${value}`;
+  }).join('\n')+`\nDrawn line: ${$('boundaryEquation').textContent}`;
+}
+function renderStages(){
+  const current=state.phaseIndex,done=state.complete.has(current),work=currentStageWork();
+  state.stageWork[current]=done?`Working: ${['None','Some','All'][state.workLevel]}\n${work}`:null;
+  stageNames.forEach((name,i)=>{
+    const complete=state.complete.has(i),active=i===current,marker=$(`stageMarker${i}`);
+    marker.classList.toggle('is-complete',complete);marker.setAttribute('aria-current',active?'step':'false');
+    marker.setAttribute('aria-label',`${name}: ${complete?'complete':active?'current':'upcoming'}`);
+    $(`stageDot${i}`).textContent=complete?'✓':'';
+    $(`stageStatus${i}`).textContent=complete?'✓ Construction verified':active?`${state.transitioning?'Moving endpoints':state.visualSuccess?'Complete the highlighted working':'Construction in progress'} · Working: ${['None','Some','All'][state.workLevel]}`:stageTasks[i];
+    $(`stageWork${i}`).textContent=active?work:complete?state.stageWork[i]||'':'';
+  });
+}
+stageNames.forEach((_,i)=>{
+  const item=$(`stageItem${i}`),marker=$(`stageMarker${i}`);
+  const show=()=>stageNames.forEach((_,j)=>{const other=$(`stageItem${j}`);other.classList.toggle('is-dismissed',j!==i);if(j!==i)other.classList.toggle('is-open',false)});
+  marker.addEventListener('click',()=>{const open=!item.classList.contains('is-open');stageNames.forEach((_,j)=>$(`stageItem${j}`).classList.toggle('is-open',false));item.classList.toggle('is-open',open);item.classList.toggle('is-dismissed',!open)});
+  item.addEventListener('pointerenter',show);
+  marker.addEventListener('focus',show);
+  item.addEventListener('focusout',()=>{item.classList.toggle('is-open',false);item.classList.toggle('is-dismissed',true)});
+  item.addEventListener('keydown',e=>{if(e.key==='Escape'){item.classList.toggle('is-open',false);item.classList.toggle('is-dismissed',true)}});
+});
 function positionGuideCue(){
   const cue=$('guideCue'),leader=$('cueLeader'),base=state.phaseIndex===3&&!state.baseMoved,target=base?el.baseA:el.rotateHandle;
   const visible=!state.guideDismissed&&!state.transitioning&&(!state.visualSuccess||base);

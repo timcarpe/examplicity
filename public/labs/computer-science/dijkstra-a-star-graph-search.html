@@ -380,6 +380,90 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
   }
 }
 
+/* Opt-in working and learning-sequence controls; lab logic owns their state. */
+.lab-working-toggle {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--lab-line-subtle);
+  border-radius: var(--lab-control-radius);
+  background: var(--lab-surface-muted);
+}
+.lab-working-toggle button {
+  min-width: 40px;
+  min-height: 34px;
+  padding: 0 6px;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--lab-ink-secondary);
+  font-size: var(--lab-type-label);
+  font-weight: 400;
+  box-shadow: none;
+}
+.lab-working-toggle button:hover { background: var(--lab-line-subtle); }
+.lab-working-toggle button[aria-pressed="true"] {
+  border-color: var(--lab-line);
+  background: var(--lab-surface);
+  color: var(--lab-ink);
+  box-shadow: var(--lab-panel-shadow);
+}
+.lab-stage-progress { position: relative; display: flex; flex-shrink: 0; }
+.lab-stage-progress .stage-marker {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  min-height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  box-shadow: none;
+}
+.lab-stage-progress .stage-marker > span {
+  display: grid;
+  place-items: center;
+  width: 12px;
+  height: 12px;
+  border: 1px solid var(--lab-line-strong);
+  border-radius: 50%;
+  color: var(--lab-good-ink);
+  font-size: 11px;
+  line-height: 1;
+}
+.lab-stage-progress .stage-marker[aria-current="step"] > span {
+  border-color: var(--lab-accent);
+  background: var(--lab-accent);
+  box-shadow: inset 0 0 0 3px var(--lab-surface);
+}
+.lab-stage-progress .stage-marker.is-complete > span {
+  border-color: var(--lab-good-line);
+  background: var(--lab-good-soft);
+  box-shadow: none;
+}
+.lab-stage-progress .stage-detail {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 20;
+  display: none;
+  width: min(300px, calc(100vw - 84px));
+  padding: 16px;
+  border: 1px solid var(--lab-line);
+  border-radius: var(--lab-control-radius);
+  background: var(--lab-surface);
+  box-shadow: var(--lab-shadow-cue);
+  color: var(--lab-ink);
+  font-size: var(--lab-type-body);
+  line-height: var(--lab-leading-body);
+  text-align: left;
+}
+.lab-stage-progress .stage-detail strong { display: block; font-size: var(--lab-type-body); font-weight: 600; }
+.lab-stage-progress .stage-detail p { margin: 6px 0 0; color: var(--lab-ink-secondary); font-size: inherit; }
+.lab-stage-progress .stage-detail .stage-work { margin-top: 12px; white-space: pre-line; overflow-wrap: anywhere; }
+.lab-stage-progress .stage-detail .stage-work:empty { display: none; }
+.lab-stage-progress .stage-item:not(.is-dismissed):is(:hover, :focus-within, .is-open) .stage-detail { display: block; }
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -562,10 +646,10 @@ h2,h3{margin:0}h2{font-size:15px}h3{font-size:9px;text-transform:uppercase;lette
 .frontier-heading{margin-top:12px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}.frontier-heading span{color:var(--lab-muted);font-size:8px}.frontier-list{min-height:46px;margin-top:5px;display:grid;gap:5px}.frontier-choice{width:100%;min-height:42px;padding:5px 7px;display:grid;grid-template-columns:minmax(45px,1fr) repeat(3,43px);align-items:center;gap:3px;border-color:#b8cae7;background:var(--lab-accent-soft);text-align:center}.frontier-choice.dijkstra{grid-template-columns:minmax(45px,1fr) 60px}.frontier-choice span:first-child{text-align:left;font-size:13px;font-weight:900}.frontier-choice span:not(:first-child){font:800 10px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.frontier-choice.minimum{border-color:var(--lab-accent);box-shadow:none}.frontier-choice.inspected{border-color:var(--orange);background:var(--orange-soft)}.frontier-choice:disabled{opacity:.65}.tie-note{margin-top:5px;padding:6px 7px;border-radius:7px;background:#f3f6f8;color:#586770;font-size:8.5px;line-height:1.35}.tie-note strong{color:var(--lab-ink)}
 .settled-section{margin-top:12px}.chip-list{min-height:29px;margin-top:5px;display:flex;flex-wrap:wrap;gap:4px}.chip{min-width:28px;padding:5px 7px;border:1px solid #b9daca;border-radius:7px;background:var(--lab-good-soft);color:#246b56;text-align:center;font-size:9px;font-weight:850}.empty{color:#8a969d;font-size:9px}.status{min-height:34px;margin:11px 0 0;padding:7px 8px;border-radius:8px;background:#f3f6f7;color:#506069;font-size:9px;line-height:1.4}.status.warn{background:var(--lab-warn-soft);color:#72520f}
 
-.comparison{margin-top:10px;padding:11px;display:grid;grid-template-columns:195px minmax(0,1fr) minmax(220px,.75fr);grid-template-areas:"heading results note" "previous previous previous";gap:10px;align-items:center}.comparison>div:first-child{grid-area:heading}.comparison>div:first-child p{margin:3px 0 0;color:var(--lab-muted);font-size:9px;line-height:1.35}.result-grid{grid-area:results;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.result-card{min-height:70px;padding:8px 9px;border:1px solid var(--lab-line);border-radius:8px;background:#fafbfb}.result-card span,.result-card strong{display:block}.result-card span{color:var(--lab-muted);font-size:7.5px;font-weight:850;text-transform:uppercase;letter-spacing:.05em}.result-card strong{margin-top:4px;font-size:11px}.result-card p{margin:3px 0 0;color:var(--lab-muted);font-size:8.5px;line-height:1.35}.result-card.complete{border-color:#acd3c0;background:var(--lab-good-soft)}.comparison-note{grid-area:note;margin:0;padding:8px 9px;border-radius:8px;background:#f3f6f7;color:#4f5d65;font-size:9px;line-height:1.4}.previous-experiment{grid-area:previous;padding:8px 9px;border:1px dashed #b9c2c8;border-radius:8px;background:#fafbfb;color:#526169;font-size:8.5px;line-height:1.4}
+.result-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.result-card{min-height:70px;padding:8px 9px;border:1px solid var(--lab-line);border-radius:8px;background:#fafbfb}.result-card span,.result-card strong{display:block}.result-card span{color:var(--lab-muted);font-size:7.5px;font-weight:850;text-transform:uppercase;letter-spacing:.05em}.result-card strong{margin-top:4px;font-size:11px}.result-card p{margin:3px 0 0;color:var(--lab-muted);font-size:8.5px;line-height:1.35}.result-card.complete{border-color:#acd3c0;background:var(--lab-good-soft)}.previous-experiment{padding:8px 9px;border:1px dashed #b9c2c8;border-radius:8px;background:#fafbfb;color:#526169;font-size:8.5px;line-height:1.4}
 
-@media(max-width:1040px){.workspace{grid-template-columns:1fr}.inspector{display:grid;grid-template-columns:minmax(240px,.85fr) minmax(300px,1.15fr);gap:0 12px}.inspector-heading,.decision-card,.relax-card,.status{grid-column:1}.frontier-heading,.frontier-list,.tie-note,.settled-section{grid-column:2}.frontier-heading{margin-top:0}.comparison{grid-template-columns:180px 1fr;grid-template-areas:"heading results" "note note" "previous previous"}}
-@media(max-width:700px){main{width:min(100% - 12px,1340px);margin-top:9px}.mission{grid-template-columns:1fr}.run-actions{justify-content:flex-start}.algorithm-button{flex:1 1 125px}.panel-heading{display:block}.key{justify-content:flex-start;margin-top:6px;white-space:normal}.inspector{display:block}.frontier-heading{margin-top:12px}.comparison{grid-template-columns:1fr;grid-template-areas:"heading" "results" "note" "previous"}.graph-canvas{min-width:0}#graph{min-height:0}}
+@media(max-width:1040px){.workspace{grid-template-columns:1fr}.inspector{display:grid;grid-template-columns:minmax(240px,.85fr) minmax(300px,1.15fr);gap:0 12px}.inspector-heading,.decision-card,.relax-card,.status{grid-column:1}.frontier-heading,.frontier-list,.tie-note,.settled-section{grid-column:2}.frontier-heading{margin-top:0}}
+@media(max-width:700px){main{width:min(100% - 12px,1340px);margin-top:9px}.mission{grid-template-columns:1fr}.run-actions{justify-content:flex-start}.algorithm-button{flex:1 1 125px}.panel-heading{display:block}.key{justify-content:flex-start;margin-top:6px;white-space:normal}.inspector{display:block}.frontier-heading{margin-top:12px}.graph-canvas{min-width:0}#graph{min-height:0}}
 @media(max-width:430px){.result-grid{grid-template-columns:1fr}.run-actions button:not(.algorithm-button){flex:1 1 90px}.frontier-choice{grid-template-columns:minmax(45px,1fr) repeat(3,39px)}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}}
 </style>
@@ -573,17 +657,17 @@ h2,h3{margin:0}h2{font-size:15px}h3{font-size:9px;text-transform:uppercase;lette
 /* The graph remains the visual model. The adjacent column is one open learner-working surface. */
 button{min-height:42px;padding:0 13px;font-size:var(--lab-type-body,14px);font-weight:600}
 .mission{min-height:0;padding:0 0 20px;border:0;background:transparent;box-shadow:none;gap:24px}
-.mission-copy strong{font-size:16px;font-weight:600}.mission-copy span{margin-top:4px;color:var(--lab-ink-secondary,#424245);font-size:var(--lab-type-body,14px);line-height:1.5}
+.mission-copy strong{font-size:16px;font-weight:600}
 .run-actions{gap:8px}.algorithm-button{min-width:142px;padding:7px 12px;border-color:var(--lab-accent-line,#9fb4d6);background:var(--lab-accent-surface,#f8fbff);color:var(--lab-accent-ink,#315b91)}.algorithm-button span{font-size:var(--lab-type-body,14px);font-weight:600}.algorithm-button small{margin-top:2px;color:inherit;font-size:var(--lab-type-annotation,11px);font-weight:400}.algorithm-button.active{border-color:var(--lab-accent);background:var(--lab-accent);color:var(--lab-on-accent,#fff)}
-.workspace{gap:32px;padding:24px;grid-template-columns:minmax(0,1fr) 340px;background:var(--lab-surface);border-radius:var(--lab-panel-radius)}.graph-panel,.inspector{padding:0;border:0;border-radius:0;box-shadow:none;background:transparent}.panel-heading{padding-bottom:0;border:0}.panel-heading h2,.working-heading h2,.comparison h2{font-size:16px;font-weight:600}.panel-heading p,.graph-note,.comparison>div:first-child p,.comparison-note,.previous-experiment{color:var(--lab-ink-secondary,#424245);font-size:var(--lab-type-body,14px);line-height:1.5}.panel-heading p{margin-top:4px}.key{gap:10px;color:var(--lab-muted);font-size:var(--lab-type-label,12px);font-weight:400}.graph-shell{margin-top:16px;overflow:hidden;border:0;background:var(--lab-surface)}.graph-canvas{min-width:0;width:100%;aspect-ratio:760/430}#graph{min-height:0;height:100%}.graph-note{margin:16px 0 0}.graph-note strong{color:var(--lab-ink);font-weight:600}
+.workspace{gap:32px;padding:24px;grid-template-columns:minmax(0,1fr) 340px;background:var(--lab-surface);border-radius:var(--lab-panel-radius)}.graph-panel,.inspector{padding:0;border:0;border-radius:0;box-shadow:none;background:transparent}.panel-heading{padding-bottom:0;border:0}.panel-heading h2,.working-heading h2{font-size:16px;font-weight:600}.panel-heading p,.graph-note,.previous-experiment{color:var(--lab-ink-secondary,#424245);font-size:var(--lab-type-body,14px);line-height:1.5}.panel-heading p{margin-top:4px}.key{gap:10px;color:var(--lab-muted);font-size:var(--lab-type-label,12px);font-weight:400}.graph-shell{margin-top:16px;overflow:hidden;border:0;background:var(--lab-surface)}.graph-canvas{min-width:0;width:100%;aspect-ratio:760/430}#graph{min-height:0;height:100%}.graph-note{margin:16px 0 0}.graph-note strong{color:var(--lab-ink);font-weight:600}
 .edge-weight.selected rect{fill:var(--lab-accent-surface,#f8fbff);stroke:var(--lab-accent);stroke-width:3}.cost-editor{border-color:var(--lab-accent-line,#9fb4d6);background:var(--lab-accent-surface,#f8fbff);box-shadow:var(--lab-shadow-cue,0 10px 24px rgba(29,29,31,.16))}.cost-editor-head span{color:var(--lab-ink-secondary,#424245);font-size:var(--lab-type-label,12px);font-weight:400}.cost-close,.cost-editor-controls button{min-width:40px;min-height:40px;border-color:var(--lab-accent-line,#9fb4d6);color:var(--lab-accent-ink,#315b91)}.cost-editor-controls output{font-size:var(--lab-type-body,14px);font-weight:600}
-.inspector{display:block}.working-heading{padding-bottom:0;border:0}.working-heading p{margin:4px 0 0;color:var(--lab-ink-secondary,#424245);font-size:var(--lab-type-body,14px);line-height:1.5}.decision-card{margin-top:24px;padding:12px;border:1px solid var(--lab-line);border-radius:var(--lab-control-radius,8px);background:var(--lab-surface)}.decision-card.needed,.decision-card.warn{border-color:var(--lab-needed-line,#d8c36a);background:var(--lab-needed-surface,#fffdf4)}.decision-card.bad{border-color:var(--lab-bad-line,#d99b93);background:var(--lab-bad-surface,#fff8f7)}.decision-card.good{border-color:var(--lab-good-line,#9cc7aa);background:var(--lab-good-surface,#f7fcf8)}.decision-card span{color:var(--lab-ink-secondary,#424245);font-size:var(--lab-type-label,12px);font-weight:400;text-transform:none;letter-spacing:0}.decision-card strong{margin-top:4px;color:var(--lab-ink);font-size:16px;font-weight:600;line-height:1.35}.decision-card p{margin-top:4px;color:var(--lab-ink-secondary,#424245);font-size:var(--lab-type-body,14px);font-weight:400;line-height:1.5}
+.inspector{display:block}.working-heading{padding-bottom:0;border:0}.decision-card{margin-top:24px;padding:12px;border:1px solid var(--lab-line);border-radius:var(--lab-control-radius,8px);background:var(--lab-surface)}.decision-card.needed,.decision-card.warn{border-color:var(--lab-needed-line,#d8c36a);background:var(--lab-needed-surface,#fffdf4)}.decision-card.bad{border-color:var(--lab-bad-line,#d99b93);background:var(--lab-bad-surface,#fff8f7)}.decision-card.good{border-color:var(--lab-good-line,#9cc7aa);background:var(--lab-good-surface,#f7fcf8)}.decision-card span{color:var(--lab-ink-secondary,#424245);font-size:var(--lab-type-label,12px);font-weight:400;text-transform:none;letter-spacing:0}.decision-card strong{margin-top:4px;color:var(--lab-ink);font-size:16px;font-weight:600;line-height:1.35}.decision-card p{margin-top:4px;color:var(--lab-ink-secondary,#424245);font-size:var(--lab-type-body,14px);font-weight:400;line-height:1.5}
 .frontier-section,.relaxation,.settled-section{margin-top:24px}.frontier-heading{margin:0;align-items:baseline}.frontier-heading h3,.relaxation h3,.settled-section h3{font-size:var(--lab-type-label,12px);font-weight:400;text-transform:none;letter-spacing:0}.frontier-heading span{color:var(--lab-muted);font-size:var(--lab-type-label,12px);font-weight:400}.frontier-list{margin-top:8px;gap:8px}.frontier-choice{min-height:44px;border-color:var(--lab-accent-line,#9fb4d6);background:var(--lab-accent-surface,#f8fbff);font-size:var(--lab-type-body,14px);font-weight:400}.frontier-choice span:first-child{font-size:var(--lab-type-body,14px);font-weight:600}.frontier-choice span:not(:first-child){font:400 var(--lab-type-body,14px)/1.2 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.frontier-choice.minimum{border-color:var(--lab-accent);background:var(--lab-accent-soft)}.frontier-choice.inspected{border-color:var(--lab-concept-amber-line,#e0b383);background:var(--lab-concept-amber-soft,#fff2e6)}.tie-note{margin:8px 0 0;padding:0;background:transparent;color:var(--lab-ink-secondary,#424245);font-size:var(--lab-type-body,14px);line-height:1.5}.tie-note strong{font-weight:600}
 .relax-card{min-height:0;margin-top:8px;padding:0;border:0;border-radius:0;background:transparent}.relax-card span{color:var(--lab-muted);font-size:var(--lab-type-label,12px);font-weight:400;text-transform:none;letter-spacing:0}.relax-card strong{margin-top:4px;color:var(--lab-ink);font:400 var(--lab-type-body,14px)/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.relax-card p{margin-top:4px;color:var(--lab-ink-secondary,#424245);font-size:var(--lab-type-body,14px);font-weight:400;line-height:1.5}.relax-card.idle{background:transparent}.relax-card.idle span,.relax-card.idle p{color:var(--lab-muted)}
 .chip-list{min-height:0;margin-top:8px;gap:8px}.chip{min-width:0;padding:0;border:0;border-radius:0;background:transparent;color:var(--lab-good-ink,#225f43);font-size:var(--lab-type-body,14px);font-weight:600}.chip+.chip::before{content:"→";margin-right:8px;color:var(--lab-muted);font-weight:400}.empty{color:var(--lab-ink-secondary);font-size:var(--lab-type-body,14px);font-weight:400}.status{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
-.comparison{margin-top:16px;padding:24px;gap:16px}.comparison h2{margin:0}.result-grid{gap:12px}.result-card{min-height:0;padding:12px;border-color:transparent;background:transparent}.result-card span{color:var(--lab-muted);font-size:var(--lab-type-label,12px);font-weight:400;text-transform:none;letter-spacing:0}.result-card strong{font-size:var(--lab-type-body,14px);font-weight:600}.result-card p,.comparison-note{color:var(--lab-ink-secondary,#424245);font-size:var(--lab-type-body,14px);font-weight:400;line-height:1.5}.result-card.complete{border-color:var(--lab-good-line,#9cc7aa);background:var(--lab-good-surface,#f7fcf8)}.comparison-note{padding:0;background:transparent}.previous-experiment{padding:12px;border-color:var(--lab-line);background:var(--lab-surface-muted,#f7f8fa)}
-@media(max-width:800px){.workspace{grid-template-columns:1fr}.inspector{display:block;padding-top:24px;border-top:1px solid var(--lab-line-subtle)}.comparison{grid-template-columns:180px 1fr;grid-template-areas:"heading results" "note note" "previous previous"}}
-@media(max-width:700px){.mission{grid-template-columns:1fr}.run-actions{width:100%;justify-content:flex-start}.algorithm-button{flex:1 1 150px}.workspace,.comparison{padding:16px}.graph-panel,.inspector{padding-inline:0}.panel-heading{display:block}.key{justify-content:flex-start;margin-top:10px;white-space:normal}.comparison{grid-template-columns:1fr;grid-template-areas:"heading" "results" "note" "previous"}}
+.comparison{display:block;margin-top:16px;padding:24px}.result-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.result-card{min-height:0;padding:12px;border-color:transparent;background:transparent}.result-card span{color:var(--lab-muted);font-size:var(--lab-type-label,12px);font-weight:400;text-transform:none;letter-spacing:0}.result-card strong{font-size:var(--lab-type-body,14px);font-weight:600}.result-card p,.tie-caveat{color:var(--lab-ink-secondary,#424245);font-size:var(--lab-type-body,14px);font-weight:400;line-height:1.5}.result-card.complete{border-color:var(--lab-good-line,#9cc7aa);background:var(--lab-good-surface,#f7fcf8)}.tie-caveat{margin:12px 0 0}.previous-experiment{white-space:pre-line;margin-top:12px;padding:12px;border-color:var(--lab-line);background:var(--lab-surface-muted,#f7f8fa)}
+@media(max-width:800px){.workspace{grid-template-columns:1fr}.inspector{display:block;padding-top:24px;border-top:1px solid var(--lab-line-subtle)}}
+@media(max-width:700px){.mission{grid-template-columns:1fr}.run-actions{width:100%;justify-content:flex-start}.algorithm-button{flex:1 1 150px}.workspace,.comparison{padding:16px}.graph-panel,.inspector{padding-inline:0}.panel-heading{display:block}.key{justify-content:flex-start;margin-top:10px;white-space:normal}}
 @media(max-width:430px){.node-name{font-size:32px}.edge-weight text{font-size:28px}.edge-weight rect{transform:scale(1.5)}.run-actions button{flex:1 1 132px}.frontier-choice{grid-template-columns:minmax(45px,1fr) repeat(3,36px)}}
 </style>
 <!-- LAB_CONTRACT_START -->
@@ -638,7 +722,6 @@ button{min-height:42px;padding:0 13px;font-size:var(--lab-type-body,14px);font-w
   <section class="mission" aria-labelledby="mission-title">
     <div class="mission-copy">
       <strong id="mission-title">Find the cheapest route from S to G</strong>
-      <span>Choose the next frontier town, then compare the two priority rules on the same roads.</span>
     </div>
     <div class="run-actions" aria-label="Search controls">
       <button id="run-dijkstra" class="algorithm-button" type="button"><span>Start Dijkstra</span><small>priority = travelled g</small></button>
@@ -653,7 +736,7 @@ button{min-height:42px;padding:0 13px;font-size:var(--lab-type-body,14px);font-w
       <div class="panel-heading">
         <div>
           <h2 id="graph-heading">Town road map</h2>
-          <p>Road labels are costs. Blue towns are the choices currently in the frontier.</p>
+          <p>Road labels are costs.</p>
         </div>
         <div class="key" aria-label="Search state key">
           <span><i class="dot current"></i>settling</span><span><i class="dot frontier"></i>frontier</span><span><i class="dot settled"></i>settled</span><span><i class="line"></i>route</span><span><i class="line old"></i>previous route</span>
@@ -692,27 +775,26 @@ button{min-height:42px;padding:0 13px;font-size:var(--lab-type-body,14px);font-w
           </div>
         </div>
       </div>
-      <div class="graph-note"><strong>h is an optimistic estimate of remaining cost.</strong> The dashed line illustrates that estimate. <span id="cost-edit-hint">Complete both searches to edit a road cost.</span></div>
+      <div class="graph-note"><strong>For A*, h is an optimistic estimate of remaining cost.</strong> <span id="cost-edit-hint">Complete both searches to edit a road cost.</span></div>
     </section>
 
     <aside class="panel inspector" aria-labelledby="inspector-heading">
-      <header class="working-heading"><h2 id="inspector-heading">Working</h2><p id="priority-rule">Choose a search to see its priority rule.</p></header>
-      <article id="decision-card" class="decision-card needed"><span id="decision-label">Your next choice</span><strong id="decision-node">Choose a search</strong><p id="decision-reason">Then choose the blue frontier town with minimum priority.</p></article>
+      <header class="working-heading"><h2 id="inspector-heading">Working</h2></header>
+      <article id="decision-card" class="decision-card needed"><span id="decision-label">Next decision</span><strong id="decision-node">Start a search</strong><p id="decision-reason">Choose Dijkstra or A* above.</p></article>
       <section class="frontier-section" aria-labelledby="frontier-heading"><div class="frontier-heading"><h3 id="frontier-heading">Frontier</h3><span id="frontier-columns">town · priority</span></div>
         <div id="frontier-list" class="frontier-list"><span class="empty">No active search</span></div>
         <div id="tie-note" class="tie-note" hidden></div>
       </section>
-      <section class="relaxation" aria-labelledby="relaxation-heading"><h3 id="relaxation-heading">Latest relaxation</h3><article id="relax-card" class="relax-card idle"><span id="relax-label">No road checked yet</span><strong id="relax-equation">—</strong><p id="relax-result">Settling a town checks its outgoing roads.</p></article></section>
-      <section class="settled-section" aria-labelledby="settled-heading"><h3 id="settled-heading">Settled order</h3><div id="settled-list" class="chip-list"><span class="empty">None yet</span></div></section>
+      <section id="relaxation" class="relaxation" aria-labelledby="relaxation-heading" hidden><h3 id="relaxation-heading">Latest relaxation</h3><article id="relax-card" class="relax-card idle"><span id="relax-label">Waiting for a choice</span><strong id="relax-equation">—</strong><p id="relax-result">Settling a town tests its outgoing roads.</p></article></section>
+      <section id="settled-section" class="settled-section" aria-labelledby="settled-heading" hidden><h3 id="settled-heading">Settled order</h3><div id="settled-list" class="chip-list"></div></section>
       <p id="status" class="status needed" role="status" aria-live="polite">Start either search. Road costs are fixed until both are complete.</p>
     </aside>
   </div>
 
-  <section class="panel comparison" aria-labelledby="comparison-heading">
-    <div><h2 id="comparison-heading">Same roads, different priority</h2><p>Run both searches, change one road cost, then compare the routes again.</p></div>
-    <div class="result-grid"><article id="dijkstra-result" class="result-card"><span>Dijkstra · g</span><strong>Not explored</strong><p>Choose frontier towns using travelled cost.</p></article><article id="astar-result" class="result-card"><span>A* · g + h</span><strong>Not explored</strong><p>Choose frontier towns using travelled cost plus estimate.</p></article></div>
+  <section id="comparison" class="panel comparison" aria-label="Search results" hidden>
+    <div class="result-grid"><article id="dijkstra-result" class="result-card" hidden></article><article id="astar-result" class="result-card" hidden></article></div>
     <div id="previous-experiment" class="previous-experiment" hidden></div>
-    <p id="comparison-note" class="comparison-note">Run both searches, then compare their settled order and route.</p>
+    <p id="tie-caveat" class="tie-caveat" hidden></p>
   </section>
 </main>
 
@@ -1217,18 +1299,17 @@ button{min-height:42px;padding:0 13px;font-size:var(--lab-type-body,14px);font-w
       const old=search.distances[item.id];const proposed=search.distances[id]+item.weight;
       $("relax-card").className="relax-card";$("relax-label").textContent=`Relax ${id} → ${item.id}`;$("relax-equation").textContent=`${search.distances[id]} + ${item.weight} = ${proposed}`;
       if(proposed<old){
-        $("relax-result").textContent=`Candidate ${proposed} beats ${Number.isFinite(old)?old:"∞"}. ${item.id}'s best-known g and predecessor become ${proposed} and ${id}.`;
+        $("relax-result").textContent=`${proposed} < ${Number.isFinite(old)?old:"∞"}: g(${item.id}) becomes ${proposed}, with predecessor ${id}.`;
       }else if(proposed===old){
-        $("relax-result").textContent=`Candidate ${proposed} ties the existing g = ${old}. The cost is equally good, so the existing predecessor is kept.`;
+        $("relax-result").textContent=`${proposed} = ${old}: equal cost; keep the existing predecessor.`;
       }else{
-        $("relax-result").textContent=`Candidate ${proposed} is worse than the existing g = ${old}. Nothing changes.`;
+        $("relax-result").textContent=`${proposed} > ${old}: keep g(${item.id}) = ${old}.`;
       }
       renderGraph();await sleep(560);
       if(proposed<old){search.distances[item.id]=proposed;search.previous[item.id]=id;search.frontier.add(item.id);renderAll();await sleep(360)}
     }
     activeEdge=null;activeNeighbour=null;search.current=null;
     search.lastReason=`${id} is settled. Choose the minimum-priority town from the updated frontier.`;
-    $("relax-card").className="relax-card idle";$("relax-label").textContent="Relaxation complete";$("relax-equation").textContent=outgoing.length?`${outgoing.length} road${outgoing.length===1?"":"s"} checked`:"No unsettled neighbours";$("relax-result").textContent="The frontier now contains the best tentative costs discovered so far.";
     $("status").className="status needed";$("status").textContent="Frontier updated. Predict the next town to settle.";
     busy=false;renderAll();
   }
@@ -1240,7 +1321,6 @@ button{min-height:42px;padding:0 13px;font-size:var(--lab-type-body,14px);font-w
     search.lastReason=`G has minimum priority, so the cheapest route is fixed at cost ${search.distances.G}.`;
     $("decision-card").className="decision-card good";$("decision-label").textContent="✓ Route fixed";$("decision-node").textContent=`${search.route.join(" → ")} · cost ${search.distances.G}`;
     $("decision-reason").textContent=optimal.length>1?`There are ${optimal.length} equal cheapest routes on these roads. This run fixed one of them.`:`This is the unique cheapest route on the current roads.`;
-    $("relax-card").className="relax-card idle";$("relax-label").textContent="Search complete";$("relax-equation").textContent="G is minimum";$("relax-result").textContent="No outgoing road needs relaxation once the goal is settled.";
     const both=Boolean(results.dijkstra&&results.astar);
     if(both)costEditingUnlocked=true;
     $("status").className="status good";$("status").textContent=both?"✓ Both challenges complete. Select any road cost on the map to adjust it, then rerun either search.":`✓ ${labels[search.algorithm]} complete. Run the other strategy on the same road costs.`;
@@ -1297,18 +1377,19 @@ button{min-height:42px;padding:0 13px;font-size:var(--lab-type-body,14px);font-w
   }
 
   function renderInspector(){
-    $("priority-rule").textContent=search?(search.algorithm==="astar"?"A* uses travelled g + estimate h.":"Dijkstra uses travelled g only."):"Choose a search to see its priority rule.";$("frontier-columns").textContent=search?.algorithm==="astar"?"town · g · h · f":"town · g";
-    if(search&&!inspected&&!busy&&!search.complete){const mins=minimumCandidates();$("decision-card").className="decision-card needed";$("decision-label").textContent="Your next choice";$("decision-node").textContent=mins.length>1?"Choose either tied minimum":"Choose the minimum priority";$("decision-reason").textContent="Choose a blue frontier town. Only a minimum-priority choice advances the search."}
-    if(!search){$("decision-card").className="decision-card needed";$("decision-label").textContent="Your next choice";$("decision-node").textContent="Choose a search";$("decision-reason").textContent="Then choose the blue frontier town with minimum priority."}
-    const list=$("settled-list");list.replaceChildren();if(!search?.settled.length){const e=document.createElement("span");e.className="empty";e.textContent="None yet";list.append(e)}else search.settled.forEach(id=>{const c=document.createElement("span");c.className="chip";c.textContent=id;list.append(c)});
+    $("frontier-columns").textContent=search?.algorithm==="astar"?"town · g · h · f":"town · g";
+    if(search&&!inspected&&!busy&&!search.complete){const mins=minimumCandidates();$("decision-card").className="decision-card needed";$("decision-label").textContent="Next decision";$("decision-node").textContent=mins.length>1?"Choose either tied minimum":"Choose the minimum priority";$("decision-reason").textContent="Select a blue town from the map or frontier."}
+    if(!search){$("decision-card").className="decision-card needed";$("decision-label").textContent="Next decision";$("decision-node").textContent="Start a search";$("decision-reason").textContent="Choose Dijkstra or A* above."}
+    const hasSettled=Boolean(search?.settled.length);$("relaxation").hidden=!hasSettled;$("settled-section").hidden=!hasSettled;
+    const list=$("settled-list");list.replaceChildren();if(hasSettled)search.settled.forEach(id=>{const c=document.createElement("span");c.className="chip";c.textContent=id;list.append(c)});
   }
 
-  function resultCard(id,result,algorithm){const card=$(id);card.className=`result-card${result?" complete":""}`;card.replaceChildren();const label=document.createElement("span"),heading=document.createElement("strong"),detail=document.createElement("p");label.textContent=algorithm==="dijkstra"?"Dijkstra · g":"A* · g + h";if(result){heading.textContent=`${result.route.join(" → ")} · cost ${result.cost}`;const tieText=result.ties.length?` ${result.ties.length} tie choice${result.ties.length===1?"":"s"} occurred.`:"";const altText=result.optimalRoutes.length>1?` ${result.optimalRoutes.length} equal cheapest routes exist.`:"";detail.textContent=`${result.settled.length} towns settled.${tieText}${altText}`}else{heading.textContent="Not explored";detail.textContent="Complete this search on the current roads."}card.append(label,heading,detail)}
+  function resultCard(id,result,algorithm){const card=$(id);card.hidden=!result;card.className=`result-card${result?" complete":""}`;card.replaceChildren();if(!result)return;const label=document.createElement("span"),heading=document.createElement("strong"),detail=document.createElement("p");label.textContent=algorithm==="dijkstra"?"Dijkstra · g":"A* · g + h";heading.textContent=`${result.route.join(" → ")} · cost ${result.cost}`;const facts=[`${result.settled.length} settled`];if(result.ties.length)facts.push(`${result.ties.length} tie${result.ties.length===1?"":"s"}`);if(result.optimalRoutes.length>1)facts.push(`${result.optimalRoutes.length} equal routes`);detail.textContent=facts.join(" · ");card.append(label,heading,detail)}
 
   function renderComparison(){
-    resultCard("dijkstra-result",results.dijkstra,"dijkstra");resultCard("astar-result",results.astar,"astar");const both=results.dijkstra&&results.astar;
-    if(both){const d=results.dijkstra,a=results.astar;let note=`Both found cheapest cost ${d.cost}. Your runs settled ${d.settled.length} towns with Dijkstra and ${a.settled.length} with A*.`;if(d.ties.length||a.ties.length)note+=` Equal-priority choices occurred, so the exact settled order/count can depend on which legal tie you chose.`;if(d.optimalRoutes.length>1)note+=` This graph also has ${d.optimalRoutes.length} equal cheapest routes.`;note+=` Road-cost editing is unlocked: select any cost label on the map to change that road.`;$("comparison-note").textContent=note}else if(costEditingUnlocked){$("comparison-note").textContent="Road costs are editable. Rerun both searches on the current costs to compare the two priority rules."}else $("comparison-note").textContent="Complete both searches on the fixed starting costs. Compare the frontier priorities, not just the final route.";
-    const previous=$("previous-experiment");previous.hidden=!previousExperiment;if(previousExperiment){const parts=[];for(const alg of["dijkstra","astar"]){const r=previousExperiment.results[alg];if(r)parts.push(`${labels[alg]}: ${r.route.join(" → ")} · cost ${r.cost} · ${r.settled.length} settled`)}const key=previousExperiment.changedEdge;previous.textContent=`Previous graph before ${edgeNames[key]} changed from ${previousExperiment.costs[key]} to ${edgeCosts[key]} — ${parts.join(" | ")}. Those route edges remain ghosted above.`}
+    const hasEvidence=Boolean(results.dijkstra||results.astar||previousExperiment);$("comparison").hidden=!hasEvidence;resultCard("dijkstra-result",results.dijkstra,"dijkstra");resultCard("astar-result",results.astar,"astar");if(!hasEvidence)return;
+    const previous=$("previous-experiment");previous.hidden=!previousExperiment;if(previousExperiment){const parts=[];for(const alg of["dijkstra","astar"]){const r=previousExperiment.results[alg];if(r)parts.push(`${labels[alg]} ${r.route.join(" → ")} · cost ${r.cost} · ${r.settled.length} settled`)}const key=previousExperiment.changedEdge;previous.textContent=`Before ${edgeNames[key]} changed ${previousExperiment.costs[key]} → ${edgeCosts[key]}\n${parts.join("\n")}`}
+    const tied=[results.dijkstra,results.astar,...Object.values(previousExperiment?.results||{})].some(result=>result?.ties.length);const caveat=$("tie-caveat");caveat.hidden=!tied;caveat.textContent=tied?"Legal tie choices can change settled order and count, not the cheapest cost.":"";
   }
 
   function renderCostEditor(){

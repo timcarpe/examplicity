@@ -1,6 +1,6 @@
 # Examplicity design update — lean plan
 
-Target: `codex/llm-first-v0.1`. Scope: shared design language across the site and every lab in the current manifest (57 at review). Implementation is in progress. The three pilot labs require user review before further visible lab migrations.
+Target: `codex/llm-first-v0.1`. Scope: shared design language across the site and every lab in the current manifest (57 at review). Implementation is in progress. The second pilot pass has been accepted, with the Working, stage and copy refinements recorded below. The other labs remain queued for subsequent batches.
 
 ## Agreed rules
 
@@ -121,6 +121,57 @@ Second-pass verification:
   lint, production build and all 57 publication/download/contract checks pass.
   Offline browser verification remains separate from the automated packaging
   checks, as recorded above.
+
+### Accepted pilot refinements — Working, stages and visual-first copy
+
+The user accepted the second pass and clarified that the process should stay
+lean while the documentation can remain detailed. These refinements are now
+part of the living `docs/lab-style-contract.md`, superseding the second pass's
+blanket removal of progress surfaces:
+
+- **Working:** use the established grey segmented control, polished to one
+  plain label and None / Some / All. The selected option is white with a neutral
+  border; assistance settings do not use the blue primary-action treatment.
+- **Actual learning stages:** keep minimal markers immediately to the right of
+  Working, without a fraction counter or internal phase labels. Hover, keyboard
+  focus and tap expose the task and relevant working. Upcoming stages disclose
+  no answers. Current evidence updates; completed-stage evidence is retained.
+  Stage details do not provide a bypass around required learner action.
+- **Visual-first editorial review:** remove text that repeats a nearby visual,
+  control, legend or calculation. Improve the visual where that better exposes
+  the concept. Keep useful goals, interaction hints, working and non-obvious
+  interpretation. Review the bottom of each lab as carefully as its model.
+- **Graph Search:** reveal comparison results only when evidence exists;
+  omit empty relaxation/settled sections and generic bottom instructions.
+  Preserve priority decisions, the optimistic meaning of h, real result facts,
+  previous-map evidence and the qualification about legal tie choices.
+
+Implementation remains one Git batch: opt-in shared control styles, Coordinate
+stage details, Graph Search's copy/evidence changes and this guidance. The
+reference examples on the live site inform the new controls; their wider lab
+migrations remain in the catalogue queue. No new progression framework is
+introduced, and the supplied Downloads documents remain the original inputs.
+The repository style contract is the maintained source for subsequent feedback.
+
+Refinement verification:
+
+- Coordinate's None, Some and All settings expose zero, three and four learner
+  inputs respectively, and all start incomplete. The selected segment computes
+  to white on the guide's `#f7f8fa` grey group. All working plus a keyboard-built
+  bisector completes the first stage; its actual working remains available
+  after advancing. Future-stage details contain no answers. Tab, tap and Escape
+  open, switch and dismiss details without changing the learning stage.
+- Graph Search completed A* and Dijkstra at cost 8, with five and eight settled
+  towns respectively in the tested runs. The last relaxation calculation stays
+  visible after completion. Road-cost editing clears current working and keeps
+  the previous results for comparison; generic empty bottom content is absent.
+- Both labs have no page overflow at 1440, 1366, 1200, 900 and 390px. Coordinate's
+  header and details fit at phone width and in the 1280×720 embedded viewer.
+  No browser console errors were recorded.
+- All 67 tests, lint, production build and 57 publication/download/contract
+  checks pass. The other 55 generated labs are unchanged outside their inlined
+  shared styles; the new classes are opt-in. Offline browser testing remains
+  the separate outstanding check recorded in the earlier pilot evidence.
 
 ### Catalogue checklist
 

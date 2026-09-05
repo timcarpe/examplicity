@@ -641,6 +641,90 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
   }
 }
 
+/* Opt-in working and learning-sequence controls; lab logic owns their state. */
+.lab-working-toggle {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--lab-line-subtle);
+  border-radius: var(--lab-control-radius);
+  background: var(--lab-surface-muted);
+}
+.lab-working-toggle button {
+  min-width: 40px;
+  min-height: 34px;
+  padding: 0 6px;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--lab-ink-secondary);
+  font-size: var(--lab-type-label);
+  font-weight: 400;
+  box-shadow: none;
+}
+.lab-working-toggle button:hover { background: var(--lab-line-subtle); }
+.lab-working-toggle button[aria-pressed="true"] {
+  border-color: var(--lab-line);
+  background: var(--lab-surface);
+  color: var(--lab-ink);
+  box-shadow: var(--lab-panel-shadow);
+}
+.lab-stage-progress { position: relative; display: flex; flex-shrink: 0; }
+.lab-stage-progress .stage-marker {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  min-height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  box-shadow: none;
+}
+.lab-stage-progress .stage-marker > span {
+  display: grid;
+  place-items: center;
+  width: 12px;
+  height: 12px;
+  border: 1px solid var(--lab-line-strong);
+  border-radius: 50%;
+  color: var(--lab-good-ink);
+  font-size: 11px;
+  line-height: 1;
+}
+.lab-stage-progress .stage-marker[aria-current="step"] > span {
+  border-color: var(--lab-accent);
+  background: var(--lab-accent);
+  box-shadow: inset 0 0 0 3px var(--lab-surface);
+}
+.lab-stage-progress .stage-marker.is-complete > span {
+  border-color: var(--lab-good-line);
+  background: var(--lab-good-soft);
+  box-shadow: none;
+}
+.lab-stage-progress .stage-detail {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 20;
+  display: none;
+  width: min(300px, calc(100vw - 84px));
+  padding: 16px;
+  border: 1px solid var(--lab-line);
+  border-radius: var(--lab-control-radius);
+  background: var(--lab-surface);
+  box-shadow: var(--lab-shadow-cue);
+  color: var(--lab-ink);
+  font-size: var(--lab-type-body);
+  line-height: var(--lab-leading-body);
+  text-align: left;
+}
+.lab-stage-progress .stage-detail strong { display: block; font-size: var(--lab-type-body); font-weight: 600; }
+.lab-stage-progress .stage-detail p { margin: 6px 0 0; color: var(--lab-ink-secondary); font-size: inherit; }
+.lab-stage-progress .stage-detail .stage-work { margin-top: 12px; white-space: pre-line; overflow-wrap: anywhere; }
+.lab-stage-progress .stage-detail .stage-work:empty { display: none; }
+.lab-stage-progress .stage-item:not(.is-dismissed):is(:hover, :focus-within, .is-open) .stage-detail { display: block; }
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

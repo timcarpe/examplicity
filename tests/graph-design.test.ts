@@ -45,7 +45,7 @@ async function loadGraphRuntime() {
   assert.ok(match, 'graph lab source script should exist');
   const instrumented = match[1].replace(
     /\s*renderAll\(\);\s*\}\)\(\);\s*$/,
-    '\n  globalThis.__graphDesignTest = { chooseFrontier, getCanReveal: () => canReveal, getSearch: () => search, setSearch: value => { search = value; } };\n})();\n',
+    '\n  globalThis.__graphDesignTest = { startSearch, chooseFrontier, getCanReveal: () => canReveal, getSearch: () => search, setSearch: value => { search = value; } };\n})();\n',
   );
   assert.notEqual(instrumented, match[1], 'test runtime should expose the real chooseFrontier function');
 
@@ -69,6 +69,7 @@ async function loadGraphRuntime() {
     elements,
     runtime: (globalThis as typeof globalThis & {
       __graphDesignTest: {
+        startSearch: (algorithm: string) => void;
         chooseFrontier: (id: string) => Promise<void>;
         getCanReveal: () => boolean;
         getSearch: () => Record<string, unknown>;
@@ -121,6 +122,34 @@ test('wrong A* frontier choices preserve the search and show red feedback', asyn
     assert.equal(elements.get('decision-card')!.className, 'decision-card bad');
     assert.equal(elements.get('status')!.className, 'status bad');
     assert.match(elements.get('decision-label')!.textContent, /^✕ A is not minimum$/);
+  } finally {
+    delete (globalThis as typeof globalThis & { __graphDesignTest?: unknown }).__graphDesignTest;
+  }
+});
+
+test('Graph Search reveals actual evidence and retains the last relaxation calculation', async () => {
+  const { elements, runtime } = await loadGraphRuntime();
+  try {
+    runtime.startSearch('astar');
+    assert.equal(elements.get('comparison')!.hidden, true);
+    assert.equal(elements.get('relaxation')!.hidden, true);
+    assert.equal(elements.get('settled-section')!.hidden, true);
+
+    await runtime.chooseFrontier('S');
+    assert.equal(elements.get('comparison')!.hidden, true);
+    assert.equal(elements.get('relaxation')!.hidden, false);
+    assert.equal(elements.get('settled-section')!.hidden, false);
+    assert.equal(elements.get('relax-equation')!.textContent, '0 + 2 = 2');
+
+    for (const town of ['B', 'D', 'F', 'G']) await runtime.chooseFrontier(town);
+    assert.equal(elements.get('comparison')!.hidden, false);
+    assert.equal(elements.get('astar-result')!.hidden, false);
+    assert.equal(elements.get('dijkstra-result')!.hidden, true);
+    assert.equal(elements.get('relax-equation')!.textContent, '6 + 2 = 8');
+
+    runtime.startSearch('dijkstra');
+    assert.equal(elements.get('comparison')!.hidden, false, 'keep the completed A* result for comparison');
+    assert.equal(elements.get('relaxation')!.hidden, true, 'new search has no relaxation evidence yet');
   } finally {
     delete (globalThis as typeof globalThis & { __graphDesignTest?: unknown }).__graphDesignTest;
   }

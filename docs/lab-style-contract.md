@@ -92,11 +92,13 @@ Do not edit an embedded `LAB_FRAME_STYLES`, `LAB_MANIFEST_HEAD`,
   same labels, formula rows and order when assistance changes: replace shown
   results with learner inputs in place. Working stays outside transient cues
   and completion cards.
-- Do not surface stage numbers, phase names such as “calibrate”, progress
-  counters/bars, or redundant “Working required” headings and explanatory
-  subtext. Keep one clear learner task and one Working heading with its controls.
-  Internal progression still governs the learning sequence. Algorithm traces,
-  settled order and measured counts are evidence, not generic progress chrome.
+- Keep one clear learner task and a quiet `Working:` control where assistance
+  levels exist. Real learning stages may appear as minimal markers immediately
+  to its right, with working available on hover, focus and tap. Do not surface
+  fraction counters such as “1 / 4”, internal phase names such as “calibrate”,
+  or redundant “Working required” headings and explanatory subtext. Do not
+  invent a sequence for a lab that does not have one. Algorithm traces, settled
+  order and measured counts remain evidence beside their model.
 - Use padding and spacing within one parent surface. Idle calculations and
   explanatory paragraphs do not each need a box. Reserve full state borders
   for learner fields, actual feedback and bounded interaction/phase cards.
@@ -131,6 +133,10 @@ a saturated local button colour during ingestion. A local colour is justified
 only when it carries instructional meaning inside the operated model, such as a
 packet route, signal, bus, warning or diagram legend; that colour must not leak
 into surrounding interface chrome.
+
+The Working segmented control is deliberately neutral: its selected segment is
+white inside a light grey group. It is an assistance setting, not a primary
+action or a correctness state. See the control specification below.
 
 Static goals, hints and explanations normally use padding and ordinary text
 on the parent surface. A separate neutral border needs a grouping purpose.
@@ -175,6 +181,77 @@ Keep these local to each lab:
 Binary Register Practice keeps its `820px` maximum width. Other labs use the
 shared `1200px` maximum. Preserve useful responsive layouts while allowing
 vertical document flow under the rules above.
+
+## Working and stage controls
+
+This is living guidance. The September 2026 user review refines the supplied v3
+references; these rules supersede earlier instructions to remove all progress
+surfaces. The reference is the grey control in [Prime Factors](https://www.examplicity.org/mathematics/0580?lab=prime-factors-hcf-lcm)
+and the compact stage placement in [Sequence Patterns](https://www.examplicity.org/mathematics/0580?lab=sequence-patterns-differences),
+with redundant labels, helper paragraphs and numeric counters removed.
+
+- Label the control simply **Working:** followed by **None / Some / All**.
+  None means the learner supplies no written calculations; the working remains
+  visible and operating the model is still required. Preserve each lab's
+  existing meaning of Some and All. Do not add artificial levels to a lab.
+- Use the opt-in `.lab-working-toggle` from `public/labs/lab-frame.css`: a
+  `#f7f8fa` group, `#e7e8eb` boundary, white selected segment with a `#d2d2d7`
+  border, regular 12px labels and an overall 42px control height. Keep the
+  selected segment neutral; no blue fill, bold microtitle or explanatory line.
+  Buttons expose `aria-pressed` and retain a visible keyboard focus outline.
+- Place optional `.lab-stage-progress` directly to the right of the toggle in
+  the top-right working header. Small empty circles denote upcoming stages,
+  a blue inset dot marks the current stage, and a green check marks completion.
+  The visible marker is 12px within a 24×40px target. Text in its accessible
+  name distinguishes current, complete and upcoming independently of colour.
+- Stages represent the existing learning sequence. They report progress and
+  open details; they do not silently become skip-ahead navigation. A completed
+  marker requires the actual model and required working to be complete.
+- Give each stage a rich detail surface on hover, keyboard focus and tap.
+  Show a learner-facing task name and state, then relevant calculations,
+  submitted work or results. Current evidence updates as the model changes;
+  completed stages retain the evidence from that stage. Future stages describe
+  their task without revealing answers. Never expose a required answer through
+  a tooltip before the learner has supplied it.
+- Keep details readable: white surface, full neutral border, 16px padding,
+  regular 14px ink text and a restrained shadow. Anchor them within the working
+  column, with no page overflow. The pointer can enter the detail without
+  dismissing it; Escape dismisses it, and moving keyboard focus away closes it.
+  Tap opens the same content. Do not rely on a native `title` attribute alone.
+- At narrow widths, the working column moves below the model with its header
+  intact. Keep all controls reachable and tooltip content within the viewport.
+
+The executable reference is
+`labs-src/mathematics/coordinate-distance-midpoint-perpendicular/lab.html`.
+Shared CSS supplies appearance; stage names, completion and recorded working
+belong to the individual lab. This avoids a second progression framework.
+
+## Text must earn its place
+
+Review copy as part of every lab's design update, rather than transferring
+every old paragraph into a cleaner-looking box. Useful text establishes a goal,
+enables an interaction, shows working, identifies a non-obvious state or
+explains a relationship the visual alone cannot communicate.
+
+For each heading, paragraph and caption:
+
+1. Name what the learner gains from it. If the nearby visual, legend, control
+   or calculation already conveys that information, remove the repetition.
+2. Consider improving the visual first: label the operated object, show its
+   changing value, connect a cue to its handle, or compare results in aligned
+   rows. Do not narrate every visible change underneath the model.
+3. Keep working and meaningful interpretation. Brevity must not remove the
+   reason a choice is valid, the meaning of a heuristic, or qualifications such
+   as settled counts depending on legal tie choices.
+4. Show results when they exist. Avoid bottom panels of placeholder text,
+   generic summaries, repeated task instructions and “results appear here”
+   copy. A comparison should expose actual differences rather than repeat its
+   metrics in a paragraph.
+
+Apply this review to the whole lab, including the bottom area, every working
+level, intermediate feedback and completion states. Accessibility announcements
+may repeat essential visual changes when that serves a screen reader user;
+they do not require another visible paragraph.
 
 ## Change checklist
 
