@@ -11,6 +11,7 @@ const sourcePaths = [
   "agent/authoring-contract.md",
   "package.json",
   "src/lab-kit.css",
+  "src/lab-design.css",
   "src/lab-kit.js",
   "tools/build-manifest.mjs"
 ];
@@ -28,7 +29,8 @@ const manifest = {
   purpose: "Dependency-free capabilities for source labs that compile to standalone HTML.",
   entrypoints: {
     browserScript: "src/lab-kit.js",
-    css: "src/lab-kit.css"
+    css: "src/lab-kit.css",
+    designCss: "src/lab-design.css"
   },
   runtime: {
     global: "LabKit",

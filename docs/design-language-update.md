@@ -529,3 +529,14 @@ Unattempted, available calculation cards pulse their yellow border softly until 
 ### Field feedback without duplicate card marks — 5 September 2026
 
 Sequence and Prime Factors: cards containing answer fields no longer show a top-right status symbol or reserve space for it. Histogram: hide the matching header status pill when a card contains an input. Field feedback, card colour/pulse and field-free progress remain. Other reviewed labs have no equivalent corner mark to remove. Guide updated; validation skipped as requested.
+
+
+### Shared implementation consolidation — 5 September 2026
+
+- Added canonical `Lab Creation/packages/lab-kit/src/lab-design.css`: reviewed working cards, controls, heading styles, mathematical surfaces, attention and field-feedback rules; public reusable classes for new labs.
+- Removed repeated refinement style blocks from all six reviewed sources. They opt in with `<!-- LAB_DESIGN_COMPONENTS -->`; publication embeds the shared stylesheet after local styles. Model geometry, learning logic and lab-specific layout remain local.
+- Kit manifest/bundle include the resource. The living guide loads the canonical resource; developer sync embeds it in the published guide and combined downloadable CSS. Existing runtime 0.2.1 pins remain.
+- Download packaging uses the already compiled HTML and retains the inline design style. No extra CSS/network dependency is introduced.
+- Historical base lab CSS remains for compatibility; shared refinement rules override it. Future reusable visual changes must edit the canonical component resource.
+
+Packaging verification requested by user: all six reviewed labs’ compiled publication and standalone download contain the exact canonical CSS inline, with no unresolved component marker or external lab-design.css link. This is a focused packaging check; broader tests/browser validation were not run. Catalogue download fetches the compiled HTML and preserves its style block through createStandaloneLabHtml.

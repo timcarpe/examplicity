@@ -381,3 +381,5 @@ Available, unattempted working cards use a restrained two-second yellow border p
 The living HTML guide’s **Refined components and their uses** section groups the latest rules with interactive working-state and maths-surface specimens. Use it for purpose and appearance; the deployment copies are generated from this repository. Lab rollout scope remains in the site change record, not in this visual reference.
 
 Cards containing answer fields do not repeat check/x/status symbols in the top-right corner. Keep feedback at the fields, while retaining card state colour and attention behaviour. Field-free progress cards may retain their status marks.
+
+Shared implementation lives in `packages/lab-kit/src/lab-design.css`. New labs consume its component API; reviewed labs use compatibility selectors. Reusable refinements belong there, while geometry and learner-state logic remain lab-owned. Lab export embeds the resource in HTML, with no separate stylesheet or network requirement.

@@ -72,7 +72,7 @@ export default function DeveloperPage() {
               adapt or omit that styling; the guide takes precedence.
             </p>
             <ul className={styles.plainList}>
-              <li><a href="/developer/design-language.html">Open the living HTML design guide</a> · <a href="/developer/design-language.html" download>Download the complete guide</a> · <a href="/developer/design-language.css" download>Guide CSS</a></li>
+              <li><a href="/developer/design-language.html">Open the living HTML design guide</a> · <a href="/developer/design-language.html" download>Download the complete guide</a> · <a href="/developer/design-language.css" download>Guide CSS</a> · <a href="/developer/lab-design.css" download>Shared design components</a></li>
               <li><a href="/developer/lab-style-contract.md">Read the written style contract</a></li>
               <li><a href="/developer/lab-kit/0.3.0/README.md">Lab Kit 0.3.0 usage</a> · <a href="/developer/lab-kit/0.3.0/src/lab-kit.css" download>CSS</a> · <a href="/developer/lab-kit/0.3.0/src/lab-kit.js" download>JavaScript</a> · <a href="/developer/lab-kit/0.3.0/manifest.json">Release hashes</a></li>
             </ul>

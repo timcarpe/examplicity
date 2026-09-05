@@ -152,3 +152,12 @@ visual renderers, domain-specific working and authored progression in the lab.
 Use this kit for repeated mechanics and accessibility affordances only. The
 kit cannot decide what a learner should notice, what counts as evidence, or how
 an authentic system should behave.
+
+
+## Shared design components
+
+`src/lab-design.css` is the canonical implementation for the reviewed design refinements. Include it **after** base kit/tokens and local layout styles. Inline it in exported HTML; never leave a network stylesheet dependency in a downloaded lab. The site compiler expands `<!-- LAB_DESIGN_COMPONENTS -->` at the end of the source head into this stylesheet. Existing kit 0.2.1 runtime pins do not change.
+
+New labs use `.lab-toggle` with `data-kind="working|exam|mode"`, `.lab-action` with optional `data-priority="primary"`, `.lab-work-card` with `data-work-state="needed|good|bad|reference"` and `data-interacted="true"`, `.lab-math-surface`, `.lab-stage-surface`, `.lab-stage-heading` and `.lab-guide-target`. Use native button/input state and update the attributes from real learner state. Stop attention on pointer/keyboard interaction, reset for a new activity, and keep geometry/learning logic local. The stylesheet includes compatibility selectors for the six reviewed labs.
+
+The living guide documents visual intent. Change the shared stylesheet for reusable visual changes; keep only layout/model-specific adapters in a lab.

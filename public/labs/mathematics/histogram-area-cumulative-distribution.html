@@ -733,14 +733,68 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 @container lab-canvas (max-width:980px){.lab{padding:20px}.workspace{grid-template-columns:1fr;gap:0}.working-panel{border-top:1px solid var(--lab-line-subtle,var(--lab-line))}.evidence{padding-inline:0}.lab-activity-task{flex-basis:100%}.lab-activity-bar>.working-head{margin-left:auto}}
 @container lab-canvas (max-width:620px){.lab{padding:16px}.lab-activity-bar{gap:12px;margin-bottom:18px;padding-bottom:16px}.lab-activity-task{display:block;flex-basis:100%}.activity-actions{margin-top:12px}.activity-actions button{flex:0 1 auto}.lab-activity-bar>.working-head{width:100%;margin-left:0;justify-content:flex-start;flex-wrap:wrap}.lab-stage-progress .stage-detail{right:0;width:min(300px,calc(100vw - 36px))}.working-panel{padding:20px 0}.working-panel .working-row{grid-template-columns:1fr}.working-panel .work-input-wrap{width:min(100%,220px)}.working-panel .history-row{grid-template-columns:76px minmax(0,1fr) 48px}.next-card{width:min(320px,calc(100% - 24px))}}
 </style>
-<style data-rounded-settings>
+<style data-lab-design>
+/* Canonical Examplicity shared design components.
+   Edit this file, then sync the guide, authoring bundle and published labs.
+   Compatibility selectors retain the reviewed labs; use the public API for new labs. */
+
+/* working-progression */
+#answerForm{padding:12px;border:1px solid var(--lab-needed-line,#d8c36a);border-radius:8px;background:var(--lab-needed-surface,#fffdf4)}
+#answerForm[data-work-state="good"]{border-color:var(--lab-good-line,#9cc7aa);background:var(--lab-good-surface,#f7fcf8)}
+#answerForm[data-work-state="bad"]{border-color:var(--lab-bad-line,#d8aaa4);background:var(--lab-bad-surface,#fff8f7)}
+#answerForm .answer-label::before{content:"●";margin-right:8px;color:var(--lab-needed-ink,#735100)}
+#answerForm[data-work-state="good"] .answer-label::before{content:"✓";color:var(--lab-good-ink,#225f43)}
+#answerForm[data-work-state="bad"] .answer-label::before{content:"✕";color:var(--lab-bad-ink,#853b34)}
+#answerForm .feedback{padding:8px 0 0;border:0;background:transparent}
+.inspector .decision-card,.inspector .frontier-section,.inspector .relaxation,.inspector .settled-section{margin:10px 0 0;padding:12px;border:1px solid var(--lab-line-subtle,#e7e8eb);border-radius:8px;background:var(--lab-surface-muted,#f7f8fa);box-shadow:none}
+.inspector .decision-card.needed{border-color:var(--lab-needed-line,#d8c36a);background:var(--lab-needed-surface,#fffdf4)}
+.inspector .decision-card.good,.inspector .settled-section[data-complete="true"]{border-color:var(--lab-good-line,#9cc7aa);background:var(--lab-good-surface,#f7fcf8)}
+.inspector .decision-card.bad{border-color:var(--lab-bad-line,#d8aaa4);background:var(--lab-bad-surface,#fff8f7)}
+.inspector .relax-card{padding:0;border:0;background:transparent;box-shadow:none}
+.work-progress{display:flex;align-items:center;gap:8px;margin:10px 0;padding:12px;border:1px solid var(--lab-needed-line,#d8c36a);border-radius:8px;background:var(--lab-needed-surface,#fffdf4);color:var(--lab-ink,#242428);font-size:14px;line-height:1.45;box-shadow:none}
+.work-progress[data-complete="true"]{border-color:var(--lab-good-line,#9cc7aa);background:var(--lab-good-surface,#f7fcf8)}
+.work-progress .progress-mark{color:var(--lab-needed-ink,#735100);font-size:12px}
+.work-progress[data-complete="true"] .progress-mark{color:var(--lab-good-ink,#225f43)}
+.evidence .working-chain{display:grid;gap:10px}
+.evidence .readout-line,.evidence .readout-line.owned{margin:0;padding:12px;border:1px solid var(--lab-line-subtle,#e7e8eb);border-radius:8px;background:var(--lab-surface-muted,#f7f8fa)}
+.evidence .readout-line.owned{border-color:var(--lab-needed-line,#d8c36a);background:var(--lab-needed-surface,#fffdf4)}
+.evidence .readout-line.owned.correct{border-color:var(--lab-good-line,#9cc7aa);background:var(--lab-good-surface,#f7fcf8)}
+.evidence .readout-line.owned.incorrect{border-color:var(--lab-bad-line,#d8aaa4);background:var(--lab-bad-surface,#fff8f7)}
+.work-progress{display:flex;align-items:center;gap:8px;margin:10px 0;padding:12px;border:1px solid var(--lab-needed-line,#d8c36a);border-radius:8px;background:var(--lab-needed-surface,#fffdf4);color:var(--lab-ink,#242428);font-size:14px;line-height:1.45;box-shadow:none}
+.work-progress[data-complete="true"]{border-color:var(--lab-good-line,#9cc7aa);background:var(--lab-good-surface,#f7fcf8)}
+.work-progress .progress-mark{color:var(--lab-needed-ink,#735100);font-size:12px}
+.work-progress[data-complete="true"] .progress-mark{color:var(--lab-good-ink,#225f43)}
+.evidence .working-chain{gap:10px}
+.evidence .output-card,.evidence .output-card.complete,.evidence .output-card.working-required{margin:0;padding:12px;border:1px solid var(--lab-line-subtle,#e7e8eb);border-radius:8px;background:var(--lab-surface-muted,#f7f8fa);box-shadow:none}
+.evidence .output-card.working-required.in-progress{border-color:var(--lab-needed-line,#d8c36a);background:var(--lab-needed-surface,#fffdf4)}
+.evidence .output-card.working-required.correct{border-color:var(--lab-good-line,#9cc7aa);background:var(--lab-good-surface,#f7fcf8)}
+.evidence .output-card.working-required.incorrect{border-color:var(--lab-bad-line,#d8aaa4);background:var(--lab-bad-surface,#fff8f7)}
+.evidence .output-card.working-required.in-progress::after{content:"●";font-size:12px}
+.evidence .output-head{padding-right:18px}
+.work-progress{display:flex;align-items:center;gap:8px;margin:10px 0;padding:12px;border:1px solid var(--lab-needed-line,#d8c36a);border-radius:8px;background:var(--lab-needed-surface,#fffdf4);color:var(--lab-ink,#242428);font-size:14px;line-height:1.45;box-shadow:none}
+.work-progress[data-complete="true"]{border-color:var(--lab-good-line,#9cc7aa);background:var(--lab-good-surface,#f7fcf8)}
+.work-progress .progress-mark{color:var(--lab-needed-ink,#735100);font-size:12px}
+.work-progress[data-complete="true"] .progress-mark{color:var(--lab-good-ink,#225f43)}
+.calc-panel .calc-flow{gap:10px}
+.calc-panel .calc-step{position:relative;padding:12px;border:1px solid var(--lab-line-subtle,#e7e8eb);border-radius:8px;background:var(--lab-surface-muted,#f7f8fa);box-shadow:none}
+.calc-panel .calc-step.pending{border-color:var(--lab-needed-line,#d8c36a);background:var(--lab-needed-surface,#fffdf4)}
+.calc-panel .calc-step.good{border-color:var(--lab-good-line,#9cc7aa);background:var(--lab-good-surface,#f7fcf8)}
+.calc-panel .calc-step.bad{border-color:var(--lab-bad-line,#d8aaa4);background:var(--lab-bad-surface,#fff8f7)}
+.calc-panel .calc-step.locked{opacity:1}
+.calc-panel .calc-step .step-head{padding-right:20px}
+.calc-panel .calc-step::after{content:attr(data-progress-mark);position:absolute;top:12px;right:12px;font-size:12px;color:var(--lab-needed-ink,#735100)}
+.calc-panel .calc-step.good::after{color:var(--lab-good-ink,#225f43)}
+.calc-panel .calc-step.bad::after{color:var(--lab-bad-ink,#853b34)}
+.calc-panel .calc-step.locked::after{color:var(--lab-muted,#666670)}
+
+/* rounded-settings */
 /* Working and exam settings share one softly rounded segmented control. */
 .lab-working-toggle,.lab-activity-bar .lab-working-toggle,.pill-toggle{display:inline-flex;align-items:center;gap:2px;height:42px;padding:3px;border:1px solid var(--lab-line-subtle,#e7e8eb);border-radius:999px;background:var(--lab-surface-muted,#f7f8fa);box-shadow:0 1px 3px rgba(29,29,31,.08)}
 .lab-working-toggle button,.lab-activity-bar .lab-working-toggle button,.pill-toggle button{width:auto;min-width:40px;min-height:34px;padding:0 12px;border:1px solid transparent;border-radius:999px;background:transparent;color:var(--lab-ink-secondary,#424245);font-size:12px;font-weight:400;line-height:1.2;box-shadow:none}
 .lab-working-toggle button[aria-pressed="true"],.pill-toggle button[aria-checked="true"]{border-color:transparent;border-radius:999px;background:var(--lab-ink-secondary,#424245);color:#fff;font-weight:400;box-shadow:none}
 .pill-toggle.level-toggle button[aria-checked="true"]{background:var(--lab-accent-hover,#4569aa);color:var(--lab-on-accent,#fff)}
-</style>
-<style data-top-panel-controls>
+
+/* top-panel-controls */
 /* Activity controls share a light boundary and restrained elevation. */
 .lab-working-toggle,.lab-activity-bar .lab-working-toggle,.pill-toggle{border-color:var(--lab-line,#d2d2d7)}
 .lab-activity-bar .lab-activity-task>button,.lab-activity-bar .run-actions>button,.lab-activity-bar>button{display:inline-flex;align-items:center;justify-content:center;gap:4px;min-height:40px;padding:8px 14px;border:1px solid var(--lab-ink-secondary,#424245);border-radius:var(--lab-control-radius,8px);background:var(--lab-muted,#6e6e73);color:#fff;font-size:12px;font-weight:400;line-height:1.3;box-shadow:0 1px 3px rgba(29,29,31,.08)}
@@ -750,8 +804,18 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 .lab-activity-bar .run-actions>button.algorithm-button:hover{background:var(--lab-accent-pressed,#3a5d99)}
 .lab-activity-bar .algorithm-button span,.lab-activity-bar .algorithm-button small{color:inherit}
 .lab-activity-bar button:disabled{cursor:default}
-</style>
-<style data-action-hierarchy>
+/* Activity controls share a light boundary and restrained elevation. */
+.lab-working-toggle,.lab-activity-bar .lab-working-toggle,.pill-toggle{border-color:var(--lab-line,#d2d2d7)}
+.lab-activity-bar .lab-activity-task>button,.lab-activity-bar .run-actions>button,.lab-activity-bar>button{display:inline-flex;align-items:center;justify-content:center;gap:4px;min-height:40px;padding:8px 14px;border:1px solid var(--lab-ink-secondary,#424245);border-radius:var(--lab-control-radius,8px);background:var(--lab-muted,#6e6e73);color:#fff;font-size:12px;font-weight:400;line-height:1.3;box-shadow:0 1px 3px rgba(29,29,31,.08)}
+.lab-activity-bar .lab-activity-task>button:hover,.lab-activity-bar .run-actions>button:hover,.lab-activity-bar>button:hover{background:var(--lab-ink-secondary,#424245)}
+.lab-activity-bar .run-actions>button.active{background:var(--lab-accent-hover,#4569aa);border-color:var(--lab-accent-hover,#4569aa);color:#fff}
+.lab-activity-bar .run-actions>button.algorithm-button{border-color:var(--lab-accent-pressed,#3a5d99);background:var(--lab-accent-hover,#4569aa);color:#fff}
+.lab-activity-bar .run-actions>button.algorithm-button:hover{background:var(--lab-accent-pressed,#3a5d99)}
+.lab-activity-bar .algorithm-button span,.lab-activity-bar .algorithm-button small{color:inherit}
+.lab-activity-bar button:disabled{cursor:default}
+.lab-activity-bar .run-actions>button.algorithm-button{flex-direction:column}.lab-activity-bar .algorithm-button span{font-size:12px;font-weight:400}.lab-activity-bar .algorithm-button small{font-size:11px;font-weight:400}
+
+/* action-hierarchy */
 /* Action hierarchy: blue primary, white/blue secondary, muted disabled. */
 .lab-activity-bar .lab-activity-task>button,.lab-activity-bar .run-actions>button,.lab-activity-bar .activity-actions>button,.lab-activity-bar>button{min-height:40px;padding:8px 14px;border:1px solid var(--lab-accent-line,#9fb4d6);border-radius:var(--lab-control-radius,8px);background:#fff;color:var(--lab-accent-ink,#315b91);font-size:12px;font-weight:400;box-shadow:0 1px 3px rgba(29,29,31,.08)}
 .lab-activity-bar .lab-activity-task>button:hover,.lab-activity-bar .run-actions>button:hover,.lab-activity-bar .activity-actions>button:hover,.lab-activity-bar>button:hover{background:var(--lab-accent-soft,#eef2fa)}
@@ -762,26 +826,82 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 .lab-activity-bar .lab-mode-toggle>button.algorithm-button{display:inline-flex;align-items:center;justify-content:center;min-width:80px;min-height:34px;padding:0 12px;border:1px solid transparent;border-radius:999px;background:transparent;color:var(--lab-accent-ink,#315b91);font-size:12px;font-weight:400;box-shadow:none}
 .lab-activity-bar .lab-mode-toggle>button.algorithm-button[aria-pressed="true"]{background:var(--lab-accent-hover,#4569aa);color:#fff}
 .lab-activity-bar .lab-mode-toggle>button:disabled{opacity:.55;cursor:not-allowed}
-</style>
-<style data-disabled-actions>
+
+/* disabled-actions */
 /* Disabled actions override primary colours and hover without resembling an active secondary action. */
 .lab-activity-bar button:disabled:not([aria-pressed]):not([aria-checked]),
 .lab-activity-bar #newButton:disabled,.lab-activity-bar #newProblemBtn:disabled,
 .lab-activity-bar .lab-mode-toggle>button.algorithm-button:disabled{
   border-color:var(--lab-line,#d2d2d7);background:var(--lab-surface-strong,#eef1f3);color:var(--lab-muted,#6e6e73);box-shadow:none;opacity:1;cursor:not-allowed;transform:none;
 }
-</style>
-<style data-task-heading>
+
+/* task-heading */
 /* Task headings are quiet, readable anchors above the model. */
 .lab-activity-bar .lab-activity-task>strong,.lab-activity-bar .lab-activity-task h2,.lab-activity-bar .lab-activity-task h3,.lab-activity-bar .mission-copy>strong,.lab-activity-bar #goalTitle{margin:0;color:var(--lab-ink,#1d1d1f);font-family:var(--lab-font-sans,inherit);font-size:14px;font-weight:500;line-height:1.45;letter-spacing:normal;text-transform:none;text-wrap:balance}
-</style>
-<style data-working-refinements>.working-panel .work-step.current:not([data-attention-used="true"]){animation:workingAttention 2s ease-in-out infinite}
+
+/* flat-mathematics */
+/* Compact concept-tinted backing distinguishes displayed mathematics. */
+.calc-panel .term-chip,.calc-panel .worked-value,.calc-panel .flat-expression{padding:3px 7px;border:0;border-radius:4px;background:color-mix(in srgb,var(--lab-concept-violet,#7563a7) 20%,white);color:var(--lab-ink,#1d1d1f);box-shadow:none}
+.calc-panel .flat-expression{width:fit-content}
+.calc-panel .flat-expression .worked-value{padding:0;background:transparent}
+
+/* working-attention */
+/* Unattempted working draws attention through its border, never moving the content. */
+.calc-panel .calc-step.pending:not([data-interacted="true"]),.calc-panel .work-progress:not([data-complete="true"]):not([data-interacted="true"]){animation:workingBorderPulse 2s ease-in-out infinite}
+@keyframes workingBorderPulse{0%,100%{border-color:var(--lab-needed-line,#d8c36a);box-shadow:0 0 0 0 rgba(216,195,106,0)}50%{border-color:var(--lab-needed,#946200);box-shadow:0 0 0 3px rgba(216,195,106,.18)}}
+@media(prefers-reduced-motion:reduce){.calc-panel .calc-step,.calc-panel .work-progress{animation:none!important}}
+
+/* working-refinements */
+#answerForm[data-work-state="current"]:not([data-attention-used="true"]){animation:workingAttention 2s ease-in-out infinite}
+@keyframes workingAttention{0%,100%{border-color:var(--lab-needed-line,#d8c36a);box-shadow:none}50%{border-color:var(--lab-needed,#946200);box-shadow:0 0 0 3px rgba(216,195,106,.18)}}
+@media(prefers-reduced-motion:reduce){#answerForm[data-work-state="current"]{animation:none!important}}
+.decision-card.needed:not([data-attention-used="true"]){animation:workingAttention 2s ease-in-out infinite}
+@keyframes workingAttention{0%,100%{border-color:var(--lab-needed-line,#d8c36a);box-shadow:none}50%{border-color:var(--lab-needed,#946200);box-shadow:0 0 0 3px rgba(216,195,106,.18)}}
+@media(prefers-reduced-motion:reduce){.decision-card.needed{animation:none!important}}
+#relax-equation{padding:3px 7px;border:0;border-radius:4px;background:color-mix(in srgb,var(--lab-concept-violet,#7563a7) 20%,white);box-shadow:none}
+.readout-line.owned:not(.correct):not(.incorrect):not([data-attention-used="true"]),.work-progress:not([data-complete="true"]):not([data-attention-used="true"]){animation:workingAttention 2s ease-in-out infinite}
+@keyframes workingAttention{0%,100%{border-color:var(--lab-needed-line,#d8c36a);box-shadow:none}50%{border-color:var(--lab-needed,#946200);box-shadow:0 0 0 3px rgba(216,195,106,.18)}}
+@media(prefers-reduced-motion:reduce){.readout-line.owned:not(.correct):not(.incorrect),.work-progress:not([data-complete="true"]){animation:none!important}}
+.auto-value{padding:3px 7px;border:0;border-radius:4px;background:color-mix(in srgb,var(--lab-concept-violet,#7563a7) 20%,white);box-shadow:none}
+.output-card.working-required.in-progress:not([data-attention-used="true"]),.work-progress:not([data-complete="true"]):not([data-attention-used="true"]){animation:workingAttention 2s ease-in-out infinite}
+@keyframes workingAttention{0%,100%{border-color:var(--lab-needed-line,#d8c36a);box-shadow:none}50%{border-color:var(--lab-needed,#946200);box-shadow:0 0 0 3px rgba(216,195,106,.18)}}
+@media(prefers-reduced-motion:reduce){.output-card.working-required.in-progress,.work-progress:not([data-complete="true"]){animation:none!important}}
+.product-line:not(:has(input)){padding:3px 7px;border:0;border-radius:4px;background:color-mix(in srgb,var(--lab-concept-violet,#7563a7) 20%,white);box-shadow:none}
+.working-panel .work-step.current:not([data-attention-used="true"]){animation:workingAttention 2s ease-in-out infinite}
 @keyframes workingAttention{0%,100%{border-color:var(--lab-needed-line,#d8c36a);box-shadow:none}50%{border-color:var(--lab-needed,#946200);box-shadow:0 0 0 3px rgba(216,195,106,.18)}}
 .working-panel .step-value{width:fit-content;padding:3px 7px;border:0;border-radius:4px;background:color-mix(in srgb,var(--lab-concept-violet,#7563a7) 20%,white);box-shadow:none}
 @media(prefers-reduced-motion:reduce){.working-panel .work-step{animation:none!important}}
-</style>
-<style data-field-feedback-only>
+
+/* field-feedback-only */
+.evidence .output-card:has(.answer-entry)::after{content:none}
+.evidence .output-card:has(.answer-entry) .output-head{padding-right:0}
+.calc-panel .calc-step:has(.work-entry)::after{content:none}
+.calc-panel .calc-step:has(.work-entry) .step-head{padding-right:0}
 .working-panel .work-step:has(input) .step-head>.step-status{display:none}
+
+/* Public component API for new labs. */
+.lab-toggle{display:inline-flex;align-items:center;gap:2px;height:42px;padding:3px;border:1px solid var(--lab-line,#d2d2d7);border-radius:999px;background:var(--lab-surface-muted,#f7f8fa);box-shadow:0 1px 3px rgba(29,29,31,.08)}
+.lab-toggle>button{min-width:40px;min-height:34px;padding:0 12px;border:1px solid transparent;border-radius:999px;background:transparent;color:var(--lab-ink-secondary,#424245);font:400 12px/1.2 var(--lab-font-sans,sans-serif);box-shadow:none}
+.lab-toggle>button:is([aria-pressed="true"],[aria-checked="true"]){background:var(--lab-ink-secondary,#424245);color:#fff}
+.lab-toggle[data-kind="exam"]>button:is([aria-pressed="true"],[aria-checked="true"]),.lab-toggle[data-kind="mode"]>button:is([aria-pressed="true"],[aria-checked="true"]){background:var(--lab-accent-hover,#4569aa);color:#fff}
+.lab-action{min-height:40px;padding:8px 14px;border:1px solid var(--lab-accent-line,#9fb4d6);border-radius:8px;background:#fff;color:var(--lab-accent-ink,#315b91);font:400 12px/1.3 var(--lab-font-sans,sans-serif);box-shadow:0 1px 3px rgba(29,29,31,.08)}
+.lab-action:hover{background:var(--lab-accent-soft,#eef2fa)}
+.lab-action[data-priority="primary"]{background:var(--lab-accent-hover,#4569aa);border-color:var(--lab-accent-pressed,#3a5d99);color:#fff}
+.lab-action:disabled,.lab-action[data-priority="primary"]:disabled{background:var(--lab-surface-strong,#eef1f3);color:var(--lab-muted,#6e6e73);border-color:var(--lab-line,#d2d2d7);box-shadow:none;opacity:1;cursor:not-allowed}
+.lab-math-surface{display:inline-block;padding:3px 7px;border:0;border-radius:4px;background:color-mix(in srgb,var(--lab-concept-violet,#7563a7) 20%,white);color:var(--lab-ink,#1d1d1f);box-shadow:none}
+.lab-work-card{padding:12px;border:1px solid var(--lab-line-subtle,#e7e8eb);border-radius:8px;background:var(--lab-surface-muted,#f7f8fa);box-shadow:none}
+.lab-work-card[data-work-state="needed"]{border-color:var(--lab-needed-line,#d8c36a);background:var(--lab-needed-surface,#fffdf4)}
+.lab-work-card[data-work-state="good"]{border-color:var(--lab-good-line,#9cc7aa);background:var(--lab-good-surface,#f7fcf8)}
+.lab-work-card[data-work-state="bad"]{border-color:var(--lab-bad-line,#d8aaa4);background:var(--lab-bad-surface,#fff8f7)}
+.lab-work-card[data-work-state="needed"]:not([data-interacted="true"]){animation:workingAttention 2s ease-in-out infinite}
+.lab-work-card:has(input) .lab-card-status{display:none}
+.lab-stage-surface{border:1px solid var(--lab-line,#d2d2d7);border-radius:12px;background:var(--lab-surface-muted,#f7f8fa)}
+.lab-stage-heading{display:flex;flex-direction:column;gap:4px;padding:12px 12px 8px;font:400 12px/1.45 var(--lab-font-sans,sans-serif)}
+.lab-guide-target{border-radius:12px;outline:2px solid var(--lab-accent,#5277b8);outline-offset:3px;animation:labGuideAttention 2s ease-in-out infinite}
+@keyframes labGuideAttention{0%,100%{box-shadow:0 0 0 4px rgba(82,119,184,.10)}50%{box-shadow:0 0 0 9px rgba(82,119,184,.22)}}
+@media(prefers-reduced-motion:reduce){.lab-work-card,.lab-guide-target{animation:none!important}.lab-guide-target{box-shadow:0 0 0 5px rgba(82,119,184,.16)}}
+
+
 </style>
 <!-- LAB_CONTRACT_START -->
 <script type="application/json" data-examplicity-lab-contract data-contract-version="1">

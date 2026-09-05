@@ -33,11 +33,17 @@ if (source) {
   await write(`${release}/manifest.json`, manifestBytes);
 }
 
+const designComponents = await readFile(path.join(root, release, 'src/lab-design.css'), 'utf8');
+const componentsOutput = 'public/developer/lab-design.css';
+if (check) {
+  if (await readFile(path.join(root, componentsOutput), 'utf8') !== designComponents) throw new Error(`${componentsOutput} is stale`);
+} else await write(componentsOutput, designComponents);
+
 for (const [name, published] of documents) {
   const sourceBytes = await readFile(path.join(root, 'docs', name));
   const expected = name.endsWith('.md')
     ? Buffer.from(sourceBytes.toString('utf8').replaceAll('(examplicity-living-style-guide-v3.html)', '(design-language.html)'))
-    : sourceBytes;
+    : Buffer.from(sourceBytes.toString('utf8').replace('<link rel="stylesheet" data-shared-design href="../../packages/lab-kit/src/lab-design.css">', `<style data-shared-design>\n${designComponents}\n</style>`));
   const output = `public/developer/${published}`;
   if (check) {
     if (!expected.equals(await readFile(path.join(root, output)))) throw new Error(`${output} is stale; run npm run developer:sync`);
@@ -45,8 +51,9 @@ for (const [name, published] of documents) {
 }
 
 const guide = await readFile(path.join(root, 'docs/examplicity-living-style-guide-v3.html'), 'utf8');
-const stylesheet = guide.match(/<style id="examplicity-starter-token-layer">([\s\S]*?)<\/style>/)?.[1];
-if (!stylesheet) throw new Error('The guide is missing its starter stylesheet');
+const starterStylesheet = guide.match(/<style id="examplicity-starter-token-layer">([\s\S]*?)<\/style>/)?.[1];
+if (!starterStylesheet) throw new Error('The guide is missing its starter stylesheet');
+const stylesheet = `${starterStylesheet}\n${designComponents}`;
 const cssPath = 'public/developer/design-language.css';
 if (check) {
   if (await readFile(path.join(root, cssPath), 'utf8') !== stylesheet) throw new Error(`${cssPath} is stale`);

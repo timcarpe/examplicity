@@ -408,6 +408,10 @@ export const compilePublicationLab = async (
     compilableSource = injectLabContract(source, contract);
   }
 
+  if (compilableSource.includes('<!-- LAB_DESIGN_COMPONENTS -->')) {
+    const design = await readFile(path.join(context.root, 'public/developer/lab-kit/0.3.0/src/lab-design.css'), 'utf8');
+    compilableSource = compilableSource.replace('<!-- LAB_DESIGN_COMPONENTS -->', `<style data-lab-design>\n${design}\n</style>`);
+  }
   const compiledSource = compileLabResources(compilableSource, context.kit.resources).source;
   if (check) compileLabResources(compiledSource, context.kit.resources, { check: true });
 
