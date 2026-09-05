@@ -524,3 +524,8 @@ Unattempted, available calculation cards pulse their yellow border softly until 
 - Graph Search: attention on the pending decision until map/frontier interaction; latest relaxation calculation gets flat violet backing, without grading automatic calculations.
 - Histogram: current working cards remember interaction across rebuilt sidebar DOM; model interaction dismisses model-owned card attention. Displayed calculations get flat violet backing.
 - Sequence retains the refined implementation. No changes to other unreviewed labs. Reduced-motion fallbacks apply throughout. Validation skipped at user request; user review pending.
+
+
+### Field feedback without duplicate card marks — 5 September 2026
+
+Sequence and Prime Factors: cards containing answer fields no longer show a top-right status symbol or reserve space for it. Histogram: hide the matching header status pill when a card contains an input. Field feedback, card colour/pulse and field-free progress remain. Other reviewed labs have no equivalent corner mark to remove. Guide updated; validation skipped as requested.

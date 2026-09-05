@@ -379,3 +379,5 @@ Displayed terms and formulas may use approved concept violet #7563a7 at 20% over
 Available, unattempted working cards use a restrained two-second yellow border pulse until pointer or keyboard interaction with their input or associated model. Remember that interaction through rerenders; reset it with a fresh activity. Reference, locked, completed and incorrect cards stay static. Use static borders with reduced motion.
 
 The living HTML guide’s **Refined components and their uses** section groups the latest rules with interactive working-state and maths-surface specimens. Use it for purpose and appearance; the deployment copies are generated from this repository. Lab rollout scope remains in the site change record, not in this visual reference.
+
+Cards containing answer fields do not repeat check/x/status symbols in the top-right corner. Keep feedback at the fields, while retaining card state colour and attention behaviour. Field-free progress cards may retain their status marks.
