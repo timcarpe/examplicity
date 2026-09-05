@@ -446,3 +446,8 @@ Binary exam/range controls and Coordinate, Prime Factors, Sequence and Histogram
 ### Toggle contrast correction — 5 September 2026
 
 Working now uses dark grey `#424245` selected pills; Binary’s exam toggle uses blue `#4569aa`. Both have white selected text, a grey track, rounded shape and regular labels. Binary’s question-range setting stays grey. Colour identity differs by purpose; green remains correctness feedback. Updated canonical guide and generated examples; validation skipped as requested.
+
+
+### Toggle container shadow — 5 September 2026
+
+Added `0 1px 3px rgba(29,29,31,.08)` to the five reviewed labs’ rounded toggle containers (including Binary exam/range). Segments remain shadow-free. Updated the canonical guide, starter CSS and written companion; regenerated published labs and guide copies. Validation skipped as requested.
