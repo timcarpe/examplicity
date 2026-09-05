@@ -95,9 +95,9 @@ Done when the selected labs match reviewed decisions, original defaults remain c
 
 Every handoff includes: objective, owned paths, exact input references/revisions, accepted decisions, verification, stop conditions and a concise evidence-backed result. All owners are working alongside others and must preserve unrelated work. Keep progress reports brief; no new sub-tasks, broad refactors or infrastructure unless a concrete blocker warrants discussion. Commit completed verified work, including applicable changelog notes; do not push, deploy or change catalogue deployment status without authorization and evidence.
 
-## Approval requested
+## Approval checkpoints
 
-Approve this scope and three-task sequence, or identify changes. The filtered JSON CLI is the default. The exact representative lab batch remains an evidence-led decision at checkpoint 5.
+Launch is approved. The filtered JSON CLI is the default. The exact representative lab batch remains an evidence-led decision requiring user review at checkpoint 5.
 
 ## Launch and workflow follow-up
 
@@ -122,3 +122,5 @@ Review of Lab Creation workflows identified the following follow-up changes. The
 | `automated/chatgpt-authoring/PROMPT.md`, `scripts/build-agent-distribution.mjs` and generated bundle | When shared authoring guidance changes, reconcile the concise external prompt and regenerate the distribution once. Preserve its 8,000-character limit; do not edit generated bundles as independent authority. | Storage after source guidance settles |
 
 The adaptations review found that publication validation currently requires profile alignment in registered live metadata. Resolve that internal/public boundary explicitly before adding 9709 profiles. It also confirmed that the trigonometric circle and degree conventions are deeply connected to completion; neither removal nor radian conversion is assumed to be a small first-batch change.
+
+All three first turns have been reviewed and steered. Storage and evidence may continue after recording their shared schema contract; adaptations remains paused. Approved evidence collections are optional `evidence/{syllabuses,objectives,papers,questions,lab-alignments}.json` under the maths data directory, preserving existing idea records. Use part-level question references, explicit PDF/printed-page locators, bounded query expansions and pagination. Book and exam evidence may coexist. Source linkage is independent of deployment status. Initial 9709 acquisition covers same-cycle QP/MS pairs 11, 21 and 31, with 13, 23 and 33 added only for evidence gaps; complete the supplied 0580 baseline with matching mark schemes.
