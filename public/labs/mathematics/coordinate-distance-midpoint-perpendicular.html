@@ -1392,7 +1392,112 @@ window.LabDesign = {
   "nonGoals": [
     "Presenting a line as a perpendicular bisector without testing or deriving its equal-distance property."
   ],
-  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract",
+  "implementation": {
+    "reviewedRevision": "7a15bda",
+    "surfaces": {
+      "task": {
+        "selectors": [
+          ".lab-activity-task h2"
+        ],
+        "kind": "given",
+        "description": "Current problem statement and supplied quantities.",
+        "visibility": "Shown at the start of each problem or stage."
+      },
+      "model": {
+        "selectors": [
+          "#map"
+        ],
+        "kind": "model",
+        "description": "Operated construction and its live measurements; see quantities for what is given and revealed.",
+        "visibility": "Present for the current problem; child controls and readouts follow the states described below."
+      },
+      "working": {
+        "selectors": [
+          "#supportBand"
+        ],
+        "kind": "working",
+        "description": "Ordered calculations, learner entries and consequential evidence for the current task.",
+        "visibility": "Present for the current problem; child controls and readouts follow the states described below."
+      },
+      "completion": {
+        "selectors": [
+          "#nextCard"
+        ],
+        "kind": "completion",
+        "description": "Achievement, next task or learning transition.",
+        "visibility": "Shown only when the local completion conditions below are satisfied; representation controls are separately identified."
+      },
+      "measurements": {
+        "selectors": [
+          "#distA",
+          "#distB",
+          "#boundaryGradient",
+          "#boundaryEquation",
+          "#modelProgress"
+        ],
+        "kind": "evidence",
+        "description": "Live caller distances and candidate-line state.",
+        "visibility": "Present for the current problem; child controls and readouts follow the states described below."
+      },
+      "settings": {
+        "selectors": [
+          "[data-work-level]",
+          "#restoreBtn"
+        ],
+        "kind": "control",
+        "description": "Working support and restore/reset control.",
+        "visibility": "Present for the current problem; child controls and readouts follow the states described below."
+      }
+    },
+    "quantities": {
+      "endpoints": {
+        "description": "A and B coordinate pairs define the segment and all derived quantities.",
+        "domain": "Cartesian coordinates in the map domain.",
+        "source": "Initially given; draggable only after endpoint movement unlocks.",
+        "output": "Coordinates, horizontal/vertical changes and midpoint geometry update together.",
+        "inputSlots": [
+          "#baseA",
+          "#baseB"
+        ]
+      },
+      "segment-results": {
+        "description": "Length AB, gradient AB and midpoint M are distinct derived quantities; midpoint is one ordered-pair quantity entered in one text field.",
+        "domain": "Length in coordinate units; signed/fractional gradient; ordered coordinate pair.",
+        "source": "Computed from the current endpoints or supplied by learner according to Working level.",
+        "output": "Working readouts/field feedback update after any endpoint change.",
+        "inputSlots": [
+          "#lengthInput",
+          "#gradientInput",
+          "#midpointInput"
+        ]
+      },
+      "bisector": {
+        "description": "One perpendicular-bisector line, represented by anchor, direction and equation.",
+        "domain": "Line equation including vertical/horizontal special cases; map coordinates.",
+        "source": "Learner slides/rotates the candidate line and, when required, writes its equation.",
+        "output": "Two probe distances, sampled equality, candidate gradient/equation and target working provide live evidence.",
+        "inputSlots": [
+          "#slideHandle",
+          "#rotateHandle",
+          "#boundaryHit",
+          "#equationInput"
+        ]
+      }
+    },
+    "modes": {
+      "none": "Length, gradient, midpoint and target equation are shown; construction remains required.",
+      "some": "Learner enters gradient, midpoint and bisector equation; length is shown.",
+      "all": "Learner also enters segment length.",
+      "stages": "Four construction stages vary translation/rotation requirements; the final stage unlocks endpoint movement and requires moving a base before restoring the bisector."
+    },
+    "dependencies": [
+      "Endpoint changes invalidate previous answers and the current construction.",
+      "A phase completes only when visualSuccess and workingReady() agree; the final phase additionally requires baseMoved.",
+      "Field values are checked against the same endpoints used by the visual."
+    ],
+    "completion": "phaseComplete() combines the visual equality test, required working and final-stage endpoint movement; the four stage markers store completed evidence."
+  }
 }
 </script>
 <!-- LAB_CONTRACT_END -->
@@ -1440,7 +1545,7 @@ window.LabDesign = {
 
         </div>
       </div>
-      <div id="nextCard" class="next-card" hidden role="dialog" aria-live="polite" aria-label="Configuration complete">
+      <div id="nextCard" class="next-card" hidden role="dialog" aria-live="polite" aria-label="Configuration complete" data-lab-role="evidence">
         <button class="dialog-move" type="button" data-dialog-drag aria-label="Move completion card" title="Drag to move; click to switch sides; use arrow keys when focused"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 3v18M3 12h18M8 7l4-4 4 4M8 17l4 4 4-4M7 8l-4 4 4 4M17 8l4 4-4 4"/></svg></button>
         <strong id="nextCardTitle">Boundary verified</strong>
         <span id="nextCardText">Every test point is equidistant.</span>
@@ -1485,7 +1590,7 @@ window.LabDesign = {
     <aside class="evidence" aria-label="Working">
 
       <div id="modelProgress" class="work-progress" role="status"><span class="progress-mark" aria-hidden="true">●</span><span id="modelProgressText"></span></div>
-<section id="supportBand" class="working-chain" aria-label="Working chain">
+<section id="supportBand" class="working-chain" aria-label="Working chain" data-lab-role="working">
         <div id="lengthBox" class="readout-line"><span>Length AB</span><small id="lengthFormula" class="calc-formula">—</small><strong id="segmentLength" class="auto-value">—</strong><input id="lengthInput" class="calc-input" inputmode="decimal" autocomplete="off" spellcheck="false" placeholder="number" aria-label="Calculate segment length"><small id="lengthState" class="calc-state"></small></div>
         <div id="gradientBox" class="readout-line"><span>Gradient AB</span><small id="gradientFormula" class="calc-formula">—</small><strong id="segmentGradient" class="auto-value">—</strong><input id="gradientInput" class="calc-input" inputmode="text" autocomplete="off" spellcheck="false" placeholder="e.g. 3/4" aria-label="Calculate gradient of AB"><small id="gradientState" class="calc-state"></small></div>
         <div id="midpointBox" class="readout-line"><span>Midpoint M</span><small id="midpointFormula" class="calc-formula">—</small><strong id="midpointReadout" class="auto-value">—</strong><input id="midpointInput" class="calc-input" inputmode="text" autocomplete="off" spellcheck="false" placeholder="(x, y)" aria-label="Calculate midpoint of AB"><small id="midpointState" class="calc-state"></small></div>

@@ -19,6 +19,7 @@ export const changelogEntries: readonly ChangelogEntry[] = [
       'Documented a three-owner plan for queryable exam evidence, demand summaries and lab adaptations; recorded a source audit that blocks use of incorrect draft mappings pending semantic re-review.',
       'Published the living design guide and Lab Kit resources under /developer for the next release, with focused component-use rules and interactive specimens. Extended working attention and flat maths surfaces across the reviewed labs. Consolidated refinement CSS into a shared authoring-kit resource embedded into published and downloaded labs. Recorded the accepted five-lab batch and adaptation lessons for future passes, including preserved interaction models, purposeful working, shared resources and focused review.',
       'Rolled out separate contract sidecars and semantic hooks across all 57 labs, expanded developer guidance and CLI inspection, and validated contract preservation in generated and standalone HTML.',
+      'Mapped the 16 redesigned labs’ current surfaces, quantities, physical input slots, support modes and completion dependencies in optional revision-bound contract metadata. Added passive locators and developer reference documentation; preserved existing curriculum and behaviour.',
       'Connected Binary Numbers’ existing IGCSE and AS question pools to curriculum profiles, corrected contract invariants, and added focused curriculum and download regression checks. The AI adaptation comparison remains unevaluated.',
     ],
   },

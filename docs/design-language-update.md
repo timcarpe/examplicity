@@ -1,6 +1,6 @@
 # Examplicity design update — lean plan
 
-Target: `codex/llm-first-v0.1`. Scope: shared design language across the site and every lab in the current manifest (57 at review). Implementation is in progress. Batch 2 (Repeated Percentage Change, Motion Graphs, Bounds, Straight Lines and Recurring Decimals) is accepted by the user at site commit `3ffcee4` and canonical kit/guide commit `0bea909`. The other labs remain queued for subsequent batches.
+Target: `codex/llm-first-v0.1`. Scope: shared design language across the site and every lab in the current manifest (57 at review). Implementation is in progress. Batch 2 (Repeated Percentage Change, Motion Graphs, Bounds, Straight Lines and Recurring Decimals) is accepted by the user at site commit `3ffcee4` and canonical kit/guide commit `0bea909`. Batch 3 (five geometry/trigonometry labs) is ready for user review at site `7a15bda` and kit `11baf3a`; subsequent labs remain queued.
 
 ## Current adaptation approach — accepted batch 2
 
@@ -8,6 +8,7 @@ This section records the user's rollout preferences. The canonical visual refere
 
 - Root implements directly in batches of five, records a concise change list, commits, and supplies review links. Each batch receives user review. Surface novel situations that cannot be resolved from the agreed intent; avoid routine handoff and approval overhead.
 - Before changing a lab, read the HTML and trace learner action → model change → working/evidence → next decision, including later stages and Working levels. A style adoption is incomplete if it misses the interaction or removes its purpose. If a regression is suspected, inspect relevant Git history and user-authorized originals before concluding that a feature never existed.
+- Map that current implementation first in the existing `lab-contracts/<subject>/<slug>.lab.json` sidecar: coherent surfaces, quantities versus input slots, given versus learner-produced values, mode differences, dependencies and completion. Refresh it after adaptation. This map documents observed behaviour; exam alignment is a separate review. The shape is documented at `/developer/lab-contract#implementation`, not in the visual style guide.
 - Preserve the causal model: fit the existing visual to its canvas, keep horizontal relationships horizontal, and let the page handle vertical flow. Do not add a separate slider when the model itself should be manipulated. Ordinary SVG chart labels, controls and interactions are in scope; complex illustrations such as jars and routers do not need a cosmetic redraw.
 - Reuse shared CSS and runtime for recurring features. Roughly 90% shared styling is a soft goal, not a quota. Keep geometry, mathematical constraints and learning state local; replace repeated one-off mechanics when the shared resource already covers them.
 - Audit copy by purpose. Keep one goal, consequential state and explanations that help learners reason. Remove narration of what the model already shows. Working needs visible progression even at None; clean spacing must not become missing explanation. Introduce newly required operations, including later ones, with target-anchored tooltips; pulses alone are insufficient.
@@ -668,3 +669,58 @@ card. The new readable-chart hook applies only to opted-in ordinary diagrams.
 The canonical HTML guide, style contract and kit README document these shared
 patterns; generated /developer copies and the guide's embedded reference labs
 are refreshed from those sources.
+
+
+## Retrospective implementation maps — 5 September 2026
+
+Mapped the 16 redesigned labs at `7a15bda` in their existing subject-specific
+contract sidecars. `implementation` is optional in schema version 1; old contracts
+remain valid. The schema/type/validator live in `tools/lab-contract/index.ts`;
+the field reference is `/developer/lab-contract#implementation`. These sidecars
+are the single source for the map; source HTML receives only passive role hooks.
+
+| Subject | Mapped lab |
+| --- | --- |
+| computer-science | `binary-numbers` |
+| computer-science | `dijkstra-a-star-graph-search` |
+| mathematics | `circle-theorem-constraint-network` |
+| mathematics | `coordinate-distance-midpoint-perpendicular` |
+| mathematics | `histogram-area-cumulative-distribution` |
+| mathematics | `motion-graph-rate-area` |
+| mathematics | `non-right-triangle-solution-constraints` |
+| mathematics | `prime-factors-hcf-lcm` |
+| mathematics | `recurring-decimals-fractions` |
+| mathematics | `repeated-percentage-change` |
+| mathematics | `right-triangle-ratio-invariance` |
+| mathematics | `rounded-measurements-bounds` |
+| mathematics | `sequence-patterns-differences` |
+| mathematics | `straight-line-coordinates-equations` |
+| mathematics | `three-dimensional-line-plane-trigonometry` |
+| mathematics | `trigonometric-function-periodicity-solutions` |
+
+Each map identifies coherent surfaces and conditional locators; separates
+given, manipulated and calculated quantities from their physical answer slots;
+records support-level differences, interaction-dependent evidence, dependencies
+and actual completion conditions. Existing curriculum metadata is preserved.
+
+Important handoff distinctions: Binary and Graph Search do not use None/Some/All.
+Motion retains separate support states per graph mode. Midpoint pairs, recurring
+fraction numerator/denominator slots, binary bits and trigonometric solution sets
+must not be counted as unrelated mathematical unknowns. Non-Right Triangle's
+no-solution exploration uses its existing span heuristic, and Trig uses a sampled
+sweep threshold; neither should be described as a new formal proof requirement.
+These and other lab-specific limitations are recorded in the respective map.
+
+For later alignment work, inspect the mapped source and existing curriculum
+separately before deciding syllabus demand. This pass adds no exam alignment,
+profile toggle, hiding rule or behavioral change. Update maps in the same batch
+when adaptation changes fields, evidence or progression; do not create a second
+map in the style guide.
+
+Focused checks: six contract tests passed, including optional-map round-trip and
+invalid-shape rejection. All 57 publication sources compiled and contract
+preservation passed for published and standalone HTML. For the 16 maps, source
+diffs contain only passive role annotations; all previous contract fields are
+unchanged and referenced ID anchors exist in source. Conditional generated
+controls are documented; this is not a claim that every selector matches the
+initial screen or that every generated state was replayed.

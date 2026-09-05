@@ -1404,7 +1404,117 @@ window.LabDesign = {
   "nonGoals": [
     "Offering arbitrary graph algorithms beyond the two displayed searches."
   ],
-  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract",
+  "implementation": {
+    "reviewedRevision": "7a15bda",
+    "surfaces": {
+      "task": {
+        "selectors": [
+          "#mission-title"
+        ],
+        "kind": "given",
+        "description": "Current problem statement and supplied quantities.",
+        "visibility": "Shown at the start of each problem or stage."
+      },
+      "model": {
+        "selectors": [
+          "#graph"
+        ],
+        "kind": "model",
+        "description": "Operated construction and its live measurements; see quantities for what is given and revealed.",
+        "visibility": "Present for the current problem; child controls and readouts follow the states described below."
+      },
+      "working": {
+        "selectors": [
+          "#decision-card",
+          "#frontier-list",
+          "#relaxation",
+          "#settled-list"
+        ],
+        "kind": "working",
+        "description": "Ordered calculations, learner entries and consequential evidence for the current task.",
+        "visibility": "Present for the current problem; child controls and readouts follow the states described below."
+      },
+      "completion": {
+        "selectors": [
+          "#comparison",
+          "#decision-card"
+        ],
+        "kind": "completion",
+        "description": "Achievement, next task or learning transition.",
+        "visibility": "Shown only when the local completion conditions below are satisfied; representation controls are separately identified."
+      },
+      "feedback": {
+        "selectors": [
+          "#decision-card",
+          "#relax-card"
+        ],
+        "kind": "feedback",
+        "description": "Decision correctness and candidate-distance comparison.",
+        "visibility": "Present for the current problem; child controls and readouts follow the states described below."
+      },
+      "cost-editor": {
+        "selectors": [
+          "#cost-editor"
+        ],
+        "kind": "control",
+        "description": "Adjust a selected edge after both algorithm challenges.",
+        "visibility": "Hidden until editing is unlocked and an edge cost is selected."
+      },
+      "algorithm": {
+        "selectors": [
+          "#run-dijkstra",
+          "#run-astar",
+          "#reveal-button",
+          "#reset-button"
+        ],
+        "kind": "control",
+        "description": "Algorithm selection, conditional reveal and experiment reset.",
+        "visibility": "Present for the current problem; child controls and readouts follow the states described below."
+      }
+    },
+    "quantities": {
+      "road-costs": {
+        "description": "Positive weighted edges and the fixed heuristic are supplied evidence.",
+        "domain": "Numeric road costs and heuristic estimates; no physical units.",
+        "source": "Initial costs and h values are given; after both searches finish, learner may edit road costs.",
+        "output": "Costs remain on the map; the editor uses decrement/increment buttons.",
+        "inputSlots": [
+          "#cost-down",
+          "#cost-up"
+        ]
+      },
+      "next-frontier-node": {
+        "description": "Choose the next minimum-priority town. Tied minima are alternative valid values of this ONE decision.",
+        "domain": "Town IDs in the current frontier.",
+        "source": "Learner chooses using g for Dijkstra or g+h for A*.",
+        "output": "Wrong choices stay in the frontier with feedback; a legal choice settles the town and reveals each relaxation.",
+        "inputSlots": [
+          "#graph [data-node]",
+          "#frontier-list button"
+        ]
+      },
+      "route-and-cost": {
+        "description": "The completed predecessor route, total cost and settled order are computed outputs.",
+        "domain": "Ordered node list plus numeric total and counts.",
+        "source": "Built from accepted search decisions and relaxations, not entered into answer boxes.",
+        "output": "Comparison cards appear after each algorithm reaches the goal; both enable cost experiments."
+      }
+    },
+    "modes": {
+      "algorithm": "Dijkstra is selected and started initially. The algorithm toggle starts a fresh Dijkstra or A* search; stored comparison results are kept for the same road costs.",
+      "support": "There is no None/Some/All setting. A wrong frontier choice makes Reveal minimum available. A* displays g, h and f; Dijkstra uses g."
+    },
+    "dependencies": [
+      "Only frontier nodes can be chosen; busy relaxation animation temporarily blocks choices.",
+      "Accepting a minimum settles it and relaxes its neighbours; selecting G at minimum priority fixes the route.",
+      "Both algorithms must finish before cost editing unlocks. Changing costs invalidates/restarts current experiments as implemented."
+    ],
+    "completion": "finishSearch() runs when G is settled as a minimum. Each algorithm stores route, cost, settled list and tie choices; both results unlock road-cost editing.",
+    "limitations": [
+      "There are no numerical answer fields. Route cost and relaxation values are shown evidence, not learner-produced numeric unknowns."
+    ]
+  }
 }
 </script>
 <!-- LAB_CONTRACT_END -->
@@ -1495,18 +1605,18 @@ window.LabDesign = {
 
     <aside class="panel inspector" aria-labelledby="inspector-heading">
       <header class="working-heading"><h2 id="inspector-heading">Working</h2></header>
-      <article id="decision-card" class="decision-card needed"><span id="decision-label">Next decision</span><strong id="decision-node">Start a search</strong><p id="decision-reason">Choose Dijkstra or A* above.</p></article>
+      <article id="decision-card" class="decision-card needed" data-lab-role="working"><span id="decision-label">Next decision</span><strong id="decision-node">Start a search</strong><p id="decision-reason">Choose Dijkstra or A* above.</p></article>
       <section class="frontier-section" aria-labelledby="frontier-heading"><div class="frontier-heading"><h3 id="frontier-heading">Frontier</h3><span id="frontier-columns">town · priority</span></div>
-        <div id="frontier-list" class="frontier-list"><span class="empty">No active search</span></div>
+        <div id="frontier-list" class="frontier-list" data-lab-role="working"><span class="empty">No active search</span></div>
         <div id="tie-note" class="tie-note" hidden></div>
       </section>
-      <section id="relaxation" class="relaxation" aria-labelledby="relaxation-heading" hidden><h3 id="relaxation-heading">Latest relaxation</h3><article id="relax-card" class="relax-card idle"><span id="relax-label">Waiting for a choice</span><strong id="relax-equation">—</strong><p id="relax-result">Settling a town tests its outgoing roads.</p></article></section>
-      <section id="settled-section" class="settled-section" aria-labelledby="settled-heading" hidden><h3 id="settled-heading">Settled order</h3><div id="settled-list" class="chip-list"></div></section>
+      <section id="relaxation" class="relaxation" aria-labelledby="relaxation-heading" hidden data-lab-role="working"><h3 id="relaxation-heading">Latest relaxation</h3><article id="relax-card" class="relax-card idle"><span id="relax-label">Waiting for a choice</span><strong id="relax-equation">—</strong><p id="relax-result">Settling a town tests its outgoing roads.</p></article></section>
+      <section id="settled-section" class="settled-section" aria-labelledby="settled-heading" hidden><h3 id="settled-heading">Settled order</h3><div id="settled-list" class="chip-list" data-lab-role="working"></div></section>
       <p id="status" class="status needed" role="status" aria-live="polite">Start either search. Road costs are fixed until both are complete.</p>
     </aside>
   </div>
 
-  <section id="comparison" class="panel comparison" aria-label="Search results" hidden>
+  <section id="comparison" class="panel comparison" aria-label="Search results" hidden data-lab-role="evidence">
     <div class="result-grid"><article id="dijkstra-result" class="result-card" hidden></article><article id="astar-result" class="result-card" hidden></article></div>
     <div id="previous-experiment" class="previous-experiment" hidden></div>
     <p id="tie-caveat" class="tie-caveat" hidden></p>

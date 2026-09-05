@@ -15,6 +15,7 @@ const fields = [
   ['invariants', 'Optional', 'Learning properties worth preserving. Keep them conceptual, not tied to DOM structure.'],
   ['safeAdaptations', 'Optional', 'Changes that can vary while retaining the learning relationship.'],
   ['nonGoals', 'Optional', 'Nearby scope the lab deliberately does not teach.'],
+  ['implementation', 'Optional', 'Revision-bound map of current surfaces, quantities, input slots, modes and completion dependencies.'],
   ['curriculum', 'Optional', 'Profiles and feature IDs only when one lab genuinely varies by curriculum.'],
   ['developerGuide', 'Optional', 'Canonical link to this reference.'],
 ] as const;
@@ -39,6 +40,7 @@ export default function LabContractPage() {
           <a href="#shape">Shape</a>
           <a href="#lifecycle">Lifecycle</a>
           <a href="#locators">Locators</a>
+          <a href="#implementation">Implementation map</a>
           <a href="#curriculum">Curriculum</a>
         </aside>
 
@@ -48,8 +50,8 @@ export default function LabContractPage() {
             <h1>Lab Contract reference</h1>
             <p>
               A Lab Contract is small JSON guidance embedded in a lab. Its reader is a person or model adapting
-              the learning experience. It is not implementation documentation, a component contract, or a
-              contribution specification.
+              the learning experience. The core describes learning; an optional implementation map records
+              how the current lab realises it. Neither is a contribution specification or runtime API.
             </p>
           </header>
 
@@ -61,8 +63,9 @@ export default function LabContractPage() {
               minimum information an adaptation should understand before changing the file.
             </p>
             <p className={styles.boundary}>
-              Describe learning, not implementation. “Changing the clock advances one CPU micro-operation and
-              exposes its effect” is useful. “Call <code>advanceCycle()</code> and update <code>#status</code>” is not.
+              Keep the core learning statements conceptual. “Changing the clock advances one CPU micro-operation
+              and exposes its effect” describes the relationship. Put revision-specific selectors and mechanics
+              in the optional implementation map.
             </p>
           </section>
 
@@ -143,6 +146,28 @@ contract preserved in standalone HTML`}</code></pre>
             <p>
               Labs mark meaningful model, working, and evidence surfaces, with reset and manipulative locators
               where applicable. These annotations preserve existing behaviour and do not add runtime controls.
+            </p>
+          </section>
+
+          <section id="implementation" className={styles.section}>
+            <h2>Optional implementation map</h2>
+            <p>
+              Record what the inspected source actually implements. The map does not establish exam alignment,
+              prescribe a redesign, or add controls. <code>reviewedRevision</code> identifies the inspected Git
+              revision; update the map when the corresponding behaviour changes.
+            </p>
+            <dl className={styles.fileList}>
+              <div><dt><code>surfaces</code></dt><dd>Stable names for coherent task, model, working, input, evidence and completion areas. Each has selectors, a kind, a description and visibility conditions.</dd></div>
+              <div><dt><code>quantities</code></dt><dd>Mathematical or domain quantities with description, domain and units, source, and output conditions. Optional inputSlots locate physical controls; several boxes can compose one answer, and one box can hold several values.</dd></div>
+              <div><dt><code>modes</code></dt><dd>Current settings and the actual differences in supplied working, learner entries and evidence. Record when None/Some/All is absent.</dd></div>
+              <div><dt><code>dependencies</code> / <code>completion</code></dt><dd>What must happen before later evidence, inputs or progression become available, and what the implementation accepts as completion.</dd></div>
+              <div><dt><code>limitations</code></dt><dd>Optional caveats about heuristics, conditional controls and unresolved interpretation.</dd></div>
+            </dl>
+            <p>
+              Prefer existing IDs and stable data attributes. Selectors may identify controls generated only
+              in a later state; describe that condition instead of assuming every selector matches at startup.
+              Use ordinary role annotations for structure. Reserve <code>data-lab-feature</code> for declared
+              curriculum features. The compiler preserves the map in standalone downloads alongside the core.
             </p>
           </section>
 

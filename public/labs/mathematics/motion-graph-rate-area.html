@@ -1384,7 +1384,108 @@ window.LabDesign = {
   "nonGoals": [
     "Interpreting graph shape without relating it to the journey it represents."
   ],
-  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract",
+  "implementation": {
+    "reviewedRevision": "7a15bda",
+    "surfaces": {
+      "task": {
+        "selectors": [
+          "#goalSentence",
+          "#constraintStrip"
+        ],
+        "kind": "given",
+        "description": "Current problem statement and supplied quantities.",
+        "visibility": "Shown at the start of each problem or stage."
+      },
+      "model": {
+        "selectors": [
+          "#stage"
+        ],
+        "kind": "model",
+        "description": "Operated construction and its live measurements; see quantities for what is given and revealed.",
+        "visibility": "Present for the current problem; child controls and readouts follow the states described below."
+      },
+      "working": {
+        "selectors": [
+          "#calcContent"
+        ],
+        "kind": "working",
+        "description": "Ordered calculations, learner entries and consequential evidence for the current task.",
+        "visibility": "Present for the current problem; child controls and readouts follow the states described below."
+      },
+      "completion": {
+        "selectors": [
+          "#nextCard"
+        ],
+        "kind": "completion",
+        "description": "Achievement, next task or learning transition.",
+        "visibility": "Shown only when the local completion conditions below are satisfied; representation controls are separately identified."
+      },
+      "settings": {
+        "selectors": [
+          "#coreMode",
+          "#extendedMode",
+          "[data-work-level]",
+          "#goalDrawer"
+        ],
+        "kind": "control",
+        "description": "Mode, support and optional goal editing.",
+        "visibility": "Present for the current problem; child controls and readouts follow the states described below."
+      },
+      "playback": {
+        "selectors": [
+          "#runBtn",
+          "#pauseBtn",
+          "#timeSlider"
+        ],
+        "kind": "control",
+        "description": "Run, pause and inspect time without adding a separate answer quantity.",
+        "visibility": "Present for the current problem; child controls and readouts follow the states described below."
+      }
+    },
+    "quantities": {
+      "journey-constraints": {
+        "description": "Route distances, required stop, deadline and camera/kinematic limits.",
+        "domain": "Metres, seconds, m/s and m/s².",
+        "source": "Given by generated or edited goal.",
+        "output": "Goal, constraint strip and reference rule expose the relevant limits."
+      },
+      "time-controls": {
+        "description": "Arrival and departure are graph coordinates; typed answers are section travel durations, not necessarily absolute times.",
+        "domain": "Seconds, ordered within the journey deadline.",
+        "source": "Drag free points; required duration entries place locked points.",
+        "output": "Two moving speeds and stop duration update from the same graph.",
+        "inputSlots": [
+          "#stage [data-core-handle]",
+          "#calcContent input[data-core-value]"
+        ]
+      },
+      "speed-controls": {
+        "description": "Four speed–time ending vertices, controlled by dragging or a per-section acceleration/ending-speed calculation.",
+        "domain": "Nonnegative speed in m/s; entered acceleration in m/s² or ending speed in m/s according to calcType.",
+        "source": "Working plan selects which vertices are locked to calculations.",
+        "output": "Changing a vertex changes adjacent slopes/areas and total distance.",
+        "inputSlots": [
+          "#stage [data-ext-vertex]",
+          "#calcContent input[data-ext-value]"
+        ]
+      }
+    },
+    "modes": {
+      "distance-time": "Existing core mode uses arrival/departure times, two camera speed limits, a stop interval and fixed journey deadline.",
+      "speed-time": "Existing extended mode uses four sections, speed/acceleration constraints, total area and final position.",
+      "none": "Available points/vertices are dragged; slope, time and area evidence is shown.",
+      "some": "One selected segment is controlled by a required calculation.",
+      "all": "Both moving distance–time sections or all four speed–time sections require calculations.",
+      "persistence": "Each mode preserves its own Working level, solved counts and availability. These mode names describe existing code, not newly inferred exam alignment."
+    },
+    "dependencies": [
+      "Changing mode selects that mode’s preserved Working state.",
+      "Required inputs control the same graph points that are otherwise dragged; an incorrect entry can still visibly move the point.",
+      "Run/pause/time scrub examine the journey; verification also checks the relevant graph/goal constraints and required calculations."
+    ],
+    "completion": "The local success check opens state.popup when the selected mode’s journey constraints and required calculation results agree; the next journey preserves the selected support plan."
+  }
 }
 </script>
 <!-- LAB_CONTRACT_END -->
@@ -1433,11 +1534,11 @@ window.LabDesign = {
     <div class="stage-wrap">
       <div class="visual-head"><div class="visual-copy" hidden><strong id="visualTitle">Change the graph, then run the trolley.</strong><span id="visualHint"></span></div><div class="runbar"><button id="runBtn" class="primary lab-action" type="button" data-priority="primary">Run trolley</button><button id="pauseBtn" type="button" disabled class="lab-action">Pause</button><input id="timeSlider" type="range" min="0" max="15" step="0.05" value="0" aria-label="Scrub journey time"></div></div>
       <div class="stage-shell"><svg id="stage" class="stage lab-motion-chart" viewBox="0 0 1080 650" role="img" aria-label="Linked trolley journey and motion graph" data-lab-role="model" data-lab-manipulative="journey-graph"></svg>
-        <div id="nextCard" class="next-card" hidden><strong id="nextCardTitle">Journey verified</strong><span id="nextCardText"></span><div class="next-goal"><span>Next goal</span><strong id="nextGoalText"></strong></div><div id="nextUpgrade" class="next-upgrade" hidden><strong id="nextUpgradeTitle"></strong><span id="nextUpgradeText"></span><button id="nextUpgradeButton" type="button" class="lab-action"></button></div><div class="next-actions"><button id="nextStageButton" type="button" class="lab-action" data-priority="primary">Next journey</button></div></div>
+        <div id="nextCard" class="next-card" hidden data-lab-role="evidence"><strong id="nextCardTitle">Journey verified</strong><span id="nextCardText"></span><div class="next-goal"><span>Next goal</span><strong id="nextGoalText"></strong></div><div id="nextUpgrade" class="next-upgrade" hidden><strong id="nextUpgradeTitle"></strong><span id="nextUpgradeText"></span><button id="nextUpgradeButton" type="button" class="lab-action"></button></div><div class="next-actions"><button id="nextStageButton" type="button" class="lab-action" data-priority="primary">Next journey</button></div></div>
       </div>
       <div class="evidence"><div id="evidenceMain" class="evidence-main"></div><div id="evidenceStatus" class="evidence-status"></div></div>
     </div>
-    <aside class="calc-panel" aria-live="polite"><div class="calc-head"><div class="calc-head-top"><strong id="calcTitle">What the graph is doing</strong><span id="workingBadge" class="calc-badge">working shown</span></div><p id="calcIntro"></p><div id="referenceStrip" class="reference-strip"></div></div><div id="calcContent"></div></aside>
+    <aside class="calc-panel" aria-live="polite"><div class="calc-head"><div class="calc-head-top"><strong id="calcTitle">What the graph is doing</strong><span id="workingBadge" class="calc-badge">working shown</span></div><p id="calcIntro"></p><div id="referenceStrip" class="reference-strip"></div></div><div id="calcContent" data-lab-role="working"></div></aside>
   </div>
 </section>
 </main>

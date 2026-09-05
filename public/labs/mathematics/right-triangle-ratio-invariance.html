@@ -1457,7 +1457,94 @@ window.LabDesign = {
   "nonGoals": [
     "Choosing a trigonometric ratio from absolute side position rather than reference-angle roles."
   ],
-  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract",
+  "implementation": {
+    "reviewedRevision": "7a15bda",
+    "surfaces": {
+      "task": {
+        "selectors": [
+          "#missionTitle"
+        ],
+        "kind": "given",
+        "description": "Current problem statement and supplied quantities.",
+        "visibility": "Shown at the start of each problem or stage."
+      },
+      "model": {
+        "selectors": [
+          "#stage"
+        ],
+        "kind": "model",
+        "description": "Operated construction and its live measurements; see quantities for what is given and revealed.",
+        "visibility": "Present for the current problem; child controls and readouts follow the states described below."
+      },
+      "working": {
+        "selectors": [
+          "#workPanel"
+        ],
+        "kind": "working",
+        "description": "Ordered calculations, learner entries and consequential evidence for the current task.",
+        "visibility": "Present for the current problem; child controls and readouts follow the states described below."
+      },
+      "completion": {
+        "selectors": [
+          "#nextCard"
+        ],
+        "kind": "completion",
+        "description": "Achievement, next task or learning transition.",
+        "visibility": "Shown only when the local completion conditions below are satisfied; representation controls are separately identified."
+      },
+      "feedback": {
+        "selectors": [
+          "#workPanel .work-step"
+        ],
+        "kind": "feedback",
+        "description": "Progress/correctness surfaces for reference, scale/roles, ratio and result.",
+        "visibility": "Present for the current problem; child controls and readouts follow the states described below."
+      }
+    },
+    "quantities": {
+      "reference-and-given-side": {
+        "description": "A specified acute reference angle and one supplied side length.",
+        "domain": "Acute degrees and length in m; reference may be runway, upper acute or depression angle.",
+        "source": "Generated givens. Learner selects the named arc.",
+        "output": "Selection defines opposite/adjacent roles for the same physical sides.",
+        "inputSlots": [
+          "#stage [data-ref]"
+        ]
+      },
+      "scale": {
+        "description": "The triangle scale is adjusted until the supplied side matches; fixed-angle ratios remain invariant.",
+        "domain": "Positive lengths in m on the fixed glidepath.",
+        "source": "Learner drags the aircraft or uses its keys.",
+        "output": "Live side lengths, target guide and sin/cos/tan ratio strip update.",
+        "inputSlots": [
+          "#aircraft"
+        ]
+      },
+      "roles-ratio-result": {
+        "description": "Three side-role classifications, one trig-function choice, and ONE missing side length. Choice buttons are alternatives; O/A/H are labels relative to the reference.",
+        "domain": "O/A/H; sin/cos/tan; length to one decimal place.",
+        "source": "Required at Some/All as described by modes.",
+        "output": "Role correctness and scale gate ratio choices; a correct ratio gates the answer field.",
+        "inputSlots": [
+          "#workPanel [data-phys][data-role]",
+          "#workPanel [data-ratio]",
+          "#answerInput"
+        ]
+      }
+    },
+    "modes": {
+      "none": "Learner chooses the reference arc and resizes to the given side; side roles, ratio and calculation are shown.",
+      "some": "Additionally choose the ratio and enter the missing side.",
+      "all": "Also identify O/A/H for each physical side before the ratio and result unlock."
+    },
+    "dependencies": [
+      "Reference correctness unlocks resizing.",
+      "The given side must match; in All, all physical-side roles must also be correct.",
+      "Correct ratio selection unlocks result entry; None supplies the calculation but still requires the physical construction."
+    ],
+    "completion": "problemComplete() combines reference, matched scale, required role/ratio choices and the missing-side answer; shared completion then permits another generated problem."
+  }
 }
 </script>
 <!-- LAB_CONTRACT_END -->
@@ -1548,7 +1635,7 @@ window.LabDesign = {
           <div id="guideCard" class="guide-card"><span id="guideKicker" class="guide-kicker"></span><strong id="guideTitle"></strong><span id="guideCopy" class="guide-copy"></span></div>
         </div>
         <div id="completionLayer" class="completion-layer" hidden>
-          <div id="nextCard" class="next-card" hidden role="dialog" aria-modal="false" aria-live="polite">
+          <div id="nextCard" class="next-card" hidden role="dialog" aria-modal="false" aria-live="polite" data-lab-role="evidence">
             <strong id="nextCardTitle"></strong><span id="nextCardText"></span>
             <div id="nextInsight" class="next-insight"></div>
             <div id="nextUpgrade" class="next-upgrade" hidden><strong id="nextUpgradeTitle"></strong><span id="nextUpgradeText"></span><button id="upgradeLevel" type="button" class="lab-action"></button></div>
@@ -1559,7 +1646,7 @@ window.LabDesign = {
       <div id="stageNote" class="stage-note" role="status" aria-live="polite"><div id="stageNoteCopy" class="stage-note-copy"></div><div id="stageNoteState" class="stage-note-state"></div></div>
     </div>
 
-    <aside id="workPanel" class="work-panel" aria-label="Trigonometry working area"></aside>
+    <aside id="workPanel" class="work-panel" aria-label="Trigonometry working area" data-lab-role="working"></aside>
   </div>
 </section>
 </main>

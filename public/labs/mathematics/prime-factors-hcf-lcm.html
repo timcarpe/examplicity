@@ -1457,7 +1457,108 @@ window.LabDesign = {
   "nonGoals": [
     "Finding HCF or LCM from unstructured factor lists without prime multiplicities."
   ],
-  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract",
+  "implementation": {
+    "reviewedRevision": "7a15bda",
+    "surfaces": {
+      "task": {
+        "selectors": [
+          "#missionTitle"
+        ],
+        "kind": "given",
+        "description": "Current problem statement and supplied quantities.",
+        "visibility": "Shown at the start of each problem or stage."
+      },
+      "model": {
+        "selectors": [
+          "#lanes",
+          "#aHead",
+          "#bHead"
+        ],
+        "kind": "model",
+        "description": "Operated construction and its live measurements; see quantities for what is given and revealed.",
+        "visibility": "Present for the current problem; child controls and readouts follow the states described below."
+      },
+      "working": {
+        "selectors": [
+          "#hcfCard",
+          "#lcmCard",
+          "#pairProgress"
+        ],
+        "kind": "working",
+        "description": "Ordered calculations, learner entries and consequential evidence for the current task.",
+        "visibility": "Present for the current problem; child controls and readouts follow the states described below."
+      },
+      "completion": {
+        "selectors": [
+          "#nextCard"
+        ],
+        "kind": "completion",
+        "description": "Achievement, next task or learning transition.",
+        "visibility": "Shown only when the local completion conditions below are satisfied; representation controls are separately identified."
+      },
+      "confirmation": {
+        "selectors": [
+          "#claimButton",
+          "#mergeCheck"
+        ],
+        "kind": "control",
+        "description": "Confirm that no additional common prime pair remains.",
+        "visibility": "Present for the current problem; child controls and readouts follow the states described below."
+      },
+      "copy-evidence": {
+        "selectors": [
+          "#copyPanel",
+          "#copyGrid"
+        ],
+        "kind": "evidence",
+        "description": "Copies required to build the common multiple.",
+        "visibility": "Updated from the completed decomposition/pairing state."
+      }
+    },
+    "quantities": {
+      "integer-pair": {
+        "description": "Two positive integers and their prime-factor multisets. Repeated equal primes are multiplicities, not separate unknown variables.",
+        "domain": "Positive integers generated from PRIME_BANK.",
+        "source": "Numbers are given; decompositions are supplied or built according to Working level.",
+        "output": "Factor products and divisibility feedback appear immediately.",
+        "inputSlots": [
+          "#aHead .prime-add",
+          "#bHead .prime-add"
+        ]
+      },
+      "shared-pairs": {
+        "description": "A matching of equal prime copies across the two rows.",
+        "domain": "Discrete token pairs, with each token usable once.",
+        "source": "Learner pairs every common copy.",
+        "output": "The lanes and HCF/LCM factor products update as pairs form.",
+        "inputSlots": [
+          "#lanes"
+        ]
+      },
+      "hcf-and-lcm": {
+        "description": "Two distinct positive integer results.",
+        "domain": "Positive integers.",
+        "source": "Products follow the paired/unpaired factor structure; entered only in Some/All.",
+        "output": "Product fields unlock after the shared-factor claim is confirmed.",
+        "inputSlots": [
+          "#hcfProduct input",
+          "#lcmProduct input"
+        ]
+      }
+    },
+    "modes": {
+      "none": "Both prime decompositions are supplied; learner still pairs shared factors and confirms no pair remains. HCF/LCM products are shown.",
+      "some": "One decomposition (chosen by seed parity) must be built, then HCF and LCM entered.",
+      "all": "Both decompositions must be built, then HCF and LCM entered."
+    },
+    "dependencies": [
+      "Each built factor product must equal its given integer before pairing.",
+      "Factor editing locks once pairing begins.",
+      "Confirmation is valid only when no equal-prime pairing remains; required product answers then finish the problem."
+    ],
+    "completion": "finalised() requires rowsReady(), no possiblePrimes(), session.confirmed and, for Some/All, both product answers exactly correct."
+  }
 }
 </script>
 <!-- LAB_CONTRACT_END -->
@@ -1492,7 +1593,7 @@ window.LabDesign = {
 
 
         <section class="board" aria-label="Prime factor merge workspace">
-          <div id="nextCard" class="next-card" hidden role="dialog" aria-live="polite" aria-label="Problem complete">
+          <div id="nextCard" class="next-card" hidden role="dialog" aria-live="polite" aria-label="Problem complete" data-lab-role="evidence">
             <button class="dialog-move" type="button" data-dialog-drag aria-label="Move completion card" title="Drag to move; click to switch sides; use arrow keys when focused"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 3v18M3 12h18M8 7l4-4 4 4M8 17l4 4 4-4M7 8l-4 4 4 4M17 8l4 4-4 4"/></svg></button>
             <strong id="nextCardTitle">Problem complete</strong><span id="nextCardText"></span>
             <div id="nextUpgrade" class="next-upgrade" hidden><strong id="nextUpgradeTitle"></strong><span id="nextUpgradeText"></span><button id="upgradeLevel" type="button"></button></div>
@@ -1501,26 +1602,26 @@ window.LabDesign = {
           <div class="board-scroll">
             <div class="board-head">
               <div></div>
-              <div id="aHead" class="number-head a"></div>
+              <div id="aHead" class="number-head a" data-lab-role="model"></div>
               <div class="shared-head"><strong>Pair equal copies</strong><span>one shared factor</span></div>
-              <div id="bHead" class="number-head b"></div>
+              <div id="bHead" class="number-head b" data-lab-role="model"></div>
             </div>
-            <div id="lanes" class="lanes"></div>
+            <div id="lanes" class="lanes" data-lab-role="model"></div>
           </div>
           <div id="mergeCheck" class="merge-check" hidden><button id="claimButton" class="claim-button primary" type="button">Confirm no pair remains</button></div>
         </section>
       </div>
       <aside class="evidence" aria-label="Working">
 
-        <div id="pairProgress" class="work-progress" role="status"><span class="progress-mark" aria-hidden="true">●</span><span id="pairProgressText"></span></div>
+        <div id="pairProgress" class="work-progress" role="status" data-lab-role="working"><span class="progress-mark" aria-hidden="true">●</span><span id="pairProgressText"></span></div>
 <section class="working-chain" aria-label="HCF and LCM working">
-          <section id="hcfCard" class="output-card waiting" aria-live="polite">
+          <section id="hcfCard" class="output-card waiting" aria-live="polite" data-lab-role="working">
             <div class="output-head"><strong>HCF</strong></div>
             <div id="hcfFormula" class="calc-formula">Shared factors</div>
             <div class="working-expression"><div id="hcfFactors" class="factor-strip factor-items"></div><div id="hcfProduct" class="product-line"></div></div>
             <div id="hcfState" class="output-state"></div>
           </section>
-          <section id="lcmCard" class="output-card waiting" aria-live="polite">
+          <section id="lcmCard" class="output-card waiting" aria-live="polite" data-lab-role="working">
             <div class="output-head"><strong>LCM</strong></div>
             <div id="lcmFormula" class="calc-formula">Combined factors</div>
             <div class="working-expression"><div id="lcmFactors" class="factor-strip factor-items"></div><div id="lcmProduct" class="product-line"></div></div>

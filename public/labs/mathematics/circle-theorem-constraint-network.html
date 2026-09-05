@@ -1418,7 +1418,95 @@ window.LabDesign = {
   "nonGoals": [
     "Treating a visually plausible angle as proof without its circle-theorem reason."
   ],
-  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract",
+  "implementation": {
+    "reviewedRevision": "7a15bda",
+    "surfaces": {
+      "task": {
+        "selectors": [
+          "#goalTitle"
+        ],
+        "kind": "given",
+        "description": "Current problem statement and supplied quantities.",
+        "visibility": "Shown at the start of each problem or stage."
+      },
+      "model": {
+        "selectors": [
+          "#geometry"
+        ],
+        "kind": "model",
+        "description": "Operated construction and its live measurements; see quantities for what is given and revealed.",
+        "visibility": "Present for the current problem; child controls and readouts follow the states described below."
+      },
+      "working": {
+        "selectors": [
+          "#calcContent",
+          "#evidenceGrid"
+        ],
+        "kind": "working",
+        "description": "Ordered calculations, learner entries and consequential evidence for the current task.",
+        "visibility": "Present for the current problem; child controls and readouts follow the states described below."
+      },
+      "completion": {
+        "selectors": [
+          "#nextCard"
+        ],
+        "kind": "completion",
+        "description": "Achievement, next task or learning transition.",
+        "visibility": "Shown only when the local completion conditions below are satisfied; representation controls are separately identified."
+      },
+      "checkpoints": {
+        "selectors": [
+          "#objectiveDots"
+        ],
+        "kind": "evidence",
+        "description": "Existing objective markers expose current task and work phase on hover/focus.",
+        "visibility": "Present for the current problem; child controls and readouts follow the states described below."
+      }
+    },
+    "quantities": {
+      "given-geometry": {
+        "description": "Problem-specific angle/length givens, labelled points, chord/tangent relationships and the requested x/length.",
+        "domain": "Angles in degrees; lengths in cm when used.",
+        "source": "Supplied in the goal and construction.",
+        "output": "Live angle/length evidence updates during geometric repair."
+      },
+      "structure-and-invariant": {
+        "description": "A repaired diameter/tangent/equal-chord condition and its invariance under the designated movement.",
+        "domain": "Constrained point/line angles and chord/tangent lengths.",
+        "source": "Learner moves the relevant handles; a later target tests invariance.",
+        "output": "geometryPhase() gates the theorem and calculation steps.",
+        "inputSlots": [
+          "#geometry [data-drag]"
+        ]
+      },
+      "calculation-and-reasons": {
+        "description": "Requested numeric value, variant-specific intermediate lengths/angles and textual circle reasons. Step numbers are workflow labels; reason fields are explanations, not numeric quantities.",
+        "domain": "Degrees, cm, numeric expressions and short reason text.",
+        "source": "fieldDefinitions()/requiredKeys() select inputs according to objective and Working level.",
+        "output": "Dependent fields unlock after prior correct values; checked results drive the same working cards.",
+        "inputSlots": [
+          "#calcContent input[data-work-key]",
+          "#calcContent textarea[data-work-key]"
+        ]
+      }
+    },
+    "modes": {
+      "none": "Construction and invariant stress-test remain required; theorem and calculation are revealed when the geometry justifies them.",
+      "some": "Key numeric result is required after the visual test; shown theorem/setup remain support.",
+      "all": "Relevant intermediate numeric results and circle reasons are required; field dependencies vary by objective.",
+      "objectives": "Right-angle structures, a chord angle network, paired tangents, then equal chords/centre distance; generated variants and later mixed practice retain the same local rules."
+    },
+    "dependencies": [
+      "Repair the structure before the stress-test/invariant phase.",
+      "Geometry readiness precedes required working; some numeric fields depend on an earlier correct result.",
+      "Each objective has three generated problems before progression; mixed practice follows the last objective."
+    ],
+    "completion": "problemComplete() requires geometryReady() and all required fields/reasons validated. Objective checkpoints and the completion card describe the resulting progression.",
+    "limitations": [
+      "Circle reason checking uses the existing phrase/keyword rules; this map does not claim assessment-quality natural-language marking."
+    ]
+  }
 }
 </script>
 <!-- LAB_CONTRACT_END -->
@@ -1461,12 +1549,12 @@ window.LabDesign = {
       <div class="svg-wrap"><svg id="geometry" data-lab-readable-chart="14" class="lab-kit-svg" viewBox="0 0 820 720" role="img" aria-label="Interactive circle theorem geometry" data-lab-role="model" data-lab-manipulative="circle-construction"></svg></div>
       <div id="interactionGuide" class="interaction-guide" hidden aria-live="polite"><div id="guideCard" class="guide-card"><span id="guideKicker" class="guide-kicker"></span><strong id="guideTitle"></strong><span id="guideCopy" class="guide-copy"></span></div></div>
       <div id="completionLayer" class="completion-layer" hidden>
-        <section id="nextCard" class="next-card" role="dialog" aria-modal="false" aria-labelledby="nextTitle" aria-describedby="nextText nextRealisation"><strong id="nextTitle"></strong><span id="nextText"></span><div id="nextRealisation" class="next-realisation"></div><div id="nextUpgrade" class="next-upgrade" hidden><strong id="nextUpgradeTitle"></strong><span id="nextUpgradeText"></span><button id="upgradeWorkBtn" type="button" class="lab-action"></button></div><div class="next-actions"><button id="nextBtn" class="primary lab-action" type="button" data-priority="primary">Next problem</button></div></section>
+        <section id="nextCard" class="next-card" role="dialog" aria-modal="false" aria-labelledby="nextTitle" aria-describedby="nextText nextRealisation" data-lab-role="evidence"><strong id="nextTitle"></strong><span id="nextText"></span><div id="nextRealisation" class="next-realisation"></div><div id="nextUpgrade" class="next-upgrade" hidden><strong id="nextUpgradeTitle"></strong><span id="nextUpgradeText"></span><button id="upgradeWorkBtn" type="button" class="lab-action"></button></div><div class="next-actions"><button id="nextBtn" class="primary lab-action" type="button" data-priority="primary">Next problem</button></div></section>
       </div>
     </div>
     <aside class="sidebar">
-      <section id="calcPanel" class="panel calc-panel" aria-live="polite"><div class="calc-head"><div class="calc-head-top"><strong>Relationship route</strong><span id="workingBadge" class="calc-badge"></span></div><p id="calcIntro"></p><div class="strategy-strip"><strong>Construction first:</strong> establish the structure → test the circle property → unlock only the calculation the problem needs.</div><div id="methodSpine" class="method-spine"></div></div><div id="calcContent"></div></section>
-      <section class="panel evidence-card compact"><h2>Live evidence</h2><div id="evidenceGrid" class="evidence-grid"></div><div id="reason" class="reason"></div></section>
+      <section id="calcPanel" class="panel calc-panel" aria-live="polite"><div class="calc-head"><div class="calc-head-top"><strong>Relationship route</strong><span id="workingBadge" class="calc-badge"></span></div><p id="calcIntro"></p><div class="strategy-strip"><strong>Construction first:</strong> establish the structure → test the circle property → unlock only the calculation the problem needs.</div><div id="methodSpine" class="method-spine"></div></div><div id="calcContent" data-lab-role="working"></div></section>
+      <section class="panel evidence-card compact"><h2>Live evidence</h2><div id="evidenceGrid" class="evidence-grid" data-lab-role="working"></div><div id="reason" class="reason"></div></section>
       <section id="status" class="panel status" aria-live="polite"><strong id="statusTitle"></strong><span id="statusDetail"></span><div class="actions"></div></section>
     </aside>
   </div>

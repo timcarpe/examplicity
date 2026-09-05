@@ -7,6 +7,38 @@ export const LAB_CONTRACT_END = '<!-- LAB_CONTRACT_END -->';
 const stableIdPattern = new RegExp(LAB_CONTRACT_STABLE_ID_PATTERN);
 const nonEmptyStringSchema = { type: 'string', minLength: 1, pattern: '\\S' } as const;
 
+const implementationMapSchema = {
+  type: 'object', additionalProperties: false,
+  properties: {
+    reviewedRevision: nonEmptyStringSchema,
+    surfaces: {
+      type: 'object', minProperties: 1, propertyNames: { pattern: LAB_CONTRACT_STABLE_ID_PATTERN },
+      additionalProperties: {
+        type: 'object', additionalProperties: false,
+        properties: {
+          selectors: { type: 'array', minItems: 1, uniqueItems: true, items: nonEmptyStringSchema },
+          kind: nonEmptyStringSchema, description: nonEmptyStringSchema, visibility: nonEmptyStringSchema,
+        }, required: ['selectors', 'kind', 'description', 'visibility'],
+      },
+    },
+    quantities: {
+      type: 'object', minProperties: 1, propertyNames: { pattern: LAB_CONTRACT_STABLE_ID_PATTERN },
+      additionalProperties: {
+        type: 'object', additionalProperties: false,
+        properties: {
+          description: nonEmptyStringSchema, domain: nonEmptyStringSchema,
+          source: nonEmptyStringSchema, output: nonEmptyStringSchema,
+          inputSlots: { type: 'array', minItems: 1, uniqueItems: true, items: nonEmptyStringSchema },
+        }, required: ['description', 'domain', 'source', 'output'],
+      },
+    },
+    modes: { type: 'object', minProperties: 1, additionalProperties: nonEmptyStringSchema },
+    dependencies: { type: 'array', minItems: 1, uniqueItems: true, items: nonEmptyStringSchema },
+    completion: nonEmptyStringSchema,
+    limitations: { type: 'array', minItems: 1, uniqueItems: true, items: nonEmptyStringSchema },
+  }, required: ['reviewedRevision', 'surfaces', 'quantities', 'modes', 'dependencies', 'completion'],
+} as const;
+
 export const labContractSchemaV1 = {
   $schema: 'https://json-schema.org/draft/2020-12/schema',
   $id: 'https://www.examplicity.org/developer/lab-contract.schema.json',
@@ -35,6 +67,7 @@ export const labContractSchemaV1 = {
       format: 'uri',
       const: LAB_CONTRACT_DEVELOPER_GUIDE,
     },
+    implementation: implementationMapSchema,
     curriculum: {
       type: 'object',
       additionalProperties: false,
@@ -147,6 +180,16 @@ export type LabContractProfile = {
   parameters: Record<string, unknown>;
 };
 
+export type LabImplementationMap = {
+  reviewedRevision: string;
+  surfaces: Record<string, { selectors: string[]; kind: string; description: string; visibility: string }>;
+  quantities: Record<string, { description: string; domain: string; source: string; output: string; inputSlots?: string[] }>;
+  modes: Record<string, string>;
+  dependencies: string[];
+  completion: string;
+  limitations?: string[];
+};
+
 export type LabContractV1 = {
   schemaVersion: typeof LAB_CONTRACT_VERSION;
   relationship: string;
@@ -155,6 +198,7 @@ export type LabContractV1 = {
   safeAdaptations?: string[];
   nonGoals?: string[];
   developerGuide?: typeof LAB_CONTRACT_DEVELOPER_GUIDE;
+  implementation?: LabImplementationMap;
   curriculum?: {
     features: Record<string, LabContractFeature>;
     profiles: Record<string, LabContractProfile>;
@@ -277,6 +321,30 @@ const validateCurriculum = (value: unknown, label: string) => {
   }
 };
 
+const validateImplementation = (value: unknown, label: string) => {
+  const map = asRecord(value, label);
+  requireOnlyKeys(map, label, ['reviewedRevision', 'surfaces', 'quantities', 'modes', 'dependencies', 'completion'], ['limitations']);
+  validateString(map.reviewedRevision, `${label}.reviewedRevision`);
+  validateString(map.completion, `${label}.completion`);
+  validateStringArray(map.dependencies, `${label}.dependencies`);
+  if (map.limitations !== undefined) validateStringArray(map.limitations, `${label}.limitations`);
+  for (const section of ['surfaces', 'quantities', 'modes']) {
+    const entries = Object.entries(asRecord(map[section], `${label}.${section}`));
+    if (!entries.length) fail(`${label}.${section}`, 'must not be empty');
+    for (const [id, raw] of entries) {
+      const itemLabel = `${label}.${section}.${id}`;
+      if (section === 'modes') { validateString(raw, itemLabel); continue; }
+      if (!stableIdPattern.test(id)) fail(itemLabel, 'must have a stable ID');
+      const item = asRecord(raw, itemLabel);
+      const strings = section === 'surfaces' ? ['kind', 'description', 'visibility'] : ['description', 'domain', 'source', 'output'];
+      requireOnlyKeys(item, itemLabel, [...strings, ...(section === 'surfaces' ? ['selectors'] : [])], section === 'quantities' ? ['inputSlots'] : []);
+      strings.forEach(key => validateString(item[key], `${itemLabel}.${key}`));
+      if (section === 'surfaces') validateStringArray(item.selectors, `${itemLabel}.selectors`);
+      if (item.inputSlots !== undefined) validateStringArray(item.inputSlots, `${itemLabel}.inputSlots`);
+    }
+  }
+};
+
 export const validateLabContractV1 = (value: unknown, label = 'Lab Contract'): LabContractV1 => {
   const contract = asRecord(value, label);
   if (contract.schemaVersion !== LAB_CONTRACT_VERSION) {
@@ -298,6 +366,7 @@ export const validateLabContractV1 = (value: unknown, label = 'Lab Contract'): L
   if (contract.developerGuide !== undefined && contract.developerGuide !== LAB_CONTRACT_DEVELOPER_GUIDE) {
     fail(label, `developerGuide must be ${LAB_CONTRACT_DEVELOPER_GUIDE}`);
   }
+  if (contract.implementation !== undefined) validateImplementation(contract.implementation, `${label}.implementation`);
   if (contract.curriculum !== undefined) validateCurriculum(contract.curriculum, `${label}.curriculum`);
   return contract as LabContractV1;
 };

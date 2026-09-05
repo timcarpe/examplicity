@@ -1403,7 +1403,122 @@ window.LabDesign = {
   "nonGoals": [
     "Using one inverse-calculator output as the complete solution set."
   ],
-  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract",
+  "implementation": {
+    "reviewedRevision": "7a15bda",
+    "surfaces": {
+      "task": {
+        "selectors": [
+          "#missionTitle"
+        ],
+        "kind": "given",
+        "description": "Current problem statement and supplied quantities.",
+        "visibility": "Shown at the start of each problem or stage."
+      },
+      "model": {
+        "selectors": [
+          "#rotorSvg",
+          "#graphSvg"
+        ],
+        "kind": "model",
+        "description": "Operated construction and its live measurements; see quantities for what is given and revealed.",
+        "visibility": "Present for the current problem; child controls and readouts follow the states described below."
+      },
+      "working": {
+        "selectors": [
+          "#workContent"
+        ],
+        "kind": "working",
+        "description": "Ordered calculations, learner entries and consequential evidence for the current task.",
+        "visibility": "Present for the current problem; child controls and readouts follow the states described below."
+      },
+      "completion": {
+        "selectors": [
+          "#nextCard"
+        ],
+        "kind": "completion",
+        "description": "Achievement, next task or learning transition.",
+        "visibility": "Shown only when the local completion conditions below are satisfied; representation controls are separately identified."
+      },
+      "comparison": {
+        "selectors": [
+          "#solutionList",
+          "#inverseCopy"
+        ],
+        "kind": "evidence",
+        "description": "Discovered intersections versus principal inverse; distinct values of x are compared.",
+        "visibility": "Present for the current problem; child controls and readouts follow the states described below."
+      },
+      "check": {
+        "selectors": [
+          "#checkWork",
+          "#resetSweep",
+          "[data-work-level]"
+        ],
+        "kind": "control",
+        "description": "Explicit working check, trace reset and assistance selection.",
+        "visibility": "Present for the current problem; child controls and readouts follow the states described below."
+      }
+    },
+    "quantities": {
+      "equation-target": {
+        "description": "One supplied trig equation and target ordinate over a fixed interval.",
+        "domain": "x in degrees, 0°≤x≤360°; function ordinate unitless.",
+        "source": "Given in the task; isolated target requires entry for relevant cases.",
+        "output": "Circle component and target line expose the same function relationship.",
+        "inputSlots": [
+          "#workContent input[data-work-key=\"target\"]"
+        ]
+      },
+      "trace-angle": {
+        "description": "One rotating angle x produces the graph trace and target intersections.",
+        "domain": "Degrees modulo 360, with an unwrapped trace history.",
+        "source": "Learner rotates the handle or uses keyboard motion.",
+        "output": "Visited arc and discovered intersections progressively reveal the solution set.",
+        "inputSlots": [
+          "#rotorSvg"
+        ]
+      },
+      "solutions": {
+        "description": "Principal angle, partner angle and endpoint are candidate VALUES OF x; the final set is one set-valued answer entered in a single field, not separate unrelated unknowns.",
+        "domain": "Angles in degrees; set on closed interval 0–360.",
+        "source": "Inverse is a button action; partner/endpoint/final set entries depend on case and Working.",
+        "output": "Final list parser checks cardinality and each sorted angle within tolerance.",
+        "inputSlots": [
+          "#runInverse",
+          "#workContent input[data-work-key=\"partner\"]",
+          "#workContent input[data-work-key=\"endpoint\"]",
+          "#workContent input[data-work-key=\"final\"]"
+        ]
+      },
+      "range-count": {
+        "description": "Lower/upper function range and the resulting number of solutions in the out-of-range case.",
+        "domain": "Unitless bounds −1 and 1; integer count 0.",
+        "source": "Shown or entered depending on Working.",
+        "output": "The graph range justifies why an inverse is unavailable.",
+        "inputSlots": [
+          "#workContent input[data-work-key=\"lower\"]",
+          "#workContent input[data-work-key=\"upper\"]",
+          "#workContent input[data-work-key=\"count\"]"
+        ]
+      }
+    },
+    "modes": {
+      "none": "Trace the full interval; inverse/symmetry/range and final-set working are shown.",
+      "some": "Run the inverse and enter required isolated target/partner/endpoint values, or the upper sine-range bound in the no-solution case.",
+      "all": "Also enter the final solution set; range cases additionally require lower bound and solution count.",
+      "cases": "Existing cases cover sine/cosine/tangent solutions, out-of-range target and closed-interval endpoints."
+    },
+    "dependencies": [
+      "Trace completeness requires at least 354 of the 360 degree bins visited; it then marks the full interval.",
+      "Required isolated target gates inverse; inverse/trace gate symmetry; required partner gates final set.",
+      "In Some/All, entries require explicit Check working or Enter before workReady() can complete."
+    ],
+    "completion": "caseComplete() is state.complete && workReady(); None requires the trace, while Some/All additionally require a checked correct set of case-specific working keys.",
+    "limitations": [
+      "Trace completion allows a six-degree-bin tolerance; do not describe it as every individual angle having been physically visited."
+    ]
+  }
 }
 </script>
 <!-- LAB_CONTRACT_END -->
@@ -1447,7 +1562,7 @@ window.LabDesign = {
           <div><strong id="rotorTitle">Sine on the circle</strong><span id="rotorSub">Vertical coordinate of the point.</span></div>
           <div class="live-pill"><small>angle x</small><span id="anglePill">0.0°</span></div>
         </div>
-        <svg id="rotorSvg" data-lab-readable-chart="12" tabindex="0" role="slider" aria-label="Angle x. Drag around the circle or use left and right arrow keys." aria-valuemin="0" aria-valuemax="360" aria-valuenow="20"></svg>
+        <svg id="rotorSvg" data-lab-readable-chart="12" tabindex="0" role="slider" aria-label="Angle x. Drag around the circle or use left and right arrow keys." aria-valuemin="0" aria-valuemax="360" aria-valuenow="20" data-lab-role="model"></svg>
         <span class="stage-note">Drag the point around the circle</span>
       </section>
 
@@ -1458,7 +1573,7 @@ window.LabDesign = {
         </div>
         <svg id="graphSvg" data-lab-readable-chart="12" role="img" aria-label="Live trigonometric graph from zero to 360 degrees" data-lab-role="model" data-lab-manipulative="trig-trace"></svg>
       </section>
-      <div id="nextCard" class="next-card" hidden>
+      <div id="nextCard" class="next-card" hidden data-lab-role="evidence">
         <strong id="nextTitle">Solutions verified</strong>
         <span id="nextText"></span>
         <div id="nextUpgrade" class="next-upgrade" hidden><strong id="nextUpgradeTitle"></strong><span id="nextUpgradeText"></span><button id="upgradeNext" type="button" class="lab-action"></button></div>
@@ -1468,7 +1583,7 @@ window.LabDesign = {
 
     <section class="working-panel" aria-label="Trigonometric solution working">
       <div class="working-head"><div><strong>Solutions in the interval</strong></div></div>
-      <div id="workContent" class="calc-flow"></div><div class="working-foot"><div id="workingStatus" class="working-status" aria-live="polite"></div><button id="checkWork" type="button" class="lab-action">Check working</button></div><div id="realisation" class="realisation"></div>
+      <div id="workContent" class="calc-flow" data-lab-role="working"></div><div class="working-foot"><div id="workingStatus" class="working-status" aria-live="polite"></div><button id="checkWork" type="button" class="lab-action">Check working</button></div><div id="realisation" class="realisation"></div>
     </section>
 
     <div class="evidence" aria-live="polite">

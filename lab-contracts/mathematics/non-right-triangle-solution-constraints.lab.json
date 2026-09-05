@@ -7,8 +7,103 @@
     "evidence": "The construction, valid intersections and checked calculations show the number of solutions.",
     "nextDecision": "Decide which candidate angles form valid triangles and complete the solution set."
   },
-  "invariants": ["A valid candidate must lie on the fixed ray and at the supplied distance from the fixed vertex.", "Only angle configurations that close a triangle count as solutions."],
-  "safeAdaptations": ["Vary SSA values that deliberately yield zero, one or two solutions.", "Change working support while preserving geometric validation of each candidate."],
-  "nonGoals": ["Assuming every sine-rule calculation produces exactly one triangle."],
-  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+  "invariants": [
+    "A valid candidate must lie on the fixed ray and at the supplied distance from the fixed vertex.",
+    "Only angle configurations that close a triangle count as solutions."
+  ],
+  "safeAdaptations": [
+    "Vary SSA values that deliberately yield zero, one or two solutions.",
+    "Change working support while preserving geometric validation of each candidate."
+  ],
+  "nonGoals": [
+    "Assuming every sine-rule calculation produces exactly one triangle."
+  ],
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract",
+  "implementation": {
+    "reviewedRevision": "7a15bda",
+    "surfaces": {
+      "task": {
+        "selectors": [
+          "#missionTitle"
+        ],
+        "kind": "given",
+        "description": "Current problem statement and supplied quantities.",
+        "visibility": "Shown at the start of each problem or stage."
+      },
+      "model": {
+        "selectors": [
+          "#stage"
+        ],
+        "kind": "model",
+        "description": "Operated construction and its live measurements; see quantities for what is given and revealed.",
+        "visibility": "Present for the current problem; child controls and readouts follow the states described below."
+      },
+      "working": {
+        "selectors": [
+          "#workingBody"
+        ],
+        "kind": "working",
+        "description": "Ordered calculations, learner entries and consequential evidence for the current task.",
+        "visibility": "Present for the current problem; child controls and readouts follow the states described below."
+      },
+      "completion": {
+        "selectors": [
+          "#nextCard"
+        ],
+        "kind": "completion",
+        "description": "Achievement, next task or learning transition.",
+        "visibility": "Shown only when the local completion conditions below are satisfied; representation controls are separately identified."
+      },
+      "completion-next": {
+        "selectors": [
+          "#nextProblem",
+          "#upgradeLevel"
+        ],
+        "kind": "control",
+        "description": "Advance a completed generated problem, optionally increasing Working support requirements.",
+        "visibility": "Present for the current problem; child controls and readouts follow the states described below."
+      }
+    },
+    "quantities": {
+      "ssa-givens": {
+        "description": "One angle A and two opposite side quantities a=BC, b=AC.",
+        "domain": "Degrees and metres.",
+        "source": "Supplied by each generated SSA problem.",
+        "output": "A fixes the ray; b fixes C; the circle around C has radius a."
+      },
+      "peg-positions": {
+        "description": "Zero, one or two possible locations of B on the ray. These are alternatives for the SAME vertex/unknown triangle, not separate freely chosen measurements.",
+        "domain": "Positive distance along the ray in metres.",
+        "source": "Learner drags/releases the peg at circle/ray intersections.",
+        "output": "Claimed triangles and measured BC are shown; a second peg gets a new cue.",
+        "inputSlots": [
+          "#probe",
+          "#rayHit"
+        ]
+      },
+      "candidate-angles-count": {
+        "description": "Sine ratio, candidate values B1/B2, their corresponding remaining C angles, and number of valid triangles. B1/B2 are possible values of angle B; count is a separate discrete conclusion.",
+        "domain": "Unitless sine ratio; angles in degrees; integer count 0, 1 or 2.",
+        "source": "Numerical inputs unlock after the construction search.",
+        "output": "The candidate table uses C=180−A−B and positive-angle validity.",
+        "inputSlots": [
+          "#workingBody input[data-field]"
+        ]
+      }
+    },
+    "modes": {
+      "none": "Peg every valid position (or search the ray for no solution); the numerical chain is revealed.",
+      "some": "Enter principal/supplementary angles where defined and final count; the no-inverse case requires the sine ratio instead.",
+      "all": "Also enter sine ratio and remaining candidate angles, following requiredKeys()."
+    },
+    "dependencies": [
+      "For solution cases all geometry().valid peg locations must be claimed before working unlocks.",
+      "For zero-solution cases constructionReady() uses visitedMax−visitedMin >= 3.5, not a proof of an exhaustive continuous ray search.",
+      "requiredKeys() changes for no-inverse and coincident-candidate cases to avoid meaningless angle entries."
+    ],
+    "completion": "solved() requires constructionReady() and workingReady(); typed values use existing ratio/angle tolerances and exact integer count.",
+    "limitations": [
+      "The no-solution exploration gate measures a minimum travelled interval (3.5 model units). It must not be described as a formal exhaustive proof of no intersection."
+    ]
+  }
 }

@@ -1384,7 +1384,108 @@ window.LabDesign = {
   "nonGoals": [
     "Adding the same absolute percentage amount at every step."
   ],
-  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract",
+  "implementation": {
+    "reviewedRevision": "7a15bda",
+    "surfaces": {
+      "task": {
+        "selectors": [
+          "#goalTitle"
+        ],
+        "kind": "given",
+        "description": "Current problem statement and supplied quantities.",
+        "visibility": "Shown at the start of each problem or stage."
+      },
+      "model": {
+        "selectors": [
+          "#mainVisual",
+          "#projectionSvg"
+        ],
+        "kind": "model",
+        "description": "Operated construction and its live measurements; see quantities for what is given and revealed.",
+        "visibility": "Present for the current problem; child controls and readouts follow the states described below."
+      },
+      "working": {
+        "selectors": [
+          "#compress"
+        ],
+        "kind": "working",
+        "description": "Ordered calculations, learner entries and consequential evidence for the current task.",
+        "visibility": "Present for the current problem; child controls and readouts follow the states described below."
+      },
+      "completion": {
+        "selectors": [
+          "#nextCard"
+        ],
+        "kind": "completion",
+        "description": "Achievement, next task or learning transition.",
+        "visibility": "Shown only when the local completion conditions below are satisfied; representation controls are separately identified."
+      },
+      "projection": {
+        "selectors": [
+          "#projectionSvg",
+          "#projectionControls",
+          "#horizon"
+        ],
+        "kind": "evidence",
+        "description": "Manual sequence compared with the repeated multiplier; optional horizon extension.",
+        "visibility": "Forward mode, enabled by the bridge/projection state."
+      }
+    },
+    "quantities": {
+      "base-rate-periods": {
+        "description": "Starting or final amount, percentage rate and number of periods.",
+        "domain": "Positive amounts (currency £ where the question uses money), signed percentages, integer years.",
+        "source": "Generated givens vary with forward or reverse problem.",
+        "output": "The bars, gates and goal expose the supplied values."
+      },
+      "period-changes": {
+        "description": "Each period has its own change amount, applied to that period’s current base.",
+        "domain": "Amount units follow the problem; currency comparisons use the lab’s money tolerance.",
+        "source": "Learner drags the next bar at None or enters indexed change amounts at Some/All.",
+        "output": "A completed gate unlocks the next period and its base.",
+        "inputSlots": [
+          "#mainVisual [data-period]",
+          "#mainVisual input[id^=\"change-\"]"
+        ]
+      },
+      "multiplier-bridge": {
+        "description": "Whole percentage and a unitless forward multiplier are two representations linked by division by 100.",
+        "domain": "Percentage and positive decimal multiplier.",
+        "source": "Supplied or entered according to Working level.",
+        "output": "The bridge must match the rate before projection or inverse steps count as complete.",
+        "inputSlots": [
+          "#resultPercentInput",
+          "#multiplierInput",
+          "#mainVisual #reverseResultPercent",
+          "#mainVisual #forwardMultiplier"
+        ]
+      },
+      "inverse-result": {
+        "description": "An inverse operation and factor recover ONE original amount; operation buttons are alternatives, not two answer slots.",
+        "domain": "Multiply/divide choice and positive decimal factor.",
+        "source": "Learner chooses the inverse gate; resulting amount is calculated.",
+        "output": "The reverse result is compared with the original target.",
+        "inputSlots": [
+          "#mainVisual #opMultiply",
+          "#mainVisual #opDivide",
+          "#mainVisual #inverseFactor"
+        ]
+      }
+    },
+    "modes": {
+      "none": "Apply each forward percentage change by dragging the existing next bar. Whole percentage and multiplier are supplied.",
+      "some": "Enter each forward change and the one-period multiplier; whole percentage is shown.",
+      "all": "Also derive the whole percentage after the change.",
+      "reverse": "All levels choose an inverse operation/factor; support supplies or requires the forward percentage/multiplier bridge. The projection horizon is an optional extension."
+    },
+    "dependencies": [
+      "Forward gates are sequential; each percentage is applied to the latest amount, not repeatedly to the opening value.",
+      "The percentage-to-multiplier bridge gates dependent multiplier input.",
+      "Reverse completion requires the bridge, correct inverse factor/operation and restored original value."
+    ],
+    "completion": "challengeComplete() requires all forward gates and Working-dependent bridge results, or reverseComplete() for reverse mode."
+  }
 }
 </script>
 <!-- LAB_CONTRACT_END -->
@@ -1423,11 +1524,11 @@ window.LabDesign = {
   </section>
 
   <section class="panel workbench">
-    <div id="nextCard" class="next-card" hidden><strong>Problem complete</strong><span id="nextCardText"></span><div id="nextUpgrade" class="next-upgrade" hidden><strong id="nextUpgradeTitle"></strong><span id="nextUpgradeText"></span><button id="upgradeLevel" type="button" class="lab-action"></button></div><div class="next-actions"><button id="nextProblem" type="button" class="lab-action" data-priority="primary">Next problem</button></div></div>
+    <div id="nextCard" class="next-card" hidden data-lab-role="evidence"><strong>Problem complete</strong><span id="nextCardText"></span><div id="nextUpgrade" class="next-upgrade" hidden><strong id="nextUpgradeTitle"></strong><span id="nextUpgradeText"></span><button id="upgradeLevel" type="button" class="lab-action"></button></div><div class="next-actions"><button id="nextProblem" type="button" class="lab-action" data-priority="primary">Next problem</button></div></div>
 
-    <div id="mainVisual" role="region" aria-label="Repeated percentage change workbench"></div>
+    <div id="mainVisual" role="region" aria-label="Repeated percentage change workbench" data-lab-role="model"></div>
 
-    <section id="compress" class="compress" aria-label="Build the repeated multiplier">
+    <section id="compress" class="compress" aria-label="Build the repeated multiplier" data-lab-role="working">
       <div class="compress-body">
         <div class="mult-builder">
           <div id="percentStrip" class="percent-strip"></div>

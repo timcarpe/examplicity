@@ -78,6 +78,32 @@ test('validates the small semantic hook vocabulary', () => {
   `), { roles: [], actions: [], manipulatives: [], features: [] });
 });
 
+test('preserves an optional implementation map without changing curriculum', () => {
+  const mapped = {
+    ...contract,
+    implementation: {
+      reviewedRevision: '7a15bda',
+      surfaces: { working: { selectors: ['#working'], kind: 'working', description: 'Fraction answer.', visibility: 'After alignment.' } },
+      quantities: { fraction: { description: 'One rational answer.', domain: 'Rational number.', source: 'Learner derived.', output: 'Checked after entry.', inputSlots: ['#numerator', '#denominator'] } },
+      modes: { None: 'Model action remains required; algebra is supplied.' },
+      dependencies: ['Alignment precedes the fraction answer.'],
+      completion: 'The two slots compose one correct rational answer.',
+    },
+  };
+  const parsed = parseLabContractV1(JSON.stringify(mapped));
+  assert.deepEqual(parsed.curriculum, contract.curriculum);
+  assert.deepEqual(extractEmbeddedLabContract(injectLabContract('<html><head></head><body></body></html>', parsed)), mapped);
+
+  const emptySelectors = structuredClone(mapped);
+  emptySelectors.implementation.surfaces.working.selectors = [];
+  assert.throws(() => parseLabContractV1(JSON.stringify(emptySelectors)), /selectors.*non-empty array/);
+  const missingDomain = structuredClone(mapped);
+  Reflect.deleteProperty(missingDomain.implementation.quantities.fraction, 'domain');
+  assert.throws(() => parseLabContractV1(JSON.stringify(missingDomain)), /missing domain/);
+  const invalidId = { ...mapped, implementation: { ...mapped.implementation, surfaces: { 'Not stable': mapped.implementation.surfaces.working } } };
+  assert.throws(() => parseLabContractV1(JSON.stringify(invalidId)), /stable ID/);
+});
+
 test('resolves a separate contract tree while preserving the package source and flat public output', async () => {
   const root = await mkdtemp(path.join(os.tmpdir(), 'examplicity-lab-package-'));
   const identity = { subject: 'computer-science', slug: 'example-lab' };

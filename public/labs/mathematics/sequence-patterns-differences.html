@@ -1439,7 +1439,108 @@ window.LabDesign = {
   "nonGoals": [
     "Accepting an nth-term rule without checking it against constructed stages."
   ],
-  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract",
+  "implementation": {
+    "reviewedRevision": "7a15bda",
+    "surfaces": {
+      "task": {
+        "selectors": [
+          "#goalTitle"
+        ],
+        "kind": "given",
+        "description": "Current problem statement and supplied quantities.",
+        "visibility": "Shown at the start of each problem or stage."
+      },
+      "model": {
+        "selectors": [
+          "#canvas",
+          "#referenceStage",
+          "#buildGrid",
+          "#looseField"
+        ],
+        "kind": "model",
+        "description": "Operated construction and its live measurements; see quantities for what is given and revealed.",
+        "visibility": "Present for the current problem; child controls and readouts follow the states described below."
+      },
+      "working": {
+        "selectors": [
+          "#calcPanel"
+        ],
+        "kind": "working",
+        "description": "Ordered calculations, learner entries and consequential evidence for the current task.",
+        "visibility": "Present for the current problem; child controls and readouts follow the states described below."
+      },
+      "completion": {
+        "selectors": [
+          "#nextCard"
+        ],
+        "kind": "completion",
+        "description": "Achievement, next task or learning transition.",
+        "visibility": "Shown only when the local completion conditions below are satisfied; representation controls are separately identified."
+      },
+      "progress": {
+        "selectors": [
+          "#termStrip",
+          "#evidence",
+          "#calcDiagnosis"
+        ],
+        "kind": "evidence",
+        "description": "Current term values, construction feedback and working diagnosis.",
+        "visibility": "Present for the current problem; child controls and readouts follow the states described below."
+      },
+      "stages": {
+        "selectors": [
+          "#stageItem0",
+          "#stageItem1",
+          "#stageItem2",
+          "#stageItem3",
+          "[data-work-level]"
+        ],
+        "kind": "control",
+        "description": "Existing family progression and earned support levels.",
+        "visibility": "Present for the current problem; child controls and readouts follow the states described below."
+      }
+    },
+    "quantities": {
+      "terms-and-squares": {
+        "description": "Stage counts T1, T2, … and the spatial pattern they count.",
+        "domain": "Nonnegative integer square counts and connected lattice cells.",
+        "source": "The preceding stage is given; learner places/removes squares to extend the construction.",
+        "output": "Stage counts and the term strip update from placement.",
+        "inputSlots": [
+          "#buildGrid",
+          "#looseField"
+        ]
+      },
+      "difference-rule-use": {
+        "description": "Difference entries, one nth-term expression and one requested Tn value. Labels T1/T2 and step numbers identify positions, not independent scalar unknowns.",
+        "domain": "Integer differences/term values; algebraic expression in n.",
+        "source": "Required entries vary by Working level and family.",
+        "output": "Rule entry unlocks after construction; the use value waits for a required rule to be correct.",
+        "inputSlots": [
+          "#calcContent input[data-work-key]"
+        ]
+      },
+      "ambiguous-futures": {
+        "description": "Two different values of T4 for the same prefix, produced by two constructions.",
+        "domain": "Distinct connected fourth-stage square patterns/counts.",
+        "source": "Learner constructs both; no unique nth-term rule is demanded in this family.",
+        "output": "The two future counts are compared in working."
+      }
+    },
+    "modes": {
+      "none": "Build the pattern; differences, rule and use value are revealed as construction completes.",
+      "some": "Enter the invariant difference, nth-term rule and requested later term.",
+      "all": "Enter all difference rows, nth-term rule and requested term.",
+      "availability": "Some/All are earned through completed patterns. The ambiguity family instead requires two different connected fourth-stage constructions."
+    },
+    "dependencies": [
+      "A valid extension advances the constructed stage.",
+      "requiredWorkKeys() selects invariant-only or all difference entries; construction gates formula entry and a correct required formula gates use.",
+      "The final ambiguity task uses two distinct constructed futures rather than calculation-field completion."
+    ],
+    "completion": "stageFinished() is constructionComplete() && workingReady(), except the ambiguity family where state.futures.length >= 2 completes the stage."
+  }
 }
 </script>
 <!-- LAB_CONTRACT_END -->
@@ -1478,17 +1579,17 @@ window.LabDesign = {
       </div></div></header>
   <div class="lab-layout">
     <div class="stage-column" id="stageColumn">
-      <div class="canvas" id="canvas">
+      <div class="canvas" id="canvas" data-lab-role="model">
         <div class="workspace-row">
           <section class="reference-zone" aria-label="Previous completed stage">
             <header class="stage-zone-heading"><span class="zone-label">Previous stage</span><span id="referenceValue" class="zone-value"></span></header>
-            <div id="referenceStage" class="reference-stage"></div>
+            <div id="referenceStage" class="reference-stage" data-lab-role="model"></div>
             <div id="referenceCaption" class="reference-caption"></div>
           </section>
           <section class="build-zone" id="buildZone" aria-label="Build the next stage">
             <header class="stage-zone-heading"><span class="zone-label">Next stage</span><span id="buildValue" class="zone-value"></span></header>
             <div class="build-model">
-              <div id="buildGrid" class="build-grid" aria-label="Square lattice"></div>
+              <div id="buildGrid" class="build-grid" aria-label="Square lattice" data-lab-role="model"></div>
               <div id="buildStageShell" class="build-stage-shell"></div>
             </div>
             <div id="dropMessage" class="drop-message" aria-live="polite"></div>
@@ -1496,11 +1597,11 @@ window.LabDesign = {
         </div>
         <section id="tray" class="tray" aria-label="Loose square material">
           <div class="tray-head"><div><strong>Loose material</strong><span>Drag a square onto the lattice, or select a square then a cell.</span></div><div class="tray-return" aria-hidden="true">↩ Return square</div></div>
-          <div id="looseField" class="loose-field"></div>
+          <div id="looseField" class="loose-field" data-lab-role="model"></div>
         </section>
       </div>
       <div id="evidence" class="evidence" aria-live="polite"></div>
-      <div id="nextCard" class="next-card" hidden role="dialog" aria-live="polite" aria-label="Pattern complete">
+      <div id="nextCard" class="next-card" hidden role="dialog" aria-live="polite" aria-label="Pattern complete" data-lab-role="evidence">
         <button class="dialog-move" type="button" data-dialog-drag aria-label="Move completion card" title="Drag to move; click to switch sides; use arrow keys when focused"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 3v18M3 12h18M8 7l4-4 4 4M8 17l4 4 4-4M7 8l-4 4 4 4M17 8l4 4-4 4"/></svg></button>
         <strong id="nextTitle">Pattern verified</strong>
         <span id="nextText"></span>
@@ -1515,7 +1616,7 @@ window.LabDesign = {
         </div>
       </div>
     </div>
-    <aside id="calcPanel" class="calc-panel" aria-live="polite">
+    <aside id="calcPanel" class="calc-panel" aria-live="polite" data-lab-role="working">
 
       <div class="calc-head">
         <div id="termStrip" class="term-strip"></div>

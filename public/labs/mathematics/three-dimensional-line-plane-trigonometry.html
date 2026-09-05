@@ -1384,7 +1384,104 @@ window.LabDesign = {
   "nonGoals": [
     "Measuring the apparent screen angle as the angle between line and plane."
   ],
-  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract",
+  "implementation": {
+    "reviewedRevision": "7a15bda",
+    "surfaces": {
+      "task": {
+        "selectors": [
+          "#missionTitle"
+        ],
+        "kind": "given",
+        "description": "Current problem statement and supplied quantities.",
+        "visibility": "Shown at the start of each problem or stage."
+      },
+      "model": {
+        "selectors": [
+          "#stage"
+        ],
+        "kind": "model",
+        "description": "Operated construction and its live measurements; see quantities for what is given and revealed.",
+        "visibility": "Present for the current problem; child controls and readouts follow the states described below."
+      },
+      "working": {
+        "selectors": [
+          "#workPanel"
+        ],
+        "kind": "working",
+        "description": "Ordered calculations, learner entries and consequential evidence for the current task.",
+        "visibility": "Present for the current problem; child controls and readouts follow the states described below."
+      },
+      "completion": {
+        "selectors": [
+          "#phaseModal"
+        ],
+        "kind": "completion",
+        "description": "Achievement, next task or learning transition.",
+        "visibility": "Shown only when the local completion conditions below are satisfied; representation controls are separately identified."
+      },
+      "unfolding": {
+        "selectors": [
+          "#phaseModal"
+        ],
+        "kind": "control",
+        "description": "Movable blue support card contains the actual unfolding transformation control.",
+        "visibility": "After projection; green cards are used separately for achieved results."
+      }
+    },
+    "quantities": {
+      "room-offsets": {
+        "description": "Q has given east/north offsets and height relative to floor point P.",
+        "domain": "Lengths in m.",
+        "source": "Generated task givens.",
+        "output": "Room dimensions and the goal supply these lengths."
+      },
+      "floor-projection": {
+        "description": "One perpendicular floor projection PR, initially explored through a candidate floor beam and section drop QT.",
+        "domain": "Floor direction in degrees; lengths in m; true section angle and drop tilt in degrees.",
+        "source": "Learner rotates/releases the beam until the drop is vertical.",
+        "output": "The true-section inset distinguishes geometric angle from perspective screen opening.",
+        "inputSlots": [
+          "#stage [data-drag=\"beam\"]"
+        ]
+      },
+      "pr-and-angle": {
+        "description": "PR is reused as adjacent side in the vertical triangle; the final unknown is angle QPR. PR and angle are distinct quantities, while repeated PR labels represent the same segment.",
+        "domain": "Positive length m and angle degrees; sin/cos/tan choice at All.",
+        "source": "Unfolding exposes the connected floor and vertical right triangles; working is shown or entered by level.",
+        "output": "Pythagoras result precedes angle calculation and optional ratio choice.",
+        "inputSlots": [
+          "#workPanel input[data-answer]",
+          "#workPanel [data-ratio]"
+        ]
+      },
+      "representation-view": {
+        "description": "Unfold fraction and camera yaw/pitch are view controls, not mathematical answer quantities.",
+        "domain": "Unfold 0–100%; bounded camera angles.",
+        "source": "Learner uses the unfolding slider and later room rotation.",
+        "output": "The same geometry changes representation without changing the certified projection/angle.",
+        "inputSlots": [
+          "#phaseFoldSlider",
+          "#viewSurface"
+        ]
+      }
+    },
+    "modes": {
+      "none": "Beam projection and unfolding are required; Pythagoras and trig working are supplied through staged Continue actions.",
+      "some": "Enter projection length PR and line–plane angle.",
+      "all": "Also choose the trig ratio for the vertical right triangle.",
+      "perspective": "After the calculation, rotate the room to see screen opening change while the true line–plane angle remains fixed."
+    },
+    "dependencies": [
+      "Projection alignment locks the beam before the unfolding support card appears.",
+      "Full unfolding precedes projection calculation; verified PR precedes the angle step.",
+      "The final perspective test requires a changed screen opening while the calculated angle is fixed."
+    ],
+    "completion": "Local calcStep/completed state gates the staged cards; final viewCheck is set when the perspective screen opening changes by at least 2.5 degrees from its reference.",
+    "limitations": [
+      "The screen opening is view-dependent and is not an alternative answer to the line–plane angle."
+    ]
+  }
 }
 </script>
 <!-- LAB_CONTRACT_END -->
@@ -1453,11 +1550,11 @@ window.LabDesign = {
           <g id="overlayLayer"></g>
         </svg>
         <div id="guideCard" class="guide-card"><strong>Drag and release the blue floor beam</strong><span>Find the direction where the drop from Q becomes vertical and the true section angle is smallest.</span></div>
-        <section id="phaseModal" class="phase-modal next-card" hidden role="dialog" aria-live="polite"></section>
+        <section id="phaseModal" class="phase-modal next-card" hidden role="dialog" aria-live="polite" data-lab-role="evidence"></section>
       </div>
       <div class="stage-note" aria-live="polite"><div id="stageNote" class="stage-note-copy"></div><span id="stageState" class="stage-note-state warn"></span></div>
     </section>
-    <aside id="workPanel" class="evidence" aria-live="polite"></aside>
+    <aside id="workPanel" class="evidence" aria-live="polite" data-lab-role="working"></aside>
   </div>
 </section>
 </main>

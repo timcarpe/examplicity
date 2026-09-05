@@ -1464,7 +1464,108 @@ window.LabDesign = {
   "nonGoals": [
     "Using bar height alone as frequency for unequal-width classes."
   ],
-  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract",
+  "implementation": {
+    "reviewedRevision": "7a15bda",
+    "surfaces": {
+      "task": {
+        "selectors": [
+          "#goalSentence"
+        ],
+        "kind": "given",
+        "description": "Current problem statement and supplied quantities.",
+        "visibility": "Shown at the start of each problem or stage."
+      },
+      "model": {
+        "selectors": [
+          "#stage"
+        ],
+        "kind": "model",
+        "description": "Operated construction and its live measurements; see quantities for what is given and revealed.",
+        "visibility": "Present for the current problem; child controls and readouts follow the states described below."
+      },
+      "working": {
+        "selectors": [
+          "#workingPanel"
+        ],
+        "kind": "working",
+        "description": "Ordered calculations, learner entries and consequential evidence for the current task.",
+        "visibility": "Present for the current problem; child controls and readouts follow the states described below."
+      },
+      "completion": {
+        "selectors": [
+          "#nextCard"
+        ],
+        "kind": "completion",
+        "description": "Achievement, next task or learning transition.",
+        "visibility": "Shown only when the local completion conditions below are satisfied; representation controls are separately identified."
+      },
+      "progress": {
+        "selectors": [
+          "#stageItem0",
+          "#stageItem1",
+          "#stageItem2",
+          "#stageItem3"
+        ],
+        "kind": "evidence",
+        "description": "Existing construction/read-off/summary progression and saved working.",
+        "visibility": "Present for the current problem; child controls and readouts follow the states described below."
+      },
+      "controls": {
+        "selectors": [
+          "[data-work-level]",
+          "#resetCurrentBtn",
+          "#newProblemBtn"
+        ],
+        "kind": "control",
+        "description": "Working ownership, current-step reset and sample generation.",
+        "visibility": "Present for the current problem; child controls and readouts follow the states described below."
+      }
+    },
+    "quantities": {
+      "grouped-data": {
+        "description": "Supplied unequal class boundaries and class frequencies.",
+        "domain": "Journey time in minutes and frequency in pupils.",
+        "source": "Generated sample data are given.",
+        "output": "Current interval values and completed history rows are visible."
+      },
+      "density-total": {
+        "description": "Per-class density and next cumulative total are distinct quantities; repeated fields are indexed instances across intervals.",
+        "domain": "Pupils per minute and cumulative pupils.",
+        "source": "Produced by drag or typed entry according to ownership().",
+        "output": "Density controls bar height/area; the next total controls the curve rise.",
+        "inputSlots": [
+          "#workingPanel input[data-field^=\"density-\"]",
+          "#workingPanel input[data-field^=\"total-\"]",
+          "#stage [data-bar-handle]",
+          "#stage [data-point-handle]"
+        ]
+      },
+      "quartiles-iqr": {
+        "description": "Q1, median and Q3 are three read-offs of the same distribution; IQR is Q3−Q1, a distinct derived spread.",
+        "domain": "Ranks in pupils; read-offs and IQR in minutes.",
+        "source": "Learner positions the ruler at each target rank; All first requires the rank calculation.",
+        "output": "Accepted read-offs are estimates within grouped intervals; IQR entry controls the bracket.",
+        "inputSlots": [
+          "#stage [data-read-handle]",
+          "#workingPanel input[data-field^=\"rank-\"]",
+          "#workingPanel input[data-field=\"iqr\"]"
+        ]
+      }
+    },
+    "modes": {
+      "none": "Drag each density bar, then its cumulative point; quartile ranks and IQR working are shown.",
+      "some": "Density is entered and controls its bar; cumulative rise remains a drag. IQR is entered.",
+      "all": "Density and cumulative totals are entered; quartile rank entries unlock the read-off ruler; IQR is entered.",
+      "experiment": "After the summary, an optional experiment changes an interval density and recomputes frequencies, cumulative totals and median."
+    },
+    "dependencies": [
+      "A class requires barOK, riseOK and ownedWorkReady before moving to the next interval.",
+      "The cumulative point is unavailable until density is correct.",
+      "All class intervals precede Q1/median/Q3; required ranks gate the ruler; Q3 precedes IQR."
+    ],
+    "completion": "Each manipulation is checked on release. The final guide is reached after three accepted quartiles and the IQR calculation (shown automatically at None); experiment remains optional."
+  }
 }
 </script>
 <!-- LAB_CONTRACT_END -->
@@ -1523,7 +1624,7 @@ window.LabDesign = {
           </div>
         </div>
         <div id="completionLayer" class="completion-layer" hidden>
-          <section id="nextCard" class="next-card" role="dialog" aria-modal="false" aria-live="polite">
+          <section id="nextCard" class="next-card" role="dialog" aria-modal="false" aria-live="polite" data-lab-role="evidence">
             <button class="dialog-move" type="button" data-dialog-drag aria-label="Move completion card" title="Drag to move; click to switch sides; use arrow keys when focused">↔</button>
             <strong id="nextCardTitle"></strong><span id="nextCardText"></span>
             <div class="next-actions"><button id="nextSecondary" class="next-secondary" type="button" hidden></button><button id="nextPrimary" class="good" type="button"></button></div>
@@ -1532,7 +1633,7 @@ window.LabDesign = {
       </div>
       <div class="evidence"><div id="evidenceMain" class="evidence-main"></div><div id="evidenceStatus" class="evidence-status"></div></div>
     </div>
-    <aside id="workingPanel" class="working-panel" aria-live="polite"></aside>
+    <aside id="workingPanel" class="working-panel" aria-live="polite" data-lab-role="working"></aside>
   </div>
 </section>
 </main>

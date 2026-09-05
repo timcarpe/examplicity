@@ -7,8 +7,124 @@
     "evidence": "Aligned digits, cancellation, checked working and repeating remainders support the exact fraction.",
     "nextDecision": "Choose the required scale or subtraction step to isolate the original decimal."
   },
-  "invariants": ["Equivalent repeating tails cancel only after correct place-value alignment.", "A repeated remainder produces the same subsequent digits."],
-  "safeAdaptations": ["Use different terminating or recurring digit patterns with exact fractional results.", "Vary working support while preserving the alignment-and-subtraction argument."],
-  "nonGoals": ["Replacing the exact conversion with decimal rounding."],
-  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+  "invariants": [
+    "Equivalent repeating tails cancel only after correct place-value alignment.",
+    "A repeated remainder produces the same subsequent digits."
+  ],
+  "safeAdaptations": [
+    "Use different terminating or recurring digit patterns with exact fractional results.",
+    "Vary working support while preserving the alignment-and-subtraction argument."
+  ],
+  "nonGoals": [
+    "Replacing the exact conversion with decimal rounding."
+  ],
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract",
+  "implementation": {
+    "reviewedRevision": "7a15bda",
+    "surfaces": {
+      "task": {
+        "selectors": [
+          "#missionTitle",
+          "#targetValue"
+        ],
+        "kind": "given",
+        "description": "Current problem statement and supplied quantities.",
+        "visibility": "Shown at the start of each problem or stage."
+      },
+      "model": {
+        "selectors": [
+          "#placeGrid",
+          "#rowAHost",
+          "#rowBHost",
+          "#subtractTrack"
+        ],
+        "kind": "model",
+        "description": "Operated construction and its live measurements; see quantities for what is given and revealed.",
+        "visibility": "Present for the current problem; child controls and readouts follow the states described below."
+      },
+      "working": {
+        "selectors": [
+          "#alignmentWork",
+          "#solveFlow"
+        ],
+        "kind": "working",
+        "description": "Ordered calculations, learner entries and consequential evidence for the current task.",
+        "visibility": "Present for the current problem; child controls and readouts follow the states described below."
+      },
+      "completion": {
+        "selectors": [
+          "#nextCard"
+        ],
+        "kind": "completion",
+        "description": "Achievement, next task or learning transition.",
+        "visibility": "Shown only when the local completion conditions below are satisfied; representation controls are separately identified."
+      },
+      "verification": {
+        "selectors": [
+          "#proofPanel",
+          "#divisionStage",
+          "#factorBox",
+          "#terminationBox",
+          "#derivedVerify",
+          "#counterVerify",
+          "#replayTrace"
+        ],
+        "kind": "evidence",
+        "description": "Replayable remainder/termination evidence and verifier selection.",
+        "visibility": "Present for the current problem; child controls and readouts follow the states described below."
+      }
+    },
+    "quantities": {
+      "decimal-tapes": {
+        "description": "One recurring decimal represented by two power-of-ten multiples.",
+        "domain": "Place-value shifts and an exact recurring decimal.",
+        "source": "The decimal/prefix/repetend is given; learner shifts the tapes.",
+        "output": "Aligned repeating blocks provide evidence for cancellation.",
+        "inputSlots": [
+          "#rowAHost",
+          "#rowBHost"
+        ]
+      },
+      "finite-equation": {
+        "description": "Coefficient of x and the finite subtraction result are two intermediate scalars.",
+        "domain": "Integer coefficient; exact finite number after tail cancellation.",
+        "source": "Produced by the subtraction pull once the tails align; entered only in All.",
+        "output": "The finite equation feeds the fraction result.",
+        "inputSlots": [
+          "#subtractHandle",
+          "#solveChain input"
+        ]
+      },
+      "fraction": {
+        "description": "ONE reduced rational answer encoded by two physical slots: numerator and denominator.",
+        "domain": "Integer numerator and positive integer denominator.",
+        "source": "Shown at None; entered in Some/All after cancellation.",
+        "output": "The fraction is checked exactly against the generated reduced result; long division reveals digits and the repeating remainder cycle.",
+        "inputSlots": [
+          "#solveChain input"
+        ]
+      },
+      "remainder-evidence": {
+        "description": "Repeated remainders and resulting quotient digits from long division.",
+        "domain": "Integer remainder states and decimal digits.",
+        "source": "Computed from the selected verifier fraction.",
+        "output": "Trace, factor box and termination/repetition explanation expose why the decimal repeats."
+      }
+    },
+    "modes": {
+      "none": "After aligning and cancelling the recurring tails, the finite equation and exact fraction are supplied.",
+      "some": "Finite equation is shown; enter the reduced numerator and denominator.",
+      "all": "Also enter the finite-equation coefficient and finite result.",
+      "verification": "Derived and counterexample fraction modes drive a long-division remainder trace; the selected verifier is separate from Working support."
+    },
+    "dependencies": [
+      "The shift alignment must make repeating tails cancel before the subtraction is accepted.",
+      "Cancellation produces the finite equation before fraction working can complete.",
+      "The same rational value is checked through algebra and the long-division trace."
+    ],
+    "completion": "workingComplete() requires session.solved cancellation and, in Some/All, exact numerator/denominator; All additionally requires coefficient and finite result.",
+    "limitations": [
+      "The numerator and denominator slots must not be counted as two distinct unknown rational quantities."
+    ]
+  }
 }

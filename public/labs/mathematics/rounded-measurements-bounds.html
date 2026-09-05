@@ -1378,7 +1378,100 @@ window.LabDesign = {
   "nonGoals": [
     "Certifying a claim from the rounded displayed values alone."
   ],
-  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract",
+  "implementation": {
+    "reviewedRevision": "7a15bda",
+    "surfaces": {
+      "task": {
+        "selectors": [
+          "#goalText"
+        ],
+        "kind": "given",
+        "description": "Current problem statement and supplied quantities.",
+        "visibility": "Shown at the start of each problem or stage."
+      },
+      "model": {
+        "selectors": [
+          "#stage"
+        ],
+        "kind": "model",
+        "description": "Operated construction and its live measurements; see quantities for what is given and revealed.",
+        "visibility": "Present for the current problem; child controls and readouts follow the states described below."
+      },
+      "working": {
+        "selectors": [
+          "#proofDock"
+        ],
+        "kind": "working",
+        "description": "Ordered calculations, learner entries and consequential evidence for the current task.",
+        "visibility": "Present for the current problem; child controls and readouts follow the states described below."
+      },
+      "completion": {
+        "selectors": [
+          "#nextCard"
+        ],
+        "kind": "completion",
+        "description": "Achievement, next task or learning transition.",
+        "visibility": "Shown only when the local completion conditions below are satisfied; representation controls are separately identified."
+      },
+      "stage-settings": {
+        "selectors": [
+          "#steps",
+          "#complexity",
+          "#reset"
+        ],
+        "kind": "control",
+        "description": "Existing stage navigation, Working level and current-step reset.",
+        "visibility": "Present for the current problem; child controls and readouts follow the states described below."
+      }
+    },
+    "quantities": {
+      "distance-time": {
+        "description": "Two underlying measurements with four interval endpoints. Endpoints are bounds of these measurements, not four unrelated physical quantities.",
+        "domain": "Distance m; time s; intervals are lower-inclusive and upper-exclusive.",
+        "source": "Reported values and rounding units are given; stage 0 discovers both edges with rulers.",
+        "output": "Readings change at crossed boundaries; later manipulations stay inside the valid intervals.",
+        "inputSlots": [
+          "#stage [data-drag=\"distance\"]",
+          "#stage [data-drag=\"time\"]"
+        ]
+      },
+      "worst-case-speed": {
+        "description": "Lower speed bound uses lower distance divided by upper time; upper speed uses the opposite endpoints.",
+        "domain": "m/s; numerical proof uses endpoint limits while the draggable upper endpoint is approached from below.",
+        "source": "Physical extremes are explored first, then working is supplied or entered by level.",
+        "output": "The proof and speed-range display compare the lower bound with 8.05.",
+        "inputSlots": [
+          "#proofDock input[data-field]"
+        ]
+      },
+      "certificate": {
+        "description": "One yes/no assertion for each precision: whether every allowed run meets the threshold.",
+        "domain": "Discrete certify/cannot-certify verdict.",
+        "source": "Learner chooses at every Working level.",
+        "output": "Explicit Check prediction verifies arithmetic and verdict together.",
+        "inputSlots": [
+          "#proofDock [data-verdict]",
+          "#proofDock [data-check]"
+        ]
+      }
+    },
+    "modes": {
+      "none": "Discover interval boundaries and speed extremes physically; proof arithmetic is supplied, but the certificate verdict still requires a learner choice/check.",
+      "some": "Interval values are supplied; learner enters lower speed and verdict.",
+      "all": "Learner supplies coarse lower distance/upper time/speed and verdict; the finer stage first requires all four new interval limits.",
+      "precision": "Base readings are 100 m to 1 m and 12.4 s to 0.1 s; the final stage tightens to 0.1 m and 0.01 s. The speed threshold remains 8.05 m/s."
+    },
+    "dependencies": [
+      "Both distance and time boundaries must be crossed before interval discovery completes.",
+      "Both fastest and slowest endpoint combinations must be explored in stage 1.",
+      "Coarse proof precedes finer precision; All gates the final proof behind four correct finer interval limits."
+    ],
+    "completion": "state.complete[0..3] records discovery, both extremes, successful coarse proof (no guarantee), and successful finer proof (guarantee). Completion is hidden during dragging.",
+    "limitations": [
+      "The fixed task is a certificate counterexample/proof, not a generated set of independent measurement questions. Numeric parsing uses the existing parseFloat/tolerance checks."
+    ]
+  }
 }
 </script>
 <!-- LAB_CONTRACT_END -->
@@ -1412,8 +1505,8 @@ window.LabDesign = {
   </section>
 
   <section class="panel lab">
-    <section class="next-card" id="nextCard" hidden aria-live="polite"></section>
-    <div class="workspace"><div class="stage-shell"><svg id="stage" class="stage" viewBox="0 0 1120 665" role="img" aria-labelledby="stageTitle stageDesc" data-lab-role="model" data-lab-manipulative="bounds-interval"></svg></div><aside id="proofDock" class="proof-dock lab-proof-sidebar" aria-live="polite"></aside></div>
+    <section class="next-card" id="nextCard" hidden aria-live="polite" data-lab-role="evidence"></section>
+    <div class="workspace"><div class="stage-shell"><svg id="stage" class="stage" viewBox="0 0 1120 665" role="img" aria-labelledby="stageTitle stageDesc" data-lab-role="model" data-lab-manipulative="bounds-interval"></svg></div><aside id="proofDock" class="proof-dock lab-proof-sidebar" aria-live="polite" data-lab-role="working"></aside></div>
   </section>
 
 </main>
