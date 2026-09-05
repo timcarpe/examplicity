@@ -431,3 +431,31 @@ Use `.lab-card-title` for a modest header treatment: 15px, regular weight 400,
 tracking or bold. This applies to reference, concept, prediction and working
 card titles (for example, Blue reference). Body working remains 14px; short
 field labels remain 12px. Formulas and values are content, not card titles.
+
+
+### Introduce required actions and preserve the model composition
+
+Introduce each newly required operation with a short tooltip anchored to its
+actual target, including operations unlocked in later stages and calculation
+modes. Pair it with the existing quiet blue target emphasis; a pulse alone
+does not explain an unfamiliar action. Explain what to do and why, including
+the keyboard equivalent for a drag. Show one introduction at a time, when its
+target is visible and enabled. Dismiss on that operation or Escape; do not
+repeat it on rerender or interrupt an active drag. Keep passive introductions
+out of the pointer path and pause them while a completion card is visible.
+
+For adopted labs, annotate an input, control or SVG handle group with
+`data-lab-intro` (stable operation key), `data-lab-intro-title` and
+`data-lab-intro-copy`. The shared runtime handles placement, dismissal and
+attention. An SVG group should include both the visible handle and its larger
+hit target. Field introductions retain the existing border-only focus style.
+
+Completion cards describe the achieved relationship and the next learning
+transition. Generic status such as “Evidence ready” belongs to neither a
+learning transition nor an explanation. Keep the detailed evidence in working,
+show the card after release, and retain the shared move handle.
+
+Vertical page flow does not mean rearranging a horizontal model into stacked
+copies. Percentage bars and gates remain a single causal sequence: resize
+their widths and spacing to fit the available canvas without scrolling.
+Wrapping a long symbolic remainder trace is a separate presentation choice.

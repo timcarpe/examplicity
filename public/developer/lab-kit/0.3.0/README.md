@@ -163,3 +163,21 @@ New labs use `.lab-toggle` with `data-kind="working|exam|mode"`, `.lab-action` w
 The living guide documents visual intent. Change the shared stylesheet for reusable visual changes; keep only layout/model-specific adapters in a lab.
 
 For adopted legacy labs, add `lab-adopt-v3` to the body and inline `src/lab-design.js` as well. It provides shared working-attention dismissal and movable completion handles; unique model behaviour remains local. The publication marker embeds both resources automatically.
+
+
+Required-action introductions use `data-lab-intro`, `data-lab-intro-title` and
+`data-lab-intro-copy` on the operated target. Stable keys survive rerenders;
+distinct newly unlocked operations receive their own keys. The adopted-lab
+runtime places one non-blocking tooltip at a time, hides it on interaction or
+Escape, and pauses introductions during completion. Group the SVG visible
+handle and hit target so both dismiss the same introduction.
+
+`LabDesign.bindSvgDrag(stage, {start, move, end})` supplies shared SVG pointer
+capture, pickup offsets, grab cursors and release/cancellation handling.
+`start(event, point)` returns the model handle's current `{x,y}` or nothing
+for a locked/non-draggable target. For an unconstrained coordinate, return the
+pointer coordinate. `move(point, event)` receives the offset-adjusted SVG
+coordinate; `end(event)` distinguishes release from cancellation. Keep model
+constraints, snapping, keyboard actions and success checks in the lab.
+Histogram and Motion Graphs use this same implementation. The compiler embeds
+the runtime before the lab script, including in standalone downloads.

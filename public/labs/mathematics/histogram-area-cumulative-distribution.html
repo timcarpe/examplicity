@@ -993,14 +993,8 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 .lab-adopt-v3 .next-card .lab-dialog-move{display:grid;place-items:center}
 .lab-dialog-move svg{width:20px;height:20px;pointer-events:none}
 
-/* Repeated transformations wrap as complete before → action → after rows. */
+/* Fit the causal sequence within its canvas; keep the model horizontal. */
 .lab-adopt-v3 .chain{display:grid;width:100%;min-width:0;padding:0;gap:16px;grid-auto-flow:row;grid-auto-columns:auto}
-.lab-change-row{display:grid;grid-template-columns:minmax(100px,1fr) minmax(190px,1.2fr) minmax(100px,1fr);gap:16px;align-items:center}
-.lab-change-row :is(.state-card,.gate-card){width:auto;min-width:0}
-.lab-change-row .gate-core{width:100%;background:var(--lab-surface-muted,#f7f8fa);border:1px solid var(--lab-line,#d2d2d7);box-shadow:none}
-.lab-change-row :is(.state-foot,.gate-note,.lock-copy,.rate-readout,.calc-result-label){font:400 12px/1.45 var(--lab-font-sans,sans-serif)}
-.lab-change-row :is(.state-head strong,.gate-rate,.calc-equation strong){font:400 14px/1.45 var(--lab-font-sans,sans-serif)}
-.lab-change-row .rate-target::after{display:none}
 
 /* Prediction choices use selection blue; assessed outcomes belong to the card. */
 .lab-prediction-options{display:grid;gap:8px;margin:12px 0}
@@ -1042,10 +1036,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 .lab-adopt-v3 .verifier-head{gap:16px;flex-wrap:wrap}
 .lab-adopt-v3 .factor-box{padding:12px;background:var(--lab-surface-muted,#f7f8fa);font:400 14px/1.45 var(--lab-font-sans,sans-serif)}
 .lab-adopt-v3 .factor-box :is(strong,code,span,p){font-family:var(--lab-font-sans,sans-serif);font-size:14px;font-weight:400;line-height:1.45}
-.lab-adopt-v3 .lab-change-row .state-head>span{font-size:12px;font-weight:400;text-transform:none;letter-spacing:normal}
-.lab-adopt-v3 .lab-change-row .state-card.pending{opacity:1}
 @media(max-width:900px){.lab-adopt-v3 .lab-proof-sidebar{padding:18px 0 0;border-left:0;border-top:1px solid var(--lab-line-subtle,#e7e8eb)}}
-@media(max-width:560px){.lab-change-row{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}.lab-change-row .gate-card{grid-column:1/-1;grid-row:2}.lab-change-row .state-card:last-child{grid-column:2;grid-row:1}.lab-motion-chart :is(.tick,.axis-label,.track-label,.gate-title,.gate-value,.handle-label,.limit-label){font-size:24px}}
 
 /* Direct manipulation cues belong to the operated object, not a second control. */
 .lab-bar-action{cursor:grab;touch-action:none;user-select:none}
@@ -1054,9 +1045,6 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 .lab-bar-action .bar-fill::after{content:"";position:absolute;left:-3px;right:-3px;top:-4px;height:8px;border:1px solid var(--lab-accent,#5277b8);border-radius:999px;background:#fff}
 .lab-bar-action:not([data-interacted="true"]) .bar-fill::after{animation:labGuideAttention 2s ease-in-out infinite}
 .lab-bar-target{position:absolute;left:0;right:0;border-top:2px dashed var(--lab-accent,#5277b8);pointer-events:none}
-.lab-adopt-v3 .lab-change-row :is(.state-card,.bar-track){background:#fff}
-.lab-adopt-v3 .lab-change-row .bar-fill{background:var(--lab-concept-blue,#4779b7)}
-.lab-adopt-v3 .lab-change-row .add-slice{background:var(--lab-concept-amber,#c9782c)}
 .lab-checkpoints{display:flex;align-items:center;gap:10px}
 .lab-adopt-v3 .lab-checkpoint{width:12px;min-width:12px;height:12px;min-height:12px;padding:0;border:1px solid var(--lab-line-strong,#a7a7ad);border-radius:50%;background:#fff;opacity:1;box-shadow:none}
 .lab-adopt-v3 .lab-checkpoint[aria-current="true"]{border-color:var(--lab-accent,#5277b8);box-shadow:inset 0 0 0 3px #fff;background:var(--lab-accent,#5277b8)}
@@ -1091,13 +1079,115 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
   font:400 15px/1.4 var(--lab-font-sans,sans-serif);color:var(--lab-ink,#1d1d1f);letter-spacing:normal;text-transform:none;margin-block:0 6px;
 }
 
+/* Target-anchored introduction, shared by every newly required operation. */
+.lab-intro-card{position:fixed;z-index:100;width:min(260px,calc(100vw - 16px));padding:12px 14px;border:1px solid var(--lab-accent-line,#9fb4d6);border-radius:12px;background:var(--lab-accent-soft,#eef2fa);color:var(--lab-ink,#1d1d1f);box-shadow:0 4px 14px rgba(29,29,31,.12);pointer-events:none}
+.lab-intro-card[hidden]{display:none}
+.lab-intro-card strong{display:block;margin-bottom:6px;font:400 15px/1.4 var(--lab-font-sans,sans-serif);color:var(--lab-accent-ink,#315b91)}
+.lab-intro-card>span{display:block;font:400 14px/1.45 var(--lab-font-sans,sans-serif)}
+.lab-intro-target{outline:1px solid var(--lab-accent,#5277b8);outline-offset:3px;border-radius:8px;animation:labGuideAttention 2s ease-in-out infinite}
+svg .lab-intro-target{outline:none;animation:labSvgIntroAttention 2s ease-in-out infinite}
+@keyframes labSvgIntroAttention{0%,100%{filter:drop-shadow(0 0 3px rgba(82,119,184,.35))}50%{filter:drop-shadow(0 0 7px rgba(82,119,184,.8))}}
+.lab-is-dragging,.lab-is-dragging *{cursor:grabbing!important}
+.lab-motion-chart :is(.handle-hit,.vertex-hit){cursor:grab}
+@media(prefers-reduced-motion:reduce){.lab-intro-target{animation:none!important;box-shadow:0 0 0 3px var(--lab-accent-soft,#eef2fa)}svg .lab-intro-target{filter:drop-shadow(0 0 4px rgba(82,119,184,.6));box-shadow:none}}
+
+/* Preserve the percentage model's single horizontal sequence at the available width. */
+.lab-adopt-v3 .lab-percentage-chain{gap:8px;align-items:start;grid-auto-flow:row;min-width:0;padding:0}
+.lab-percentage-chain .gate-card{align-self:center}
+.lab-percentage-chain :is(.state-card,.gate-card){width:auto;min-width:0;padding:6px}
+.lab-percentage-chain .state-card{background:#fff}
+.lab-percentage-chain .state-head{display:grid;gap:4px}
+.lab-percentage-chain .state-head :is(span,strong){text-align:left;font:400 12px/1.4 var(--lab-font-sans,sans-serif);overflow-wrap:anywhere}
+.lab-percentage-chain .bar-stage{height:210px;padding:0}
+.lab-percentage-chain .bar-track{left:6px;right:6px;background:#fff}
+.lab-percentage-chain .bar-fill{background:var(--lab-concept-blue,#4779b7)}
+.lab-percentage-chain .add-slice{background:var(--lab-concept-amber,#c9782c)}
+.lab-percentage-chain .gate-core{width:100%;min-width:0;padding:8px;background:var(--lab-surface-muted,#f7f8fa);border:1px solid var(--lab-line,#d2d2d7);box-shadow:none}
+.lab-percentage-chain :is(.gate-top,.calc-equation){display:flex;flex-direction:column;align-items:stretch;gap:4px}
+.lab-percentage-chain :is(.calc-line,.gate-note,.lock-copy,.rate-readout,.state-foot){font:400 12px/1.4 var(--lab-font-sans,sans-serif);overflow-wrap:anywhere}
+.lab-percentage-chain .calc-line{padding:6px 0;border:0;background:transparent}
+.lab-percentage-chain :is(.calc-expression,.calc-result-label){white-space:normal;overflow:visible;text-overflow:clip;font-size:12px}
+.lab-percentage-chain .calc-equation input{width:100%;min-width:0}
+.lab-percentage-chain .state-foot{min-height:0}
+.lab-percentage-chain .state-foot:empty{display:none}
+.lab-percentage-chain .target-line span{position:static;display:block;font-size:11px;font-weight:400;white-space:normal;border:0;background:#fff}
+@media(max-width:620px){.lab-adopt-v3 .lab-percentage-chain{gap:3px}.lab-percentage-chain :is(.state-card,.gate-card,.gate-core){padding:3px}.lab-percentage-chain .bar-track{left:2px;right:2px}.lab-percentage-chain :is(.bar-fill,.removed-slice){left:2px;right:2px}.lab-percentage-chain .bar-stage{height:170px}.lab-percentage-chain .gate-period{overflow-wrap:anywhere}}
+
+/* Field introductions preserve the existing field-border focus language. */
+input.lab-intro-target{outline:none;animation:none}
+.lab-motion-chart :is(.handle,.vertex):not(.locked){cursor:grab}
+
 </style>
 <script data-lab-design-runtime>
+/* Shared model dragging: retain the point grabbed while the model rerenders. */
+window.LabDesign = {
+  svgPoint(stage, event) {
+    const point = stage.createSVGPoint(); point.x = event.clientX; point.y = event.clientY;
+    return point.matrixTransform(stage.getScreenCTM().inverse());
+  },
+  bindSvgDrag(stage, { start, move, end }) {
+    let active = null;
+    stage.addEventListener('pointerdown', event => {
+      if (active || !event.isPrimary || event.button !== 0) return;
+      const point = LabDesign.svgPoint(stage, event), grip = start(event, point);
+      if (!grip) return;
+      active = { id: event.pointerId, x: point.x - grip.x, y: point.y - grip.y };
+      stage.setPointerCapture(event.pointerId); stage.classList.add('lab-is-dragging'); event.preventDefault();
+    });
+    stage.addEventListener('pointermove', event => {
+      if (!active || active.id !== event.pointerId) return;
+      const point = LabDesign.svgPoint(stage, event);
+      move({ x: point.x - active.x, y: point.y - active.y }, event); event.preventDefault();
+    });
+    const finish = event => {
+      if (!active || active.id !== event.pointerId) return;
+      active = null; stage.classList.remove('lab-is-dragging');
+      if (stage.hasPointerCapture(event.pointerId)) stage.releasePointerCapture(event.pointerId);
+      end(event);
+    };
+    ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(type => stage.addEventListener(type, finish));
+  }
+};
+
 /* Shared progressive-card attention and movable completion for opted-in labs. */
 (() => {
   function init() {
     if (!document.body.classList.contains('lab-adopt-v3')) return;
     const touched = new Set();
+    const introduced = new Set();
+    let introduction = null, interacting = false;
+    const hint = document.createElement('aside');
+    hint.id = 'lab-intro-hint'; hint.className = 'lab-intro-card'; hint.setAttribute('role', 'tooltip'); hint.hidden = true;
+    const hintTitle = document.createElement('strong'), hintCopy = document.createElement('span');
+    hint.append(hintTitle, hintCopy); document.body.append(hint);
+    function clearIntroduction() {
+      if (introduction) {
+        introduction.classList.remove('lab-intro-target');
+        const ids = (introduction.getAttribute('aria-describedby') || '').split(' ').filter(id => id && id !== hint.id);
+        if (ids.length) introduction.setAttribute('aria-describedby', ids.join(' ')); else introduction.removeAttribute('aria-describedby');
+      }
+      introduction = null; hint.hidden = true;
+    }
+    function refreshIntroduction() {
+      clearIntroduction();
+      if (interacting || [...document.querySelectorAll('.next-card')].some(card => !card.hidden && card.getClientRects().length)) return;
+      introduction = [...document.querySelectorAll('[data-lab-intro]')].find(target => {
+        if (introduced.has(target.dataset.labIntro) || target.disabled || !target.getClientRects().length) return false;
+        const r = target.getBoundingClientRect(); return r.bottom > 20 && r.top < innerHeight - 20 && r.right > 0 && r.left < innerWidth;
+      });
+      if (!introduction) return;
+      introduction.classList.add('lab-intro-target');
+      introduction.setAttribute('aria-describedby', ((introduction.getAttribute('aria-describedby') || '') + ' ' + hint.id).trim());
+      hintTitle.textContent = introduction.dataset.labIntroTitle;
+      hintCopy.textContent = introduction.dataset.labIntroCopy;
+      hint.hidden = false;
+      const r = introduction.getBoundingClientRect(), w = hint.offsetWidth, h = hint.offsetHeight, gap = 16;
+      const candidates = [[r.right + gap, r.top], [r.left - w - gap, r.top], [r.left + (r.width - w) / 2, r.bottom + gap], [r.left + (r.width - w) / 2, r.top - h - gap]];
+      const overlap = ([x, y]) => Math.max(0, Math.min(x + w, r.right + 8) - Math.max(x, r.left - 8)) * Math.max(0, Math.min(y + h, r.bottom + 8) - Math.max(y, r.top - 8));
+      const positions = candidates.map(([x, y]) => [Math.max(8, Math.min(innerWidth - w - 8, x)), Math.max(8, Math.min(innerHeight - h - 8, y))]);
+      positions.sort((a, b) => overlap(a) - overlap(b));
+      hint.style.left = positions[0][0] + 'px'; hint.style.top = positions[0][1] + 'px';
+    }
     const cardSelector = '.calc-step,.solve-card,.derive-step';
     let queued = false;
     const key = card => [...card.querySelectorAll('input')].map(input => input.id || input.name || [...input.attributes].filter(a => a.name.startsWith('data-')).map(a => a.name + a.value).join(':')).join('|') || card.querySelector('.step-head,.derive-step-head')?.textContent;
@@ -1114,8 +1204,22 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
         handle.setAttribute('aria-label', 'Move completion card. Use arrow keys to reposition.');
         card.prepend(handle);
       });
+      refreshIntroduction();
     }
     const schedule = () => { if (!queued) { queued = true; requestAnimationFrame(refresh); } };
+    document.addEventListener('pointerdown', event => {
+      const target = event.target.closest('[data-lab-intro]');
+      if (!target) return;
+      introduced.add(target.dataset.labIntro); interacting = true; clearIntroduction();
+    }, true);
+    ['pointerup', 'pointercancel'].forEach(type => document.addEventListener(type, () => { interacting = false; schedule(); }));
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && introduction) { introduced.add(introduction.dataset.labIntro); clearIntroduction(); return; }
+      const target = event.target.closest('[data-lab-intro]');
+      if (target && event.key !== 'Tab') { introduced.add(target.dataset.labIntro); clearIntroduction(); schedule(); }
+    }, true);
+    window.addEventListener('resize', schedule);
+    window.addEventListener('scroll', schedule, true);
     document.addEventListener('focusin', event => {
       if (!event.target.matches('input')) return;
       const card = event.target.closest(cardSelector);
@@ -1933,22 +2037,21 @@ function maybeCompleteClass(){const i=state.classIndex;if(state.stage!=='class'|
 function initQuartile(i){state.rankInputs[i]='';const expected=expectedQuartile(i),b=sample().boundaries,offset=[-4.2,4.5,-5.2][i],alt=clamp(expected+offset,b[0]+.4,b[b.length-1]-.4);state.readX=Math.abs(targetModel().evalAt(alt)-qTargets()[i])>.8?alt:clamp(expected-offset,b[0]+.4,b[b.length-1]-.4)}
 function maybeCompleteQuartile(){if(state.stage!=='quartile'||state.guide||!quartileRankReady())return;const i=state.quartileIndex,model=targetModel(),target=qTargets()[i];if(Math.abs(model.evalAt(state.readX)-target)>.6)return;const x=expectedQuartile(i);state.readX=x;state.quartiles[QKEYS[i]]=x;state.guide={type:'quartileComplete',index:i};renderAll()}
 function maybeCompleteIqr(){if(state.stage!=='iqr'||state.guide)return;const n=parseNumber(state.iqrInput);if(n==null||Math.abs(n-iqrTarget())>.11)return;state.iqrInput=fmt(iqrTarget(),1);state.guide={type:'final'};renderAll()}
-function eventPoint(e){const r=stage.getBoundingClientRect(),vb=stage.viewBox.baseVal;return{x:(e.clientX-r.left)*vb.width/r.width,y:(e.clientY-r.top)*vb.height/r.height}}
-function startDrag(e){
+function startDrag(e,p){
  if(state.guide||state.drag||!e.isPrimary||e.button!==0)return;
- const bar=e.target.closest('[data-bar-handle]'),pt=e.target.closest('[data-point-handle]'),read=e.target.closest('[data-read-handle]'),p=eventPoint(e);
+ const bar=e.target.closest('[data-bar-handle]'),pt=e.target.closest('[data-point-handle]'),read=e.target.closest('[data-read-handle]');
  if(bar){const i=Number(bar.dataset.barHandle);if(state.stage==='class'&&i===state.classIndex&&ownership(i).density==='input')return;state.drag={type:'bar',i,pointerId:e.pointerId,offsetY:p.y-yDensity(state.barDensities[i])};if(state.stage==='experiment')state.experimentSelected=i}
  else if(pt&&state.stage==='class'){const i=Number(pt.dataset.pointHandle);if(!barOK(i)||ownership().total==='input')return;state.drag={type:'point',i,pointerId:e.pointerId,offsetY:p.y-yCF(state.pointTotals[i+1])}}
  else if(read&&state.stage==='quartile'&&quartileRankReady())state.drag={type:'read',pointerId:e.pointerId,offsetX:p.x-xScale(state.readX)};
  else return;
- stage.setPointerCapture(e.pointerId);e.preventDefault();renderAll();
+ const grip={x:p.x-(state.drag.offsetX||0),y:p.y-(state.drag.offsetY||0)};renderAll();return grip;
 }
-function moveDrag(e){if(!state.drag||e.pointerId!==state.drag.pointerId)return;const p=eventPoint(e);p.x-=state.drag.offsetX||0;p.y-=state.drag.offsetY||0;if(state.drag.type==='bar'){const i=state.drag.i,w=widths()[i],dmax=densityMax(),raw=clamp((cfg.histBottom-p.y)/(cfg.histBottom-cfg.histTop)*dmax,0,dmax),target=sample().frequencies[i],freq=Math.abs(raw*w-target)<=.7?target:Math.round(raw*w);state.barDensities[i]=Math.max(0,freq/w)}else if(state.drag.type==='point'){const i=state.drag.i,raw=(cfg.cfBottom-p.y)/(cfg.cfBottom-cfg.cfTop)*totalN(),target=targetCumulative()[i+1],val=Math.abs(raw-target)<=1?target:Math.round(clamp(raw,0,totalN()));state.pointTotals[i+1]=val}else if(state.drag.type==='read'){const x=clamp(xValue(p.x),sample().boundaries[0],sample().boundaries.at(-1)),model=targetModel(),target=qTargets()[state.quartileIndex],expected=expectedQuartile(state.quartileIndex);state.readX=Math.abs(model.evalAt(x)-target)<=.65?expected:x}renderAll();e.preventDefault()}
-function endDrag(e){if(!state.drag||e.pointerId!==state.drag.pointerId)return;const t=state.drag.type;state.drag=null;if(stage.hasPointerCapture(e.pointerId))stage.releasePointerCapture(e.pointerId);renderAll();if(e.type!=='pointerup')return;if(t==='bar'||t==='point')maybeCompleteClass();else if(t==='read')maybeCompleteQuartile()}
+function moveDrag(p,e){if(!state.drag||e.pointerId!==state.drag.pointerId)return;if(state.drag.type==='bar'){const i=state.drag.i,w=widths()[i],dmax=densityMax(),raw=clamp((cfg.histBottom-p.y)/(cfg.histBottom-cfg.histTop)*dmax,0,dmax),target=sample().frequencies[i],freq=Math.abs(raw*w-target)<=.7?target:Math.round(raw*w);state.barDensities[i]=Math.max(0,freq/w)}else if(state.drag.type==='point'){const i=state.drag.i,raw=(cfg.cfBottom-p.y)/(cfg.cfBottom-cfg.cfTop)*totalN(),target=targetCumulative()[i+1],val=Math.abs(raw-target)<=1?target:Math.round(clamp(raw,0,totalN()));state.pointTotals[i+1]=val}else if(state.drag.type==='read'){const x=clamp(xValue(p.x),sample().boundaries[0],sample().boundaries.at(-1)),model=targetModel(),target=qTargets()[state.quartileIndex],expected=expectedQuartile(state.quartileIndex);state.readX=Math.abs(model.evalAt(x)-target)<=.65?expected:x}renderAll();e.preventDefault()}
+function endDrag(e){if(!state.drag||e.pointerId!==state.drag.pointerId)return;const t=state.drag.type;state.drag=null;renderAll();if(e.type!=='pointerup')return;if(t==='bar'||t==='point')maybeCompleteClass();else if(t==='read')maybeCompleteQuartile()}
 function keyboardStage(e){if(state.guide)return;const bar=e.target.closest('[data-bar-handle]'),pt=e.target.closest('[data-point-handle]'),read=e.target.closest('[data-read-handle]');if(bar&&(e.key==='ArrowUp'||e.key==='ArrowDown')){e.preventDefault();const i=Number(bar.dataset.barHandle),dir=e.key==='ArrowUp'?1:-1;if(state.stage==='class'&&ownership(i).density==='input')return;state.barDensities[i]=Math.max(0,(Math.round(state.barDensities[i]*widths()[i])+dir)/widths()[i]);if(state.stage==='experiment')state.experimentSelected=i;renderAll();maybeCompleteClass()}else if(pt&&(e.key==='ArrowUp'||e.key==='ArrowDown')){e.preventDefault();const i=Number(pt.dataset.pointHandle);if(!barOK(i)||ownership().total==='input')return;state.pointTotals[i+1]=clamp((state.pointTotals[i+1]??0)+(e.key==='ArrowUp'?1:-1),0,totalN());renderAll();maybeCompleteClass()}else if(read&&quartileRankReady()&&(e.key==='ArrowLeft'||e.key==='ArrowRight')){e.preventDefault();state.readX=clamp(state.readX+(e.key==='ArrowRight' ? .2 : -.2),sample().boundaries[0],sample().boundaries.at(-1));renderAll();maybeCompleteQuartile()}}
 function handleWorkInput(e){const field=e.target.dataset.field;if(!field)return;const value=e.target.value;if(field.startsWith('density-')){const i=Number(field.split('-')[1]);state.densityInputs[i]=value;const n=parseNumber(value);if(n!=null)state.barDensities[i]=clamp(n,0,densityMax())}else if(field.startsWith('total-')){const i=Number(field.split('-')[1]);state.totalInputs[i]=value;const n=parseNumber(value);if(n!=null)state.pointTotals[i+1]=clamp(n,0,totalN())}else if(field.startsWith('rank-')){const i=Number(field.split('-')[1]);state.rankInputs[i]=value}else if(field==='iqr')state.iqrInput=value;renderAll()}
 function commitWorkInput(e){const field=e.target.dataset.field;if(!field)return;if(field.startsWith('density-')){const i=Number(field.split('-')[1]),n=parseNumber(state.densityInputs[i]);if(n!=null&&Math.abs(n-targetDensities()[i])<=.025){state.densityInputs[i]=fmt(targetDensities()[i],2);state.barDensities[i]=targetDensities()[i]}renderAll();maybeCompleteClass()}else if(field.startsWith('total-')){const i=Number(field.split('-')[1]),n=parseNumber(state.totalInputs[i]);if(n!=null&&Math.abs(n-targetCumulative()[i+1])<=.12){state.totalInputs[i]=fmt(targetCumulative()[i+1],0);state.pointTotals[i+1]=targetCumulative()[i+1]}renderAll();maybeCompleteClass()}else if(field.startsWith('rank-')){const i=Number(field.split('-')[1]),n=parseNumber(state.rankInputs[i]);if(n!=null&&Math.abs(n-qTargets()[i])<=.12)state.rankInputs[i]=fmt(qTargets()[i],0);renderAll()}else if(field==='iqr'){const n=parseNumber(state.iqrInput);if(n!=null&&Math.abs(n-iqrTarget())<=.11)state.iqrInput=fmt(iqrTarget(),1);renderAll();maybeCompleteIqr()}}
-stage.addEventListener('pointerdown',startDrag);window.addEventListener('pointermove',moveDrag);window.addEventListener('pointerup',endDrag);window.addEventListener('pointercancel',endDrag);stage.addEventListener('lostpointercapture',endDrag);stage.addEventListener('keydown',keyboardStage);
+LabDesign.bindSvgDrag(stage,{start:startDrag,move:moveDrag,end:endDrag});stage.addEventListener('keydown',keyboardStage);
 $('workingPanel').addEventListener('input',handleWorkInput);$('workingPanel').addEventListener('change',commitWorkInput);$('workingPanel').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.dataset.field){e.preventDefault();commitWorkInput(e)}});
 $('nextPrimary').addEventListener('click',nextGuide);$('nextSecondary').addEventListener('click',guideSecondary);$('resetCurrentBtn').addEventListener('click',resetCurrent);$('newProblemBtn').addEventListener('click',newProblem);document.querySelectorAll('[data-work-level]').forEach(button=>button.addEventListener('click',()=>{state.workLevel=clamp(Number(button.dataset.workLevel)||0,0,2);state.guide=state.stage==='iqr'&&state.workLevel===0?{type:'final'}:null;renderAll();maybeCompleteClass()}));window.addEventListener('resize',()=>{updateGuide();positionCompletion()});
 window.labTest={

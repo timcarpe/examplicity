@@ -913,14 +913,8 @@ button:focus-visible,input:focus-visible,[tabindex="0"]:focus-visible{outline:3p
 .lab-adopt-v3 .next-card .lab-dialog-move{display:grid;place-items:center}
 .lab-dialog-move svg{width:20px;height:20px;pointer-events:none}
 
-/* Repeated transformations wrap as complete before → action → after rows. */
+/* Fit the causal sequence within its canvas; keep the model horizontal. */
 .lab-adopt-v3 .chain{display:grid;width:100%;min-width:0;padding:0;gap:16px;grid-auto-flow:row;grid-auto-columns:auto}
-.lab-change-row{display:grid;grid-template-columns:minmax(100px,1fr) minmax(190px,1.2fr) minmax(100px,1fr);gap:16px;align-items:center}
-.lab-change-row :is(.state-card,.gate-card){width:auto;min-width:0}
-.lab-change-row .gate-core{width:100%;background:var(--lab-surface-muted,#f7f8fa);border:1px solid var(--lab-line,#d2d2d7);box-shadow:none}
-.lab-change-row :is(.state-foot,.gate-note,.lock-copy,.rate-readout,.calc-result-label){font:400 12px/1.45 var(--lab-font-sans,sans-serif)}
-.lab-change-row :is(.state-head strong,.gate-rate,.calc-equation strong){font:400 14px/1.45 var(--lab-font-sans,sans-serif)}
-.lab-change-row .rate-target::after{display:none}
 
 /* Prediction choices use selection blue; assessed outcomes belong to the card. */
 .lab-prediction-options{display:grid;gap:8px;margin:12px 0}
@@ -962,10 +956,7 @@ button:focus-visible,input:focus-visible,[tabindex="0"]:focus-visible{outline:3p
 .lab-adopt-v3 .verifier-head{gap:16px;flex-wrap:wrap}
 .lab-adopt-v3 .factor-box{padding:12px;background:var(--lab-surface-muted,#f7f8fa);font:400 14px/1.45 var(--lab-font-sans,sans-serif)}
 .lab-adopt-v3 .factor-box :is(strong,code,span,p){font-family:var(--lab-font-sans,sans-serif);font-size:14px;font-weight:400;line-height:1.45}
-.lab-adopt-v3 .lab-change-row .state-head>span{font-size:12px;font-weight:400;text-transform:none;letter-spacing:normal}
-.lab-adopt-v3 .lab-change-row .state-card.pending{opacity:1}
 @media(max-width:900px){.lab-adopt-v3 .lab-proof-sidebar{padding:18px 0 0;border-left:0;border-top:1px solid var(--lab-line-subtle,#e7e8eb)}}
-@media(max-width:560px){.lab-change-row{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}.lab-change-row .gate-card{grid-column:1/-1;grid-row:2}.lab-change-row .state-card:last-child{grid-column:2;grid-row:1}.lab-motion-chart :is(.tick,.axis-label,.track-label,.gate-title,.gate-value,.handle-label,.limit-label){font-size:24px}}
 
 /* Direct manipulation cues belong to the operated object, not a second control. */
 .lab-bar-action{cursor:grab;touch-action:none;user-select:none}
@@ -974,9 +965,6 @@ button:focus-visible,input:focus-visible,[tabindex="0"]:focus-visible{outline:3p
 .lab-bar-action .bar-fill::after{content:"";position:absolute;left:-3px;right:-3px;top:-4px;height:8px;border:1px solid var(--lab-accent,#5277b8);border-radius:999px;background:#fff}
 .lab-bar-action:not([data-interacted="true"]) .bar-fill::after{animation:labGuideAttention 2s ease-in-out infinite}
 .lab-bar-target{position:absolute;left:0;right:0;border-top:2px dashed var(--lab-accent,#5277b8);pointer-events:none}
-.lab-adopt-v3 .lab-change-row :is(.state-card,.bar-track){background:#fff}
-.lab-adopt-v3 .lab-change-row .bar-fill{background:var(--lab-concept-blue,#4779b7)}
-.lab-adopt-v3 .lab-change-row .add-slice{background:var(--lab-concept-amber,#c9782c)}
 .lab-checkpoints{display:flex;align-items:center;gap:10px}
 .lab-adopt-v3 .lab-checkpoint{width:12px;min-width:12px;height:12px;min-height:12px;padding:0;border:1px solid var(--lab-line-strong,#a7a7ad);border-radius:50%;background:#fff;opacity:1;box-shadow:none}
 .lab-adopt-v3 .lab-checkpoint[aria-current="true"]{border-color:var(--lab-accent,#5277b8);box-shadow:inset 0 0 0 3px #fff;background:var(--lab-accent,#5277b8)}
@@ -1011,13 +999,115 @@ button:focus-visible,input:focus-visible,[tabindex="0"]:focus-visible{outline:3p
   font:400 15px/1.4 var(--lab-font-sans,sans-serif);color:var(--lab-ink,#1d1d1f);letter-spacing:normal;text-transform:none;margin-block:0 6px;
 }
 
+/* Target-anchored introduction, shared by every newly required operation. */
+.lab-intro-card{position:fixed;z-index:100;width:min(260px,calc(100vw - 16px));padding:12px 14px;border:1px solid var(--lab-accent-line,#9fb4d6);border-radius:12px;background:var(--lab-accent-soft,#eef2fa);color:var(--lab-ink,#1d1d1f);box-shadow:0 4px 14px rgba(29,29,31,.12);pointer-events:none}
+.lab-intro-card[hidden]{display:none}
+.lab-intro-card strong{display:block;margin-bottom:6px;font:400 15px/1.4 var(--lab-font-sans,sans-serif);color:var(--lab-accent-ink,#315b91)}
+.lab-intro-card>span{display:block;font:400 14px/1.45 var(--lab-font-sans,sans-serif)}
+.lab-intro-target{outline:1px solid var(--lab-accent,#5277b8);outline-offset:3px;border-radius:8px;animation:labGuideAttention 2s ease-in-out infinite}
+svg .lab-intro-target{outline:none;animation:labSvgIntroAttention 2s ease-in-out infinite}
+@keyframes labSvgIntroAttention{0%,100%{filter:drop-shadow(0 0 3px rgba(82,119,184,.35))}50%{filter:drop-shadow(0 0 7px rgba(82,119,184,.8))}}
+.lab-is-dragging,.lab-is-dragging *{cursor:grabbing!important}
+.lab-motion-chart :is(.handle-hit,.vertex-hit){cursor:grab}
+@media(prefers-reduced-motion:reduce){.lab-intro-target{animation:none!important;box-shadow:0 0 0 3px var(--lab-accent-soft,#eef2fa)}svg .lab-intro-target{filter:drop-shadow(0 0 4px rgba(82,119,184,.6));box-shadow:none}}
+
+/* Preserve the percentage model's single horizontal sequence at the available width. */
+.lab-adopt-v3 .lab-percentage-chain{gap:8px;align-items:start;grid-auto-flow:row;min-width:0;padding:0}
+.lab-percentage-chain .gate-card{align-self:center}
+.lab-percentage-chain :is(.state-card,.gate-card){width:auto;min-width:0;padding:6px}
+.lab-percentage-chain .state-card{background:#fff}
+.lab-percentage-chain .state-head{display:grid;gap:4px}
+.lab-percentage-chain .state-head :is(span,strong){text-align:left;font:400 12px/1.4 var(--lab-font-sans,sans-serif);overflow-wrap:anywhere}
+.lab-percentage-chain .bar-stage{height:210px;padding:0}
+.lab-percentage-chain .bar-track{left:6px;right:6px;background:#fff}
+.lab-percentage-chain .bar-fill{background:var(--lab-concept-blue,#4779b7)}
+.lab-percentage-chain .add-slice{background:var(--lab-concept-amber,#c9782c)}
+.lab-percentage-chain .gate-core{width:100%;min-width:0;padding:8px;background:var(--lab-surface-muted,#f7f8fa);border:1px solid var(--lab-line,#d2d2d7);box-shadow:none}
+.lab-percentage-chain :is(.gate-top,.calc-equation){display:flex;flex-direction:column;align-items:stretch;gap:4px}
+.lab-percentage-chain :is(.calc-line,.gate-note,.lock-copy,.rate-readout,.state-foot){font:400 12px/1.4 var(--lab-font-sans,sans-serif);overflow-wrap:anywhere}
+.lab-percentage-chain .calc-line{padding:6px 0;border:0;background:transparent}
+.lab-percentage-chain :is(.calc-expression,.calc-result-label){white-space:normal;overflow:visible;text-overflow:clip;font-size:12px}
+.lab-percentage-chain .calc-equation input{width:100%;min-width:0}
+.lab-percentage-chain .state-foot{min-height:0}
+.lab-percentage-chain .state-foot:empty{display:none}
+.lab-percentage-chain .target-line span{position:static;display:block;font-size:11px;font-weight:400;white-space:normal;border:0;background:#fff}
+@media(max-width:620px){.lab-adopt-v3 .lab-percentage-chain{gap:3px}.lab-percentage-chain :is(.state-card,.gate-card,.gate-core){padding:3px}.lab-percentage-chain .bar-track{left:2px;right:2px}.lab-percentage-chain :is(.bar-fill,.removed-slice){left:2px;right:2px}.lab-percentage-chain .bar-stage{height:170px}.lab-percentage-chain .gate-period{overflow-wrap:anywhere}}
+
+/* Field introductions preserve the existing field-border focus language. */
+input.lab-intro-target{outline:none;animation:none}
+.lab-motion-chart :is(.handle,.vertex):not(.locked){cursor:grab}
+
 </style>
 <script data-lab-design-runtime>
+/* Shared model dragging: retain the point grabbed while the model rerenders. */
+window.LabDesign = {
+  svgPoint(stage, event) {
+    const point = stage.createSVGPoint(); point.x = event.clientX; point.y = event.clientY;
+    return point.matrixTransform(stage.getScreenCTM().inverse());
+  },
+  bindSvgDrag(stage, { start, move, end }) {
+    let active = null;
+    stage.addEventListener('pointerdown', event => {
+      if (active || !event.isPrimary || event.button !== 0) return;
+      const point = LabDesign.svgPoint(stage, event), grip = start(event, point);
+      if (!grip) return;
+      active = { id: event.pointerId, x: point.x - grip.x, y: point.y - grip.y };
+      stage.setPointerCapture(event.pointerId); stage.classList.add('lab-is-dragging'); event.preventDefault();
+    });
+    stage.addEventListener('pointermove', event => {
+      if (!active || active.id !== event.pointerId) return;
+      const point = LabDesign.svgPoint(stage, event);
+      move({ x: point.x - active.x, y: point.y - active.y }, event); event.preventDefault();
+    });
+    const finish = event => {
+      if (!active || active.id !== event.pointerId) return;
+      active = null; stage.classList.remove('lab-is-dragging');
+      if (stage.hasPointerCapture(event.pointerId)) stage.releasePointerCapture(event.pointerId);
+      end(event);
+    };
+    ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(type => stage.addEventListener(type, finish));
+  }
+};
+
 /* Shared progressive-card attention and movable completion for opted-in labs. */
 (() => {
   function init() {
     if (!document.body.classList.contains('lab-adopt-v3')) return;
     const touched = new Set();
+    const introduced = new Set();
+    let introduction = null, interacting = false;
+    const hint = document.createElement('aside');
+    hint.id = 'lab-intro-hint'; hint.className = 'lab-intro-card'; hint.setAttribute('role', 'tooltip'); hint.hidden = true;
+    const hintTitle = document.createElement('strong'), hintCopy = document.createElement('span');
+    hint.append(hintTitle, hintCopy); document.body.append(hint);
+    function clearIntroduction() {
+      if (introduction) {
+        introduction.classList.remove('lab-intro-target');
+        const ids = (introduction.getAttribute('aria-describedby') || '').split(' ').filter(id => id && id !== hint.id);
+        if (ids.length) introduction.setAttribute('aria-describedby', ids.join(' ')); else introduction.removeAttribute('aria-describedby');
+      }
+      introduction = null; hint.hidden = true;
+    }
+    function refreshIntroduction() {
+      clearIntroduction();
+      if (interacting || [...document.querySelectorAll('.next-card')].some(card => !card.hidden && card.getClientRects().length)) return;
+      introduction = [...document.querySelectorAll('[data-lab-intro]')].find(target => {
+        if (introduced.has(target.dataset.labIntro) || target.disabled || !target.getClientRects().length) return false;
+        const r = target.getBoundingClientRect(); return r.bottom > 20 && r.top < innerHeight - 20 && r.right > 0 && r.left < innerWidth;
+      });
+      if (!introduction) return;
+      introduction.classList.add('lab-intro-target');
+      introduction.setAttribute('aria-describedby', ((introduction.getAttribute('aria-describedby') || '') + ' ' + hint.id).trim());
+      hintTitle.textContent = introduction.dataset.labIntroTitle;
+      hintCopy.textContent = introduction.dataset.labIntroCopy;
+      hint.hidden = false;
+      const r = introduction.getBoundingClientRect(), w = hint.offsetWidth, h = hint.offsetHeight, gap = 16;
+      const candidates = [[r.right + gap, r.top], [r.left - w - gap, r.top], [r.left + (r.width - w) / 2, r.bottom + gap], [r.left + (r.width - w) / 2, r.top - h - gap]];
+      const overlap = ([x, y]) => Math.max(0, Math.min(x + w, r.right + 8) - Math.max(x, r.left - 8)) * Math.max(0, Math.min(y + h, r.bottom + 8) - Math.max(y, r.top - 8));
+      const positions = candidates.map(([x, y]) => [Math.max(8, Math.min(innerWidth - w - 8, x)), Math.max(8, Math.min(innerHeight - h - 8, y))]);
+      positions.sort((a, b) => overlap(a) - overlap(b));
+      hint.style.left = positions[0][0] + 'px'; hint.style.top = positions[0][1] + 'px';
+    }
     const cardSelector = '.calc-step,.solve-card,.derive-step';
     let queued = false;
     const key = card => [...card.querySelectorAll('input')].map(input => input.id || input.name || [...input.attributes].filter(a => a.name.startsWith('data-')).map(a => a.name + a.value).join(':')).join('|') || card.querySelector('.step-head,.derive-step-head')?.textContent;
@@ -1034,8 +1124,22 @@ button:focus-visible,input:focus-visible,[tabindex="0"]:focus-visible{outline:3p
         handle.setAttribute('aria-label', 'Move completion card. Use arrow keys to reposition.');
         card.prepend(handle);
       });
+      refreshIntroduction();
     }
     const schedule = () => { if (!queued) { queued = true; requestAnimationFrame(refresh); } };
+    document.addEventListener('pointerdown', event => {
+      const target = event.target.closest('[data-lab-intro]');
+      if (!target) return;
+      introduced.add(target.dataset.labIntro); interacting = true; clearIntroduction();
+    }, true);
+    ['pointerup', 'pointercancel'].forEach(type => document.addEventListener(type, () => { interacting = false; schedule(); }));
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && introduction) { introduced.add(introduction.dataset.labIntro); clearIntroduction(); return; }
+      const target = event.target.closest('[data-lab-intro]');
+      if (target && event.key !== 'Tab') { introduced.add(target.dataset.labIntro); clearIntroduction(); schedule(); }
+    }, true);
+    window.addEventListener('resize', schedule);
+    window.addEventListener('scroll', schedule, true);
     document.addEventListener('focusin', event => {
       if (!event.target.matches('input')) return;
       const card = event.target.closest(cardSelector);
@@ -1723,17 +1827,17 @@ function renderForward(host,c,s){
      if(i>0&&s.changes[i-1]!=null){const base=amounts[i-1],change=s.changes[i-1];if(c.rate>0&&value>0)bar+=`<div class="add-slice" style="height:${Math.max(2,change/value*100)}%"></div>`;bar+='</div>';if(c.rate<0&&base!=null){bar+=`<div class="removed-slice" style="bottom:${barPercent(value,max)}%;height:${Math.max(2,barPercent(base,max)-barPercent(value,max))}%"></div>`}}else bar+='</div>';
    }
    if(i===c.periods)bar+=`<div class="target-line" style="bottom:${barPercent(c.target,max)}%"><span>target ${format(c,c.target)}</span></div>`;bar+='</div>';
-    let foot='';if(i===0)foot='<strong>Starting value</strong>';else if(value==null)foot='Complete the previous calculation.';else foot=`${deltaVerb(c.rate)} <strong>${format(c,s.changes[i-1])}</strong> from ${format(c,amounts[i-1])}`;
+    let foot='';if(i===0)foot='<strong>Starting value</strong>';else if(value==null)foot='';else foot=`${deltaVerb(c.rate)} <strong>${format(c,s.changes[i-1])}</strong> from ${format(c,amounts[i-1])}`;
    card.innerHTML=`<div class="state-head"><span>${labelState(i)}</span><strong class="${value==null?'unknown':''}">${value==null?'—':format(c,value)}</strong></div><div class="bar-stage">${bar}</div><div class="state-foot">${foot}</div>`;chain.appendChild(card);
    if(i<c.periods)chain.appendChild(gateElement(c,s,i,amounts,active));
  }
- const parts=[...chain.children];chain.replaceChildren();
- for(let i=0;i<c.periods;i++){const row=document.createElement('div');row.className='lab-change-row';row.append(parts[i*2].cloneNode(true),parts[i*2+1],parts[i*2+2].cloneNode(true));chain.append(row);if(state.workingLevel===0&&i===active)wireChangeBar(row,c,i,amounts[i],max)}
+ chain.classList.add('lab-percentage-chain');chain.style.gridTemplateColumns=Array.from({length:c.periods},()=> 'minmax(0,1fr) minmax(0,1.1fr)').join(' ')+' minmax(0,1fr)';
+ if(state.workingLevel===0&&active!==null)wireChangeBar(chain.querySelector(`[data-period="${active+1}"]`),c,active,amounts[active],max);
 }
-function wireChangeBar(row,c,i,base,max){
- const card=row.querySelector('.state-card:last-child'),bar=card.querySelector('.bar-track'),amount=round2(Math.abs(c.rate)*base),direction=c.rate>0?1:-1;
+function wireChangeBar(card,c,i,base,max){
+ const bar=card.querySelector('.bar-track'),amount=round2(Math.abs(c.rate)*base),direction=c.rate>0?1:-1;
  let progress=0,drag=null;
- bar.classList.add('lab-bar-action');bar.tabIndex=0;bar.setAttribute('role','slider');bar.setAttribute('aria-label',`Apply ${Math.abs(c.rate*100)} percent ${c.rate>0?'increase':'decrease'} for year ${i+1}`);bar.setAttribute('aria-valuemin','0');bar.setAttribute('aria-valuemax','100');
+ bar.dataset.labIntro='percentage-bar';bar.dataset.labIntroTitle='Apply the change to this bar';bar.dataset.labIntroCopy=`Drag the top of the bar ${direction>0?'up':'down'} to the dashed target. The changed value becomes the next year's starting amount. Arrow keys or End also apply the change.`;bar.classList.add('lab-bar-action');bar.tabIndex=0;bar.setAttribute('role','slider');bar.setAttribute('aria-label',`Apply ${Math.abs(c.rate*100)} percent ${c.rate>0?'increase':'decrease'} for year ${i+1}`);bar.setAttribute('aria-valuemin','0');bar.setAttribute('aria-valuemax','100');
  bar.innerHTML=`<div class="bar-fill"></div><div class="lab-bar-target" style="bottom:${barPercent(base+direction*amount,max)}%"></div>`;
  const fill=bar.querySelector('.bar-fill');
  const preview=value=>{progress=Math.max(0,Math.min(1,value));const result=base+direction*amount*progress;fill.style.height=barPercent(result,max)+'%';card.querySelector('.state-head strong').textContent=format(c,result);bar.setAttribute('aria-valuenow',String(Math.round(progress*100)));bar.setAttribute('aria-valuetext',`${format(c,result)}, ${Math.round(progress*100)} percent of the change applied`);};
@@ -1747,12 +1851,12 @@ function wireChangeBar(row,c,i,base,max){
 function gateElement(c,s,i,amounts,active){
  const gate=document.createElement('div');gate.className='gate-card';const core=document.createElement('div');const locked=i>active&&active!==null,solved=gateExact(c,s,i),isActive=i===active;core.className=`gate-core${locked?' locked':''}${solved?' solved':''}${isActive?' active':''}`;
  const pctTarget=targetRate(c),base=amounts[i],change=s.changes[i],expected=base==null?null:round2(Math.abs(c.rate)*base),actual=base&&change!=null?change/base*100:null,meterMax=Math.max(40,pctTarget*1.5),fill=actual==null?0:Math.min(100,Math.max(0,actual/meterMax*100)),mark=Math.min(100,pctTarget/meterMax*100),guided=state.workingLevel===0;
- if(locked||base==null){core.innerHTML=`<div class="gate-top"><span class="gate-rate">${c.rate>0?'+':'−'}${pctTarget}%</span><span class="gate-period">Year ${i+1}</span></div><div class="lock-copy">Finish the previous percentage calculation first.<br>The next base is not fixed yet.</div>`}
+ if(locked||base==null){core.innerHTML=`<div class="gate-top"><span class="gate-rate">${c.rate>0?'+':'−'}${pctTarget}%</span><span class="gate-period">Year ${i+1}</span></div><div class="lock-copy">Waiting for the previous year</div>`}
  else if(guided){core.innerHTML=`<div class="gate-top"><span class="gate-rate">${c.rate>0?'+':'−'}${pctTarget}%</span><span class="gate-period">Year ${i+1}</span></div><div class="calc-line"><span class="calc-label">Percentage change</span><div class="calc-equation"><span class="calc-expression">${format(c,base)} × ${pctTarget}%</span><span class="calc-result-label">${deltaVerb(c.rate)} =</span><strong>${format(c,expected)}</strong></div></div>${solved?'<div class="gate-note good">Applied</div>':''}`;}
 
  else{
    const note=change==null?'Enter the percentage amount to calculate the next value.':solved?`${format(c,base)} × ${pctTarget}% = ${format(c,expected)}.`:`${format(c,change)} is ${format(c,round2(Math.abs(change-expected)))} ${change<expected?'too low':'too high'}. Enter ${format(c,expected)}.`;
-   core.innerHTML=`<div class="gate-top"><span class="gate-rate">${c.rate>0?'+':'−'}${pctTarget}%</span><span class="gate-period">Year ${i+1}</span></div><div class="calc-line"><span class="calc-label">Your calculation</span><div class="calc-equation"><span class="calc-expression">${format(c,base)} × ${pctTarget}%</span><span class="calc-result-label">${deltaVerb(c.rate)} = ${c.currency?'£':''}</span><input id="change-${i}" class="numeric-entry" type="text" inputmode="decimal" enterkeyhint="done" value="${change==null?'':change}" placeholder="?" autocomplete="off" spellcheck="false" aria-label="${deltaVerb(c.rate)} amount for year ${i+1}"></div><div class="rate-meter"><div class="rate-fill" style="width:${fill}%"></div><div class="rate-target" style="left:${mark}%"></div></div><div class="rate-readout"><span>your amount ${change==null?'—':format(c,change)}</span><span>target ${format(c,expected)}</span></div></div><div class="gate-note ${change==null?'':solved?'good':'warn'}">${note}</div>`;
+   core.innerHTML=`<div class="gate-top"><span class="gate-rate">${c.rate>0?'+':'−'}${pctTarget}%</span><span class="gate-period">Year ${i+1}</span></div><div class="calc-line"><span class="calc-label">Your calculation</span><div class="calc-equation"><span class="calc-expression">${format(c,base)} × ${pctTarget}%</span><span class="calc-result-label">${deltaVerb(c.rate)} = ${c.currency?'£':''}</span><input id="change-${i}" data-lab-intro="percentage-calculation" data-lab-intro-title="Calculate this year’s change" data-lab-intro-copy="Apply the percentage to this year’s starting value. The next bar uses your result." class="numeric-entry" type="text" inputmode="decimal" enterkeyhint="done" value="${change==null?'':change}" placeholder="?" autocomplete="off" spellcheck="false" aria-label="${deltaVerb(c.rate)} amount for year ${i+1}"></div><div class="rate-meter"><div class="rate-fill" style="width:${fill}%"></div><div class="rate-target" style="left:${mark}%"></div></div><div class="rate-readout"><span>your amount ${change==null?'—':format(c,change)}</span><span>target ${format(c,expected)}</span></div></div><div class="gate-note ${change==null?'':solved?'good':'warn'}">${note}</div>`;
    const inp=core.querySelector(`#change-${i}`);wireNumericEntry(inp,(value)=>setChange(i,value));
  }
  gate.innerHTML='<div class="gate-arrow"></div>';gate.appendChild(core);return gate;
@@ -1767,10 +1871,10 @@ function renderCompress(){
  $('percentSummary').textContent=c.rate>0?`The new value contains the whole 100% base plus another ${changeFr}%.`:`The gate removes ${changeFr}% from the whole 100%, so find the percentage left.`;
  const pctStep=$('percentStep'),multStep=$('multiplierStep'),pctEq=$('percentEquation'),multEq=$('multiplierEquation'),pctNote=$('percentDeriveNote'),multNote=$('multiplierDeriveNote');
  pctStep.className=`derive-step ${percentExact(c,s)?'done':'current'}`;multStep.className=`derive-step ${percentExact(c,s)?multiplierExact(c,s)?'done':'current':'locked'}`;
- const percentInput=state.workingLevel>=2?`<input id="resultPercentInput" class="numeric-entry wide" type="text" inputmode="decimal" enterkeyhint="done" value="${s.resultPercent==null?'':s.resultPercent}" placeholder="?" autocomplete="off" spellcheck="false" aria-label="Percentage after one gate">`:`<strong>${num(resultPct)}%</strong>`;
+ const percentInput=state.workingLevel>=2?`<input id="resultPercentInput" data-lab-intro="percentage-resultPercentInput" data-lab-intro-title="Find the whole percentage" data-lab-intro-copy="Combine the original 100% with the percentage increase or decrease." class="numeric-entry wide" type="text" inputmode="decimal" enterkeyhint="done" value="${s.resultPercent==null?'':s.resultPercent}" placeholder="?" autocomplete="off" spellcheck="false" aria-label="Percentage after one gate">`:`<strong>${num(resultPct)}%</strong>`;
  pctEq.innerHTML=`<span>100%</span><span>${c.rate>0?'+':'−'}</span><span>${changeFr}%</span><span>=</span>${percentInput}<span>%</span>`;
  if(state.workingLevel<2){pctNote.className='derive-note good';pctNote.textContent=`Shown: one gate leaves ${num(resultPct)}% of the previous value.`}else if(!Number.isFinite(s.resultPercent))pctNote.textContent='Enter the total percentage represented after one gate.';else if(percentExact(c,s)){pctNote.className='derive-note good';pctNote.textContent=`Yes. One gate leaves the new value at ${num(resultPct)}% of the previous value.`}else{pctNote.className='derive-note warn';pctNote.textContent=`${num(s.resultPercent)}% would mean a ${num(Math.abs(s.resultPercent-100))}% ${s.resultPercent>=100?'increase':'decrease'}.`}
- const multiplierInput=state.workingLevel>=1?`<input id="multiplierInput" class="numeric-entry" type="text" inputmode="decimal" enterkeyhint="done" value="${s.multiplier==null?'':s.multiplier}" placeholder="?" ${percentExact(c,s)?'':'disabled'} autocomplete="off" spellcheck="false" aria-label="One-period multiplier">`:`<strong>${multiplierExpected(c).toFixed(2)}</strong>`;
+ const multiplierInput=state.workingLevel>=1?`<input id="multiplierInput" data-lab-intro="percentage-multiplierInput" data-lab-intro-title="Build the multiplier" data-lab-intro-copy="Divide the new percentage by 100. This multiplier must reproduce the bar changes." class="numeric-entry" type="text" inputmode="decimal" enterkeyhint="done" value="${s.multiplier==null?'':s.multiplier}" placeholder="?" ${percentExact(c,s)?'':'disabled'} autocomplete="off" spellcheck="false" aria-label="One-period multiplier">`:`<strong>${multiplierExpected(c).toFixed(2)}</strong>`;
  multEq.innerHTML=`<span>${num(resultPct)}%</span><span>=</span><span>${num(resultPct)} ÷ 100</span><span>=</span>${multiplierInput}`;
  if(state.workingLevel===0){multNote.className='derive-note good';multNote.textContent=`Shown: ${num(resultPct)} ÷ 100 = ${multiplierExpected(c).toFixed(2)}.`}else if(!percentExact(c,s))multNote.textContent='Finish step 1 first: the decimal multiplier comes from the percentage after the change.';else if(!Number.isFinite(s.multiplier))multNote.textContent=`Divide ${num(resultPct)} by 100. Enter that decimal as the one-period multiplier.`;else if(multiplierExact(c,s)){multNote.className='derive-note good';multNote.textContent=`Correct: ${num(resultPct)} ÷ 100 = ${multiplierExpected(c).toFixed(2)}.`}else{multNote.className='derive-note warn';multNote.textContent=`Your multiplier means ${(s.multiplier*100).toFixed(2)}% of the previous value, not ${num(resultPct)}%.`}
  const pctInput=$('resultPercentInput');wireNumericEntry(pctInput,(value)=>{s.resultPercent=value!=null&&value>=0?value:null;if(!percentExact(c,s))s.multiplier=null;schedulePreservingRender()});const input=$('multiplierInput');wireNumericEntry(input,(value)=>{s.multiplier=value!=null&&value>=0?value:null;renderCompressLive();renderNextCard()});
@@ -1800,7 +1904,7 @@ function reverseComplete(c,s){return reverseBridgeComplete(c,s)&&inverseFactorEx
 function renderReverse(host,c,s){
  const sc=document.createElement('div');sc.className='chain-scroll';const stage=document.createElement('div');stage.className='reverse-stage';sc.appendChild(stage);host.appendChild(sc);const r=reverseResult(c,s),max=c.target*1.08,candidate=r.candidate,resultPct=percentExpected(c),changeFr=Math.abs(c.rate*100);
  const left=document.createElement('section');left.className='reverse-state';left.innerHTML=`<div class="state-head"><span>Reconstructed opening</span><strong class="${candidate==null?'unknown':''}">${candidate==null?'—':money(candidate)}</strong></div><div class="reverse-bar"><div class="reverse-fill" style="height:${candidate==null?0:barPercent(candidate,max)}%"></div></div><div class="state-foot">Output of your backward gate</div>`;stage.appendChild(left);
- const gate=document.createElement('section');gate.className='reverse-gate';gate.innerHTML=`<h3>Build and undo the multiplier</h3><span class="bridge-caption">Percentage after the change → divide by 100 → forward multiplier → inverse gate.</span><div class="forward-mult"><label>Forward gate · +${targetRate(c)}%</label><div class="percent-strip" style="--change-fr:${changeFr}"><div class="percent-base">100% whole</div><div class="percent-change">+${changeFr}%</div></div><div class="derive-bridge"><div id="reversePercentStep" class="derive-step ${percentExact(c,s)?'done':'current'}"><div class="derive-step-head"><span class="derive-num">1</span><strong>Percentage after the increase</strong></div><div class="derive-equation"><span>100%</span><span>+</span><span>${changeFr}%</span><span>=</span><input id="reverseResultPercent" class="numeric-entry wide" type="text" inputmode="decimal" enterkeyhint="done" placeholder="?" value="${s.resultPercent==null?'':s.resultPercent}" ${state.workingLevel<2?'disabled':''} autocomplete="off" spellcheck="false" aria-label="Percentage after the increase"><span>%</span></div><div class="derive-note ${Number.isFinite(s.resultPercent)?percentExact(c,s)?'good':'warn':''}">${reversePercentNote(c,s)}</div></div><div id="reverseMultiplierStep" class="derive-step ${percentExact(c,s)?forwardMultiplierExact(c,s)?'done':'current':'locked'}"><div class="derive-step-head"><span class="derive-num">2</span><strong>Convert percent to forward multiplier</strong></div><div class="derive-equation"><span>${num(resultPct)}%</span><span>=</span><span>${num(resultPct)} ÷ 100</span><span>=</span><input id="forwardMultiplier" class="numeric-entry" type="text" inputmode="decimal" enterkeyhint="done" placeholder="?" value="${s.forwardMultiplier==null?'':s.forwardMultiplier}" ${state.workingLevel<1||!percentExact(c,s)?'disabled':''} autocomplete="off" spellcheck="false" aria-label="Forward multiplier"></div><div class="derive-note ${Number.isFinite(s.forwardMultiplier)?forwardMultiplierExact(c,s)?'good':'warn':''}">${reverseMultiplierNote(c,s)}</div></div></div></div><div class="inverse-builder ${reverseBridgeComplete(c,s)?'':'locked'}"><label>Backward gate · your inverse</label><div class="inverse-row"><div class="operator-choice"><button id="opMultiply" type="button" class="${s.operator==='multiply'?'active':''} lab-action" aria-pressed="${s.operator==='multiply'}" ${state.workingLevel===0||!reverseBridgeComplete(c,s)?'disabled':''}>×</button><button id="opDivide" type="button" class="${s.operator==='divide'?'active':''} lab-action" aria-pressed="${s.operator==='divide'}" ${state.workingLevel===0||!reverseBridgeComplete(c,s)?'disabled':''}>÷</button></div><input id="inverseFactor" class="numeric-entry" type="text" inputmode="decimal" enterkeyhint="done" placeholder="factor" value="${s.inverseFactor==null?'':s.inverseFactor}" ${state.workingLevel===0||!reverseBridgeComplete(c,s)?'disabled':''} autocomplete="off" spellcheck="false" aria-label="Backward factor"></div></div><div class="reverse-equation">${reverseEquation(c,s)}</div>${reverseAttempted(s)?`<div class="forward-check ${r.ok?'good':''}">${money(r.candidate)} × ${(1+c.rate).toFixed(2)} = ${money(r.forward)}${r.ok?' · returns exactly':r.forward<c.target?` · ${money(c.target-r.forward)} short`:` · ${money(r.forward-c.target)} over`}</div>`:''}`;stage.appendChild(gate);
+ const gate=document.createElement('section');gate.className='reverse-gate';gate.innerHTML=`<h3>Build and undo the multiplier</h3><span class="bridge-caption">Percentage after the change → divide by 100 → forward multiplier → inverse gate.</span><div class="forward-mult"><label>Forward gate · +${targetRate(c)}%</label><div class="percent-strip" style="--change-fr:${changeFr}"><div class="percent-base">100% whole</div><div class="percent-change">+${changeFr}%</div></div><div class="derive-bridge"><div id="reversePercentStep" class="derive-step ${percentExact(c,s)?'done':'current'}"><div class="derive-step-head"><span class="derive-num">1</span><strong>Percentage after the increase</strong></div><div class="derive-equation"><span>100%</span><span>+</span><span>${changeFr}%</span><span>=</span><input id="reverseResultPercent" data-lab-intro="percentage-reverseResultPercent" data-lab-intro-title="Find the percentage after the increase" data-lab-intro-copy="Add the increase to the original 100% before reversing the change." class="numeric-entry wide" type="text" inputmode="decimal" enterkeyhint="done" placeholder="?" value="${s.resultPercent==null?'':s.resultPercent}" ${state.workingLevel<2?'disabled':''} autocomplete="off" spellcheck="false" aria-label="Percentage after the increase"><span>%</span></div><div class="derive-note ${Number.isFinite(s.resultPercent)?percentExact(c,s)?'good':'warn':''}">${reversePercentNote(c,s)}</div></div><div id="reverseMultiplierStep" class="derive-step ${percentExact(c,s)?forwardMultiplierExact(c,s)?'done':'current':'locked'}"><div class="derive-step-head"><span class="derive-num">2</span><strong>Convert percent to forward multiplier</strong></div><div class="derive-equation"><span>${num(resultPct)}%</span><span>=</span><span>${num(resultPct)} ÷ 100</span><span>=</span><input id="forwardMultiplier" data-lab-intro="percentage-forwardMultiplier" data-lab-intro-title="Build the forward multiplier" data-lab-intro-copy="Divide the new percentage by 100 to express the forward change as a multiplier." class="numeric-entry" type="text" inputmode="decimal" enterkeyhint="done" placeholder="?" value="${s.forwardMultiplier==null?'':s.forwardMultiplier}" ${state.workingLevel<1||!percentExact(c,s)?'disabled':''} autocomplete="off" spellcheck="false" aria-label="Forward multiplier"></div><div class="derive-note ${Number.isFinite(s.forwardMultiplier)?forwardMultiplierExact(c,s)?'good':'warn':''}">${reverseMultiplierNote(c,s)}</div></div></div></div><div class="inverse-builder ${reverseBridgeComplete(c,s)?'':'locked'}"><label>Backward gate · your inverse</label><div class="inverse-row"><div class="operator-choice"><button id="opMultiply" type="button" class="${s.operator==='multiply'?'active':''} lab-action" aria-pressed="${s.operator==='multiply'}" ${state.workingLevel===0||!reverseBridgeComplete(c,s)?'disabled':''}>×</button><button id="opDivide" type="button" class="${s.operator==='divide'?'active':''} lab-action" aria-pressed="${s.operator==='divide'}" ${state.workingLevel===0||!reverseBridgeComplete(c,s)?'disabled':''}>÷</button></div><input id="inverseFactor" data-lab-intro="percentage-inverseFactor" data-lab-intro-title="Undo the change" data-lab-intro-copy="Choose multiplication or division, then enter the factor that returns the final amount to its starting value." class="numeric-entry" type="text" inputmode="decimal" enterkeyhint="done" placeholder="factor" value="${s.inverseFactor==null?'':s.inverseFactor}" ${state.workingLevel===0||!reverseBridgeComplete(c,s)?'disabled':''} autocomplete="off" spellcheck="false" aria-label="Backward factor"></div></div><div class="reverse-equation">${reverseEquation(c,s)}</div>${reverseAttempted(s)?`<div class="forward-check ${r.ok?'good':''}">${money(r.candidate)} × ${(1+c.rate).toFixed(2)} = ${money(r.forward)}${r.ok?' · returns exactly':r.forward<c.target?` · ${money(c.target-r.forward)} short`:` · ${money(r.forward-c.target)} over`}</div>`:''}`;stage.appendChild(gate);
  const right=document.createElement('section');right.className='reverse-state known';right.innerHTML=`<div class="state-head"><span>Known closing</span><strong>${money(c.target)}</strong></div><div class="reverse-bar"><div class="reverse-fill" style="height:${barPercent(c.target,max)}%"></div><div class="reverse-target" style="bottom:${barPercent(c.target,max)}%"><span>known</span></div></div><div class="state-foot">Forward gate must return here</div>`;stage.appendChild(right);
  wireNumericEntry(gate.querySelector('#reverseResultPercent'),(value)=>{s.resultPercent=value!=null&&value>=0?value:null;if(!percentExact(c,s)){s.forwardMultiplier=null;s.operator='';s.inverseFactor=null}schedulePreservingRender()});wireNumericEntry(gate.querySelector('#forwardMultiplier'),(value)=>{s.forwardMultiplier=value!=null&&value>=0?value:null;if(!forwardMultiplierExact(c,s)){s.operator='';s.inverseFactor=null}schedulePreservingRender()});gate.querySelector('#opMultiply').addEventListener('click',()=>{if(!reverseBridgeComplete(c,s))return;s.operator='multiply';render()});gate.querySelector('#opDivide').addEventListener('click',()=>{if(!reverseBridgeComplete(c,s))return;s.operator='divide';render()});wireNumericEntry(gate.querySelector('#inverseFactor'),(value)=>{s.inverseFactor=value!=null&&value>0?value:null;schedulePreservingRender()});
 }

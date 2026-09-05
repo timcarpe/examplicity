@@ -809,6 +809,7 @@ button:focus-visible,.tape-track:focus-visible{outline:3px solid var(--lab-focus
     });
     const marker=document.createElement("div");marker.className="decimal-marker";track.appendChild(marker);
     if(!locked){
+      track.dataset.labIntro='recurring-row-'+which;track.dataset.labIntroTitle='Align this recurring tail';track.dataset.labIntroCopy='Drag the digit row left to multiply by 10, or right to divide by 10. Match the repeating tails before subtracting; the arrow keys and ×10 buttons also shift the row.';
       track.addEventListener("pointerdown",e=>startDrag(e,which,track));
       track.addEventListener("keydown",e=>{if(e.key==="ArrowLeft"){e.preventDefault();shiftRow(which,1)}else if(e.key==="ArrowRight"){e.preventDefault();shiftRow(which,-1)}});
     }
@@ -936,7 +937,7 @@ button:focus-visible,.tape-track:focus-visible{outline:3px solid var(--lab-focus
     }
   }
   function answerExact(key,expected){return Number.isFinite(session()[key])&&Math.abs(session()[key]-expected)<1e-9}
-  function solveInput(key,label,expected){const wrap=document.createElement('label');wrap.className='solve-entry solve-card action';const title=document.createElement('span');title.textContent=label;const input=document.createElement('input');input.type='text';input.inputMode=Number.isInteger(expected)?'numeric':'decimal';input.autocomplete='off';input.dataset.answer=key;input.placeholder='?';input.value=session()[key]??'';const mark=document.createElement('span');mark.className='field-status';mark.setAttribute('aria-hidden','true');const update=()=>{const status=answerExact(key,expected)?'good':session()[key]!==null?'bad':'action';wrap.classList.remove('action','good','bad');wrap.classList.add(status);input.classList.toggle('good',status==='good');input.classList.toggle('bad',status==='bad');mark.textContent=status==='good'?'✓':status==='bad'?'×':''};update();input.addEventListener('input',()=>{const value=Number(input.value);session()[key]=input.value.trim()!==''&&Number.isFinite(value)?value:null;update();renderGoalRoute();renderAction();renderProof();renderNextCard()});wrap.append(title,input,mark);return wrap}
+  function solveInput(key,label,expected){const wrap=document.createElement('label');wrap.className='solve-entry solve-card action';const title=document.createElement('span');title.textContent=label;const input=document.createElement('input');input.type='text';input.inputMode=Number.isInteger(expected)?'numeric':'decimal';input.autocomplete='off';input.dataset.labIntro='recurring-answer-'+key;input.dataset.labIntroTitle=label;input.dataset.labIntroCopy='Use the aligned-tail subtraction and the calculation chain to supply this part of the exact fraction.';input.dataset.answer=key;input.placeholder='?';input.value=session()[key]??'';const mark=document.createElement('span');mark.className='field-status';mark.setAttribute('aria-hidden','true');const update=()=>{const status=answerExact(key,expected)?'good':session()[key]!==null?'bad':'action';wrap.classList.remove('action','good','bad');wrap.classList.add(status);input.classList.toggle('good',status==='good');input.classList.toggle('bad',status==='bad');mark.textContent=status==='good'?'✓':status==='bad'?'×':''};update();input.addEventListener('input',()=>{const value=Number(input.value);session()[key]=input.value.trim()!==''&&Number.isFinite(value)?value:null;update();renderGoalRoute();renderAction();renderProof();renderNextCard()});wrap.append(title,input,mark);return wrap}
   function workingComplete(){const s=session();if(!s.solved)return false;if(state.workingLevel===0)return true;if(!answerExact('numAnswer',current().num)||!answerExact('denAnswer',current().den))return false;return state.workingLevel===1||answerExact('coefAnswer',difference().coef)&&answerExact('resultAnswer',difference().n/difference().d)}
   function challengeComplete(){return workingComplete()}
 
@@ -961,6 +962,7 @@ button:focus-visible,.tape-track:focus-visible{outline:3px solid var(--lab-focus
   function renderSubtractGesture(){
     const s=session(),track=$("subtractTrack"),caption=$("subtractCaption");if(!track)return;
     track.dataset.interacted=String(Boolean(s.subtractTouched));
+    const minus=$('subtractHandle');if(gapAligned()&&!s.attempted){minus.dataset.labIntro='recurring-subtract';minus.dataset.labIntroTitle='Cancel the shared tail';minus.dataset.labIntroCopy='Pull the minus sign across the aligned rows to subtract them exactly. Press Enter for the same operation.';}else delete minus.dataset.labIntro;
     const blocked=s.a<=s.b;
     track.classList.toggle("blocked",blocked&&!s.attempted);
     track.classList.toggle("ready",gapAligned()&&!s.attempted&&!blocked);

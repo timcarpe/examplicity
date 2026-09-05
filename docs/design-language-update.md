@@ -592,3 +592,15 @@ Canonical HTML guide and style contract document these patterns; developer copie
 ### Shared card-title hierarchy — 5 September 2026
 
 Canonical CSS adds lab-card-title and compatible existing card-heading selectors: 15px regular, sentence case, primary ink, 6px content separation. Includes Blue reference, working-step, prediction and concept titles; excludes equations and field labels. Guide specimen and contract updated; inline publication resources regenerated. No lab-local styles added. Compilation only; no browser/test validation.
+
+
+### Batch 2 adaptation correction — 5 September 2026
+
+- Shared CSS/JS: target-anchored, one-at-a-time introductions with stable operation keys, pointer/keyboard dismissal, viewport placement and reduced-motion cues. Later unlocked actions get introductions too. Shared SVG dragging now retains pickup offsets and owns capture/release; model rules stay local.
+- Bounds: stopwatch beside the time ruler; completion names the actual learning transition, after release. Introductions cover boundary discovery, speed exploration, owned interval/speed fields and prediction. Retains the restored four-stage model.
+- Percentage: restores one horizontal sequence of bars and gates sized to the canvas. Removes stacked duplicate state rows; the existing bar remains the slider. Introductions cover bar manipulation, percentage entry, multipliers and inversion.
+- Motion: adopts the same shared drag implementation as Histogram, with unchanged constraints/snapping. Groups visible handles and hit targets for one cue; introduces each mode, calculation entry and testing the journey. Separates camera-zone labels from speed signs.
+- Histogram: replaces its local pickup-offset/capture helper with the shared implementation. No learning-model redesign.
+- Straight Lines / Recurring: only introductory hooks for their model operations and owned answers; their approved layouts are preserved.
+- Canonical HTML guide, style contract and kit README document these patterns. Developer publication and standalone inline resources regenerated. Earlier notes about stacked Percentage rows are superseded by this correction.
+- Focused browser review of the three affected compositions and direct interaction; no broad test suite. Review links: `/labs/mathematics/repeated-percentage-change.html`, `/labs/mathematics/rounded-measurements-bounds.html`, `/labs/mathematics/motion-graph-rate-area.html`.
