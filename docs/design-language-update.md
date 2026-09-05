@@ -508,3 +508,8 @@ Refined the flat maths surfaces to approved concept violet #7563a7 at 20% over w
 ### Sequence lattice alignment — 5 September 2026
 
 Grid previously used a -55% self-height transform while square positions subtracted 5% of their larger container. Both now share one model area below the descriptors, centered at 50% with identical cell coordinates. Grid boundary is an outline so it does not offset the first cell. Reference-square spacing now uses the same responsive --cell value as tile sizes. Published HTML regenerated; validation skipped as requested.
+
+
+### Sequence working attention — 5 September 2026
+
+Unattempted, available calculation cards pulse their yellow border softly until pointer/keyboard interaction with an input. The construction-progress card pulses until model interaction, including None mode. Interaction state survives rerenders and resets with the activity state. Reference, locked, correct and incorrect cards remain static; reduced motion disables the pulse. Documented the reusable rule; validation skipped as requested.
