@@ -1,34 +1,3 @@
-:root {
-  --lab-canvas: #f3f5f7;
-  --lab-paper: #fbfbfd;
-  --lab-surface: #ffffff;
-  --lab-control: #ffffff;
-  --lab-ink: #1d1d1f;
-  --lab-muted: #6e6e73;
-  --lab-line: #d2d2d7;
-  --lab-line-strong: #a7a7ad;
-  --lab-accent: #5277b8;
-  --lab-accent-soft: #eef2fa;
-  --lab-good: #18794e;
-  --lab-good-soft: #edf8f1;
-  --lab-warn: #946200;
-  --lab-warn-soft: #fff6e7;
-  --lab-bad: #b42318;
-  --lab-bad-soft: #fff0ee;
-  --lab-focus: #1d1d1f;
-  --lab-focus-soft: rgba(29, 29, 31, 0.18);
-  --lab-font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
-  --lab-panel-radius: 12px;
-  --lab-control-radius: 8px;
-  --lab-pill-radius: 999px;
-  --lab-control-height: 35px;
-  --lab-panel-shadow: 0 1px 2px rgba(29, 29, 31, 0.04);
-  --lab-header-max-width: 1200px;
-  --lab-header-gutter: max(28px, calc((100vw - var(--lab-header-max-width)) / 2));
-  --lab-page-gutter: var(--lab-header-gutter);
-  --lab-compact-workspace-max: 820px;
-}
-
 html,
 body {
   background: var(--lab-canvas);
@@ -230,6 +199,34 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 :where(button, input, select, textarea, summary):focus-visible {
   outline: 3px solid var(--lab-focus);
   outline-offset: 4px;
+}
+
+/* Site feedback treatment also wins when a lab loads Kit CSS after the frame. */
+:root .lab-kit-status {
+  background: var(--lab-surface-muted);
+  border: 1px solid var(--lab-line);
+  border-radius: var(--lab-control-radius);
+  color: var(--lab-ink-secondary);
+  font-size: var(--lab-type-body);
+  line-height: var(--lab-leading-body);
+}
+
+:root .lab-kit-status[data-state="warn"] {
+  background: var(--lab-needed-soft);
+  border-color: var(--lab-needed-line);
+  color: var(--lab-needed-ink);
+}
+
+:root .lab-kit-status[data-state="good"] {
+  background: var(--lab-good-soft);
+  border-color: var(--lab-good-line);
+  color: var(--lab-good-ink);
+}
+
+:root .lab-kit-status[data-state="bad"] {
+  background: var(--lab-bad-soft);
+  border-color: var(--lab-bad-line);
+  color: var(--lab-bad-ink);
 }
 
 @media (max-width: 620px) {

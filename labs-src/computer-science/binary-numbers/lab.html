@@ -661,6 +661,38 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 </style>
 <!-- LAB_FRAME_STYLES_END -->
 <link rel="stylesheet" href="./lab-kit.css" data-lab-resource="lab-kit.css">
+<style data-style-guide-patch>
+/* Readable pilot treatment: retain the existing question model and answer flow. */
+body[data-lab-layout="compact"]{align-content:start;min-height:auto;padding:18px 0 38px;font-size:var(--lab-type-body,14px)}
+.title{font-size:16px}
+.pill-toggle{border-radius:9px;background:var(--lab-control,#fff)}
+.pill-toggle button{min-height:40px;border-radius:6px;font-size:12px}
+.choice-answer button{border-radius:8px}
+.answer-label{font-size:12px;letter-spacing:0;text-transform:none}
+.help-tip{font-size:var(--lab-type-body,14px);background:var(--lab-accent-soft);border-color:var(--lab-accent-line,var(--lab-line))}
+.scalar-base,.place-values{font-size:var(--lab-type-annotation,11px)}
+.feedback{min-height:38px;margin-top:14px;padding:7px 10px;border:1px solid var(--lab-line);border-radius:var(--lab-control-radius,8px);font-size:var(--lab-type-body,14px);text-align:left}
+.feedback:empty{display:none}
+.feedback.good{border-color:var(--lab-good-line,var(--good));background:var(--lab-good-surface,var(--good-soft));color:var(--lab-good-ink,var(--good))}
+.feedback.good::before{content:"✓ ";font-weight:900}
+.feedback.warn{border-color:var(--lab-needed-line,var(--lab-warn,var(--line)));background:var(--lab-needed-surface,var(--lab-warn-soft,var(--accent-soft)));color:var(--lab-needed-ink,var(--ink))}
+.feedback.warn::before{content:"! ";font-weight:900}
+.feedback.bad{border-color:var(--lab-bad-line,var(--bad));background:var(--lab-bad-surface,var(--bad-soft));color:var(--lab-bad-ink,var(--bad))}
+.feedback.bad::before{content:"✕ ";font-weight:900}
+.answer-control.needs-working .bit-row,.answer-control.needs-working .bit-cell,.text-answer.needs-working,.choice-answer.needs-working{border-color:var(--lab-needed-line,var(--lab-warn,var(--line)));background:var(--lab-needed-soft,var(--lab-warn-soft,var(--accent-soft)))}
+.answer-control.incorrect .bit-row,.answer-control.incorrect .bit-cell,.text-answer.incorrect,.choice-answer.incorrect{border-color:var(--lab-bad-line,var(--bad));background:var(--lab-bad-surface,var(--bad-soft))}
+.answer-control.correct .bit-row,.answer-control.correct .bit-cell,.text-answer.correct,.choice-answer.correct{border-color:var(--lab-good-line,var(--good));background:var(--lab-good-surface,var(--good-soft))}
+.choice-answer.needs-working,.choice-answer.incorrect,.choice-answer.correct{padding:7px 9px;border:1px solid;border-radius:var(--lab-control-radius,8px)}
+.choice-answer.needs-working{border-color:var(--lab-needed-line,var(--lab-warn,var(--line)));background:var(--lab-needed-surface,var(--lab-warn-soft,var(--accent-soft)))}
+.choice-answer.incorrect{border-color:var(--lab-bad-line,var(--bad));background:var(--lab-bad-surface,var(--bad-soft))}
+.choice-answer.correct{border-color:var(--lab-good-line,var(--good));background:var(--lab-good-surface,var(--good-soft))}
+.actions{gap:10px;margin-top:15px}
+.actions button{height:42px;min-width:128px;padding:0 17px;font-size:12px}
+.actions .primary{box-shadow:0 1px 2px rgba(29,29,31,.10)}
+/* Four digit place values need a compact diagram scale in a 16-bit register. */
+.register-group[data-bits="16"] .place-values{font-size:7.5px}
+@media(max-width:390px){.actions{gap:8px}.actions button{min-width:0;padding:0 8px}}
+</style>
 </head>
 <body data-lab-layout="compact">
 <main class="shell">
@@ -1629,7 +1661,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
     if(state.correct) return;
     $("feedback").textContent="";
     $("feedback").className="feedback";
-    document.querySelectorAll(".incorrect,.correct").forEach(element=>element.classList.remove("incorrect","correct"));
+    document.querySelectorAll(".incorrect,.correct,.needs-working").forEach(element=>element.classList.remove("incorrect","correct","needs-working"));
   }
 
   function readAnswer(){
@@ -1665,8 +1697,8 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
     const feedback=$("feedback");
     if(!submitted.complete){
       feedback.textContent="Complete the answer before checking.";
-      feedback.className="feedback bad";
-      markAnswer("incorrect");
+      feedback.className="feedback warn";
+      markAnswer("needs-working");
       return;
     }
 

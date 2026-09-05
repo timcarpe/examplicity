@@ -5,13 +5,14 @@ import { labs } from '../app/labs.ts';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const labsDirectory = path.join(root, 'public', 'labs');
-const sharedStylesPath = path.join(labsDirectory, 'lab-frame.css');
+const sharedStylesPaths = ['lab-tokens.css', 'lab-frame.css'].map((file) => path.join(labsDirectory, file));
 const startMarker = '<!-- LAB_FRAME_STYLES_START -->';
 const endMarker = '<!-- LAB_FRAME_STYLES_END -->';
 const externalLink = '<link rel="stylesheet" href="/labs/lab-frame.css">';
 const checkOnly = process.argv.includes('--check');
 
-const sharedStyles = (await readFile(sharedStylesPath, 'utf8')).trim();
+const sharedStyles = (await Promise.all(sharedStylesPaths.map((file) => readFile(file, 'utf8'))))
+  .map((styles) => styles.trim()).join('\n\n');
 const embeddedStyles = `${startMarker}\n<style data-lab-frame>\n${sharedStyles}\n</style>\n${endMarker}`;
 const labFiles = labs
   .map((lab) => path.join(lab.subject, `${lab.slug}.html`))

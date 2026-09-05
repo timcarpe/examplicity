@@ -18,12 +18,13 @@ template nor part of the creation kit.
 
 ## Shared chrome
 
-`public/labs/lab-frame.css` is the maintenance source for the shared lab canvas,
-homepage-aligned design tokens, typography, focus treatment, responsive frame,
-and reduced-motion defaults. Its custom properties are namespaced with
+`public/labs/lab-tokens.css` is the shared token source imported by the website
+and embedded before `public/labs/lab-frame.css` in each published lab. The frame
+owns the shared lab canvas, manifest typography, focus, responsive layout and
+reduced-motion defaults. Custom properties are namespaced with
 `--lab-` so they cannot silently replace instructional variables.
 
-Run `npm run labs:sync` after changing the contract. It copies the stylesheet
+Run `npm run labs:sync` after changing the contract. It copies both stylesheets
 into every marked `LAB_FRAME_STYLES` block. The content generator writes each
 `LAB_MANIFEST_HEAD`, visible manifest title, optional subtitle and
 `LAB_SYLLABUS_CHIPS` block. `npm run labs:sync:check` verifies every generated
@@ -55,16 +56,11 @@ Do not edit an embedded `LAB_FRAME_STYLES`, `LAB_MANIFEST_HEAD`,
   even when a compact or otherwise narrow lab keeps a smaller teaching
   workspace beneath it. Lab-owned width rules must not narrow the shared title,
   subtitle and syllabus alignment surface.
-- Preserve the lab's intended single-screen desktop composition at both
-  `1440×1000` and `1366×768`. Adapt lab-owned columns, fixed canvases, controls,
-  spacing and typography to the 1200px rail. Do not satisfy the width contract
-  by stacking a primary panel below the fold or leaving a conspicuous gap where
-  content used to be.
-- Application-style labs must also fit the host's content row at `1280×720`.
-  The outer lab document must not scroll behind the persistent footer. Fold
-  progress, backup and resource controls into the application chrome, use the
-  remaining height for the teaching surface, and confine overflow to named
-  internal panes such as navigation, editors, consoles or long task briefs.
+- Test desktop composition at `1440×1000`, `1366×768` and inside the host at
+  `1280×720`. Let the lab document extend vertically within the viewer when
+  readable working or controls need room. Preserve useful editor, console and
+  navigation panes; do not give primary operated diagrams vertical scrollers
+  or shrink interface text merely to keep the activity above the fold.
 - Base wide-layout transitions on the `lab-canvas` container. Viewport media
   queries do not detect when a capped 1200px rail is narrower than the viewport.
   Fixed instructional geometry may use an intentionally labelled internal
@@ -77,16 +73,27 @@ Do not edit an embedded `LAB_FRAME_STYLES`, `LAB_MANIFEST_HEAD`,
   above-fold position.
 - The visible `h1` and document `<title>` must match the lab name in
   `app/labs.ts`; do not append redundant “Lab” or version labels.
-- Use chips consistently: navigation chips identify destinations, status chips
-  describe current state, access chips describe editability, and legend chips
-  explain diagram or simulation meaning. Do not use a chip for decorative copy.
+- Shared buttons, tabs and mode controls use rounded rectangles. Reserve shared
+  pills for syllabus chips; circular icon-only controls and meaningful model
+  shapes remain appropriate. Do not use a chip for decorative copy.
 - The top-right syllabus chips are generated navigation. The whole chip opens
   the primary section in Cambridge's official syllabus document. When a chip
   lists multiple sections, each numbered section also opens its corresponding
   document page. Colour supports the visible qualification and exam-code label
   but never replaces it.
-- Surrounding interactive chrome should generally be at least `10px`; diagram
-  labels and other geometry-constrained instructional text are exempt.
+- Use `--lab-type-body` (14px) for working and explanations, `--lab-type-label`
+  (12px) for short labels and `--lab-type-annotation` (11px) for secondary
+  annotations. Review smaller geometry-constrained labels individually.
+  Ordinary actions should be 40–44px high. The legacy 35px control token remains
+  for unmigrated labs; updated controls use `--lab-action-height` or 44px.
+- Keep measurements on or beside their model. Choose the order of working and
+  evidence to make the current activity clear rather than forcing one sidebar
+  arrangement on every lab. Working stays persistent outside transient cues
+  and completion cards.
+- Unfinished learner work is yellow, a wrong attempt is red with a visible x,
+  and a correct attempt is green with a visible check. Use complete borders and
+  surfaces, including the input itself. Blue communicates actions, process and
+  future support. Model identity colours are separate from answer correctness.
 - Keep lab-specific spacing and geometry local when it carries instructional
   meaning; do not force every internal layout into the shared frame grid.
 - Assistance and “working required” controls change which calculations the
@@ -111,9 +118,11 @@ into surrounding interface chrome.
 Static goals, hints, explanations and supporting callouts belong to the shared
 panel language: a neutral full border, shared surface and ordinary text colour.
 Do not preserve generator boilerplate that uses a saturated coloured side rail
-as decoration. A coloured rail is appropriate only inside an operated visual or
-when its changing colour communicates a semantic state such as success, warning
-or error.
+as decoration. Shared feedback must not use a unilateral coloured rail or inset
+stripe. Meaningful model identities, graph edges and CSS arrow geometry remain
+lab-owned. The site frame corrects Kit status surfaces without editing the
+immutable vendored release; callers still supply explicit check/x text and
+accessible state descriptions.
 
 Primary operated diagrams, models and manipulatives should use the optional
 `.lab-kit-canvas` surface when their background is generic framing rather than
@@ -147,8 +156,8 @@ Keep these local to each lab:
   is part of the represented object or state.
 
 Binary Register Practice keeps its `820px` maximum width. Other labs use the
-shared `1200px` maximum and must retain their existing internal responsive or
-scrolling behavior.
+shared `1200px` maximum. Preserve useful responsive layouts while allowing
+vertical document flow under the rules above.
 
 ## Change checklist
 
@@ -159,8 +168,8 @@ scrolling behavior.
 5. Check the standalone lab at `1440×1000` and `1366×768`. At each size, verify
    `document.documentElement.scrollWidth <= document.documentElement.clientWidth`,
    each primary operated visual has matching client/scroll dimensions, the
-   intended primary panels and controls remain above the current fold, and no
-   noticeable dead space was introduced. Record any intentional internal
+   primary panels remain readable and all controls are reachable through normal
+   document flow. Record any intentional internal
    scroller for human review rather than hiding overflow.
 6. Resize at 1200, 900, and 390 pixels; also check lab-specific breakpoints and
    Binary at 820, 640, and 390 pixels.

@@ -113,6 +113,34 @@ button{min-height:34px;padding:0 10px;border:1px solid var(--line);border-radius
   --lab-header-gutter: max(28px, calc((100vw - var(--lab-header-max-width)) / 2));
   --lab-page-gutter: var(--lab-header-gutter);
   --lab-compact-workspace-max: 820px;
+
+  /* Readability and learner-state roles for the design update. */
+  --lab-ink-secondary: #424245;
+  --lab-surface-muted: #f7f8fa;
+  --lab-line-subtle: #e7e8eb;
+  --lab-accent-hover: #4569aa;
+  --lab-accent-pressed: #3a5d99;
+  --lab-accent-surface: #f8fbff;
+  --lab-accent-line: #9fb4d6;
+  --lab-accent-ink: #315b91;
+  --lab-on-accent: #ffffff;
+  --lab-needed: #946200;
+  --lab-needed-ink: #735100;
+  --lab-needed-line: #d8c36a;
+  --lab-needed-soft: #fff9db;
+  --lab-needed-surface: #fffdf4;
+  --lab-good-ink: #225f43;
+  --lab-good-line: #9cc7aa;
+  --lab-good-surface: #f7fcf8;
+  --lab-bad-ink: #8f2f27;
+  --lab-bad-line: #d99b93;
+  --lab-bad-surface: #fff8f7;
+  --lab-type-body: 14px;
+  --lab-type-label: 12px;
+  --lab-type-annotation: 11px;
+  --lab-leading-body: 1.5;
+  --lab-action-height: 40px;
+  --lab-target-min: 44px;
 }
 
 html,
@@ -316,6 +344,34 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 :where(button, input, select, textarea, summary):focus-visible {
   outline: 3px solid var(--lab-focus);
   outline-offset: 4px;
+}
+
+/* Site feedback treatment also wins when a lab loads Kit CSS after the frame. */
+:root .lab-kit-status {
+  background: var(--lab-surface-muted);
+  border: 1px solid var(--lab-line);
+  border-radius: var(--lab-control-radius);
+  color: var(--lab-ink-secondary);
+  font-size: var(--lab-type-body);
+  line-height: var(--lab-leading-body);
+}
+
+:root .lab-kit-status[data-state="warn"] {
+  background: var(--lab-needed-soft);
+  border-color: var(--lab-needed-line);
+  color: var(--lab-needed-ink);
+}
+
+:root .lab-kit-status[data-state="good"] {
+  background: var(--lab-good-soft);
+  border-color: var(--lab-good-line);
+  color: var(--lab-good-ink);
+}
+
+:root .lab-kit-status[data-state="bad"] {
+  background: var(--lab-bad-soft);
+  border-color: var(--lab-bad-line);
+  color: var(--lab-bad-ink);
 }
 
 @media (max-width: 620px) {

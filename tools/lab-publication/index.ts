@@ -297,7 +297,9 @@ export const loadPublicationContext = async (repositoryRoot: string): Promise<Pu
     resources.push({ id: resource.id, type: resource.type, content });
   }
 
-  const frameStyles = (await readFile(path.join(root, 'public', 'labs', 'lab-frame.css'), 'utf8')).trim();
+  const frameStyles = (await Promise.all(['lab-tokens.css', 'lab-frame.css'].map(
+    (file) => readFile(path.join(root, 'public', 'labs', file), 'utf8'),
+  ))).map((styles) => styles.trim()).join('\n\n');
   const frame = assertFrame(frameStyles);
 
   return {

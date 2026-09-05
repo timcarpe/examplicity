@@ -406,6 +406,34 @@ button:focus-visible{outline:3px solid var(--lab-focus);outline-offset:4px}
   --lab-header-gutter: max(28px, calc((100vw - var(--lab-header-max-width)) / 2));
   --lab-page-gutter: var(--lab-header-gutter);
   --lab-compact-workspace-max: 820px;
+
+  /* Readability and learner-state roles for the design update. */
+  --lab-ink-secondary: #424245;
+  --lab-surface-muted: #f7f8fa;
+  --lab-line-subtle: #e7e8eb;
+  --lab-accent-hover: #4569aa;
+  --lab-accent-pressed: #3a5d99;
+  --lab-accent-surface: #f8fbff;
+  --lab-accent-line: #9fb4d6;
+  --lab-accent-ink: #315b91;
+  --lab-on-accent: #ffffff;
+  --lab-needed: #946200;
+  --lab-needed-ink: #735100;
+  --lab-needed-line: #d8c36a;
+  --lab-needed-soft: #fff9db;
+  --lab-needed-surface: #fffdf4;
+  --lab-good-ink: #225f43;
+  --lab-good-line: #9cc7aa;
+  --lab-good-surface: #f7fcf8;
+  --lab-bad-ink: #8f2f27;
+  --lab-bad-line: #d99b93;
+  --lab-bad-surface: #fff8f7;
+  --lab-type-body: 14px;
+  --lab-type-label: 12px;
+  --lab-type-annotation: 11px;
+  --lab-leading-body: 1.5;
+  --lab-action-height: 40px;
+  --lab-target-min: 44px;
 }
 
 html,
@@ -611,6 +639,34 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
   outline-offset: 4px;
 }
 
+/* Site feedback treatment also wins when a lab loads Kit CSS after the frame. */
+:root .lab-kit-status {
+  background: var(--lab-surface-muted);
+  border: 1px solid var(--lab-line);
+  border-radius: var(--lab-control-radius);
+  color: var(--lab-ink-secondary);
+  font-size: var(--lab-type-body);
+  line-height: var(--lab-leading-body);
+}
+
+:root .lab-kit-status[data-state="warn"] {
+  background: var(--lab-needed-soft);
+  border-color: var(--lab-needed-line);
+  color: var(--lab-needed-ink);
+}
+
+:root .lab-kit-status[data-state="good"] {
+  background: var(--lab-good-soft);
+  border-color: var(--lab-good-line);
+  color: var(--lab-good-ink);
+}
+
+:root .lab-kit-status[data-state="bad"] {
+  background: var(--lab-bad-soft);
+  border-color: var(--lab-bad-line);
+  color: var(--lab-bad-ink);
+}
+
 @media (max-width: 620px) {
   :root {
     --lab-header-gutter: 18px;
@@ -794,6 +850,38 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 
 </style>
 <!-- LAB_RESOURCE_END id="lab-kit.css" type="stylesheet" -->
+<style data-style-guide-patch>
+/* Readable pilot treatment: retain the existing question model and answer flow. */
+body[data-lab-layout="compact"]{align-content:start;min-height:auto;padding:18px 0 38px;font-size:var(--lab-type-body,14px)}
+.title{font-size:16px}
+.pill-toggle{border-radius:9px;background:var(--lab-control,#fff)}
+.pill-toggle button{min-height:40px;border-radius:6px;font-size:12px}
+.choice-answer button{border-radius:8px}
+.answer-label{font-size:12px;letter-spacing:0;text-transform:none}
+.help-tip{font-size:var(--lab-type-body,14px);background:var(--lab-accent-soft);border-color:var(--lab-accent-line,var(--lab-line))}
+.scalar-base,.place-values{font-size:var(--lab-type-annotation,11px)}
+.feedback{min-height:38px;margin-top:14px;padding:7px 10px;border:1px solid var(--lab-line);border-radius:var(--lab-control-radius,8px);font-size:var(--lab-type-body,14px);text-align:left}
+.feedback:empty{display:none}
+.feedback.good{border-color:var(--lab-good-line,var(--good));background:var(--lab-good-surface,var(--good-soft));color:var(--lab-good-ink,var(--good))}
+.feedback.good::before{content:"✓ ";font-weight:900}
+.feedback.warn{border-color:var(--lab-needed-line,var(--lab-warn,var(--line)));background:var(--lab-needed-surface,var(--lab-warn-soft,var(--accent-soft)));color:var(--lab-needed-ink,var(--ink))}
+.feedback.warn::before{content:"! ";font-weight:900}
+.feedback.bad{border-color:var(--lab-bad-line,var(--bad));background:var(--lab-bad-surface,var(--bad-soft));color:var(--lab-bad-ink,var(--bad))}
+.feedback.bad::before{content:"✕ ";font-weight:900}
+.answer-control.needs-working .bit-row,.answer-control.needs-working .bit-cell,.text-answer.needs-working,.choice-answer.needs-working{border-color:var(--lab-needed-line,var(--lab-warn,var(--line)));background:var(--lab-needed-soft,var(--lab-warn-soft,var(--accent-soft)))}
+.answer-control.incorrect .bit-row,.answer-control.incorrect .bit-cell,.text-answer.incorrect,.choice-answer.incorrect{border-color:var(--lab-bad-line,var(--bad));background:var(--lab-bad-surface,var(--bad-soft))}
+.answer-control.correct .bit-row,.answer-control.correct .bit-cell,.text-answer.correct,.choice-answer.correct{border-color:var(--lab-good-line,var(--good));background:var(--lab-good-surface,var(--good-soft))}
+.choice-answer.needs-working,.choice-answer.incorrect,.choice-answer.correct{padding:7px 9px;border:1px solid;border-radius:var(--lab-control-radius,8px)}
+.choice-answer.needs-working{border-color:var(--lab-needed-line,var(--lab-warn,var(--line)));background:var(--lab-needed-surface,var(--lab-warn-soft,var(--accent-soft)))}
+.choice-answer.incorrect{border-color:var(--lab-bad-line,var(--bad));background:var(--lab-bad-surface,var(--bad-soft))}
+.choice-answer.correct{border-color:var(--lab-good-line,var(--good));background:var(--lab-good-surface,var(--good-soft))}
+.actions{gap:10px;margin-top:15px}
+.actions button{height:42px;min-width:128px;padding:0 17px;font-size:12px}
+.actions .primary{box-shadow:0 1px 2px rgba(29,29,31,.10)}
+/* Four digit place values need a compact diagram scale in a 16-bit register. */
+.register-group[data-bits="16"] .place-values{font-size:7.5px}
+@media(max-width:390px){.actions{gap:8px}.actions button{min-width:0;padding:0 8px}}
+</style>
 <!-- LAB_CONTRACT_START -->
 <script type="application/json" data-examplicity-lab-contract data-contract-version="1">
 {
@@ -2415,7 +2503,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
     if(state.correct) return;
     $("feedback").textContent="";
     $("feedback").className="feedback";
-    document.querySelectorAll(".incorrect,.correct").forEach(element=>element.classList.remove("incorrect","correct"));
+    document.querySelectorAll(".incorrect,.correct,.needs-working").forEach(element=>element.classList.remove("incorrect","correct","needs-working"));
   }
 
   function readAnswer(){
@@ -2451,8 +2539,8 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
     const feedback=$("feedback");
     if(!submitted.complete){
       feedback.textContent="Complete the answer before checking.";
-      feedback.className="feedback bad";
-      markAnswer("incorrect");
+      feedback.className="feedback warn";
+      markAnswer("needs-working");
       return;
     }
 

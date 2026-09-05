@@ -11,8 +11,9 @@ const readAuthoredLab = (subject: string, slug: string) => readFile(
 
 test('shared manifest headers use the 1200px rail independently of lab workspace width', async () => {
   const frame = await readFile(path.join(repositoryRoot, 'public', 'labs', 'lab-frame.css'), 'utf8');
+  const tokens = await readFile(path.join(repositoryRoot, 'public', 'labs', 'lab-tokens.css'), 'utf8');
 
-  assert.match(frame, /--lab-header-max-width:\s*1200px/);
+  assert.match(tokens, /--lab-header-max-width:\s*1200px/);
   assert.match(frame, /\.lab-manifest-header\s*\{[\s\S]*?max-width:\s*var\(--lab-header-max-width\)/);
   assert.match(frame, /\.lab-manifest-header\s*\{[\s\S]*?width:\s*calc\(100vw - var\(--lab-header-gutter\) - var\(--lab-header-gutter\)\)/);
   assert.match(frame, /\.lab-manifest-header\s*\{[\s\S]*?border-bottom:\s*0\s*!important/);

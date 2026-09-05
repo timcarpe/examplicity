@@ -10,9 +10,11 @@ export const changelogEntries: readonly ChangelogEntry[] = [
     date: '2026-09-05',
     displayDate: '5 September 2026',
     publicChanges: [
+      'Updated Binary Number Practice, Coordinate Geometry and Graph Search with clearer text, consistent controls and distinct unfinished, incorrect and correct feedback. Improved Graph Search’s narrow-screen layout and road labels.',
       'Clarified AI remix guidance to preserve each lab’s learning relationships and curriculum, and made downloaded labs link consistently to their live versions with the correct MIT licence notice.',
     ],
     internalChanges: [
+      'Established shared design tokens for the site and self-contained lab publication, preserved existing styling in the other 54 labs, and added a regression check that incorrect Graph Search predictions leave the search unchanged.',
       'Rolled out separate contract sidecars and semantic hooks across all 57 labs, expanded developer guidance and CLI inspection, and validated contract preservation in generated and standalone HTML.',
       'Connected Binary Numbers’ existing IGCSE and AS question pools to curriculum profiles, corrected contract invariants, and added focused curriculum and download regression checks. The AI adaptation comparison remains unevaluated.',
     ],

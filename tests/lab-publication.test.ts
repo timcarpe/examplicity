@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
-import { mkdtemp, mkdir, rm, writeFile } from 'node:fs/promises';
+import { mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
@@ -39,6 +39,11 @@ test('publication core compiles and validates one packaged lab in memory', async
   assert.deepEqual(findUnresolvedRuntimeResources(compiled.output), []);
   assert.deepEqual(findUnresolvedRuntimeResources(compiled.standalone), []);
   assert.match(compiled.standalone, /data-examplicity-download-chrome/);
+  const tokens = (await readFile(path.join(repositoryRoot, 'public/labs/lab-tokens.css'), 'utf8')).trim();
+  for (const html of [compiled.output, compiled.standalone]) {
+    assert.equal(html.split(tokens).length - 1, 1, 'shared tokens are embedded once, including offline downloads');
+    assert.doesNotMatch(html, /(?:href|@import)[^\n]*lab-tokens\.css/);
+  }
 
   const validation = await validatePublicationLab(context, 'fetch-decode-execute');
   assert.equal(validation.ok, true);
