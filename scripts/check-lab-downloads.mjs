@@ -7,6 +7,7 @@ import { labPageHref, labs } from '../app/labs.ts';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const count = (source, value) => source.split(value).length - 1;
 const artifactLimitBytes = 512 * 1024;
+const licenseNotice = (await readFile(path.join(root, 'LICENSE'), 'utf8')).trim().replaceAll('\r\n', '\n');
 const artifactSizeWaivers = new Map([
   ['python-programming-practice', {
     maxBytes: 1_300_000,
@@ -28,6 +29,15 @@ for (const lab of labs) {
     lab,
   });
   const packagedBytes = Buffer.byteLength(packaged, 'utf8');
+  const footer = packaged.match(/<footer class="examplicity-download-footer">[\s\S]*?<\/footer>/)?.[0] ?? '';
+  if (
+    !packaged.replaceAll('\r\n', '\n').includes(`<!--\n${licenseNotice}\n-->`)
+    || !footer.includes('href="https://opensource.org/license/mit"')
+    || !footer.includes('>MIT License</a>')
+    || /creativecommons\.org|CC BY 4\.0/.test(footer)
+  ) {
+    throw new Error(`${lab.slug} has an inconsistent standalone licence`);
+  }
   const sizeWaiver = artifactSizeWaivers.get(lab.slug);
   if (packagedBytes > artifactLimitBytes && (!sizeWaiver || packagedBytes > sizeWaiver.maxBytes)) {
     throw new Error(`${lab.slug} produced a ${packagedBytes}-byte artifact without an adequate size waiver`);
@@ -68,6 +78,8 @@ for (const lab of labs) {
     || count(packaged, 'padding-bottom: 58px !important') !== 1
     || count(packaged, '<header class="examplicity-download-header"') !== 1
     || count(packaged, '<footer class="examplicity-download-footer"') !== 1
+    || !footer.includes(`href="https://www.examplicity.org${lab.href}"`)
+    || !footer.includes('href="https://www.examplicity.org/"')
     || count(packaged, '<!-- LAB_FRAME_STYLES_START -->') !== 1
     || count(packaged, '<!-- LAB_FRAME_STYLES_END -->') !== 1
     || count(packaged, '<style data-lab-frame>') !== 1

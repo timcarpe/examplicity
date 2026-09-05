@@ -10,7 +10,7 @@ export const changelogEntries: readonly ChangelogEntry[] = [
     date: '2026-09-05',
     displayDate: '5 September 2026',
     publicChanges: [
-      'Clarified AI remix guidance to preserve each lab’s learning relationships and curriculum, and made downloaded labs link consistently to their live versions.',
+      'Clarified AI remix guidance to preserve each lab’s learning relationships and curriculum, and made downloaded labs link consistently to their live versions with the correct MIT licence notice.',
     ],
     internalChanges: [
       'Rolled out separate contract sidecars and semantic hooks across all 57 labs, expanded developer guidance and CLI inspection, and validated contract preservation in generated and standalone HTML.',
