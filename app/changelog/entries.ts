@@ -15,7 +15,7 @@ export const changelogEntries: readonly ChangelogEntry[] = [
     ],
     internalChanges: [
       'Documented a three-owner plan for queryable exam evidence, demand summaries and lab adaptations; recorded a source audit that blocks use of incorrect draft mappings pending semantic re-review.',
-      'Established shared design tokens for the site and self-contained lab publication, preserved existing styling in the other 54 labs, and added a regression check that incorrect Graph Search predictions leave the search unchanged.',
+      'Established shared design tokens for the site and self-contained lab publication, preserved existing styling in the other 54 labs, and added a regression check that incorrect Graph Search predictions leave the search unchanged. Updated the living HTML guide with interactive Working and stage specimens, refreshed pilot sources and visual-first copy guidance.',
       'Rolled out separate contract sidecars and semantic hooks across all 57 labs, expanded developer guidance and CLI inspection, and validated contract preservation in generated and standalone HTML.',
       'Connected Binary Numbers’ existing IGCSE and AS question pools to curriculum profiles, corrected contract invariants, and added focused curriculum and download regression checks. The AI adaptation comparison remains unevaluated.',
     ],

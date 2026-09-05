@@ -150,8 +150,11 @@ Implementation remains one Git batch: opt-in shared control styles, Coordinate
 stage details, Graph Search's copy/evidence changes and this guidance. The
 reference examples on the live site inform the new controls; their wider lab
 migrations remain in the catalogue queue. No new progression framework is
-introduced, and the supplied Downloads documents remain the original inputs.
-The repository style contract is the maintained source for subsequent feedback.
+introduced. The repository style contract and
+`docs/examplicity-living-style-guide-v3.html` are maintained together for
+subsequent feedback. The HTML guide's executable pilots and inspectable source
+have been refreshed from the reviewed publication output, and its Downloads
+copy has been updated too. The supplied Markdown documents remain original inputs.
 
 Refinement verification:
 
