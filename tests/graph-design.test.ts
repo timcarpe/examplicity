@@ -120,7 +120,7 @@ test('wrong A* frontier choices preserve the search and show red feedback', asyn
     assert.equal(runtime.getCanReveal(), true);
     assert.equal(elements.get('decision-card')!.className, 'decision-card bad');
     assert.equal(elements.get('status')!.className, 'status bad');
-    assert.match(elements.get('decision-label')!.textContent, /^✕ Prediction: A$/);
+    assert.match(elements.get('decision-label')!.textContent, /^✕ A is not minimum$/);
   } finally {
     delete (globalThis as typeof globalThis & { __graphDesignTest?: unknown }).__graphDesignTest;
   }

@@ -7,7 +7,7 @@ Target: `codex/llm-first-v0.1`. Scope: shared design language across the site an
 - Keep the catalogue and supporting-page layouts. Preserve lab models, geometry, meaningful colours and learning behaviour. Set Membership's possible model overhaul stays separate; its interface styling is included.
 - Follow written feedback rules and correct conflicting examples: yellow for unfinished work, red with an x for a wrong attempt, green with a check for a correct attempt. Use complete feedback borders and surfaces.
 - Use 14px working/explanations, 12px short labels and 11px secondary annotations as defaults, with reviewed diagram-specific exceptions. Apply v3 rounded rectangular actions; preserve meaningful model shapes.
-- Allow taller labs within the viewer. Keep operated diagrams intact and retain useful editor/console panes. Keep measurements beside the model; choose panel order to suit the activity.
+- Allow taller labs within the viewer. Keep operated diagrams intact and retain useful editor/console panes. Keep measurements beside the model and persistent working in the right-hand column, flowing below on narrow screens. Use the same calculation layout across assistance levels.
 
 ## Three steps
 
@@ -63,6 +63,64 @@ Intentional exceptions for this review:
 Automated evidence: 65 tests pass, including the new wrong-prediction regression and shared-token download coverage. Compilation, styles, content, standalone resource checks and contract checks pass for all 57 labs. A comparison against the baseline confirms that all 54 non-pilot HTML files are identical outside the embedded shared frame and that every existing token value is unchanged.
 
 Production build, lint and `git diff --check` also pass. Remaining verification: a separate offline browser run of downloaded files has not been exercised in this pass. The publication checks verify self-contained resources and preserved scripts; they do not substitute for an offline runtime check.
+
+### Second pilot pass — review response
+
+The first pass preserved too much inherited interface structure. Increasing
+type sizes and recolouring boxes did not adequately apply the guide's intent.
+The following decisions supersede the earlier permission to choose arbitrary
+working/evidence order and now govern every subsequent lab migration:
+
+- One clear task; no stage numbers, phase names, generic progress counters or
+  bars, redundant Working required heading, or assistance summary subtext.
+- One persistent Working column to the right, flowing below the model on
+  narrow screens. Calculations keep their labels, formula placement and order
+  across Off, Some and All; an input replaces the shown result in the same row.
+- Padding and whitespace establish groups. Idle values and prose do not need
+  individual boxes. Semantic fields, actual feedback and temporary phase/cue
+  cards retain their meaningful full borders.
+- Regular primary ink for working, secondary ink for explanation, and heavier
+  type only for headings or selected results. Remove inherited grey bold
+  microtitles and prose about the application's internal state.
+- Distances, current line equations and other model evidence stay beside the
+  operated visual. Guidance attaches to its actual handle with the guide's
+  blue cue/halo treatment and dismisses after interaction; no drag chips.
+
+The guide's literal examples remain references, not instructions overriding
+this review. Internal phase progression and the authentic learning models are
+preserved while the surrounding information architecture changes.
+
+Colour audit: shared neutral, interaction and learner-state colour tokens
+match the starter layer embedded in the supplied living HTML guide. The key
+values are ink `#1d1d1f`, secondary ink `#424245`, accent `#5277b8`, needed
+`#946200`, correct `#18794e` and incorrect `#b42318`, with the guide's associated
+surface and border colours. Target cues and concept accents use the guide's
+named tokens. Existing 35px controls in unmigrated labs remain a deliberate
+compatibility exception; updated actions use 40–44px. Pixel text defaults are
+equivalent to the guide's rem values at the default root size.
+
+Second-pass verification:
+
+- Coordinate completed all four configurations: All working in the first,
+  Some in the second, then Off for the horizontal case and endpoint repair.
+  Formulas update with the endpoints; new cases clear answers. Correct answers
+  alone do not complete the geometric construction. Wrong, unfinished and
+  correct field surfaces were inspected. The shown target equation is separate
+  from the current drawn line, and hidden answers are not leaked by explanation.
+- Pointer rotation updates the live line and distance evidence. Keyboard
+  translation/rotation and endpoint movement also work. The target cue and its
+  leader dismiss after interaction and stay attached after resizing.
+- Graph Search completed both algorithms at cost 8, preserves the frontier
+  after a wrong prediction, reveals the minimum, and retains previous routes
+  after keyboard road-cost editing. Its working is an open column beside the
+  graph, with visible borders reserved for decisions and actual feedback.
+- Both layouts were inspected at 1200, 900 and 390px, with no page-level
+  horizontal overflow. Coordinate's completion card and working controls were
+  checked on a phone; the 1280×720 embedded viewer was also inspected.
+- 66 tests pass, including the new Coordinate rendering/state regression;
+  lint, production build and all 57 publication/download/contract checks pass.
+  Offline browser verification remains separate from the automated packaging
+  checks, as recorded above.
 
 ### Catalogue checklist
 

@@ -86,10 +86,27 @@ Do not edit an embedded `LAB_FRAME_STYLES`, `LAB_MANIFEST_HEAD`,
   annotations. Review smaller geometry-constrained labels individually.
   Ordinary actions should be 40–44px high. The legacy 35px control token remains
   for unmigrated labs; updated controls use `--lab-action-height` or 44px.
-- Keep measurements on or beside their model. Choose the order of working and
-  evidence to make the current activity clear rather than forcing one sidebar
-  arrangement on every lab. Working stays persistent outside transient cues
+- Keep measurements on or beside their model. Use a persistent right-hand
+  Working column on wide screens and the same column below the model on narrow
+  screens. Begin with calculations or decisions, then interpretation. Keep the
+  same labels, formula rows and order when assistance changes: replace shown
+  results with learner inputs in place. Working stays outside transient cues
   and completion cards.
+- Do not surface stage numbers, phase names such as “calibrate”, progress
+  counters/bars, or redundant “Working required” headings and explanatory
+  subtext. Keep one clear learner task and one Working heading with its controls.
+  Internal progression still governs the learning sequence. Algorithm traces,
+  settled order and measured counts are evidence, not generic progress chrome.
+- Use padding and spacing within one parent surface. Idle calculations and
+  explanatory paragraphs do not each need a box. Reserve full state borders
+  for learner fields, actual feedback and bounded interaction/phase cards.
+  Use regular ink-coloured text for calculations and secondary ink for prose;
+  reserve heavier type for headings or a result that needs emphasis. Do not
+  use grey bold microtitles throughout the working area.
+- Interaction guidance must identify a real operated target and a purpose.
+  Use the guide's blue cue and target halo, positioned against the rendered
+  handle after resizing. Dismiss introductory guidance after the action.
+  Do not add floating “drag to slide” chips or repeat general lesson copy.
 - Unfinished learner work is yellow, a wrong attempt is red with a visible x,
   and a correct attempt is green with a visible check. Use complete borders and
   surfaces, including the input itself. Blue communicates actions, process and
@@ -115,8 +132,8 @@ only when it carries instructional meaning inside the operated model, such as a
 packet route, signal, bus, warning or diagram legend; that colour must not leak
 into surrounding interface chrome.
 
-Static goals, hints, explanations and supporting callouts belong to the shared
-panel language: a neutral full border, shared surface and ordinary text colour.
+Static goals, hints and explanations normally use padding and ordinary text
+on the parent surface. A separate neutral border needs a grouping purpose.
 Do not preserve generator boilerplate that uses a saturated coloured side rail
 as decoration. Shared feedback must not use a unilateral coloured rail or inset
 stripe. Meaningful model identities, graph edges and CSS arrow geometry remain
