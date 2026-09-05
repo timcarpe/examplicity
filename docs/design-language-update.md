@@ -587,3 +587,8 @@ Canonical HTML guide and style contract document these patterns; developer copie
 - Motion: removed redundant visual header/instruction, primary chart titles and moving annotation labels that duplicated working. Separated tick/axis label bands and track readings; enlarged camera readout containers to fit text. Derived distance chart retains its identifying title.
 - Recurring: regular sentence-case model labels; approved concept colours and direct tint variants. Removed drag-left/pull-across chips and repeated row instructions; retained accessible labels, keyboard actions and working explanations. Highlight the operated row/minus handle, stopping attention on interaction.
 - Shared CSS owns cue, label, colour, checkpoint and direct-bar appearance. Lab source changes own restored mechanics, label placement and semantic adoption. Straight Lines remains unchanged. Guide, developer publication and inline download resources regenerated; compilation only, no browser/test validation.
+
+
+### Shared card-title hierarchy — 5 September 2026
+
+Canonical CSS adds lab-card-title and compatible existing card-heading selectors: 15px regular, sentence case, primary ink, 6px content separation. Includes Blue reference, working-step, prediction and concept titles; excludes equations and field labels. Guide specimen and contract updated; inline publication resources regenerated. No lab-local styles added. Compilation only; no browser/test validation.

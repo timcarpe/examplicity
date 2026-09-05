@@ -422,3 +422,12 @@ ticks, axis titles and object readings; resize annotation containers to their
 text. Avoid labels that follow moving points when they collide with other
 readings or duplicate the persistent working. A second derived graph may need
 a title; a mode toggle and labelled axes already identify the primary graph.
+
+
+### Card titles
+
+Use `.lab-card-title` for a modest header treatment: 15px, regular weight 400,
+1.4 line-height, primary ink and 6px below. Use sentence case, without uppercase
+tracking or bold. This applies to reference, concept, prediction and working
+card titles (for example, Blue reference). Body working remains 14px; short
+field labels remain 12px. Formulas and values are content, not card titles.
