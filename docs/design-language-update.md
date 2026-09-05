@@ -724,3 +724,21 @@ diffs contain only passive role annotations; all previous contract fields are
 unchanged and referenced ID anchors exist in source. Conditional generated
 controls are documented; this is not a claim that every selector matches the
 initial screen or that every generated state was replayed.
+
+
+### Batch 3 review refinements — 5 September 2026
+
+- Shared CSS removes legacy inset side rails from calculation surfaces and
+  compact candidate-table values in every state; complete input feedback
+  borders remain. Non-Right Triangle section 4 now uses flat material fields.
+- The 3D concept palette now uses approved blue for the floor beam/projection,
+  amber for height and violet for cable. The green alignment line remains
+  green and is distinct from those concept colours. No extra success badge
+  or learning/interaction change was introduced.
+- Both changes reside in the canonical shared stylesheet. The HTML style
+  guide and style contract record their uses; developer and standalone
+  resources are regenerated. Browser review reached successful 3D alignment
+  and both SSA candidates, including section 4's displayed values.
+- The user requested a direct mapping-specification review from Lab Internals
+  (Orchestrator), task `01a06f2a-1766-7a52-bf78-3609692c5ab1`; commit `9e65dcb`
+  was sent for read-only evaluation.

@@ -490,3 +490,6 @@ control, such as the 3D unfolding slider; its purpose differs from green
 completion. Suppress inherited positioning animations when shared placement
 owns the popup. Checkpoints may show the current task and its work phase in a
 hover/focus detail surface, without adding a numeric progress counter.
+
+
+Geometry review refinement: calculation and candidate-table surfaces are flat material, without inset side rails in any state; fields retain complete feedback borders. Choose concept colours that separate clearly from success green. The 3D palette uses approved blue for the beam/projection, amber for height and violet for cable; verified alignment keeps its green feedback.
