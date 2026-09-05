@@ -360,3 +360,5 @@ they do not require another visible paragraph.
 8. For every assistance or working level, start a fresh problem and confirm it
    is incomplete before interaction, cannot advance immediately, and completes
    only after the level-appropriate learner action.
+
+Working and exam settings share the living guide’s smooth pill toggle: fully rounded track and selected segment, neutral grey background, white selection without a visible segment border, 42px height with 3px inset, and 12px regular-weight text. Preserve existing options and earned availability.

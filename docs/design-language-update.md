@@ -436,3 +436,8 @@ Change list for this batch (source paths below; matching `public/labs` HTML is r
 | `labs-src/mathematics/sequence-patterns-differences/lab.html` | Show construction progress in every mode; group calculation steps and propagate actual incorrect answers to card state. Supplied calculations remain neutral. |
 
 Uses the existing guide's working-progression pattern: 12px padding, 8px corners, 10px separation, neutral reference/upcoming, yellow unfinished work, green/check completion, red/x mistake. Complex illustrated assets and learning rules are unchanged. Validation is deliberately skipped for this batch at the user's request. Review is pending.
+
+
+### Rounded settings correction — 5 September 2026
+
+Binary exam/range controls and Coordinate, Prime Factors, Sequence and Histogram Working controls now share fully rounded grey tracks and white selected pills, 12px regular text, 3px inset and roomier horizontal padding. No options, curriculum profiles or learning state changed. Updated the canonical HTML guide, written companion and generated developer copies. Validation remains skipped as requested.
