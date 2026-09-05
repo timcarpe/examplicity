@@ -369,3 +369,5 @@ Activity top panels sit above the model and working area. Put task/actions at le
 An algorithm mode toggle starts with a real selected mode and matching model state (Graph Search defaults to Dijkstra on load/reset), not an unselected pair or a merely cosmetic selection.
 
 Activity task headings: primary ink #1d1d1f, 14px, weight 500, line-height 1.45, normal letter spacing, sentence case and balanced wrapping. Settings labels remain regular weight. No badge/background or extra title in a controls-only panel.
+
+For adjacent previous/current stage views, use matched padded descriptor headers (12px text, 4px label/value gap) and a lightweight neutral container for reference evidence. Return-area cues appear when a placed item can be returned; use an interaction-blue target highlight during hover rather than permanent verbose drop instructions.

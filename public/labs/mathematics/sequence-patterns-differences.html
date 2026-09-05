@@ -735,6 +735,25 @@ button{min-height:34px;padding:0 10px;border:1px solid var(--lab-line);border-ra
 /* Task headings are quiet, readable anchors above the model. */
 .lab-activity-bar .lab-activity-task>strong,.lab-activity-bar .lab-activity-task h2,.lab-activity-bar .lab-activity-task h3,.lab-activity-bar .mission-copy>strong,.lab-activity-bar #goalTitle{margin:0;color:var(--lab-ink,#1d1d1f);font-family:var(--lab-font-sans,inherit);font-size:14px;font-weight:500;line-height:1.45;letter-spacing:normal;text-transform:none;text-wrap:balance}
 </style>
+<style data-stage-containers>
+/* Separate the previous evidence from the operated stage with matching, padded descriptors. */
+.canvas .workspace-row{gap:16px}
+.canvas .reference-zone{border:1px solid var(--lab-line,#d2d2d7);border-radius:8px;background:var(--lab-surface-muted,#f7f8fa)}
+.stage-zone-heading{position:relative;z-index:5;display:flex;flex-direction:column;align-items:flex-start;gap:4px;padding:12px 12px 8px}
+.stage-zone-heading .zone-label,.stage-zone-heading .zone-value{position:static;margin:0;font-family:var(--lab-font-sans,inherit);font-size:12px;font-weight:400;line-height:1.45;text-transform:none;letter-spacing:normal}
+.stage-zone-heading .zone-label{color:var(--lab-muted,#6e6e73)}
+.stage-zone-heading .zone-value{color:var(--lab-ink,#1d1d1f)}
+.canvas .reference-stage{padding:12px}
+.canvas .tray{padding:12px;border:1px solid var(--lab-line-subtle,#e7e8eb);border-radius:8px;background:var(--lab-surface,#fff)}
+.tray .tray-head{display:flex;align-items:center;flex-wrap:wrap;gap:8px 12px}
+.tray .tray-head>div:first-child{flex:1 1 220px}
+.tray .tray-head strong{font-size:12px;font-weight:500}
+.tray .tray-head span{margin-top:4px;font-size:12px;font-weight:400;line-height:1.45}
+.tray .tray-return{display:none;margin:0;color:var(--lab-accent-ink,#315b91);font-size:12px;font-weight:400;line-height:1.45}
+.tray.return-ready{border-color:var(--lab-accent-line,#9fb4d6)}
+.tray.return-ready .tray-return{display:block}
+.tray.return-over{background:var(--lab-accent-soft,#eef2fa);outline:2px solid var(--lab-accent-line,#9fb4d6);outline-offset:2px}
+</style>
 <!-- LAB_CONTRACT_START -->
 <script type="application/json" data-examplicity-lab-contract data-contract-version="1">
 {
@@ -799,19 +818,19 @@ button{min-height:34px;padding:0 10px;border:1px solid var(--lab-line);border-ra
       <div class="canvas" id="canvas">
         <div class="workspace-row">
           <section class="reference-zone" aria-label="Previous completed stage">
-            <span class="zone-label">Previous stage</span><span id="referenceValue" class="zone-value"></span>
+            <header class="stage-zone-heading"><span class="zone-label">Previous stage</span><span id="referenceValue" class="zone-value"></span></header>
             <div id="referenceStage" class="reference-stage"></div>
             <div id="referenceCaption" class="reference-caption"></div>
           </section>
           <section class="build-zone" id="buildZone" aria-label="Build the next stage">
-            <span class="zone-label">Build next stage</span><span id="buildValue" class="zone-value"></span>
+            <header class="stage-zone-heading"><span class="zone-label">Next stage</span><span id="buildValue" class="zone-value"></span></header>
             <div id="buildGrid" class="build-grid" aria-label="Square lattice"></div>
             <div id="buildStageShell" class="build-stage-shell"></div>
             <div id="dropMessage" class="drop-message" aria-live="polite"></div>
           </section>
         </div>
         <section id="tray" class="tray" aria-label="Loose square material">
-          <div class="tray-head"><div><strong>Loose material</strong><span>Each square is independent. Drag one onto the lattice, or select it and then select a cell.</span></div><div class="tray-return">Drop a placed square here to return it.</div></div>
+          <div class="tray-head"><div><strong>Loose material</strong><span>Drag a square onto the lattice, or select a square then a cell.</span></div><div class="tray-return" aria-hidden="true">↩ Return square</div></div>
           <div id="looseField" class="loose-field"></div>
         </section>
       </div>
@@ -1296,18 +1315,18 @@ function ghostSet(){const f=family();if(f.id==='ambiguity'){const b=bounds(state
 function renderBuild(){const f=family(),shell=$('buildStageShell');shell.innerHTML='';const ghosts=ghostSet();if(ghosts.size){const gb=bounds(ghosts),lab=document.createElement('span');lab.className='previous-pattern-label';lab.textContent='previous pattern';lab.style.left=`calc(50% - ${GRID_COLS/2} * var(--cell) + ${gb.minX} * var(--cell))`;lab.style.top=`calc(50% - ${GRID_ROWS/2} * var(--cell) + ${gb.minY} * var(--cell) - 5% - 18px)`;shell.appendChild(lab)}for(const k of ghosts){const[x,y]=parseKey(k),d=document.createElement('div');d.className='build-ghost';d.style.left=`calc(50% - ${GRID_COLS/2} * var(--cell) + ${x} * var(--cell))`;d.style.top=`calc(50% - ${GRID_ROWS/2} * var(--cell) + ${y} * var(--cell) - 5%)`;shell.appendChild(d)}for(const[cell,tileId]of state.placed){const[x,y]=parseKey(cell),d=document.createElement('button');d.type='button';d.className='placed-tile';d.dataset.tileId=tileId;d.dataset.cell=cell;d.setAttribute('aria-label','Placed square. Drag back to the loose material area to remove it.');d.style.left=`calc(50% - ${GRID_COLS/2} * var(--cell) + ${x} * var(--cell))`;d.style.top=`calc(50% - ${GRID_ROWS/2} * var(--cell) + ${y} * var(--cell) - 5%)`;bindTile(d,'placed');shell.appendChild(d)}if(f.id==='ambiguity'){$('buildValue').textContent=state.futures.length===0?'Future A':state.futures.length===1?'Future B':'Compared';$('dropMessage').textContent=''}else{$('buildValue').textContent=state.currentStage<f.maxStage?`Build Stage ${state.currentStage+1}`:'Pattern built';$('dropMessage').textContent=''}}
 function renderTray(){const used=new Set(state.placed.values()),field=$('looseField');field.innerHTML='';for(let i=1;i<=MAX_TILES;i++){const id=`tile-${i}`,b=document.createElement('button');b.type='button';b.className='loose-tile'+(used.has(id)?' used':'');b.dataset.tileId=id;b.setAttribute('aria-label',`Loose square ${i}`);bindTile(b,'loose');field.appendChild(b)}}
 function bindTile(el,origin){el.addEventListener('pointerdown',e=>startDrag(e,el,origin));el.addEventListener('click',e=>{if(drag)return;e.stopPropagation();selectTile(el,origin)});el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();selectTile(el,origin)}})}
-function selectTile(el,origin){document.querySelectorAll('.selected').forEach(n=>n.classList.remove('selected'));selectedTile={id:el.dataset.tileId,origin,cell:el.dataset.cell||null};el.classList.add('selected');document.querySelectorAll('.grid-cell').forEach(c=>c.tabIndex=0);$('dropMessage').innerHTML='<strong>Square selected.</strong> Choose a lattice cell, or choose the loose-material area to return a placed square.'}
-function clearSelection(){selectedTile=null;document.querySelectorAll('.selected').forEach(n=>n.classList.remove('selected'));document.querySelectorAll('.grid-cell').forEach(c=>c.tabIndex=-1)}
+function selectTile(el,origin){document.querySelectorAll('.selected').forEach(n=>n.classList.remove('selected'));selectedTile={id:el.dataset.tileId,origin,cell:el.dataset.cell||null};$('tray').classList.toggle('return-ready',origin==='placed');el.classList.add('selected');document.querySelectorAll('.grid-cell').forEach(c=>c.tabIndex=0);$('dropMessage').innerHTML='<strong>Square selected.</strong> Choose a lattice cell, or choose the loose-material area to return a placed square.'}
+function clearSelection(){$("tray").classList.remove("return-ready","return-over");selectedTile=null;document.querySelectorAll('.selected').forEach(n=>n.classList.remove('selected'));document.querySelectorAll('.grid-cell').forEach(c=>c.tabIndex=-1)}
 function cellElement(k){return document.querySelector(`.grid-cell[data-cell="${k}"]`)}
 function validAmbiguityCell(k){const ghosts=ghostSet();if(ghosts.has(k)||state.placed.has(k))return false;const[x,y]=parseKey(k),nbr=[key(x+1,y),key(x-1,y),key(x,y+1),key(x,y-1)];return nbr.some(n=>ghosts.has(n)||state.placed.has(n))}
 function validTargetCell(k){const f=family();return f.id==='ambiguity'?validAmbiguityCell(k):targetGrowthSet().has(k)&&!state.placed.has(k)}
 function placeSelectedAt(k){if(!selectedTile)return;const tile={...selectedTile};clearSelection();moveTile(tile.id,tile.origin,tile.cell,k)}
 function moveTile(tileId,origin,oldCell,newCell){if(origin==='placed'&&oldCell)state.placed.delete(oldCell);if(validTargetCell(newCell)){state.placed.set(newCell,tileId);state.notice=null;if(!interactionGuideSeen&&guideStep===1){interactionGuideSeen=true;$('interactionGuide').hidden=true;clearGuideHighlight()}renderBuild();renderTray();const c=cellElement(newCell);c?.classList.add('drag-valid');setTimeout(()=>c?.classList.remove('drag-valid'),180);checkCompletion();renderEvidence();renderStages()}else{if(origin==='placed'&&oldCell)state.placed.set(oldCell,tileId);const c=cellElement(newCell);c?.classList.add('reject');setTimeout(()=>c?.classList.remove('reject'),340);renderBuild();renderTray();$('dropMessage').className='drop-message bad';$('dropMessage').innerHTML=family().id==='ambiguity'?'<strong>Keep the new growth connected.</strong> That square is detached from the pattern.':'<strong>That square does not continue this pattern.</strong> Look at the boundary created by the most recent growth.'}}
 function returnTile(tileId,oldCell){if(oldCell)state.placed.delete(oldCell);clearSelection();renderBuild();renderTray();state.notice=null;renderEvidence()}
-function startDrag(e,el,origin){if(e.button!==0)return;const id=el.dataset.tileId,oldCell=el.dataset.cell||null,g=document.createElement('div');g.className='drag-ghost';document.body.appendChild(g);drag={id,origin,oldCell,ghost:g};moveGhost(e);document.addEventListener('pointermove',onDragMove);document.addEventListener('pointerup',endDrag,{once:true});e.preventDefault()}
+function startDrag(e,el,origin){if(e.button!==0)return;const id=el.dataset.tileId,oldCell=el.dataset.cell||null,g=document.createElement('div');g.className='drag-ghost';document.body.appendChild(g);drag={id,origin,oldCell,ghost:g};$("tray").classList.toggle("return-ready",origin==='placed');moveGhost(e);document.addEventListener('pointermove',onDragMove);document.addEventListener('pointerup',endDrag,{once:true});e.preventDefault()}
 function moveGhost(e){if(drag){drag.ghost.style.left=e.clientX+'px';drag.ghost.style.top=e.clientY+'px'}}
-function onDragMove(e){moveGhost(e);document.querySelectorAll('.grid-cell').forEach(c=>c.classList.remove('drag-valid','drag-invalid'));const under=document.elementFromPoint(e.clientX,e.clientY),cell=under?.closest?.('.grid-cell');if(cell)cell.classList.add(validTargetCell(cell.dataset.cell)?'drag-valid':'drag-invalid')}
-function endDrag(e){document.removeEventListener('pointermove',onDragMove);document.querySelectorAll('.grid-cell').forEach(c=>c.classList.remove('drag-valid','drag-invalid'));if(!drag)return;const under=document.elementFromPoint(e.clientX,e.clientY),cell=under?.closest?.('.grid-cell'),inTray=under?.closest?.('#tray'),d=drag;drag=null;d.ghost.remove();if(cell)moveTile(d.id,d.origin,d.oldCell,cell.dataset.cell);else if(inTray&&d.origin==='placed')returnTile(d.id,d.oldCell)}
+function onDragMove(e){moveGhost(e);$("tray").classList.toggle("return-over",drag?.origin==='placed'&&Boolean(document.elementFromPoint(e.clientX,e.clientY)?.closest('#tray')));document.querySelectorAll('.grid-cell').forEach(c=>c.classList.remove('drag-valid','drag-invalid'));const under=document.elementFromPoint(e.clientX,e.clientY),cell=under?.closest?.('.grid-cell');if(cell)cell.classList.add(validTargetCell(cell.dataset.cell)?'drag-valid':'drag-invalid')}
+function endDrag(e){$("tray").classList.remove("return-ready","return-over");document.removeEventListener('pointermove',onDragMove);document.querySelectorAll('.grid-cell').forEach(c=>c.classList.remove('drag-valid','drag-invalid'));if(!drag)return;const under=document.elementFromPoint(e.clientX,e.clientY),cell=under?.closest?.('.grid-cell'),inTray=under?.closest?.('#tray'),d=drag;drag=null;d.ghost.remove();if(cell)moveTile(d.id,d.origin,d.oldCell,cell.dataset.cell);else if(inTray&&d.origin==='placed')returnTile(d.id,d.oldCell)}
 
 /* Working panel */
 function allDifferenceKeys(f){if(f.id==='linear')return['d1const'];if(f.id==='quadratic')return['d1_0','d1_1','d1_2','d2const'];if(f.id==='cubic')return['d1_0','d1_1','d1_2','d2_0','d2_1','d3const'];return[]}

@@ -483,3 +483,8 @@ Graph Search now initializes Dijkstra through its existing startSearch function,
 ### Top-panel task typography — 5 September 2026
 
 Graph Search, Coordinate, Prime Factors, Sequence and Histogram task headings now use primary ink, 14px medium weight, 1.45 line-height and balanced wrapping. Binary remains controls-only; no redundant heading added. Guide and generated references updated. Validation skipped as requested.
+
+
+### Sequence stage containers — 5 September 2026
+
+Sequence only: previous-stage evidence regained a light bordered container. Both stage descriptor pairs now share a padded, stacked header (12px labels, 4px gap), replacing overlapping absolute positions. Loose-material instructions shortened; the return cue appears only while moving/selecting a placed square, with a blue target highlight over the return area. Model geometry and placement rules unchanged. Generated HTML updated; validation skipped as requested.
