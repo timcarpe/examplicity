@@ -382,6 +382,14 @@ button{min-height:42px;padding:0 13px;font-size:var(--lab-type-body,14px);font-w
 @media(max-width:700px){.mission{grid-template-columns:1fr}.run-actions{width:100%;justify-content:flex-start}.algorithm-button{flex:1 1 150px}.workspace,.comparison{padding:16px}.graph-panel,.inspector{padding-inline:0}.panel-heading{display:block}.key{justify-content:flex-start;margin-top:10px;white-space:normal}}
 @media(max-width:430px){.node-name{font-size:32px}.edge-weight text{font-size:28px}.edge-weight rect{transform:scale(1.5)}.run-actions button{flex:1 1 132px}.frontier-choice{grid-template-columns:minmax(45px,1fr) repeat(3,36px)}}
 </style>
+<style data-working-progression>
+.inspector .decision-card,.inspector .frontier-section,.inspector .relaxation,.inspector .settled-section{margin:10px 0 0;padding:12px;border:1px solid var(--lab-line-subtle,#e7e8eb);border-radius:8px;background:var(--lab-surface-muted,#f7f8fa);box-shadow:none}
+.inspector .decision-card.needed{border-color:var(--lab-needed-line,#d8c36a);background:var(--lab-needed-surface,#fffdf4)}
+.inspector .decision-card.good,.inspector .settled-section[data-complete="true"]{border-color:var(--lab-good-line,#9cc7aa);background:var(--lab-good-surface,#f7fcf8)}
+.inspector .decision-card.bad{border-color:var(--lab-bad-line,#d8aaa4);background:var(--lab-bad-surface,#fff8f7)}
+.inspector .relax-card{padding:0;border:0;background:transparent;box-shadow:none}
+
+</style>
 </head>
 <body data-lab-layout="standard">
 <main>
@@ -662,8 +670,8 @@ button{min-height:42px;padding:0 13px;font-size:var(--lab-type-body,14px);font-w
     $("frontier-columns").textContent=search?.algorithm==="astar"?"town · g · h · f":"town · g";
     if(search&&!inspected&&!busy&&!search.complete){const mins=minimumCandidates();$("decision-card").className="decision-card needed";$("decision-label").textContent="Next decision";$("decision-node").textContent=mins.length>1?"Choose either tied minimum":"Choose the minimum priority";$("decision-reason").textContent="Select a blue town from the map or frontier."}
     if(!search){$("decision-card").className="decision-card needed";$("decision-label").textContent="Next decision";$("decision-node").textContent="Start a search";$("decision-reason").textContent="Choose Dijkstra or A* above."}
-    const hasSettled=Boolean(search?.settled.length);$("relaxation").hidden=!hasSettled;$("settled-section").hidden=!hasSettled;
-    const list=$("settled-list");list.replaceChildren();if(hasSettled)search.settled.forEach(id=>{const c=document.createElement("span");c.className="chip";c.textContent=id;list.append(c)});
+    const hasSettled=Boolean(search?.settled.length);$("relaxation").hidden=!hasSettled;$("settled-section").hidden=false;$("settled-section").dataset.complete=String(hasSettled);$("settled-section").querySelector("h3").textContent=hasSettled?"✓ Settled order":"○ Settled order";
+    const list=$("settled-list");list.replaceChildren();if(!hasSettled)list.textContent="—";if(hasSettled)search.settled.forEach(id=>{const c=document.createElement("span");c.className="chip";c.textContent=id;list.append(c)});
   }
 
   function resultCard(id,result,algorithm){const card=$(id);card.hidden=!result;card.className=`result-card${result?" complete":""}`;card.replaceChildren();if(!result)return;const label=document.createElement("span"),heading=document.createElement("strong"),detail=document.createElement("p");label.textContent=algorithm==="dijkstra"?"Dijkstra · g":"A* · g + h";heading.textContent=`${result.route.join(" → ")} · cost ${result.cost}`;const facts=[`${result.settled.length} settled`];if(result.ties.length)facts.push(`${result.ties.length} tie${result.ties.length===1?"":"s"}`);if(result.optimalRoutes.length>1)facts.push(`${result.optimalRoutes.length} equal routes`);detail.textContent=facts.join(" · ");card.append(label,heading,detail)}

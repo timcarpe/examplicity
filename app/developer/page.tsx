@@ -4,7 +4,7 @@ import styles from './developer.module.css';
 
 export const metadata: Metadata = {
   title: 'Lab system reference | Examplicity',
-  description: 'Source layout, publication flow, and current tooling for Examplicity labs.',
+  description: 'The living design guide, reusable lab kit, source layout and publication flow for Examplicity labs.',
   alternates: { canonical: '/developer' },
 };
 
@@ -35,6 +35,7 @@ export default function DeveloperPage() {
         <Link className={styles.brand} href="/">Examplicity</Link>
         <nav className={styles.topNav} aria-label="Developer reference">
           <Link href="/developer" aria-current="page">Lab system</Link>
+          <a href="/developer/design-language.html">Design guide</a>
           <Link href="/developer/lab-contract">Lab Contract</Link>
           <Link href="/">Labs</Link>
         </nav>
@@ -43,6 +44,7 @@ export default function DeveloperPage() {
       <div className={styles.layout}>
         <aside className={styles.contents} aria-label="On this page">
           <p>On this page</p>
+          <a href="#design">Design language</a>
           <a href="#model">Artifact model</a>
           <a href="#anatomy">Source anatomy</a>
           <a href="#publish">Publish and check</a>
@@ -60,6 +62,32 @@ export default function DeveloperPage() {
               repository root.
             </p>
           </header>
+
+          <section id="design" className={styles.section}>
+            <h2>Design language</h2>
+            <p>
+              The living guide is the visual authority for lab creation and adaptation. It contains
+              interactive examples, exact colour tokens, the shared activity top bar, Working controls,
+              checkpoint details and movable completion cards. If kit styling conflicts with the guide,
+              adapt or omit that styling; the guide takes precedence.
+            </p>
+            <ul className={styles.plainList}>
+              <li><a href="/developer/design-language.html">Open the living HTML design guide</a> · <a href="/developer/design-language.html" download>Download the complete guide</a> · <a href="/developer/design-language.css" download>Guide CSS</a></li>
+              <li><a href="/developer/lab-style-contract.md">Read the written style contract</a></li>
+              <li><a href="/developer/lab-kit/0.3.0/README.md">Lab Kit 0.3.0 usage</a> · <a href="/developer/lab-kit/0.3.0/src/lab-kit.css" download>CSS</a> · <a href="/developer/lab-kit/0.3.0/src/lab-kit.js" download>JavaScript</a> · <a href="/developer/lab-kit/0.3.0/manifest.json">Release hashes</a></li>
+            </ul>
+            <p>
+              Working: None / Some / All keeps its existing meaning in each lab. The kit supplies optional
+              styling and interaction helpers; the lab owns its model, validation and progression.
+              Concept backgrounds use the base colour directly at 30% alpha over white—for example,
+              violet <code>#7563a7</code> becomes <code>#7563a74d</code>.
+            </p>
+            <p className={styles.boundary}>
+              Lab Kit 0.3.0 supports the reviewed guide for new adaptations. Existing published labs remain
+              pinned to 0.2.1 until deliberately migrated and checked. Downloads remain self-contained;
+              do not add a runtime dependency on these URLs.
+            </p>
+          </section>
 
           <section id="model" className={styles.section}>
             <h2>Artifact model</h2>
@@ -121,6 +149,14 @@ npm run lab -- build <slug>`}</code></pre>
             <p>
               The sync command generates the complete catalogue. The focused build compiles one package to its
               normal path under <code>public/labs/</code> using the same publication core.
+            </p>
+            <h3>Refresh design resources</h3>
+            <pre className={styles.command}><code>{`npm run developer:sync -- --source "<path to Lab Creation>"
+npm run developer:check`}</code></pre>
+            <p>
+              Import the reviewed guide and kit release from Lab Creation. The site keeps a checked-in
+              snapshot, extracts the guide CSS, and verifies the public files and kit hashes at build time.
+              Builds do not depend on a sibling checkout.
             </p>
             <h3>Read-only checks</h3>
             <pre className={styles.command}><code>{`npm run lab -- inspect <slug>

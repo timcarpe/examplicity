@@ -10,12 +10,12 @@ export const changelogEntries: readonly ChangelogEntry[] = [
     date: '2026-09-05',
     displayDate: '5 September 2026',
     publicChanges: [
-      'Updated Binary Number Practice, Coordinate Geometry and Graph Search with clearer text and consistent feedback. Reorganised Coordinate and Graph Search around open working columns, added a quieter Working control with stage evidence on demand, reduced repeated explanation, and improved responsive layouts and interaction guidance.',
+      'Updated Binary Numbers, Coordinate Geometry, Graph Search, Prime Factors, Sequences and Histograms with clearer working areas and consistent progress feedback. Added lightweight action and calculation cards, quieter Working controls, movable completion cards and improved chart dragging and readability.',
       'Clarified AI remix guidance to preserve each lab’s learning relationships and curriculum, and made downloaded labs link consistently to their live versions with the correct MIT licence notice.',
     ],
     internalChanges: [
       'Documented a three-owner plan for queryable exam evidence, demand summaries and lab adaptations; recorded a source audit that blocks use of incorrect draft mappings pending semantic re-review.',
-      'Established shared design tokens for the site and self-contained lab publication, preserved existing styling in the other 54 labs, and added a regression check that incorrect Graph Search predictions leave the search unchanged. Updated the living HTML guide with interactive Working and stage specimens, refreshed pilot sources and visual-first copy guidance.',
+      'Published the living design guide and Lab Kit resources under /developer for the next release. Recorded the six-lab design changes and working-progression adaptations for later review; validation of the latest five-lab working-area batch was skipped at the user’s request.',
       'Rolled out separate contract sidecars and semantic hooks across all 57 labs, expanded developer guidance and CLI inspection, and validated contract preservation in generated and standalone HTML.',
       'Connected Binary Numbers’ existing IGCSE and AS question pools to curriculum profiles, corrected contract invariants, and added focused curriculum and download regression checks. The AI adaptation comparison remains unevaluated.',
     ],

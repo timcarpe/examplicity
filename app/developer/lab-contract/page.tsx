@@ -26,6 +26,7 @@ export default function LabContractPage() {
         <Link className={styles.brand} href="/">Examplicity</Link>
         <nav className={styles.topNav} aria-label="Developer reference">
           <Link href="/developer">Lab system</Link>
+          <a href="/developer/design-language.html">Design guide</a>
           <Link href="/developer/lab-contract" aria-current="page">Lab Contract</Link>
           <Link href="/">Labs</Link>
         </nav>

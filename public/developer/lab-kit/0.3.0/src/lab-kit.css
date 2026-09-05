@@ -1,0 +1,145 @@
+:root {
+  /* These aliases map to the living guide when it is present. */
+  --lab-kit-ink: var(--lab-ink, #1d1d1f);
+  --lab-kit-ink-secondary: var(--lab-ink-secondary, #424245);
+  --lab-kit-muted: var(--lab-muted, #6e6e73);
+  --lab-kit-line: var(--lab-line, #d2d2d7);
+  --lab-kit-line-subtle: var(--lab-line-subtle, #e7e8eb);
+  --lab-kit-surface: var(--lab-surface, #ffffff);
+  --lab-kit-surface-muted: var(--lab-surface-muted, #f7f8fa);
+  --lab-kit-panel: var(--lab-paper, #fbfbfd);
+  --lab-kit-control: var(--lab-control, #ffffff);
+  --lab-kit-accent: var(--lab-accent, #5277b8);
+  --lab-kit-accent-hover: var(--lab-accent-hover, #4569aa);
+  --lab-kit-accent-soft: var(--lab-accent-soft, #eef2fa);
+  --lab-kit-good: var(--lab-good, #18794e);
+  --lab-kit-good-ink: var(--lab-good-ink, #225f43);
+  --lab-kit-good-line: var(--lab-good-line, #9cc7aa);
+  --lab-kit-good-soft: var(--lab-good-soft, #edf8f1);
+  --lab-kit-warn: var(--lab-needed, #946200);
+  --lab-kit-warn-ink: var(--lab-needed-ink, #735100);
+  --lab-kit-warn-line: var(--lab-needed-line, #d8c36a);
+  --lab-kit-warn-soft: var(--lab-needed-soft, #fff9db);
+  --lab-kit-bad: var(--lab-bad, #b42318);
+  --lab-kit-bad-ink: var(--lab-bad-ink, #8f2f27);
+  --lab-kit-bad-line: var(--lab-bad-line, #d99b93);
+  --lab-kit-bad-soft: var(--lab-bad-soft, #fff0ee);
+  --lab-kit-focus: var(--lab-focus, #1d1d1f);
+  --lab-kit-focus-ring: var(--lab-focus-soft, rgba(29, 29, 31, .18));
+  --lab-kit-canvas: var(--lab-paper, #fbfbfd);
+  --lab-kit-canvas-grid: #e7e8eb;
+  --lab-kit-canvas-grid-size: 24px;
+  --lab-kit-radius: var(--lab-panel-radius, 12px);
+  --lab-kit-control-radius: var(--lab-control-radius, 8px);
+  --lab-kit-shadow: var(--lab-panel-shadow, 0 1px 2px rgba(29, 29, 31, .04));
+  --lab-kit-type-body: var(--lab-type-body, .875rem);
+  --lab-kit-type-label: var(--lab-type-label, .75rem);
+  --lab-kit-type-annotation: var(--lab-type-annotation, .6875rem);
+  --lab-kit-action-height: var(--lab-action-height, 40px);
+}
+
+.lab-kit-visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.lab-kit-panel {
+  color: var(--lab-kit-ink);
+  background: var(--lab-kit-surface);
+  border: 1px solid var(--lab-kit-line);
+  border-radius: var(--lab-kit-radius);
+  box-shadow: var(--lab-kit-shadow);
+}
+
+.lab-kit-stack { display: flex; flex-direction: column; gap: var(--lab-kit-stack-gap, 1rem); }
+.lab-kit-cluster { display: flex; flex-wrap: wrap; align-items: center; gap: var(--lab-kit-cluster-gap, .5rem); }
+.lab-kit-grid { display: grid; gap: var(--lab-kit-grid-gap, 1rem); grid-template-columns: repeat(var(--lab-kit-grid-columns, 1), minmax(0, 1fr)); }
+.lab-kit-scroll { max-width: 100%; overflow: auto; }
+.lab-kit-svg { display: block; width: 100%; max-width: 100%; height: auto; }
+
+.lab-kit-canvas {
+  box-sizing: border-box;
+  min-width: 0;
+  color: var(--lab-kit-ink);
+  background-color: var(--lab-kit-canvas);
+  border: 1px solid var(--lab-kit-line);
+  border-radius: var(--lab-kit-radius);
+  box-shadow: none;
+}
+
+.lab-kit-canvas[data-grid="square"] {
+  background-image:
+    linear-gradient(var(--lab-kit-canvas-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--lab-kit-canvas-grid) 1px, transparent 1px);
+  background-size: var(--lab-kit-canvas-grid-size) var(--lab-kit-canvas-grid-size);
+}
+
+.lab-kit-field { display: grid; gap: .35rem; color: var(--lab-kit-ink); }
+.lab-kit-field > label { color: var(--lab-kit-ink-secondary); font-size: var(--lab-kit-type-label); font-weight: 400; }
+.lab-kit-field > small { color: var(--lab-kit-muted); font-size: var(--lab-kit-type-label); line-height: 1.35; }
+.lab-kit-output { color: var(--lab-kit-ink); font-size: var(--lab-kit-type-body); font-variant-numeric: tabular-nums; }
+
+.lab-kit-button,
+.lab-kit-input {
+  min-height: var(--lab-kit-action-height);
+  border: 1px solid var(--lab-kit-line);
+  border-radius: var(--lab-kit-control-radius);
+  background: var(--lab-kit-control);
+  color: var(--lab-kit-ink);
+  font: inherit;
+}
+
+.lab-kit-button { padding: 0 1rem; cursor: pointer; font-weight: 680; }
+.lab-kit-button[data-variant="primary"] { border-color: var(--lab-kit-accent); background: var(--lab-kit-accent); color: #fff; }
+.lab-kit-button[data-variant="primary"]:hover:not(:disabled) { border-color: var(--lab-kit-accent-hover); background: var(--lab-kit-accent-hover); }
+.lab-kit-input { width: 100%; padding: 0 .7rem; }
+.lab-kit-button:focus-visible,
+.lab-kit-input:focus-visible,
+[data-lab-kit-focus]:focus-visible {
+  outline: 3px solid var(--lab-kit-focus-ring);
+  outline-offset: 3px;
+}
+
+/* Feedback is a complete semantic surface. Idle working is separated by space. */
+.lab-kit-status {
+  padding: .75rem 1rem;
+  border: 1px solid var(--lab-kit-line);
+  border-radius: var(--lab-kit-control-radius);
+  background: var(--lab-kit-surface-muted);
+  color: var(--lab-kit-ink-secondary);
+}
+
+.lab-kit-status[data-state="good"] { border-color: var(--lab-kit-good-line); background: var(--lab-kit-good-soft); color: var(--lab-kit-good-ink); }
+.lab-kit-status[data-state="warn"] { border-color: var(--lab-kit-warn-line); background: var(--lab-kit-warn-soft); color: var(--lab-kit-warn-ink); }
+.lab-kit-status[data-state="bad"] { border-color: var(--lab-kit-bad-line); background: var(--lab-kit-bad-soft); color: var(--lab-kit-bad-ink); }
+
+.lab-kit-work { display: grid; min-width: 0; gap: var(--lab-kit-work-gap, .75rem); }
+.lab-kit-work-item { min-width: 0; padding: 0; border: 0; background: transparent; color: var(--lab-kit-ink); font-size: var(--lab-kit-type-body); }
+.lab-kit-work-item[data-state="needed"],
+.lab-kit-work-item[data-state="mistake"],
+.lab-kit-work-item[data-state="correct"] {
+  padding: .75rem 1rem;
+  border: 1px solid var(--lab-kit-line);
+  border-radius: var(--lab-kit-control-radius);
+}
+.lab-kit-work-item[data-state="needed"] { border-color: var(--lab-kit-warn-line); background: var(--lab-kit-warn-soft); }
+.lab-kit-work-item[data-state="mistake"] { border-color: var(--lab-kit-bad-line); background: var(--lab-kit-bad-soft); }
+.lab-kit-work-item[data-state="correct"] { border-color: var(--lab-kit-good-line); background: var(--lab-kit-good-soft); }
+.lab-kit-work-state { display: inline-flex; align-items: center; gap: .35rem; font-size: var(--lab-kit-type-label); font-weight: 600; }
+.lab-kit-work-item[data-state="needed"] .lab-kit-work-state { color: var(--lab-kit-warn-ink); }
+.lab-kit-work-item[data-state="mistake"] .lab-kit-work-state { color: var(--lab-kit-bad-ink); }
+.lab-kit-work-item[data-state="correct"] .lab-kit-work-state { color: var(--lab-kit-good-ink); }
+.lab-kit-work-mark::before { display: inline-block; width: 1em; text-align: center; font-size: 1rem; font-weight: 900; }
+.lab-kit-work-item[data-state="mistake"] .lab-kit-work-mark::before { content: "×"; }
+.lab-kit-work-item[data-state="correct"] .lab-kit-work-mark::before { content: "✓"; }
+
+@media (prefers-reduced-motion: reduce) {
+  .lab-kit-motion { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
+}

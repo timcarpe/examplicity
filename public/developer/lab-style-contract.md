@@ -193,7 +193,7 @@ vertical document flow under the rules above.
 
 ## Working and stage controls
 
-The [living HTML guide](examplicity-living-style-guide-v3.html) contains an
+The [living HTML guide](design-language.html) contains an
 interactive control specimen and self-contained snapshots of the three reviewed
 pilot labs. Keep its written rules, executable examples and inspectable source
 in step with this contract when design feedback changes the standard.

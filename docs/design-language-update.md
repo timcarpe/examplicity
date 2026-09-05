@@ -176,7 +176,191 @@ Refinement verification:
   shared styles; the new classes are opt-in. Offline browser testing remains
   the separate outstanding check recorded in the earlier pilot evidence.
 
+### Rollout after pilot acceptance — 5 September 2026
+
+The three pilots and their subsequent refinements have been accepted as the
+basis for additional lab redesigns. Continue in small related batches under
+the existing review agreement; raise substantive learning or interaction
+ambiguity rather than requiring another visual approval for every lab.
+
+The living guide is now also maintained in Lab Creation at
+`docs/design-language/examplicity-living-style-guide-v3.html`, alongside its
+written contract. Preserve these reviewed refinements in later batches:
+
+- Enlarge primary visuals within their available area; avoid excessive internal
+  margins or arbitrary maximum widths that leave an otherwise large canvas empty.
+- Overlapping completion cards remain movable within the workspace, by pointer,
+  click-to-switch-sides and keyboard, without a blocking backdrop. Moving a card
+  preserves the result and its continuation actions.
+- Modal actions have centred labels and rows, 10px vertical / 18px horizontal
+  padding, 40px minimum height and the reviewed 11px / 600 label treatment.
+- Working offers say “Try some working” or “Try all working”. Qualification-aware
+  working is future work, contingent on the selected IGCSE / AS / A Level and
+  verification of its appropriate working; this rollout does not introduce it.
+
+The next pair has been implemented: Prime Factors: HCF and LCM, and Sequence
+Patterns and Differences. Both retain their learning models. Sequence's existing
+progressive working availability was preserved under the stated default;
+higher levels are offered after successful patterns, with earned levels then
+available in the shared control.
+
+### First additional batch — implementation and evidence
+
+- Prime Factors now places its responsive pairing board beside one open Working
+  column. Coloured factor chips form the multiplication rows without duplicate
+  numeric narration. Copy counts remain visible mathematical evidence. The
+  pairing target says “Pair 2s”, avoiding an apparent false addition equation.
+- Sequence keeps one term table, a readable calculation chain, and minimal
+  stage details with retained shown/submitted working. Generic assistance copy,
+  duplicated term lists and nested decorative framing have been removed.
+  Completed None stages retain the shown calculations; unanswered required
+  results and future-stage answers remain hidden.
+- Both use the accepted grey Working control, semantic field states and movable
+  completion cards with the approved action labels and spacing.
+- Prime Factors completed the same 200/24 case at None, Some and All, yielding
+  HCF 8 and LCM 600. Factor construction and explicit pairing confirmation
+  remain required. Wrong answers show red ×; correct answers show green ✓.
+  Reset clears completion and restores required factor construction.
+- Sequence completed linear construction, then quadratic Some working
+  (constant second difference 2, n², T10 = 100), cubic All working
+  (differences 3/6/10, 3/4, 1; n(n+1)(n+2)/6; T8 = 120), and distinct connected
+  futures 8 and 9. Working inputs have accessible labels and explicit feedback
+  marks; stage details preserve history and never advance the sequence.
+- Both primary models fit at 1440, 1366, 1200, 900 and 390px with no page-level
+  overflow or clipped model bounds. Sequence also fits at 360px. Its mobile
+  Working column stacks below the model and stage details stay within the
+  viewport. Prime's completion card remains bounded with a 40px move handle.
+- Automated verification: 74 tests, lint, production build, and all 57
+  compilation/style/content/download/contract checks pass. A focused Sequence
+  evidence regression checks readable labels, retained shown working and hidden
+  unanswered results. The separate offline browser audit remains outstanding
+  for the rollout; automated packaging checks confirm self-contained resources.
+
+### Review refinement — shared activity top bar and flat palette
+
+Coordinate, Prime Factors and Sequence now use one activity bar above the model
+and calculation columns: current task and Reset on the left; Working and any
+real learning-stage markers together on the right. On narrow screens, controls
+wrap beneath the task while remaining above the visualization. Calculations
+alone move below the model. Binary and Graph Search have no equivalent working
+levels or learning checkpoints; their existing top-level controls remain and
+no artificial progression has been added.
+
+Prime Factors now uses the living-guide concept blue, violet and teal families
+for A, B and shared factors, with matching ink, line and flat soft fills. Large concept backgrounds use the approved base colour at 30% alpha over white; number tiles and shared-factor circles stay white for contrast, while working tokens use the matching opaque base-colour tint. Both guides include the surface derivation and visible background/object specimens. Neutral
+framing, blue actions and the separate answer-feedback palette replace custom
+near-match colours and decorative gradients. Both written contracts and living
+HTML guides document this rule; the control specimen and embedded Coordinate
+reference demonstrate the top-bar arrangement. The guide's decorative gradient
+specimens have also been replaced with flat fills and discrete palette swatches.
+
+Verification: top-bar positioning and overflow checked on desktop and at 390px
+and 360px; checkpoint details stay inside the viewport and future stages reveal
+no answers. Coordinate working controls and Prime pairing/completion still
+operate. All 74 existing tests pass; publication checks verify generated output.
+
+### Developer publication and kit simplification
+
+The guide is available from this worktree's `/developer` page for the next
+release, with the complete HTML, extracted starter CSS, written style contract
+and hash-verified Lab Kit 0.3.0 downloads. `developer:sync -- --source` imports
+the canonical Lab Creation snapshot; `developer:check` verifies public copies,
+the extracted CSS and every kit release file before the site build.
+
+The guide takes precedence over kit styling. The kit retains useful compatible
+primitives and a reusable movable-completion helper that uses the guide's
+existing handle markup. Duplicate kit activity, toggle, stage, completion and
+concept-surface implementations were removed. Working: None / Some / All and
+all existing lab-specific meanings remain intact. The authoring bundle includes
+the guide and contract. Existing published labs stay pinned to 0.2.1 until
+separately migrated; this publication does not restyle the remaining catalogue.
+
+The latest colour decision supersedes the earlier whitening experiment:
+backgrounds use the base concept hex with `4d` alpha (approximately 30%), painted over white.
+For violet this is `#7563a74d`. Prime Factors was checked against the rendered
+RGBA values. The user selected worktree publication for the next release;
+no live deployment is part of this change.
+
+Validation: 74 site tests and 14 kit tests pass; lint, production build, guide
+publication and kit hash checks pass. All eight developer page/resource URLs
+respond with HTTP 200. Developer navigation was checked on mobile.
+
+### Standing rollout execution policy
+
+Implement each batch directly: review the lab HTML, record an explicit change
+list, make the changes, validate them, and provide review links. The user reviews
+each completed batch before the next begins. Surface substantive novel design
+situations; routine changes follow the agreed visual language. Delegation is
+not the default rollout process.
+
+The living HTML guide in Lab Creation is the shared visual and interaction
+reference, containing design rules, tokens and examples. It is not a prompt
+supplement or a source of rollout scope, delegation or verification instructions;
+those belong in this plan and task briefs. Published guide copies and agent
+bundles are generated snapshots, refreshed through the existing scripts.
+
+Ordinary SVG charts and diagrams, including their labels and presentation
+typography, are in scope for a migration. Preserve mathematical/data mapping,
+meaningful model colours and interaction semantics; adjust diagram text and
+its surrounding viewport when readability requires it. Complex illustrated
+assets such as routers and jars are outside this rollout unless separately
+commissioned. Surrounding HTML controls, layout, working and feedback remain
+in scope. Preserve unrelated work, keep the existing kit pin, and stop when a
+change would require a learning-model decision or a redraw of a complex
+illustrated asset.
+
+### Histogram correction batch — change list
+
+- Raise diagram text to readable rendered sizes, including at the minimum chart
+  width; consolidate repeated typography overrides and centre vertical labels.
+- Shorten plot captions while retaining their mathematical meaning.
+- Keep the draggable completion card in a sibling overlay outside graph scroll
+  content; opening, focusing and moving it must not displace the graph.
+- Keep ordinary chart presentation in scope and preserve the learning sequence.
+- Keep reusable typography/overlay guidance in the Style Guide; keep this
+  rollout's scope and process here.
+- Validate desktop and narrow layouts, completion/movement, working controls,
+  and focused compilation/tests. Then submit this batch for user review.
+
+Completed for user review: typography overrides consolidated, vertical axis
+labels centred, captions shortened, and the completion-card move control placed
+at its top right. Completion and restored input focus use `preventScroll`.
+At 390px, rendered diagram annotations measure 11.52px, labels 12.24px and values
+14.4px; there is no page-level horizontal overflow. Desktop and narrow keyboard
+completion/movement leave graph `scrollTop` at zero and its scroll height equal
+to its visible height. None/Some/All switching was checked. All 75 tests,
+compilation, developer publication and authoring-bundle checks pass. This is a
+focused correction check, not a repeat of every quartile/experiment path.
+
 ### Catalogue checklist
+
+Histogram drag refinement: keep vertical bar/point and horizontal ruler
+constraints; use grab/grabbing handles, preserve the pointer's initial offset,
+and capture the active pointer until release/cancellation. Retain target snapping
+and keyboard controls. Check off-centre pickup, movement, limits and cancellation.
+
+Implemented for review. Regression checks exercise off-centre pickup, movement,
+target snapping, unrelated pointers and cancellation for all three handle types.
+Browser checks confirm grab cursors, neutral locked handles and unchanged arrow-key
+adjustment. All 79 tests, compilation and guide/bundle checks pass. Manual pointer
+feel remains part of user review; no other labs were changed in this batch.
+
+Histogram sidebar refinement (next review batch): retain the same visible step
+sequence in None/Some/All; use lightly bordered cards with yellow active work,
+green/check completed actions, red/x incorrect answers, and neutral upcoming or
+provided reference work. Remove duplicate turn/drag prompts while retaining
+essential mathematical dependencies. Distinguish showing a calculation from
+completing the learner action. Record the visual pattern in the HTML guide.
+
+Implemented for review in Histogram: None's model actions advance the same
+numbered cards as Some/All; incorrect entered values show red/x and corrected
+values green/check. Provided width/rank calculations and free exploration stay
+neutral. Duplicate sidebar turn/drag prompts were removed. Fixed Enter committing
+rebuilt input fields, which otherwise could leave correct work without Continue.
+Verified None progression, All incorrect/correct answers and Continue, Some on
+the next interval, and 390px cards without page overflow. The entry commit has
+a regression test; all 76 tests and publication checks pass. Earlier pilot labs
+remain unchanged pending review of this pattern.
 
 Check an entry only after its local design update and relevant interaction/responsive/download checks are complete. Shared token distribution alone does not complete a lab.
 
@@ -214,7 +398,7 @@ Check an entry only after its local design update and relevant interaction/respo
 - [ ] `mathematics/histogram-area-cumulative-distribution`
 - [ ] `mathematics/motion-graph-rate-area`
 - [ ] `mathematics/non-right-triangle-solution-constraints`
-- [ ] `mathematics/prime-factors-hcf-lcm`
+- [x] `mathematics/prime-factors-hcf-lcm`
 - [ ] `mathematics/ratio-concentration-flow-rate`
 - [ ] `mathematics/recurring-decimals-fractions`
 - [ ] `mathematics/relative-frequency-bias-expected-frequency`
@@ -223,7 +407,7 @@ Check an entry only after its local design update and relevant interaction/respo
 - [ ] `mathematics/right-triangle-ratio-invariance`
 - [ ] `mathematics/rounded-measurements-bounds`
 - [ ] `mathematics/scatter-correlation-prediction`
-- [ ] `mathematics/sequence-patterns-differences`
+- [x] `mathematics/sequence-patterns-differences`
 - [ ] `mathematics/set-membership-operations`
 - [ ] `mathematics/similarity-scale-effects`
 - [ ] `mathematics/solid-surface-volume-tradeoffs`
@@ -237,3 +421,18 @@ Check an entry only after its local design update and relevant interaction/respo
 - [ ] `physics/critical-angle-and-total-internal-reflection`
 - [ ] `physics/diffraction-through-a-gap`
 - [ ] `physics/gas-compression-at-constant-temperature`
+
+
+### Working-area follow-up — 5 September 2026
+
+Change list for this batch (source paths below; matching `public/labs` HTML is regenerated):
+
+| Lab / source | What changes and how |
+| --- | --- |
+| `labs-src/computer-science/binary-numbers/lab.html` | Group the single answer in a lightweight current/correct/mistake card. No invented stages or Working levels. |
+| `labs-src/mathematics/coordinate-distance-midpoint-perpendicular/lab.html` | Add model-action progress in every Working mode; separate calculation cards, with supplied values neutral and owned answers using existing checks. |
+| `labs-src/computer-science/dijkstra-a-star-graph-search/lab.html` | Group decision, frontier, relaxation and settled history; keep settled progress visible from the start. Automatic relaxation remains neutral. |
+| `labs-src/mathematics/prime-factors-hcf-lcm/lab.html` | Show factor-row/pairing progress in every mode; separate parallel HCF and LCM cards without inventing sequential gates. |
+| `labs-src/mathematics/sequence-patterns-differences/lab.html` | Show construction progress in every mode; group calculation steps and propagate actual incorrect answers to card state. Supplied calculations remain neutral. |
+
+Uses the existing guide's working-progression pattern: 12px padding, 8px corners, 10px separation, neutral reference/upcoming, yellow unfinished work, green/check completion, red/x mistake. Complex illustrated assets and learning rules are unchanged. Validation is deliberately skipped for this batch at the user's request. Review is pending.

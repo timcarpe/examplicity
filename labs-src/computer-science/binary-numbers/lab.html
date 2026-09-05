@@ -693,6 +693,16 @@ body[data-lab-layout="compact"]{align-content:start;min-height:auto;padding:18px
 .register-group[data-bits="16"] .place-values{font-size:7.5px}
 @media(max-width:390px){.actions{gap:8px}.actions button{min-width:0;padding:0 8px}}
 </style>
+<style data-working-progression>
+#answerForm{padding:12px;border:1px solid var(--lab-needed-line,#d8c36a);border-radius:8px;background:var(--lab-needed-surface,#fffdf4)}
+#answerForm[data-work-state="good"]{border-color:var(--lab-good-line,#9cc7aa);background:var(--lab-good-surface,#f7fcf8)}
+#answerForm[data-work-state="bad"]{border-color:var(--lab-bad-line,#d8aaa4);background:var(--lab-bad-surface,#fff8f7)}
+#answerForm .answer-label::before{content:"●";margin-right:8px;color:var(--lab-needed-ink,#735100)}
+#answerForm[data-work-state="good"] .answer-label::before{content:"✓";color:var(--lab-good-ink,#225f43)}
+#answerForm[data-work-state="bad"] .answer-label::before{content:"✕";color:var(--lab-bad-ink,#853b34)}
+#answerForm .feedback{padding:8px 0 0;border:0;background:transparent}
+
+</style>
 </head>
 <body data-lab-layout="compact">
 <main class="shell">
@@ -743,7 +753,7 @@ body[data-lab-layout="compact"]{align-content:start;min-height:auto;padding:18px
 
     <div id="initialArea" class="initial-area"></div>
 
-    <form id="answerForm" class="answer-block" novalidate data-lab-manipulative="number-answer">
+    <form id="answerForm" class="answer-block" data-work-state="current" novalidate data-lab-manipulative="number-answer">
       <div id="answerLabel" class="answer-label"></div>
       <div id="answerArea"></div>
       <div id="feedback" class="feedback" role="status" aria-live="polite" data-lab-role="evidence"></div>
@@ -1644,6 +1654,7 @@ body[data-lab-layout="compact"]{align-content:start;min-height:auto;padding:18px
     const feature=Object.keys(featureTemplates).find(id=>featureTemplates[id].includes(state.question.key));
     $("questionCard").setAttribute("data-lab-feature",feature);
     state.correct=false;
+    $("answerForm").dataset.workState="current";
     state.helpPinned=false;
     state.helpPreview=false;
     $("prompt").textContent=state.question.prompt;
@@ -1659,6 +1670,7 @@ body[data-lab-layout="compact"]{align-content:start;min-height:auto;padding:18px
 
   function clearAnswerState(){
     if(state.correct) return;
+    $("answerForm").dataset.workState="current";
     $("feedback").textContent="";
     $("feedback").className="feedback";
     document.querySelectorAll(".incorrect,.correct,.needs-working").forEach(element=>element.classList.remove("incorrect","correct","needs-working"));
@@ -1688,6 +1700,7 @@ body[data-lab-layout="compact"]{align-content:start;min-height:auto;padding:18px
   }
 
   function markAnswer(kind){
+    $("answerForm").dataset.workState=kind==="correct"?"good":kind==="incorrect"?"bad":"current";
     const target=$("answerArea").querySelector(".answer-control,.text-answer,.choice-answer");
     target?.classList.add(kind);
   }
