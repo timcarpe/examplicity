@@ -159,7 +159,7 @@ test('registered sources and generated outputs satisfy the compiler-owned contra
   for (const entry of manifest.labs) {
     const key = manifestKey(entry);
     const relativePath = path.join(entry.subject, `${entry.slug}.html`);
-    const sourcePath = path.join(sourceRoot, relativePath);
+    const sourcePath = path.join(sourceRoot, entry.subject, entry.slug, 'lab.html');
     const outputPath = path.join(publicRoot, relativePath);
     let source: string;
     try {
@@ -228,7 +228,7 @@ test('every registered inline executable script parses', async () => {
 
   for (const entry of manifest.labs) {
     const key = manifestKey(entry);
-    const source = await readFile(path.join(sourceRoot, entry.subject, `${entry.slug}.html`), 'utf8');
+    const source = await readFile(path.join(sourceRoot, entry.subject, entry.slug, 'lab.html'), 'utf8');
     const scripts = [...source.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)]
       .filter((match) => !/\bsrc\s*=/i.test(match[1]) && !/\btype\s*=/i.test(match[1]));
 

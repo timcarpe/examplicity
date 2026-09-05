@@ -11,7 +11,7 @@ redesign existing labs or introduce a new runtime architecture.
   belongs in the catalogue. Record its syllabus coverage, topic, short card
   description, and the interaction the card should depict.
 - [ ] Preserve the approved authoring document at
-  `labs-src/<subject>/<slug>.html` and register it in `labs-src/manifest.json`.
+  `labs-src/<subject>/<slug>/lab.html` and register it in `labs-src/manifest.json`.
   The compiler writes `public/labs/<subject>/<slug>.html`; never hand-edit that
   generated output. The subject directory is the manifest `subject` ID, not an
   exam-code directory.

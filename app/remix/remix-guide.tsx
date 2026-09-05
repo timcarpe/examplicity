@@ -36,11 +36,14 @@ const remixIdeas = [
 const createPrompt = (lab: Lab) => `I’d like to remix the attached standalone HTML lab, “${lab.title}”.
 
 Please work with me collaboratively:
-1. Inspect the attached HTML and briefly explain how the current learning experience works.
-2. Ask me what I want to change and who the remixed lab is for.
-3. Suggest a concise plan before editing.
-4. Keep the result as a polished, accessible, standalone HTML file that works offline.
-5. Preserve what already works unless the requested remix requires changing it.
+1. Inspect the attached HTML. If it contains an embedded Lab Contract (the script marked data-examplicity-lab-contract), read it as guidance for adaptation rather than as a fixed implementation specification.
+2. Briefly explain the learning relationship and learner experience you find.
+3. Ask me who the audience is and what I want to change.
+4. Suggest a concise plan before editing.
+5. Preserve the learning relationship and any important guidance, but feel free to change the implementation when that serves my request.
+6. Return one polished, accessible, standalone HTML file that works offline.
+
+General information about how Examplicity labs are packaged is available at https://www.examplicity.org/developer if useful.
 
 The current lab is described as: ${lab.description}`;
 

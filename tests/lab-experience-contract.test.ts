@@ -4,6 +4,10 @@ import path from 'node:path';
 import test from 'node:test';
 
 const repositoryRoot = path.resolve('.');
+const readAuthoredLab = (subject: string, slug: string) => readFile(
+  path.join(repositoryRoot, 'labs-src', subject, slug, 'lab.html'),
+  'utf8',
+);
 
 test('shared manifest headers use the 1200px rail independently of lab workspace width', async () => {
   const frame = await readFile(path.join(repositoryRoot, 'public', 'labs', 'lab-frame.css'), 'utf8');
@@ -15,10 +19,7 @@ test('shared manifest headers use the 1200px rail independently of lab workspace
 });
 
 test('guided repeated-percentage problems start incomplete and require model interaction', async () => {
-  const source = await readFile(
-    path.join(repositoryRoot, 'labs-src', 'mathematics', 'repeated-percentage-change.html'),
-    'utf8',
-  );
+  const source = await readAuthoredLab('mathematics', 'repeated-percentage-change');
 
   assert.match(source, /changes:Array\(c\.periods\)\.fill\(null\)/);
   assert.doesNotMatch(source, /changes:Array\(c\.periods\)\.fill\(null\)\.map/);
@@ -28,10 +29,7 @@ test('guided repeated-percentage problems start incomplete and require model int
 });
 
 test('prime-factor pairing hands some-working learners to the required calculation', async () => {
-  const source = await readFile(
-    path.join(repositoryRoot, 'labs-src', 'mathematics', 'prime-factors-hcf-lcm.html'),
-    'utf8',
-  );
+  const source = await readAuthoredLab('mathematics', 'prime-factors-hcf-lcm');
 
   assert.match(source, /if\(answersRequired\(\)\)requestAnimationFrame/);
   assert.match(source, /const input=\$\("hcfAnswer"\)/);
@@ -50,10 +48,7 @@ test('the translator dedicates the remaining desktop viewport height to its work
 });
 
 test('the recurring-decimals manipulative fits without an internal scrollbar', async () => {
-  const source = await readFile(
-    path.join(repositoryRoot, 'labs-src', 'mathematics', 'recurring-decimals-fractions.html'),
-    'utf8',
-  );
+  const source = await readAuthoredLab('mathematics', 'recurring-decimals-fractions');
 
   assert.match(source, /\.board-scroll\{overflow-x:hidden\}/);
   assert.match(source, /\.alignment-board\{width:100%;min-width:0/);
@@ -76,10 +71,7 @@ test('generic computer-science operated surfaces use the shared light canvas pri
   ];
 
   for (const slug of slugs) {
-    const source = await readFile(
-      path.join(repositoryRoot, 'labs-src', 'computer-science', `${slug}.html`),
-      'utf8',
-    );
+    const source = await readAuthoredLab('computer-science', slug);
 
     assert.match(source, /class="[^"]*lab-kit-canvas[^"]*"/, slug);
     assert.doesNotMatch(
@@ -91,24 +83,15 @@ test('generic computer-science operated surfaces use the shared light canvas pri
 });
 
 test('fixed CS construction canvases retain their authored width under the kit primitive', async () => {
-  const dataTransmission = await readFile(
-    path.join(repositoryRoot, 'labs-src', 'computer-science', 'data-transmission-methods.html'),
-    'utf8',
-  );
-  const csma = await readFile(
-    path.join(repositoryRoot, 'labs-src', 'computer-science', 'csma-cd.html'),
-    'utf8',
-  );
+  const dataTransmission = await readAuthoredLab('computer-science', 'data-transmission-methods');
+  const csma = await readAuthoredLab('computer-science', 'csma-cd');
 
   assert.match(dataTransmission, /\.canvas\.lab-kit-canvas\{[\s\S]*?min-width:850px/);
   assert.match(csma, /\.canvas\.lab-kit-canvas\{[\s\S]*?min-width:930px/);
 });
 
 test('TCP/IP receiver layers occupy one meaningful station frame', async () => {
-  const source = await readFile(
-    path.join(repositoryRoot, 'labs-src', 'computer-science', 'tcp-ip-encapsulation.html'),
-    'utf8',
-  );
+  const source = await readAuthoredLab('computer-science', 'tcp-ip-encapsulation');
 
   assert.match(source, /class="station receiver-station lab-kit-panel"/);
   assert.match(source, /id="receiverMap" class="receiver-map"/);
@@ -117,10 +100,7 @@ test('TCP/IP receiver layers occupy one meaningful station frame', async () => {
 });
 
 test('DNS web servers populate the lab field without a decorative rack frame', async () => {
-  const source = await readFile(
-    path.join(repositoryRoot, 'labs-src', 'computer-science', 'dns-web-page-retrieval.html'),
-    'utf8',
-  );
+  const source = await readAuthoredLab('computer-science', 'dns-web-page-retrieval');
 
   assert.match(source, /\.rack-shell\{height:218px;padding:0;background:transparent\}/);
   assert.match(source, /@media\(max-width:820px\)\{[\s\S]*?\.rack-shell\{height:230px\}/);
@@ -129,14 +109,8 @@ test('DNS web servers populate the lab field without a decorative rack frame', a
 });
 
 test('primary visual histories do not gain incidental overflow', async () => {
-  const automated = await readFile(
-    path.join(repositoryRoot, 'labs-src', 'computer-science', 'automated-system-control-flowcharts.html'),
-    'utf8',
-  );
-  const processStates = await readFile(
-    path.join(repositoryRoot, 'labs-src', 'computer-science', 'process-states-scheduling.html'),
-    'utf8',
-  );
+  const automated = await readAuthoredLab('computer-science', 'automated-system-control-flowcharts');
+  const processStates = await readAuthoredLab('computer-science', 'process-states-scheduling');
 
   assert.match(automated, /\.run-popup\{display:none;/);
   assert.match(automated, /\.run-popup\.show\{display:block;/);
@@ -152,10 +126,7 @@ test('primary visual histories do not gain incidental overflow', async () => {
 });
 
 test('circle theorem uses neutral toolkit surfaces without decorative blue rails', async () => {
-  const source = await readFile(
-    path.join(repositoryRoot, 'labs-src', 'mathematics', 'circle-theorem-constraint-network.html'),
-    'utf8',
-  );
+  const source = await readAuthoredLab('mathematics', 'circle-theorem-constraint-network');
 
   assert.match(source, /\.method-node\.current\{[^}]*box-shadow:none/);
   assert.match(source, /\.calc-step\.current\{[^}]*box-shadow:none/);

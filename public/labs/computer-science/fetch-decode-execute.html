@@ -982,6 +982,33 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 
 </style>
 <!-- LAB_RESOURCE_END id="lab-kit.css" type="stylesheet" -->
+<!-- LAB_CONTRACT_START -->
+<script type="application/json" data-examplicity-lab-contract data-contract-version="1">
+{
+  "schemaVersion": 1,
+  "relationship": "Advancing the cycle connects each small processor action to visible changes in data and control, helping learners understand how one instruction unfolds across fetch, decode and execute.",
+  "learnerLoop": {
+    "action": "Choose a program, predict what will happen, and advance or run the processor cycle.",
+    "modelChange": "The instruction progresses and the processor's stored values, active components and data movement change.",
+    "evidence": "The current phase, highlighted activity, changing values and explanation reveal what happened and why.",
+    "nextDecision": "Explain the observed change, predict the next action, or compare how another program or instruction model behaves."
+  },
+  "invariants": [
+    "Learners can trace an instruction through fetch, decode and execute and relate each phase to the roles of processor components and memory.",
+    "Visible evidence remains causally consistent, so learners can explain why values and data movement change."
+  ],
+  "safeAdaptations": [
+    "Invent new programs, values, contexts, prediction tasks or debugging challenges that make the cycle meaningful to a particular audience.",
+    "Change the pacing, terminology, amount of guidance or way evidence is revealed while keeping cause and consequence traceable.",
+    "Use different visual, narrative or interactive representations that deepen comparison between instructions or processor models."
+  ],
+  "nonGoals": [
+    "Expanding into advanced processor architecture unless it directly supports understanding the fetch-decode-execute cycle."
+  ],
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+}
+</script>
+<!-- LAB_CONTRACT_END -->
 </head>
 <body data-lab-layout="standard">
 <main>
@@ -1014,7 +1041,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 
 <section class="panel lab-panel">
   <div class="architecture">
-    <div class="arch-grid">
+    <div class="arch-grid" data-lab-role="model">
 
       <section class="clock-module" aria-label="Clock and program controls">
         <div class="clock-head">
@@ -1067,7 +1094,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
           </label>
 
           <div class="clock-buttons">
-            <button id="resetBtn">Reset</button>
+            <button id="resetBtn" data-lab-action="reset">Reset</button>
             <button id="stepBtn" class="primary">Next tick</button>
             <button id="runBtn" class="play-button">
               <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6 4.7v10.6L15 10 6 4.7Z"/></svg>
@@ -1076,7 +1103,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
           </div>
         </div>
 
-        <div class="clock-status">
+        <div class="clock-status" data-lab-role="evidence">
           <div class="phase-strip">
             <span id="phaseFetch" class="phase fetch active">Fetch</span>
             <span id="phaseDecode" class="phase decode">Decode</span>
@@ -1250,7 +1277,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
       </section>
     </div>
 
-    <div class="step-card">
+    <div class="step-card" data-lab-role="evidence">
       <div>
         <div class="micro-operation-label">Current micro-operation</div>
         <div id="operation" class="operation">PC contains I1</div>

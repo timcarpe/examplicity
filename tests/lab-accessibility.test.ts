@@ -4,8 +4,8 @@ import path from 'node:path';
 import test from 'node:test';
 
 const sourceRoot = path.resolve('labs-src', 'computer-science');
-const readSource = (slug: string) => readFile(path.join(sourceRoot, `${slug}.html`), 'utf8');
-const readMathSource = (slug: string) => readFile(path.resolve('labs-src', 'mathematics', `${slug}.html`), 'utf8');
+const readSource = (slug: string) => readFile(path.join(sourceRoot, slug, 'lab.html'), 'utf8');
+const readMathSource = (slug: string) => readFile(path.resolve('labs-src', 'mathematics', slug, 'lab.html'), 'utf8');
 
 test('W1 bitmap painting uses one keyboard grid stop and the existing paint state', async () => {
   const source = await readSource('bitmap-compression');
