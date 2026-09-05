@@ -653,6 +653,315 @@ button:focus-visible,input:focus-visible,[tabindex="0"]:focus-visible{outline:3p
 @media(max-width:620px){body{padding-top:60px;padding-bottom:76px}.numeric-entry{font-size:16px;min-height:44px}main{width:min(100% - 12px,1180px);margin-top:6px}h1{font-size:24px}.sub{font-size:12px}.lab-manifest-header{grid-template-columns:minmax(0,1fr) auto;gap:8px}.lab-syllabus-chips{display:none}.goal-copy span:last-child{display:none}.goal-top{grid-template-columns:1fr}.goal-meta{justify-content:space-between}.complexity{justify-items:start}.complexity-copy{text-align:left}.chain{margin:0}.reverse-stage{min-width:820px}.projection-svg{height:170px}.next-card{top:10px;width:min(310px,calc(100% - 20px))}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important;scroll-behavior:auto!important}}
 </style>
+<style data-lab-design>
+/* Canonical Examplicity shared design components.
+   Edit this file, then sync the guide, authoring bundle and published labs.
+   Compatibility selectors retain the reviewed labs; use the public API for new labs. */
+
+/* working-progression */
+#answerForm{padding:12px;border:1px solid var(--lab-needed-line,#d8c36a);border-radius:8px;background:var(--lab-needed-surface,#fffdf4)}
+#answerForm[data-work-state="good"]{border-color:var(--lab-good-line,#9cc7aa);background:var(--lab-good-surface,#f7fcf8)}
+#answerForm[data-work-state="bad"]{border-color:var(--lab-bad-line,#d8aaa4);background:var(--lab-bad-surface,#fff8f7)}
+#answerForm .answer-label::before{content:"●";margin-right:8px;color:var(--lab-needed-ink,#735100)}
+#answerForm[data-work-state="good"] .answer-label::before{content:"✓";color:var(--lab-good-ink,#225f43)}
+#answerForm[data-work-state="bad"] .answer-label::before{content:"✕";color:var(--lab-bad-ink,#853b34)}
+#answerForm .feedback{padding:8px 0 0;border:0;background:transparent}
+.inspector .decision-card,.inspector .frontier-section,.inspector .relaxation,.inspector .settled-section{margin:10px 0 0;padding:12px;border:1px solid var(--lab-line-subtle,#e7e8eb);border-radius:8px;background:var(--lab-surface-muted,#f7f8fa);box-shadow:none}
+.inspector .decision-card.needed{border-color:var(--lab-needed-line,#d8c36a);background:var(--lab-needed-surface,#fffdf4)}
+.inspector .decision-card.good,.inspector .settled-section[data-complete="true"]{border-color:var(--lab-good-line,#9cc7aa);background:var(--lab-good-surface,#f7fcf8)}
+.inspector .decision-card.bad{border-color:var(--lab-bad-line,#d8aaa4);background:var(--lab-bad-surface,#fff8f7)}
+.inspector .relax-card{padding:0;border:0;background:transparent;box-shadow:none}
+.work-progress{display:flex;align-items:center;gap:8px;margin:10px 0;padding:12px;border:1px solid var(--lab-needed-line,#d8c36a);border-radius:8px;background:var(--lab-needed-surface,#fffdf4);color:var(--lab-ink,#242428);font-size:14px;line-height:1.45;box-shadow:none}
+.work-progress[data-complete="true"]{border-color:var(--lab-good-line,#9cc7aa);background:var(--lab-good-surface,#f7fcf8)}
+.work-progress .progress-mark{color:var(--lab-needed-ink,#735100);font-size:12px}
+.work-progress[data-complete="true"] .progress-mark{color:var(--lab-good-ink,#225f43)}
+.evidence .working-chain{display:grid;gap:10px}
+.evidence .readout-line,.evidence .readout-line.owned{margin:0;padding:12px;border:1px solid var(--lab-line-subtle,#e7e8eb);border-radius:8px;background:var(--lab-surface-muted,#f7f8fa)}
+.evidence .readout-line.owned{border-color:var(--lab-needed-line,#d8c36a);background:var(--lab-needed-surface,#fffdf4)}
+.evidence .readout-line.owned.correct{border-color:var(--lab-good-line,#9cc7aa);background:var(--lab-good-surface,#f7fcf8)}
+.evidence .readout-line.owned.incorrect{border-color:var(--lab-bad-line,#d8aaa4);background:var(--lab-bad-surface,#fff8f7)}
+.work-progress{display:flex;align-items:center;gap:8px;margin:10px 0;padding:12px;border:1px solid var(--lab-needed-line,#d8c36a);border-radius:8px;background:var(--lab-needed-surface,#fffdf4);color:var(--lab-ink,#242428);font-size:14px;line-height:1.45;box-shadow:none}
+.work-progress[data-complete="true"]{border-color:var(--lab-good-line,#9cc7aa);background:var(--lab-good-surface,#f7fcf8)}
+.work-progress .progress-mark{color:var(--lab-needed-ink,#735100);font-size:12px}
+.work-progress[data-complete="true"] .progress-mark{color:var(--lab-good-ink,#225f43)}
+.evidence .working-chain{gap:10px}
+.evidence .output-card,.evidence .output-card.complete,.evidence .output-card.working-required{margin:0;padding:12px;border:1px solid var(--lab-line-subtle,#e7e8eb);border-radius:8px;background:var(--lab-surface-muted,#f7f8fa);box-shadow:none}
+.evidence .output-card.working-required.in-progress{border-color:var(--lab-needed-line,#d8c36a);background:var(--lab-needed-surface,#fffdf4)}
+.evidence .output-card.working-required.correct{border-color:var(--lab-good-line,#9cc7aa);background:var(--lab-good-surface,#f7fcf8)}
+.evidence .output-card.working-required.incorrect{border-color:var(--lab-bad-line,#d8aaa4);background:var(--lab-bad-surface,#fff8f7)}
+.evidence .output-card.working-required.in-progress::after{content:"●";font-size:12px}
+.evidence .output-head{padding-right:18px}
+.work-progress{display:flex;align-items:center;gap:8px;margin:10px 0;padding:12px;border:1px solid var(--lab-needed-line,#d8c36a);border-radius:8px;background:var(--lab-needed-surface,#fffdf4);color:var(--lab-ink,#242428);font-size:14px;line-height:1.45;box-shadow:none}
+.work-progress[data-complete="true"]{border-color:var(--lab-good-line,#9cc7aa);background:var(--lab-good-surface,#f7fcf8)}
+.work-progress .progress-mark{color:var(--lab-needed-ink,#735100);font-size:12px}
+.work-progress[data-complete="true"] .progress-mark{color:var(--lab-good-ink,#225f43)}
+.calc-panel .calc-flow{gap:10px}
+.calc-panel .calc-step{position:relative;padding:12px;border:1px solid var(--lab-line-subtle,#e7e8eb);border-radius:8px;background:var(--lab-surface-muted,#f7f8fa);box-shadow:none}
+.calc-panel .calc-step.pending{border-color:var(--lab-needed-line,#d8c36a);background:var(--lab-needed-surface,#fffdf4)}
+.calc-panel .calc-step.good{border-color:var(--lab-good-line,#9cc7aa);background:var(--lab-good-surface,#f7fcf8)}
+.calc-panel .calc-step.bad{border-color:var(--lab-bad-line,#d8aaa4);background:var(--lab-bad-surface,#fff8f7)}
+.calc-panel .calc-step.locked{opacity:1}
+.calc-panel .calc-step .step-head{padding-right:20px}
+.calc-panel .calc-step::after{content:attr(data-progress-mark);position:absolute;top:12px;right:12px;font-size:12px;color:var(--lab-needed-ink,#735100)}
+.calc-panel .calc-step.good::after{color:var(--lab-good-ink,#225f43)}
+.calc-panel .calc-step.bad::after{color:var(--lab-bad-ink,#853b34)}
+.calc-panel .calc-step.locked::after{color:var(--lab-muted,#666670)}
+
+/* rounded-settings */
+/* Working and exam settings share one softly rounded segmented control. */
+.lab-working-toggle,.lab-activity-bar .lab-working-toggle,.pill-toggle{display:inline-flex;align-items:center;gap:2px;height:42px;padding:3px;border:1px solid var(--lab-line-subtle,#e7e8eb);border-radius:999px;background:var(--lab-surface-muted,#f7f8fa);box-shadow:0 1px 3px rgba(29,29,31,.08)}
+.lab-working-toggle button,.lab-activity-bar .lab-working-toggle button,.pill-toggle button{width:auto;min-width:40px;min-height:34px;padding:0 12px;border:1px solid transparent;border-radius:999px;background:transparent;color:var(--lab-ink-secondary,#424245);font-size:12px;font-weight:400;line-height:1.2;box-shadow:none}
+.lab-working-toggle button[aria-pressed="true"],.pill-toggle button[aria-checked="true"]{border-color:transparent;border-radius:999px;background:var(--lab-ink-secondary,#424245);color:#fff;font-weight:400;box-shadow:none}
+.pill-toggle.level-toggle button[aria-checked="true"]{background:var(--lab-accent-hover,#4569aa);color:var(--lab-on-accent,#fff)}
+
+/* top-panel-controls */
+/* Activity controls share a light boundary and restrained elevation. */
+.lab-working-toggle,.lab-activity-bar .lab-working-toggle,.pill-toggle{border-color:var(--lab-line,#d2d2d7)}
+.lab-activity-bar .lab-activity-task>button,.lab-activity-bar .run-actions>button,.lab-activity-bar>button{display:inline-flex;align-items:center;justify-content:center;gap:4px;min-height:40px;padding:8px 14px;border:1px solid var(--lab-ink-secondary,#424245);border-radius:var(--lab-control-radius,8px);background:var(--lab-muted,#6e6e73);color:#fff;font-size:12px;font-weight:400;line-height:1.3;box-shadow:0 1px 3px rgba(29,29,31,.08)}
+.lab-activity-bar .lab-activity-task>button:hover,.lab-activity-bar .run-actions>button:hover,.lab-activity-bar>button:hover{background:var(--lab-ink-secondary,#424245)}
+.lab-activity-bar .run-actions>button.active{background:var(--lab-accent-hover,#4569aa);border-color:var(--lab-accent-hover,#4569aa);color:#fff}
+.lab-activity-bar .run-actions>button.algorithm-button{border-color:var(--lab-accent-pressed,#3a5d99);background:var(--lab-accent-hover,#4569aa);color:#fff}
+.lab-activity-bar .run-actions>button.algorithm-button:hover{background:var(--lab-accent-pressed,#3a5d99)}
+.lab-activity-bar .algorithm-button span,.lab-activity-bar .algorithm-button small{color:inherit}
+.lab-activity-bar button:disabled{cursor:default}
+/* Activity controls share a light boundary and restrained elevation. */
+.lab-working-toggle,.lab-activity-bar .lab-working-toggle,.pill-toggle{border-color:var(--lab-line,#d2d2d7)}
+.lab-activity-bar .lab-activity-task>button,.lab-activity-bar .run-actions>button,.lab-activity-bar>button{display:inline-flex;align-items:center;justify-content:center;gap:4px;min-height:40px;padding:8px 14px;border:1px solid var(--lab-ink-secondary,#424245);border-radius:var(--lab-control-radius,8px);background:var(--lab-muted,#6e6e73);color:#fff;font-size:12px;font-weight:400;line-height:1.3;box-shadow:0 1px 3px rgba(29,29,31,.08)}
+.lab-activity-bar .lab-activity-task>button:hover,.lab-activity-bar .run-actions>button:hover,.lab-activity-bar>button:hover{background:var(--lab-ink-secondary,#424245)}
+.lab-activity-bar .run-actions>button.active{background:var(--lab-accent-hover,#4569aa);border-color:var(--lab-accent-hover,#4569aa);color:#fff}
+.lab-activity-bar .run-actions>button.algorithm-button{border-color:var(--lab-accent-pressed,#3a5d99);background:var(--lab-accent-hover,#4569aa);color:#fff}
+.lab-activity-bar .run-actions>button.algorithm-button:hover{background:var(--lab-accent-pressed,#3a5d99)}
+.lab-activity-bar .algorithm-button span,.lab-activity-bar .algorithm-button small{color:inherit}
+.lab-activity-bar button:disabled{cursor:default}
+.lab-activity-bar .run-actions>button.algorithm-button{flex-direction:column}.lab-activity-bar .algorithm-button span{font-size:12px;font-weight:400}.lab-activity-bar .algorithm-button small{font-size:11px;font-weight:400}
+
+/* action-hierarchy */
+/* Action hierarchy: blue primary, white/blue secondary, muted disabled. */
+.lab-activity-bar .lab-activity-task>button,.lab-activity-bar .run-actions>button,.lab-activity-bar .activity-actions>button,.lab-activity-bar>button{min-height:40px;padding:8px 14px;border:1px solid var(--lab-accent-line,#9fb4d6);border-radius:var(--lab-control-radius,8px);background:#fff;color:var(--lab-accent-ink,#315b91);font-size:12px;font-weight:400;box-shadow:0 1px 3px rgba(29,29,31,.08)}
+.lab-activity-bar .lab-activity-task>button:hover,.lab-activity-bar .run-actions>button:hover,.lab-activity-bar .activity-actions>button:hover,.lab-activity-bar>button:hover{background:var(--lab-accent-soft,#eef2fa)}
+.lab-activity-bar #newButton,.lab-activity-bar #newProblemBtn{border-color:var(--lab-accent-pressed,#3a5d99);background:var(--lab-accent-hover,#4569aa);color:#fff}
+.lab-activity-bar #newButton:hover,.lab-activity-bar #newProblemBtn:hover{background:var(--lab-accent-pressed,#3a5d99)}
+.lab-activity-bar button:disabled:not([aria-pressed]):not([aria-checked]){border-color:var(--lab-line,#d2d2d7);background:var(--lab-surface-strong,#eef1f3);color:var(--lab-muted,#6e6e73);box-shadow:none;opacity:1;cursor:not-allowed}
+.lab-mode-toggle{display:inline-flex;align-items:center;gap:2px;padding:3px;border:1px solid var(--lab-line,#d2d2d7);border-radius:999px;background:var(--lab-surface-muted,#f7f8fa);box-shadow:0 1px 3px rgba(29,29,31,.08)}
+.lab-activity-bar .lab-mode-toggle>button.algorithm-button{display:inline-flex;align-items:center;justify-content:center;min-width:80px;min-height:34px;padding:0 12px;border:1px solid transparent;border-radius:999px;background:transparent;color:var(--lab-accent-ink,#315b91);font-size:12px;font-weight:400;box-shadow:none}
+.lab-activity-bar .lab-mode-toggle>button.algorithm-button[aria-pressed="true"]{background:var(--lab-accent-hover,#4569aa);color:#fff}
+.lab-activity-bar .lab-mode-toggle>button:disabled{opacity:.55;cursor:not-allowed}
+
+/* disabled-actions */
+/* Disabled actions override primary colours and hover without resembling an active secondary action. */
+.lab-activity-bar button:disabled:not([aria-pressed]):not([aria-checked]),
+.lab-activity-bar #newButton:disabled,.lab-activity-bar #newProblemBtn:disabled,
+.lab-activity-bar .lab-mode-toggle>button.algorithm-button:disabled{
+  border-color:var(--lab-line,#d2d2d7);background:var(--lab-surface-strong,#eef1f3);color:var(--lab-muted,#6e6e73);box-shadow:none;opacity:1;cursor:not-allowed;transform:none;
+}
+
+/* task-heading */
+/* Task headings are quiet, readable anchors above the model. */
+.lab-activity-bar .lab-activity-task>strong,.lab-activity-bar .lab-activity-task h2,.lab-activity-bar .lab-activity-task h3,.lab-activity-bar .mission-copy>strong,.lab-activity-bar #goalTitle{margin:0;color:var(--lab-ink,#1d1d1f);font-family:var(--lab-font-sans,inherit);font-size:14px;font-weight:500;line-height:1.45;letter-spacing:normal;text-transform:none;text-wrap:balance}
+
+/* flat-mathematics */
+/* Compact concept-tinted backing distinguishes displayed mathematics. */
+.calc-panel .term-chip,.calc-panel .worked-value,.calc-panel .flat-expression{padding:3px 7px;border:0;border-radius:4px;background:color-mix(in srgb,var(--lab-concept-violet,#7563a7) 20%,white);color:var(--lab-ink,#1d1d1f);box-shadow:none}
+.calc-panel .flat-expression{width:fit-content}
+.calc-panel .flat-expression .worked-value{padding:0;background:transparent}
+
+/* working-attention */
+/* Unattempted working draws attention through its border, never moving the content. */
+.calc-panel .calc-step.pending:not([data-interacted="true"]),.calc-panel .work-progress:not([data-complete="true"]):not([data-interacted="true"]){animation:workingBorderPulse 2s ease-in-out infinite}
+@keyframes workingBorderPulse{0%,100%{border-color:var(--lab-needed-line,#d8c36a);box-shadow:0 0 0 0 rgba(216,195,106,0)}50%{border-color:var(--lab-needed,#946200);box-shadow:0 0 0 3px rgba(216,195,106,.18)}}
+@media(prefers-reduced-motion:reduce){.calc-panel .calc-step,.calc-panel .work-progress{animation:none!important}}
+
+/* working-refinements */
+#answerForm[data-work-state="current"]:not([data-attention-used="true"]){animation:workingAttention 2s ease-in-out infinite}
+@keyframes workingAttention{0%,100%{border-color:var(--lab-needed-line,#d8c36a);box-shadow:none}50%{border-color:var(--lab-needed,#946200);box-shadow:0 0 0 3px rgba(216,195,106,.18)}}
+@media(prefers-reduced-motion:reduce){#answerForm[data-work-state="current"]{animation:none!important}}
+.decision-card.needed:not([data-attention-used="true"]){animation:workingAttention 2s ease-in-out infinite}
+@keyframes workingAttention{0%,100%{border-color:var(--lab-needed-line,#d8c36a);box-shadow:none}50%{border-color:var(--lab-needed,#946200);box-shadow:0 0 0 3px rgba(216,195,106,.18)}}
+@media(prefers-reduced-motion:reduce){.decision-card.needed{animation:none!important}}
+#relax-equation{padding:3px 7px;border:0;border-radius:4px;background:color-mix(in srgb,var(--lab-concept-violet,#7563a7) 20%,white);box-shadow:none}
+.readout-line.owned:not(.correct):not(.incorrect):not([data-attention-used="true"]),.work-progress:not([data-complete="true"]):not([data-attention-used="true"]){animation:workingAttention 2s ease-in-out infinite}
+@keyframes workingAttention{0%,100%{border-color:var(--lab-needed-line,#d8c36a);box-shadow:none}50%{border-color:var(--lab-needed,#946200);box-shadow:0 0 0 3px rgba(216,195,106,.18)}}
+@media(prefers-reduced-motion:reduce){.readout-line.owned:not(.correct):not(.incorrect),.work-progress:not([data-complete="true"]){animation:none!important}}
+.auto-value{padding:3px 7px;border:0;border-radius:4px;background:color-mix(in srgb,var(--lab-concept-violet,#7563a7) 20%,white);box-shadow:none}
+.output-card.working-required.in-progress:not([data-attention-used="true"]),.work-progress:not([data-complete="true"]):not([data-attention-used="true"]){animation:workingAttention 2s ease-in-out infinite}
+@keyframes workingAttention{0%,100%{border-color:var(--lab-needed-line,#d8c36a);box-shadow:none}50%{border-color:var(--lab-needed,#946200);box-shadow:0 0 0 3px rgba(216,195,106,.18)}}
+@media(prefers-reduced-motion:reduce){.output-card.working-required.in-progress,.work-progress:not([data-complete="true"]){animation:none!important}}
+.product-line:not(:has(input)){padding:3px 7px;border:0;border-radius:4px;background:color-mix(in srgb,var(--lab-concept-violet,#7563a7) 20%,white);box-shadow:none}
+.working-panel .work-step.current:not([data-attention-used="true"]){animation:workingAttention 2s ease-in-out infinite}
+@keyframes workingAttention{0%,100%{border-color:var(--lab-needed-line,#d8c36a);box-shadow:none}50%{border-color:var(--lab-needed,#946200);box-shadow:0 0 0 3px rgba(216,195,106,.18)}}
+.working-panel .step-value{width:fit-content;padding:3px 7px;border:0;border-radius:4px;background:color-mix(in srgb,var(--lab-concept-violet,#7563a7) 20%,white);box-shadow:none}
+@media(prefers-reduced-motion:reduce){.working-panel .work-step{animation:none!important}}
+
+/* field-feedback-only */
+.evidence .output-card:has(.answer-entry)::after{content:none}
+.evidence .output-card:has(.answer-entry) .output-head{padding-right:0}
+.calc-panel .calc-step:has(.work-entry)::after{content:none}
+.calc-panel .calc-step:has(.work-entry) .step-head{padding-right:0}
+.working-panel .work-step:has(input) .step-head>.step-status{display:none}
+
+/* Public component API for new labs. */
+.lab-toggle{display:inline-flex;align-items:center;gap:2px;height:42px;padding:3px;border:1px solid var(--lab-line,#d2d2d7);border-radius:999px;background:var(--lab-surface-muted,#f7f8fa);box-shadow:0 1px 3px rgba(29,29,31,.08)}
+.lab-toggle>button{min-width:40px;min-height:34px;padding:0 12px;border:1px solid transparent;border-radius:999px;background:transparent;color:var(--lab-ink-secondary,#424245);font:400 12px/1.2 var(--lab-font-sans,sans-serif);box-shadow:none}
+.lab-toggle>button:is([aria-pressed="true"],[aria-checked="true"]){background:var(--lab-ink-secondary,#424245);color:#fff}
+.lab-toggle[data-kind="exam"]>button:is([aria-pressed="true"],[aria-checked="true"]),.lab-toggle[data-kind="mode"]>button:is([aria-pressed="true"],[aria-checked="true"]){background:var(--lab-accent-hover,#4569aa);color:#fff}
+.lab-action{min-height:40px;padding:8px 14px;border:1px solid var(--lab-accent-line,#9fb4d6);border-radius:8px;background:#fff;color:var(--lab-accent-ink,#315b91);font:400 12px/1.3 var(--lab-font-sans,sans-serif);box-shadow:0 1px 3px rgba(29,29,31,.08)}
+.lab-action:hover{background:var(--lab-accent-soft,#eef2fa)}
+.lab-action[data-priority="primary"]{background:var(--lab-accent-hover,#4569aa);border-color:var(--lab-accent-pressed,#3a5d99);color:#fff}
+.lab-action:disabled,.lab-action[data-priority="primary"]:disabled{background:var(--lab-surface-strong,#eef1f3);color:var(--lab-muted,#6e6e73);border-color:var(--lab-line,#d2d2d7);box-shadow:none;opacity:1;cursor:not-allowed}
+.lab-math-surface{display:inline-block;padding:3px 7px;border:0;border-radius:4px;background:color-mix(in srgb,var(--lab-concept-violet,#7563a7) 20%,white);color:var(--lab-ink,#1d1d1f);box-shadow:none}
+.lab-work-card{padding:12px;border:1px solid var(--lab-line-subtle,#e7e8eb);border-radius:8px;background:var(--lab-surface-muted,#f7f8fa);box-shadow:none}
+.lab-work-card[data-work-state="needed"]{border-color:var(--lab-needed-line,#d8c36a);background:var(--lab-needed-surface,#fffdf4)}
+.lab-work-card[data-work-state="good"]{border-color:var(--lab-good-line,#9cc7aa);background:var(--lab-good-surface,#f7fcf8)}
+.lab-work-card[data-work-state="bad"]{border-color:var(--lab-bad-line,#d8aaa4);background:var(--lab-bad-surface,#fff8f7)}
+.lab-work-card[data-work-state="needed"]:not([data-interacted="true"]){animation:workingAttention 2s ease-in-out infinite}
+.lab-work-card:has(input) .lab-card-status{display:none}
+.lab-stage-surface{border:1px solid var(--lab-line,#d2d2d7);border-radius:12px;background:var(--lab-surface-muted,#f7f8fa)}
+.lab-stage-heading{display:flex;flex-direction:column;gap:4px;padding:12px 12px 8px;font:400 12px/1.45 var(--lab-font-sans,sans-serif)}
+.lab-guide-target{border-radius:12px;outline:2px solid var(--lab-accent,#5277b8);outline-offset:3px;animation:labGuideAttention 2s ease-in-out infinite}
+@keyframes labGuideAttention{0%,100%{box-shadow:0 0 0 4px rgba(82,119,184,.10)}50%{box-shadow:0 0 0 9px rgba(82,119,184,.22)}}
+@media(prefers-reduced-motion:reduce){.lab-work-card,.lab-guide-target{animation:none!important}.lab-guide-target{box-shadow:0 0 0 5px rgba(82,119,184,.16)}}
+
+
+/* Field focus follows the existing border's colour family, without a second outline. */
+:is(input,textarea,select):focus{outline:none!important;box-shadow:none!important;border-color:var(--lab-field-focus,var(--lab-line-strong,#a7a7ad))!important}
+:is(.work-entry,.answer-entry,.working-input,.calc-input,.lab-work-card input){--lab-field-focus:var(--lab-needed,#946200)}
+:is(input.good,input.correct){--lab-field-focus:var(--lab-good-ink,#225f43)}
+:is(input.bad,input.incorrect,[aria-invalid="true"]){--lab-field-focus:var(--lab-bad-ink,#853b34)}
+
+/* Legacy adoption surface: opt in once; keep only model geometry in the lab. */
+.lab-adopt-v3{color:var(--lab-ink,#1d1d1f)}
+.lab-adopt-v3 .panel{border:1px solid var(--lab-line,#d2d2d7);border-radius:12px;background:var(--lab-surface,#fff);box-shadow:none}
+.lab-adopt-v3 :is(.mission,.goal-panel).lab-activity-bar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px 24px;padding:20px 24px;margin:0;border-bottom-color:var(--lab-line-subtle,#e7e8eb);border-radius:12px 12px 0 0;background:#fff}
+.lab-adopt-v3 .lab-activity-bar :is(.goal-top,.goal-meta){display:contents}
+.lab-adopt-v3 .lab-activity-bar :is(.mission-copy,.goal-copy){flex:1 1 300px;min-width:0}
+.lab-adopt-v3 .lab-activity-bar :is(.mission-copy,.goal-copy)>strong{display:block;font-size:14px;font-weight:500;line-height:1.45;color:var(--lab-ink,#1d1d1f);letter-spacing:normal;text-wrap:balance}
+.lab-adopt-v3 .lab-activity-bar :is(.mission-copy,.goal-copy)>span{font-size:12px;font-weight:400;line-height:1.45;color:var(--lab-ink-secondary,#424245)}
+.lab-adopt-v3 :is(.setup-meta,.goal-kicker,.step-label,.complexity-help,.calc-badge,.method-badge,.complexity-copy>span,.calc-head>p,.method-head>p){display:none}
+.lab-adopt-v3 :is(.mission-actions,.mission-tools,.case-actions){display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-left:auto}
+.lab-adopt-v3 :is(.complexity,.ownership){display:flex;align-items:center;gap:8px;background:transparent;border:0;padding:0;box-shadow:none}
+.lab-adopt-v3 :is(.complexity-copy strong,.ownership>span){color:var(--lab-ink,#1d1d1f);font-size:14px;font-weight:400;white-space:nowrap}
+.lab-adopt-v3 .lab-activity-bar .lab-toggle{display:inline-flex;flex:none;padding:3px;border:1px solid var(--lab-line,#d2d2d7);border-radius:999px;background:var(--lab-surface-muted,#f7f8fa);box-shadow:0 1px 3px rgba(29,29,31,.08);height:42px;gap:2px}
+.lab-adopt-v3 .lab-activity-bar .lab-toggle>button{width:auto;min-height:34px;min-width:40px;padding:0 12px;border:1px solid transparent;border-radius:999px;background:transparent;color:var(--lab-ink-secondary,#424245);font:400 12px/1.2 var(--lab-font-sans,sans-serif);box-shadow:none}
+.lab-adopt-v3 .lab-activity-bar .lab-toggle>button[aria-pressed="true"]{background:var(--lab-ink-secondary,#424245);color:#fff}
+.lab-adopt-v3 .lab-activity-bar .lab-toggle[data-kind="mode"]>button[aria-pressed="true"]{background:var(--lab-accent-hover,#4569aa);color:#fff}
+.lab-adopt-v3 .lab-activity-bar+:is(.lab,.workbench){margin-top:0;border-top:0;border-radius:0 0 12px 12px;padding:20px 24px;position:relative}
+.lab-adopt-v3 :is(.workspace,.recurring-workspace){display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,320px);gap:24px;align-items:start}
+.lab-adopt-v3 :is(.stage-wrap,.interaction-pane){min-width:0;position:relative}
+.lab-adopt-v3 :is(.calc-panel,.method-panel){padding:0 0 0 20px;min-width:0;border:0;border-left:1px solid var(--lab-line-subtle,#e7e8eb);background:transparent}
+.lab-adopt-v3 :is(.calc-head,.method-head){padding:0 0 12px;border:0;background:transparent}
+.lab-adopt-v3 :is(.calc-head,.method-head) strong{font-size:14px;font-weight:500;color:var(--lab-ink,#1d1d1f)}
+.lab-adopt-v3 :is(.calc-flow,.solve-chain){display:grid;gap:10px;margin-top:10px;padding:0}
+.lab-adopt-v3 .calc-flow::before,.lab-adopt-v3 .calc-step::before{display:none}
+.lab-adopt-v3 :is(.calc-step,.solve-card,.derive-step,.proof-rule,.compare-rule){padding:12px;border:1px solid var(--lab-line-subtle,#e7e8eb);border-radius:8px;background:var(--lab-surface-muted,#f7f8fa);box-shadow:none;opacity:1}
+.lab-adopt-v3 :is(.calc-step,.solve-card,.derive-step):has(input:not(:disabled)){border-color:var(--lab-needed-line,#d8c36a);background:var(--lab-needed-surface,#fffdf4)}
+.lab-adopt-v3 :is(.calc-step,.solve-card,.derive-step):has(input):is(.good,.complete,.correct),.lab-adopt-v3 :is(.calc-step,.solve-card,.derive-step):has(input.good):not(:has(input:not(.good))){border-color:var(--lab-good-line,#9cc7aa);background:var(--lab-good-surface,#f7fcf8)}
+.lab-adopt-v3 :is(.calc-step,.solve-card,.derive-step):has(input):is(.bad,.incorrect),.lab-adopt-v3 :is(.calc-step,.solve-card,.derive-step):has(input.bad,input.incorrect){border-color:var(--lab-bad-line,#d8aaa4);background:var(--lab-bad-surface,#fff8f7)}
+.lab-adopt-v3 :is(.calc-step,.solve-card,.derive-step):has(input:not(:disabled)):not(.good,.complete,.correct,.bad,.incorrect):not(:has(input.bad,input.incorrect)):not([data-interacted="true"]){animation:workingAttention 2s ease-in-out infinite}
+.lab-adopt-v3 :is(.calc-step,.solve-card,.derive-step):has(input)::after,.lab-adopt-v3 .step-head em{display:none}
+.lab-adopt-v3 :is(.step-head span,.solve-card>span,.derive-step-head strong,.calc-label,.reference-strip>span,.solve-label){font-size:12px;line-height:1.45;font-weight:400;text-transform:none;letter-spacing:normal;color:var(--lab-ink-secondary,#424245)}
+.lab-adopt-v3 :is(.step-note,.derive-note,.work-feedback,.working-row,.method-panel p,.reference-strip em,.calc-intro,.proof-body,.compare-rule,.gate-caption,.bridge-caption){font-size:14px;font-weight:400;line-height:1.45;color:var(--lab-ink-secondary,#424245)}
+.lab-adopt-v3 :is(.step-value,.solve-card>strong,.formula-band,.derive-equation,.calc-equation,.proof-rule code):not(:has(input)){width:fit-content;max-width:100%;padding:3px 7px;border:0;border-radius:4px;background:color-mix(in srgb,var(--lab-concept-violet,#7563a7) 20%,white);color:var(--lab-ink,#1d1d1f);font-size:14px;font-weight:400;line-height:1.45;box-shadow:none;overflow-wrap:anywhere}
+.lab-adopt-v3 :is(.reference-strip,.proof-head){padding:12px;border:0;border-radius:8px;background:var(--lab-surface-muted,#f7f8fa);font-size:12px;line-height:1.45}
+.lab-adopt-v3 input:not([type="range"]):not([type="checkbox"]):not([type="radio"]){min-height:40px;padding:6px 9px;border-width:1px;border-radius:8px;font-size:14px;font-weight:400;line-height:1.4}
+.lab-adopt-v3 :is(input.good,input.correct){border-color:var(--lab-good-line,#9cc7aa);background:var(--lab-good-surface,#f7fcf8)}
+.lab-adopt-v3 :is(input.bad,input.incorrect){border-color:var(--lab-bad-line,#d8aaa4);background:var(--lab-bad-surface,#fff8f7)}
+.lab-adopt-v3 :is(.solve-arrow,.derive-num){font-size:12px;font-weight:400;color:var(--lab-muted,#6e6e73)}
+.lab-adopt-v3 :is(.solve-arrow small,.projection-head span,.visual-copy span,.trace-note){font-size:12px;font-weight:400;line-height:1.45}
+.lab-adopt-v3 .lab-action{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:8px 14px;border:1px solid var(--lab-accent-line,#9fb4d6);border-radius:8px;background:#fff;color:var(--lab-accent-ink,#315b91);font-size:12px;font-weight:400;line-height:1.3;box-shadow:0 1px 3px rgba(29,29,31,.08)}
+.lab-adopt-v3 .lab-action[data-priority="primary"]{background:var(--lab-accent-hover,#4569aa);border-color:var(--lab-accent-pressed,#3a5d99);color:#fff}
+.lab-adopt-v3 .lab-action:disabled{background:var(--lab-surface-strong,#eef1f3);color:var(--lab-muted,#6e6e73);border-color:var(--lab-line,#d2d2d7);box-shadow:none;opacity:1}
+.lab-adopt-v3 .next-card{position:absolute;top:16px;right:16px;bottom:auto;left:auto;width:min(320px,calc(100% - 32px));max-width:none;padding:16px;border:1px solid var(--lab-good-line,#9cc7aa);border-radius:12px;background:var(--lab-good-surface,#f7fcf8);box-shadow:0 6px 18px rgba(29,29,31,.12);z-index:30;transform:none}
+.lab-adopt-v3 .next-card>strong{display:block;padding-right:30px;color:var(--lab-ink,#1d1d1f);font-size:14px;font-weight:500;line-height:1.4}
+.lab-adopt-v3 .next-card span{font-size:14px;line-height:1.45;font-weight:400}
+.lab-adopt-v3 .next-card .next-actions{display:flex;justify-content:center;gap:8px}
+.lab-adopt-v3 .next-card button:not(.lab-dialog-move){min-height:40px;padding:10px 18px;font-size:11px;font-weight:600;border-radius:8px}
+.lab-adopt-v3 .next-card .lab-dialog-move{position:absolute;top:6px;right:6px;width:32px;min-width:32px;height:32px;min-height:32px;margin:0;padding:0;border:0;border-radius:8px;background:transparent;color:var(--lab-muted,#6e6e73);cursor:grab;touch-action:none;font-size:16px;font-weight:400}
+.lab-adopt-v3 .next-card .lab-dialog-move:active{cursor:grabbing}
+.lab-adopt-v3 .goal-editor{flex-basis:100%;font-size:14px}
+@media(max-width:900px){.lab-adopt-v3 :is(.workspace,.recurring-workspace){grid-template-columns:minmax(0,1fr)}.lab-adopt-v3 :is(.calc-panel,.method-panel){padding:18px 0 0;border-left:0;border-top:1px solid var(--lab-line-subtle,#e7e8eb)}}
+@media(max-width:620px){.lab-adopt-v3 :is(.mission,.goal-panel).lab-activity-bar,.lab-adopt-v3 .lab-activity-bar+:is(.lab,.workbench){padding:16px}.lab-adopt-v3 :is(.mission-actions,.mission-tools,.case-actions){margin-left:0;justify-content:flex-end;width:100%}.lab-adopt-v3 .lab-activity-bar .lab-toggle>button{padding-inline:9px}}
+@media(prefers-reduced-motion:reduce){.lab-adopt-v3 :is(.calc-step,.solve-card,.derive-step){animation:none!important}}
+
+.lab-adopt-v3 :is(.mission-actions,.mission-tools,.case-actions)>button{order:-1}
+.lab-adopt-v3 .goal-meta>.reset{order:1}.lab-adopt-v3 .goal-meta>.complexity{order:2}
+.lab-adopt-v3 .lab-activity-bar>.complexity{margin-left:auto}
+.lab-adopt-v3 .method-panel .solve-card.final:not(:has(input)){border-color:var(--lab-line-subtle,#e7e8eb);background:var(--lab-surface-muted,#f7f8fa)}
+
+.lab-adopt-v3 .calc-panel .calc-step:not(:has(input)){border-color:var(--lab-line-subtle,#e7e8eb);background:var(--lab-surface-muted,#f7f8fa);box-shadow:none}
+.lab-adopt-v3 :is(.proof-head strong,.compare-rule strong,.gate-core strong,.projection-head strong,.verifier-head strong){font-size:14px;font-weight:500;line-height:1.45}
+.lab-adopt-v3 :is(.gate-top,.gate-period,.gate-rate,.percent-step-label,.method-head span){font-size:12px;font-weight:400;line-height:1.4}
+.lab-adopt-v3 .next-card.has-upgrade{display:block}
+.lab-adopt-v3 .next-card .next-upgrade{margin-top:12px;padding-top:12px;border:0;border-top:1px solid var(--lab-line-subtle,#e7e8eb);background:transparent}
+
+.lab-adopt-v3 .next-card[hidden]{display:none!important}
+
+</style>
+<script data-lab-design-runtime>
+/* Shared progressive-card attention and movable completion for opted-in labs. */
+(() => {
+  function init() {
+    if (!document.body.classList.contains('lab-adopt-v3')) return;
+    const touched = new Set();
+    const cardSelector = '.calc-step,.solve-card,.derive-step';
+    let queued = false;
+    const key = card => [...card.querySelectorAll('input')].map(input => input.id || input.name || [...input.attributes].filter(a => a.name.startsWith('data-')).map(a => a.name + a.value).join(':')).join('|') || card.querySelector('.step-head,.derive-step-head')?.textContent;
+    function refresh() {
+      queued = false;
+      document.querySelectorAll(cardSelector).forEach(card => {
+        if (touched.has(key(card)) && card.dataset.interacted !== 'true') card.dataset.interacted = 'true';
+      });
+      document.querySelectorAll('.next-card').forEach(card => {
+        if (card.querySelector('.lab-dialog-move')) return;
+        const handle = document.createElement('button');
+        handle.type = 'button'; handle.className = 'lab-dialog-move'; handle.textContent = '↔';
+        handle.setAttribute('aria-label', 'Move completion card. Use arrow keys to reposition.');
+        card.prepend(handle);
+      });
+    }
+    const schedule = () => { if (!queued) { queued = true; requestAnimationFrame(refresh); } };
+    document.addEventListener('focusin', event => {
+      if (!event.target.matches('input')) return;
+      const card = event.target.closest(cardSelector);
+      if (card) { touched.add(key(card)); card.dataset.interacted = 'true'; }
+    });
+    document.addEventListener('pointerdown', event => {
+      const input = event.target.closest('input');
+      const card = input?.closest(cardSelector);
+      if (card) { touched.add(key(card)); card.dataset.interacted = 'true'; }
+    });
+    document.addEventListener('click', event => {
+      if (event.target.closest('[data-work-level],[data-level],#reset,#resetCase,#resetChallenge,#resetGraph,#nextProblem,#nextStageButton,[data-next],#newJourney')) {
+        touched.clear(); document.querySelectorAll(cardSelector).forEach(card => delete card.dataset.interacted);
+      }
+    }, true);
+    const move = (card, left, top) => {
+      const bounds = card.offsetParent;
+      card.style.right = 'auto'; card.style.bottom = 'auto';
+      card.style.left = Math.max(0, Math.min(left, bounds.clientWidth - card.offsetWidth)) + 'px';
+      card.style.top = Math.max(0, Math.min(top, bounds.clientHeight - card.offsetHeight)) + 'px';
+    };
+    document.addEventListener('pointerdown', event => {
+      const handle = event.target.closest('.lab-dialog-move');
+      if (!handle || event.button !== 0) return;
+      const card = handle.closest('.next-card'), x = event.clientX, y = event.clientY, left = card.offsetLeft, top = card.offsetTop;
+      handle.setPointerCapture(event.pointerId); event.preventDefault();
+      const update = e => { if (e.pointerId === event.pointerId) move(card, left + e.clientX - x, top + e.clientY - y); };
+      const stop = () => { handle.removeEventListener('pointermove', update); handle.removeEventListener('pointerup', stop); handle.removeEventListener('pointercancel', stop); handle.removeEventListener('lostpointercapture', stop); };
+      handle.addEventListener('pointermove', update); handle.addEventListener('pointerup', stop); handle.addEventListener('pointercancel', stop); handle.addEventListener('lostpointercapture', stop);
+    });
+    document.addEventListener('keydown', event => {
+      const handle = event.target.closest('.lab-dialog-move');
+      const delta = {ArrowLeft:[-10,0],ArrowRight:[10,0],ArrowUp:[0,-10],ArrowDown:[0,10]}[event.key];
+      if (!handle || !delta) return;
+      event.preventDefault(); const card = handle.closest('.next-card'); move(card, card.offsetLeft + delta[0], card.offsetTop + delta[1]);
+    });
+    new MutationObserver(schedule).observe(document.querySelector('main') || document.body, {childList:true,subtree:true});
+    refresh();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, {once:true}); else init();
+})();
+
+</script>
 <!-- LAB_CONTRACT_START -->
 <script type="application/json" data-examplicity-lab-contract data-contract-version="1">
 {
@@ -680,7 +989,7 @@ button:focus-visible,input:focus-visible,[tabindex="0"]:focus-visible{outline:3p
 </script>
 <!-- LAB_CONTRACT_END -->
 </head>
-<body data-lab-layout="standard">
+<body class="lab-adopt-v3" data-lab-layout="standard">
 <main>
 <!-- LAB_MANIFEST_HEADER_START -->
 <header class="lab-manifest-header">
@@ -703,18 +1012,18 @@ button:focus-visible,input:focus-visible,[tabindex="0"]:focus-visible{outline:3p
 <span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span>
   <span data-lab-authored-subtitle-slot hidden></span>
 
-  <section class="panel goal-panel">
+  <section class="panel goal-panel lab-activity-bar">
     <div class="goal-top">
       <div class="goal-copy"><span id="stepLabel" class="step-label"></span><strong id="goalTitle"></strong><span id="goalHint"></span></div>
       <div class="goal-meta">
-        <div class="complexity"><div class="complexity-copy"><strong>Working required</strong><span id="complexityHelp"></span></div><div class="complexity-switch" role="group" aria-label="Working required"><button type="button" data-work-level="0" class="active" aria-pressed="true">Off</button><button type="button" data-work-level="1" aria-pressed="false">Some</button><button type="button" data-work-level="2" aria-pressed="false">All</button></div></div>
-        <button id="resetChallenge" class="reset" type="button">Reset</button>
+        <div class="complexity"><div class="complexity-copy"><strong>Working:</strong><span id="complexityHelp"></span></div><div class="complexity-switch lab-toggle" data-kind="working" role="group" aria-label="Working"><button type="button" data-work-level="0" class="active" aria-pressed="true">None</button><button type="button" data-work-level="1" aria-pressed="false">Some</button><button type="button" data-work-level="2" aria-pressed="false">All</button></div></div>
+        <button id="resetChallenge" class="reset lab-action" type="button">Reset</button>
       </div>
     </div>
   </section>
 
   <section class="panel workbench">
-    <div id="nextCard" class="next-card" hidden><strong>Problem complete</strong><span id="nextCardText"></span><div id="nextUpgrade" class="next-upgrade" hidden><strong id="nextUpgradeTitle"></strong><span id="nextUpgradeText"></span><button id="upgradeLevel" type="button"></button></div><div class="next-actions"><button id="nextProblem" type="button">Next problem</button></div></div>
+    <div id="nextCard" class="next-card" hidden><strong>Problem complete</strong><span id="nextCardText"></span><div id="nextUpgrade" class="next-upgrade" hidden><strong id="nextUpgradeTitle"></strong><span id="nextUpgradeText"></span><button id="upgradeLevel" type="button" class="lab-action"></button></div><div class="next-actions"><button id="nextProblem" type="button" class="lab-action" data-priority="primary">Next problem</button></div></div>
 
     <div id="mainVisual" role="region" aria-label="Repeated percentage change workbench"></div>
 
@@ -1306,7 +1615,7 @@ function gateElement(c,s,i,amounts,active){
  const gate=document.createElement('div');gate.className='gate-card';const core=document.createElement('div');const locked=i>active&&active!==null,solved=gateExact(c,s,i),isActive=i===active;core.className=`gate-core${locked?' locked':''}${solved?' solved':''}${isActive?' active':''}`;
  const pctTarget=targetRate(c),base=amounts[i],change=s.changes[i],expected=base==null?null:round2(Math.abs(c.rate)*base),actual=base&&change!=null?change/base*100:null,meterMax=Math.max(40,pctTarget*1.5),fill=actual==null?0:Math.min(100,Math.max(0,actual/meterMax*100)),mark=Math.min(100,pctTarget/meterMax*100),guided=state.workingLevel===0;
  if(locked||base==null){core.innerHTML=`<div class="gate-top"><span class="gate-rate">${c.rate>0?'+':'−'}${pctTarget}%</span><span class="gate-period">Year ${i+1}</span></div><div class="lock-copy">Finish the previous percentage calculation first.<br>The next base is not fixed yet.</div>`}
- else if(guided){core.innerHTML=`<div class="gate-top"><span class="gate-rate">${c.rate>0?'+':'−'}${pctTarget}%</span><span class="gate-period">Year ${i+1}</span></div><div class="calc-line"><span class="calc-label">Worked calculation</span><div class="calc-equation"><span class="calc-expression">${format(c,base)} × ${pctTarget}%</span><span class="calc-result-label">${deltaVerb(c.rate)} =</span><strong>${format(c,expected)}</strong></div><div class="rate-meter"><div class="rate-fill" style="width:${fill}%"></div><div class="rate-target" style="left:${mark}%"></div></div><div class="rate-readout"><span>${pctTarget}% of ${format(c,base)}</span></div></div>${solved?'<div class="gate-note good">Applied. The new value is now the base for the next period.</div>':`<button class="guided-apply" type="button" data-apply-guided>Apply this change</button><div class="gate-note">Use the shown change to move the system to its next state.</div>`}`;const apply=core.querySelector('[data-apply-guided]');if(apply)apply.addEventListener('click',()=>setChange(i,expected))}
+ else if(guided){core.innerHTML=`<div class="gate-top"><span class="gate-rate">${c.rate>0?'+':'−'}${pctTarget}%</span><span class="gate-period">Year ${i+1}</span></div><div class="calc-line"><span class="calc-label">Worked calculation</span><div class="calc-equation"><span class="calc-expression">${format(c,base)} × ${pctTarget}%</span><span class="calc-result-label">${deltaVerb(c.rate)} =</span><strong>${format(c,expected)}</strong></div><div class="rate-meter"><div class="rate-fill" style="width:${fill}%"></div><div class="rate-target" style="left:${mark}%"></div></div><div class="rate-readout"><span>${pctTarget}% of ${format(c,base)}</span></div></div>${solved?'<div class="gate-note good">Applied. The new value is now the base for the next period.</div>':`<button class="guided-apply lab-action" type="button" data-apply-guided>Apply this change</button><div class="gate-note">Use the shown change to move the system to its next state.</div>`}`;const apply=core.querySelector('[data-apply-guided]');if(apply)apply.addEventListener('click',()=>setChange(i,expected))}
  else{
    const note=change==null?'Enter the percentage amount to calculate the next value.':solved?`${format(c,base)} × ${pctTarget}% = ${format(c,expected)}.`:`${format(c,change)} is ${format(c,round2(Math.abs(change-expected)))} ${change<expected?'too low':'too high'}. Enter ${format(c,expected)}.`;
    core.innerHTML=`<div class="gate-top"><span class="gate-rate">${c.rate>0?'+':'−'}${pctTarget}%</span><span class="gate-period">Year ${i+1}</span></div><div class="calc-line"><span class="calc-label">Your calculation</span><div class="calc-equation"><span class="calc-expression">${format(c,base)} × ${pctTarget}%</span><span class="calc-result-label">${deltaVerb(c.rate)} = ${c.currency?'£':''}</span><input id="change-${i}" class="numeric-entry" type="text" inputmode="decimal" enterkeyhint="done" value="${change==null?'':change}" placeholder="?" autocomplete="off" spellcheck="false" aria-label="${deltaVerb(c.rate)} amount for year ${i+1}"></div><div class="rate-meter"><div class="rate-fill" style="width:${fill}%"></div><div class="rate-target" style="left:${mark}%"></div></div><div class="rate-readout"><span>your amount ${change==null?'—':format(c,change)}</span><span>target ${format(c,expected)}</span></div></div><div class="gate-note ${change==null?'':solved?'good':'warn'}">${note}</div>`;
@@ -1357,7 +1666,7 @@ function reverseComplete(c,s){return reverseBridgeComplete(c,s)&&inverseFactorEx
 function renderReverse(host,c,s){
  const sc=document.createElement('div');sc.className='chain-scroll';const stage=document.createElement('div');stage.className='reverse-stage';sc.appendChild(stage);host.appendChild(sc);const r=reverseResult(c,s),max=c.target*1.08,candidate=r.candidate,resultPct=percentExpected(c),changeFr=Math.abs(c.rate*100);
  const left=document.createElement('section');left.className='reverse-state';left.innerHTML=`<div class="state-head"><span>Reconstructed opening</span><strong class="${candidate==null?'unknown':''}">${candidate==null?'—':money(candidate)}</strong></div><div class="reverse-bar"><div class="reverse-fill" style="height:${candidate==null?0:barPercent(candidate,max)}%"></div></div><div class="state-foot">Output of your backward gate</div>`;stage.appendChild(left);
- const gate=document.createElement('section');gate.className='reverse-gate';gate.innerHTML=`<h3>Build and undo the multiplier</h3><span class="bridge-caption">Percentage after the change → divide by 100 → forward multiplier → inverse gate.</span><div class="forward-mult"><label>Forward gate · +${targetRate(c)}%</label><div class="percent-strip" style="--change-fr:${changeFr}"><div class="percent-base">100% whole</div><div class="percent-change">+${changeFr}%</div></div><div class="derive-bridge"><div id="reversePercentStep" class="derive-step ${percentExact(c,s)?'done':'current'}"><div class="derive-step-head"><span class="derive-num">1</span><strong>Percentage after the increase</strong></div><div class="derive-equation"><span>100%</span><span>+</span><span>${changeFr}%</span><span>=</span><input id="reverseResultPercent" class="numeric-entry wide" type="text" inputmode="decimal" enterkeyhint="done" placeholder="?" value="${s.resultPercent==null?'':s.resultPercent}" ${state.workingLevel<2?'disabled':''} autocomplete="off" spellcheck="false" aria-label="Percentage after the increase"><span>%</span></div><div class="derive-note ${Number.isFinite(s.resultPercent)?percentExact(c,s)?'good':'warn':''}">${reversePercentNote(c,s)}</div></div><div id="reverseMultiplierStep" class="derive-step ${percentExact(c,s)?forwardMultiplierExact(c,s)?'done':'current':'locked'}"><div class="derive-step-head"><span class="derive-num">2</span><strong>Convert percent to forward multiplier</strong></div><div class="derive-equation"><span>${num(resultPct)}%</span><span>=</span><span>${num(resultPct)} ÷ 100</span><span>=</span><input id="forwardMultiplier" class="numeric-entry" type="text" inputmode="decimal" enterkeyhint="done" placeholder="?" value="${s.forwardMultiplier==null?'':s.forwardMultiplier}" ${state.workingLevel<1||!percentExact(c,s)?'disabled':''} autocomplete="off" spellcheck="false" aria-label="Forward multiplier"></div><div class="derive-note ${Number.isFinite(s.forwardMultiplier)?forwardMultiplierExact(c,s)?'good':'warn':''}">${reverseMultiplierNote(c,s)}</div></div></div></div><div class="inverse-builder ${reverseBridgeComplete(c,s)?'':'locked'}"><label>Backward gate · your inverse</label><div class="inverse-row"><div class="operator-choice"><button id="opMultiply" type="button" class="${s.operator==='multiply'?'active':''}" aria-pressed="${s.operator==='multiply'}" ${state.workingLevel===0||!reverseBridgeComplete(c,s)?'disabled':''}>×</button><button id="opDivide" type="button" class="${s.operator==='divide'?'active':''}" aria-pressed="${s.operator==='divide'}" ${state.workingLevel===0||!reverseBridgeComplete(c,s)?'disabled':''}>÷</button></div><input id="inverseFactor" class="numeric-entry" type="text" inputmode="decimal" enterkeyhint="done" placeholder="factor" value="${s.inverseFactor==null?'':s.inverseFactor}" ${state.workingLevel===0||!reverseBridgeComplete(c,s)?'disabled':''} autocomplete="off" spellcheck="false" aria-label="Backward factor"></div></div><div class="reverse-equation">${reverseEquation(c,s)}</div>${reverseAttempted(s)?`<div class="forward-check ${r.ok?'good':''}">${money(r.candidate)} × ${(1+c.rate).toFixed(2)} = ${money(r.forward)}${r.ok?' · returns exactly':r.forward<c.target?` · ${money(c.target-r.forward)} short`:` · ${money(r.forward-c.target)} over`}</div>`:''}`;stage.appendChild(gate);
+ const gate=document.createElement('section');gate.className='reverse-gate';gate.innerHTML=`<h3>Build and undo the multiplier</h3><span class="bridge-caption">Percentage after the change → divide by 100 → forward multiplier → inverse gate.</span><div class="forward-mult"><label>Forward gate · +${targetRate(c)}%</label><div class="percent-strip" style="--change-fr:${changeFr}"><div class="percent-base">100% whole</div><div class="percent-change">+${changeFr}%</div></div><div class="derive-bridge"><div id="reversePercentStep" class="derive-step ${percentExact(c,s)?'done':'current'}"><div class="derive-step-head"><span class="derive-num">1</span><strong>Percentage after the increase</strong></div><div class="derive-equation"><span>100%</span><span>+</span><span>${changeFr}%</span><span>=</span><input id="reverseResultPercent" class="numeric-entry wide" type="text" inputmode="decimal" enterkeyhint="done" placeholder="?" value="${s.resultPercent==null?'':s.resultPercent}" ${state.workingLevel<2?'disabled':''} autocomplete="off" spellcheck="false" aria-label="Percentage after the increase"><span>%</span></div><div class="derive-note ${Number.isFinite(s.resultPercent)?percentExact(c,s)?'good':'warn':''}">${reversePercentNote(c,s)}</div></div><div id="reverseMultiplierStep" class="derive-step ${percentExact(c,s)?forwardMultiplierExact(c,s)?'done':'current':'locked'}"><div class="derive-step-head"><span class="derive-num">2</span><strong>Convert percent to forward multiplier</strong></div><div class="derive-equation"><span>${num(resultPct)}%</span><span>=</span><span>${num(resultPct)} ÷ 100</span><span>=</span><input id="forwardMultiplier" class="numeric-entry" type="text" inputmode="decimal" enterkeyhint="done" placeholder="?" value="${s.forwardMultiplier==null?'':s.forwardMultiplier}" ${state.workingLevel<1||!percentExact(c,s)?'disabled':''} autocomplete="off" spellcheck="false" aria-label="Forward multiplier"></div><div class="derive-note ${Number.isFinite(s.forwardMultiplier)?forwardMultiplierExact(c,s)?'good':'warn':''}">${reverseMultiplierNote(c,s)}</div></div></div></div><div class="inverse-builder ${reverseBridgeComplete(c,s)?'':'locked'}"><label>Backward gate · your inverse</label><div class="inverse-row"><div class="operator-choice"><button id="opMultiply" type="button" class="${s.operator==='multiply'?'active':''} lab-action" aria-pressed="${s.operator==='multiply'}" ${state.workingLevel===0||!reverseBridgeComplete(c,s)?'disabled':''}>×</button><button id="opDivide" type="button" class="${s.operator==='divide'?'active':''} lab-action" aria-pressed="${s.operator==='divide'}" ${state.workingLevel===0||!reverseBridgeComplete(c,s)?'disabled':''}>÷</button></div><input id="inverseFactor" class="numeric-entry" type="text" inputmode="decimal" enterkeyhint="done" placeholder="factor" value="${s.inverseFactor==null?'':s.inverseFactor}" ${state.workingLevel===0||!reverseBridgeComplete(c,s)?'disabled':''} autocomplete="off" spellcheck="false" aria-label="Backward factor"></div></div><div class="reverse-equation">${reverseEquation(c,s)}</div>${reverseAttempted(s)?`<div class="forward-check ${r.ok?'good':''}">${money(r.candidate)} × ${(1+c.rate).toFixed(2)} = ${money(r.forward)}${r.ok?' · returns exactly':r.forward<c.target?` · ${money(c.target-r.forward)} short`:` · ${money(r.forward-c.target)} over`}</div>`:''}`;stage.appendChild(gate);
  const right=document.createElement('section');right.className='reverse-state known';right.innerHTML=`<div class="state-head"><span>Known closing</span><strong>${money(c.target)}</strong></div><div class="reverse-bar"><div class="reverse-fill" style="height:${barPercent(c.target,max)}%"></div><div class="reverse-target" style="bottom:${barPercent(c.target,max)}%"><span>known</span></div></div><div class="state-foot">Forward gate must return here</div>`;stage.appendChild(right);
  wireNumericEntry(gate.querySelector('#reverseResultPercent'),(value)=>{s.resultPercent=value!=null&&value>=0?value:null;if(!percentExact(c,s)){s.forwardMultiplier=null;s.operator='';s.inverseFactor=null}schedulePreservingRender()});wireNumericEntry(gate.querySelector('#forwardMultiplier'),(value)=>{s.forwardMultiplier=value!=null&&value>=0?value:null;if(!forwardMultiplierExact(c,s)){s.operator='';s.inverseFactor=null}schedulePreservingRender()});gate.querySelector('#opMultiply').addEventListener('click',()=>{if(!reverseBridgeComplete(c,s))return;s.operator='multiply';render()});gate.querySelector('#opDivide').addEventListener('click',()=>{if(!reverseBridgeComplete(c,s))return;s.operator='divide';render()});wireNumericEntry(gate.querySelector('#inverseFactor'),(value)=>{s.inverseFactor=value!=null&&value>0?value:null;schedulePreservingRender()});
 }
@@ -1371,7 +1680,7 @@ function renderNextCard(){
  const c=current(),card=$('nextCard'),upgrade=$('nextUpgrade'),next=suggestedWorkLevel();card.hidden=!challengeComplete(c,session());if(card.hidden)return;
  $('nextCardText').textContent=c.mode==='reverse'?`The inverse gate returns to ${money(c.opening)} and the forward check reaches ${money(c.target)}.`:`The repeated calculations and ×${multiplierExpected(c).toFixed(2)} model both reach ${format(c,c.target)}.`;
  card.classList.toggle('has-upgrade',next>0);upgrade.hidden=next<0;
- if(next>0){$('nextUpgradeTitle').textContent=next===1?'Ready to write some working?':'Ready to write the full chain?';$('nextUpgradeText').textContent=next===1?'Calculate every percentage change and supply the multiplier. This prompt will return after each completed problem until you increase the working required.':'Supply the percentage after the change as well as every change and multiplier. This prompt will keep returning until you increase the working required.';$('upgradeLevel').textContent=next===1?'Write some working':'Write the full chain';$('upgradeLevel').dataset.level=String(next)}
+ if(next>0){$('nextUpgradeTitle').textContent=next===1?'Ready to write some working?':'Ready to write the full chain?';$('nextUpgradeText').textContent=next===1?'Calculate every percentage change and supply the multiplier. This prompt will return after each completed problem until you increase the working required.':'Supply the percentage after the change as well as every change and multiplier. This prompt will keep returning until you increase the working required.';$('upgradeLevel').textContent=next===1?'Try some working':'Write the full chain';$('upgradeLevel').dataset.level=String(next)}
 }
 function nextKind(){return KIND_ORDER[(state.problemNumber-1)%KIND_ORDER.length]}
 function startProblem(seed=randomSeed()){

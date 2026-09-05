@@ -12,6 +12,7 @@ const sourcePaths = [
   "package.json",
   "src/lab-kit.css",
   "src/lab-design.css",
+  "src/lab-design.js",
   "src/lab-kit.js",
   "tools/build-manifest.mjs"
 ];
@@ -30,7 +31,8 @@ const manifest = {
   entrypoints: {
     browserScript: "src/lab-kit.js",
     css: "src/lab-kit.css",
-    designCss: "src/lab-design.css"
+    designCss: "src/lab-design.css",
+    designScript: "src/lab-design.js"
   },
   runtime: {
     global: "LabKit",

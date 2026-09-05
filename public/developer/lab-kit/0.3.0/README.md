@@ -161,3 +161,5 @@ an authentic system should behave.
 New labs use `.lab-toggle` with `data-kind="working|exam|mode"`, `.lab-action` with optional `data-priority="primary"`, `.lab-work-card` with `data-work-state="needed|good|bad|reference"` and `data-interacted="true"`, `.lab-math-surface`, `.lab-stage-surface`, `.lab-stage-heading` and `.lab-guide-target`. Use native button/input state and update the attributes from real learner state. Stop attention on pointer/keyboard interaction, reset for a new activity, and keep geometry/learning logic local. The stylesheet includes compatibility selectors for the six reviewed labs.
 
 The living guide documents visual intent. Change the shared stylesheet for reusable visual changes; keep only layout/model-specific adapters in a lab.
+
+For adopted legacy labs, add `lab-adopt-v3` to the body and inline `src/lab-design.js` as well. It provides shared working-attention dismissal and movable completion handles; unique model behaviour remains local. The publication marker embeds both resources automatically.

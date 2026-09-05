@@ -383,3 +383,5 @@ The living HTML guide’s **Refined components and their uses** section groups t
 Cards containing answer fields do not repeat check/x/status symbols in the top-right corner. Keep feedback at the fields, while retaining card state colour and attention behaviour. Field-free progress cards may retain their status marks.
 
 Shared implementation lives in `packages/lab-kit/src/lab-design.css`. New labs consume its component API; reviewed labs use compatibility selectors. Reusable refinements belong there, while geometry and learner-state logic remain lab-owned. Lab export embeds the resource in HTML, with no separate stylesheet or network requirement.
+
+Form-field focus darkens the existing border within its colour family, with no extra black outline/ring/shadow. Button keyboard focus remains visible. `lab-adopt-v3` supplies a shared compatibility surface; `lab-design.js` supplies remembered card attention and pointer/keyboard-movable completion cards for adopted labs. Embed both resources in standalone downloads.

@@ -752,3 +752,76 @@
 @keyframes labGuideAttention{0%,100%{box-shadow:0 0 0 4px rgba(82,119,184,.10)}50%{box-shadow:0 0 0 9px rgba(82,119,184,.22)}}
 @media(prefers-reduced-motion:reduce){.lab-work-card,.lab-guide-target{animation:none!important}.lab-guide-target{box-shadow:0 0 0 5px rgba(82,119,184,.16)}}
 
+
+/* Field focus follows the existing border's colour family, without a second outline. */
+:is(input,textarea,select):focus{outline:none!important;box-shadow:none!important;border-color:var(--lab-field-focus,var(--lab-line-strong,#a7a7ad))!important}
+:is(.work-entry,.answer-entry,.working-input,.calc-input,.lab-work-card input){--lab-field-focus:var(--lab-needed,#946200)}
+:is(input.good,input.correct){--lab-field-focus:var(--lab-good-ink,#225f43)}
+:is(input.bad,input.incorrect,[aria-invalid="true"]){--lab-field-focus:var(--lab-bad-ink,#853b34)}
+
+/* Legacy adoption surface: opt in once; keep only model geometry in the lab. */
+.lab-adopt-v3{color:var(--lab-ink,#1d1d1f)}
+.lab-adopt-v3 .panel{border:1px solid var(--lab-line,#d2d2d7);border-radius:12px;background:var(--lab-surface,#fff);box-shadow:none}
+.lab-adopt-v3 :is(.mission,.goal-panel).lab-activity-bar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px 24px;padding:20px 24px;margin:0;border-bottom-color:var(--lab-line-subtle,#e7e8eb);border-radius:12px 12px 0 0;background:#fff}
+.lab-adopt-v3 .lab-activity-bar :is(.goal-top,.goal-meta){display:contents}
+.lab-adopt-v3 .lab-activity-bar :is(.mission-copy,.goal-copy){flex:1 1 300px;min-width:0}
+.lab-adopt-v3 .lab-activity-bar :is(.mission-copy,.goal-copy)>strong{display:block;font-size:14px;font-weight:500;line-height:1.45;color:var(--lab-ink,#1d1d1f);letter-spacing:normal;text-wrap:balance}
+.lab-adopt-v3 .lab-activity-bar :is(.mission-copy,.goal-copy)>span{font-size:12px;font-weight:400;line-height:1.45;color:var(--lab-ink-secondary,#424245)}
+.lab-adopt-v3 :is(.setup-meta,.goal-kicker,.step-label,.complexity-help,.calc-badge,.method-badge,.complexity-copy>span,.calc-head>p,.method-head>p){display:none}
+.lab-adopt-v3 :is(.mission-actions,.mission-tools,.case-actions){display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-left:auto}
+.lab-adopt-v3 :is(.complexity,.ownership){display:flex;align-items:center;gap:8px;background:transparent;border:0;padding:0;box-shadow:none}
+.lab-adopt-v3 :is(.complexity-copy strong,.ownership>span){color:var(--lab-ink,#1d1d1f);font-size:14px;font-weight:400;white-space:nowrap}
+.lab-adopt-v3 .lab-activity-bar .lab-toggle{display:inline-flex;flex:none;padding:3px;border:1px solid var(--lab-line,#d2d2d7);border-radius:999px;background:var(--lab-surface-muted,#f7f8fa);box-shadow:0 1px 3px rgba(29,29,31,.08);height:42px;gap:2px}
+.lab-adopt-v3 .lab-activity-bar .lab-toggle>button{width:auto;min-height:34px;min-width:40px;padding:0 12px;border:1px solid transparent;border-radius:999px;background:transparent;color:var(--lab-ink-secondary,#424245);font:400 12px/1.2 var(--lab-font-sans,sans-serif);box-shadow:none}
+.lab-adopt-v3 .lab-activity-bar .lab-toggle>button[aria-pressed="true"]{background:var(--lab-ink-secondary,#424245);color:#fff}
+.lab-adopt-v3 .lab-activity-bar .lab-toggle[data-kind="mode"]>button[aria-pressed="true"]{background:var(--lab-accent-hover,#4569aa);color:#fff}
+.lab-adopt-v3 .lab-activity-bar+:is(.lab,.workbench){margin-top:0;border-top:0;border-radius:0 0 12px 12px;padding:20px 24px;position:relative}
+.lab-adopt-v3 :is(.workspace,.recurring-workspace){display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,320px);gap:24px;align-items:start}
+.lab-adopt-v3 :is(.stage-wrap,.interaction-pane){min-width:0;position:relative}
+.lab-adopt-v3 :is(.calc-panel,.method-panel){padding:0 0 0 20px;min-width:0;border:0;border-left:1px solid var(--lab-line-subtle,#e7e8eb);background:transparent}
+.lab-adopt-v3 :is(.calc-head,.method-head){padding:0 0 12px;border:0;background:transparent}
+.lab-adopt-v3 :is(.calc-head,.method-head) strong{font-size:14px;font-weight:500;color:var(--lab-ink,#1d1d1f)}
+.lab-adopt-v3 :is(.calc-flow,.solve-chain){display:grid;gap:10px;margin-top:10px;padding:0}
+.lab-adopt-v3 .calc-flow::before,.lab-adopt-v3 .calc-step::before{display:none}
+.lab-adopt-v3 :is(.calc-step,.solve-card,.derive-step,.proof-rule,.compare-rule){padding:12px;border:1px solid var(--lab-line-subtle,#e7e8eb);border-radius:8px;background:var(--lab-surface-muted,#f7f8fa);box-shadow:none;opacity:1}
+.lab-adopt-v3 :is(.calc-step,.solve-card,.derive-step):has(input:not(:disabled)){border-color:var(--lab-needed-line,#d8c36a);background:var(--lab-needed-surface,#fffdf4)}
+.lab-adopt-v3 :is(.calc-step,.solve-card,.derive-step):has(input):is(.good,.complete,.correct),.lab-adopt-v3 :is(.calc-step,.solve-card,.derive-step):has(input.good):not(:has(input:not(.good))){border-color:var(--lab-good-line,#9cc7aa);background:var(--lab-good-surface,#f7fcf8)}
+.lab-adopt-v3 :is(.calc-step,.solve-card,.derive-step):has(input):is(.bad,.incorrect),.lab-adopt-v3 :is(.calc-step,.solve-card,.derive-step):has(input.bad,input.incorrect){border-color:var(--lab-bad-line,#d8aaa4);background:var(--lab-bad-surface,#fff8f7)}
+.lab-adopt-v3 :is(.calc-step,.solve-card,.derive-step):has(input:not(:disabled)):not(.good,.complete,.correct,.bad,.incorrect):not(:has(input.bad,input.incorrect)):not([data-interacted="true"]){animation:workingAttention 2s ease-in-out infinite}
+.lab-adopt-v3 :is(.calc-step,.solve-card,.derive-step):has(input)::after,.lab-adopt-v3 .step-head em{display:none}
+.lab-adopt-v3 :is(.step-head span,.solve-card>span,.derive-step-head strong,.calc-label,.reference-strip>span,.solve-label){font-size:12px;line-height:1.45;font-weight:400;text-transform:none;letter-spacing:normal;color:var(--lab-ink-secondary,#424245)}
+.lab-adopt-v3 :is(.step-note,.derive-note,.work-feedback,.working-row,.method-panel p,.reference-strip em,.calc-intro,.proof-body,.compare-rule,.gate-caption,.bridge-caption){font-size:14px;font-weight:400;line-height:1.45;color:var(--lab-ink-secondary,#424245)}
+.lab-adopt-v3 :is(.step-value,.solve-card>strong,.formula-band,.derive-equation,.calc-equation,.proof-rule code):not(:has(input)){width:fit-content;max-width:100%;padding:3px 7px;border:0;border-radius:4px;background:color-mix(in srgb,var(--lab-concept-violet,#7563a7) 20%,white);color:var(--lab-ink,#1d1d1f);font-size:14px;font-weight:400;line-height:1.45;box-shadow:none;overflow-wrap:anywhere}
+.lab-adopt-v3 :is(.reference-strip,.proof-head){padding:12px;border:0;border-radius:8px;background:var(--lab-surface-muted,#f7f8fa);font-size:12px;line-height:1.45}
+.lab-adopt-v3 input:not([type="range"]):not([type="checkbox"]):not([type="radio"]){min-height:40px;padding:6px 9px;border-width:1px;border-radius:8px;font-size:14px;font-weight:400;line-height:1.4}
+.lab-adopt-v3 :is(input.good,input.correct){border-color:var(--lab-good-line,#9cc7aa);background:var(--lab-good-surface,#f7fcf8)}
+.lab-adopt-v3 :is(input.bad,input.incorrect){border-color:var(--lab-bad-line,#d8aaa4);background:var(--lab-bad-surface,#fff8f7)}
+.lab-adopt-v3 :is(.solve-arrow,.derive-num){font-size:12px;font-weight:400;color:var(--lab-muted,#6e6e73)}
+.lab-adopt-v3 :is(.solve-arrow small,.projection-head span,.visual-copy span,.trace-note){font-size:12px;font-weight:400;line-height:1.45}
+.lab-adopt-v3 .lab-action{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:8px 14px;border:1px solid var(--lab-accent-line,#9fb4d6);border-radius:8px;background:#fff;color:var(--lab-accent-ink,#315b91);font-size:12px;font-weight:400;line-height:1.3;box-shadow:0 1px 3px rgba(29,29,31,.08)}
+.lab-adopt-v3 .lab-action[data-priority="primary"]{background:var(--lab-accent-hover,#4569aa);border-color:var(--lab-accent-pressed,#3a5d99);color:#fff}
+.lab-adopt-v3 .lab-action:disabled{background:var(--lab-surface-strong,#eef1f3);color:var(--lab-muted,#6e6e73);border-color:var(--lab-line,#d2d2d7);box-shadow:none;opacity:1}
+.lab-adopt-v3 .next-card{position:absolute;top:16px;right:16px;bottom:auto;left:auto;width:min(320px,calc(100% - 32px));max-width:none;padding:16px;border:1px solid var(--lab-good-line,#9cc7aa);border-radius:12px;background:var(--lab-good-surface,#f7fcf8);box-shadow:0 6px 18px rgba(29,29,31,.12);z-index:30;transform:none}
+.lab-adopt-v3 .next-card>strong{display:block;padding-right:30px;color:var(--lab-ink,#1d1d1f);font-size:14px;font-weight:500;line-height:1.4}
+.lab-adopt-v3 .next-card span{font-size:14px;line-height:1.45;font-weight:400}
+.lab-adopt-v3 .next-card .next-actions{display:flex;justify-content:center;gap:8px}
+.lab-adopt-v3 .next-card button:not(.lab-dialog-move){min-height:40px;padding:10px 18px;font-size:11px;font-weight:600;border-radius:8px}
+.lab-adopt-v3 .next-card .lab-dialog-move{position:absolute;top:6px;right:6px;width:32px;min-width:32px;height:32px;min-height:32px;margin:0;padding:0;border:0;border-radius:8px;background:transparent;color:var(--lab-muted,#6e6e73);cursor:grab;touch-action:none;font-size:16px;font-weight:400}
+.lab-adopt-v3 .next-card .lab-dialog-move:active{cursor:grabbing}
+.lab-adopt-v3 .goal-editor{flex-basis:100%;font-size:14px}
+@media(max-width:900px){.lab-adopt-v3 :is(.workspace,.recurring-workspace){grid-template-columns:minmax(0,1fr)}.lab-adopt-v3 :is(.calc-panel,.method-panel){padding:18px 0 0;border-left:0;border-top:1px solid var(--lab-line-subtle,#e7e8eb)}}
+@media(max-width:620px){.lab-adopt-v3 :is(.mission,.goal-panel).lab-activity-bar,.lab-adopt-v3 .lab-activity-bar+:is(.lab,.workbench){padding:16px}.lab-adopt-v3 :is(.mission-actions,.mission-tools,.case-actions){margin-left:0;justify-content:flex-end;width:100%}.lab-adopt-v3 .lab-activity-bar .lab-toggle>button{padding-inline:9px}}
+@media(prefers-reduced-motion:reduce){.lab-adopt-v3 :is(.calc-step,.solve-card,.derive-step){animation:none!important}}
+
+.lab-adopt-v3 :is(.mission-actions,.mission-tools,.case-actions)>button{order:-1}
+.lab-adopt-v3 .goal-meta>.reset{order:1}.lab-adopt-v3 .goal-meta>.complexity{order:2}
+.lab-adopt-v3 .lab-activity-bar>.complexity{margin-left:auto}
+.lab-adopt-v3 .method-panel .solve-card.final:not(:has(input)){border-color:var(--lab-line-subtle,#e7e8eb);background:var(--lab-surface-muted,#f7f8fa)}
+
+.lab-adopt-v3 .calc-panel .calc-step:not(:has(input)){border-color:var(--lab-line-subtle,#e7e8eb);background:var(--lab-surface-muted,#f7f8fa);box-shadow:none}
+.lab-adopt-v3 :is(.proof-head strong,.compare-rule strong,.gate-core strong,.projection-head strong,.verifier-head strong){font-size:14px;font-weight:500;line-height:1.45}
+.lab-adopt-v3 :is(.gate-top,.gate-period,.gate-rate,.percent-step-label,.method-head span){font-size:12px;font-weight:400;line-height:1.4}
+.lab-adopt-v3 .next-card.has-upgrade{display:block}
+.lab-adopt-v3 .next-card .next-upgrade{margin-top:12px;padding-top:12px;border:0;border-top:1px solid var(--lab-line-subtle,#e7e8eb);background:transparent}
+
+.lab-adopt-v3 .next-card[hidden]{display:none!important}

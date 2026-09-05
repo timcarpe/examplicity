@@ -540,3 +540,27 @@ Sequence and Prime Factors: cards containing answer fields no longer show a top-
 - Historical base lab CSS remains for compatibility; shared refinement rules override it. Future reusable visual changes must edit the canonical component resource.
 
 Packaging verification requested by user: all six reviewed labs’ compiled publication and standalone download contain the exact canonical CSS inline, with no unresolved component marker or external lab-design.css link. This is a focused packaging check; broader tests/browser validation were not run. Catalogue download fetches the compiled HTML and preserves its style block through createStandaloneLabHtml.
+
+
+### Batch 2 — five mathematics labs (implementation change list)
+
+| Lab | Adaptation |
+| --- | --- |
+| Repeated Percentage Change | Shared top panel/Working control; clean calculation cards and inputs. Preserve year-by-year calculations beside their causal model. |
+| Motion Graphs | Shared mode/Working toggles and right working column; one Working control updates active-mode ownership without changing the other mode or graph geometry. |
+| Rounded Measurements / Bounds | Shared top panel and proof styling; preserve existing proof reveal timing and interval/certificate model. |
+| Straight Lines | Shared top panel, working cards and formula surfaces; preserve gantry traversal and algebra checks. |
+| Recurring Decimals | Shared top panel, right calculation chain and interaction cues; preserve aligned-tail subtraction and remainder evidence. |
+
+Shared additions: opt-in adoption styles for legacy panel/field classes, action hierarchy, readable text, feedback/pulsing, flat maths, responsive columns and movable completion cards. No exam levels are added without curriculum evidence. Review choices: percentage calculations stay beside their years; Bounds proof stays progressively revealed; ordinary chart typography is included, complex illustrated models stay intact. Implementation uses shared resources and small adoption hooks. Validation remains skipped by the user's standing instruction; compilation and standalone packaging remain part of delivery.
+
+Batch 2 implementation notes:
+- Most presentation changes live in the shared stylesheet, including the darker-border-only field focus rule (also reaches the six previous labs). The five source files only adopt components, clean redundant settings labels, and connect Motion’s existing per-mode calculation ownership.
+- Motion Working selection changes active-mode ownership flags while preserving the current graph, answers, scenario counts and the other mode. Existing acceleration/area task type is retained rather than reinterpreting stored answers.
+- Completion movement and working attention are shared in lab-design.js, embedded alongside CSS.
+- No dropdowns found in these five labs. At the first dropdown, perform a focused design pass using the homepage dropdown as the reference.
+- This is an interface adoption batch: existing complex illustration geometry and model-specific stage/certificate/remainder evidence are retained. Review the density of Bounds’ interval diagram and the percentage year-by-year chain before further structural changes.
+
+The field-focus amendment is implemented in the canonical CSS, not copied into labs. Dropdown work is deferred because this batch contains none. Remaining review choice: model-specific dense SVG labels were not globally enlarged, to avoid obscuring existing geometry; flag any unreadable labels during this visual review for a targeted shared pattern.
+
+Batch 2 packaging check: all five standalone downloads include the exact shared CSS and JavaScript, with no unresolved component marker. No browser or broad test run was performed. Ready for user review before batch 3.

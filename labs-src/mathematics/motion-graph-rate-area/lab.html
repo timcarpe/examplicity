@@ -371,8 +371,9 @@ body>main{margin-top:10px}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}}
 </style>
 <link rel="stylesheet" href="./lab-kit.css" data-lab-resource="lab-kit.css">
+<!-- LAB_DESIGN_COMPONENTS -->
 </head>
-<body data-lab-layout="standard">
+<body data-lab-layout="standard" class="lab-adopt-v3">
 <main>
 <!-- LAB_MANIFEST_HEADER_START -->
 <header class="lab-manifest-header">
@@ -395,17 +396,18 @@ body>main{margin-top:10px}
 <span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span>
 <span data-lab-authored-subtitle-slot hidden></span>
 
-<section class="panel mission" aria-live="polite">
+<section class="panel mission lab-activity-bar" aria-live="polite">
   <div class="mission-copy">
     <div class="setup-meta"><span id="journeyNumber">Journey 1</span><span id="modeLabel">Distance–time</span><span id="difficultyLabel" class="difficulty">Working shown</span></div>
     <strong id="goalSentence"></strong><span id="goalSub"></span>
   </div>
   <div class="mission-actions">
-    <div class="mode-toggle" role="group" aria-label="Graph type"><button id="coreMode" class="active" type="button">Distance–time</button><button id="extendedMode" type="button">Speed–time</button></div>
-    <button id="editGoalBtn" type="button" aria-expanded="false">Change goal</button><button id="resetGraph" type="button">Reset</button>
+    <div class="mode-toggle lab-toggle" data-kind="mode" role="group" aria-label="Graph type"><button id="coreMode" class="active" type="button">Distance–time</button><button id="extendedMode" type="button">Speed–time</button></div>
+    <div class="ownership"><span>Working:</span><div class="lab-toggle" data-kind="working" role="group" aria-label="Working"><button type="button" data-work-level="0" aria-pressed="true">None</button><button type="button" data-work-level="1" aria-pressed="false">Some</button><button type="button" data-work-level="2" aria-pressed="false">All</button></div></div>
+    <button id="editGoalBtn" type="button" aria-expanded="false" class="lab-action">Change goal</button><button id="resetGraph" type="button" class="lab-action">Reset</button>
   </div>
   <div id="goalDrawer" class="goal-editor" hidden>
-    <div class="goal-editor-head"><div><strong>Edit this goal</strong><span>Change the journey; the limits are rebuilt so it stays solvable.</span></div><div class="goal-editor-actions"><button id="newJourney" type="button">Generate another</button></div></div>
+    <div class="goal-editor-head"><div><strong>Edit this goal</strong><span>Change the journey; the limits are rebuilt so it stays solvable.</span></div><div class="goal-editor-actions"><button id="newJourney" type="button" class="lab-action" data-priority="primary">Generate another</button></div></div>
     <div id="contractRoute" class="contract-route"></div><div id="constraintStrip" class="auto-constraints"></div>
   </div>
 </section>
@@ -413,9 +415,9 @@ body>main{margin-top:10px}
 <section class="panel lab">
   <div class="workspace">
     <div class="stage-wrap">
-      <div class="visual-head"><div class="visual-copy"><strong id="visualTitle">Change the graph, then run the trolley.</strong><span id="visualHint"></span></div><div class="runbar"><button id="runBtn" class="primary" type="button">Run trolley</button><button id="pauseBtn" type="button" disabled>Pause</button><input id="timeSlider" type="range" min="0" max="15" step="0.05" value="0" aria-label="Scrub journey time"></div></div>
+      <div class="visual-head"><div class="visual-copy"><strong id="visualTitle">Change the graph, then run the trolley.</strong><span id="visualHint"></span></div><div class="runbar"><button id="runBtn" class="primary lab-action" type="button" data-priority="primary">Run trolley</button><button id="pauseBtn" type="button" disabled class="lab-action">Pause</button><input id="timeSlider" type="range" min="0" max="15" step="0.05" value="0" aria-label="Scrub journey time"></div></div>
       <div class="stage-shell"><svg id="stage" class="stage" viewBox="0 0 1080 650" role="img" aria-label="Linked trolley journey and motion graph" data-lab-role="model" data-lab-manipulative="journey-graph"></svg>
-        <div id="nextCard" class="next-card" hidden><strong id="nextCardTitle">Journey verified</strong><span id="nextCardText"></span><div class="next-goal"><span>Next goal</span><strong id="nextGoalText"></strong></div><div id="nextUpgrade" class="next-upgrade" hidden><strong id="nextUpgradeTitle"></strong><span id="nextUpgradeText"></span><button id="nextUpgradeButton" type="button"></button></div><div class="next-actions"><button id="nextStageButton" type="button">Next journey</button></div></div>
+        <div id="nextCard" class="next-card" hidden><strong id="nextCardTitle">Journey verified</strong><span id="nextCardText"></span><div class="next-goal"><span>Next goal</span><strong id="nextGoalText"></strong></div><div id="nextUpgrade" class="next-upgrade" hidden><strong id="nextUpgradeTitle"></strong><span id="nextUpgradeText"></span><button id="nextUpgradeButton" type="button" class="lab-action"></button></div><div class="next-actions"><button id="nextStageButton" type="button" class="lab-action" data-priority="primary">Next journey</button></div></div>
       </div>
       <div class="evidence"><div id="evidenceMain" class="evidence-main"></div><div id="evidenceStatus" class="evidence-status"></div></div>
     </div>
@@ -544,7 +546,7 @@ function previewGoal(mode,level=state.workLevel[mode]){const idx=state.scenario[
 function suggestedWorkLevel(){const mode=state.mode,l=state.workLevel[mode],done=state.solvedAtLevel[mode][l];if(l===0&&done>=3)return 1;if(l===1&&done>=3)return 2;return -1}
 function renderNextCard(){const card=$('nextCard'),upgrade=$('nextUpgrade');card.hidden=!state.popup;if(!state.popup)return;const mode=state.mode,l=state.workLevel[mode],next=suggestedWorkLevel();$('nextCardTitle').textContent='Journey verified';$('nextCardText').textContent=mode==='core'?'Your graph, camera speeds and stop time all agree.':'Your speed profile, total area and final position all agree.';$('nextGoalText').textContent=previewGoal(mode,l);card.classList.toggle('has-upgrade',next>l);upgrade.hidden=next<=l;if(next>l){$('nextUpgradeTitle').textContent=next===1?'Ready to calculate one part?':'Ready to calculate every part?';$('nextUpgradeText').textContent=mode==='core'?(next===1?'You found speed = distance ÷ time by dragging. On the next journey, one point will be locked; calculate its safe travel time and your answer will move it.':'Now calculate both moving sections instead of positioning either point by trial and error.'):(next===1?'You found slope and area by dragging. On the next journey, one speed vertex will be locked and controlled by your calculation.':'Now use calculations to control all four sections of the profile.');$('nextUpgradeButton').textContent=next===1?'Next + one calculation':'Next + all calculations';$('nextUpgradeButton').dataset.level=String(next)}}
 function renderDrawers(){$('goalDrawer').hidden=$('editGoalBtn').getAttribute('aria-expanded')!=='true'}
-function renderAll(){renderContract();renderRunbar();renderStage();renderCalcPanel();renderEvidence();renderNextCard();renderDrawers();$('coreMode').classList.toggle('active',state.mode==='core');$('extendedMode').classList.toggle('active',state.mode==='extended')}
+function renderAll(){document.querySelectorAll('[data-work-level]').forEach(button=>button.setAttribute('aria-pressed',String(Number(button.dataset.workLevel)===state.workLevel[state.mode])));$('coreMode').setAttribute('aria-pressed',String(state.mode==='core'));$('extendedMode').setAttribute('aria-pressed',String(state.mode==='extended'));renderContract();renderRunbar();renderStage();renderCalcPanel();renderEvidence();renderNextCard();renderDrawers();$('coreMode').classList.toggle('active',state.mode==='core');$('extendedMode').classList.toggle('active',state.mode==='extended')}
 function applyCoreCalc(idx){const c=state.core,raw=Number(c.calcValues[idx]);if(!Number.isFinite(raw)||raw<=0)return;const target=idx===0?c.targetA:c.targetB,n=Math.abs(raw-target)<=.06?target:roundStep(raw,.01);if(Math.abs(raw-target)<=.06)c.calcValues[idx]=fmt(target,2);setChanged();if(idx===0)c.arrive=clamp(n,.35,c.deadline-.35);else c.depart=clamp(c.deadline-n,.35,c.deadline-.35);state.selected=idx===0?0:2;state.coach=`Your ${fmt(n,2)} s answer moved the ${idx===0?'arrival':'departure'} point. Read the camera and stop timer to test the consequence.`;renderAll()}
 function applyExtCalculations(){const e=state.ext,dt=e.deadline/4;setChanged();for(let i=0;i<4;i++){if(!e.calc[i])continue;const raw=Number(e.calcValues[i]);if(!Number.isFinite(raw))continue;const expected=extExpected(i),n=Math.abs(raw-expected)<=.07?expected:roundStep(raw,.01);if(Math.abs(raw-expected)<=.07)e.calcValues[i]=fmt(expected,2);e.speeds[i+1]=clamp(e.calcType==='acceleration'?e.speeds[i]+n*dt:n,0,e.maxSpeed*1.55)}state.coach=e.calcType==='acceleration'?'Your acceleration answer moved the locked vertex. Check the new slope and endpoint.':'Your ending-speed answer moved the locked vertex. Check the new shaded area and endpoint.';renderAll()}
 function applyExtCalculationsNoRender(changedVertex=0){const e=state.ext,dt=e.deadline/4;for(let i=Math.max(0,changedVertex);i<4;i++){if(!e.calc[i])continue;const raw=Number(e.calcValues[i]);if(!Number.isFinite(raw))continue;const expected=extExpected(i),n=Math.abs(raw-expected)<=.07?expected:roundStep(raw,.01);e.speeds[i+1]=clamp(e.calcType==='acceleration'?e.speeds[i]+n*dt:n,0,e.maxSpeed*1.55)}}
@@ -620,6 +622,7 @@ function run(){const max=state.mode==='core'?state.core.deadline:state.ext.deadl
 function pause(){state.running=false;if(state.raf)cancelAnimationFrame(state.raf);state.raf=0;renderRunbar()}
 function setDrawer(){const open=$('editGoalBtn').getAttribute('aria-expanded')==='true';$('editGoalBtn').setAttribute('aria-expanded',open?'false':'true');renderDrawers()}
 
+document.querySelectorAll('[data-work-level]').forEach(button=>button.addEventListener('click',()=>{const level=Number(button.dataset.workLevel),mode=state.mode;if(level===state.workLevel[mode])return;pause();state.workLevel[mode]=level;const plan=practicePlan(mode,state.scenario[mode],level);(mode==='core'?state.core:state.ext).calc=plan.calc.slice();state.popup=false;state.verified=false;renderAll()}));
 $('coreMode').addEventListener('click',()=>{pause();state.mode='core';state.time=0;state.selected=0;state.coach='';state.popup=false;$('editGoalBtn').setAttribute('aria-expanded','false');renderAll()});$('extendedMode').addEventListener('click',()=>{pause();state.mode='extended';state.time=0;state.selected=0;state.coach='';state.popup=false;$('editGoalBtn').setAttribute('aria-expanded','false');renderAll()});$('newJourney').addEventListener('click',newJourney);$('resetGraph').addEventListener('click',resetGraph);$('nextStageButton').addEventListener('click',nextJourney);$('nextUpgradeButton').addEventListener('click',()=>advanceJourney(Number($('nextUpgradeButton').dataset.level)));$('editGoalBtn').addEventListener('click',setDrawer);$('runBtn').addEventListener('click',run);$('pauseBtn').addEventListener('click',pause);$('timeSlider').addEventListener('input',e=>{pause();state.time=+e.target.value;renderStage()});
 $('contractRoute').addEventListener('change',e=>{const k=e.target.dataset.goal;if(!k)return;setChanged();const v=+e.target.value;if(state.mode==='core'){if(k==='checkpoint')state.core.checkpoint=v;if(k==='dock')state.core.dock=v;if(k==='dwell')state.core.dwell=v;if(k==='deadline')state.core.deadline=v;deriveCoreFromGoal(true)}else{if(k==='extDock')state.ext.dock=v;if(k==='extDeadline')state.ext.deadline=v;deriveExtFromGoal(true)}state.time=0;state.coach='Goal changed. Try the rebuilt journey.';renderAll()});
 $('calcContent').addEventListener('change',e=>{if(e.target.dataset.coreValue!==undefined){const i=+e.target.dataset.coreValue;state.core.calcValues[i]=e.target.value;applyCoreCalc(i)}else if(e.target.dataset.extValue!==undefined){const i=+e.target.dataset.extValue;state.ext.calcValues[i]=e.target.value;state.selected=i;applyExtCalculations()}});
