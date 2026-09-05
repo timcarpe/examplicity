@@ -179,5 +179,7 @@ for a locked/non-draggable target. For an unconstrained coordinate, return the
 pointer coordinate. `move(point, event)` receives the offset-adjusted SVG
 coordinate; `end(event)` distinguishes release from cancellation. Keep model
 constraints, snapping, keyboard actions and success checks in the lab.
-Histogram and Motion Graphs use this same implementation. The compiler embeds
+Histogram, Motion Graphs and Bounds use this same implementation. The compiler embeds
 the runtime before the lab script, including in standalone downloads.
+
+Shared introductions and completion cards prefer empty visible workspace, using rendered text, controls and SVG objects as placement obstacles. Completion placement runs on opening/content changes and preserves user movement. Use `data-lab-popup-avoid` on an otherwise unrecognisable custom visual region.

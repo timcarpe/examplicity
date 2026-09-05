@@ -1057,6 +1057,7 @@ svg .lab-intro-target{outline:none;animation:labSvgIntroAttention 2s ease-in-out
 /* Field introductions preserve the existing field-border focus language. */
 input.lab-intro-target{outline:none;animation:none}
 .lab-motion-chart :is(.handle,.vertex):not(.locked){cursor:grab}
+.lab-bounds-restored [data-drag]{cursor:grab}
 
 </style>
 <script data-lab-design-runtime>
@@ -1092,10 +1093,42 @@ window.LabDesign = {
 
 /* Shared progressive-card attention and movable completion for opted-in labs. */
 (() => {
+  // Prefer unoccupied space inside the visible workspace, then the least overlap.
+  function popupPosition(popup, scope, anchor) {
+    const box = scope.getBoundingClientRect(), w = popup.offsetWidth, h = popup.offsetHeight;
+    const left = Math.max(8, box.left + 8), top = Math.max(8, box.top + 8);
+    const right = Math.max(left, Math.min(innerWidth - 8, box.right - 8) - w);
+    const bottom = Math.max(top, Math.min(innerHeight - 8, box.bottom - 8) - h);
+    const occupied = [];
+    const add = r => { if (r.width && r.height && r.bottom > top && r.top < bottom + h) occupied.push(r); };
+    const walker = document.createTreeWalker(scope, NodeFilter.SHOW_TEXT);
+    while (walker.nextNode()) {
+      const node = walker.currentNode, parent = node.parentElement;
+      if (!node.textContent.trim() || !parent || parent.closest('svg,script,style,.next-card,.lab-intro-card') || !parent.getClientRects().length) continue;
+      const range = document.createRange(); range.selectNodeContents(node);
+      for (const r of range.getClientRects()) add(r);
+    }
+    scope.querySelectorAll('input,button,select,textarea,canvas,svg text,svg path,svg line,svg circle,svg rect,[data-lab-popup-avoid]').forEach(element => {
+      if (element.closest('.next-card,.lab-intro-card') || !element.getClientRects().length) return;
+      const r = element.getBoundingClientRect(), css = getComputedStyle(element);
+      if (css.visibility === 'hidden' || css.opacity === '0') return;
+      // Large SVG backgrounds are workspace, not an operated object.
+      if (element.tagName === 'rect' && (r.width * r.height > box.width * box.height / 5 || css.fill === 'transparent' || css.fill === 'rgba(0, 0, 0, 0)')) return;
+      add(r);
+    });
+    if (anchor) occupied.push(anchor);
+    const candidates = [[right, top], [left, top], [right, bottom], [left, bottom]];
+    if (anchor) candidates.unshift([anchor.right + 16, anchor.top], [anchor.left - w - 16, anchor.top], [anchor.left, anchor.bottom + 16], [anchor.left, anchor.top - h - 16]);
+    for (let y = top; y <= bottom; y += 48) for (let x = left; x <= right; x += 48) candidates.push([x, y]);
+    const score = ([x, y]) => occupied.reduce((sum, r) => sum + Math.max(0, Math.min(x + w, r.right + 6) - Math.max(x, r.left - 6)) * Math.max(0, Math.min(y + h, r.bottom + 6) - Math.max(y, r.top - 6)), 0);
+    const distance = ([x, y]) => anchor ? Math.hypot(x + w / 2 - (anchor.left + anchor.right) / 2, y + h / 2 - (anchor.top + anchor.bottom) / 2) : 0;
+    return candidates.map(([x, y]) => [Math.max(left, Math.min(right, x)), Math.max(top, Math.min(bottom, y))]).sort((a, b) => score(a) - score(b) || distance(a) - distance(b))[0];
+  }
   function init() {
     if (!document.body.classList.contains('lab-adopt-v3')) return;
     const touched = new Set();
     const introduced = new Set();
+    const placed = new WeakMap(), moved = new WeakSet();
     let introduction = null, interacting = false;
     const hint = document.createElement('aside');
     hint.id = 'lab-intro-hint'; hint.className = 'lab-intro-card'; hint.setAttribute('role', 'tooltip'); hint.hidden = true;
@@ -1122,12 +1155,8 @@ window.LabDesign = {
       hintTitle.textContent = introduction.dataset.labIntroTitle;
       hintCopy.textContent = introduction.dataset.labIntroCopy;
       hint.hidden = false;
-      const r = introduction.getBoundingClientRect(), w = hint.offsetWidth, h = hint.offsetHeight, gap = 16;
-      const candidates = [[r.right + gap, r.top], [r.left - w - gap, r.top], [r.left + (r.width - w) / 2, r.bottom + gap], [r.left + (r.width - w) / 2, r.top - h - gap]];
-      const overlap = ([x, y]) => Math.max(0, Math.min(x + w, r.right + 8) - Math.max(x, r.left - 8)) * Math.max(0, Math.min(y + h, r.bottom + 8) - Math.max(y, r.top - 8));
-      const positions = candidates.map(([x, y]) => [Math.max(8, Math.min(innerWidth - w - 8, x)), Math.max(8, Math.min(innerHeight - h - 8, y))]);
-      positions.sort((a, b) => overlap(a) - overlap(b));
-      hint.style.left = positions[0][0] + 'px'; hint.style.top = positions[0][1] + 'px';
+      const [x, y] = popupPosition(hint, document.querySelector('main') || document.body, introduction.getBoundingClientRect());
+      hint.style.left = x + 'px'; hint.style.top = y + 'px';
     }
     const cardSelector = '.calc-step,.solve-card,.derive-step';
     let queued = false;
@@ -1138,6 +1167,15 @@ window.LabDesign = {
         if (touched.has(key(card)) && card.dataset.interacted !== 'true') card.dataset.interacted = 'true';
       });
       document.querySelectorAll('.next-card').forEach(card => {
+        if (card.hidden || !card.getClientRects().length) { placed.delete(card); moved.delete(card); return; }
+        if (!moved.has(card) && placed.get(card) !== card.textContent) {
+          const scope = card.offsetParent, box = scope.getBoundingClientRect();
+          const [x, y] = popupPosition(card, scope);
+          card.style.right = 'auto'; card.style.bottom = 'auto';
+          card.style.left = x - box.left - scope.clientLeft + scope.scrollLeft + 'px';
+          card.style.top = y - box.top - scope.clientTop + scope.scrollTop + 'px';
+          placed.set(card, card.textContent);
+        }
         if (card.querySelector('.lab-dialog-move')) return;
         const handle = document.createElement('button');
         handle.type = 'button'; handle.className = 'lab-dialog-move';
@@ -1177,6 +1215,7 @@ window.LabDesign = {
       }
     }, true);
     const move = (card, left, top) => {
+      moved.add(card);
       const bounds = card.offsetParent;
       card.style.right = 'auto'; card.style.bottom = 'auto';
       card.style.left = Math.max(0, Math.min(left, bounds.clientWidth - card.offsetWidth)) + 'px';

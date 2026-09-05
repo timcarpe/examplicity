@@ -404,7 +404,7 @@ const BASE={distance:{report:100,step:1,unit:'m',digits:1},time:{report:12.4,ste
 const FINE={distance:{report:100,step:.1,unit:'m',digits:2},time:{report:12.4,step:.01,unit:'s',digits:3},threshold:8.05};
 const blankProof=()=>({distance:'',time:'',speed:'',verdict:'',checked:false,success:false,message:'',bad:[]});
 const blankFine=()=>({dLow:'',dHigh:'',tLow:'',tHigh:'',boundsChecked:false,boundsSuccess:false,speed:'',verdict:'',checked:false,success:false,message:'',bad:[]});
-const state={workingLevel:0,step:0,complete:[false,false,false,false],d:100,t:12.4,drag:null,pointerId:null,
+const state={workingLevel:0,step:0,complete:[false,false,false,false],d:100,t:12.4,drag:null,
   discover:{dLow:false,dHigh:false,tLow:false,tHigh:false},upperSpeed:false,lowerSpeed:false,observedFail:false,
   proof:blankProof(),fine:blankFine()};
 const svg=(tag,attrs={},text=null)=>{const e=document.createElementNS(NS,tag);Object.entries(attrs).forEach(([k,v])=>{if(v!==undefined&&v!==null)e.setAttribute(k,String(v))});if(text!==null)e.textContent=text;return e};
@@ -428,14 +428,14 @@ const steps=[
 ];
 
 function resetStep(){
-  const c=cfg();state.d=c.distance.report;state.t=c.time.report;state.drag=null;state.pointerId=null;
+  const c=cfg();state.d=c.distance.report;state.t=c.time.report;state.drag=null;
   if(state.step===0){state.discover={dLow:false,dHigh:false,tLow:false,tHigh:false};state.complete[0]=false}
   if(state.step===1){state.upperSpeed=false;state.lowerSpeed=false;state.complete[1]=false}
   if(state.step===2){state.d=low(BASE.distance);state.t=safeHigh(BASE.time);state.observedFail=false;state.proof=blankProof();state.complete[2]=false}
   if(state.step===3){state.fine=blankFine();state.complete[3]=false}
   renderAll();
 }
-function selectStep(i){if(i>0&&!state.complete[i-1])return;state.step=i;const c=cfg();if(i===2){state.d=low(BASE.distance);state.t=safeHigh(BASE.time)}else{state.d=c.distance.report;state.t=c.time.report}state.drag=null;state.pointerId=null;renderAll()}
+function selectStep(i){if(i>0&&!state.complete[i-1])return;state.step=i;const c=cfg();if(i===2){state.d=low(BASE.distance);state.t=safeHigh(BASE.time)}else{state.d=c.distance.report;state.t=c.time.report}state.drag=null;renderAll()}
 function renderSteps(){
  const host=$('steps');host.replaceChildren();
  const evidence=[`Distance: 99.5 ≤ d < 100.5 m. Time: 12.35 ≤ t < 12.45 s.`, `Fastest: upper distance ÷ lower time. Slowest: lower distance ÷ upper time.`, `99.5 ÷ 12.45 ≈ 7.992 m/s: cannot certify.`, `99.95 ÷ 12.405 ≈ 8.057 m/s: certify.`];
@@ -449,7 +449,6 @@ function scanDomain(kind){return kind==='distance'?[99.2,100.8]:[12.30,12.50]}
 function domain(kind){return scanDomain(kind)}
 function valueToX(kind,v){const [a,b]=domain(kind),g=geom[kind];return g.x+(v-a)/(b-a)*g.w}
 function xToValue(kind,x){const [a,b]=domain(kind),g=geom[kind];let v=a+clamp((x-g.x)/g.w,0,1)*(b-a);if(state.step>0)v=Math.min(v,safeHigh(cfg()[kind]));return v}
-function stagePoint(evt){const s=$('stage'),p=s.createSVGPoint();p.x=evt.clientX;p.y=evt.clientY;return p.matrixTransform(s.getScreenCTM().inverse())}
 
 function ticks(root,kind,y){
   const [a,b]=domain(kind),g=geom[kind],count=10;
@@ -600,7 +599,20 @@ function checkFineProof(){
 
 const dock=$('proofDock');dock.addEventListener('input',evt=>{const path=evt.target.dataset.field;if(path){setByPath(path,evt.target.value);const field=evt.target.closest('.num-field');field?.classList.remove('good','bad');const mark=field?.querySelector('.field-status');if(mark)mark.textContent='';const prediction=dock.querySelector('.lab-prediction');if(prediction){prediction.dataset.workState='needed';prediction.querySelector('p').textContent='';}}});dock.addEventListener('click',evt=>{const verdict=evt.target.closest?.('[data-verdict]');if(verdict){const obj=verdict.dataset.prefix==='fine'?state.fine:state.proof;obj.verdict=verdict.dataset.verdict;obj.success=false;obj.message='';state.complete[state.step]=false;renderCompletion();obj.checked=false;obj.bad=[];renderProofDock();return}const check=evt.target.closest?.('[data-check]')?.dataset.check;if(check==='proof')checkProof();if(check==='fine-bounds')checkFineBounds();if(check==='fine-proof')checkFineProof()});
 
-const stage=$('stage');stage.addEventListener('pointerdown',evt=>{const p=stagePoint(evt),drag=evt.target.closest?.('[data-drag]'),lane=evt.target.closest?.('[data-lane]'),kind=drag?.dataset.drag||lane?.dataset.lane;if(!kind)return;state.drag=kind;state.pointerId=evt.pointerId;stage.setPointerCapture?.(evt.pointerId);evt.preventDefault();setValue(kind,xToValue(kind,p.x))});stage.addEventListener('pointermove',evt=>{if(!state.drag)return;setValue(state.drag,xToValue(state.drag,stagePoint(evt).x))});function endPointer(){if(state.pointerId!==null)try{stage.releasePointerCapture?.(state.pointerId)}catch{}state.drag=null;state.pointerId=null;renderCompletion()}stage.addEventListener('pointerup',endPointer);stage.addEventListener('pointercancel',endPointer);stage.addEventListener('keydown',evt=>{const handle=evt.target.closest?.('[data-drag]');if(handle&&(evt.key==='ArrowLeft'||evt.key==='ArrowRight')){evt.preventDefault();const kind=handle.dataset.drag,[a,b]=domain(kind),delta=(b-a)/80*(evt.key==='ArrowLeft'?-1:1);setValue(kind,(kind==='distance'?state.d:state.t)+delta);requestAnimationFrame(()=>stage.querySelector(`[data-drag="${kind}"][tabindex]`)?.focus({preventScroll:true}))}});
+const stage=$('stage');
+LabDesign.bindSvgDrag(stage,{
+ start(evt,p){
+  const drag=evt.target.closest('[data-drag]'),lane=evt.target.closest('[data-lane]'),kind=drag?.dataset.drag||lane?.dataset.lane;
+  if(!kind)return;
+  state.drag=kind;
+  if(!drag)setValue(kind,xToValue(kind,p.x));
+  renderCompletion();
+  return {x:valueToX(kind,kind==='distance'?state.d:state.t),y:p.y};
+ },
+ move(p){setValue(state.drag,xToValue(state.drag,p.x))},
+ end(){state.drag=null;renderCompletion()}
+});
+stage.addEventListener('keydown',evt=>{const handle=evt.target.closest?.('[data-drag]');if(handle&&(evt.key==='ArrowLeft'||evt.key==='ArrowRight')){evt.preventDefault();const kind=handle.dataset.drag,[a,b]=domain(kind),delta=(b-a)/80*(evt.key==='ArrowLeft'?-1:1);setValue(kind,(kind==='distance'?state.d:state.t)+delta);requestAnimationFrame(()=>stage.querySelector(`[data-drag="${kind}"][tabindex]`)?.focus({preventScroll:true}))}});
 
 
 function renderCompletion(){

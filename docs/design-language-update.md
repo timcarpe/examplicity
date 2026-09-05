@@ -604,3 +604,10 @@ Canonical CSS adds lab-card-title and compatible existing card-heading selectors
 - Straight Lines / Recurring: only introductory hooks for their model operations and owned answers; their approved layouts are preserved.
 - Canonical HTML guide, style contract and kit README document these patterns. Developer publication and standalone inline resources regenerated. Earlier notes about stacked Percentage rows are superseded by this correction.
 - Focused browser review of the three affected compositions and direct interaction; no broad test suite. Review links: `/labs/mathematics/repeated-percentage-change.html`, `/labs/mathematics/rounded-measurements-bounds.html`, `/labs/mathematics/motion-graph-rate-area.html`.
+
+
+### Popup placement and Bounds pickup — 5 September 2026
+
+- Shared lab-design.js: introduction/completion placement scores visible workspace for overlap with text, controls and diagram objects; prefers empty space and retains manual completion positioning. Shared CSS supplies Bounds' grab cursor.
+- Bounds source: replaces the archive's pointer-to-centre jump with shared pickup-offset dragging for the car and time handle. Retains ruler click-to-select, allowed intervals, keyboard adjustment and speed-discovery rules. Percentage and Motion model logic unchanged.
+- Focused browser check: off-centre click preserves 100 m; first-stage intervals and both second-stage speed extremes complete through pointer dragging; completion appears in clear space beside the model. Guide, contract, kit README and inline publication resources updated.

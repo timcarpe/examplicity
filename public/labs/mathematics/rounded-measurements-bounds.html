@@ -1030,6 +1030,7 @@ svg .lab-intro-target{outline:none;animation:labSvgIntroAttention 2s ease-in-out
 /* Field introductions preserve the existing field-border focus language. */
 input.lab-intro-target{outline:none;animation:none}
 .lab-motion-chart :is(.handle,.vertex):not(.locked){cursor:grab}
+.lab-bounds-restored [data-drag]{cursor:grab}
 
 </style>
 <script data-lab-design-runtime>
@@ -1065,10 +1066,42 @@ window.LabDesign = {
 
 /* Shared progressive-card attention and movable completion for opted-in labs. */
 (() => {
+  // Prefer unoccupied space inside the visible workspace, then the least overlap.
+  function popupPosition(popup, scope, anchor) {
+    const box = scope.getBoundingClientRect(), w = popup.offsetWidth, h = popup.offsetHeight;
+    const left = Math.max(8, box.left + 8), top = Math.max(8, box.top + 8);
+    const right = Math.max(left, Math.min(innerWidth - 8, box.right - 8) - w);
+    const bottom = Math.max(top, Math.min(innerHeight - 8, box.bottom - 8) - h);
+    const occupied = [];
+    const add = r => { if (r.width && r.height && r.bottom > top && r.top < bottom + h) occupied.push(r); };
+    const walker = document.createTreeWalker(scope, NodeFilter.SHOW_TEXT);
+    while (walker.nextNode()) {
+      const node = walker.currentNode, parent = node.parentElement;
+      if (!node.textContent.trim() || !parent || parent.closest('svg,script,style,.next-card,.lab-intro-card') || !parent.getClientRects().length) continue;
+      const range = document.createRange(); range.selectNodeContents(node);
+      for (const r of range.getClientRects()) add(r);
+    }
+    scope.querySelectorAll('input,button,select,textarea,canvas,svg text,svg path,svg line,svg circle,svg rect,[data-lab-popup-avoid]').forEach(element => {
+      if (element.closest('.next-card,.lab-intro-card') || !element.getClientRects().length) return;
+      const r = element.getBoundingClientRect(), css = getComputedStyle(element);
+      if (css.visibility === 'hidden' || css.opacity === '0') return;
+      // Large SVG backgrounds are workspace, not an operated object.
+      if (element.tagName === 'rect' && (r.width * r.height > box.width * box.height / 5 || css.fill === 'transparent' || css.fill === 'rgba(0, 0, 0, 0)')) return;
+      add(r);
+    });
+    if (anchor) occupied.push(anchor);
+    const candidates = [[right, top], [left, top], [right, bottom], [left, bottom]];
+    if (anchor) candidates.unshift([anchor.right + 16, anchor.top], [anchor.left - w - 16, anchor.top], [anchor.left, anchor.bottom + 16], [anchor.left, anchor.top - h - 16]);
+    for (let y = top; y <= bottom; y += 48) for (let x = left; x <= right; x += 48) candidates.push([x, y]);
+    const score = ([x, y]) => occupied.reduce((sum, r) => sum + Math.max(0, Math.min(x + w, r.right + 6) - Math.max(x, r.left - 6)) * Math.max(0, Math.min(y + h, r.bottom + 6) - Math.max(y, r.top - 6)), 0);
+    const distance = ([x, y]) => anchor ? Math.hypot(x + w / 2 - (anchor.left + anchor.right) / 2, y + h / 2 - (anchor.top + anchor.bottom) / 2) : 0;
+    return candidates.map(([x, y]) => [Math.max(left, Math.min(right, x)), Math.max(top, Math.min(bottom, y))]).sort((a, b) => score(a) - score(b) || distance(a) - distance(b))[0];
+  }
   function init() {
     if (!document.body.classList.contains('lab-adopt-v3')) return;
     const touched = new Set();
     const introduced = new Set();
+    const placed = new WeakMap(), moved = new WeakSet();
     let introduction = null, interacting = false;
     const hint = document.createElement('aside');
     hint.id = 'lab-intro-hint'; hint.className = 'lab-intro-card'; hint.setAttribute('role', 'tooltip'); hint.hidden = true;
@@ -1095,12 +1128,8 @@ window.LabDesign = {
       hintTitle.textContent = introduction.dataset.labIntroTitle;
       hintCopy.textContent = introduction.dataset.labIntroCopy;
       hint.hidden = false;
-      const r = introduction.getBoundingClientRect(), w = hint.offsetWidth, h = hint.offsetHeight, gap = 16;
-      const candidates = [[r.right + gap, r.top], [r.left - w - gap, r.top], [r.left + (r.width - w) / 2, r.bottom + gap], [r.left + (r.width - w) / 2, r.top - h - gap]];
-      const overlap = ([x, y]) => Math.max(0, Math.min(x + w, r.right + 8) - Math.max(x, r.left - 8)) * Math.max(0, Math.min(y + h, r.bottom + 8) - Math.max(y, r.top - 8));
-      const positions = candidates.map(([x, y]) => [Math.max(8, Math.min(innerWidth - w - 8, x)), Math.max(8, Math.min(innerHeight - h - 8, y))]);
-      positions.sort((a, b) => overlap(a) - overlap(b));
-      hint.style.left = positions[0][0] + 'px'; hint.style.top = positions[0][1] + 'px';
+      const [x, y] = popupPosition(hint, document.querySelector('main') || document.body, introduction.getBoundingClientRect());
+      hint.style.left = x + 'px'; hint.style.top = y + 'px';
     }
     const cardSelector = '.calc-step,.solve-card,.derive-step';
     let queued = false;
@@ -1111,6 +1140,15 @@ window.LabDesign = {
         if (touched.has(key(card)) && card.dataset.interacted !== 'true') card.dataset.interacted = 'true';
       });
       document.querySelectorAll('.next-card').forEach(card => {
+        if (card.hidden || !card.getClientRects().length) { placed.delete(card); moved.delete(card); return; }
+        if (!moved.has(card) && placed.get(card) !== card.textContent) {
+          const scope = card.offsetParent, box = scope.getBoundingClientRect();
+          const [x, y] = popupPosition(card, scope);
+          card.style.right = 'auto'; card.style.bottom = 'auto';
+          card.style.left = x - box.left - scope.clientLeft + scope.scrollLeft + 'px';
+          card.style.top = y - box.top - scope.clientTop + scope.scrollTop + 'px';
+          placed.set(card, card.textContent);
+        }
         if (card.querySelector('.lab-dialog-move')) return;
         const handle = document.createElement('button');
         handle.type = 'button'; handle.className = 'lab-dialog-move';
@@ -1150,6 +1188,7 @@ window.LabDesign = {
       }
     }, true);
     const move = (card, left, top) => {
+      moved.add(card);
       const bounds = card.offsetParent;
       card.style.right = 'auto'; card.style.bottom = 'auto';
       card.style.left = Math.max(0, Math.min(left, bounds.clientWidth - card.offsetWidth)) + 'px';
@@ -1652,7 +1691,7 @@ const BASE={distance:{report:100,step:1,unit:'m',digits:1},time:{report:12.4,ste
 const FINE={distance:{report:100,step:.1,unit:'m',digits:2},time:{report:12.4,step:.01,unit:'s',digits:3},threshold:8.05};
 const blankProof=()=>({distance:'',time:'',speed:'',verdict:'',checked:false,success:false,message:'',bad:[]});
 const blankFine=()=>({dLow:'',dHigh:'',tLow:'',tHigh:'',boundsChecked:false,boundsSuccess:false,speed:'',verdict:'',checked:false,success:false,message:'',bad:[]});
-const state={workingLevel:0,step:0,complete:[false,false,false,false],d:100,t:12.4,drag:null,pointerId:null,
+const state={workingLevel:0,step:0,complete:[false,false,false,false],d:100,t:12.4,drag:null,
   discover:{dLow:false,dHigh:false,tLow:false,tHigh:false},upperSpeed:false,lowerSpeed:false,observedFail:false,
   proof:blankProof(),fine:blankFine()};
 const svg=(tag,attrs={},text=null)=>{const e=document.createElementNS(NS,tag);Object.entries(attrs).forEach(([k,v])=>{if(v!==undefined&&v!==null)e.setAttribute(k,String(v))});if(text!==null)e.textContent=text;return e};
@@ -1676,14 +1715,14 @@ const steps=[
 ];
 
 function resetStep(){
-  const c=cfg();state.d=c.distance.report;state.t=c.time.report;state.drag=null;state.pointerId=null;
+  const c=cfg();state.d=c.distance.report;state.t=c.time.report;state.drag=null;
   if(state.step===0){state.discover={dLow:false,dHigh:false,tLow:false,tHigh:false};state.complete[0]=false}
   if(state.step===1){state.upperSpeed=false;state.lowerSpeed=false;state.complete[1]=false}
   if(state.step===2){state.d=low(BASE.distance);state.t=safeHigh(BASE.time);state.observedFail=false;state.proof=blankProof();state.complete[2]=false}
   if(state.step===3){state.fine=blankFine();state.complete[3]=false}
   renderAll();
 }
-function selectStep(i){if(i>0&&!state.complete[i-1])return;state.step=i;const c=cfg();if(i===2){state.d=low(BASE.distance);state.t=safeHigh(BASE.time)}else{state.d=c.distance.report;state.t=c.time.report}state.drag=null;state.pointerId=null;renderAll()}
+function selectStep(i){if(i>0&&!state.complete[i-1])return;state.step=i;const c=cfg();if(i===2){state.d=low(BASE.distance);state.t=safeHigh(BASE.time)}else{state.d=c.distance.report;state.t=c.time.report}state.drag=null;renderAll()}
 function renderSteps(){
  const host=$('steps');host.replaceChildren();
  const evidence=[`Distance: 99.5 ≤ d < 100.5 m. Time: 12.35 ≤ t < 12.45 s.`, `Fastest: upper distance ÷ lower time. Slowest: lower distance ÷ upper time.`, `99.5 ÷ 12.45 ≈ 7.992 m/s: cannot certify.`, `99.95 ÷ 12.405 ≈ 8.057 m/s: certify.`];
@@ -1697,7 +1736,6 @@ function scanDomain(kind){return kind==='distance'?[99.2,100.8]:[12.30,12.50]}
 function domain(kind){return scanDomain(kind)}
 function valueToX(kind,v){const [a,b]=domain(kind),g=geom[kind];return g.x+(v-a)/(b-a)*g.w}
 function xToValue(kind,x){const [a,b]=domain(kind),g=geom[kind];let v=a+clamp((x-g.x)/g.w,0,1)*(b-a);if(state.step>0)v=Math.min(v,safeHigh(cfg()[kind]));return v}
-function stagePoint(evt){const s=$('stage'),p=s.createSVGPoint();p.x=evt.clientX;p.y=evt.clientY;return p.matrixTransform(s.getScreenCTM().inverse())}
 
 function ticks(root,kind,y){
   const [a,b]=domain(kind),g=geom[kind],count=10;
@@ -1848,7 +1886,20 @@ function checkFineProof(){
 
 const dock=$('proofDock');dock.addEventListener('input',evt=>{const path=evt.target.dataset.field;if(path){setByPath(path,evt.target.value);const field=evt.target.closest('.num-field');field?.classList.remove('good','bad');const mark=field?.querySelector('.field-status');if(mark)mark.textContent='';const prediction=dock.querySelector('.lab-prediction');if(prediction){prediction.dataset.workState='needed';prediction.querySelector('p').textContent='';}}});dock.addEventListener('click',evt=>{const verdict=evt.target.closest?.('[data-verdict]');if(verdict){const obj=verdict.dataset.prefix==='fine'?state.fine:state.proof;obj.verdict=verdict.dataset.verdict;obj.success=false;obj.message='';state.complete[state.step]=false;renderCompletion();obj.checked=false;obj.bad=[];renderProofDock();return}const check=evt.target.closest?.('[data-check]')?.dataset.check;if(check==='proof')checkProof();if(check==='fine-bounds')checkFineBounds();if(check==='fine-proof')checkFineProof()});
 
-const stage=$('stage');stage.addEventListener('pointerdown',evt=>{const p=stagePoint(evt),drag=evt.target.closest?.('[data-drag]'),lane=evt.target.closest?.('[data-lane]'),kind=drag?.dataset.drag||lane?.dataset.lane;if(!kind)return;state.drag=kind;state.pointerId=evt.pointerId;stage.setPointerCapture?.(evt.pointerId);evt.preventDefault();setValue(kind,xToValue(kind,p.x))});stage.addEventListener('pointermove',evt=>{if(!state.drag)return;setValue(state.drag,xToValue(state.drag,stagePoint(evt).x))});function endPointer(){if(state.pointerId!==null)try{stage.releasePointerCapture?.(state.pointerId)}catch{}state.drag=null;state.pointerId=null;renderCompletion()}stage.addEventListener('pointerup',endPointer);stage.addEventListener('pointercancel',endPointer);stage.addEventListener('keydown',evt=>{const handle=evt.target.closest?.('[data-drag]');if(handle&&(evt.key==='ArrowLeft'||evt.key==='ArrowRight')){evt.preventDefault();const kind=handle.dataset.drag,[a,b]=domain(kind),delta=(b-a)/80*(evt.key==='ArrowLeft'?-1:1);setValue(kind,(kind==='distance'?state.d:state.t)+delta);requestAnimationFrame(()=>stage.querySelector(`[data-drag="${kind}"][tabindex]`)?.focus({preventScroll:true}))}});
+const stage=$('stage');
+LabDesign.bindSvgDrag(stage,{
+ start(evt,p){
+  const drag=evt.target.closest('[data-drag]'),lane=evt.target.closest('[data-lane]'),kind=drag?.dataset.drag||lane?.dataset.lane;
+  if(!kind)return;
+  state.drag=kind;
+  if(!drag)setValue(kind,xToValue(kind,p.x));
+  renderCompletion();
+  return {x:valueToX(kind,kind==='distance'?state.d:state.t),y:p.y};
+ },
+ move(p){setValue(state.drag,xToValue(state.drag,p.x))},
+ end(){state.drag=null;renderCompletion()}
+});
+stage.addEventListener('keydown',evt=>{const handle=evt.target.closest?.('[data-drag]');if(handle&&(evt.key==='ArrowLeft'||evt.key==='ArrowRight')){evt.preventDefault();const kind=handle.dataset.drag,[a,b]=domain(kind),delta=(b-a)/80*(evt.key==='ArrowLeft'?-1:1);setValue(kind,(kind==='distance'?state.d:state.t)+delta);requestAnimationFrame(()=>stage.querySelector(`[data-drag="${kind}"][tabindex]`)?.focus({preventScroll:true}))}});
 
 
 function renderCompletion(){

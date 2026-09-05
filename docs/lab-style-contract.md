@@ -459,3 +459,15 @@ Vertical page flow does not mean rearranging a horizontal model into stacked
 copies. Percentage bars and gates remain a single causal sequence: resize
 their widths and spacing to fit the available canvas without scrolling.
 Wrapping a long symbolic remainder trace is a separate presentation choice.
+
+
+Popup placement prefers visible empty workspace, avoiding text, fields, controls
+and diagram objects. If no clear position fits, choose the least overlap and
+keep completion movable. Automatic placement is an opening default; preserve
+the learner's manual position while the card remains open. Introduction cues
+prefer the nearest clear position to their target.
+
+Bounds' car and time marker use the same pickup-offset drag resource as Motion
+and Histogram: grabbing an object must not change its value until it moves.
+Clicking a ruler lane may deliberately select a value; interval constraints
+and speed discovery remain lab-specific.
