@@ -374,4 +374,4 @@ For adjacent previous/current stage views, use matched padded descriptor headers
 
 Introduction targets use rounded containers and a restrained two-second interaction-blue halo pulse. Match the halo to the container corners (12px for Sequence stage/material surfaces). Pulse only the current target while guidance is active; retain a static halo for prefers-reduced-motion. Avoid moving individual model objects solely for attention.
 
-Displayed terms and formulas may use a flat #eef1f3 backing with 4px corners, no border, shadow or added padding. Keep existing spacing; group a short expression such as “add 2” as one surface. This identifies mathematical content, not correctness, and does not replace input feedback states.
+Displayed terms and formulas may use approved concept violet #7563a7 at 20% over white, 4px corners and compact 3px vertical / 7px horizontal padding, without borders or shadows. Group a short expression such as “add 2” as one surface with only one padding layer. This identifies mathematical content, not correctness, and does not replace input feedback states.

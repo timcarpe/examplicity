@@ -498,3 +498,8 @@ Previous/next-stage containers, material area and introduction card now use 12px
 ### Sequence flat maths surfaces — 5 September 2026
 
 Displayed term chips, calculated values and formulas now have a subtle #eef1f3 flat backing with 4px corners, no border/shadow and no added padding. Supplied “add 2” expressions share one backing. Input and correctness styling remains unchanged. Updated guide and published HTML; validation skipped as requested.
+
+
+### Sequence maths tint and padding — 5 September 2026
+
+Refined the flat maths surfaces to approved concept violet #7563a7 at 20% over white, with 3px vertical / 7px horizontal padding. Compound expressions receive one outer padding layer. Borders and shadows remain absent; input feedback unchanged. Guide and generated copies updated; validation skipped as requested.
