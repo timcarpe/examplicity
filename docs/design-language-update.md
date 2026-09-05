@@ -493,3 +493,8 @@ Sequence only: previous-stage evidence regained a light bordered container. Both
 ### Sequence introduction emphasis — 5 September 2026
 
 Previous/next-stage containers, material area and introduction card now use 12px corners. Restored a light boundary around the operated stage. The current introduction target has a slow two-second blue halo pulse instead of bouncing individual squares; reduced-motion users receive a static halo. The highlight still clears when the introduction ends. Guide updated; validation skipped as requested.
+
+
+### Sequence flat maths surfaces — 5 September 2026
+
+Displayed term chips, calculated values and formulas now have a subtle #eef1f3 flat backing with 4px corners, no border/shadow and no added padding. Supplied “add 2” expressions share one backing. Input and correctness styling remains unchanged. Updated guide and published HTML; validation skipped as requested.

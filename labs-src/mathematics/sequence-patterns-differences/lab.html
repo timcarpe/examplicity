@@ -481,6 +481,12 @@ button{min-height:34px;padding:0 10px;border:1px solid var(--lab-line);border-ra
 @keyframes sequenceTargetPulse{0%,100%{box-shadow:0 0 0 4px rgba(82,119,184,.10)}50%{box-shadow:0 0 0 9px rgba(82,119,184,.22)}}
 @media(prefers-reduced-motion:reduce){.canvas .guide-highlight{animation:none;box-shadow:0 0 0 5px rgba(82,119,184,.16)}}
 </style>
+<style data-flat-mathematics>
+/* Flat backing distinguishes displayed mathematics without changing its spacing. */
+.calc-panel .term-chip,.calc-panel .worked-value,.calc-panel .flat-expression{border:0;border-radius:4px;background:var(--lab-surface-strong,#eef1f3);box-shadow:none}
+.calc-panel .flat-expression{width:fit-content}
+.calc-panel .flat-expression .worked-value{background:transparent}
+</style>
 </head>
 <body data-lab-layout="standard">
 <main data-lab-role="model" data-lab-manipulative="pattern-builder">
@@ -642,7 +648,7 @@ function field(keyName,placeholder,{disabled=false,wide=false}={}){const row=doc
 function workedValue(text,{wide=false}={}){const span=document.createElement('span');span.className='worked-value'+(wide?' wide':'');span.textContent=text;return span}
 function keyIsRequired(keyName){return requiredWorkKeys().includes(keyName)}
 function diffInputs(rowIndex,values){const wrap=document.createElement('div');wrap.className='diff-line';const label=document.createElement('span');label.className='diff-label';label.textContent=`Δ${rowIndex}`;wrap.appendChild(label);values.forEach((v,i)=>{const keyName=`d${rowIndex}_${i}`;if(keyIsRequired(keyName)){const row=field(keyName,'?');row.style.display='contents';wrap.append(...row.children)}else wrap.appendChild(workedValue(String(v)))});return wrap}
-function constantInput(keyName,labelText,disabled=false){const wrap=document.createElement('div');wrap.className='diff-line';const label=document.createElement('span');label.className='diff-label';label.textContent=labelText;wrap.appendChild(label);if(keyIsRequired(keyName)){const row=field(keyName,'?',{disabled});row.style.display='contents';wrap.append(...row.children)}else wrap.appendChild(workedValue(String(expectedFor(keyName))));return wrap}
+function constantInput(keyName,labelText,disabled=false){const wrap=document.createElement('div');wrap.className='diff-line';const label=document.createElement('span');label.className='diff-label';label.textContent=labelText;wrap.appendChild(label);if(keyIsRequired(keyName)){const row=field(keyName,'?',{disabled});row.style.display='contents';wrap.append(...row.children)}else{wrap.classList.add('flat-expression');wrap.appendChild(workedValue(String(expectedFor(keyName))))}return wrap}
 function formulaControl(f){if(keyIsRequired('formula'))return field('formula','Tₙ = ...',{disabled:!constructionComplete(),wide:true});const row=document.createElement('div');row.className='worked-row';row.appendChild(workedValue(constructionComplete()?`Tₙ = ${f.formulaLabel}`:'',{wide:true}));return row}
 function useControl(f){if(keyIsRequired('use'))return field('use',`T${f.useN}`,{disabled:!constructionComplete()||(keyIsRequired('formula')&&!formulaMatches(state.work.formula||''))});const row=document.createElement('div');row.className='worked-row';row.appendChild(workedValue(constructionComplete()?`T${f.useN} = ${countStage(f,f.useN)}`:'',{wide:true}));return row}
 function renderCalcPanel(){const f=family();termStrip();renderStages();const host=$('calcContent');host.replaceChildren();const progress=document.createElement('div'),built=f.id==='ambiguity'?state.futures.length>=2:constructionComplete();progress.className='work-progress';progress.dataset.complete=String(built);progress.innerHTML=`<span class="progress-mark" aria-hidden="true">${built?'✓':'●'}</span><span>${f.id==='ambiguity'?(built?'Two different futures built':'Build two different futures'):(built?'Pattern built':'Extend the pattern')}</span>`;host.appendChild(progress);if(f.id==='ambiguity'){const box=document.createElement('div');box.className='reasoning-box';box.innerHTML=`${state.futures.length>=2?'Different fourth terms fit the same prefix; it does not determine a unique nth-term rule.':''}<div class="future-compare">${state.futures.map((v,i)=>`<span class="future-pill">Future ${i?'B':'A'} · T₄ = ${v}</span>`).join('')}</div>`;host.appendChild(box);renderCalcDiagnosis();return}
