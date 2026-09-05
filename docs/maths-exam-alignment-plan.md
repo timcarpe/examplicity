@@ -57,6 +57,14 @@ Validate IDs, references, syllabus cycles and review states. Preserve existing c
 
 ## Three task owners and lean briefs
 
+### Reviewed demand summaries
+
+Add a small synthesis layer within the concept/comparison model: a reviewed demand summary per concept and syllabus/component. It describes recurring task families, supplied versus required information, representations/notation/units/domains, expected working and marking, supported variations, boundaries and counterexamples. Link each substantive claim to objective or question evidence and distinguish syllabus requirements, paper observations and design recommendations.
+
+The CLI and human review should retrieve these compact summaries before optional bounded question-evidence expansion. Record sampled papers, sessions and components, review status and coverage gaps. Any frequency count needs an explicit denominator; sampled-paper completeness is not examination-cycle representativeness. Single-example patterns remain provisional, and absence from the sample is not exclusion from the curriculum. Leave insufficiently evidenced summaries incomplete rather than inventing an exam-level model.
+
+Storage owns the minimal schema/query/review support, reusing existing concept records where practical. Evidence owns synthesis after source review, initially prioritising useful cross-curriculum comparisons and candidate-batch concepts. Adaptations consumes reviewed summaries plus selected source questions. This does not add automated statistical inference, another database or permission to create new labs.
+
 ### 1. Catalogue data storage — gpt-5.6-sol, medium
 
 Own catalogue loading, schema/validation, migration where necessary, query CLI, HTML consumption and directly affected workflow documentation in Lab Creation. Do not own paper interpretation or lab implementation. Preserve other subjects without forcing a wholesale rewrite.
