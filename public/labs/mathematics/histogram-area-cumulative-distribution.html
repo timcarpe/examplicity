@@ -1000,8 +1000,6 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 .lab-change-row .gate-core{width:100%;background:var(--lab-surface-muted,#f7f8fa);border:1px solid var(--lab-line,#d2d2d7);box-shadow:none}
 .lab-change-row :is(.state-foot,.gate-note,.lock-copy,.rate-readout,.calc-result-label){font:400 12px/1.45 var(--lab-font-sans,sans-serif)}
 .lab-change-row :is(.state-head strong,.gate-rate,.calc-equation strong){font:400 14px/1.45 var(--lab-font-sans,sans-serif)}
-.lab-change-slider{display:grid;gap:8px;margin-top:12px;font:400 12px/1.4 var(--lab-font-sans,sans-serif)}
-.lab-change-slider input{width:100%;min-width:0;height:32px;margin:0;accent-color:var(--lab-accent,#5277b8);cursor:ew-resize}
 .lab-change-row .rate-target::after{display:none}
 
 /* Prediction choices use selection blue; assessed outcomes belong to the card. */
@@ -1048,6 +1046,43 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 .lab-adopt-v3 .lab-change-row .state-card.pending{opacity:1}
 @media(max-width:900px){.lab-adopt-v3 .lab-proof-sidebar{padding:18px 0 0;border-left:0;border-top:1px solid var(--lab-line-subtle,#e7e8eb)}}
 @media(max-width:560px){.lab-change-row{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}.lab-change-row .gate-card{grid-column:1/-1;grid-row:2}.lab-change-row .state-card:last-child{grid-column:2;grid-row:1}.lab-motion-chart :is(.tick,.axis-label,.track-label,.gate-title,.gate-value,.handle-label,.limit-label){font-size:24px}}
+
+/* Direct manipulation cues belong to the operated object, not a second control. */
+.lab-bar-action{cursor:grab;touch-action:none;user-select:none}
+.lab-bar-action:active{cursor:grabbing}
+.lab-bar-action .bar-fill{transition:none;background:var(--lab-concept-blue,#4779b7)}
+.lab-bar-action .bar-fill::after{content:"";position:absolute;left:-3px;right:-3px;top:-4px;height:8px;border:1px solid var(--lab-accent,#5277b8);border-radius:999px;background:#fff}
+.lab-bar-action:not([data-interacted="true"]) .bar-fill::after{animation:labGuideAttention 2s ease-in-out infinite}
+.lab-bar-target{position:absolute;left:0;right:0;border-top:2px dashed var(--lab-accent,#5277b8);pointer-events:none}
+.lab-adopt-v3 .lab-change-row :is(.state-card,.bar-track){background:#fff}
+.lab-adopt-v3 .lab-change-row .bar-fill{background:var(--lab-concept-blue,#4779b7)}
+.lab-adopt-v3 .lab-change-row .add-slice{background:var(--lab-concept-amber,#c9782c)}
+.lab-checkpoints{display:flex;align-items:center;gap:10px}
+.lab-adopt-v3 .lab-checkpoint{width:12px;min-width:12px;height:12px;min-height:12px;padding:0;border:1px solid var(--lab-line-strong,#a7a7ad);border-radius:50%;background:#fff;opacity:1;box-shadow:none}
+.lab-adopt-v3 .lab-checkpoint[aria-current="true"]{border-color:var(--lab-accent,#5277b8);box-shadow:inset 0 0 0 3px #fff;background:var(--lab-accent,#5277b8)}
+.lab-adopt-v3 .lab-checkpoint[data-complete="true"]{border-color:var(--lab-good,#18794e);background:var(--lab-good,#18794e)}
+.lab-bounds-restored :is(.bound-label,.certificate,.phase-chip,.phase-text){display:none}
+.lab-bounds-restored :is(.bound-value,.smallmono,.mono){font:400 18px var(--lab-font-sans,sans-serif);letter-spacing:normal;text-transform:none}
+.lab-bounds-restored :is(.distance-handle,.time-drag-control){cursor:grab}
+.lab-proof-sidebar .verdict-group{display:grid;gap:8px}
+.lab-adopt-v3 .lab-proof-sidebar .proof-body>p{font:400 14px/1.45 var(--lab-font-sans,sans-serif)}
+.lab-motion-chart :is(.track-label,.gate-title,.gate-value,.readout-text,.speed-sign-text,.endpoint-text){font:400 18px var(--lab-font-sans,sans-serif);letter-spacing:normal}
+.lab-motion-chart .endpoint-text{text-anchor:start}
+.lab-motion-chart .plot-title{font-size:18px}
+.lab-adopt-v3 .visual-head:has(.visual-copy[hidden]){display:flex;justify-content:flex-end}
+.lab-recurring{--cycle-a:var(--lab-concept-blue,#4779b7);--cycle-b:var(--lab-concept-violet,#7563a7);--cycle-c:var(--lab-concept-amber,#c9782c);--cycle-a-soft:color-mix(in srgb,var(--cycle-a) 25%,white);--cycle-b-soft:color-mix(in srgb,var(--cycle-b) 25%,white);--cycle-c-soft:color-mix(in srgb,var(--cycle-c) 25%,white);--match:var(--lab-concept-teal,#2d8792);--match-soft:color-mix(in srgb,var(--match) 20%,white)}
+.lab-recurring :is(.target-label,.row-name strong,.row-name code,.subtract-operator-copy strong,.subtract-operator-copy span,.shift-tools button){font:400 12px/1.45 var(--lab-font-sans,sans-serif);letter-spacing:normal;text-transform:none}
+.lab-recurring :is(.digit-cell,.trace-digit).cycle-0{background:var(--cycle-a-soft);border-color:var(--cycle-a);color:var(--lab-ink,#1d1d1f)}
+.lab-recurring :is(.digit-cell,.trace-digit).cycle-1{background:var(--cycle-b-soft);border-color:var(--cycle-b);color:var(--lab-ink,#1d1d1f)}
+.lab-recurring :is(.digit-cell,.trace-digit).cycle-2{background:var(--cycle-c-soft);border-color:var(--cycle-c);color:var(--lab-ink,#1d1d1f)}
+.lab-recurring .row-note{display:none}
+.lab-recurring .row-panel.fixed .row-note{display:block;font-size:11px;font-weight:400}
+.lab-recurring .track-shell.cued .tape-track{border-radius:8px;outline:1px solid var(--lab-accent,#5277b8);outline-offset:3px;animation:labGuideAttention 2s ease-in-out infinite}
+.lab-recurring .subtract-track.ready:not(.dragging):not([data-interacted="true"]) .subtract-handle{border-color:var(--lab-accent,#5277b8);color:var(--lab-accent,#5277b8);background:#fff;animation:labGuideAttention 2s ease-in-out infinite}
+@media(prefers-reduced-motion:reduce){.lab-bar-action .bar-fill::after,.lab-recurring .track-shell.cued .tape-track,.lab-recurring .subtract-track.ready .subtract-handle{animation:none!important;box-shadow:0 0 0 3px var(--lab-accent-soft,#eef2fa)}}
+
+.lab-recurring .goal-mini-tail i{background:var(--cycle-a);border-left:18px solid var(--cycle-b);border-right:18px solid var(--cycle-c)}
+.lab-recurring .subtract-operator-copy span{display:none}
 
 </style>
 <script data-lab-design-runtime>

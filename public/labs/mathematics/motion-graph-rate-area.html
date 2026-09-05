@@ -920,8 +920,6 @@ body>main{margin-top:10px}
 .lab-change-row .gate-core{width:100%;background:var(--lab-surface-muted,#f7f8fa);border:1px solid var(--lab-line,#d2d2d7);box-shadow:none}
 .lab-change-row :is(.state-foot,.gate-note,.lock-copy,.rate-readout,.calc-result-label){font:400 12px/1.45 var(--lab-font-sans,sans-serif)}
 .lab-change-row :is(.state-head strong,.gate-rate,.calc-equation strong){font:400 14px/1.45 var(--lab-font-sans,sans-serif)}
-.lab-change-slider{display:grid;gap:8px;margin-top:12px;font:400 12px/1.4 var(--lab-font-sans,sans-serif)}
-.lab-change-slider input{width:100%;min-width:0;height:32px;margin:0;accent-color:var(--lab-accent,#5277b8);cursor:ew-resize}
 .lab-change-row .rate-target::after{display:none}
 
 /* Prediction choices use selection blue; assessed outcomes belong to the card. */
@@ -968,6 +966,43 @@ body>main{margin-top:10px}
 .lab-adopt-v3 .lab-change-row .state-card.pending{opacity:1}
 @media(max-width:900px){.lab-adopt-v3 .lab-proof-sidebar{padding:18px 0 0;border-left:0;border-top:1px solid var(--lab-line-subtle,#e7e8eb)}}
 @media(max-width:560px){.lab-change-row{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}.lab-change-row .gate-card{grid-column:1/-1;grid-row:2}.lab-change-row .state-card:last-child{grid-column:2;grid-row:1}.lab-motion-chart :is(.tick,.axis-label,.track-label,.gate-title,.gate-value,.handle-label,.limit-label){font-size:24px}}
+
+/* Direct manipulation cues belong to the operated object, not a second control. */
+.lab-bar-action{cursor:grab;touch-action:none;user-select:none}
+.lab-bar-action:active{cursor:grabbing}
+.lab-bar-action .bar-fill{transition:none;background:var(--lab-concept-blue,#4779b7)}
+.lab-bar-action .bar-fill::after{content:"";position:absolute;left:-3px;right:-3px;top:-4px;height:8px;border:1px solid var(--lab-accent,#5277b8);border-radius:999px;background:#fff}
+.lab-bar-action:not([data-interacted="true"]) .bar-fill::after{animation:labGuideAttention 2s ease-in-out infinite}
+.lab-bar-target{position:absolute;left:0;right:0;border-top:2px dashed var(--lab-accent,#5277b8);pointer-events:none}
+.lab-adopt-v3 .lab-change-row :is(.state-card,.bar-track){background:#fff}
+.lab-adopt-v3 .lab-change-row .bar-fill{background:var(--lab-concept-blue,#4779b7)}
+.lab-adopt-v3 .lab-change-row .add-slice{background:var(--lab-concept-amber,#c9782c)}
+.lab-checkpoints{display:flex;align-items:center;gap:10px}
+.lab-adopt-v3 .lab-checkpoint{width:12px;min-width:12px;height:12px;min-height:12px;padding:0;border:1px solid var(--lab-line-strong,#a7a7ad);border-radius:50%;background:#fff;opacity:1;box-shadow:none}
+.lab-adopt-v3 .lab-checkpoint[aria-current="true"]{border-color:var(--lab-accent,#5277b8);box-shadow:inset 0 0 0 3px #fff;background:var(--lab-accent,#5277b8)}
+.lab-adopt-v3 .lab-checkpoint[data-complete="true"]{border-color:var(--lab-good,#18794e);background:var(--lab-good,#18794e)}
+.lab-bounds-restored :is(.bound-label,.certificate,.phase-chip,.phase-text){display:none}
+.lab-bounds-restored :is(.bound-value,.smallmono,.mono){font:400 18px var(--lab-font-sans,sans-serif);letter-spacing:normal;text-transform:none}
+.lab-bounds-restored :is(.distance-handle,.time-drag-control){cursor:grab}
+.lab-proof-sidebar .verdict-group{display:grid;gap:8px}
+.lab-adopt-v3 .lab-proof-sidebar .proof-body>p{font:400 14px/1.45 var(--lab-font-sans,sans-serif)}
+.lab-motion-chart :is(.track-label,.gate-title,.gate-value,.readout-text,.speed-sign-text,.endpoint-text){font:400 18px var(--lab-font-sans,sans-serif);letter-spacing:normal}
+.lab-motion-chart .endpoint-text{text-anchor:start}
+.lab-motion-chart .plot-title{font-size:18px}
+.lab-adopt-v3 .visual-head:has(.visual-copy[hidden]){display:flex;justify-content:flex-end}
+.lab-recurring{--cycle-a:var(--lab-concept-blue,#4779b7);--cycle-b:var(--lab-concept-violet,#7563a7);--cycle-c:var(--lab-concept-amber,#c9782c);--cycle-a-soft:color-mix(in srgb,var(--cycle-a) 25%,white);--cycle-b-soft:color-mix(in srgb,var(--cycle-b) 25%,white);--cycle-c-soft:color-mix(in srgb,var(--cycle-c) 25%,white);--match:var(--lab-concept-teal,#2d8792);--match-soft:color-mix(in srgb,var(--match) 20%,white)}
+.lab-recurring :is(.target-label,.row-name strong,.row-name code,.subtract-operator-copy strong,.subtract-operator-copy span,.shift-tools button){font:400 12px/1.45 var(--lab-font-sans,sans-serif);letter-spacing:normal;text-transform:none}
+.lab-recurring :is(.digit-cell,.trace-digit).cycle-0{background:var(--cycle-a-soft);border-color:var(--cycle-a);color:var(--lab-ink,#1d1d1f)}
+.lab-recurring :is(.digit-cell,.trace-digit).cycle-1{background:var(--cycle-b-soft);border-color:var(--cycle-b);color:var(--lab-ink,#1d1d1f)}
+.lab-recurring :is(.digit-cell,.trace-digit).cycle-2{background:var(--cycle-c-soft);border-color:var(--cycle-c);color:var(--lab-ink,#1d1d1f)}
+.lab-recurring .row-note{display:none}
+.lab-recurring .row-panel.fixed .row-note{display:block;font-size:11px;font-weight:400}
+.lab-recurring .track-shell.cued .tape-track{border-radius:8px;outline:1px solid var(--lab-accent,#5277b8);outline-offset:3px;animation:labGuideAttention 2s ease-in-out infinite}
+.lab-recurring .subtract-track.ready:not(.dragging):not([data-interacted="true"]) .subtract-handle{border-color:var(--lab-accent,#5277b8);color:var(--lab-accent,#5277b8);background:#fff;animation:labGuideAttention 2s ease-in-out infinite}
+@media(prefers-reduced-motion:reduce){.lab-bar-action .bar-fill::after,.lab-recurring .track-shell.cued .tape-track,.lab-recurring .subtract-track.ready .subtract-handle{animation:none!important;box-shadow:0 0 0 3px var(--lab-accent-soft,#eef2fa)}}
+
+.lab-recurring .goal-mini-tail i{background:var(--cycle-a);border-left:18px solid var(--cycle-b);border-right:18px solid var(--cycle-c)}
+.lab-recurring .subtract-operator-copy span{display:none}
 
 </style>
 <script data-lab-design-runtime>
@@ -1106,7 +1141,7 @@ body>main{margin-top:10px}
 <section class="panel lab">
   <div class="workspace">
     <div class="stage-wrap">
-      <div class="visual-head"><div class="visual-copy"><strong id="visualTitle">Change the graph, then run the trolley.</strong><span id="visualHint"></span></div><div class="runbar"><button id="runBtn" class="primary lab-action" type="button" data-priority="primary">Run trolley</button><button id="pauseBtn" type="button" disabled class="lab-action">Pause</button><input id="timeSlider" type="range" min="0" max="15" step="0.05" value="0" aria-label="Scrub journey time"></div></div>
+      <div class="visual-head"><div class="visual-copy" hidden><strong id="visualTitle">Change the graph, then run the trolley.</strong><span id="visualHint"></span></div><div class="runbar"><button id="runBtn" class="primary lab-action" type="button" data-priority="primary">Run trolley</button><button id="pauseBtn" type="button" disabled class="lab-action">Pause</button><input id="timeSlider" type="range" min="0" max="15" step="0.05" value="0" aria-label="Scrub journey time"></div></div>
       <div class="stage-shell"><svg id="stage" class="stage lab-motion-chart" viewBox="0 0 1080 650" role="img" aria-label="Linked trolley journey and motion graph" data-lab-role="model" data-lab-manipulative="journey-graph"></svg>
         <div id="nextCard" class="next-card" hidden><strong id="nextCardTitle">Journey verified</strong><span id="nextCardText"></span><div class="next-goal"><span>Next goal</span><strong id="nextGoalText"></strong></div><div id="nextUpgrade" class="next-upgrade" hidden><strong id="nextUpgradeTitle"></strong><span id="nextUpgradeText"></span><button id="nextUpgradeButton" type="button" class="lab-action"></button></div><div class="next-actions"><button id="nextStageButton" type="button" class="lab-action" data-priority="primary">Next journey</button></div></div>
       </div>
@@ -1655,7 +1690,7 @@ function sySpeed(v,e,g){const topMax=e.maxSpeed*1.35;return g.sBottom-(v/topMax)
 function syDist(d,max,g){return g.dBottom-(d/max)*(g.dBottom-g.dTop)}
 function tag(name,attrs={},content=''){const a=Object.entries(attrs).filter(([,v])=>v!==null&&v!==undefined&&v!==false).map(([k,v])=>`${k}="${esc(v)}"`).join(' ');return `<${name}${a?' '+a:''}>${content}</${name}>`}
 function line(x1,y1,x2,y2,cls,extra={}){return tag('line',{x1,y1,x2,y2,class:cls,...extra})}
-function text(x,y,cls,content,extra={}){return tag('text',{x,y,class:cls,...extra},esc(content))}
+function text(x,y,cls,content,extra={}){if(['plot-sub','trolley-label','handle-label','triangle-text','dwell-text','warning-text','relation-main','relation-sub'].includes(cls.split(' ')[0]))return '';return tag('text',{x,y,class:cls,...extra},esc(content))}
 function rect(x,y,w,h,cls,extra={}){return tag('rect',{x,y,width:w,height:h,class:cls,...extra})}
 function circle(cx,cy,r,cls,extra={}){return tag('circle',{cx,cy,r,class:cls,...extra})}
 
@@ -1664,18 +1699,18 @@ function coreTrack(){const c=state.core,m=coreMetrics(),g=coreVG,max=c.dock*1.08
   [0,c.checkpoint,c.dock].forEach(d=>{const x=trackX(d,max,g);s+=line(x,g.trackY-9,x,g.trackY+9,'track-tick')+text(x,g.trackY+24,'track-label',`${fmt(d,0)} m`)});
   const dA=Math.min(dnow,c.checkpoint),dB=Math.max(0,dnow-c.checkpoint);if(dA>0)s+=line(g.x0,g.trackY,trackX(dA,max,g),g.trackY,'track-progress',{stroke:'var(--a)'});if(dB>0)s+=line(cp,g.trackY,trackX(c.checkpoint+dB,max,g),g.trackY,'track-progress',{stroke:'var(--c)'});
   // checkpoint gate
-  s+=rect(cp-12,57,24,25,'gate',{rx:5})+circle(cp,69,5,'gate-light '+(m.okWait?'good':'bad'))+line(cp,82,cp,g.trackY-9,'camera-post')+text(cp,49,'gate-title','LOADING')+text(cp,137,'gate-value '+(m.okWait?'good':'bad'),`${fmt(m.wait,1)} s · need ${fmt(c.dwell,1)} s`);
+  s+=rect(cp-12,57,24,25,'gate',{rx:5})+circle(cp,69,5,'gate-light '+(m.okWait?'good':'bad'))+line(cp,82,cp,g.trackY-9,'camera-post')+text(cp,49,'gate-title','LOADING')+text(cp,163,'gate-value '+(m.okWait?'good':'bad'),`${fmt(m.wait,1)} s · need ${fmt(c.dwell,1)} s`);
   // dock
-  s+=line(dock,g.trackY-23,dock,g.trackY+11,'dock-line')+text(dock,49,'gate-title','DOCK')+text(dock,137,'gate-value',`${fmt(c.deadline,1)} s deadline`);
+  s+=line(dock,g.trackY-23,dock,g.trackY+11,'dock-line')+text(dock,49,'gate-title','DOCK')+text(dock,163,'gate-value',`${fmt(c.deadline,1)} s deadline`);
   // cameras and signs
   const midA=trackX(c.checkpoint*.55,max,g),midB=trackX(c.checkpoint+(c.dock-c.checkpoint)*.58,max,g);s+=cameraSVG(midA,57,m.sA,c.limitA,m.okA,'A')+cameraSVG(midB,57,m.sB,c.limitB,m.okB,'B');
   s+=trolleySVG(tnow,g.trackY-1,state.time,coreSpeed(state.time));return s}
-function cameraSVG(x,y,v,limit,ok,label){let s='';s+=line(x,y+18,x,coreVG.trackY-9,'camera-post')+rect(x-9,y,18,13,'camera',{rx:3})+circle(x+3,y+6,3,'lens')+rect(x-25,y+22,50,17,'readout '+(ok?'good':'bad'),{rx:4})+text(x,y+33,'readout-text '+(ok?'good':'bad'),`${fmt(v,1)} m/s`);const sx=x-32,sy=y-2;s+=circle(sx,sy,13,'speed-sign')+circle(sx,sy,10,'speed-sign-inner')+text(sx,sy+3,'speed-sign-text',fmt(limit,1))+text(x,y-9,'gate-title',`ZONE ${label}`);return s}
+function cameraSVG(x,y,v,limit,ok,label){let s='';s+=line(x,y+18,x,coreVG.trackY-9,'camera-post')+rect(x-9,y,18,13,'camera',{rx:3})+circle(x+3,y+6,3,'lens')+rect(x-48,y+58,96,28,'readout '+(ok?'good':'bad'),{rx:4})+text(x,y+78,'readout-text '+(ok?'good':'bad'),`${fmt(v,1)} m/s`);const sx=x-40,sy=y-2;s+=circle(sx,sy,20,'speed-sign')+circle(sx,sy,17,'speed-sign-inner')+text(sx,sy+6,'speed-sign-text',fmt(limit,1))+text(x,y-9,'gate-title',`ZONE ${label}`);return s}
 function trolleySVG(x,y,t,v){return `<g transform="translate(${x} ${y})">${rect(-22,-27,44,20,'trolley-body',{rx:6})}${rect(-15,-23,12,8,'trolley-window',{rx:2})}${rect(2,-23,12,8,'trolley-window',{rx:2})}${rect(-20,-10,40,4,'trolley-stripe',{rx:2})}${circle(-13,-4,5,'wheel')}${circle(13,-4,5,'wheel')}${text(0,-36,'trolley-label',`t ${fmt(t,1)} s · ${fmt(v,1)} m/s`)}</g>`}
 function coreGraph(){const c=state.core,m=coreMetrics(),g=coreVG,T=c.deadline;let s='';s+=rect(g.gLeft,g.gTop,g.gRight-g.gLeft,g.gBottom-g.gTop,'plot-frame',{rx:9});
-  for(let i=0;i<=6;i++){const t=T*i/6,x=sx(t,T,g);s+=line(x,g.gTop,x,g.gBottom,'grid')+text(x,g.gBottom+17,'tick',fmt(t,1),{'text-anchor':'middle'})}
+  for(let i=0;i<=6;i++){const t=T*i/6,x=sx(t,T,g);s+=line(x,g.gTop,x,g.gBottom,'grid')+text(x,g.gBottom+24,'tick',fmt(t,1),{'text-anchor':'middle'})}
   for(let i=0;i<=5;i++){const d=c.dock*i/5,y=syCore(d,c,g);s+=line(g.gLeft,y,g.gRight,y,'grid')+text(g.gLeft-10,y+3,'tick',fmt(d,0),{'text-anchor':'end'})}
-  s+=line(g.gLeft,g.gBottom,g.gRight,g.gBottom,'axis')+line(g.gLeft,g.gTop,g.gLeft,g.gBottom,'axis')+text((g.gLeft+g.gRight)/2,g.gBottom+35,'axis-label','time / s',{'text-anchor':'middle'})+text(g.gLeft-54,(g.gTop+g.gBottom)/2,'axis-label','distance / m',{transform:`rotate(-90 ${g.gLeft-54} ${(g.gTop+g.gBottom)/2})`})+text(g.gLeft+10,g.gTop+20,'plot-title','Distance–time graph')+text(g.gLeft+10,g.gTop+34,'plot-sub','move a point sideways — it snaps to tenths and settles onto exact boundaries');
+  s+=line(g.gLeft,g.gBottom,g.gRight,g.gBottom,'axis')+line(g.gLeft,g.gTop,g.gLeft,g.gBottom,'axis')+text((g.gLeft+g.gRight)/2,g.gBottom+55,'axis-label','time / s',{'text-anchor':'middle'})+text(g.gLeft-54,(g.gTop+g.gBottom)/2,'axis-label','distance / m',{transform:`rotate(-90 ${g.gLeft-54} ${(g.gTop+g.gBottom)/2})`})+''+text(g.gLeft+10,g.gTop+34,'plot-sub','move a point sideways — it snaps to tenths and settles onto exact boundaries');
   const p0=[sx(0,T,g),syCore(0,c,g)],p1=[sx(c.arrive,T,g),syCore(c.checkpoint,c,g)],p2=[sx(c.depart,T,g),syCore(c.checkpoint,c,g)],p3=[sx(T,T,g),syCore(c.dock,c,g)];
   s+=line(...p0,...p1,'path-under')+line(...p1,...p2,'path-under')+line(...p2,...p3,'path-under')+line(...p0,...p1,'journey-a')+line(...p1,...p2,'journey-stop')+line(...p2,...p3,'journey-b');
   const by=p1[1]-26;s+=`<path d="M${p1[0]} ${by+6}V${by}H${p2[0]}V${by+6}" class="dwell"/>`+text((p1[0]+p2[0])/2,by-5,'dwell-text',`${fmt(m.wait,1)} s stop`);
@@ -1683,27 +1718,27 @@ function coreGraph(){const c=state.core,m=coreMetrics(),g=coreVG,T=c.deadline;le
   const sel=state.selected===2?2:state.selected===1?1:0;if(sel!==1){const a=sel===0?{x0:p0[0],y0:p0[1],x1:p1[0],y1:p1[1],dd:c.checkpoint,dt:c.arrive,s:m.sA}:{x0:p2[0],y0:p2[1],x1:p3[0],y1:p3[1],dd:c.dock-c.checkpoint,dt:c.deadline-c.depart,s:m.sB};s+=`<path d="M${a.x0+8} ${a.y0-8}H${a.x1-8}V${a.y1+8}" class="triangle"/>`+text((a.x0+a.x1)/2,a.y0-14,'triangle-text',`time ${fmt(a.dt,1)} s`,{'text-anchor':'middle'})+text(a.x1-6,(a.y0+a.y1)/2,'triangle-text',`${fmt(a.dd,0)} m`,{'text-anchor':'end'});const bx=clamp((a.x0+a.x1)/2-98,g.gLeft+8,g.gRight-204),yy=clamp(Math.min(a.y0,a.y1)-57,g.gTop+9,g.gBottom-50);s+=rect(bx,yy,196,41,'relation-box',{rx:7});if(state.discovery.core===0&&!c.calc.some(Boolean)){s+=text(bx+9,yy+17,'relation-main',`${fmt(a.dd,0)} m in ${fmt(a.dt,1)} s`)+text(bx+9,yy+31,'relation-sub','move the point: what changes at the camera?')}else if(state.discovery.core===1&&!c.calc.some(Boolean)){s+=text(bx+9,yy+17,'relation-main',`camera speed ${fmt(a.s,2)} m/s`)+text(bx+9,yy+31,'relation-sub','more time makes this line flatter')}else{s+=text(bx+9,yy+17,'relation-main',`${fmt(a.dd,0)} ÷ ${fmt(a.dt,1)} = ${fmt(a.s,2)} m/s`)+text(bx+9,yy+31,'relation-sub','gradient = speed')}}
   else{const bx=clamp((p1[0]+p2[0])/2-86,g.gLeft+8,g.gRight-180),yy=p1[1]-56;s+=rect(bx,yy,172,38,'relation-box',{rx:7})+text(bx+9,yy+16,'relation-main','horizontal section')+text(bx+9,yy+30,'relation-sub','distance is not changing → speed 0')}
   s+=line(sx(state.time,T,g),g.gTop,sx(state.time,T,g),g.gBottom,'time-cursor');return s}
-function renderCoreStage(){stage.setAttribute('viewBox','32 24 1000 590');stage.innerHTML=coreTrack()+coreGraph()}
+function renderCoreStage(){stage.setAttribute('viewBox','24 0 1024 640');stage.innerHTML=coreTrack()+coreGraph()}
 
 function extTrack(){const e=state.ext,m=extMetrics(),g=extVG,max=e.dock*1.28,d=extAreaTo(state.time),x=trackX(clamp(d,0,max),max,g),dock=trackX(e.dock,max,g),end=trackX(clamp(m.total,0,max),max,g);let s='';s+=line(g.x0,g.trackY,g.x1,g.trackY,'track-base')+line(g.x0,g.trackY,g.x1,g.trackY,'track-core');
   [0,e.dock].forEach(v=>{const xx=trackX(v,max,g);s+=line(xx,g.trackY-9,xx,g.trackY+9,'track-tick')+text(xx,g.trackY+24,'track-label',`${fmt(v,0)} m`)});
   let start=0;for(let i=0;i<4;i++){const full=m.areas[i],part=state.time>=e.times[i+1]?full:state.time<=e.times[i]?0:extAreaTo(state.time)-start;if(part>0)s+=line(trackX(start,max,g),g.trackY,trackX(start+part,max,g),g.trackY,'track-progress',{stroke:COLORS[i]});start+=full}
-  s+=line(dock,g.trackY-24,dock,g.trackY+12,'dock-line')+text(dock,47,'gate-title',`DOCK · ${fmt(e.dock,0)} m`)+text(dock,137,'gate-value '+(m.distOk&&m.stopOk?'good':'bad'),m.distOk&&m.stopOk?'reached and stopped':`endpoint ${fmt(m.total,1)} m · final ${fmt(e.speeds[4],1)} m/s`);
-  s+=line(end,56,end,126,'endpoint')+text(end,48,'endpoint-text',`profile endpoint ${fmt(m.total,1)} m`)+trolleySVG(x,g.trackY-1,state.time,extSpeedAt(state.time));return s}
+  s+=line(dock,g.trackY-24,dock,g.trackY+12,'dock-line')+text(dock,47,'gate-title','DOCK')+text(dock,163,'gate-value '+(m.distOk&&m.stopOk?'good':'bad'),m.distOk&&m.stopOk?'Stopped at dock':`Final ${fmt(e.speeds[4],1)} m/s`);
+  s+=line(end,56,end,126,'endpoint')+text(g.x0,163,'endpoint-text',`Travelled ${fmt(m.total,1)} m`)+trolleySVG(x,g.trackY-1,state.time,extSpeedAt(state.time));return s}
 function extSpeedGraph(){const e=state.ext,m=extMetrics(),g=extVG,T=e.deadline,topMax=e.maxSpeed*1.35;let s='';s+=rect(g.gLeft,g.sTop,g.gRight-g.gLeft,g.sBottom-g.sTop,'plot-frame',{rx:9});
-  for(let i=0;i<=4;i++){const t=e.times[i],x=sx(t,T,g);s+=line(x,g.sTop,x,g.sBottom,'grid')+text(x,g.sBottom+17,'tick',fmt(t,1),{'text-anchor':'middle'})}
+  for(let i=0;i<=4;i++){const t=e.times[i],x=sx(t,T,g);s+=line(x,g.sTop,x,g.sBottom,'grid')+text(x,g.sBottom+24,'tick',fmt(t,1),{'text-anchor':'middle'})}
   for(let i=0;i<=4;i++){const v=topMax*i/4,y=sySpeed(v,e,g);s+=line(g.gLeft,y,g.gRight,y,'grid')+text(g.gLeft-10,y+3,'tick',fmt(v,0),{'text-anchor':'end'})}
-  s+=line(g.gLeft,g.sBottom,g.gRight,g.sBottom,'axis')+line(g.gLeft,g.sTop,g.gLeft,g.sBottom,'axis')+text((g.gLeft+g.gRight)/2,g.sBottom+35,'axis-label','time / s',{'text-anchor':'middle'})+text(g.gLeft-48,(g.sTop+g.sBottom)/2,'axis-label','speed / m/s',{transform:`rotate(-90 ${g.gLeft-48} ${(g.sTop+g.sBottom)/2})`})+text(g.gLeft+10,g.sTop+20,'plot-title','Speed–time graph')+text(g.gLeft+10,g.sTop+34,'plot-sub','move a speed point — it snaps to tenths while the shaded area changes');
+  s+=line(g.gLeft,g.sBottom,g.gRight,g.sBottom,'axis')+line(g.gLeft,g.sTop,g.gLeft,g.sBottom,'axis')+text((g.gLeft+g.gRight)/2,g.sBottom+55,'axis-label','time / s',{'text-anchor':'middle'})+text(g.gLeft-48,(g.sTop+g.sBottom)/2,'axis-label','speed / m/s',{transform:`rotate(-90 ${g.gLeft-48} ${(g.sTop+g.sBottom)/2})`})+''+text(g.gLeft+10,g.sTop+34,'plot-sub','move a speed point — it snaps to tenths while the shaded area changes');
   const ly=sySpeed(e.maxSpeed,e,g);s+=line(g.gLeft,ly,g.gRight,ly,'limit')+text(g.gRight-6,ly-6,'limit-label',`max ${fmt(e.maxSpeed,1)} m/s`,{'text-anchor':'end'});
   const pts=e.times.map((t,i)=>[sx(t,T,g),sySpeed(e.speeds[i],e,g)]);for(let i=0;i<4;i++){const [x0,y0]=pts[i],[x1,y1]=pts[i+1],base=g.sBottom;s+=`<path d="M${x0} ${base}L${x0} ${y0}L${x1} ${y1}L${x1} ${base}Z" class="area-${String.fromCharCode(97+i)}" data-ext-seg="${i}"/>`}
   for(let i=0;i<4;i++){const bad=Math.abs(m.accels[i])>e.maxAccel+.001,[x0,y0]=pts[i],[x1,y1]=pts[i+1];s+=line(x0,y0,x1,y1,'profile-line')+line(x0,y0,x1,y1,'profile-seg '+(bad?'bad':''),{stroke:COLORS[i],'data-ext-seg':i});if(bad)s+=text((x0+x1)/2,(y0+y1)/2-9,'warning-text',`|a| ${fmt(Math.abs(m.accels[i]),1)} > ${fmt(e.maxAccel,1)}`)}
   for(let i=1;i<5;i++){const locked=e.calc[i-1],bad=e.speeds[i]>e.maxSpeed+.001,x=pts[i][0],y=pts[i][1];s+=circle(x,y,20,'vertex-hit',{tabindex:locked?-1:0,'data-ext-vertex':i,role:'slider','aria-label':`speed vertex ${i}, ${fmt(e.speeds[i],1)} metres per second`})+circle(x,y,8,'vertex '+(locked?'locked ':'')+(bad?'bad':''),{stroke:COLORS[Math.min(i-1,3)],'data-ext-vertex':i})+text(x,y-13,'handle-label',locked?'calc':`${fmt(e.speeds[i],1)}`,{fill:locked?'#7d8990':COLORS[Math.min(i-1,3)]})}
   const i=state.selected,[x0,y0]=pts[i],[x1,y1]=pts[i+1],bx=clamp((x0+x1)/2-105,g.gLeft+8,g.gRight-218),yy=clamp(Math.min(y0,y1)-60,g.sTop+8,g.sBottom-52);s+=rect(bx,yy,210,43,'relation-box',{rx:7});if(state.discovery.extended===0&&!e.calc.some(Boolean)){s+=text(bx+9,yy+17,'relation-main',`section ${i+1}: shaded distance ${fmt(m.areas[i],1)} m`)+text(bx+9,yy+32,'relation-sub','move a speed point: where does the trolley endpoint go?')}else if(state.discovery.extended===1&&!e.calc.some(Boolean)){s+=text(bx+9,yy+17,'relation-main',`area ${fmt(m.areas[i],1)} m · total ${fmt(m.total,1)} m`)+text(bx+9,yy+32,'relation-sub','more area moves the endpoint farther')}else{s+=text(bx+9,yy+17,'relation-main',`area = ${fmt(m.areas[i],1)} m · gradient = ${fmt(m.accels[i],2)} m/s²`)+text(bx+9,yy+32,'relation-sub','area → distance · gradient → acceleration')}
   s+=line(sx(state.time,T,g),g.sTop,sx(state.time,T,g),g.sBottom,'time-cursor');return s}
-function extDistanceGraph(){const e=state.ext,g=extVG,T=e.deadline,m=extMetrics(),maxD=Math.max(e.dock*1.15,m.total*1.05,1);let s='';s+=rect(g.gLeft,g.dTop,g.gRight-g.gLeft,g.dBottom-g.dTop,'plot-frame',{rx:9});for(let i=0;i<=4;i++){const t=e.times[i],x=sx(t,T,g);s+=line(x,g.dTop,x,g.dBottom,'grid')+text(x,g.dBottom+17,'tick',fmt(t,1),{'text-anchor':'middle'})}for(let i=0;i<=4;i++){const d=maxD*i/4,y=syDist(d,maxD,g);s+=line(g.gLeft,y,g.gRight,y,'grid')+text(g.gLeft-10,y+3,'tick',fmt(d,0),{'text-anchor':'end'})}s+=line(g.gLeft,g.dBottom,g.gRight,g.dBottom,'axis')+line(g.gLeft,g.dTop,g.gLeft,g.dBottom,'axis');const dockY=syDist(e.dock,maxD,g);s+=line(g.gLeft,dockY,g.gRight,dockY,'limit')+text(g.gRight-6,dockY-6,'limit-label',`dock ${fmt(e.dock,0)} m`,{'text-anchor':'end'})+rect(g.gLeft+5,g.dTop+5,230,35,'plot-title-bg',{rx:5})+text(g.gLeft+10,g.dTop+20,'plot-title','Derived distance–time graph')+text(g.gLeft+10,g.dTop+34,'plot-sub','this curve is generated by the speed profile above');
+function extDistanceGraph(){const e=state.ext,g=extVG,T=e.deadline,m=extMetrics(),maxD=Math.max(e.dock*1.15,m.total*1.05,1);let s='';s+=rect(g.gLeft,g.dTop,g.gRight-g.gLeft,g.dBottom-g.dTop,'plot-frame',{rx:9});for(let i=0;i<=4;i++){const t=e.times[i],x=sx(t,T,g);s+=line(x,g.dTop,x,g.dBottom,'grid')+text(x,g.dBottom+17,'tick',fmt(t,1),{'text-anchor':'middle'})}for(let i=0;i<=4;i++){const d=maxD*i/4,y=syDist(d,maxD,g);s+=line(g.gLeft,y,g.gRight,y,'grid')+text(g.gLeft-10,y+3,'tick',fmt(d,0),{'text-anchor':'end'})}s+=line(g.gLeft,g.dBottom,g.gRight,g.dBottom,'axis')+line(g.gLeft,g.dTop,g.gLeft,g.dBottom,'axis');const dockY=syDist(e.dock,maxD,g);s+=line(g.gLeft,dockY,g.gRight,dockY,'limit')+text(g.gRight-6,dockY-6,'limit-label',`dock ${fmt(e.dock,0)} m`,{'text-anchor':'end'})+''+text(g.gLeft,g.dTop-14,'plot-title','Derived distance–time')+text(g.gLeft+10,g.dTop+34,'plot-sub','this curve is generated by the speed profile above');
   for(let i=0;i<4;i++){const pts=[];for(let k=0;k<=18;k++){const t=e.times[i]+(e.times[i+1]-e.times[i])*k/18;pts.push(`${sx(t,T,g)},${syDist(extAreaTo(t),maxD,g)}`)}s+=`<polyline points="${pts.join(' ')}" class="dist-path"/><polyline points="${pts.join(' ')}" class="dist-seg" stroke="${COLORS[i]}"/>`}
   s+=line(sx(state.time,T,g),g.dTop,sx(state.time,T,g),g.dBottom,'time-cursor');return s}
-function renderExtStage(){stage.setAttribute('viewBox','32 24 1000 805');stage.innerHTML=extTrack()+extSpeedGraph()+extDistanceGraph()}
+function renderExtStage(){stage.setAttribute('viewBox','24 0 1024 850');stage.innerHTML=extTrack()+extSpeedGraph()+extDistanceGraph()}
 function renderStage(){if(state.mode==='core')renderCoreStage();else renderExtStage()}
 
 function eventPoint(e){const r=stage.getBoundingClientRect(),vb=stage.viewBox.baseVal;return{x:vb.x+(e.clientX-r.left)*vb.width/r.width,y:vb.y+(e.clientY-r.top)*vb.height/r.height}}

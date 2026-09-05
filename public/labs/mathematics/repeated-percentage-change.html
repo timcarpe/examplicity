@@ -920,8 +920,6 @@ button:focus-visible,input:focus-visible,[tabindex="0"]:focus-visible{outline:3p
 .lab-change-row .gate-core{width:100%;background:var(--lab-surface-muted,#f7f8fa);border:1px solid var(--lab-line,#d2d2d7);box-shadow:none}
 .lab-change-row :is(.state-foot,.gate-note,.lock-copy,.rate-readout,.calc-result-label){font:400 12px/1.45 var(--lab-font-sans,sans-serif)}
 .lab-change-row :is(.state-head strong,.gate-rate,.calc-equation strong){font:400 14px/1.45 var(--lab-font-sans,sans-serif)}
-.lab-change-slider{display:grid;gap:8px;margin-top:12px;font:400 12px/1.4 var(--lab-font-sans,sans-serif)}
-.lab-change-slider input{width:100%;min-width:0;height:32px;margin:0;accent-color:var(--lab-accent,#5277b8);cursor:ew-resize}
 .lab-change-row .rate-target::after{display:none}
 
 /* Prediction choices use selection blue; assessed outcomes belong to the card. */
@@ -968,6 +966,43 @@ button:focus-visible,input:focus-visible,[tabindex="0"]:focus-visible{outline:3p
 .lab-adopt-v3 .lab-change-row .state-card.pending{opacity:1}
 @media(max-width:900px){.lab-adopt-v3 .lab-proof-sidebar{padding:18px 0 0;border-left:0;border-top:1px solid var(--lab-line-subtle,#e7e8eb)}}
 @media(max-width:560px){.lab-change-row{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}.lab-change-row .gate-card{grid-column:1/-1;grid-row:2}.lab-change-row .state-card:last-child{grid-column:2;grid-row:1}.lab-motion-chart :is(.tick,.axis-label,.track-label,.gate-title,.gate-value,.handle-label,.limit-label){font-size:24px}}
+
+/* Direct manipulation cues belong to the operated object, not a second control. */
+.lab-bar-action{cursor:grab;touch-action:none;user-select:none}
+.lab-bar-action:active{cursor:grabbing}
+.lab-bar-action .bar-fill{transition:none;background:var(--lab-concept-blue,#4779b7)}
+.lab-bar-action .bar-fill::after{content:"";position:absolute;left:-3px;right:-3px;top:-4px;height:8px;border:1px solid var(--lab-accent,#5277b8);border-radius:999px;background:#fff}
+.lab-bar-action:not([data-interacted="true"]) .bar-fill::after{animation:labGuideAttention 2s ease-in-out infinite}
+.lab-bar-target{position:absolute;left:0;right:0;border-top:2px dashed var(--lab-accent,#5277b8);pointer-events:none}
+.lab-adopt-v3 .lab-change-row :is(.state-card,.bar-track){background:#fff}
+.lab-adopt-v3 .lab-change-row .bar-fill{background:var(--lab-concept-blue,#4779b7)}
+.lab-adopt-v3 .lab-change-row .add-slice{background:var(--lab-concept-amber,#c9782c)}
+.lab-checkpoints{display:flex;align-items:center;gap:10px}
+.lab-adopt-v3 .lab-checkpoint{width:12px;min-width:12px;height:12px;min-height:12px;padding:0;border:1px solid var(--lab-line-strong,#a7a7ad);border-radius:50%;background:#fff;opacity:1;box-shadow:none}
+.lab-adopt-v3 .lab-checkpoint[aria-current="true"]{border-color:var(--lab-accent,#5277b8);box-shadow:inset 0 0 0 3px #fff;background:var(--lab-accent,#5277b8)}
+.lab-adopt-v3 .lab-checkpoint[data-complete="true"]{border-color:var(--lab-good,#18794e);background:var(--lab-good,#18794e)}
+.lab-bounds-restored :is(.bound-label,.certificate,.phase-chip,.phase-text){display:none}
+.lab-bounds-restored :is(.bound-value,.smallmono,.mono){font:400 18px var(--lab-font-sans,sans-serif);letter-spacing:normal;text-transform:none}
+.lab-bounds-restored :is(.distance-handle,.time-drag-control){cursor:grab}
+.lab-proof-sidebar .verdict-group{display:grid;gap:8px}
+.lab-adopt-v3 .lab-proof-sidebar .proof-body>p{font:400 14px/1.45 var(--lab-font-sans,sans-serif)}
+.lab-motion-chart :is(.track-label,.gate-title,.gate-value,.readout-text,.speed-sign-text,.endpoint-text){font:400 18px var(--lab-font-sans,sans-serif);letter-spacing:normal}
+.lab-motion-chart .endpoint-text{text-anchor:start}
+.lab-motion-chart .plot-title{font-size:18px}
+.lab-adopt-v3 .visual-head:has(.visual-copy[hidden]){display:flex;justify-content:flex-end}
+.lab-recurring{--cycle-a:var(--lab-concept-blue,#4779b7);--cycle-b:var(--lab-concept-violet,#7563a7);--cycle-c:var(--lab-concept-amber,#c9782c);--cycle-a-soft:color-mix(in srgb,var(--cycle-a) 25%,white);--cycle-b-soft:color-mix(in srgb,var(--cycle-b) 25%,white);--cycle-c-soft:color-mix(in srgb,var(--cycle-c) 25%,white);--match:var(--lab-concept-teal,#2d8792);--match-soft:color-mix(in srgb,var(--match) 20%,white)}
+.lab-recurring :is(.target-label,.row-name strong,.row-name code,.subtract-operator-copy strong,.subtract-operator-copy span,.shift-tools button){font:400 12px/1.45 var(--lab-font-sans,sans-serif);letter-spacing:normal;text-transform:none}
+.lab-recurring :is(.digit-cell,.trace-digit).cycle-0{background:var(--cycle-a-soft);border-color:var(--cycle-a);color:var(--lab-ink,#1d1d1f)}
+.lab-recurring :is(.digit-cell,.trace-digit).cycle-1{background:var(--cycle-b-soft);border-color:var(--cycle-b);color:var(--lab-ink,#1d1d1f)}
+.lab-recurring :is(.digit-cell,.trace-digit).cycle-2{background:var(--cycle-c-soft);border-color:var(--cycle-c);color:var(--lab-ink,#1d1d1f)}
+.lab-recurring .row-note{display:none}
+.lab-recurring .row-panel.fixed .row-note{display:block;font-size:11px;font-weight:400}
+.lab-recurring .track-shell.cued .tape-track{border-radius:8px;outline:1px solid var(--lab-accent,#5277b8);outline-offset:3px;animation:labGuideAttention 2s ease-in-out infinite}
+.lab-recurring .subtract-track.ready:not(.dragging):not([data-interacted="true"]) .subtract-handle{border-color:var(--lab-accent,#5277b8);color:var(--lab-accent,#5277b8);background:#fff;animation:labGuideAttention 2s ease-in-out infinite}
+@media(prefers-reduced-motion:reduce){.lab-bar-action .bar-fill::after,.lab-recurring .track-shell.cued .tape-track,.lab-recurring .subtract-track.ready .subtract-handle{animation:none!important;box-shadow:0 0 0 3px var(--lab-accent-soft,#eef2fa)}}
+
+.lab-recurring .goal-mini-tail i{background:var(--cycle-a);border-left:18px solid var(--cycle-b);border-right:18px solid var(--cycle-c)}
+.lab-recurring .subtract-operator-copy span{display:none}
 
 </style>
 <script data-lab-design-runtime>
@@ -1686,23 +1721,28 @@ function renderForward(host,c,s){
    if(i<c.periods)chain.appendChild(gateElement(c,s,i,amounts,active));
  }
  const parts=[...chain.children];chain.replaceChildren();
- for(let i=0;i<c.periods;i++){const row=document.createElement('div');row.className='lab-change-row';row.append(parts[i*2].cloneNode(true),parts[i*2+1],parts[i*2+2].cloneNode(true));chain.append(row)}
+ for(let i=0;i<c.periods;i++){const row=document.createElement('div');row.className='lab-change-row';row.append(parts[i*2].cloneNode(true),parts[i*2+1],parts[i*2+2].cloneNode(true));chain.append(row);if(state.workingLevel===0&&i===active)wireChangeBar(row,c,i,amounts[i],max)}
+}
+function wireChangeBar(row,c,i,base,max){
+ const card=row.querySelector('.state-card:last-child'),bar=card.querySelector('.bar-track'),amount=round2(Math.abs(c.rate)*base),direction=c.rate>0?1:-1;
+ let progress=0,drag=null;
+ bar.classList.add('lab-bar-action');bar.tabIndex=0;bar.setAttribute('role','slider');bar.setAttribute('aria-label',`Apply ${Math.abs(c.rate*100)} percent ${c.rate>0?'increase':'decrease'} for year ${i+1}`);bar.setAttribute('aria-valuemin','0');bar.setAttribute('aria-valuemax','100');
+ bar.innerHTML=`<div class="bar-fill"></div><div class="lab-bar-target" style="bottom:${barPercent(base+direction*amount,max)}%"></div>`;
+ const fill=bar.querySelector('.bar-fill');
+ const preview=value=>{progress=Math.max(0,Math.min(1,value));const result=base+direction*amount*progress;fill.style.height=barPercent(result,max)+'%';card.querySelector('.state-head strong').textContent=format(c,result);bar.setAttribute('aria-valuenow',String(Math.round(progress*100)));bar.setAttribute('aria-valuetext',`${format(c,result)}, ${Math.round(progress*100)} percent of the change applied`);};
+ preview(0);
+ bar.addEventListener('pointerdown',e=>{if(e.button!==0)return;e.preventDefault();bar.dataset.interacted='true';bar.setPointerCapture(e.pointerId);drag={id:e.pointerId,y:e.clientY,progress};});
+ bar.addEventListener('pointermove',e=>{if(!drag||drag.id!==e.pointerId)return;preview(drag.progress+(drag.y-e.clientY)*max/(bar.clientHeight*amount)*direction);});
+ const finish=e=>{if(!drag||drag.id!==e.pointerId)return;drag=null;if(e.type==='pointercancel'){preview(0);return;}if(progress>=.98)setChange(i,amount);};
+ bar.addEventListener('pointerup',finish);bar.addEventListener('pointercancel',finish);
+ bar.addEventListener('keydown',e=>{const delta={ArrowUp:.1,ArrowRight:.1,ArrowDown:-.1,ArrowLeft:-.1}[e.key];if(delta===undefined&&!['Home','End'].includes(e.key))return;e.preventDefault();bar.dataset.interacted='true';preview(e.key==='End'?1:e.key==='Home'?0:progress+delta);if(progress>=.999)setChange(i,amount);});
 }
 function gateElement(c,s,i,amounts,active){
  const gate=document.createElement('div');gate.className='gate-card';const core=document.createElement('div');const locked=i>active&&active!==null,solved=gateExact(c,s,i),isActive=i===active;core.className=`gate-core${locked?' locked':''}${solved?' solved':''}${isActive?' active':''}`;
  const pctTarget=targetRate(c),base=amounts[i],change=s.changes[i],expected=base==null?null:round2(Math.abs(c.rate)*base),actual=base&&change!=null?change/base*100:null,meterMax=Math.max(40,pctTarget*1.5),fill=actual==null?0:Math.min(100,Math.max(0,actual/meterMax*100)),mark=Math.min(100,pctTarget/meterMax*100),guided=state.workingLevel===0;
  if(locked||base==null){core.innerHTML=`<div class="gate-top"><span class="gate-rate">${c.rate>0?'+':'−'}${pctTarget}%</span><span class="gate-period">Year ${i+1}</span></div><div class="lock-copy">Finish the previous percentage calculation first.<br>The next base is not fixed yet.</div>`}
- else if(guided){core.innerHTML=`<div class="gate-top"><span class="gate-rate">${c.rate>0?'+':'−'}${pctTarget}%</span><span class="gate-period">Year ${i+1}</span></div><div class="calc-line"><span class="calc-label">Worked calculation</span><div class="calc-equation"><span class="calc-expression">${format(c,base)} × ${pctTarget}%</span><span class="calc-result-label">${deltaVerb(c.rate)} =</span><strong>${format(c,expected)}</strong></div><div class="rate-meter"><div class="rate-fill" style="width:${fill}%"></div><div class="rate-target" style="left:${mark}%"></div></div><div class="rate-readout"><span>${pctTarget}% of ${format(c,base)}</span></div></div>${solved?'<div class="gate-note good">Applied. The new value is now the base for the next period.</div>':`<label class="lab-change-slider"><span>Apply ${c.rate>0?'+':'−'}${pctTarget}%</span><input type="range" min="0" max="100" step="1" value="0" data-apply-guided aria-label="Apply percentage change for year ${i+1}"></label>`}`;const apply=core.querySelector('[data-apply-guided]');if(apply){
-   apply.addEventListener('input',()=>{
-     const progress=Number(apply.value)/100,value=base+(c.rate>0?1:-1)*expected*progress;
-     const next=gate.closest('.lab-change-row').querySelector('.state-card:last-child');
-     const max=Math.max(c.opening,c.target,...amounts.filter(v=>v!=null))*1.08;
-     next.querySelector('.bar-track').innerHTML=`<div class="bar-fill" style="height:${barPercent(value,max)}%"></div>`;
-     next.querySelector('.state-head strong').textContent=format(c,value);
-     apply.setAttribute('aria-valuetext',`${Math.round(progress*100)} percent applied, ${format(c,value)}`);
-   });
-   apply.addEventListener('change',()=>{if(Number(apply.value)===100)setChange(i,expected)});
- }}
+ else if(guided){core.innerHTML=`<div class="gate-top"><span class="gate-rate">${c.rate>0?'+':'−'}${pctTarget}%</span><span class="gate-period">Year ${i+1}</span></div><div class="calc-line"><span class="calc-label">Percentage change</span><div class="calc-equation"><span class="calc-expression">${format(c,base)} × ${pctTarget}%</span><span class="calc-result-label">${deltaVerb(c.rate)} =</span><strong>${format(c,expected)}</strong></div></div>${solved?'<div class="gate-note good">Applied</div>':''}`;}
+
  else{
    const note=change==null?'Enter the percentage amount to calculate the next value.':solved?`${format(c,base)} × ${pctTarget}% = ${format(c,expected)}.`:`${format(c,change)} is ${format(c,round2(Math.abs(change-expected)))} ${change<expected?'too low':'too high'}. Enter ${format(c,expected)}.`;
    core.innerHTML=`<div class="gate-top"><span class="gate-rate">${c.rate>0?'+':'−'}${pctTarget}%</span><span class="gate-period">Year ${i+1}</span></div><div class="calc-line"><span class="calc-label">Your calculation</span><div class="calc-equation"><span class="calc-expression">${format(c,base)} × ${pctTarget}%</span><span class="calc-result-label">${deltaVerb(c.rate)} = ${c.currency?'£':''}</span><input id="change-${i}" class="numeric-entry" type="text" inputmode="decimal" enterkeyhint="done" value="${change==null?'':change}" placeholder="?" autocomplete="off" spellcheck="false" aria-label="${deltaVerb(c.rate)} amount for year ${i+1}"></div><div class="rate-meter"><div class="rate-fill" style="width:${fill}%"></div><div class="rate-target" style="left:${mark}%"></div></div><div class="rate-readout"><span>your amount ${change==null?'—':format(c,change)}</span><span>target ${format(c,expected)}</span></div></div><div class="gate-note ${change==null?'':solved?'good':'warn'}">${note}</div>`;

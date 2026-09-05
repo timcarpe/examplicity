@@ -400,11 +400,25 @@ Form-field focus darkens the existing border within its colour family, with no e
   when correct, red after an incorrect attempt. Choices use selection blue,
   retain explanatory labels, and have a separate Check action.
 - Assistance may reveal calculations, but an applied transformation can still
-  use a slider that visibly changes the model. The slider's end commits the
-  step; arrow keys and End provide the same operation.
+  be performed directly on its existing bar. A visible edge grip and target
+  line make the action discoverable; reaching the target commits the step.
+  Arrow keys and End provide the same operation.
 - Preserve causal explanations: why aligned infinite tails cancel, why both
   sides are divided, and why matching remainders reproduce digits. Avoid
   replacing useful algebra with an unexplained answer or a sparse sidebar.
 - Wrap a long calculation trace into readable rows instead of scrolling or
   shrinking text. Matching endpoint rings can identify a repeating cycle across
   rows where a single horizontal bracket would be misleading.
+
+
+Direct interaction cues use a quiet blue boundary or halo on the operated
+object. Retain keyboard controls and accessible instructions; remove floating
+“drag left” or “pull across” chips when the target and working explanation
+make the action clear. Attention stops after interaction, with a static
+reduced-motion alternative.
+
+Chart labels need reserved space as well as readable type. Separate axis
+ticks, axis titles and object readings; resize annotation containers to their
+text. Avoid labels that follow moving points when they collide with other
+readings or duplicate the persistent working. A second derived graph may need
+a title; a mode toggle and labelled axes already identify the primary graph.

@@ -385,8 +385,8 @@ input{font:inherit;color:var(--lab-ink)}
   <span data-lab-authored-subtitle-slot hidden></span>
 
   <section class="panel mission lab-activity-bar" aria-live="polite">
-    <div class="mission-copy"><span class="mission-claim" id="missionClaim"></span><span class="goal-kicker" id="goalKicker"></span><strong class="goal-text" id="goalText"></strong></div>
-    <div class="mission-tools"><div class="ownership"><span>Working:</span><div class="complexity lab-toggle" data-kind="working" id="complexity" aria-label="How much working you complete"><button type="button" data-level="0" aria-pressed="true">None</button><button type="button" data-level="1" aria-pressed="false">Some</button><button type="button" data-level="2" aria-pressed="false">All</button></div></div><button type="button" class="reset lab-action" id="reset">Reset</button></div>
+    <div class="mission-copy"><span class="goal-kicker" id="goalKicker"></span><strong class="goal-text" id="goalText"></strong></div>
+    <div class="mission-tools"><div id="steps" class="lab-checkpoints" aria-label="Learning stages"></div><div class="ownership"><span>Working:</span><div class="complexity lab-toggle" data-kind="working" id="complexity" aria-label="How much working you complete"><button type="button" data-level="0" aria-pressed="true">None</button><button type="button" data-level="1" aria-pressed="false">Some</button><button type="button" data-level="2" aria-pressed="false">All</button></div></div><button type="button" class="reset lab-action" id="reset">Reset</button></div>
   </section>
 
   <section class="panel lab">
@@ -399,108 +399,218 @@ input{font:inherit;color:var(--lab-ink)}
 <script>
 (() => {
 'use strict';
-const $=LabKit.dom.byId,NS='http://www.w3.org/2000/svg';
-const low=x=>x.report-x.step/2,high=x=>x.report+x.step/2;
+const $=id=>document.getElementById(id), NS='http://www.w3.org/2000/svg';
+const BASE={distance:{report:100,step:1,unit:'m',digits:1},time:{report:12.4,step:.1,unit:'s',digits:2},threshold:8.05};
+const FINE={distance:{report:100,step:.1,unit:'m',digits:2},time:{report:12.4,step:.01,unit:'s',digits:3},threshold:8.05};
+const blankProof=()=>({distance:'',time:'',speed:'',verdict:'',checked:false,success:false,message:'',bad:[]});
+const blankFine=()=>({dLow:'',dHigh:'',tLow:'',tHigh:'',boundsChecked:false,boundsSuccess:false,speed:'',verdict:'',checked:false,success:false,message:'',bad:[]});
+const state={workingLevel:0,step:0,complete:[false,false,false,false],d:100,t:12.4,drag:null,pointerId:null,
+  discover:{dLow:false,dHigh:false,tLow:false,tHigh:false},upperSpeed:false,lowerSpeed:false,observedFail:false,
+  proof:blankProof(),fine:blankFine()};
+const svg=(tag,attrs={},text=null)=>{const e=document.createElementNS(NS,tag);Object.entries(attrs).forEach(([k,v])=>{if(v!==undefined&&v!==null)e.setAttribute(k,String(v))});if(text!==null)e.textContent=text;return e};
+const add=(root,tag,attrs,text)=>{const e=svg(tag,attrs,text);root.appendChild(e);return e};
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const cfg=()=>state.step===3?FINE:BASE;
+const low=x=>x.report-x.step/2, high=x=>x.report+x.step/2;
+const safeHigh=x=>high(x)-Math.max(x.step*1e-5,1e-9);
+const roundTo=(v,step)=>Math.floor(v/step+0.5)*step;
+const speed=(d,t)=>d/t;
+const speedBounds=(c=cfg())=>[low(c.distance)/high(c.time),high(c.distance)/low(c.time)];
 const fmt=(v,n=3)=>Number(v).toFixed(n).replace(/\.0+$/,'').replace(/(\.\d*?)0+$/,'$1');
-const number=v=>{const n=parseFloat(v);return Number.isFinite(n)?n:null};
+const num=v=>{const n=parseFloat(v);return Number.isFinite(n)?n:null};
 const close=(a,b,t)=>a!==null&&Math.abs(a-b)<=t;
-const svg=(tag,attrs={},text)=>{const node=document.createElementNS(NS,tag);for(const [key,value] of Object.entries(attrs))node.setAttribute(key,String(value));if(text!==undefined)node.textContent=text;return node};
-const add=(root,tag,attrs,text)=>{const node=svg(tag,attrs,text);root.appendChild(node);return node};
 
-function makeProblem(seed=1,forcedOutcome){
-  const distances=[60,80,100,120,150,200],times=[8,10,12,12.4,15,20,25],dSteps=[1,2,5],tSteps=[.1,.2,.5];
-  const distance={report:distances[(seed*5+1)%distances.length],step:dSteps[(seed*7)%dSteps.length],unit:'m'};
-  const time={report:times[(seed*3+2)%times.length],step:tSteps[(seed*11)%tSteps.length],unit:'s'};
-  const lowerSpeed=low(distance)/high(time),outcome=forcedOutcome||(seed%2?'cannot':'certify');
-  const threshold=outcome==='certify'?Math.max(.1,Math.floor((lowerSpeed-.03)*100)/100):Math.ceil((lowerSpeed+.03)*100)/100;
-  return {seed,distance,time,threshold,lowerSpeed,outcome};
-}
-function freshSession(problem,level){
-  const lockedBounds=level<2,lockedSpeed=level<1;
-  return {dLow:lockedBounds?String(low(problem.distance)):'',dHigh:lockedBounds?String(high(problem.distance)):'',tLow:lockedBounds?String(low(problem.time)):'',tHigh:lockedBounds?String(high(problem.time)):'',speed:lockedSpeed?String(problem.lowerSpeed):'',verdict:'',checked:false,success:false,counted:false,bad:[],message:''};
-}
-const state={problemNumber:1,workingLevel:0,solvedAtLevel:0,problem:makeProblem(1),session:null};
-state.session=freshSession(state.problem,state.workingLevel);
+const steps=[
+  {name:'1 · Find the range',tag:'Core',goal:()=>{const dDone=state.discover.dLow&&state.discover.dHigh,tDone=state.discover.tLow&&state.discover.tHigh;if(!dDone)return 'Find the interval of true distances hidden by the rounded 100 m display.';if(!tDone)return 'Now find the interval of true times hidden by the rounded 12.4 s display.';return 'You now know every distance and time a valid certificate must allow for.'}},
+  {name:'2 · Find speed bounds',tag:'Extended',goal:()=>!state.upperSpeed?'Use the allowed intervals to make the run as fast as possible.':!state.lowerSpeed?'Now make it as slow as possible. This is the case the certificate must survive.':'You found the slowest allowed run. Next, turn that worst case into a calculation proof.'},
+  {name:'3 · Prove the decision',tag:'Extended',goal:()=>state.proof.success?'Proof complete: the rounded readings do not guarantee 8.05 m/s.':'Prove or disprove the certificate: lower distance bound ÷ upper time bound. Is the result still at least 8.05 m/s?'},
+  {name:'4 · Test better evidence',tag:'Extended',goal:()=>state.fine.success?'Proof complete: the finer readings now guarantee 8.05 m/s.':!state.fine.boundsSuccess?'Can better precision change the decision? Build the tighter distance and time intervals first.':'Repeat the same worst-case proof: lower distance bound ÷ upper time bound, then compare with 8.05 m/s.'}
+];
 
-function expectedVerdict(){return state.problem.outcome==='certify'?'yes':'no'}
-function setLevel(level){
-  state.workingLevel=Math.max(0,Math.min(2,Number(level)));state.solvedAtLevel=0;state.session=freshSession(state.problem,state.workingLevel);renderAll();
-}
-function newProblem(){state.problemNumber++;state.problem=makeProblem(state.problem.seed+1);state.session=freshSession(state.problem,state.workingLevel);renderAll()}
-function reset(){state.session=freshSession(state.problem,state.workingLevel);renderAll()}
-
-function renderMission(){
-  const p=state.problem,labels=['Choose the certificate decision from the completed worst-case calculation.','Calculate the slowest possible speed, then decide whether the claim is guaranteed.','Build both measurement intervals, calculate the slowest speed, then decide whether the claim is guaranteed.'];
-  $('missionClaim').textContent=`Certificate rule · every possible run must be ≥ ${fmt(p.threshold,2)} m/s`;
-  $('goalKicker').textContent=`Problem ${state.problemNumber} · ${['decision','calculation','full proof'][state.workingLevel]}`;
-  $('goalText').textContent=labels[state.workingLevel];
-  $('complexity').querySelectorAll('[data-level]').forEach(button=>button.setAttribute('aria-pressed',String(Number(button.dataset.level)===state.workingLevel)));
-}
-function field(key,label,unit,kind,locked){
-  const value=state.session[key],bad=state.session.bad.includes(key)?' bad':'';
-  if(locked)return `<div class="locked-field"><span>${label}</span><div class="locked-value ${kind}">${fmt(value,4)} ${unit}</div></div>`;
-  const status=state.session.checked?(bad?'bad':'good'):'action',mark=status==='good'?'✓':status==='bad'?'×':'';
-  return `<label class="num-field ${kind} ${status}"><span>${label}</span><input data-field="${key}" inputmode="decimal" value="${value}" placeholder="${unit}"><span class="field-status" aria-hidden="true">${mark}</span></label>`;
-}
-function renderDock(){
-  const p=state.problem,s=state.session,boundsLocked=state.workingLevel<2,speedLocked=state.workingLevel<1;
-  const working=state.workingLevel===2
-    ? `<div class="bound-entry-grid"><div class="bound-pair distance"><strong>Distance interval</strong><div class="pair-fields">${field('dLow','lower bound','m','distance',false)}${field('dHigh','upper bound','m','distance',false)}</div></div><div class="bound-pair time"><strong>Time interval</strong><div class="pair-fields">${field('tLow','lower bound','s','time',false)}${field('tHigh','upper bound','s','time',false)}</div></div></div><div class="equation-work" style="margin-top:8px"><div class="locked-field"><span>lower distance bound</span><div class="locked-value distance">${s.dLow?`${s.dLow} m`:'—'}</div></div><div class="eq-label">÷</div><div class="locked-field"><span>upper time bound</span><div class="locked-value time">${s.tHigh?`${s.tHigh} s`:'—'}</div></div><div class="eq-label">=</div>${field('speed','lower speed bound','m/s','speed',false)}</div>`
-    : `<div class="equation-work">${field('dLow','lower distance bound','m','distance',boundsLocked)}<div class="eq-label">÷</div>${field('tHigh','upper time bound','s','time',boundsLocked)}<div class="eq-label">=</div>${field('speed','lower speed bound','m/s','speed',speedLocked)}</div>`;
-  $('proofDock').hidden=false;
-  const verdictState=s.success?'good':s.checked&&s.verdict&&s.verdict!==expectedVerdict()?'bad':'needed';
-  $('proofDock').innerHTML=`<div class="proof-head"><strong>Worst-case working</strong></div><div class="proof-body"><div class="proof-rule"><strong>Slowest possible speed</strong><code>lower distance ÷ upper time</code></div>${working}<section class="lab-work-card lab-prediction" data-work-state="${verdictState}" data-interacted="${Boolean(s.verdict)}"><strong>Is the claim guaranteed?</strong><p>Every possible speed must be at least <span class="lab-math-surface">${fmt(p.threshold,2)} m/s</span>.</p><div class="lab-prediction-options"><button type="button" class="lab-action" data-verdict="yes" aria-pressed="${s.verdict==='yes'}">Certify<span>Every allowed run meets the rule</span></button><button type="button" class="lab-action" data-verdict="no" aria-pressed="${s.verdict==='no'}">Cannot certify<span>An allowed run can fall below it</span></button></div><button type="button" class="lab-action" data-priority="primary" id="checkProof" ${s.verdict?'':'disabled'}>Check prediction</button><div class="proof-message ${s.success?'good':s.checked?'bad':''}">${s.message||''}</div></section></div>`;
-
-}
-function renderNext(){
-  const card=$('nextCard'),s=state.session;if(!s.success){card.hidden=true;card.replaceChildren();return}
-  const canUpgrade=state.solvedAtLevel>=3&&state.workingLevel<2,nextLabel=state.workingLevel===0?'Try some working':'Try all working';
-  card.hidden=false;card.innerHTML=`<strong>Problem complete</strong><span>Your worst-case proof supports the certificate decision.</span><button type="button" class="next-problem lab-action" data-next data-priority="primary">Next problem</button>${canUpgrade?`<div class="next-upgrade"><strong>Ready to show more working?</strong><span>${state.workingLevel===0?'Calculate the lower speed bound yourself on this same problem.':'Construct all four bounds yourself on this same problem.'}</span><button type="button" data-upgrade class="lab-action">${nextLabel}</button></div>`:''}`;
-}
-function renderStage(){
-  const root=$('stage'),p=state.problem,s=state.session;root.replaceChildren();root.setAttribute('viewBox','0 0 640 650');root.classList.add('lab-bounds-chart');
-  add(root,'title',{id:'stageTitle'},'Possible distance, time and speed intervals');
-  add(root,'desc',{id:'stageDesc'},'Filled lower endpoints are included. Open upper endpoints are excluded. Compare the lowest speed with the required threshold.');
-  [{name:'Distance',y:90,data:p.distance,color:'allowed-d'},{name:'Time',y:285,data:p.time,color:'allowed-t'}].forEach(row=>{
-    const a=low(row.data),b=high(row.data),x=v=>70+(v-a+row.data.step*.4)/(row.data.step*1.8)*500;
-    add(root,'text',{x:24,y:row.y-60,class:'lab-chart-heading'},`${row.name}: ${fmt(row.data.report)} ${row.data.unit}`);
-    add(root,'text',{x:24,y:row.y-34,class:'lab-chart-label'},`Rounded to the nearest ${fmt(row.data.step)} ${row.data.unit}`);
-    add(root,'line',{x1:70,x2:570,y1:row.y+25,y2:row.y+25,class:'ruler'});
-    add(root,'rect',{x:x(a),y:row.y+15,width:x(b)-x(a),height:20,rx:10,class:row.color});
-    [a,b].forEach((v,i)=>{add(root,'circle',{cx:x(v),cy:row.y+25,r:7,fill:i?'white':'#536773',stroke:'#536773','stroke-width':2});add(root,'text',{x:x(v),y:row.y+63,'text-anchor':'middle',class:'lab-chart-value'},fmt(v,4))});
-    add(root,'text',{x:320,y:row.y+95,'text-anchor':'middle',class:'lab-chart-label'},`${fmt(a,4)} ≤ ${row.name.toLowerCase()} < ${fmt(b,4)} ${row.data.unit}`);
-  });
-  const lo=p.lowerSpeed,hi=high(p.distance)/low(p.time),pad=Math.max(.04,(hi-lo)*.25),min=Math.min(lo,p.threshold)-pad,max=Math.max(hi,p.threshold)+pad,x=v=>70+(v-min)/(max-min)*500;
-  add(root,'text',{x:24,y:460,class:'lab-chart-heading'},'Possible speeds');
-  add(root,'rect',{x:70,y:510,width:500,height:16,rx:8,class:'speed-track'});
-  add(root,'rect',{x:x(lo),y:510,width:x(hi)-x(lo),height:16,rx:8,class:'speed-range'});
-  add(root,'line',{x1:x(p.threshold),x2:x(p.threshold),y1:485,y2:548,class:'speed-threshold'});
-  add(root,'text',{x:x(p.threshold),y:480,'text-anchor':'middle',class:'lab-chart-label'},`${fmt(p.threshold,2)} required`);
-  add(root,'circle',{cx:x(lo),cy:518,r:6,class:'speed-extreme'});
-  add(root,'text',{x:x(lo),y:574,'text-anchor':'middle',class:'lab-chart-value'},s.success||state.workingLevel===0?`${fmt(lo,3)} m/s`:'? m/s');
-  add(root,'text',{x:x(lo),y:600,'text-anchor':'middle',class:'lab-chart-label'},'Lowest possible speed');
-}
-
-function check(){
-  const p=state.problem,s=state.session,expected={dLow:low(p.distance),dHigh:high(p.distance),tLow:low(p.time),tHigh:high(p.time),speed:p.lowerSpeed};s.checked=true;s.bad=[];
-  if(state.workingLevel===2){for(const key of ['dLow','dHigh','tLow','tHigh'])if(!close(number(s[key]),expected[key],.000001))s.bad.push(key)}
-  if(state.workingLevel>=1&&!close(number(s.speed),expected.speed,.00051))s.bad.push('speed');
-  if(s.bad.length)s.message=state.workingLevel===2&&s.bad.some(k=>k!=='speed')?'At least one interval endpoint does not match the stated rounding accuracy.':'Recalculate lower distance bound ÷ upper time bound.';
-  else if(!s.verdict)s.message='The working is complete. Now choose the certificate decision.';
-  else if(s.verdict!==expectedVerdict())s.message=`Compare ${fmt(expected.speed,3)} m/s with ${fmt(p.threshold,2)} m/s before deciding.`;
-  else{s.success=true;s.message=p.outcome==='certify'?'Every allowed speed meets the claim. Certificate justified.':'At least one allowed speed misses the claim. Cannot certify.';if(!s.counted){s.counted=true;state.solvedAtLevel++}}
+function resetStep(){
+  const c=cfg();state.d=c.distance.report;state.t=c.time.report;state.drag=null;state.pointerId=null;
+  if(state.step===0){state.discover={dLow:false,dHigh:false,tLow:false,tHigh:false};state.complete[0]=false}
+  if(state.step===1){state.upperSpeed=false;state.lowerSpeed=false;state.complete[1]=false}
+  if(state.step===2){state.d=low(BASE.distance);state.t=safeHigh(BASE.time);state.observedFail=false;state.proof=blankProof();state.complete[2]=false}
+  if(state.step===3){state.fine=blankFine();state.complete[3]=false}
   renderAll();
 }
-function renderAll(){renderMission();renderDock();renderStage();renderNext()}
+function selectStep(i){if(i>0&&!state.complete[i-1])return;state.step=i;const c=cfg();if(i===2){state.d=low(BASE.distance);state.t=safeHigh(BASE.time)}else{state.d=c.distance.report;state.t=c.time.report}state.drag=null;state.pointerId=null;renderAll()}
+function renderSteps(){
+ const host=$('steps');host.replaceChildren();
+ const evidence=[`Distance: 99.5 ≤ d < 100.5 m. Time: 12.35 ≤ t < 12.45 s.`, `Fastest: upper distance ÷ lower time. Slowest: lower distance ÷ upper time.`, `99.5 ÷ 12.45 ≈ 7.992 m/s: cannot certify.`, `99.95 ÷ 12.405 ≈ 8.057 m/s: certify.`];
+ steps.forEach((s,i)=>{const b=document.createElement('button');b.type='button';b.className='lab-checkpoint';b.dataset.complete=String(state.complete[i]);b.setAttribute('aria-current',String(i===state.step));b.setAttribute('aria-label',s.name);b.title=s.name.replace(/^\d · /,'')+(state.complete[i]?'\n'+evidence[i]:'');b.disabled=i>0&&!state.complete[i-1];b.addEventListener('click',()=>selectStep(i));host.append(b)});
+ document.querySelectorAll('[data-level]').forEach(b=>b.setAttribute('aria-pressed',String(Number(b.dataset.level)===state.workingLevel)));
+}
+function renderMission(){$('goalKicker').textContent=`Step ${state.step+1} of ${steps.length} · ${steps[state.step].tag}`;$('goalText').textContent=steps[state.step].goal();renderSteps()}
 
-$('complexity').addEventListener('click',event=>{const button=event.target.closest('[data-level]');if(button)setLevel(button.dataset.level)});$('reset').addEventListener('click',reset);
-$('proofDock').addEventListener('input',event=>{if(event.target.dataset.field){state.session[event.target.dataset.field]=event.target.value;state.session.checked=false;state.session.success=false;state.session.message='';state.session.bad=[];const field=event.target.closest('.num-field');field.classList.remove('good','bad');field.querySelector('.field-status').textContent='';$('proofDock').querySelector('.lab-prediction').dataset.workState='needed';$('proofDock').querySelector('.proof-message').textContent='';renderStage();renderNext()}});
-$('proofDock').addEventListener('click',event=>{const verdict=event.target.closest('[data-verdict]');if(verdict){state.session.verdict=verdict.dataset.verdict;state.session.checked=false;state.session.success=false;state.session.message='';state.session.bad=[];renderDock();renderNext();return}if(event.target.closest('#checkProof'))check()});
-$('nextCard').addEventListener('click',event=>{if(event.target.closest('[data-next]'))newProblem();if(event.target.closest('[data-upgrade]'))setLevel(state.workingLevel+1)});
-window.__ROUNDED_BOUNDS_LAB__={getState:()=>JSON.parse(JSON.stringify({...state,lower:low(state.problem.distance),upperTime:high(state.problem.time)})),setWorkingLevel:setLevel,setProblem:(seed,level=state.workingLevel,outcome)=>{state.problemNumber=1;state.problem=makeProblem(seed,outcome);state.workingLevel=Number(level);state.solvedAtLevel=0;state.session=freshSession(state.problem,state.workingLevel);renderAll()},setAnswers:answers=>{Object.assign(state.session,Object.fromEntries(Object.entries(answers).map(([key,value])=>[key,String(value)])));renderAll()},check,reset};
+const geom={distance:{x:50,y:165,w:600},time:{x:50,y:365,w:600}};
+function scanDomain(kind){return kind==='distance'?[99.2,100.8]:[12.30,12.50]}
+function domain(kind){return scanDomain(kind)}
+function valueToX(kind,v){const [a,b]=domain(kind),g=geom[kind];return g.x+(v-a)/(b-a)*g.w}
+function xToValue(kind,x){const [a,b]=domain(kind),g=geom[kind];let v=a+clamp((x-g.x)/g.w,0,1)*(b-a);if(state.step>0)v=Math.min(v,safeHigh(cfg()[kind]));return v}
+function stagePoint(evt){const s=$('stage'),p=s.createSVGPoint();p.x=evt.clientX;p.y=evt.clientY;return p.matrixTransform(s.getScreenCTM().inverse())}
+
+function ticks(root,kind,y){
+  const [a,b]=domain(kind),g=geom[kind],count=10;
+  add(root,'rect',{x:g.x,y:y-24,width:g.w,height:48,rx:8,class:'ruler'});add(root,'line',{x1:g.x+10,x2:g.x+g.w-10,y1:y,y2:y,class:'ruler-line'});
+  for(let i=0;i<=count;i++){const x=g.x+10+i/count*(g.w-20),major=i%5===0;add(root,'line',{x1:x,x2:x,y1:y-(major?9:5),y2:y+(major?9:5),class:`tick${major?' major':''}`})}
+  if(state.step===0){add(root,'text',{x:g.x+8,y:y+40,class:'smallmono'},fmt(a,kind==='distance'?2:3));add(root,'text',{x:g.x+g.w-8,y:y+40,'text-anchor':'end',class:'smallmono'},fmt(b,kind==='distance'?2:3))}
+}
+function screenCard(root,kind,y){
+ const c=cfg()[kind],value=kind==='distance'?state.d:state.t,display=state.step===0?roundTo(value,c.step):c.report;
+ add(root,'text',{x:34,y:y-104,class:'lab-chart-heading'},`${kind==='distance'?'Distance':'Time'} · rounded ${fmt(display,3)} ${c.unit}`);
+ add(root,'text',{x:34,y:y-75,class:'lab-chart-label'},`Nearest ${fmt(c.step,3)} ${c.unit} · true value ${fmt(value,4)} ${c.unit}`);
+}
+function car(root,x,y,draggable=true){
+  const g=add(root,'g',{transform:`translate(${x} ${y})`,class:draggable?'car-drag':'','data-drag':draggable?'distance':null,tabindex:draggable?0:null,role:draggable?'slider':null});
+  add(g,'ellipse',{cx:0,cy:14,rx:35,ry:5,fill:'#1d252b',opacity:.14});add(g,'path',{d:'M-32 3L-24 -9H10L28 0L32 11H-33Z',class:'car'});add(g,'path',{d:'M-17 -6H8L20 0H-23Z',class:'car-window'});add(g,'rect',{x:-31,y:5,width:62,height:5,rx:2.5,class:'car-accent'});add(g,'circle',{cx:-20,cy:11,r:6,class:'wheel'});add(g,'circle',{cx:19,cy:11,r:6,class:'wheel'});
+}
+function watch(root,x,y){const g=add(root,'g',{transform:`translate(${x} ${y})`});add(g,'rect',{x:-12,y:-50,width:24,height:14,rx:4,class:'stopwatch'});add(g,'circle',{cx:0,cy:0,r:35,class:'stopwatch'});add(g,'circle',{cx:0,cy:0,r:27,class:'watch-face'});for(let i=0;i<12;i++){const a=i*Math.PI/6;add(g,'line',{x1:Math.sin(a)*20,y1:-Math.cos(a)*20,x2:Math.sin(a)*24,y2:-Math.cos(a)*24,stroke:'#96a2aa','stroke-width':1.2})}add(g,'line',{x1:0,y1:0,x2:13,y2:-17,class:'watch-hand'});add(g,'circle',{cx:0,cy:0,r:4,class:'watch-dot'})}
+function discovered(kind){return kind==='distance'?(state.discover.dLow&&state.discover.dHigh):(state.discover.tLow&&state.discover.tHigh)}
+function provisionalPair(kind){if(state.step!==3||state.fine.boundsSuccess)return null;const f=state.fine;return kind==='distance'?[num(f.dLow),num(f.dHigh)]:[num(f.tLow),num(f.tHigh)]}
+function renderBounds(root,kind,y){
+  const c=cfg()[kind],g=geom[kind],a=low(c),b=high(c),isD=kind==='distance';
+  if(state.step===0){
+    const lowSeen=isD?state.discover.dLow:state.discover.tLow,highSeen=isD?state.discover.dHigh:state.discover.tHigh;
+    if(lowSeen){const x=valueToX(kind,a);add(root,'line',{x1:x,x2:x,y1:y-35,y2:y+35,class:'bound'});add(root,'text',{x,y:y+56,'text-anchor':'middle',class:'bound-label'},'lower bound');add(root,'text',{x,y:y+69,'text-anchor':'middle',class:'bound-value'},fmt(a,isD?1:2))}
+    if(highSeen){const x=valueToX(kind,b);add(root,'line',{x1:x,x2:x,y1:y-35,y2:y+35,class:'bound upper'});add(root,'text',{x,y:y+56,'text-anchor':'middle',class:'bound-label'},'upper bound');add(root,'text',{x,y:y+69,'text-anchor':'middle',class:'bound-value'},fmt(b,isD?1:2))}
+    if(discovered(kind)){const x1=valueToX(kind,a),x2=valueToX(kind,b);add(root,'rect',{x:x1,y:y-12,width:x2-x1,height:24,rx:8,class:isD?'allowed-d':'allowed-t'});add(root,'text',{x:(x1+x2)/2,y:y-42,'text-anchor':'middle',class:'mono'},isD?`${fmt(a,1)} ≤ d < ${fmt(b,1)} m`:`${fmt(a,2)} ≤ t < ${fmt(b,2)} s`)}
+    return;
+  }
+  const provisional=provisionalPair(kind);
+  if(provisional){
+    const [pa,pb]=provisional,[da,db]=domain(kind);if(pa!==null&&pa>=da&&pa<=db){const x=valueToX(kind,pa);add(root,'line',{x1:x,x2:x,y1:y-32,y2:y+32,class:'provisional-line'});add(root,'text',{x,y:y+54,'text-anchor':'middle',class:'bound-label'},'your lower')}
+    if(pb!==null&&pb>=da&&pb<=db){const x=valueToX(kind,pb);add(root,'line',{x1:x,x2:x,y1:y-32,y2:y+32,class:'provisional-line'});add(root,'text',{x,y:y+67,'text-anchor':'middle',class:'bound-value'},fmt(pb,isD?2:3))}
+    if(pa!==null&&pb!==null&&pb>pa&&pa>=da&&pb<=db){const x1=valueToX(kind,pa),x2=valueToX(kind,pb);add(root,'rect',{x:x1,y:y-10,width:x2-x1,height:20,rx:7,class:'provisional'});add(root,'text',{x:(x1+x2)/2,y:y-40,'text-anchor':'middle',class:'smallmono'},'your proposed interval')}
+    return;
+  }
+  const x1=valueToX(kind,a),x2=valueToX(kind,b);add(root,'rect',{x:x1,y:y-12,width:x2-x1,height:24,rx:8,class:isD?'allowed-d':'allowed-t'});add(root,'line',{x1:x1,x2:x1,y1:y-33,y2:y+33,class:'bound'});add(root,'line',{x1:x2,x2:x2,y1:y-33,y2:y+33,class:'bound upper'});
+  const fine=state.step===3,loX=fine?x1-10:x1,hiX=fine?x2+10:x2,loAnchor=fine?'end':'middle',hiAnchor=fine?'start':'middle';
+  add(root,'text',{x:loX,y:y+53,'text-anchor':loAnchor,class:'bound-label'},'lower bound');add(root,'text',{x:loX,y:y+66,'text-anchor':loAnchor,class:'bound-value'},fmt(a,isD?(fine?2:1):(fine?3:2)));
+  add(root,'text',{x:hiX,y:y+53,'text-anchor':hiAnchor,class:'bound-label'},'upper bound');add(root,'text',{x:hiX,y:y+66,'text-anchor':hiAnchor,class:'bound-value'},fmt(b,isD?(fine?2:1):(fine?3:2)));
+}
+function distanceEnabled(){return state.step===1}
+function renderDistance(root){
+  const g=geom.distance,x=valueToX('distance',state.d),enabled=distanceEnabled();screenCard(root,'distance',g.y);
+
+  ticks(root,'distance',g.y);renderBounds(root,'distance',g.y);
+  if(state.step===0){add(root,'rect',{x:g.x-8,y:g.y-18,width:g.w+16,height:36,fill:'transparent','data-lane':'distance',style:'cursor:ew-resize;pointer-events:all'});add(root,'line',{x1:x,x2:x,y1:g.y-34,y2:g.y+34,class:'gate'});add(root,'rect',{x:x-12,y:g.y-36,width:24,height:7,rx:3,class:'gate-foot'});add(root,'circle',{cx:x,cy:g.y,r:11,class:'distance-handle','data-drag':'distance',tabindex:0,role:'slider'});return}
+  add(root,'line',{x1:x,x2:x,y1:g.y-31,y2:g.y+24,class:'handle-line-d'});add(root,'circle',{cx:x,cy:g.y-31,r:6,class:'position-pin'});car(root,x,g.y+1,enabled);
+}
+function timeEnabled(){return state.step===0||state.step===1}
+function renderTime(root){
+  const g=geom.time,x=valueToX('time',state.t),enabled=timeEnabled();screenCard(root,'time',g.y);
+
+  ticks(root,'time',g.y);renderBounds(root,'time',g.y);watch(root,650,g.y-90);
+  if(enabled)add(root,'rect',{x:g.x-8,y:g.y-24,width:g.w+16,height:48,fill:'transparent','data-lane':'time',style:'cursor:ew-resize;pointer-events:all'});
+  if(enabled){
+    const control=add(root,'g',{class:'time-drag-control','data-drag':'time',tabindex:0,role:'slider','aria-label':'Actual stop time. Drag left or right.'});
+    add(control,'rect',{x:x-20,y:g.y-43,width:40,height:86,rx:12,class:'drag-hit','data-drag':'time'});
+    add(control,'line',{x1:x,x2:x,y1:g.y-34,y2:g.y+34,class:'handle-line-t','data-drag':'time'});
+    add(control,'circle',{cx:x,cy:g.y,r:12,class:'time-handle','data-drag':'time'});
+  }else{
+    add(root,'line',{x1:x,x2:x,y1:g.y-34,y2:g.y+34,class:'handle-line-t'});add(root,'circle',{cx:x,cy:g.y,r:11,class:'time-handle',style:'cursor:default'});
+  }
+}
+function speedDomain(){const [a,b]=speedBounds(BASE),t=BASE.threshold;let lo=a-(b-a)*.18,hi=b+(b-a)*.18;lo=Math.min(lo,t-(b-a)*.12);hi=Math.max(hi,t+(b-a)*.12);return[lo,hi]}
+function renderSpeed(root){
+ if(state.step===0)return;
+ const c=cfg(),v=speed(state.d,state.t),[lo,hi]=speedBounds(c),[min,max]=speedDomain(),x=n=>50+(n-min)/(max-min)*600,y=590;
+ add(root,'text',{x:34,y:515,class:'lab-chart-heading'},'Speed = distance ÷ time');
+ add(root,'text',{x:34,y:548,class:'lab-chart-label'},`${fmt(state.d,4)} m ÷ ${fmt(state.t,4)} s = ${state.step>1&&!state.complete[state.step]&&state.workingLevel>0?'?':fmt(v,3)} m/s`);
+ add(root,'rect',{x:50,y,width:600,height:16,rx:8,class:'speed-track'});
+ if(state.complete[1])add(root,'rect',{x:x(lo),y,width:x(hi)-x(lo),height:16,rx:8,class:'speed-range'});
+ add(root,'line',{x1:x(c.threshold),x2:x(c.threshold),y1:y-24,y2:y+38,class:'speed-threshold'});
+ add(root,'text',{x:x(c.threshold),y:y-32,'text-anchor':'middle',class:'lab-chart-label'},'8.05 required');
+ add(root,'circle',{cx:x(v),cy:y+8,r:10,class:'speed-current'});
+ add(root,'text',{x:50,y:y+65,class:'lab-chart-label'},state.upperSpeed?`Upper speed: ${fmt(hi,3)} m/s`:'');
+ add(root,'text',{x:50,y:y+93,class:'lab-chart-label'},state.lowerSpeed?`Lower speed: ${state.step>1&&!state.complete[state.step]&&state.workingLevel>0?'?':fmt(lo,3)} m/s`:'');
+ if(state.step===3&&!state.fine.boundsSuccess)return;
+ if(state.step>=2){const proof=state.step===2?state.proof:state.fine,d=state.step===2?num(proof.distance):low(c.distance),t=state.step===2?num(proof.time):high(c.time);if(d!==null&&t>0&&d/t>=min&&d/t<=max)add(root,'path',{d:`M${x(d/t)} ${y-12}l7 7-7 7-7-7Z`,class:'your-choice'});}
+}
+function renderStage(){
+ const root=$('stage');root.replaceChildren();root.classList.add('lab-bounds-chart','lab-bounds-restored');root.setAttribute('viewBox',`0 0 720 ${state.step===0?465:720}`);
+ add(root,'title',{id:'stageTitle'},'Discover rounded measurement intervals and speed bounds');
+ add(root,'desc',{id:'stageDesc'},'Drag the true distance and time across rounding boundaries. Then use the allowed intervals to find the fastest and slowest speeds.');
+ renderDistance(root);renderTime(root);renderSpeed(root);
+ root.querySelectorAll('[data-drag][tabindex]').forEach(handle=>{const kind=handle.dataset.drag;handle.setAttribute('aria-label',`True ${kind}`);handle.setAttribute('aria-valuenow',kind==='distance'?state.d:state.t);handle.setAttribute('aria-valuemin',state.step===0?domain(kind)[0]:low(cfg()[kind]));handle.setAttribute('aria-valuemax',state.step===0?domain(kind)[1]:safeHigh(cfg()[kind]));});
+}
+function observe(kind){
+  if(state.step===0){const c=BASE[kind],v=kind==='distance'?state.d:state.t,a=low(c),b=high(c);if(v<a-1e-9)state.discover[kind==='distance'?'dLow':'tLow']=true;if(v>=b-1e-9)state.discover[kind==='distance'?'dHigh':'tHigh']=true;state.complete[0]=state.discover.dLow&&state.discover.dHigh&&state.discover.tLow&&state.discover.tHigh}
+  else if(state.step===1){const c=BASE,[da,db]=[low(c.distance),high(c.distance)],[ta,tb]=[low(c.time),high(c.time)],dq=(state.d-da)/(db-da),tq=(state.t-ta)/(tb-ta);if(dq>.975&&tq<.025)state.upperSpeed=true;if(dq<.025&&tq>.975)state.lowerSpeed=true;state.complete[1]=state.upperSpeed&&state.lowerSpeed}
+  else if(state.step===2){if(speed(state.d,state.t)<BASE.threshold)state.observedFail=true}
+}
+function setValue(kind,v){const c=cfg()[kind];if(state.step===3&&!state.fine.boundsSuccess)return;if(state.step===0){const [a,b]=scanDomain(kind);v=clamp(v,a,b)}else v=clamp(v,low(c),safeHigh(c));if(kind==='distance')state.d=v;else state.t=v;observe(kind);renderVisuals()}
+function renderVisuals(){if(state.step>=2)supplyWorking();renderMission();renderStage();if(state.step<2)renderProofDock();renderCompletion()}
+function renderAll(){renderVisuals();renderProofDock()}
+
+function verdictHtml(current,prefix){return `<div class="verdict-group"><button type="button" class="verdict lab-action" data-verdict="yes" data-prefix="${prefix}" aria-pressed="${current==='yes'}">Certify</button><button type="button" class="verdict lab-action" data-verdict="no" data-prefix="${prefix}" aria-pressed="${current==='no'}">Cannot certify</button></div>`}
+function workField(path,label,value,unit,owned,bad=false,good=false){
+ if(!owned)return `<div class="locked-field"><span>${label}</span><div class="locked-value">${value} ${unit}</div></div>`;
+ return `<label class="num-field ${bad?'bad':good?'good':'action'}"><span>${label}</span><input data-field="${path}" inputmode="decimal" value="${value}" placeholder="${unit}"><span class="field-status" aria-hidden="true">${bad?'×':good?'✓':''}</span></label>`;
+}
+function supplyWorking(){
+ const c=cfg(),f=state.step===3?state.fine:state.proof;
+ if(state.workingLevel<2){if(state.step===3){Object.assign(f,{dLow:String(low(c.distance)),dHigh:String(high(c.distance)),tLow:String(low(c.time)),tHigh:String(high(c.time)),boundsSuccess:true})}else{f.distance=String(low(c.distance));f.time=String(high(c.time));}}
+ if(state.workingLevel===0)f.speed=String(speedBounds(c)[0]);
+}
+function renderProofDock(){
+ const dock=$('proofDock');dock.hidden=false;
+ if(state.step<2){const items=state.step===0?[['Distance lower boundary',state.discover.dLow,'99.5 m'],['Distance upper boundary',state.discover.dHigh,'100.5 m'],['Time lower boundary',state.discover.tLow,'12.35 s'],['Time upper boundary',state.discover.tHigh,'12.45 s']]:[['Fastest possible run',state.upperSpeed,`${fmt(speedBounds()[1],3)} m/s`],['Slowest possible run',state.lowerSpeed,`${fmt(speedBounds()[0],3)} m/s`]];
+ dock.innerHTML='<div class="proof-head"><strong>'+ (state.step===0?'Discover the intervals':'Explore the speed extremes')+'</strong></div><div class="proof-body">'+items.map(([label,done,result])=>`<section class="lab-work-card" data-work-state="${done?'good':'needed'}" data-interacted="${state.drag!==null}"><strong>${label}</strong><p>${done?result:'—'}</p></section>`).join('')+'<p>'+(state.step===0?'A rounded reading represents an interval. Crossing its edges changes the display.':'Greater distance and less time increase speed; reverse both to find the lower bound.')+'</p></div>';return;}
+ supplyWorking();const fine=state.step===3,f=fine?state.fine:state.proof,c=cfg(),prefix=fine?'fine':'proof';
+ if(fine&&!f.boundsSuccess){dock.innerHTML=`<div class="proof-head"><strong>Build the finer intervals</strong></div><div class="proof-body"><p>Distance is rounded to 0.1 m; time to 0.01 s.</p>${[['dLow','Distance lower','m'],['dHigh','Distance upper','m'],['tLow','Time lower','s'],['tHigh','Time upper','s']].map(([key,label,unit])=>workField('fine.'+key,label,f[key],unit,true,f.bad.includes(key))).join('')}<button class="lab-action" data-priority="primary" data-check="fine-bounds">Check intervals</button><p>${f.message}</p></div>`;return;}
+ const predictionState=f.success?'good':f.checked&&f.verdict&&f.verdict!==(fine?'yes':'no')?'bad':'needed';
+ dock.innerHTML=`<div class="proof-head"><strong>${fine?'Same proof, finer readings':'Worst-case proof'}</strong></div><div class="proof-body"><div class="proof-rule"><code>lower distance ÷ upper time</code></div><div class="equation-work">${workField('proof.distance','Lower distance',fine?fmt(low(c.distance),4):f.distance,'m',!fine&&state.workingLevel===2,f.bad.includes('distance'),f.checked&&!f.bad.includes('distance'))}<div class="eq-label">÷</div>${workField('proof.time','Upper time',fine?fmt(high(c.time),4):f.time,'s',!fine&&state.workingLevel===2,f.bad.includes('time'),f.checked&&!f.bad.includes('time'))}<div class="eq-label">=</div>${workField(prefix+'.speed','Lower speed',state.workingLevel===0?fmt(Number(f.speed),3):f.speed,'m/s',state.workingLevel>0,f.bad.includes('speed'),f.checked&&!f.bad.includes('speed'))}</div><section class="lab-work-card lab-prediction" data-work-state="${predictionState}" data-interacted="${Boolean(f.verdict)}"><strong>Does every allowed run reach 8.05 m/s?</strong><div class="lab-prediction-options">${verdictHtml(f.verdict,prefix)}</div><button class="lab-action" data-priority="primary" data-check="${fine?'fine-proof':'proof'}" ${f.verdict?'':'disabled'}>Check prediction</button><p>${f.message}</p></section></div>`;
+}
+
+function setByPath(path,value){const [a,b]=path.split('.');state[a][b]=value;state[a].success=false;state[a].message='';state.complete[state.step]=false;renderCompletion();state[a].checked=false;if(a==='proof')state[a].bad=[];if(a==='fine'){state[a].bad=[];if(['dLow','dHigh','tLow','tHigh'].includes(b))state.fine.boundsChecked=false}renderStage()}
+function checkProof(){
+  const p=state.proof,d=num(p.distance),t=num(p.time),s=num(p.speed),expected=low(BASE.distance)/high(BASE.time);p.checked=true;p.bad=[];
+  if(!close(d,low(BASE.distance),.006))p.bad.push('distance');if(!close(t,high(BASE.time),.0006))p.bad.push('time');if(!close(s,expected,.004))p.bad.push('speed');
+  if(p.bad.includes('distance')||p.bad.includes('time'))p.message='Those inputs do not make speed as small as possible. Compare your markers with the interval endpoints.';
+  else if(p.bad.includes('speed'))p.message=`Recalculate ${fmt(d,3)} ÷ ${fmt(t,3)}.`;
+  else if(!p.verdict)p.message='Your calculation is complete. Now compare it with 8.05 m/s and choose Certify or Cannot certify.';
+  else if(p.verdict!=='no')p.message='This lower speed bound is below 8.05 m/s, so at least one allowed run fails. The claim cannot be certified.';
+  else{p.success=true;p.message=`${fmt(expected,3)} m/s is below 8.05 m/s: the claim cannot be certified.`;state.complete[2]=true;state.d=low(BASE.distance);state.t=safeHigh(BASE.time)}
+  renderAll();
+}
+function checkFineBounds(){
+  const f=state.fine,vals={dLow:num(f.dLow),dHigh:num(f.dHigh),tLow:num(f.tLow),tHigh:num(f.tHigh)},exp={dLow:low(FINE.distance),dHigh:high(FINE.distance),tLow:low(FINE.time),tHigh:high(FINE.time)};f.boundsChecked=true;f.bad=[];
+  for(const k of Object.keys(vals)){const tol=k.startsWith('d')?.0006:.00006;if(!close(vals[k],exp[k],tol))f.bad.push(k)}
+  if(f.bad.length)f.message='At least one limit does not match the stated rounding accuracy. The dashed interval shows what your entries imply.';
+  else{f.boundsSuccess=true;f.message='Intervals fixed. Now use lower distance ÷ upper time to calculate the new slowest possible speed.';state.d=FINE.distance.report;state.t=FINE.time.report}
+  renderAll();
+}
+function checkFineProof(){
+  const f=state.fine,s=num(f.speed),expected=low(FINE.distance)/high(FINE.time);f.checked=true;f.bad=[];if(!close(s,expected,.005))f.bad.push('speed');
+  if(f.bad.length)f.message=`Recalculate ${fmt(low(FINE.distance),2)} ÷ ${fmt(high(FINE.time),3)}.`;
+  else if(!f.verdict)f.message='Your calculation is complete. Compare it with 8.05 m/s and choose Certify or Cannot certify.';
+  else if(f.verdict!=='yes')f.message='The lower speed bound is above 8.05 m/s, so every allowed run passes. This claim can be certified.';
+  else{f.success=true;f.message=`${fmt(expected,3)} m/s is above 8.05 m/s: the claim is certified.`;state.complete[3]=true;state.d=low(FINE.distance);state.t=safeHigh(FINE.time)}
+  renderAll();
+}
+
+const dock=$('proofDock');dock.addEventListener('input',evt=>{const path=evt.target.dataset.field;if(path){setByPath(path,evt.target.value);const field=evt.target.closest('.num-field');field?.classList.remove('good','bad');const mark=field?.querySelector('.field-status');if(mark)mark.textContent='';const prediction=dock.querySelector('.lab-prediction');if(prediction){prediction.dataset.workState='needed';prediction.querySelector('p').textContent='';}}});dock.addEventListener('click',evt=>{const verdict=evt.target.closest?.('[data-verdict]');if(verdict){const obj=verdict.dataset.prefix==='fine'?state.fine:state.proof;obj.verdict=verdict.dataset.verdict;obj.success=false;obj.message='';state.complete[state.step]=false;renderCompletion();obj.checked=false;obj.bad=[];renderProofDock();return}const check=evt.target.closest?.('[data-check]')?.dataset.check;if(check==='proof')checkProof();if(check==='fine-bounds')checkFineBounds();if(check==='fine-proof')checkFineProof()});
+
+const stage=$('stage');stage.addEventListener('pointerdown',evt=>{const p=stagePoint(evt),drag=evt.target.closest?.('[data-drag]'),lane=evt.target.closest?.('[data-lane]'),kind=drag?.dataset.drag||lane?.dataset.lane;if(!kind)return;state.drag=kind;state.pointerId=evt.pointerId;stage.setPointerCapture?.(evt.pointerId);evt.preventDefault();setValue(kind,xToValue(kind,p.x))});stage.addEventListener('pointermove',evt=>{if(!state.drag)return;setValue(state.drag,xToValue(state.drag,stagePoint(evt).x))});function endPointer(){if(state.pointerId!==null)try{stage.releasePointerCapture?.(state.pointerId)}catch{}state.drag=null;state.pointerId=null}stage.addEventListener('pointerup',endPointer);stage.addEventListener('pointercancel',endPointer);stage.addEventListener('keydown',evt=>{const handle=evt.target.closest?.('[data-drag]');if(handle&&(evt.key==='ArrowLeft'||evt.key==='ArrowRight')){evt.preventDefault();const kind=handle.dataset.drag,[a,b]=domain(kind),delta=(b-a)/80*(evt.key==='ArrowLeft'?-1:1);setValue(kind,(kind==='distance'?state.d:state.t)+delta);requestAnimationFrame(()=>stage.querySelector(`[data-drag="${kind}"][tabindex]`)?.focus({preventScroll:true}))}});
+
+
+function renderCompletion(){const card=$('nextCard');card.hidden=!state.complete[state.step];if(card.hidden)return;card.innerHTML=`<strong>${state.step===3?'Investigation complete':'Evidence ready'}</strong><div class="next-actions"><button class="lab-action" data-priority="primary" data-continue>${state.step===3?'Start again':'Continue'}</button></div>`;}
+$('nextCard').addEventListener('click',e=>{if(!e.target.closest('[data-continue]'))return;if(state.step<3)selectStep(state.step+1);else{state.step=0;state.complete.fill(false);state.upperSpeed=false;state.lowerSpeed=false;state.proof=blankProof();state.fine=blankFine();resetStep();}});
+$('reset').addEventListener('click',resetStep);
+$('complexity').addEventListener('click',e=>{const b=e.target.closest('[data-level]');if(!b)return;state.workingLevel=Number(b.dataset.level);if(state.step===2){state.proof=blankProof();state.complete[2]=false;}if(state.step===3){state.fine=blankFine();state.complete[3]=false;}renderAll();});
+
+window.__ROUNDED_BOUNDS_LAB__={
+  getState:()=>JSON.parse(JSON.stringify({workingLevel:state.workingLevel,step:state.step,complete:state.complete,d:state.d,t:state.t,discover:state.discover,upperSpeed:state.upperSpeed,lowerSpeed:state.lowerSpeed,observedFail:state.observedFail,proof:state.proof,fine:state.fine,speed:speed(state.d,state.t),bounds:speedBounds(cfg())})),
+  selectStep,reset:resetStep,setDistance:v=>setValue('distance',v),setTime:v=>setValue('time',v),
+  proof:(d,t,s,verdict='no')=>{state.proof.distance=String(d);state.proof.time=String(t);state.proof.speed=String(s);state.proof.verdict=verdict;checkProof()},
+  fineBounds:(dl,dh,tl,th)=>{Object.assign(state.fine,{dLow:String(dl),dHigh:String(dh),tLow:String(tl),tHigh:String(th)});checkFineBounds()},
+  fineProof:(s,verdict='yes')=>{state.fine.speed=String(s);state.fine.verdict=verdict;checkFineProof()}
+};
 renderAll();
 })();
-
 </script>
 </body>
 </html>

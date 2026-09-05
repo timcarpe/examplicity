@@ -595,7 +595,7 @@ button:focus-visible,.tape-track:focus-visible{outline:3px solid var(--lab-focus
 <link rel="stylesheet" href="./lab-kit.css" data-lab-resource="lab-kit.css">
 <!-- LAB_DESIGN_COMPONENTS -->
 </head>
-<body data-lab-layout="standard" class="lab-adopt-v3">
+<body data-lab-layout="standard" class="lab-adopt-v3 lab-recurring">
 <main data-lab-role="model" data-lab-manipulative="decimal-alignment">
 <!-- LAB_MANIFEST_HEADER_START -->
 <header class="lab-manifest-header">
@@ -654,7 +654,7 @@ button:focus-visible,.tape-track:focus-visible{outline:3px solid var(--lab-focus
           <div id="subtractTrack" class="subtract-track" role="button" tabindex="0" aria-label="Drag the minus sign across to subtract row B from row A">
             <div class="subtract-track-line"></div><div class="subtract-track-fill"></div>
             <button id="subtractHandle" class="subtract-handle" type="button" aria-label="Pull minus across to subtract">−</button>
-            <span id="subtractCaption" class="subtract-caption">pull − across to subtract</span>
+            <span id="subtractCaption" class="subtract-caption" hidden>pull − across to subtract</span>
           </div>
         </div>
         <div id="resultHost"></div>
@@ -815,7 +815,7 @@ button:focus-visible,.tape-track:focus-visible{outline:3px solid var(--lab-focus
     const preview=document.createElement("div");preview.className="shift-preview";preview.textContent=multiplierText(shift);
     shell.append(track,preview);
     if(!s.moved&&which==="A"&&!locked){
-      shell.classList.add("cued");const cue=document.createElement("div");cue.className="drag-cue";cue.innerHTML="<b>←</b> drag left = ×10";shell.appendChild(cue);
+      shell.classList.add("cued");
     }
 
     const start=aligned?firstTailIndex():anyTailOverlapIndex();
@@ -855,7 +855,7 @@ button:focus-visible,.tape-track:focus-visible{outline:3px solid var(--lab-focus
 
   function startDrag(e,which,track){
     if(e.button!==0)return;const s=session(),c=current();if(which==="B"&&!c.unlockB)return;
-    e.preventDefault();track.setPointerCapture?.(e.pointerId);track.classList.add("dragging");s.moved=true;track.parentElement.querySelector(".drag-cue")?.classList.add("engaged");
+    e.preventDefault();track.setPointerCapture?.(e.pointerId);track.classList.add("dragging");s.moved=true;track.parentElement.classList.remove("cued");
     state.drag={pointerId:e.pointerId,which,track,startX:e.clientX,startShift:which==="A"?s.a:s.b,previewShift:which==="A"?s.a:s.b};
     track.addEventListener("pointermove",dragMove);track.addEventListener("pointerup",dragEnd,{once:true});track.addEventListener("pointercancel",dragEnd,{once:true});
   }
@@ -960,6 +960,7 @@ button:focus-visible,.tape-track:focus-visible{outline:3px solid var(--lab-focus
   }
   function renderSubtractGesture(){
     const s=session(),track=$("subtractTrack"),caption=$("subtractCaption");if(!track)return;
+    track.dataset.interacted=String(Boolean(s.subtractTouched));
     const blocked=s.a<=s.b;
     track.classList.toggle("blocked",blocked&&!s.attempted);
     track.classList.toggle("ready",gapAligned()&&!s.attempted&&!blocked);
@@ -989,7 +990,7 @@ button:focus-visible,.tape-track:focus-visible{outline:3px solid var(--lab-focus
     const style=getComputedStyle(track),subStart=parseFloat(style.getPropertyValue('--sub-start'))||232;
     const range=Math.max(1,track.clientWidth-subStart-24),startProgress=s.attempted?1:0;
     state.subtractDrag={pointerId:e.pointerId,startX:e.clientX,range,startProgress,progress:startProgress,moved:false,undoing:s.attempted};
-    track.classList.add('dragging');track.setPointerCapture?.(e.pointerId);
+    session().subtractTouched=true;track.dataset.interacted='true';track.classList.add('dragging');track.setPointerCapture?.(e.pointerId);
     track.addEventListener('pointermove',moveSubtractDrag);track.addEventListener('pointerup',endSubtractDrag,{once:true});track.addEventListener('pointercancel',endSubtractDrag,{once:true});
   }
   function moveSubtractDrag(e){
