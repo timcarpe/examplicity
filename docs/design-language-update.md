@@ -461,3 +461,8 @@ Six reviewed sources and generated HTML: strengthened toggle-container borders t
 ### Top-panel button correction — 5 September 2026
 
 Restored standard control corners for the six reviewed labs’ top-panel action buttons. Primary search actions are blue; secondary/reset/new-question actions are medium grey with white text. Retained thin darker borders and subtle shadows. Toggle styling and panel layout remain unchanged. Updated guide and generated copies. Validation skipped as requested.
+
+
+### Action priority and algorithm toggle — 5 September 2026
+
+Six reviewed labs: New question/New problem blue; Reset and other secondary top-panel actions white with blue text. Disabled actions have muted grey treatment and no shadow. Working stays grey, exam stays blue. Graph Search algorithm buttons now form one blue segmented toggle with pressed state and priority tooltips; clicks still start the selected search and busy state still disables switching. Guide and published copies updated. Validation skipped as requested.

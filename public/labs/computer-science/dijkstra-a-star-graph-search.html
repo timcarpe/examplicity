@@ -692,6 +692,18 @@ button{min-height:42px;padding:0 13px;font-size:var(--lab-type-body,14px);font-w
 .mission.lab-activity-bar+.workspace{margin-top:0;border:1px solid var(--lab-line,#d2d2d7);border-top:0;border-radius:0 0 12px 12px}
 .lab-activity-bar .run-actions>button.algorithm-button{flex-direction:column}.lab-activity-bar .algorithm-button span{font-size:12px;font-weight:400}.lab-activity-bar .algorithm-button small{font-size:11px;font-weight:400}
 </style>
+<style data-action-hierarchy>
+/* Action hierarchy: blue primary, white/blue secondary, muted disabled. */
+.lab-activity-bar .lab-activity-task>button,.lab-activity-bar .run-actions>button,.lab-activity-bar .activity-actions>button,.lab-activity-bar>button{min-height:40px;padding:8px 14px;border:1px solid var(--lab-accent-line,#9fb4d6);border-radius:var(--lab-control-radius,8px);background:#fff;color:var(--lab-accent-ink,#315b91);font-size:12px;font-weight:400;box-shadow:0 1px 3px rgba(29,29,31,.08)}
+.lab-activity-bar .lab-activity-task>button:hover,.lab-activity-bar .run-actions>button:hover,.lab-activity-bar .activity-actions>button:hover,.lab-activity-bar>button:hover{background:var(--lab-accent-soft,#eef2fa)}
+.lab-activity-bar #newButton,.lab-activity-bar #newProblemBtn{border-color:var(--lab-accent-pressed,#3a5d99);background:var(--lab-accent-hover,#4569aa);color:#fff}
+.lab-activity-bar #newButton:hover,.lab-activity-bar #newProblemBtn:hover{background:var(--lab-accent-pressed,#3a5d99)}
+.lab-activity-bar button:disabled:not([aria-pressed]):not([aria-checked]){border-color:var(--lab-line,#d2d2d7);background:var(--lab-surface-strong,#eef1f3);color:var(--lab-muted,#6e6e73);box-shadow:none;opacity:1;cursor:not-allowed}
+.lab-mode-toggle{display:inline-flex;align-items:center;gap:2px;padding:3px;border:1px solid var(--lab-line,#d2d2d7);border-radius:999px;background:var(--lab-surface-muted,#f7f8fa);box-shadow:0 1px 3px rgba(29,29,31,.08)}
+.lab-activity-bar .lab-mode-toggle>button.algorithm-button{display:inline-flex;align-items:center;justify-content:center;min-width:80px;min-height:34px;padding:0 12px;border:1px solid transparent;border-radius:999px;background:transparent;color:var(--lab-accent-ink,#315b91);font-size:12px;font-weight:400;box-shadow:none}
+.lab-activity-bar .lab-mode-toggle>button.algorithm-button[aria-pressed="true"]{background:var(--lab-accent-hover,#4569aa);color:#fff}
+.lab-activity-bar .lab-mode-toggle>button:disabled{opacity:.55;cursor:not-allowed}
+</style>
 <!-- LAB_CONTRACT_START -->
 <script type="application/json" data-examplicity-lab-contract data-contract-version="1">
 {
@@ -746,8 +758,10 @@ button{min-height:42px;padding:0 13px;font-size:var(--lab-type-body,14px);font-w
       <strong id="mission-title">Find the cheapest route from S to G</strong>
     </div>
     <div class="run-actions" aria-label="Search controls">
-      <button id="run-dijkstra" class="algorithm-button" type="button"><span>Start Dijkstra</span><small>priority = travelled g</small></button>
-      <button id="run-astar" class="algorithm-button" type="button"><span>Start A*</span><small>priority = g + estimate h</small></button>
+      <div class="lab-mode-toggle" role="group" aria-label="Search algorithm — choose to start a search">
+        <button id="run-dijkstra" class="algorithm-button" type="button" aria-pressed="false" title="Start Dijkstra: priority is travelled cost g">Dijkstra</button>
+        <button id="run-astar" class="algorithm-button" type="button" aria-pressed="false" title="Start A*: priority is travelled cost g plus estimate h">A*</button>
+      </div>
       <button id="reveal-button" type="button" disabled>Reveal minimum</button>
       <button id="reset-button" type="button" data-lab-action="reset">Reset</button>
     </div>
@@ -1374,6 +1388,7 @@ button{min-height:42px;padding:0 13px;font-size:var(--lab-type-body,14px);font-w
   }
 
   function renderControls(){
+    $("run-dijkstra").setAttribute("aria-pressed",String(search?.algorithm==="dijkstra"));$("run-astar").setAttribute("aria-pressed",String(search?.algorithm==="astar"));
     $("run-dijkstra").classList.toggle("active",search?.algorithm==="dijkstra");$("run-astar").classList.toggle("active",search?.algorithm==="astar");
     $("run-dijkstra").disabled=busy;$("run-astar").disabled=busy;$("reveal-button").disabled=!search||search.complete||busy||!canReveal;$("reset-button").disabled=busy;
   }
