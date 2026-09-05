@@ -478,3 +478,8 @@ Six reviewed labs: disabled-action rules now override primary ID selectors and h
 Binary’s range toggle now aligns immediately left of its exam toggle, with New question left. Recorded the toggle priority in both guides: additional toggles, Working, exam from left to right; exam farthest right. No behaviour change. Validation skipped as requested.
 
 Graph Search now initializes Dijkstra through its existing startSearch function, so the selected toggle matches a ready search. Reset returns to that same default. No automatic search steps are performed.
+
+
+### Top-panel task typography — 5 September 2026
+
+Graph Search, Coordinate, Prime Factors, Sequence and Histogram task headings now use primary ink, 14px medium weight, 1.45 line-height and balanced wrapping. Binary remains controls-only; no redundant heading added. Guide and generated references updated. Validation skipped as requested.
