@@ -624,3 +624,47 @@ Canonical CSS adds lab-card-title and compatible existing card-heading selectors
 - Shared lab-design.js: introduction/completion placement scores visible workspace for overlap with text, controls and diagram objects; prefers empty space and retains manual completion positioning. Shared CSS supplies Bounds' grab cursor.
 - Bounds source: replaces the archive's pointer-to-centre jump with shared pickup-offset dragging for the car and time handle. Retains ruler click-to-select, allowed intervals, keyboard adjustment and speed-discovery rules. Percentage and Motion model logic unchanged.
 - Focused browser check: off-centre click preserves 100 m; first-stage intervals and both second-stage speed extremes complete through pointer dragging; completion appears in clear space beside the model. Guide, contract, kit README and inline publication resources updated.
+
+
+## Batch 3 — geometry and trigonometry, ready for user review
+
+Five source labs adopted the shared design resource: Circle Theorems,
+Right-Triangle Ratios, Non-Right Triangle Solutions, 3D Trigonometry and
+Trigonometric Graphs. The existing generators and curriculum remain intact.
+
+- Shared CSS: activity controls, regular-weight card hierarchy, compact maths
+  surfaces, yellow/green/red working states at every Working level, readable
+  inner labels, flat approved concept tints, and popup/tooltip treatment.
+- Shared runtime: introduction targets can change after SVG redraws; opted-in
+  chart type stays at its displayed size as the viewBox changes. Existing
+  pointer capture and pickup offsets now serve aircraft resizing, survey-peg
+  movement and angular tracing. Complex illustrations were preserved.
+- Circle: top Working/checkpoint controls, hover/focus task details, structural
+  and invariant introductions, shared card states and movable completion.
+- Right Triangle: reference/side-role/ratio/result introductions; retained
+  aircraft and runway; shared resize pickup; clearer live ratios and result.
+- Non-Right Triangle: retained zero/one/two-candidate construction; shared peg
+  capture; separate second-position introduction; readable diagram, candidate
+  working and meaningful completion; removed repeated search narration.
+- 3D: kept projection, unfold and perspective exploration. Respaced the true
+  section inset and removed repeated captions. The unfolding slider remains
+  in a movable blue support card because it demonstrates the transformation.
+  Beam pickup retains the grabbed offset. Working stays on the right.
+- Trig Graphs: top Working control, side-by-side rotor/graph with responsive
+  flow, shared angular capture, inverse/field introductions, regular chart
+  labels and retained range/symmetry/endpoint calculations.
+
+Focused browser review exercised the first circle structural repair, the
+right-triangle reference and resize completion, both non-right triangle pegs
+and resulting calculations, 3D projection and unfolding into the working
+stage, and a complete trigonometric trace through keyboard controls. Follow-up
+review covers revised type and later introductions. Source scripts are parsed
+and all 57 publication sources compiled; shared resources are embedded in the
+16 adopted standalone outputs. These checks do not claim exhaustive coverage
+of every generated question, Working level, touch device or narrow viewport.
+
+Review choice: retained the meaningful 3D unfolding control as a blue support
+card. The new readable-chart hook applies only to opted-in ordinary diagrams.
+The canonical HTML guide, style contract and kit README document these shared
+patterns; generated /developer copies and the guide's embedded reference labs
+are refreshed from those sources.

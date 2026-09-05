@@ -473,3 +473,20 @@ Bounds' car and time marker use the same pickup-offset drag resource as Motion
 and Histogram: grabbing an object must not change its value until it moves.
 Clicking a ruler lane may deliberately select a value; interval constraints
 and speed discovery remain lab-specific.
+
+
+### Geometry adoption: displayed type and representation controls
+
+The living HTML guide's “Geometry and representation changes” section records
+these patterns. Opt ordinary charts into `data-lab-readable-chart="14"` (or
+`12` for short labels). Shared runtime converts display pixels to SVG units
+when its size or viewBox changes. Reserve label space locally; this does not
+redraw complex illustrations or alter the mathematical geometry.
+
+Construction, choice and calculation cards share current/needed, correct and
+mistake surfaces, including at Working None. Keep waiting instructions outside
+maths surfaces. A movable blue support card can house a genuine representation
+control, such as the 3D unfolding slider; its purpose differs from green
+completion. Suppress inherited positioning animations when shared placement
+owns the popup. Checkpoints may show the current task and its work phase in a
+hover/focus detail surface, without adding a numeric progress counter.

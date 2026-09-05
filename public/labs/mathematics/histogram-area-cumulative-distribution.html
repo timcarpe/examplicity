@@ -967,7 +967,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 .lab-adopt-v3 .lab-activity-bar>.complexity{margin-left:auto}
 .lab-adopt-v3 .method-panel .solve-card.final:not(:has(input)){border-color:var(--lab-line-subtle,#e7e8eb);background:var(--lab-surface-muted,#f7f8fa)}
 
-.lab-adopt-v3 .calc-panel .calc-step:not(:has(input)){border-color:var(--lab-line-subtle,#e7e8eb);background:var(--lab-surface-muted,#f7f8fa);box-shadow:none}
+.lab-adopt-v3:not(.lab-geometry) .calc-panel .calc-step:not(:has(input)){border-color:var(--lab-line-subtle,#e7e8eb);background:var(--lab-surface-muted,#f7f8fa);box-shadow:none}
 .lab-adopt-v3 :is(.proof-head strong,.compare-rule strong,.gate-core strong,.projection-head strong,.verifier-head strong){font-size:14px;font-weight:500;line-height:1.45}
 .lab-adopt-v3 :is(.gate-top,.gate-period,.gate-rate,.percent-step-label,.method-head span){font-size:12px;font-weight:400;line-height:1.4}
 .lab-adopt-v3 .next-card.has-upgrade{display:block}
@@ -1118,10 +1118,139 @@ input.lab-intro-target{outline:none;animation:none}
 .lab-motion-chart :is(.handle,.vertex):not(.locked){cursor:grab}
 .lab-bounds-restored [data-drag]{cursor:grab}
 
+
+/* Geometry adoption: common working and presentation, with model layout kept local. */
+.lab-geometry :is(.mission-top){display:contents}
+.lab-geometry :is(.progress-meta,.mission-tools){display:flex;align-items:center;flex-wrap:wrap;gap:12px}
+.lab-geometry :is(.progress-count,.case-meta,.stage-kicker,.problem-kicker,.work-badge,.working-badge,.work-head>span,.strategy-strip,.ownership-note,.problem-family-note,.method-spine,.process-rail,.scope-chip,.scope-badge,.step-tag,.guide-kicker){display:none}
+.lab-geometry :is(#goalHint,#missionHint,.visual-copy,#visualHint,.diagram-title,.stage-head>div:first-child,.stage-note:not(svg .stage-note)){display:none}
+.lab-geometry :is(.stage-side,.diagram-shell,.rotor-side,.graph-side){min-width:0;padding:0;border:0;background:transparent}
+.lab-geometry :is(.stage-shell,.svg-wrap,.diagram-scroll,.diagram-frame){min-width:0;max-width:100%;overflow:visible;aspect-ratio:auto;background:transparent;border:0}
+.lab-geometry :is(svg.stage,#geometry,.diagram-frame svg){display:block;width:100%;min-width:0;height:auto;max-height:none;background:transparent}
+.lab-geometry .lab{overflow:visible}
+.lab-geometry :is(.work-panel,.working,.working-panel,.workspace>.evidence,.sidebar){min-width:0;padding:0 0 0 20px;border:0;border-left:1px solid var(--lab-line-subtle,#e7e8eb);background:transparent;font:400 14px/1.45 var(--lab-font-sans,sans-serif)}
+.lab-geometry .sidebar .calc-panel{border:0;padding:0}
+.lab-geometry :is(.work-head,.working-head,.calc-head){padding:0 0 10px;border:0;display:block}
+.lab-geometry :is(.work-head strong,.working-head strong,.calc-head strong){font:400 15px/1.4 var(--lab-font-sans,sans-serif)}
+.lab-geometry :is(.work-panel,.working,.working-panel,.sidebar,.workspace>.evidence) :is(p,.step-copy,.step-body,.step-note,.work-feedback,.reference-copy,.ratio-note,.transition-note,.progress-summary,.family-note,.work-description,.realisation){font:400 14px/1.45 var(--lab-font-sans,sans-serif);color:var(--lab-ink-secondary,#424245)}
+.lab-geometry :is(.work-panel,.working,.working-panel,.sidebar,.workspace>.evidence) :is(div,span,strong,b,label,output,code){font-family:var(--lab-font-sans,sans-serif);font-size:inherit;font-weight:400;line-height:1.45;letter-spacing:normal;text-transform:none}
+.lab-geometry :is(.ratio-evidence-card,.ratio-choice,.role-copy,.role-auto,.worked-result-row){font-size:14px}
+.lab-geometry :is(.ratio-evidence-card,.role-copy,.role-auto,.worked-result-row)>span{font-size:12px}
+.lab-geometry :is(.reference-choice,.scale-check){padding:0;border:0;background:transparent;font-size:14px}
+.lab-geometry .scale-check{display:grid;gap:8px}
+.lab-geometry .choice-action,.lab-geometry .step-head>:is(.work-status,.step-status),.lab-circle #status{display:none}
+.lab-geometry .role-buttons{display:flex;gap:4px;flex-wrap:wrap}
+.lab-geometry .role-buttons button{min-width:32px;padding:6px;font-size:12px}
+.lab-geometry .lab-action.correct{background:var(--lab-good-surface,#f7fcf8);border-color:var(--lab-good,#18794e);color:var(--lab-good,#18794e)}
+.lab-geometry .lab-action.wrong{background:var(--lab-bad-surface,#fff8f7);border-color:var(--lab-bad,#b42318);color:var(--lab-bad,#b42318)}
+.lab-geometry :is(.work-step,.working-step,.calc-step){margin:0 0 10px;padding:12px;border:1px solid var(--lab-line-subtle,#e7e8eb);border-radius:12px;background:var(--lab-surface-muted,#f7f8fa);box-shadow:none;opacity:1;min-width:0}
+.lab-geometry :is(.work-step,.working-step,.calc-step):is(.current,.pending,.needed,.needs-working,.work-pending){border-color:var(--lab-needed-line,#d8c36a);background:var(--lab-needed-surface,#fffdf4)}
+.lab-geometry :is(.work-step,.working-step,.calc-step):is(.good,.done,.work-good,.work-done){border-color:var(--lab-good-line,#9cc7aa);background:var(--lab-good-surface,#f7fcf8);box-shadow:none}
+.lab-geometry :is(.work-step,.working-step,.calc-step):is(.bad,.work-bad),.lab-geometry :is(.work-step,.working-step,.calc-step):has(.entry.bad,input.bad){border-color:var(--lab-bad-line,#d8aaa4);background:var(--lab-bad-surface,#fff8f7);box-shadow:none}
+.lab-geometry :is(.work-step,.working-step,.calc-step):is(.current,.pending,.needed,.needs-working,.work-pending):not([data-interacted="true"]):not(:has(.bad)){animation:workingAttention 2s ease-in-out infinite}
+.lab-geometry :is(.work-step,.working-step,.calc-step):has(input,textarea) :is(.step-status,.status-pill){display:none}
+.lab-geometry :is(.work-step,.working-step,.calc-step)::after{display:none}
+.lab-geometry .step-head{display:flex;align-items:baseline;gap:8px;margin-bottom:6px;padding:0;flex-wrap:wrap}
+.lab-geometry .step-head :is(strong,.step-title){font:400 15px/1.4 var(--lab-font-sans,sans-serif);letter-spacing:normal;text-transform:none;color:var(--lab-ink,#1d1d1f)}
+.lab-geometry :is(.step-num,.step-status,.status-pill){font:400 11px/1.4 var(--lab-font-sans,sans-serif);text-transform:none;letter-spacing:normal}
+.lab-geometry :is(.working-equation,.step-equation,.calc-line strong,.ratio-values strong,.evidence-cell strong,.auto-value-line strong,.work-box.auto>strong,.pair-box strong){font:400 14px/1.45 var(--lab-font-sans,sans-serif);background:color-mix(in srgb,var(--lab-concept-violet,#7563a7) 20%,white);border:0;border-radius:4px;padding:3px 7px;box-shadow:none;overflow-wrap:anywhere;max-width:100%}
+.lab-geometry :is(.step-equation,.working-equation):has(input,button){background:transparent;padding:0}
+.lab-geometry :is(.work-box,.entry-row,.evidence-cell,.pair-box,.ratio-evidence,.transition-note,.progress-summary){padding:8px;border:0;border-radius:8px;box-shadow:none;font-size:14px}
+.lab-geometry :is(.work-box>span,.entry-row label,.calc-line>span,.pair-box span,.evidence-cell>span,.candidate-row .head,.field-label,.field-shell .field-symbol,.given-chip,.legend,.evidence-row){font:400 12px/1.4 var(--lab-font-sans,sans-serif);letter-spacing:normal;text-transform:none}
+.lab-geometry :is(.work-box,.entry-row):focus-within{outline:none;box-shadow:none}
+.lab-geometry :is(input,textarea){font:400 14px/1.4 var(--lab-font-sans,sans-serif);max-width:100%}
+.lab-geometry textarea{min-height:64px;padding:8px;border-radius:8px;resize:vertical}
+.lab-geometry :is(.work-entry-line input,.mini-work input,.entry-wrap input){border:1px solid var(--lab-needed-line,#d8c36a);background:white;padding:6px 26px 6px 8px}
+.lab-geometry :is(.good input,input.good){border-color:var(--lab-good-line,#9cc7aa)}
+.lab-geometry :is(.bad input,input.bad){border-color:var(--lab-bad-line,#d8aaa4)}
+.lab-geometry :is(.work-status,.mini-status,.auto-mark){background:none!important;border:0!important;color:inherit!important;font:400 14px/1 var(--lab-font-sans,sans-serif)}
+.lab-geometry :is(.role-options,.role-choice,.ratio-choice,.ratio-choices){display:flex;gap:6px;flex-wrap:wrap}
+.lab-geometry :is(.role-options,.role-choice,.ratio-choice,.ratio-choices) button{flex:1 1 60px;font:400 12px/1.4 var(--lab-font-sans,sans-serif);padding:8px;min-height:40px}
+.lab-geometry :is(.ratio-choice,.ratio-choices) button span{font-size:11px;font-weight:400}
+.lab-geometry .lab-action:is(.selected,.active,[aria-pressed="true"]):not(.bad,.good){background:var(--lab-accent-soft,#eef2fa);border-color:var(--lab-accent,#5277b8);color:var(--lab-accent-ink,#315b91)}
+.lab-geometry .lab-action.good{background:var(--lab-good-surface,#f7fcf8);border-color:var(--lab-good,#18794e);color:var(--lab-good,#18794e)}
+.lab-geometry .lab-action.bad{background:var(--lab-bad-surface,#fff8f7);border-color:var(--lab-bad,#b42318);color:var(--lab-bad,#b42318)}
+.lab-geometry .working-body,.lab-geometry .calc-flow{display:grid;grid-template-columns:minmax(0,1fr);gap:0}
+.lab-geometry :is(.stage-head,.visual-head,.diagram-head){background:transparent;border:0;padding:0;margin:0 0 12px;min-height:0}
+.lab-geometry svg text{font-family:var(--lab-font-sans,sans-serif);font-weight:400}
+.lab-geometry :is(svg.stage,#geometry,.diagram-frame svg) text{font-size:20px}
+.lab-geometry :is(.probe-cue,.rotor-drag-label,#angleHandleLabel){display:none}
+.lab-geometry .interaction-guide,.lab-three #guideCard{display:none!important}
+.lab-geometry .angle-hit.lab-intro-target{stroke:var(--lab-accent,#5277b8);stroke-opacity:.22;stroke-width:16px}
+.lab-geometry .completion-layer{inset:0;background:transparent!important;pointer-events:none!important}
+.lab-geometry .completion-layer .next-card{pointer-events:auto;padding:16px!important;width:min(320px,calc(100% - 32px))!important;border:1px solid var(--lab-good-line,#9cc7aa)!important;background:var(--lab-good-surface,#f7fcf8)!important;box-shadow:0 6px 18px rgba(29,29,31,.12)!important;text-align:left!important}
+.lab-geometry .completion-layer .next-card :is(span,.next-realisation,.next-insight){font-size:14px;line-height:1.45;font-weight:400}
+.lab-geometry .phase-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.lab-geometry .phase-kicker{display:none}
+.lab-geometry .phase-modal :is(span,b,strong,label,output){font-family:var(--lab-font-sans,sans-serif);font-weight:400;font-size:14px}
+.lab-geometry .unfold-control{grid-template-columns:1fr;gap:8px;font-size:12px}
+.lab-geometry .unfold-control input{min-width:0}
+.lab-geometry .phase-modal.unfold{background:var(--lab-accent-soft,#eef2fa);border-color:var(--lab-accent-line,#9fb4d6)}
+.lab-trigonometric .workspace{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:20px;margin:0;padding:20px 24px;border-top:0;border-radius:0 0 12px 12px;overflow:visible}
+.lab-trigonometric .visual-system{grid-template-columns:minmax(220px,.65fr) minmax(0,1fr);align-items:start;gap:16px;min-width:0}
+.lab-trigonometric .working-panel{grid-column:2;grid-row:1/3}
+.lab-trigonometric .workspace>.evidence{grid-column:1;grid-row:2;border:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.lab-trigonometric .evidence-box:nth-child(2){display:none}
+.lab-trigonometric .visual-head :is(strong,span){font-size:12px;font-weight:400;line-height:1.4}
+.lab-trigonometric :is(#rotorSvg,#graphSvg){width:100%;min-width:0;height:310px;display:block;background:transparent}
+.lab-trigonometric svg text{font-size:12px}
+.lab-trigonometric .live-pill{background:transparent;border:0;font-size:12px}
+.lab-trigonometric .evidence-box{border:0;padding:12px;border-radius:12px;background:var(--lab-surface-muted,#f7f8fa);font-size:14px}
+.lab-trigonometric :is(.evidence-label,.sweep-status,.inverse-copy,.solution-chip){font-size:12px;font-weight:400;line-height:1.45}
+@media(max-width:980px){.lab-geometry .workspace{grid-template-columns:1fr}.lab-geometry :is(.work-panel,.working,.working-panel,.workspace>.evidence,.sidebar){border-left:0;padding:18px 0 0;border-top:1px solid var(--lab-line-subtle,#e7e8eb)}.lab-geometry .sidebar{grid-template-columns:1fr}.lab-trigonometric .working-panel,.lab-trigonometric .workspace>.evidence{grid-column:1;grid-row:auto}.lab-trigonometric .visual-system{grid-template-columns:minmax(240px,.7fr) minmax(0,1fr)}}
+@media(max-width:620px){.lab-trigonometric .visual-system{grid-template-columns:1fr}.lab-trigonometric .workspace>.evidence{grid-template-columns:1fr}.lab-geometry :is(.work-grid,.candidate-row){min-width:0}.lab-geometry :is(svg.stage,#geometry,.diagram-frame svg) text{font-size:24px}}
+@media(prefers-reduced-motion:reduce){.lab-geometry :is(.work-step,.working-step,.calc-step){animation:none!important}}
+.lab-geometry svg[data-lab-readable-chart] text{font:400 var(--lab-chart-text-size,14px) var(--lab-font-sans,sans-serif)!important}
+.lab-geometry .phase-modal :is(span,b,strong,label,output){text-transform:none;letter-spacing:normal}
+.lab-non :is(.working-description,#constructionStatus,#feedback,#rayLabel){display:none}
+.lab-geometry .work-control{display:flex;flex-direction:row;align-items:center;gap:8px}
+.lab-geometry .work-control>span{font:400 12px/1.4 var(--lab-font-sans,sans-serif);text-transform:none;letter-spacing:normal;color:var(--lab-ink-secondary,#424245)}
+.lab-geometry .live-pill :is(small,span){font:400 12px/1.4 var(--lab-font-sans,sans-serif)}
+.lab-geometry .calc-step .step-equation:has(.lock-copy){padding:0;background:transparent}
+.lab-trigonometric :is(.svg-title,.svg-sub,#graphSub,#workingStatus){display:none}
+.lab-trigonometric .sweep-key{background:var(--lab-concept-violet,#7563a7)}
+.lab-trigonometric .svg-range{fill:color-mix(in srgb,var(--lab-concept-blue,#4779b7) 8%,white)}
+.lab-geometry{--pair-a:var(--lab-concept-amber,#c9782c);--pair-b:var(--lab-concept-violet,#7563a7);--height:var(--lab-concept-teal,#2d8792);--principal:var(--lab-concept-blue,#4779b7);--supp:var(--lab-concept-amber,#c9782c);--probe:var(--lab-accent,#5277b8);--grid:var(--lab-line-subtle,#e7e8eb);--sweep:var(--lab-concept-violet,#7563a7)}
+.lab-geometry :is(.pair-box.a,.given-chip.a){background:color-mix(in srgb,var(--lab-concept-amber,#c9782c) 20%,white)}
+.lab-geometry :is(.pair-box.b,.given-chip.b){background:color-mix(in srgb,var(--lab-concept-violet,#7563a7) 20%,white)}
+.lab-geometry .measure-circle{stroke:var(--lab-concept-amber,#c9782c)}
+.lab-geometry :is(.side-label.a,.angle-label-a){fill:var(--lab-concept-amber,#c9782c)}
+.lab-geometry :is(.side-label.b,.point-label.c){fill:var(--lab-concept-violet,#7563a7)}
+.lab-geometry :is(.height-label,.foot-label){fill:var(--lab-concept-teal,#2d8792)}
+.lab-geometry svg[tabindex]:focus-visible{outline:1px solid var(--lab-accent,#5277b8);outline-offset:3px}
+.lab-geometry .next-card .lab-action[data-priority="primary"]:not(:disabled){background:var(--lab-accent-hover,#4569aa)!important;border-color:var(--lab-accent-pressed,#3a5d99)!important;color:#fff!important}
+.lab-geometry .next-card>strong{text-align:left;font:400 15px/1.4 var(--lab-font-sans,sans-serif)}
+.lab-geometry .next-card>span{text-align:left;font:400 14px/1.45 var(--lab-font-sans,sans-serif)}
+.lab-geometry .legend :is(span,b,i){font:400 12px/1.4 var(--lab-font-sans,sans-serif)}
+.lab-geometry .sidebar h2{font:400 15px/1.4 var(--lab-font-sans,sans-serif);margin:0 0 10px}
+.lab-geometry svg [tabindex]:focus-visible{outline:none;filter:drop-shadow(0 0 4px var(--lab-accent,#5277b8))}
+.lab-geometry svg text[data-ref]{cursor:pointer}
+.lab-geometry .next-card{animation:none}
+.lab-geometry .lab-checkpoints{order:3}
+.lab-checkpoint{position:relative}
+.lab-checkpoint-detail{display:none;position:absolute;z-index:45;right:-8px;top:24px;width:min(280px,calc(100vw - 32px));padding:12px 14px;border:1px solid var(--lab-line,#d2d2d7);border-radius:12px;background:#fff;color:var(--lab-ink,#1d1d1f);box-shadow:0 4px 14px rgba(29,29,31,.12);text-align:left;white-space:normal;font:400 14px/1.45 var(--lab-font-sans,sans-serif)}
+.lab-checkpoint-detail strong{display:block;margin-bottom:6px;font:400 15px/1.4 var(--lab-font-sans,sans-serif)}
+.lab-checkpoint-detail span{display:block;margin-top:6px}
+.lab-checkpoint:is(:hover,:focus-within)>.lab-checkpoint-detail{display:block}
+.lab-non #workingIntro{display:none}
+.lab-geometry .candidate-row{display:grid;grid-template-columns:minmax(58px,.8fr) minmax(38px,.7fr) minmax(80px,1.4fr) minmax(38px,.6fr);gap:6px;padding:8px 0}
+.lab-geometry .working .candidate-row>div{font-size:12px;min-width:0;white-space:normal;overflow-wrap:anywhere}
+
+.lab-circle #reason,.lab-geometry .next-card>span:empty,.lab-geometry .step-copy:empty{display:none}
+
 </style>
 <script data-lab-design-runtime>
 /* Shared model dragging: retain the point grabbed while the model rerenders. */
 window.LabDesign = {
+  introduce(scope, targets, key, title, copy) {
+    scope.querySelectorAll('[data-lab-intro]').forEach(target => {
+      delete target.dataset.labIntro; delete target.dataset.labIntroTitle; delete target.dataset.labIntroCopy;
+    });
+    targets.filter(Boolean).forEach(target => {
+      target.dataset.labIntro = key; target.dataset.labIntroTitle = title; target.dataset.labIntroCopy = copy;
+    });
+    document.dispatchEvent(new Event('lab-introduction-change'));
+  },
   svgPoint(stage, event) {
     const point = stage.createSVGPoint(); point.x = event.clientX; point.y = event.clientY;
     return point.matrixTransform(stage.getScreenCTM().inverse());
@@ -1185,6 +1314,16 @@ window.LabDesign = {
   }
   function init() {
     if (!document.body.classList.contains('lab-adopt-v3')) return;
+    // SVG units change with the viewBox; keep opted-in chart labels at their display size.
+    document.querySelectorAll('svg[data-lab-readable-chart]').forEach(stage => {
+      const fitText = () => {
+        const width = stage.getBoundingClientRect().width;
+        if (width) stage.style.setProperty('--lab-chart-text-size', (Number(stage.dataset.labReadableChart) || 14) * stage.viewBox.baseVal.width / width + 'px');
+      };
+      new ResizeObserver(fitText).observe(stage);
+      new MutationObserver(fitText).observe(stage, { attributes: true, attributeFilter: ['viewBox'] });
+      fitText();
+    });
     const touched = new Set();
     const introduced = new Set();
     const placed = new WeakMap(), moved = new WeakSet();
@@ -1217,7 +1356,7 @@ window.LabDesign = {
       const [x, y] = popupPosition(hint, document.querySelector('main') || document.body, introduction.getBoundingClientRect());
       hint.style.left = x + 'px'; hint.style.top = y + 'px';
     }
-    const cardSelector = '.calc-step,.solve-card,.derive-step';
+    const cardSelector = '.calc-step,.solve-card,.derive-step,.work-step,.working-step';
     let queued = false;
     const key = card => [...card.querySelectorAll('input')].map(input => input.id || input.name || [...input.attributes].filter(a => a.name.startsWith('data-')).map(a => a.name + a.value).join(':')).join('|') || card.querySelector('.step-head,.derive-step-head')?.textContent;
     function refresh() {
@@ -1253,13 +1392,14 @@ window.LabDesign = {
     ['pointerup', 'pointercancel'].forEach(type => document.addEventListener(type, () => { interacting = false; schedule(); }));
     document.addEventListener('keydown', event => {
       if (event.key === 'Escape' && introduction) { introduced.add(introduction.dataset.labIntro); clearIntroduction(); return; }
-      const target = event.target.closest('[data-lab-intro]');
+      const target = event.target.closest('[data-lab-intro]') || event.target.closest('svg')?.querySelector('.lab-intro-target');
       if (target && event.key !== 'Tab') { introduced.add(target.dataset.labIntro); clearIntroduction(); schedule(); }
     }, true);
     window.addEventListener('resize', schedule);
+    document.addEventListener('lab-introduction-change', schedule);
     window.addEventListener('scroll', schedule, true);
     document.addEventListener('focusin', event => {
-      if (!event.target.matches('input')) return;
+      if (!event.target.matches('input,textarea,button')) return;
       const card = event.target.closest(cardSelector);
       if (card) { touched.add(key(card)); card.dataset.interacted = 'true'; }
     });

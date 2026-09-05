@@ -388,8 +388,9 @@ button{min-height:34px;padding:0 10px;border:1px solid var(--lab-line);border-ra
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.001ms!important}}
 </style>
 <link rel="stylesheet" href="./lab-kit.css" data-lab-resource="lab-kit.css">
+<!-- LAB_DESIGN_COMPONENTS -->
 </head>
-<body data-lab-layout="standard">
+<body data-lab-layout="standard" class="lab-adopt-v3 lab-geometry lab-non">
 <main>
 <!-- LAB_MANIFEST_HEADER_START -->
 <header class="lab-manifest-header">
@@ -412,7 +413,7 @@ button{min-height:34px;padding:0 10px;border:1px solid var(--lab-line);border-ra
 <span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span>
 <span data-lab-authored-subtitle-slot hidden></span>
 
-<section class="panel mission">
+<section class="panel mission lab-activity-bar">
   <div class="mission-copy">
     <span id="goalKicker" class="goal-kicker">Problem 1 · worked calculation</span>
     <strong id="missionTitle"></strong>
@@ -420,22 +421,22 @@ button{min-height:34px;padding:0 10px;border:1px solid var(--lab-line);border-ra
   </div>
   <div class="mission-tools">
     <div class="complexity">
-      <div class="complexity-copy"><strong>Working required</strong><span id="complexityHelp"></span></div>
-      <div class="complexity-switch" role="group" aria-label="Working required">
-        <button type="button" data-work-level="0" class="active" aria-pressed="true">Off</button>
-        <button type="button" data-work-level="1" aria-pressed="false">Some</button>
-        <button type="button" data-work-level="2" aria-pressed="false">All</button>
+      <div class="complexity-copy"><strong>Working:</strong><span id="complexityHelp"></span></div>
+      <div class="complexity-switch lab-toggle" data-kind="working" role="group" aria-label="Working:">
+        <button type="button" data-work-level="0" class="active" aria-pressed="true">None</button>
+        <button type="button" data-work-level="1" aria-pressed="false" class="">Some</button>
+        <button type="button" data-work-level="2" aria-pressed="false" class="">All</button>
       </div>
     </div>
-    <button id="resetProblem" type="button">Reset</button>
+    <button id="resetProblem" type="button" class="lab-action">Reset</button>
   </div>
 </section>
 
 <section class="panel lab" data-lab-workspace>
   <div id="nextCard" class="next-card" hidden aria-live="polite">
-    <strong>Problem complete</strong><span id="nextCardText"></span>
-    <div id="nextUpgrade" class="next-upgrade" hidden><strong id="nextUpgradeTitle"></strong><span id="nextUpgradeText"></span><button id="upgradeLevel" type="button"></button></div>
-    <div class="next-actions"><button id="nextProblem" type="button">Next problem</button></div>
+    <strong id="nextCardTitle"></strong><span id="nextCardText"></span>
+    <div id="nextUpgrade" class="next-upgrade" hidden><strong id="nextUpgradeTitle"></strong><span id="nextUpgradeText"></span><button id="upgradeLevel" type="button" class="lab-action"></button></div>
+    <div class="next-actions"><button id="nextProblem" type="button" class="lab-action" data-priority="primary">Next problem</button></div>
   </div>
   <div class="workspace">
     <div class="diagram-shell">
@@ -452,7 +453,7 @@ button{min-height:34px;padding:0 10px;border:1px solid var(--lab-line);border-ra
       </div>
       <div class="diagram-scroll">
         <div class="diagram-frame">
-          <svg id="stage" viewBox="197 183 614 382" role="img" aria-labelledby="stageTitle stageDesc" data-lab-role="model" data-lab-manipulative="ssa-construction">
+          <svg id="stage" data-lab-readable-chart="14" viewBox="197 183 614 382" role="img" aria-labelledby="stageTitle stageDesc" data-lab-role="model" data-lab-manipulative="ssa-construction">
             <title id="stageTitle">Interactive sine-rule survey construction</title>
             <desc id="stageDesc">A fixed angle at A and fixed side AC define point C. A circle centred at C represents the supplied length BC. Drag a survey peg B along the ray from A and peg every position where BC matches the supplied length.</desc>
             <defs><marker id="rayArrow" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><path d="M0,0 L9,3.5 L0,7 z" class="ray-arrow"/></marker></defs>
@@ -557,28 +558,28 @@ function renderStage(){
   for(const q of g.valid){const claimed=state.claimed.has(q.key);if(!claimed){points.append(svg('circle',{cx:sx(q.x),cy:A.y,r:7,class:'claim-ring'}));continue}const isP=q.key==='principal',fillCls=isP?'triangle-principal':'triangle-supp',bCls=isP?'point-b1':'point-b2',angCls=isP?'angle-b1':'angle-b2',labelCls=isP?'b1':'b2';fills.append(svg('path',{d:trianglePath(c,q),class:fillCls}));lines.append(line(sx(c.x),sy(c.y),sx(q.x),A.y,'side-a'));points.append(svg('circle',{cx:sx(q.x),cy:A.y,r:8,class:bCls}));labels.append(text(sx(q.x)+(isP?10:-10),A.y+24,`point-label ${labelCls}`,isP?'B₁':'B₂',{'text-anchor':isP?'start':'end'}));const dStart=180-q.B,dEnd=180;angles.append(svg('path',{d:arcPath(sx(q.x),A.y,34,dStart,dEnd),class:angCls}));const show=revealAngle(q.key),bx=sx(q.x)+(isP?12:-12);labels.append(text(bx,A.y-48,`angle-label-b ${labelCls}`,show?`B = ${fmt(q.B,1)}°`:`${isP?'B₁':'B₂'}`,{'text-anchor':isP?'start':'end'}));}
   const probeDone=g.count>0&&state.claimed.size===g.count;$('probeLayer').setAttribute('visibility',probeDone?'hidden':'visible');
   const px=sx(state.probeX),py=A.y,dist=Math.hypot(state.probeX-c.x,c.y),match=Boolean(state.probeMatch);$('probeLine').setAttribute('x1',sx(c.x));$('probeLine').setAttribute('y1',sy(c.y));$('probeLine').setAttribute('x2',px);$('probeLine').setAttribute('y2',py);$('probeLine').setAttribute('class',`probe-line${match?' match':''}`);$('probeHalo').setAttribute('cx',px);$('probeHalo').setAttribute('cy',py);$('probe').setAttribute('cx',px);$('probe').setAttribute('cy',py);$('probe').setAttribute('class',`probe${match?' match':''}`);$('probe').setAttribute('aria-valuenow',fmt(state.probeX,2));const probeRight=state.probeX>=c.x,probeTextX=px+(probeRight?-14:14),probeAnchor=probeRight?'end':'start';$('probeLabel').setAttribute('x',probeTextX);$('probeLabel').setAttribute('y',py-18);$('probeLabel').setAttribute('text-anchor',probeAnchor);$('probeLabel').setAttribute('class',`probe-label${match?' match':''}`);$('probeLabel').textContent=match?`BC = a = ${fmt(p.a,1)} m`:`BC = ${fmt(dist,2)} m · target ${fmt(p.a,1)}`;$('probeCue').setAttribute('x',probeTextX);$('probeCue').setAttribute('y',py+32);$('probeCue').setAttribute('text-anchor',probeAnchor);$('probeCue').textContent=match?'release to peg this position':'drag B along the ray';
-  const title=state.claimed.size?`${state.claimed.size} survey position${state.claimed.size===1?'':'s'} pegged`:'No survey positions pegged yet',sub=match?'This position satisfies BC = a.':'Move B until the live distance matches side a.',bannerW=218,bannerX=camera.xMax-bannerW-12,bannerY=camera.y+12;banner.append(svg('rect',{x:bannerX,y:bannerY,width:bannerW,height:51,rx:8,class:'state-banner'}),text(bannerX+11,bannerY+21,'state-title',title),text(bannerX+11,bannerY+38,'state-sub',sub));
+  const title=state.claimed.size?`${state.claimed.size} survey position${state.claimed.size===1?'':'s'} pegged`:'No positions pegged',sub=match?'BC = a':'',bannerW=218,bannerX=camera.xMax-bannerW-12,bannerY=camera.y+12;banner.append(svg('rect',{x:bannerX,y:bannerY,width:bannerW,height:51,rx:8,class:'state-banner'}),text(bannerX+11,bannerY+21,'state-title',title),text(bannerX+11,bannerY+38,'state-sub',sub));
 }
 function isRequired(key){return requiredKeys().includes(key)}
 function autoWork(label,value){return`<div class="work-box auto good"><span>${label}</span><div class="auto-value-line"><strong>${value}</strong><i class="work-status" aria-hidden="true">✓</i></div></div>`}
 function workBox(key,label,autoValue,inputMode='decimal'){
   if(!isRequired(key))return autoWork(label,autoValue);
   const v=state.session.answers[key]??'',filled=String(v).trim()!=='',good=filled&&answerCorrect(key),cls=good?'good':filled?'bad':'pending',mark=good?'✓':filled?'×':'';
-  return`<label class="work-box entry ${cls}"><span>${label}</span><div class="work-entry-line"><input data-field="${key}" inputmode="${inputMode}" value="${v}" placeholder="?" aria-label="${label}"><i class="work-status" aria-hidden="true">${mark}</i></div></label>`
+  return`<label class="work-box entry ${cls}"><span>${label}</span><div class="work-entry-line"><input data-field="${key}" inputmode="${inputMode}" value="${v}" placeholder="?" aria-label="${label}" data-lab-intro="non-right-triangle-solution-constraints-calculation" data-lab-intro-title="Complete this working step" data-lab-intro-copy="Use the model and the displayed relationship to find this value. Your entry updates the working evidence."><i class="work-status" aria-hidden="true">${mark}</i></div></label>`
 }
 function miniWork(key,autoValue){
   if(!isRequired(key))return`<div class="mini-work auto">${autoValue}<i class="mini-status" aria-hidden="true">✓</i></div>`;
   const v=state.session.answers[key]??'',filled=String(v).trim()!=='',good=filled&&answerCorrect(key),cls=good?'good':filled?'bad':'pending',mark=good?'✓':filled?'×':'';
-  return`<div class="mini-work entry ${cls}"><input data-field="${key}" inputmode="decimal" value="${v}" placeholder="?" aria-label="${key}"><i class="mini-status" aria-hidden="true">${mark}</i></div>`
+  return`<div class="mini-work entry ${cls}"><input data-field="${key}" inputmode="decimal" value="${v}" placeholder="?" aria-label="${key}" data-lab-intro="non-right-triangle-solution-constraints-calculation" data-lab-intro-title="Complete this working step" data-lab-intro-copy="Use the model and the displayed relationship to find this value. Your entry updates the working evidence."><i class="mini-status" aria-hidden="true">${mark}</i></div>`
 }
 function stepState(keys=[]){const owned=keys.filter(isRequired);return !owned.length||owned.every(answerCorrect)?'done':'pending'}
 function renderWorking(){
   const p=current(),g=geometry(),level=state.workingLevel,evidenceReady=constructionReady();
   $('workingBadge').textContent=['working shown','some working','all working'][level];
-  $('workingIntro').textContent=!evidenceReady?'The ray construction unlocks the numerical check; nothing is solved in advance.':level===0?'The completed construction now justifies every shown result.':'The construction is verified. Yellow boxes are now yours and validate as you type.';
+  $('workingIntro').textContent=!evidenceReady?'':level===0?'The completed construction now justifies every shown result.':'The construction is verified. Yellow boxes are now yours and validate as you type.';
   const ratioShown=fmt(g.ratio,4),pShown=g.principal==null?'no real angle':`${fmt(g.principal,1)}°`,sameAngle=g.principal!=null&&Math.abs(g.supp-g.principal)<=.08,sShown=g.supp==null?'—':sameAngle?`${fmt(g.supp,1)}° · same angle`:`${fmt(g.supp,1)}°`;
   let html='';
-  html+=`<section class="working-step ${evidenceReady?'done':'current'}"><div class="step-head"><span class="step-num">1</span><strong>Test the physical constraint</strong><span class="scope-chip general">construction</span></div><div class="pair-line"><div class="pair-box a"><strong>A ↔ a</strong><span>${fmt(p.A,1)}° ↔ ${fmt(p.a,1)} m</span></div><div class="pair-box b"><strong>B ↔ b</strong><span>B ↔ ${fmt(p.b,1)} m</span></div></div><p class="step-note">${evidenceReady?'The ray search has established every possible position for B.':'Drag B along the ray and peg every position where BC = a.'}</p></section>`;
+  html+=`<section class="working-step ${evidenceReady?'done':'current'}"><div class="step-head"><span class="step-num">1</span><strong>Test the physical constraint</strong><span class="scope-chip general">construction</span></div><div class="pair-line"><div class="pair-box a"><strong>A ↔ a</strong><span>${fmt(p.A,1)}° ↔ ${fmt(p.a,1)} m</span></div><div class="pair-box b"><strong>B ↔ b</strong><span>B ↔ ${fmt(p.b,1)} m</span></div></div><p class="step-note">${evidenceReady?'The ray search has established every possible position for B.':'Each intersection of the circle and ray gives a possible triangle.'}</p></section>`;
   if(!evidenceReady){
     const finalStep=g.principal==null?'3':'4';
     html+=`<section class="working-step locked"><div class="step-head"><span class="step-num">2</span><strong>Find the first angle</strong><span class="scope-chip angle">finding angle</span></div><p class="step-note">Unlocks when the ray search is complete.</p></section>`;
@@ -601,22 +602,29 @@ function realisation(){const p=current();if(p.family==='two')return'Inverse sine
 function renderFeedback(){const el=$('feedback'),w=workingReady(),c=constructionReady();state.session.success=w&&c;if(state.session.success){state.session.message=geometry().count===0?'The numerical chain and the completed ray search agree.':`The numerical chain and the ${geometry().count} physical survey position${geometry().count===1?'':'s'} agree.`;el.className='feedback good';el.innerHTML=`<strong>Problem verified automatically.</strong>${state.session.message}<div class="realisation">${realisation()}</div>`;return}if(!w&&c){el.className='feedback warn';el.textContent='Construction complete. Finish the yellow working; each box validates as you type.';return}if(!c){el.className='feedback';el.textContent=geometry().count===0?'Sweep B along the ray to determine whether any position can satisfy BC = a.':'Peg every physical position where BC = a. The calculation will unlock when the search is complete.';return}el.className='feedback';el.textContent='Use the unlocked calculation to verify what the construction established.'}
 function renderMission(){const p=current();$('goalKicker').textContent='Survey construction';$('missionTitle').textContent=`A surveyor knows A = ${fmt(p.A,1)}°, a = BC = ${fmt(p.a,1)} m and b = AC = ${fmt(p.b,1)} m. Find every possible angle B and the number of triangles.`;const hints=['Find every valid position on the ray; the completed calculation unlocks only after the construction establishes the answer.','Use the ray first, then calculate the key angles and final number of triangles in the unlocked panel.','Use the ray first, then complete the whole sine-rule and candidate-validity chain.'];$('missionHint').textContent=hints[state.workingLevel];$('complexityHelp').textContent=['Off · construction unlocks example','Some · key results','All · full chain'][state.workingLevel];document.querySelectorAll('[data-work-level]').forEach(b=>{const on=Number(b.dataset.workLevel)===state.workingLevel;b.classList.toggle('active',on);b.setAttribute('aria-pressed',String(on))});$('givenA').textContent=`A ${fmt(p.A,1)}°`;$('givena').textContent=`a ${fmt(p.a,1)} m`;$('givenb').textContent=`b ${fmt(p.b,1)} m`}
 function suggestedWorkLevel(){return solved()&&state.workingLevel<2&&state.solvedAtLevel[state.workingLevel]+1>=2?state.workingLevel+1:-1}
-function renderNextCard(){const card=$('nextCard');if(!solved()){card.hidden=true;return}const next=suggestedWorkLevel();card.hidden=false;$('nextCardText').textContent=`The survey construction and calculation agree for A = ${fmt(current().A,1)}°, a = ${fmt(current().a,1)} m and b = ${fmt(current().b,1)} m.`;card.classList.toggle('has-upgrade',next>0);$('nextUpgrade').hidden=next<0;if(next>0){$('nextUpgradeTitle').textContent=next===1?'Ready to calculate the angle results?':'Ready to complete the whole numerical check?';$('nextUpgradeText').textContent=next===1?'On the next generated problem, the opposite-pair structure and sin B value stay visible, but you supply both possible B angles and the final count.':'On the next generated problem, you also calculate sin B and the remaining angle for each candidate before the survey can be signed off.';$('upgradeLevel').textContent=next===1?'Require some working next':'Require all working next';$('upgradeLevel').dataset.level=String(next)}}
-function renderAll(){renderMission();renderStage();renderWorking();renderFeedback();renderNextCard()}
+function renderNextCard(){const card=$('nextCard');if(!solved()){card.hidden=true;return}const next=suggestedWorkLevel();card.hidden=false;const g=geometry();$('nextCardTitle').textContent=`${g.count} valid triangle${g.count===1?'':'s'}`;$('nextCardText').textContent=g.count?`The ray intersections give B = ${g.valid.map(q=>fmt(q.B,1)+'°').join(' or ')}. Both the side constraint and angle sums are satisfied.`:'The circle does not meet the ray, so no triangle satisfies all three givens.';card.classList.toggle('has-upgrade',next>0);$('nextUpgrade').hidden=next<0;if(next>0){$('nextUpgradeTitle').textContent=next===1?'Ready to calculate the angle results?':'Ready to complete the whole numerical check?';$('nextUpgradeText').textContent=next===1?'On the next generated problem, the opposite-pair structure and sin B value stay visible, but you supply both possible B angles and the final count.':'On the next generated problem, you also calculate sin B and the remaining angle for each candidate before the survey can be signed off.';$('upgradeLevel').textContent=next===1?'Try some working':'Try all working';$('upgradeLevel').dataset.level=String(next)}}
+function renderAll(){renderMission();renderStage();renderWorking();renderFeedback();renderNextCard();renderInteractionGuide()}
 function advanceProblem(nextLevel=null){if(!solved())return;state.solvedAtLevel[state.workingLevel]++;if(nextLevel!=null)state.workingLevel=clamp(Number(nextLevel)||0,0,2);state.problemNumber++;state.problem=makeProblem(current().seed+1);state.session=freshSession();state.claimed=new Set();state.probeMatch=null;state.probeX=initialProbe();state.visitedMin=state.probeX;state.visitedMax=state.probeX;state.drag=null;contextGuideOpen=false;$('interactionGuide').hidden=true;clearGuideFocus();renderAll()}
-function eventModel(ev){const stage=$('stage'),pt=stage.createSVGPoint();pt.x=ev.clientX;pt.y=ev.clientY;const ctm=stage.getScreenCTM();if(!ctm)return{x:cfg.A.x+state.probeX*cfg.scale,y:cfg.A.y};return pt.matrixTransform(ctm.inverse())}
-function updateProbeFromX(x){const g=geometry(),rayMax=activeRayMax(g),model=clamp(x,.5,rayMax);let match=null;for(const q of g.valid){if(Math.abs(model-q.x)<=cfg.probeSnap){match=q.key;break}}state.probeX=model;state.visitedMin=Math.min(state.visitedMin,model);state.visitedMax=Math.max(state.visitedMax,model);state.probeMatch=match;renderStage();renderConstructionStatus();renderFeedback();renderNextCard()}
-function beginProbe(ev){ev.preventDefault();if(!$('interactionGuide').hidden)dismissInteractionGuide();$('stage').setPointerCapture?.(ev.pointerId);state.drag={id:ev.pointerId};const p=eventModel(ev);updateProbeFromX((p.x-cfg.A.x)/cfg.scale)}
-function moveProbe(ev){if(!state.drag||state.drag.id!==ev.pointerId)return;const p=eventModel(ev);updateProbeFromX((p.x-cfg.A.x)/cfg.scale);ev.preventDefault()}
-function endProbe(ev){if(!state.drag)return;try{$('stage').releasePointerCapture?.(state.drag.id)}catch{}const matched=state.probeMatch;if(matched){const exact=geometry().valid.find(v=>v.key===matched);if(exact)state.probeX=exact.x;state.claimed.add(matched)}state.drag=null;state.probeMatch=null;renderAll();if(matched&&geometry().count===2&&state.claimed.size===1&&!contextGuideSeen){contextGuideSeen=true;contextGuideOpen=true;renderInteractionGuide()}}
+
+function updateProbeFromX(x){const g=geometry(),rayMax=activeRayMax(g),model=clamp(x,.5,rayMax);let match=null;for(const q of g.valid){if(Math.abs(model-q.x)<=cfg.probeSnap){match=q.key;break}}state.probeX=model;state.visitedMin=Math.min(state.visitedMin,model);state.visitedMax=Math.max(state.visitedMax,model);state.probeMatch=match;renderStage();renderConstructionStatus();renderFeedback();renderNextCard();renderInteractionGuide()}
+
+
+function endProbe(ev){if(!state.drag)return;const matched=ev.type==='pointerup'?state.probeMatch:null;if(matched){const exact=geometry().valid.find(v=>v.key===matched);if(exact)state.probeX=exact.x;state.claimed.add(matched)}state.drag=null;state.probeMatch=null;renderAll();if(matched&&geometry().count===2&&state.claimed.size===1&&!contextGuideSeen){contextGuideSeen=true;contextGuideOpen=true;renderInteractionGuide()}}
 function keyProbe(ev){if(!['ArrowLeft','ArrowRight'].includes(ev.key))return;ev.preventDefault();if(!$('interactionGuide').hidden)dismissInteractionGuide();const dir=ev.key==='ArrowRight'?1:-1,step=ev.shiftKey?.5:.1;updateProbeFromX(state.probeX+dir*step);if(state.probeMatch){const matched=state.probeMatch;state.claimed.add(matched);state.probeMatch=null;renderAll();if(geometry().count===2&&state.claimed.size===1&&!contextGuideSeen){contextGuideSeen=true;contextGuideOpen=true;renderInteractionGuide()}}}
-function rayDown(ev){if(ev.target===$('probe'))return;beginProbe(ev)}
+
 function clearGuideFocus(){document.querySelectorAll('.guide-focus').forEach(n=>n.classList.remove('guide-focus'))}
 function dismissInteractionGuide({remember=true}={}){const guide=$('interactionGuide');if(guide)guide.hidden=true;if(contextGuideOpen){contextGuideOpen=false}else if(remember){guideSeen=true}clearGuideFocus()}
-function positionGuide(){const guide=$('interactionGuide'),card=$('guideCard'),host=document.querySelector('.diagram-shell'),path=$('guideArrowPath'),target=$('probe');if(!guide||guide.hidden||!card||!host||!path||!target)return;const hr=host.getBoundingClientRect(),tr=target.getBoundingClientRect(),targetX=tr.left-hr.left+tr.width/2,targetY=tr.top-hr.top+tr.height/2,cw=Math.min(176,Math.max(136,hr.width*.235)),gap=24,roomRight=hr.width-targetX-gap;card.style.width=`${cw}px`;const putRight=roomRight>=cw+8;let left=putRight?targetX+gap:Math.max(8,targetX-gap-cw),top=Math.max(48,Math.min(targetY-72,hr.height-66));card.style.left=`${left}px`;card.style.top=`${top}px`;const ch=card.offsetHeight||43,cardX=putRight?left:left+cw,cardY=top+ch*.62,stopX=targetX+(putRight?9:-9),stopY=targetY-5,midX=cardX+(stopX-cardX)*.48;path.setAttribute('d',`M ${cardX} ${cardY} L ${midX} ${cardY} Q ${stopX} ${cardY} ${stopX} ${stopY}`)}
-function renderInteractionGuide(){const guide=$('interactionGuide');if(!guide)return;if(contextGuideOpen){guide.hidden=false;$('guideTitle').textContent='Continue moving B';$('guideCopy').textContent='SSA can give another BC = a position.';requestAnimationFrame(positionGuide);return}if(guideSeen){guide.hidden=true;clearGuideFocus();return}guide.hidden=false;$('guideTitle').textContent='Move peg B along the ray';$('guideCopy').textContent='Release when BC = a.';requestAnimationFrame(positionGuide)}
+
+function renderInteractionGuide(){
+ $('interactionGuide').hidden=true;
+ LabDesign.introduce($('stage'),constructionReady()?[]:[$('probe')],'ssa-peg-'+(state.claimed.size?'second':'first'),'Find every possible triangle',state.claimed.size?'Continue along the ray: there may be another position where BC equals a. Arrow keys also move B.':'Drag B along the ray and release where BC equals a. If none fits, explore the whole ray. Arrow keys also move B.');
+}
 function showInteractionGuide(){if(!guideSeen&&!contextGuideOpen)renderInteractionGuide()}
-$('probe').addEventListener('pointerdown',beginProbe);$('rayHit').addEventListener('pointerdown',rayDown);$('stage').addEventListener('pointermove',moveProbe);$('stage').addEventListener('pointerup',endProbe);$('stage').addEventListener('pointercancel',endProbe);$('probe').addEventListener('keydown',keyProbe);$('resetProblem').addEventListener('click',resetSession);$('nextProblem').addEventListener('click',()=>advanceProblem());$('upgradeLevel').addEventListener('click',()=>advanceProblem(Number($('upgradeLevel').dataset.level)));window.addEventListener('resize',()=>{if(!$('interactionGuide').hidden)positionGuide()});document.querySelectorAll('[data-work-level]').forEach(b=>b.addEventListener('click',()=>setWorkingLevel(b.dataset.workLevel)));
+LabDesign.bindSvgDrag($('stage'),{
+ start(ev,point){if(!ev.target.closest('#probe,#rayHit'))return;state.drag={id:ev.pointerId};if(ev.target.id==='rayHit')updateProbeFromX((point.x-cfg.A.x)/cfg.scale);return{x:cfg.A.x+state.probeX*cfg.scale,y:point.y}},
+ move(point){updateProbeFromX((point.x-cfg.A.x)/cfg.scale)},end:endProbe
+});
+$('probe').addEventListener('keydown',keyProbe);$('resetProblem').addEventListener('click',resetSession);$('nextProblem').addEventListener('click',()=>advanceProblem());$('upgradeLevel').addEventListener('click',()=>advanceProblem(Number($('upgradeLevel').dataset.level)));document.querySelectorAll('[data-work-level]').forEach(b=>b.addEventListener('click',()=>setWorkingLevel(b.dataset.workLevel)));
 renderGrid();state.probeX=initialProbe();state.visitedMin=state.probeX;state.visitedMax=state.probeX;renderAll();setTimeout(showInteractionGuide,220);
 window.__triangleConstraintLab={getState:()=>{const g=geometry();return{problemNumber:state.problemNumber,workingLevel:state.workingLevel,solvedAtLevel:[...state.solvedAtLevel],problem:{...current()},geometry:{ratio:g.ratio,principal:g.principal,supp:g.supp,count:g.count,h:g.h,valid:g.valid.map(v=>({...v}))},answers:{...state.session.answers},claimed:[...state.claimed],success:solved(),complete:solved(),required:requiredKeys(),visited:[state.visitedMin,state.visitedMax],guide:{seen:guideSeen,contextOpen:contextGuideOpen,hidden:$('interactionGuide').hidden}};},setProblem,setWorkingLevel,setAnswers:o=>{Object.assign(state.session.answers,Object.fromEntries(Object.entries(o).map(([k,v])=>[k,String(v)])));renderAll()},claimAll:()=>{geometry().valid.forEach(v=>state.claimed.add(v.key));renderAll()},exploreRay:()=>{state.visitedMin=.5;state.visitedMax=cfg.rayMax;renderAll()},dismissGuide:()=>dismissInteractionGuide(),next:(level=null)=>advanceProblem(level),reset:resetSession,makeProblem};
 })();

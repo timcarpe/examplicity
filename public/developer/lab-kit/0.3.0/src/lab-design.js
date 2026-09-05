@@ -1,5 +1,14 @@
 /* Shared model dragging: retain the point grabbed while the model rerenders. */
 window.LabDesign = {
+  introduce(scope, targets, key, title, copy) {
+    scope.querySelectorAll('[data-lab-intro]').forEach(target => {
+      delete target.dataset.labIntro; delete target.dataset.labIntroTitle; delete target.dataset.labIntroCopy;
+    });
+    targets.filter(Boolean).forEach(target => {
+      target.dataset.labIntro = key; target.dataset.labIntroTitle = title; target.dataset.labIntroCopy = copy;
+    });
+    document.dispatchEvent(new Event('lab-introduction-change'));
+  },
   svgPoint(stage, event) {
     const point = stage.createSVGPoint(); point.x = event.clientX; point.y = event.clientY;
     return point.matrixTransform(stage.getScreenCTM().inverse());
@@ -63,6 +72,16 @@ window.LabDesign = {
   }
   function init() {
     if (!document.body.classList.contains('lab-adopt-v3')) return;
+    // SVG units change with the viewBox; keep opted-in chart labels at their display size.
+    document.querySelectorAll('svg[data-lab-readable-chart]').forEach(stage => {
+      const fitText = () => {
+        const width = stage.getBoundingClientRect().width;
+        if (width) stage.style.setProperty('--lab-chart-text-size', (Number(stage.dataset.labReadableChart) || 14) * stage.viewBox.baseVal.width / width + 'px');
+      };
+      new ResizeObserver(fitText).observe(stage);
+      new MutationObserver(fitText).observe(stage, { attributes: true, attributeFilter: ['viewBox'] });
+      fitText();
+    });
     const touched = new Set();
     const introduced = new Set();
     const placed = new WeakMap(), moved = new WeakSet();
@@ -95,7 +114,7 @@ window.LabDesign = {
       const [x, y] = popupPosition(hint, document.querySelector('main') || document.body, introduction.getBoundingClientRect());
       hint.style.left = x + 'px'; hint.style.top = y + 'px';
     }
-    const cardSelector = '.calc-step,.solve-card,.derive-step';
+    const cardSelector = '.calc-step,.solve-card,.derive-step,.work-step,.working-step';
     let queued = false;
     const key = card => [...card.querySelectorAll('input')].map(input => input.id || input.name || [...input.attributes].filter(a => a.name.startsWith('data-')).map(a => a.name + a.value).join(':')).join('|') || card.querySelector('.step-head,.derive-step-head')?.textContent;
     function refresh() {
@@ -131,13 +150,14 @@ window.LabDesign = {
     ['pointerup', 'pointercancel'].forEach(type => document.addEventListener(type, () => { interacting = false; schedule(); }));
     document.addEventListener('keydown', event => {
       if (event.key === 'Escape' && introduction) { introduced.add(introduction.dataset.labIntro); clearIntroduction(); return; }
-      const target = event.target.closest('[data-lab-intro]');
+      const target = event.target.closest('[data-lab-intro]') || event.target.closest('svg')?.querySelector('.lab-intro-target');
       if (target && event.key !== 'Tab') { introduced.add(target.dataset.labIntro); clearIntroduction(); schedule(); }
     }, true);
     window.addEventListener('resize', schedule);
+    document.addEventListener('lab-introduction-change', schedule);
     window.addEventListener('scroll', schedule, true);
     document.addEventListener('focusin', event => {
-      if (!event.target.matches('input')) return;
+      if (!event.target.matches('input,textarea,button')) return;
       const card = event.target.closest(cardSelector);
       if (card) { touched.add(key(card)); card.dataset.interacted = 'true'; }
     });

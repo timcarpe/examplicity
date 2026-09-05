@@ -183,3 +183,21 @@ Histogram, Motion Graphs and Bounds use this same implementation. The compiler e
 the runtime before the lab script, including in standalone downloads.
 
 Shared introductions and completion cards prefer empty visible workspace, using rendered text, controls and SVG objects as placement obstacles. Completion placement runs on opening/content changes and preserves user movement. Use `data-lab-popup-avoid` on an otherwise unrecognisable custom visual region.
+
+
+`LabDesign.introduce(scope, targets, key, title, copy)` updates model-specific
+introduction targets after a redraw, removes stale target annotations in that
+scope, and schedules the shared cue. Use distinct keys for newly unlocked
+operations; field annotations outside that model scope remain independent.
+
+Use `data-lab-readable-chart="14"` on ordinary SVG charts whose labels need a
+stable displayed size (`12` for short labels). Shared size/viewBox observers
+set `--lab-chart-text-size`; `.lab-geometry` adopts it for SVG text. Keep label
+positions and space for insets local. Complex illustrations need no opt-in.
+
+The geometry compatibility surface covers `.work-step`, `.working-step` and
+`.calc-step`, their existing state classes, working choices and mathematical
+readouts. It preserves completed progress at None. `.lab-checkpoint-detail`
+adds hover/focus task and work detail to existing `.lab-checkpoint` markers.
+Right-triangle resizing, non-right-triangle pegging and trig rotation now use
+`bindSvgDrag`; angular models retain their own angular offset and constraints.
