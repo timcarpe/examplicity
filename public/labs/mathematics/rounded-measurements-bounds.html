@@ -1162,10 +1162,57 @@ input.lab-intro-target{outline:none;animation:none}
 .lab-three :is(.edge-label.projection,.flat-label.shared){fill:var(--projection)}
 .lab-three :is(.edge-label.cable,.flat-label.cable){fill:var(--cable)}
 
+/* Instrument readouts preserve the displayed precision, including trailing zeros. */
+.lab-digital-display{color:var(--lab-concept-blue,#4779b7)}
+.lab-digital-display.time{color:var(--lab-concept-violet,#7563a7)}
+.lab-digital-face{fill:color-mix(in srgb,currentColor 12%,white);stroke:none}
+.lab-digital-segment{fill:currentColor;opacity:.1}
+.lab-digital-segment.is-on{opacity:1}
+.lab-digital-display text{font:400 12px var(--lab-font-sans,sans-serif);fill:var(--lab-ink-secondary,#424245)}
+.lab-digital-display .lab-digital-unit{font-size:14px;fill:currentColor}
+.lab-bounds-restored .lab-chart-heading{font-size:14px;font-weight:400}
+.lab-bounds-restored :is(.lab-chart-label,.bound-value,.smallmono,.mono){font-size:12px}
+.lab-task-context{padding:16px 20px 0;color:var(--lab-ink-secondary,#424245);font:400 14px/1.5 var(--lab-font-sans,sans-serif)}
+.lab-task-context p{margin:0}
+.lab-task-context strong{font-weight:400;color:var(--lab-ink,#1d1d1f)}
+
+.lab-proof-marker{fill:var(--lab-concept-blue,#4779b7);stroke:white;stroke-width:2}
+.lab-proof-marker.time{fill:var(--lab-concept-violet,#7563a7)}
+.lab-proof-sidebar :is(.num-field input,.proof-rule code){font:400 14px/1.45 var(--lab-font-sans,sans-serif)}
+.lab-proof-sidebar .lab-work-card>.num-field{margin-top:8px}
+
+.lab-interval-end{stroke:var(--lab-ink-secondary,#424245);stroke-width:1.5}
+.lab-interval-end.included{fill:var(--lab-ink-secondary,#424245)}
+.lab-interval-end.excluded{fill:white}
+.lab-interval-caption{font:400 11px var(--lab-font-sans,sans-serif);fill:var(--lab-ink-secondary,#424245)}
+
 </style>
 <script data-lab-design-runtime>
 /* Shared model dragging: retain the point grabbed while the model rerenders. */
 window.LabDesign = {
+  digitalReadout(root, value, { x, y, label }) {
+    const ns = 'http://www.w3.org/2000/svg';
+    const append = (parent, tag, attributes) => {
+      const node = document.createElementNS(ns, tag);
+      Object.entries(attributes).forEach(([key, val]) => node.setAttribute(key, val));
+      parent.appendChild(node); return node;
+    };
+    const group = append(root, 'g', { class: 'lab-digital-readout', transform: `translate(${x} ${y})`, role: 'img', 'aria-label': label });
+    const segments = [[3,0,14,3],[17,3,3,12],[17,19,3,12],[3,31,14,3],[0,19,3,12],[0,3,3,12],[3,15,14,3]];
+    const digits = ['abcdef','bc','abdeg','abcdg','bcfg','acdfg','acdefg','abc','abcdefg','abcdfg'];
+    let offset = 0;
+    for (const digit of String(value)) {
+      if (digit === '.') {
+        append(group, 'circle', { cx: offset + 2, cy: 32, r: 2, class: 'lab-digital-segment is-on' }); offset += 8; continue;
+      }
+      segments.forEach(([sx, sy, width, height], index) => append(group, 'rect', {
+        x: offset + sx, y: sy, width, height, rx: 1,
+        class: `lab-digital-segment${digits[Number(digit)].includes('abcdefg'[index]) ? ' is-on' : ''}`,
+      }));
+      offset += 26;
+    }
+    return group;
+  },
   introduce(scope, targets, key, title, copy) {
     scope.querySelectorAll('[data-lab-intro]').forEach(target => {
       delete target.dataset.labIntro; delete target.dataset.labIntroTitle; delete target.dataset.labIntroCopy;
@@ -1394,7 +1441,8 @@ window.LabDesign = {
     "surfaces": {
       "task": {
         "selectors": [
-          "#goalText"
+          "#goalText",
+          "#certificateClaim"
         ],
         "kind": "given",
         "description": "Current problem statement and supplied quantities.",
@@ -1433,6 +1481,31 @@ window.LabDesign = {
         "kind": "control",
         "description": "Existing stage navigation, Working level and current-step reset.",
         "visibility": "Present for the current problem; child controls and readouts follow the states described below."
+      },
+      "rounding-readouts": {
+        "selectors": [
+          "#stage [data-reading=\"distance\"]",
+          "#stage [data-reading=\"time\"]"
+        ],
+        "kind": "evidence",
+        "description": "Inline seven-segment rounded readings preserve trailing zeros for the current precision; adjacent true-value labels and interval markers show the hidden measurement range.",
+        "visibility": "Present in every stage; stage 0 readings change at crossed boundaries; later stages retain the recorded readings."
+      },
+      "proof-evidence": {
+        "selectors": [
+          "#stage [data-proof-marker]"
+        ],
+        "kind": "evidence",
+        "description": "Distinct diamonds show the learner-entered coarse distance/time proof values against fixed half-open intervals.",
+        "visibility": "Stage 3, Working All, when each entered quantity is numeric and inside the ruler domain."
+      },
+      "interval-check": {
+        "selectors": [
+          "#proofDock [data-check=\"fine-bounds\"]"
+        ],
+        "kind": "control",
+        "description": "Validate the four finer interval limits before the final speed proof.",
+        "visibility": "Stage 4, Working All, before fine.boundsSuccess."
       }
     },
     "quantities": {
@@ -1440,10 +1513,16 @@ window.LabDesign = {
         "description": "Two underlying measurements with four interval endpoints. Endpoints are bounds of these measurements, not four unrelated physical quantities.",
         "domain": "Distance m; time s; intervals are lower-inclusive and upper-exclusive.",
         "source": "Reported values and rounding units are given; stage 0 discovers both edges with rulers.",
-        "output": "Readings change at crossed boundaries; later manipulations stay inside the valid intervals.",
+        "output": "Rounded readings change at crossed boundaries. Included/excluded endpoint markers show half-open intervals. Stage 3 entries add proof markers; stage 4 proposed limits appear before checking. Once finer intervals are accepted or supplied, the model uses the lower distance and a time just below the excluded upper limit.",
         "inputSlots": [
           "#stage [data-drag=\"distance\"]",
-          "#stage [data-drag=\"time\"]"
+          "#stage [data-drag=\"time\"]",
+          "#proofDock input[data-field=\"proof.distance\"]",
+          "#proofDock input[data-field=\"proof.time\"]",
+          "#proofDock input[data-field=\"fine.dLow\"]",
+          "#proofDock input[data-field=\"fine.dHigh\"]",
+          "#proofDock input[data-field=\"fine.tLow\"]",
+          "#proofDock input[data-field=\"fine.tHigh\"]"
         ]
       },
       "worst-case-speed": {
@@ -1452,7 +1531,8 @@ window.LabDesign = {
         "source": "Physical extremes are explored first, then working is supplied or entered by level.",
         "output": "The proof and speed-range display compare the lower bound with 8.05.",
         "inputSlots": [
-          "#proofDock input[data-field]"
+          "#proofDock input[data-field=\"proof.speed\"]",
+          "#proofDock input[data-field=\"fine.speed\"]"
         ]
       },
       "certificate": {
@@ -1462,7 +1542,8 @@ window.LabDesign = {
         "output": "Explicit Check prediction verifies arithmetic and verdict together.",
         "inputSlots": [
           "#proofDock [data-verdict]",
-          "#proofDock [data-check]"
+          "#proofDock [data-check=\"proof\"]",
+          "#proofDock [data-check=\"fine-proof\"]"
         ]
       }
     },
@@ -1515,6 +1596,7 @@ window.LabDesign = {
   </section>
 
   <section class="panel lab">
+    <div id="certificateClaim" class="lab-task-context"><p><strong>Claim: the car’s average speed is at least 8.05 m/s.</strong> Do the rounded distance and time readings guarantee this for every possible run? One slower allowed run is enough to disprove the guarantee.</p></div>
     <section class="next-card" id="nextCard" hidden aria-live="polite" data-lab-role="evidence"></section>
     <div class="workspace"><div class="stage-shell"><svg id="stage" class="stage" viewBox="0 0 1120 665" role="img" aria-labelledby="stageTitle stageDesc" data-lab-role="model" data-lab-manipulative="bounds-interval"></svg></div><aside id="proofDock" class="proof-dock lab-proof-sidebar" aria-live="polite" data-lab-role="working"></aside></div>
   </section>
@@ -1974,7 +2056,7 @@ function renderSteps(){
 }
 function renderMission(){$('goalKicker').textContent=`Step ${state.step+1} of ${steps.length} · ${steps[state.step].tag}`;$('goalText').textContent=steps[state.step].goal();renderSteps()}
 
-const geom={distance:{x:50,y:165,w:600},time:{x:50,y:365,w:600}};
+const geom={distance:{x:260,y:165,w:440},time:{x:260,y:345,w:440}};
 function scanDomain(kind){return kind==='distance'?[99.2,100.8]:[12.30,12.50]}
 function domain(kind){return scanDomain(kind)}
 function valueToX(kind,v){const [a,b]=domain(kind),g=geom[kind];return g.x+(v-a)/(b-a)*g.w}
@@ -1982,20 +2064,27 @@ function xToValue(kind,x){const [a,b]=domain(kind),g=geom[kind];let v=a+clamp((x
 
 function ticks(root,kind,y){
   const [a,b]=domain(kind),g=geom[kind],count=10;
-  add(root,'rect',{x:g.x,y:y-24,width:g.w,height:48,rx:8,class:'ruler'});add(root,'line',{x1:g.x+10,x2:g.x+g.w-10,y1:y,y2:y,class:'ruler-line'});
-  for(let i=0;i<=count;i++){const x=g.x+10+i/count*(g.w-20),major=i%5===0;add(root,'line',{x1:x,x2:x,y1:y-(major?9:5),y2:y+(major?9:5),class:`tick${major?' major':''}`})}
+  add(root,'rect',{x:g.x-10,y:y-24,width:g.w+20,height:48,rx:8,class:'ruler'});add(root,'line',{x1:g.x,x2:g.x+g.w,y1:y,y2:y,class:'ruler-line'});
+  for(let i=0;i<=count;i++){const x=g.x+i/count*g.w,major=i%5===0;add(root,'line',{x1:x,x2:x,y1:y-(major?9:5),y2:y+(major?9:5),class:`tick${major?' major':''}`})}
   if(state.step===0){add(root,'text',{x:g.x+8,y:y+40,class:'smallmono'},fmt(a,kind==='distance'?2:3));add(root,'text',{x:g.x+g.w-8,y:y+40,'text-anchor':'end',class:'smallmono'},fmt(b,kind==='distance'?2:3))}
 }
 function screenCard(root,kind,y){
  const c=cfg()[kind],value=kind==='distance'?state.d:state.t,display=state.step===0?roundTo(value,c.step):c.report;
- add(root,'text',{x:34,y:y-104,class:'lab-chart-heading'},`${kind==='distance'?'Distance':'Time'} · rounded ${fmt(display,3)} ${c.unit}`);
- add(root,'text',{x:34,y:y-75,class:'lab-chart-label'},`Nearest ${fmt(c.step,3)} ${c.unit} · true value ${fmt(value,4)} ${c.unit}`);
+ const places=Math.max(0,Math.round(-Math.log10(c.step))),reading=display.toFixed(places),name=kind==='distance'?'distance':'time';
+ const face=add(root,'g',{class:`lab-digital-display ${kind}`,transform:`translate(26 ${y-66})`,'data-reading':kind});
+ add(face,'rect',{x:0,y:0,width:188,height:92,rx:10,class:'lab-digital-face'});
+ add(face,'text',{x:12,y:18},`Rounded ${name}`);
+ LabDesign.digitalReadout(face,reading,{x:12,y:29,label:`Rounded ${name}: ${reading} ${c.unit}`});
+ add(face,'text',{x:169,y:59,'text-anchor':'end',class:'lab-digital-unit'},c.unit);
+ add(face,'text',{x:12,y:82},`Nearest ${fmt(c.step,3)} ${c.unit}`);
+ const atUpper=state.step>0&&Math.abs(value-high(c))<c.step*.0001;
+ add(root,'text',{x:geom[kind].x,y:y-63,class:'lab-chart-label'},`True ${name}: ${atUpper?'just below '+fmt(high(c),4):fmt(value,4)} ${c.unit}`);
 }
 function car(root,x,y,draggable=true){
   const g=add(root,'g',{transform:`translate(${x} ${y})`,class:draggable?'car-drag':'','data-drag':draggable?'distance':null,tabindex:draggable?0:null,role:draggable?'slider':null});
   add(g,'ellipse',{cx:0,cy:14,rx:35,ry:5,fill:'#1d252b',opacity:.14});add(g,'path',{d:'M-32 3L-24 -9H10L28 0L32 11H-33Z',class:'car'});add(g,'path',{d:'M-17 -6H8L20 0H-23Z',class:'car-window'});add(g,'rect',{x:-31,y:5,width:62,height:5,rx:2.5,class:'car-accent'});add(g,'circle',{cx:-20,cy:11,r:6,class:'wheel'});add(g,'circle',{cx:19,cy:11,r:6,class:'wheel'});
 }
-function watch(root,x,y){const g=add(root,'g',{transform:`translate(${x} ${y})`});add(g,'rect',{x:-12,y:-50,width:24,height:14,rx:4,class:'stopwatch'});add(g,'circle',{cx:0,cy:0,r:35,class:'stopwatch'});add(g,'circle',{cx:0,cy:0,r:27,class:'watch-face'});for(let i=0;i<12;i++){const a=i*Math.PI/6;add(g,'line',{x1:Math.sin(a)*20,y1:-Math.cos(a)*20,x2:Math.sin(a)*24,y2:-Math.cos(a)*24,stroke:'#96a2aa','stroke-width':1.2})}add(g,'line',{x1:0,y1:0,x2:13,y2:-17,class:'watch-hand'});add(g,'circle',{cx:0,cy:0,r:4,class:'watch-dot'})}
+function watch(root,x,y){const g=add(root,'g',{transform:`translate(${x} ${y}) scale(.8)`});add(g,'rect',{x:-12,y:-50,width:24,height:14,rx:4,class:'stopwatch'});add(g,'circle',{cx:0,cy:0,r:35,class:'stopwatch'});add(g,'circle',{cx:0,cy:0,r:27,class:'watch-face'});for(let i=0;i<12;i++){const a=i*Math.PI/6;add(g,'line',{x1:Math.sin(a)*20,y1:-Math.cos(a)*20,x2:Math.sin(a)*24,y2:-Math.cos(a)*24,stroke:'#96a2aa','stroke-width':1.2})}add(g,'line',{x1:0,y1:0,x2:Math.sin(state.t/60*Math.PI*2)*22,y2:-Math.cos(state.t/60*Math.PI*2)*22,class:'watch-hand'});add(g,'circle',{cx:0,cy:0,r:4,class:'watch-dot'})}
 function discovered(kind){return kind==='distance'?(state.discover.dLow&&state.discover.dHigh):(state.discover.tLow&&state.discover.tHigh)}
 function provisionalPair(kind){if(state.step!==3||state.fine.boundsSuccess)return null;const f=state.fine;return kind==='distance'?[num(f.dLow),num(f.dHigh)]:[num(f.tLow),num(f.tHigh)]}
 function renderBounds(root,kind,y){
@@ -2009,13 +2098,18 @@ function renderBounds(root,kind,y){
   }
   const provisional=provisionalPair(kind);
   if(provisional){
-    const [pa,pb]=provisional,[da,db]=domain(kind);if(pa!==null&&pa>=da&&pa<=db){const x=valueToX(kind,pa);add(root,'line',{x1:x,x2:x,y1:y-32,y2:y+32,class:'provisional-line'});add(root,'text',{x,y:y+54,'text-anchor':'middle',class:'bound-label'},'your lower')}
-    if(pb!==null&&pb>=da&&pb<=db){const x=valueToX(kind,pb);add(root,'line',{x1:x,x2:x,y1:y-32,y2:y+32,class:'provisional-line'});add(root,'text',{x,y:y+67,'text-anchor':'middle',class:'bound-value'},fmt(pb,isD?2:3))}
+    const [pa,pb]=provisional,[da,db]=domain(kind);if(pa!==null&&pa>=da&&pa<=db){const x=valueToX(kind,pa);add(root,'line',{x1:x,x2:x,y1:y-32,y2:y+32,class:'provisional-line'});add(root,'text',{x:x-10,y:y+54,'text-anchor':'end',class:'bound-value'},fmt(pa,isD?2:3))}
+    if(pb!==null&&pb>=da&&pb<=db){const x=valueToX(kind,pb);add(root,'line',{x1:x,x2:x,y1:y-32,y2:y+32,class:'provisional-line'});add(root,'text',{x:x+10,y:y+67,'text-anchor':'start',class:'bound-value'},fmt(pb,isD?2:3))}
     if(pa!==null&&pb!==null&&pb>pa&&pa>=da&&pb<=db){const x1=valueToX(kind,pa),x2=valueToX(kind,pb);add(root,'rect',{x:x1,y:y-10,width:x2-x1,height:20,rx:7,class:'provisional'});add(root,'text',{x:(x1+x2)/2,y:y-40,'text-anchor':'middle',class:'smallmono'},'your proposed interval')}
     return;
   }
   const x1=valueToX(kind,a),x2=valueToX(kind,b);add(root,'rect',{x:x1,y:y-12,width:x2-x1,height:24,rx:8,class:isD?'allowed-d':'allowed-t'});add(root,'line',{x1:x1,x2:x1,y1:y-33,y2:y+33,class:'bound'});add(root,'line',{x1:x2,x2:x2,y1:y-33,y2:y+33,class:'bound upper'});
   const fine=state.step===3,loX=fine?x1-10:x1,hiX=fine?x2+10:x2,loAnchor=fine?'end':'middle',hiAnchor=fine?'start':'middle';
+  add(root,'text',{x:(x1+x2)/2,y:y-40,'text-anchor':'middle',class:'lab-chart-label'},`${fmt(a,4)} ≤ ${isD?'d':'t'} < ${fmt(b,4)} ${c.unit}`);
+  add(root,'circle',{cx:x1,cy:y+33,r:4,class:'lab-interval-end included'});
+  add(root,'circle',{cx:x2,cy:y+33,r:4,class:'lab-interval-end excluded'});
+  add(root,'text',{x:loX,y:y+52,'text-anchor':loAnchor,class:'lab-interval-caption'},'included');
+  add(root,'text',{x:hiX,y:y+52,'text-anchor':hiAnchor,class:'lab-interval-caption'},'excluded');
   add(root,'text',{x:loX,y:y+53,'text-anchor':loAnchor,class:'bound-label'},'lower bound');add(root,'text',{x:loX,y:y+66,'text-anchor':loAnchor,class:'bound-value'},fmt(a,isD?(fine?2:1):(fine?3:2)));
   add(root,'text',{x:hiX,y:y+53,'text-anchor':hiAnchor,class:'bound-label'},'upper bound');add(root,'text',{x:hiX,y:y+66,'text-anchor':hiAnchor,class:'bound-value'},fmt(b,isD?(fine?2:1):(fine?3:2)));
 }
@@ -2025,13 +2119,13 @@ function renderDistance(root){
 
   ticks(root,'distance',g.y);renderBounds(root,'distance',g.y);
   if(state.step===0){add(root,'rect',{x:g.x-8,y:g.y-18,width:g.w+16,height:36,fill:'transparent','data-lane':'distance',style:'cursor:ew-resize;pointer-events:all'});add(root,'line',{x1:x,x2:x,y1:g.y-34,y2:g.y+34,class:'gate'});add(root,'rect',{x:x-12,y:g.y-36,width:24,height:7,rx:3,class:'gate-foot'});add(root,'circle',{cx:x,cy:g.y,r:11,class:'distance-handle','data-drag':'distance',tabindex:0,role:'slider'});return}
-  add(root,'line',{x1:x,x2:x,y1:g.y-31,y2:g.y+24,class:'handle-line-d'});add(root,'circle',{cx:x,cy:g.y-31,r:6,class:'position-pin'});car(root,x,g.y+1,enabled);
+  add(root,'line',{x1:x,x2:x,y1:g.y-31,y2:g.y+24,class:'handle-line-d'});add(root,'circle',{cx:x,cy:g.y-31,r:6,class:'position-pin'});if(state.step===1)car(root,x,g.y+1,enabled);else add(root,'circle',{cx:x,cy:g.y,r:5,class:'position-pin'});
 }
 function timeEnabled(){return state.step===0||state.step===1}
 function renderTime(root){
   const g=geom.time,x=valueToX('time',state.t),enabled=timeEnabled();screenCard(root,'time',g.y);
 
-  ticks(root,'time',g.y);renderBounds(root,'time',g.y);watch(root,700,g.y);
+  ticks(root,'time',g.y);renderBounds(root,'time',g.y);watch(root,700,60);
   if(enabled)add(root,'rect',{x:g.x-8,y:g.y-24,width:g.w+16,height:48,fill:'transparent','data-lane':'time',style:'cursor:ew-resize;pointer-events:all'});
   if(enabled){
     const control=add(root,'g',{class:'time-drag-control','data-drag':'time',tabindex:0,role:'slider','aria-label':'Actual stop time. Drag left or right.'});
@@ -2039,30 +2133,39 @@ function renderTime(root){
     add(control,'line',{x1:x,x2:x,y1:g.y-34,y2:g.y+34,class:'handle-line-t','data-drag':'time'});
     add(control,'circle',{cx:x,cy:g.y,r:12,class:'time-handle','data-drag':'time'});
   }else{
-    add(root,'line',{x1:x,x2:x,y1:g.y-34,y2:g.y+34,class:'handle-line-t'});add(root,'circle',{cx:x,cy:g.y,r:11,class:'time-handle',style:'cursor:default'});
+    add(root,'line',{x1:x,x2:x,y1:g.y-34,y2:g.y+34,class:'handle-line-t'});add(root,'circle',{cx:x,cy:g.y,r:5,class:'time-handle',style:'cursor:default'});
   }
 }
 function speedDomain(){const [a,b]=speedBounds(BASE),t=BASE.threshold;let lo=a-(b-a)*.18,hi=b+(b-a)*.18;lo=Math.min(lo,t-(b-a)*.12);hi=Math.max(hi,t+(b-a)*.12);return[lo,hi]}
 function renderSpeed(root){
- if(state.step===0)return;
- const c=cfg(),v=speed(state.d,state.t),[lo,hi]=speedBounds(c),[min,max]=speedDomain(),x=n=>50+(n-min)/(max-min)*600,y=590;
- add(root,'text',{x:34,y:515,class:'lab-chart-heading'},'Speed = distance ÷ time');
- add(root,'text',{x:34,y:548,class:'lab-chart-label'},`${fmt(state.d,4)} m ÷ ${fmt(state.t,4)} s = ${state.step>1&&!state.complete[state.step]&&state.workingLevel>0?'?':fmt(v,3)} m/s`);
- add(root,'rect',{x:50,y,width:600,height:16,rx:8,class:'speed-track'});
+ if(state.step===0||(state.step===3&&!state.fine.boundsSuccess))return;
+ const c=cfg(),v=speed(state.d,state.t),[lo,hi]=speedBounds(c),[min,max]=speedDomain(),x=n=>260+(n-min)/(max-min)*440,y=540;
+ add(root,'text',{x:26,y:473,class:'lab-chart-heading'},'Speed = distance ÷ time');
+ add(root,'text',{x:26,y:500,class:'lab-chart-label'},`${fmt(state.d,4)} m ÷ ${fmt(state.t,4)} s = ${state.step>1&&!state.complete[state.step]&&state.workingLevel>0?'?':fmt(v,3)} m/s`);
+ add(root,'rect',{x:260,y,width:440,height:16,rx:8,class:'speed-track'});
  if(state.complete[1])add(root,'rect',{x:x(lo),y,width:x(hi)-x(lo),height:16,rx:8,class:'speed-range'});
  add(root,'line',{x1:x(c.threshold),x2:x(c.threshold),y1:y-24,y2:y+38,class:'speed-threshold'});
  add(root,'text',{x:x(c.threshold),y:y-32,'text-anchor':'middle',class:'lab-chart-label'},'8.05 required');
  add(root,'circle',{cx:x(v),cy:y+8,r:10,class:'speed-current'});
- add(root,'text',{x:50,y:y+65,class:'lab-chart-label'},state.upperSpeed?`Upper speed: ${fmt(hi,3)} m/s`:'');
- add(root,'text',{x:50,y:y+93,class:'lab-chart-label'},state.lowerSpeed?`Lower speed: ${state.step>1&&!state.complete[state.step]&&state.workingLevel>0?'?':fmt(lo,3)} m/s`:'');
+ add(root,'text',{x:260,y:y+53,class:'lab-chart-label'},state.upperSpeed?`Upper speed: ${fmt(hi,3)} m/s`:'');
+ add(root,'text',{x:260,y:y+77,class:'lab-chart-label'},state.lowerSpeed?`Lower speed: ${state.step>1&&!state.complete[state.step]&&state.workingLevel>0?'?':fmt(lo,3)} m/s`:'');
  if(state.step===3&&!state.fine.boundsSuccess)return;
  if(state.step>=2){const proof=state.step===2?state.proof:state.fine,d=state.step===2?num(proof.distance):low(c.distance),t=state.step===2?num(proof.time):high(c.time);if(d!==null&&t>0&&d/t>=min&&d/t<=max)add(root,'path',{d:`M${x(d/t)} ${y-12}l7 7-7 7-7-7Z`,class:'your-choice'});}
 }
+function renderProofSelection(root){
+ if(state.step!==2||state.workingLevel<2)return;
+ for(const [kind,key] of [['distance','distance'],['time','time']]){
+  const value=num(state.proof[key]),[a,b]=domain(kind);if(value===null||value<a||value>b)continue;
+  const x=valueToX(kind,value),y=geom[kind].y;
+  add(root,'path',{d:`M${x} ${y-26}l7 7-7 7-7-7Z`,class:`lab-proof-marker ${kind}`,'data-proof-marker':kind});
+  add(root,'text',{x:geom[kind].x,y:y+94,class:'lab-chart-label'},`Your ${kind==='distance'?'lower distance':'upper time'}: ${fmt(value,4)} ${cfg()[kind].unit}`);
+ }
+}
 function renderStage(){
- const root=$('stage');root.replaceChildren();root.classList.add('lab-bounds-chart','lab-bounds-restored');root.setAttribute('viewBox',`0 0 760 ${state.step===0?465:720}`);
+ const root=$('stage');root.replaceChildren();root.classList.add('lab-bounds-chart','lab-bounds-restored');root.setAttribute('viewBox',`0 0 760 ${state.step===0||(state.step===3&&!state.fine.boundsSuccess)?435:650}`);
  add(root,'title',{id:'stageTitle'},'Discover rounded measurement intervals and speed bounds');
  add(root,'desc',{id:'stageDesc'},'Drag the true distance and time across rounding boundaries. Then use the allowed intervals to find the fastest and slowest speeds.');
- renderDistance(root);renderTime(root);renderSpeed(root);
+ renderDistance(root);renderTime(root);renderSpeed(root);renderProofSelection(root);
  const introduce=(target,key,title,copy)=>{if(!target)return;target.dataset.labIntro=key;target.dataset.labIntroTitle=title;target.dataset.labIntroCopy=copy;};
  if(state.step<2){
  introduce(root.querySelector('[data-drag="distance"][tabindex]'),'bounds-distance-'+state.step,state.step===0?'Find where the reading changes':'Move the car',state.step===0?'Drag the marker across the ruler to discover the lowest and highest true distances that round to 100 m. Arrow keys also move it.':'Drag within the allowed interval. Combine a longer distance with a shorter time to find the fastest run, then reverse both.');
@@ -2087,7 +2190,7 @@ function workField(path,label,value,unit,owned,bad=false,good=false){
 }
 function supplyWorking(){
  const c=cfg(),f=state.step===3?state.fine:state.proof;
- if(state.workingLevel<2){if(state.step===3){Object.assign(f,{dLow:String(low(c.distance)),dHigh:String(high(c.distance)),tLow:String(low(c.time)),tHigh:String(high(c.time)),boundsSuccess:true})}else{f.distance=String(low(c.distance));f.time=String(high(c.time));}}
+ if(state.workingLevel<2){if(state.step===3){Object.assign(f,{dLow:String(low(c.distance)),dHigh:String(high(c.distance)),tLow:String(low(c.time)),tHigh:String(high(c.time)),boundsSuccess:true});state.d=low(c.distance);state.t=safeHigh(c.time)}else{f.distance=String(low(c.distance));f.time=String(high(c.time));}}
  if(state.workingLevel===0)f.speed=String(speedBounds(c)[0]);
 }
 function renderProofDock(){
@@ -2095,9 +2198,9 @@ function renderProofDock(){
  if(state.step<2){const items=state.step===0?[['Distance lower boundary',state.discover.dLow,'99.5 m'],['Distance upper boundary',state.discover.dHigh,'100.5 m'],['Time lower boundary',state.discover.tLow,'12.35 s'],['Time upper boundary',state.discover.tHigh,'12.45 s']]:[['Fastest possible run',state.upperSpeed,`${fmt(speedBounds()[1],3)} m/s`],['Slowest possible run',state.lowerSpeed,`${fmt(speedBounds()[0],3)} m/s`]];
  dock.innerHTML='<div class="proof-head"><strong>'+ (state.step===0?'Discover the intervals':'Explore the speed extremes')+'</strong></div><div class="proof-body">'+items.map(([label,done,result])=>`<section class="lab-work-card" data-work-state="${done?'good':'needed'}" data-interacted="${state.drag!==null}"><strong>${label}</strong><p>${done?result:'—'}</p></section>`).join('')+'<p>'+(state.step===0?'A rounded reading represents an interval. Crossing its edges changes the display.':'Greater distance and less time increase speed; reverse both to find the lower bound.')+'</p></div>';return;}
  supplyWorking();const fine=state.step===3,f=fine?state.fine:state.proof,c=cfg(),prefix=fine?'fine':'proof';
- if(fine&&!f.boundsSuccess){dock.innerHTML=`<div class="proof-head"><strong>Build the finer intervals</strong></div><div class="proof-body"><p>Distance is rounded to 0.1 m; time to 0.01 s.</p>${[['dLow','Distance lower','m'],['dHigh','Distance upper','m'],['tLow','Time lower','s'],['tHigh','Time upper','s']].map(([key,label,unit])=>workField('fine.'+key,label,f[key],unit,true,f.bad.includes(key))).join('')}<button class="lab-action" data-priority="primary" data-check="fine-bounds">Check intervals</button><p>${f.message}</p></div>`;return;}
+ if(fine&&!f.boundsSuccess){dock.innerHTML=`<div class="proof-head"><strong>Build the finer intervals</strong></div><div class="proof-body"><p>The recorded values stay the same; greater precision narrows the possible true values.</p>${[['Distance','distance','dLow','dHigh',.05,'m'],['Time','time','tLow','tHigh',.005,'s']].map(([label,kind,lo,hi,half,unit])=>`<section class="lab-work-card" data-work-state="${f.bad.includes(lo)||f.bad.includes(hi)?'bad':'needed'}"><strong>${label} interval</strong><p class="lab-math-surface">${kind==='distance'?'100.0':'12.40'} ± ${half} ${unit}</p>${workField('fine.'+lo,'Lower bound',f[lo],unit,true,f.bad.includes(lo))}${workField('fine.'+hi,'Upper bound',f[hi],unit,true,f.bad.includes(hi))}</section>`).join('')}<button class="lab-action" data-priority="primary" data-check="fine-bounds">Check intervals</button><p>${f.message}</p></div>`;return;}
  const predictionState=f.success?'good':f.checked&&f.verdict&&f.verdict!==(fine?'yes':'no')?'bad':'needed';
- dock.innerHTML=`<div class="proof-head"><strong>${fine?'Same proof, finer readings':'Worst-case proof'}</strong></div><div class="proof-body"><div class="proof-rule"><code>lower distance ÷ upper time</code></div><div class="equation-work">${workField('proof.distance','Lower distance',fine?fmt(low(c.distance),4):f.distance,'m',!fine&&state.workingLevel===2,f.bad.includes('distance'),f.checked&&!f.bad.includes('distance'))}<div class="eq-label">÷</div>${workField('proof.time','Upper time',fine?fmt(high(c.time),4):f.time,'s',!fine&&state.workingLevel===2,f.bad.includes('time'),f.checked&&!f.bad.includes('time'))}<div class="eq-label">=</div>${workField(prefix+'.speed','Lower speed',state.workingLevel===0?fmt(Number(f.speed),3):f.speed,'m/s',state.workingLevel>0,f.bad.includes('speed'),f.checked&&!f.bad.includes('speed'))}</div><section class="lab-work-card lab-prediction" data-work-state="${predictionState}" data-interacted="${Boolean(f.verdict)}"><strong>Does every allowed run reach 8.05 m/s?</strong><div class="lab-prediction-options" data-lab-intro="bounds-prediction" data-lab-intro-title="Test every allowed run" data-lab-intro-copy="Choose whether the lowest possible speed meets 8.05 m/s, then check your prediction.">${verdictHtml(f.verdict,prefix)}</div><button class="lab-action" data-priority="primary" data-check="${fine?'fine-proof':'proof'}" ${f.verdict?'':'disabled'}>Check prediction</button><p>${f.message}</p></section></div>`;
+ dock.innerHTML=`<div class="proof-head"><strong>${fine?'Same proof, finer readings':'Worst-case proof'}</strong></div><div class="proof-body"><p>${fine?'The tighter intervals must pass the same test.':'Use the intervals you found as evidence.'} Use the included lower distance and excluded upper time limit to calculate the lower speed bound.</p><div class="proof-rule"><code>lower speed bound = lower distance ÷ upper time</code></div><div class="equation-work">${workField('proof.distance','Lower distance bound',fine?fmt(low(c.distance),4):f.distance,'m',!fine&&state.workingLevel===2,f.bad.includes('distance'),f.checked&&!f.bad.includes('distance'))}<div class="eq-label">÷</div>${workField('proof.time','Upper time bound',fine?fmt(high(c.time),4):f.time,'s',!fine&&state.workingLevel===2,f.bad.includes('time'),f.checked&&!f.bad.includes('time'))}<div class="eq-label">=</div>${workField(prefix+'.speed','Lower speed',state.workingLevel===0?fmt(Number(f.speed),3):f.speed,'m/s',state.workingLevel>0,f.bad.includes('speed'),f.checked&&!f.bad.includes('speed'))}</div><section class="lab-work-card lab-prediction" data-work-state="${predictionState}" data-interacted="${Boolean(f.verdict)}"><strong>Does every allowed run reach 8.05 m/s?</strong><div class="lab-prediction-options" data-lab-intro="bounds-prediction" data-lab-intro-title="Test every allowed run" data-lab-intro-copy="Choose whether the lowest possible speed meets 8.05 m/s, then check your prediction.">${verdictHtml(f.verdict,prefix)}</div><button class="lab-action" data-priority="primary" data-check="${fine?'fine-proof':'proof'}" ${f.verdict?'':'disabled'}>Check prediction</button><p>${f.message}</p></section></div>`;
 }
 
 function setByPath(path,value){const [a,b]=path.split('.');state[a][b]=value;state[a].success=false;state[a].message='';state.complete[state.step]=false;renderCompletion();state[a].checked=false;if(a==='proof')state[a].bad=[];if(a==='fine'){state[a].bad=[];if(['dLow','dHigh','tLow','tHigh'].includes(b))state.fine.boundsChecked=false}renderStage()}
@@ -2115,7 +2218,7 @@ function checkFineBounds(){
   const f=state.fine,vals={dLow:num(f.dLow),dHigh:num(f.dHigh),tLow:num(f.tLow),tHigh:num(f.tHigh)},exp={dLow:low(FINE.distance),dHigh:high(FINE.distance),tLow:low(FINE.time),tHigh:high(FINE.time)};f.boundsChecked=true;f.bad=[];
   for(const k of Object.keys(vals)){const tol=k.startsWith('d')?.0006:.00006;if(!close(vals[k],exp[k],tol))f.bad.push(k)}
   if(f.bad.length)f.message='At least one limit does not match the stated rounding accuracy. The dashed interval shows what your entries imply.';
-  else{f.boundsSuccess=true;f.message='Intervals fixed. Now use lower distance ÷ upper time to calculate the new slowest possible speed.';state.d=FINE.distance.report;state.t=FINE.time.report}
+  else{f.boundsSuccess=true;f.message='Intervals fixed. Now use lower distance ÷ upper time to calculate the new slowest possible speed.';state.d=low(FINE.distance);state.t=safeHigh(FINE.time)}
   renderAll();
 }
 function checkFineProof(){

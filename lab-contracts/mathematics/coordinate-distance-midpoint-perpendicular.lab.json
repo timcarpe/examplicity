@@ -63,7 +63,7 @@
           "#modelProgress"
         ],
         "kind": "evidence",
-        "description": "Live caller distances and candidate-line state.",
+        "description": "Live probe distances and candidate-line state.",
         "visibility": "Present for the current problem; child controls and readouts follow the states described below."
       },
       "settings": {
@@ -99,7 +99,7 @@
         ]
       },
       "bisector": {
-        "description": "One perpendicular-bisector line, represented by anchor, direction and equation.",
+        "description": "A candidate line represented by anchor, direction and equation; it is the perpendicular bisector when the equal-distance condition holds.",
         "domain": "Line equation including vertical/horizontal special cases; map coordinates.",
         "source": "Learner slides/rotates the candidate line and, when required, writes its equation.",
         "output": "Two probe distances, sampled equality, candidate gradient/equation and target working provide live evidence.",
@@ -122,6 +122,9 @@
       "A phase completes only when visualSuccess and workingReady() agree; the final phase additionally requires baseMoved.",
       "Field values are checked against the same endpoints used by the visual."
     ],
-    "completion": "phaseComplete() combines the visual equality test, required working and final-stage endpoint movement; the four stage markers store completed evidence."
+    "completion": "phaseComplete() combines the visual equality test, required working and final-stage endpoint movement; the four stage markers store completed evidence.",
+    "limitations": [
+      "Visual success checks seven sampled points with the existing tolerance; the sampled evidence is not a continuous proof over every point of the line."
+    ]
   }
 }

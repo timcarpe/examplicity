@@ -24,7 +24,8 @@
     "surfaces": {
       "task": {
         "selectors": [
-          "#goalText"
+          "#goalText",
+          "#certificateClaim"
         ],
         "kind": "given",
         "description": "Current problem statement and supplied quantities.",
@@ -63,6 +64,31 @@
         "kind": "control",
         "description": "Existing stage navigation, Working level and current-step reset.",
         "visibility": "Present for the current problem; child controls and readouts follow the states described below."
+      },
+      "rounding-readouts": {
+        "selectors": [
+          "#stage [data-reading=\"distance\"]",
+          "#stage [data-reading=\"time\"]"
+        ],
+        "kind": "evidence",
+        "description": "Inline seven-segment rounded readings preserve trailing zeros for the current precision; adjacent true-value labels and interval markers show the hidden measurement range.",
+        "visibility": "Present in every stage; stage 0 readings change at crossed boundaries; later stages retain the recorded readings."
+      },
+      "proof-evidence": {
+        "selectors": [
+          "#stage [data-proof-marker]"
+        ],
+        "kind": "evidence",
+        "description": "Distinct diamonds show the learner-entered coarse distance/time proof values against fixed half-open intervals.",
+        "visibility": "Stage 3, Working All, when each entered quantity is numeric and inside the ruler domain."
+      },
+      "interval-check": {
+        "selectors": [
+          "#proofDock [data-check=\"fine-bounds\"]"
+        ],
+        "kind": "control",
+        "description": "Validate the four finer interval limits before the final speed proof.",
+        "visibility": "Stage 4, Working All, before fine.boundsSuccess."
       }
     },
     "quantities": {
@@ -70,10 +96,16 @@
         "description": "Two underlying measurements with four interval endpoints. Endpoints are bounds of these measurements, not four unrelated physical quantities.",
         "domain": "Distance m; time s; intervals are lower-inclusive and upper-exclusive.",
         "source": "Reported values and rounding units are given; stage 0 discovers both edges with rulers.",
-        "output": "Readings change at crossed boundaries; later manipulations stay inside the valid intervals.",
+        "output": "Rounded readings change at crossed boundaries. Included/excluded endpoint markers show half-open intervals. Stage 3 entries add proof markers; stage 4 proposed limits appear before checking. Once finer intervals are accepted or supplied, the model uses the lower distance and a time just below the excluded upper limit.",
         "inputSlots": [
           "#stage [data-drag=\"distance\"]",
-          "#stage [data-drag=\"time\"]"
+          "#stage [data-drag=\"time\"]",
+          "#proofDock input[data-field=\"proof.distance\"]",
+          "#proofDock input[data-field=\"proof.time\"]",
+          "#proofDock input[data-field=\"fine.dLow\"]",
+          "#proofDock input[data-field=\"fine.dHigh\"]",
+          "#proofDock input[data-field=\"fine.tLow\"]",
+          "#proofDock input[data-field=\"fine.tHigh\"]"
         ]
       },
       "worst-case-speed": {
@@ -82,7 +114,8 @@
         "source": "Physical extremes are explored first, then working is supplied or entered by level.",
         "output": "The proof and speed-range display compare the lower bound with 8.05.",
         "inputSlots": [
-          "#proofDock input[data-field]"
+          "#proofDock input[data-field=\"proof.speed\"]",
+          "#proofDock input[data-field=\"fine.speed\"]"
         ]
       },
       "certificate": {
@@ -92,7 +125,8 @@
         "output": "Explicit Check prediction verifies arithmetic and verdict together.",
         "inputSlots": [
           "#proofDock [data-verdict]",
-          "#proofDock [data-check]"
+          "#proofDock [data-check=\"proof\"]",
+          "#proofDock [data-check=\"fine-proof\"]"
         ]
       }
     },

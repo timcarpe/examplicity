@@ -201,3 +201,10 @@ readouts. It preserves completed progress at None. `.lab-checkpoint-detail`
 adds hover/focus task and work detail to existing `.lab-checkpoint` markers.
 Right-triangle resizing, non-right-triangle pegging and trig rotation now use
 `bindSvgDrag`; angular models retain their own angular offset and constraints.
+
+
+`LabDesign.digitalReadout(svgParent, fixedPointText, {x, y, label})` draws a
+non-negative fixed-point measurement with inline seven-segment SVG and an
+accessible label. Pass the recorded precision explicitly (for example `12.40`);
+it preserves trailing zeros. `.lab-digital-display` supplies the concept colour
+and flat face. Keep rounding rules, true-value state and ruler geometry local.

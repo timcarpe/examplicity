@@ -493,3 +493,6 @@ hover/focus detail surface, without adding a numeric progress counter.
 
 
 Geometry review refinement: calculation and candidate-table surfaces are flat material, without inset side rails in any state; fields retain complete feedback borders. Choose concept colours that separate clearly from success green. The 3D palette uses approved blue for the beam/projection, amber for height and violet for cable; verified alignment keeps its green feedback.
+
+
+Rounded measurement instruments use compact inline seven-segment readings with explicit displayed precision (including trailing zeros), separate true values, and a shared coordinate scale for rulers, bounds and proof markers. Place the stopwatch in empty space. Mark included/excluded bounds explicitly and distinguish approach to an upper limit from equality. Keep the investigation's claim and criterion visible; these are necessary context, not redundant narration. The shared digitalReadout renderer supplies SVG segments without external fonts or images.

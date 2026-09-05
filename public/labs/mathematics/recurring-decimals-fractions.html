@@ -1390,10 +1390,57 @@ input.lab-intro-target{outline:none;animation:none}
 .lab-three :is(.edge-label.projection,.flat-label.shared){fill:var(--projection)}
 .lab-three :is(.edge-label.cable,.flat-label.cable){fill:var(--cable)}
 
+/* Instrument readouts preserve the displayed precision, including trailing zeros. */
+.lab-digital-display{color:var(--lab-concept-blue,#4779b7)}
+.lab-digital-display.time{color:var(--lab-concept-violet,#7563a7)}
+.lab-digital-face{fill:color-mix(in srgb,currentColor 12%,white);stroke:none}
+.lab-digital-segment{fill:currentColor;opacity:.1}
+.lab-digital-segment.is-on{opacity:1}
+.lab-digital-display text{font:400 12px var(--lab-font-sans,sans-serif);fill:var(--lab-ink-secondary,#424245)}
+.lab-digital-display .lab-digital-unit{font-size:14px;fill:currentColor}
+.lab-bounds-restored .lab-chart-heading{font-size:14px;font-weight:400}
+.lab-bounds-restored :is(.lab-chart-label,.bound-value,.smallmono,.mono){font-size:12px}
+.lab-task-context{padding:16px 20px 0;color:var(--lab-ink-secondary,#424245);font:400 14px/1.5 var(--lab-font-sans,sans-serif)}
+.lab-task-context p{margin:0}
+.lab-task-context strong{font-weight:400;color:var(--lab-ink,#1d1d1f)}
+
+.lab-proof-marker{fill:var(--lab-concept-blue,#4779b7);stroke:white;stroke-width:2}
+.lab-proof-marker.time{fill:var(--lab-concept-violet,#7563a7)}
+.lab-proof-sidebar :is(.num-field input,.proof-rule code){font:400 14px/1.45 var(--lab-font-sans,sans-serif)}
+.lab-proof-sidebar .lab-work-card>.num-field{margin-top:8px}
+
+.lab-interval-end{stroke:var(--lab-ink-secondary,#424245);stroke-width:1.5}
+.lab-interval-end.included{fill:var(--lab-ink-secondary,#424245)}
+.lab-interval-end.excluded{fill:white}
+.lab-interval-caption{font:400 11px var(--lab-font-sans,sans-serif);fill:var(--lab-ink-secondary,#424245)}
+
 </style>
 <script data-lab-design-runtime>
 /* Shared model dragging: retain the point grabbed while the model rerenders. */
 window.LabDesign = {
+  digitalReadout(root, value, { x, y, label }) {
+    const ns = 'http://www.w3.org/2000/svg';
+    const append = (parent, tag, attributes) => {
+      const node = document.createElementNS(ns, tag);
+      Object.entries(attributes).forEach(([key, val]) => node.setAttribute(key, val));
+      parent.appendChild(node); return node;
+    };
+    const group = append(root, 'g', { class: 'lab-digital-readout', transform: `translate(${x} ${y})`, role: 'img', 'aria-label': label });
+    const segments = [[3,0,14,3],[17,3,3,12],[17,19,3,12],[3,31,14,3],[0,19,3,12],[0,3,3,12],[3,15,14,3]];
+    const digits = ['abcdef','bc','abdeg','abcdg','bcfg','acdfg','acdefg','abc','abcdefg','abcdfg'];
+    let offset = 0;
+    for (const digit of String(value)) {
+      if (digit === '.') {
+        append(group, 'circle', { cx: offset + 2, cy: 32, r: 2, class: 'lab-digital-segment is-on' }); offset += 8; continue;
+      }
+      segments.forEach(([sx, sy, width, height], index) => append(group, 'rect', {
+        x: offset + sx, y: sy, width, height, rx: 1,
+        class: `lab-digital-segment${digits[Number(digit)].includes('abcdefg'[index]) ? ' is-on' : ''}`,
+      }));
+      offset += 26;
+    }
+    return group;
+  },
   introduce(scope, targets, key, title, copy) {
     scope.querySelectorAll('[data-lab-intro]').forEach(target => {
       delete target.dataset.labIntro; delete target.dataset.labIntroTitle; delete target.dataset.labIntroCopy;

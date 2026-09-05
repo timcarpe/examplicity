@@ -1,5 +1,28 @@
 /* Shared model dragging: retain the point grabbed while the model rerenders. */
 window.LabDesign = {
+  digitalReadout(root, value, { x, y, label }) {
+    const ns = 'http://www.w3.org/2000/svg';
+    const append = (parent, tag, attributes) => {
+      const node = document.createElementNS(ns, tag);
+      Object.entries(attributes).forEach(([key, val]) => node.setAttribute(key, val));
+      parent.appendChild(node); return node;
+    };
+    const group = append(root, 'g', { class: 'lab-digital-readout', transform: `translate(${x} ${y})`, role: 'img', 'aria-label': label });
+    const segments = [[3,0,14,3],[17,3,3,12],[17,19,3,12],[3,31,14,3],[0,19,3,12],[0,3,3,12],[3,15,14,3]];
+    const digits = ['abcdef','bc','abdeg','abcdg','bcfg','acdfg','acdefg','abc','abcdefg','abcdfg'];
+    let offset = 0;
+    for (const digit of String(value)) {
+      if (digit === '.') {
+        append(group, 'circle', { cx: offset + 2, cy: 32, r: 2, class: 'lab-digital-segment is-on' }); offset += 8; continue;
+      }
+      segments.forEach(([sx, sy, width, height], index) => append(group, 'rect', {
+        x: offset + sx, y: sy, width, height, rx: 1,
+        class: `lab-digital-segment${digits[Number(digit)].includes('abcdefg'[index]) ? ' is-on' : ''}`,
+      }));
+      offset += 26;
+    }
+    return group;
+  },
   introduce(scope, targets, key, title, copy) {
     scope.querySelectorAll('[data-lab-intro]').forEach(target => {
       delete target.dataset.labIntro; delete target.dataset.labIntroTitle; delete target.dataset.labIntroCopy;

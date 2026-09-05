@@ -24,7 +24,8 @@
     "surfaces": {
       "task": {
         "selectors": [
-          "#goalSentence"
+          "#goalSentence",
+          "#goalSub"
         ],
         "kind": "given",
         "description": "Current problem statement and supplied quantities.",
@@ -74,6 +75,15 @@
         "kind": "control",
         "description": "Working ownership, current-step reset and sample generation.",
         "visibility": "Present for the current problem; child controls and readouts follow the states described below."
+      },
+      "feedback": {
+        "selectors": [
+          "#evidenceMain",
+          "#evidenceStatus"
+        ],
+        "kind": "evidence",
+        "description": "Current readiness, read-off, IQR and experiment feedback.",
+        "visibility": "Updates with the selected interval, working, read-off and experiment state."
       }
     },
     "quantities": {
@@ -115,9 +125,9 @@
     },
     "dependencies": [
       "A class requires barOK, riseOK and ownedWorkReady before moving to the next interval.",
-      "The cumulative point is unavailable until density is correct.",
+      "The cumulative point is rendered but cannot be manipulated until barOK; its interaction is gated by the correct bar density.",
       "All class intervals precede Q1/median/Q3; required ranks gate the ruler; Q3 precedes IQR."
     ],
-    "completion": "Each manipulation is checked on release. The final guide is reached after three accepted quartiles and the IQR calculation (shown automatically at None); experiment remains optional."
+    "completion": "Pointer release, keyboard manipulation and typed change/Enter paths check the relevant work. The final guide follows three accepted quartiles and the IQR calculation (supplied at None); experiment remains optional."
   }
 }

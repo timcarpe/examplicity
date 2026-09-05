@@ -742,3 +742,42 @@ initial screen or that every generated state was replayed.
 - The user requested a direct mapping-specification review from Lab Internals
   (Orchestrator), task `01a06f2a-1766-7a52-bf78-3609692c5ab1`; commit `9e65dcb`
   was sent for read-only evaluation.
+
+
+### Mapping specification review
+
+Lab Internals (Orchestrator) reviewed `9e65dcb` and confirmed the lightweight
+architecture and 16-lab retrospective coverage meet expectations. Corrected its
+bounded findings: Binary feedback visibility, Bounds quantity/input/check
+ownership, Coordinate candidate/probe wording and sample tolerance, Histogram
+task/feedback locators and acceptance paths, and Trig sweep/endpoint gating.
+The forward checklist above already requires mapping first; explicitly create
+or review the map early in EVERY future redesign, then refresh it after changes.
+Exam interpretation remains with Alignment Implementer. No alignment changes
+were requested or made here. `reviewedRevision` remains the inspected source
+baseline unless the lab behaviour itself changes.
+
+
+### Bounds instrument and proof repair — 5 September 2026
+
+- Shared CSS/JS adds inline seven-segment readings, compact labels, flat
+  instrument surfaces and included/excluded endpoint markers. Distance/time
+  retain their precise displayed decimal places and trailing zeros.
+- Bounds source places readouts to the left of shorter rulers and the stopwatch
+  in the empty top-right space. A persistent statement defines the claim and
+  what would disprove its guarantee. No extra slider or canvas scrolling.
+- Compared stages 3/4 with the user-specified archived v6: restored the lost
+  distance/time proof-entry markers and finer-interval explanation. Stage 4
+  previews both proposed limits and groups fields with the half-unit maths.
+  Speed proof waits until the finer intervals are fixed.
+- Fixed ruler ticks using a different inset coordinate scale from bound markers.
+  Half-open endpoints are explicit; true times near an excluded upper bound
+  are labelled as approaching it. Smaller static proof markers keep the bounds
+  visible. After finer limits are accepted or supplied, the model now shows
+  lower distance/upper-time approach rather than contradictory midpoint values.
+- Browser replay completed all four stages on the final implementation, with
+  Working All for both proofs. Two focused source-rule tests cover rejected
+  verdict/intervals, completion, edited-answer invalidation, and supplied
+  None/Some finer evidence. Broad device/profile coverage was not repeated.
+  The style guide, kit README, implementation sidecar and inline downloads
+  record/preserve the updated behaviour.
