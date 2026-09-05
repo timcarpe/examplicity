@@ -7,13 +7,13 @@ export type ChangelogEntry = {
 
 export const changelogEntries: readonly ChangelogEntry[] = [
   {
-    date: '2026-09-01',
-    displayDate: '1 September 2026',
+    date: '2026-09-05',
+    displayDate: '5 September 2026',
     publicChanges: [
       'Added flip-flop feedback, recursive call-stack and artificial-neuron investigations for Cambridge International A Level Computer Science 9618.',
       'Added Cambridge IGCSE Mathematics 0580 investigations for similarity, relative frequency, expected frequency, replacement and conditional sample spaces.',
       'Added Biology, Chemistry and Physics investigations for natural selection, converging lenses, total internal reflection, diffraction, and constant-temperature gas compression.',
-      'Expanded replacement and similarity practice with fresh generated problems while preserving each lab’s direct manipulation and evidence trail.',
+      'Improved prime-factor progression and expanded replacement and similarity practice while preserving each lab’s direct manipulation and evidence trail.',
       'Made direct and search-result lab links open inside the full Examplicity navigation and footer frame.',
     ],
     internalChanges: [
