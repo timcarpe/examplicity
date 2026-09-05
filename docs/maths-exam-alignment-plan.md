@@ -1,6 +1,6 @@
 # Maths exam alignment and queryable catalogue
 
-Status: proposed for user review; no task has been launched.
+Status: approved; three tasks launched, with bounded first-turn review before implementation.
 Date: 5 September 2026.
 
 ## Outcome and scope
@@ -98,3 +98,27 @@ Every handoff includes: objective, owned paths, exact input references/revisions
 ## Approval requested
 
 Approve this scope and three-task sequence, or identify changes. The filtered JSON CLI is the default. The exact representative lab batch remains an evidence-led decision at checkpoint 5.
+
+## Launch and workflow follow-up
+
+The user approved launch. Task IDs:
+
+- Catalogue storage (Sol medium): `01a06f98-c7d1-7691-9f8b-3c0de8b3d7ae`.
+- Exam evidence (Sol medium): `01a06f98-dc19-78d1-97c9-c7e5b86b4143`.
+- Lab adaptations (Astra medium): `01a06f98-efeb-7483-ac48-e2d29a57b4d7`.
+
+The design owner `01a06f2d-53e6-7233-9b9f-bd7504ac0855` has been notified of the plan and asked to identify overlapping files and its completion revision. Coordinate-distance has active design edits; defer adaptation until coordinated. The adaptations first-turn review is accepted and implementation remains paused pending evidence and batch approval.
+
+Review of Lab Creation workflows identified the following follow-up changes. These are recorded requirements for the owners, not changes already made to those workflows.
+
+| Existing source | Needed change | Owner/checkpoint |
+| --- | --- | --- |
+| `AGENTS.md`, `docs/codex-authoring-workflow.md` section 1, `catalogue/README.md` | Permit selection from a validated record query as well as generated HTML. Freeze record IDs, source revision/hash and bounded evidence, rather than making the whole HTML hash the sole selection identity. Keep HTML for human review. | Storage, with CLI implementation |
+| `docs/research-standard.md`, `prompts/research-ideas.md`, `docs/workflow.md` | Add exam questions and mark schemes as evidence for assessed task/presentation conventions; retain syllabus authority for scope and books for explanation. Do not require a missing book to fabricate or block otherwise supported exam evidence. Preserve the distinction between observation and recommendation. | Evidence proposes wording; storage coordinates shared documentation edits |
+| `scripts/build-catalogue.mjs` validation | Current idea validation requires `book`. Define how new exam-backed evidence is represented without fake book objects, while preserving all existing book records and source validation. Do not relax required evidence generally. | Storage schema review |
+| `resources/README.md`, `scripts/check-resources.mjs` | Inventory papers and mark schemes with provenance and hashes, handle the supplied staging folder, and register 9709. Current inventory scans books/syllabuses and treats every resources directory as an exam code. Keep local-resource readiness separate from portable build checks. | Storage owns checker; evidence owns inventory and classified sources |
+| `docs/codex-authoring-workflow.md` brief, packet preparation and `authoringPackets` conventions | Future briefs need small frozen evidence selections, approved profile constraints and review state. Add a bounded existing-lab adaptation route: do not reject a completed lab as a new-build candidate or force it through a new-lab creation cycle. | Storage documents retrieval; adaptations proposes route after pilot validation |
+| `docs/integration-workflow.md` | Incorporate approved exam evidence and sidecar preservation into readiness checks. Distinguish internal reviewed 9709 alignment from public catalogue registration so deferred curriculum choices do not appear accidentally. Keep deployment-owned completion unchanged. | Adaptations, before implementation/integration |
+| `automated/chatgpt-authoring/PROMPT.md`, `scripts/build-agent-distribution.mjs` and generated bundle | When shared authoring guidance changes, reconcile the concise external prompt and regenerate the distribution once. Preserve its 8,000-character limit; do not edit generated bundles as independent authority. | Storage after source guidance settles |
+
+The adaptations review found that publication validation currently requires profile alignment in registered live metadata. Resolve that internal/public boundary explicitly before adding 9709 profiles. It also confirmed that the trigonometric circle and degree conventions are deeply connected to completion; neither removal nor radian conversion is assumed to be a small first-batch change.

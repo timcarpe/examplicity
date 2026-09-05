@@ -14,7 +14,7 @@ export const changelogEntries: readonly ChangelogEntry[] = [
       'Clarified AI remix guidance to preserve each lab’s learning relationships and curriculum, and made downloaded labs link consistently to their live versions with the correct MIT licence notice.',
     ],
     internalChanges: [
-      'Documented a three-owner plan for queryable catalogue records, maths exam evidence and a reviewed batch of curriculum-aligned lab adaptations.',
+      'Documented a three-owner plan for queryable catalogue records, maths exam evidence and a reviewed batch of curriculum-aligned lab adaptations, including task coordination and required authoring-workflow updates.',
       'Established shared design tokens for the site and self-contained lab publication, preserved existing styling in the other 54 labs, and added a regression check that incorrect Graph Search predictions leave the search unchanged.',
       'Rolled out separate contract sidecars and semantic hooks across all 57 labs, expanded developer guidance and CLI inspection, and validated contract preservation in generated and standalone HTML.',
       'Connected Binary Numbers’ existing IGCSE and AS question pools to curriculum profiles, corrected contract invariants, and added focused curriculum and download regression checks. The AI adaptation comparison remains unevaluated.',
