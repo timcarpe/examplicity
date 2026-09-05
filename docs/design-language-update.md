@@ -564,3 +564,17 @@ Batch 2 implementation notes:
 The field-focus amendment is implemented in the canonical CSS, not copied into labs. Dropdown work is deferred because this batch contains none. Remaining review choice: model-specific dense SVG labels were not globally enlarged, to avoid obscuring existing geometry; flag any unreadable labels during this visual review for a targeted shared pattern.
 
 Batch 2 packaging check: all five standalone downloads include the exact shared CSS and JavaScript, with no unresolved component marker. No browser or broad test run was performed. Ready for user review before batch 3.
+
+
+### Batch 2 review revision — 5 September 2026
+
+| Touched | Change |
+| --- | --- |
+| Shared lab-design.css / .js | Fit canvas surfaces without internal scrollbars; transparent/white canvas backing; sentence-case regular Working labels; consistent chart/working typography; reusable prediction choices and four-way modal move icon. |
+| Repeated Percentage | Replaced None-mode Apply button with a keyboard-accessible range slider. The bar previews the applied change continuously; reaching the end commits it. Complete before/action/after rows replace the horizontal scroller. Some/All retain calculation entry. |
+| Motion Graphs | Tightened chart bounds and adjusted pointer-coordinate origins; removed oversized minimum width; enlarged chart labels and removed duplicate in-chart calculation overlays (working remains on the right). |
+| Bounds | Right-side proof, readable interval chart with included/excluded endpoint markers, prediction choices and separate check feedback. Editing clears stale success. Git comparison with the pre-batch source and older published version found the same static model, not a lost drag mechanism. |
+| Straight Lines | Removed redundant rail-drag mission hint; shared rules remove grey canvas framing. Existing handles and model retained. |
+| Recurring Decimals | One goal header; live alignment explanation in working; clearer divide/simplify steps and field cards. Remainder trace wraps, with matching rings replacing a horizontal bracket. Shared icon and regular maths text. |
+
+Canonical HTML guide and style contract document these patterns; developer copies, kit bundle and inline publication resources regenerated. The previous six labs inherit shared canvas-flow fixes through compilation. Review choice: Bounds remains a static evidence model with a learner prediction, rather than inventing an additional drag task. Percentage sliders replace the guided Apply action only; calculation modes retain their existing input interaction. Compilation completed; browser and test validation skipped under the standing instruction.

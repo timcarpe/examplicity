@@ -391,8 +391,7 @@ input{font:inherit;color:var(--lab-ink)}
 
   <section class="panel lab">
     <section class="next-card" id="nextCard" hidden aria-live="polite"></section>
-    <section id="proofDock" class="proof-dock" hidden aria-live="polite"></section>
-    <div class="stage-shell"><svg id="stage" class="stage" viewBox="0 0 1120 665" role="img" aria-labelledby="stageTitle stageDesc" data-lab-role="model" data-lab-manipulative="bounds-interval"></svg></div>
+    <div class="workspace"><div class="stage-shell"><svg id="stage" class="stage" viewBox="0 0 1120 665" role="img" aria-labelledby="stageTitle stageDesc" data-lab-role="model" data-lab-manipulative="bounds-interval"></svg></div><aside id="proofDock" class="proof-dock lab-proof-sidebar" aria-live="polite"></aside></div>
   </section>
 
 </main>
@@ -449,22 +448,39 @@ function renderDock(){
     ? `<div class="bound-entry-grid"><div class="bound-pair distance"><strong>Distance interval</strong><div class="pair-fields">${field('dLow','lower bound','m','distance',false)}${field('dHigh','upper bound','m','distance',false)}</div></div><div class="bound-pair time"><strong>Time interval</strong><div class="pair-fields">${field('tLow','lower bound','s','time',false)}${field('tHigh','upper bound','s','time',false)}</div></div></div><div class="equation-work" style="margin-top:8px"><div class="locked-field"><span>lower distance bound</span><div class="locked-value distance">${s.dLow?`${s.dLow} m`:'—'}</div></div><div class="eq-label">÷</div><div class="locked-field"><span>upper time bound</span><div class="locked-value time">${s.tHigh?`${s.tHigh} s`:'—'}</div></div><div class="eq-label">=</div>${field('speed','lower speed bound','m/s','speed',false)}</div>`
     : `<div class="equation-work">${field('dLow','lower distance bound','m','distance',boundsLocked)}<div class="eq-label">÷</div>${field('tHigh','upper time bound','s','time',boundsLocked)}<div class="eq-label">=</div>${field('speed','lower speed bound','m/s','speed',speedLocked)}</div>`;
   $('proofDock').hidden=false;
-  $('proofDock').innerHTML=`<div class="proof-head"><div><strong>${fmt(p.distance.report)} m and ${fmt(p.time.report)} s were recorded</strong><span>Distance was rounded to the nearest ${fmt(p.distance.step)} m. Time was rounded to the nearest ${fmt(p.time.step)} s.</span></div></div><div class="proof-body"><div class="proof-rule"><strong>Worst case</strong><code>lower distance bound ÷ upper time bound</code><span>This is the slowest possible true speed.</span></div>${working}<div class="compare-rule">Is the slowest possible speed at least ${fmt(p.threshold,2)} m/s?</div><div class="proof-actions"><span class="decision-label">Certificate decision</span><div class="verdict-group"><button type="button" class="verdict lab-action" data-verdict="yes" aria-pressed="${s.verdict==='yes'}">Certify</button><button type="button" class="verdict lab-action" data-verdict="no" aria-pressed="${s.verdict==='no'}">Cannot certify</button></div><button type="button" class="proof-check lab-action" id="checkProof">Check</button></div><div class="proof-message ${s.success?'good':s.checked?'bad':''}">${s.message||'Complete the working you own, then make the certificate decision.'}</div>${s.success?`<div class="method-reveal"><code>${fmt(low(p.distance),4)} ÷ ${fmt(high(p.time),4)} = ${fmt(p.lowerSpeed,3)} m/s</code><br>${p.outcome==='certify'?'The lowest possible speed meets the claim, so every allowed run passes.':'The lowest possible speed is below the claim, so the rounded readings cannot guarantee it.'}</div>`:''}</div>`;
+  const verdictState=s.success?'good':s.checked&&s.verdict&&s.verdict!==expectedVerdict()?'bad':'needed';
+  $('proofDock').innerHTML=`<div class="proof-head"><strong>Worst-case working</strong></div><div class="proof-body"><div class="proof-rule"><strong>Slowest possible speed</strong><code>lower distance ÷ upper time</code></div>${working}<section class="lab-work-card lab-prediction" data-work-state="${verdictState}" data-interacted="${Boolean(s.verdict)}"><strong>Is the claim guaranteed?</strong><p>Every possible speed must be at least <span class="lab-math-surface">${fmt(p.threshold,2)} m/s</span>.</p><div class="lab-prediction-options"><button type="button" class="lab-action" data-verdict="yes" aria-pressed="${s.verdict==='yes'}">Certify<span>Every allowed run meets the rule</span></button><button type="button" class="lab-action" data-verdict="no" aria-pressed="${s.verdict==='no'}">Cannot certify<span>An allowed run can fall below it</span></button></div><button type="button" class="lab-action" data-priority="primary" id="checkProof" ${s.verdict?'':'disabled'}>Check prediction</button><div class="proof-message ${s.success?'good':s.checked?'bad':''}">${s.message||''}</div></section></div>`;
+
 }
 function renderNext(){
   const card=$('nextCard'),s=state.session;if(!s.success){card.hidden=true;card.replaceChildren();return}
-  const canUpgrade=state.solvedAtLevel>=3&&state.workingLevel<2,nextLabel=state.workingLevel===0?'Take ownership of the calculation':'Take ownership of the bounds';
+  const canUpgrade=state.solvedAtLevel>=3&&state.workingLevel<2,nextLabel=state.workingLevel===0?'Try some working':'Try all working';
   card.hidden=false;card.innerHTML=`<strong>Problem complete</strong><span>Your worst-case proof supports the certificate decision.</span><button type="button" class="next-problem lab-action" data-next data-priority="primary">Next problem</button>${canUpgrade?`<div class="next-upgrade"><strong>Ready to show more working?</strong><span>${state.workingLevel===0?'Calculate the lower speed bound yourself on this same problem.':'Construct all four bounds yourself on this same problem.'}</span><button type="button" data-upgrade class="lab-action">${nextLabel}</button></div>`:''}`;
 }
 function renderStage(){
-  const root=$('stage'),p=state.problem,s=state.session;root.replaceChildren();root.setAttribute('viewBox','0 0 1120 560');
-  add(root,'title',{id:'stageTitle'},'Rounded measurement interval model');add(root,'desc',{id:'stageDesc'},'The possible distance and time intervals and their effect on the minimum speed.');add(root,'rect',{x:0,y:0,width:1120,height:560,rx:10,fill:'#fbfcfd'});
-  add(root,'text',{x:34,y:31,class:'kicker'},'RECORDED RUN');add(root,'text',{x:34,y:55,class:'title'},`Test the claim that every possible true speed is at least ${fmt(p.threshold,2)} m/s.`);
-  const rows=[{name:'DISTANCE',y:155,data:p.distance,color:'allowed-d',digits:3},{name:'TIME',y:300,data:p.time,color:'allowed-t',digits:4}];
-  rows.forEach(row=>{const a=low(row.data),b=high(row.data),pad=row.data.step*.7,min=a-pad,max=b+pad,x=v=>245+(v-min)/(max-min)*650;add(root,'rect',{x:35,y:row.y-42,width:165,height:84,rx:10,class:'screen'});add(root,'text',{x:50,y:row.y-18,class:'screen-label'},'RECORDED READING');add(root,'text',{x:50,y:row.y+13,class:'screen-value'},`${fmt(row.data.report)} ${row.data.unit}`);add(root,'text',{x:50,y:row.y+31,class:'screen-target'},`nearest ${fmt(row.data.step)} ${row.data.unit}`);add(root,'text',{x:245,y:row.y-52,class:'kicker'},row.name+' · POSSIBLE TRUE VALUES');add(root,'rect',{x:245,y:row.y-16,width:650,height:32,rx:9,class:'ruler'});add(root,'rect',{x:x(a),y:row.y-11,width:x(b)-x(a),height:22,rx:7,class:row.color});add(root,'line',{x1:x(a),x2:x(a),y1:row.y-31,y2:row.y+31,class:'bound'});add(root,'line',{x1:x(b),x2:x(b),y1:row.y-31,y2:row.y+31,class:'bound upper'});add(root,'text',{x:x(a),y:row.y+51,'text-anchor':'middle',class:'bound-value'},fmt(a,row.digits));add(root,'text',{x:x(b),y:row.y+51,'text-anchor':'middle',class:'bound-value'},fmt(b,row.digits));});
-  const lo=p.lowerSpeed,hi=high(p.distance)/low(p.time),min=Math.min(lo,p.threshold)-Math.max(.1,(hi-lo)*.25),max=Math.max(hi,p.threshold)+Math.max(.1,(hi-lo)*.25),x=v=>245+(v-min)/(max-min)*650;
-  add(root,'rect',{x:215,y:390,width:705,height:130,rx:10,class:'speed-box'});add(root,'text',{x:245,y:418,class:'kicker'},'POSSIBLE SPEEDS');add(root,'rect',{x:245,y:450,width:650,height:16,rx:8,class:'speed-track'});add(root,'rect',{x:x(lo),y:450,width:x(hi)-x(lo),height:16,rx:8,class:'speed-range'});add(root,'line',{x1:x(p.threshold),x2:x(p.threshold),y1:428,y2:486,class:'speed-threshold'});add(root,'text',{x:x(p.threshold),y:421,'text-anchor':'middle',class:'speed-caption'},`${fmt(p.threshold,2)} required`);add(root,'circle',{cx:x(lo),cy:458,r:6,class:'speed-extreme'});add(root,'text',{x:x(lo),y:500,'text-anchor':'middle',class:'speed-label'},s.success||state.workingLevel===0?fmt(lo,3):'?');add(root,'text',{x:x(lo),y:514,'text-anchor':'middle',class:'speed-caption'},'slowest possible');
+  const root=$('stage'),p=state.problem,s=state.session;root.replaceChildren();root.setAttribute('viewBox','0 0 640 650');root.classList.add('lab-bounds-chart');
+  add(root,'title',{id:'stageTitle'},'Possible distance, time and speed intervals');
+  add(root,'desc',{id:'stageDesc'},'Filled lower endpoints are included. Open upper endpoints are excluded. Compare the lowest speed with the required threshold.');
+  [{name:'Distance',y:90,data:p.distance,color:'allowed-d'},{name:'Time',y:285,data:p.time,color:'allowed-t'}].forEach(row=>{
+    const a=low(row.data),b=high(row.data),x=v=>70+(v-a+row.data.step*.4)/(row.data.step*1.8)*500;
+    add(root,'text',{x:24,y:row.y-60,class:'lab-chart-heading'},`${row.name}: ${fmt(row.data.report)} ${row.data.unit}`);
+    add(root,'text',{x:24,y:row.y-34,class:'lab-chart-label'},`Rounded to the nearest ${fmt(row.data.step)} ${row.data.unit}`);
+    add(root,'line',{x1:70,x2:570,y1:row.y+25,y2:row.y+25,class:'ruler'});
+    add(root,'rect',{x:x(a),y:row.y+15,width:x(b)-x(a),height:20,rx:10,class:row.color});
+    [a,b].forEach((v,i)=>{add(root,'circle',{cx:x(v),cy:row.y+25,r:7,fill:i?'white':'#536773',stroke:'#536773','stroke-width':2});add(root,'text',{x:x(v),y:row.y+63,'text-anchor':'middle',class:'lab-chart-value'},fmt(v,4))});
+    add(root,'text',{x:320,y:row.y+95,'text-anchor':'middle',class:'lab-chart-label'},`${fmt(a,4)} ≤ ${row.name.toLowerCase()} < ${fmt(b,4)} ${row.data.unit}`);
+  });
+  const lo=p.lowerSpeed,hi=high(p.distance)/low(p.time),pad=Math.max(.04,(hi-lo)*.25),min=Math.min(lo,p.threshold)-pad,max=Math.max(hi,p.threshold)+pad,x=v=>70+(v-min)/(max-min)*500;
+  add(root,'text',{x:24,y:460,class:'lab-chart-heading'},'Possible speeds');
+  add(root,'rect',{x:70,y:510,width:500,height:16,rx:8,class:'speed-track'});
+  add(root,'rect',{x:x(lo),y:510,width:x(hi)-x(lo),height:16,rx:8,class:'speed-range'});
+  add(root,'line',{x1:x(p.threshold),x2:x(p.threshold),y1:485,y2:548,class:'speed-threshold'});
+  add(root,'text',{x:x(p.threshold),y:480,'text-anchor':'middle',class:'lab-chart-label'},`${fmt(p.threshold,2)} required`);
+  add(root,'circle',{cx:x(lo),cy:518,r:6,class:'speed-extreme'});
+  add(root,'text',{x:x(lo),y:574,'text-anchor':'middle',class:'lab-chart-value'},s.success||state.workingLevel===0?`${fmt(lo,3)} m/s`:'? m/s');
+  add(root,'text',{x:x(lo),y:600,'text-anchor':'middle',class:'lab-chart-label'},'Lowest possible speed');
 }
+
 function check(){
   const p=state.problem,s=state.session,expected={dLow:low(p.distance),dHigh:high(p.distance),tLow:low(p.time),tHigh:high(p.time),speed:p.lowerSpeed};s.checked=true;s.bad=[];
   if(state.workingLevel===2){for(const key of ['dLow','dHigh','tLow','tHigh'])if(!close(number(s[key]),expected[key],.000001))s.bad.push(key)}
@@ -478,8 +494,8 @@ function check(){
 function renderAll(){renderMission();renderDock();renderStage();renderNext()}
 
 $('complexity').addEventListener('click',event=>{const button=event.target.closest('[data-level]');if(button)setLevel(button.dataset.level)});$('reset').addEventListener('click',reset);
-$('proofDock').addEventListener('input',event=>{if(event.target.dataset.field){state.session[event.target.dataset.field]=event.target.value;state.session.checked=false;state.session.bad=[];renderStage()}});
-$('proofDock').addEventListener('click',event=>{const verdict=event.target.closest('[data-verdict]');if(verdict){state.session.verdict=verdict.dataset.verdict;state.session.checked=false;state.session.bad=[];renderDock();return}if(event.target.closest('#checkProof'))check()});
+$('proofDock').addEventListener('input',event=>{if(event.target.dataset.field){state.session[event.target.dataset.field]=event.target.value;state.session.checked=false;state.session.success=false;state.session.message='';state.session.bad=[];const field=event.target.closest('.num-field');field.classList.remove('good','bad');field.querySelector('.field-status').textContent='';$('proofDock').querySelector('.lab-prediction').dataset.workState='needed';$('proofDock').querySelector('.proof-message').textContent='';renderStage();renderNext()}});
+$('proofDock').addEventListener('click',event=>{const verdict=event.target.closest('[data-verdict]');if(verdict){state.session.verdict=verdict.dataset.verdict;state.session.checked=false;state.session.success=false;state.session.message='';state.session.bad=[];renderDock();renderNext();return}if(event.target.closest('#checkProof'))check()});
 $('nextCard').addEventListener('click',event=>{if(event.target.closest('[data-next]'))newProblem();if(event.target.closest('[data-upgrade]'))setLevel(state.workingLevel+1)});
 window.__ROUNDED_BOUNDS_LAB__={getState:()=>JSON.parse(JSON.stringify({...state,lower:low(state.problem.distance),upperTime:high(state.problem.time)})),setWorkingLevel:setLevel,setProblem:(seed,level=state.workingLevel,outcome)=>{state.problemNumber=1;state.problem=makeProblem(seed,outcome);state.workingLevel=Number(level);state.solvedAtLevel=0;state.session=freshSession(state.problem,state.workingLevel);renderAll()},setAnswers:answers=>{Object.assign(state.session,Object.fromEntries(Object.entries(answers).map(([key,value])=>[key,String(value)])));renderAll()},check,reset};
 renderAll();

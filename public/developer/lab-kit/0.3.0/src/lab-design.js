@@ -14,7 +14,8 @@
       document.querySelectorAll('.next-card').forEach(card => {
         if (card.querySelector('.lab-dialog-move')) return;
         const handle = document.createElement('button');
-        handle.type = 'button'; handle.className = 'lab-dialog-move'; handle.textContent = '↔';
+        handle.type = 'button'; handle.className = 'lab-dialog-move';
+        handle.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 3v18M3 12h18M8 7l4-4 4 4M8 17l4 4 4-4M7 8l-4 4 4 4M17 8l4 4-4 4"/></svg>';
         handle.setAttribute('aria-label', 'Move completion card. Use arrow keys to reposition.');
         card.prepend(handle);
       });

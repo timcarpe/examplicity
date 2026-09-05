@@ -300,10 +300,12 @@ movable-card behaviour when updating an overlapping completion surface. With Lab
 use `LabKit.direct.movableCompletion(card, workspace)` and the guide’s
 `data-dialog-drag` handle instead of copying a second movement helper.
 Initialise only one helper per card; the guide still owns its styling.
-Place the completion layer in a non-scrolling visual viewport that contains the
-graph pane, with the graph's deliberate panning scroller as a sibling. Position
-the card relative to that viewport rather than the scroller, so it cannot add
-scroll extents or move the graph when it opens or receives focus.
+Canvas areas fit their available width and do not create internal scrollbars.
+The page owns vertical flow. Wrap repeated constructions as complete steps,
+and arrange chart geometry for readable labels rather than retaining oversized
+minimum widths. Place completion cards relative to the workspace, so opening
+or moving a card cannot create canvas scroll extents. Use the shared four-way
+SVG move icon; do not substitute a text arrow or font-dependent glyph.
 
 ## Modal actions
 
@@ -385,3 +387,24 @@ Cards containing answer fields do not repeat check/x/status symbols in the top-r
 Shared implementation lives in `packages/lab-kit/src/lab-design.css`. New labs consume its component API; reviewed labs use compatibility selectors. Reusable refinements belong there, while geometry and learner-state logic remain lab-owned. Lab export embeds the resource in HTML, with no separate stylesheet or network requirement.
 
 Form-field focus darkens the existing border within its colour family, with no extra black outline/ring/shadow. Button keyboard focus remains visible. `lab-adopt-v3` supplies a shared compatibility surface; `lab-design.js` supplies remembered card attention and pointer/keyboard-movable completion cards for adopted labs. Embed both resources in standalone downloads.
+
+
+## Model space, predictions and explanatory working
+
+- Canvas surfaces are white or transparent, without a grey enclosing box.
+  A model should fill its allotted area with modest padding; chart text uses
+  the approved sans family and regular weight, sized for the rendered chart.
+- Working: is a sentence-case, 12px regular label beside the grey toggle.
+  Keep one main goal in the top bar; put local method explanations in working.
+- A prediction belongs in a lightweight card: yellow before assessment, green
+  when correct, red after an incorrect attempt. Choices use selection blue,
+  retain explanatory labels, and have a separate Check action.
+- Assistance may reveal calculations, but an applied transformation can still
+  use a slider that visibly changes the model. The slider's end commits the
+  step; arrow keys and End provide the same operation.
+- Preserve causal explanations: why aligned infinite tails cancel, why both
+  sides are divided, and why matching remainders reproduce digits. Avoid
+  replacing useful algebra with an unexplained answer or a sparse sidebar.
+- Wrap a long calculation trace into readable rows instead of scrolling or
+  shrinking text. Matching endpoint rings can identify a repeating cycle across
+  rows where a single horizontal bracket would be misleading.

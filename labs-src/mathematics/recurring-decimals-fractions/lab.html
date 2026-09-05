@@ -619,7 +619,7 @@ button:focus-visible,.tape-track:focus-visible{outline:3px solid var(--lab-focus
   <span data-lab-authored-subtitle-slot hidden></span>
 
   <section class="panel mission lab-activity-bar" aria-live="polite">
-    <div class="mission-copy"><strong id="missionTitle"></strong><span id="missionHint"></span></div>
+    <div class="mission-copy"><strong id="missionTitle"></strong><span id="missionHint" hidden></span></div>
     <div class="case-actions">
       <div class="complexity"><div class="complexity-copy"><strong>Working:</strong><span id="complexityHelp"></span></div><div class="complexity-switch lab-toggle" data-kind="working" role="group" aria-label="Working"><button type="button" data-work-level="0" class="active" aria-pressed="true">None</button><button type="button" data-work-level="1" aria-pressed="false">Some</button><button type="button" data-work-level="2" aria-pressed="false">All</button></div></div>
       <button id="resetCase" class="reset-case lab-action" type="button">Reset</button>
@@ -662,7 +662,7 @@ button:focus-visible,.tape-track:focus-visible{outline:3px solid var(--lab-focus
     </div>
 
     <div class="evidence"><div id="actionLine" class="action-line" role="status" aria-live="polite"></div></div>
-    </div><aside class="method-panel" aria-label="Fraction calculation"><div class="method-head"><div class="method-head-top"><strong>Fraction calculation</strong><span id="workingBadge" class="method-badge">working shown</span></div><p>Follow the same chain from aligned tails to the exact fraction.</p></div><div id="solveFlow" class="solve-flow"><div class="solve-label">Solve x</div><div id="solveChain" class="solve-chain"></div></div></aside></div>
+    </div><aside class="method-panel" aria-label="Fraction calculation"><div class="method-head"><div class="method-head-top"><strong>Fraction calculation</strong><span id="workingBadge" class="method-badge">working shown</span></div><p>Follow the same chain from aligned tails to the exact fraction.</p></div><div id="alignmentWork" class="lab-work-card"></div><div id="solveFlow" class="solve-flow"><div class="solve-label">Solve x</div><div id="solveChain" class="solve-chain"></div></div></aside></div>
   </section>
 
   <section id="proofPanel" class="panel proof-panel" aria-live="polite">
@@ -922,17 +922,21 @@ button:focus-visible,.tape-track:focus-visible{outline:3px solid var(--lab-focus
 
   function renderSolveFlow(){
     const chain=$("solveChain"),diff=methodDifference(),f=simplify(diff.n,diff.d*diff.coef),rawDen=diff.d*diff.coef,raw=`${diff.n.toLocaleString()}/${rawDen.toLocaleString()}`,final=f.d===1?String(f.n):`${f.n}/${f.d}`,result=finiteText(diff);$("workingBadge").textContent=state.workingLevel===0?'working shown':state.workingLevel===1?'write key results':'write full chain';
+    const aligned=gapAligned(),attempted=session().attempted;
+    $('alignmentWork').dataset.workState=attempted&&session().solved?'good':'needed';
+    $('alignmentWork').dataset.interacted=String(session().moved||attempted);
+    $('alignmentWork').innerHTML=`<strong>${aligned?'Subtract the shared tail':'Align the recurring tails'}</strong><p><span class="lab-math-surface">A = ${10**session().a}x</span> <span class="lab-math-surface">B = ${10**session().b}x</span></p><p>${aligned?'The same infinite tail appears after both decimal points. Subtracting cancels it exactly.':'Shift each row by powers of ten until the infinite tails match. Each place to the left multiplies x by 10.'}</p>`;
     if(state.workingLevel===0&&f.g>1){
-      chain.innerHTML=`<div class="solve-card"><span>finite equation</span><strong>${diff.coef.toLocaleString()}x = ${result}</strong></div><div class="solve-arrow">→<small>write as a fraction</small></div><div class="solve-card"><span>fraction</span><strong>x = ${raw}</strong></div><div class="solve-arrow">→<small>÷ ${f.g}</small></div><div class="solve-card final"><span>simplest form</span><strong>x = ${final}</strong></div>`;
+      chain.innerHTML=`<div class="solve-card"><span>finite equation</span><strong>${diff.coef.toLocaleString()}x = ${result}</strong></div><div class="solve-arrow">→<small>divide both sides by the coefficient of x</small></div><div class="solve-card"><span>fraction</span><strong>x = ${raw}</strong></div><div class="solve-arrow">→<small>divide numerator and denominator by ${f.g}</small></div><div class="solve-card final"><span>simplest form</span><strong>x = ${final}</strong></div>`;
     }else if(state.workingLevel===0){
-      chain.innerHTML=`<div class="solve-card"><span>finite equation</span><strong>${diff.coef.toLocaleString()}x = ${result}</strong></div><div class="solve-arrow">→<small>write as a fraction</small></div><div class="solve-card final"><span>exact fraction</span><strong>x = ${final}</strong></div>`;
+      chain.innerHTML=`<div class="solve-card"><span>finite equation</span><strong>${diff.coef.toLocaleString()}x = ${result}</strong></div><div class="solve-arrow">→<small>divide both sides by the coefficient of x</small></div><div class="solve-card final"><span>exact fraction</span><strong>x = ${final}</strong></div>`;
     }else{
       chain.replaceChildren();if(state.workingLevel===1){const shown=document.createElement('div');shown.className='solve-card';shown.innerHTML=`<span>finite equation</span><strong>${diff.coef.toLocaleString()}x = ${result}</strong>`;chain.appendChild(shown)}else{chain.append(solveInput('coefAnswer','coefficient of x',diff.coef),solveInput('resultAnswer','finite result',diff.n/diff.d))}
       const arrow=document.createElement('div');arrow.className='solve-arrow';arrow.textContent='→';chain.append(arrow,solveInput('numAnswer','fraction numerator',current().num),solveInput('denAnswer','fraction denominator',current().den));
     }
   }
   function answerExact(key,expected){return Number.isFinite(session()[key])&&Math.abs(session()[key]-expected)<1e-9}
-  function solveInput(key,label,expected){const wrap=document.createElement('label');wrap.className='solve-entry action';const title=document.createElement('span');title.textContent=label;const input=document.createElement('input');input.type='text';input.inputMode=Number.isInteger(expected)?'numeric':'decimal';input.autocomplete='off';input.placeholder='?';input.value=session()[key]??'';const mark=document.createElement('span');mark.className='field-status';mark.setAttribute('aria-hidden','true');const update=()=>{const status=answerExact(key,expected)?'good':session()[key]!==null?'bad':'action';wrap.classList.remove('action','good','bad');wrap.classList.add(status);input.classList.toggle('good',status==='good');input.classList.toggle('bad',status==='bad');mark.textContent=status==='good'?'✓':status==='bad'?'×':''};update();input.addEventListener('input',()=>{const value=Number(input.value);session()[key]=input.value.trim()!==''&&Number.isFinite(value)?value:null;update();renderGoalRoute();renderAction();renderProof();renderNextCard()});wrap.append(title,input,mark);return wrap}
+  function solveInput(key,label,expected){const wrap=document.createElement('label');wrap.className='solve-entry solve-card action';const title=document.createElement('span');title.textContent=label;const input=document.createElement('input');input.type='text';input.inputMode=Number.isInteger(expected)?'numeric':'decimal';input.autocomplete='off';input.dataset.answer=key;input.placeholder='?';input.value=session()[key]??'';const mark=document.createElement('span');mark.className='field-status';mark.setAttribute('aria-hidden','true');const update=()=>{const status=answerExact(key,expected)?'good':session()[key]!==null?'bad':'action';wrap.classList.remove('action','good','bad');wrap.classList.add(status);input.classList.toggle('good',status==='good');input.classList.toggle('bad',status==='bad');mark.textContent=status==='good'?'✓':status==='bad'?'×':''};update();input.addEventListener('input',()=>{const value=Number(input.value);session()[key]=input.value.trim()!==''&&Number.isFinite(value)?value:null;update();renderGoalRoute();renderAction();renderProof();renderNextCard()});wrap.append(title,input,mark);return wrap}
   function workingComplete(){const s=session();if(!s.solved)return false;if(state.workingLevel===0)return true;if(!answerExact('numAnswer',current().num)||!answerExact('denAnswer',current().den))return false;return state.workingLevel===1||answerExact('coefAnswer',difference().coef)&&answerExact('resultAnswer',difference().n/difference().d)}
   function challengeComplete(){return workingComplete()}
 
@@ -1053,7 +1057,7 @@ button:focus-visible,.tape-track:focus-visible{outline:3px solid var(--lab-focus
     });
     stage.appendChild(line);
     if(trace.repeatStart!==null){
-      const bracket=document.createElement("div");bracket.className="repeat-bracket";bracket.id="repeatBracket";bracket.innerHTML=`<span>same remainder → same future digits</span>`;stage.appendChild(bracket);
+      const bracket=document.createElement("div");bracket.className="repeat-bracket";bracket.id="repeatBracket";bracket.innerHTML=`<span>Matching remainder rings mark where the digit cycle repeats.</span>`;stage.appendChild(bracket);
       requestAnimationFrame(()=>positionBracket(trace));
     }
     const struct=decimalStructure(f.n,f.d),valueText=struct.repeat.length?`${struct.integer}.${struct.prefix}<span class="repeat-inline">${struct.repeat}</span>…`:struct.prefix.length?`${struct.integer}.${struct.prefix}`:struct.integer;
@@ -1065,8 +1069,7 @@ button:focus-visible,.tape-track:focus-visible{outline:3px solid var(--lab-focus
   function positionBracket(trace){
     const stage=$("divisionStage"),line=stage.querySelector(".division-line"),bracket=$("repeatBracket");if(!line||!bracket)return;
     const startNode=line.querySelector(`.remainder-node[data-index="${trace.repeatStart}"]`),endNode=line.querySelector(`.remainder-node[data-index="${trace.repeatEnd}"]`);if(!startNode||!endNode)return;
-    const sr=startNode.getBoundingClientRect(),er=endNode.getBoundingClientRect(),lr=line.getBoundingClientRect(),st=stage.getBoundingClientRect();
-    const left=sr.left-lr.left+sr.width/2+(lr.left-st.left),right=er.left-lr.left+er.width/2+(lr.left-st.left);bracket.style.left=`${left}px`;bracket.style.width=`${Math.max(70,right-left)}px`;
+    startNode.classList.add('cycle-endpoint');endNode.classList.add('cycle-endpoint');
   }
 
   function startTrace(){
