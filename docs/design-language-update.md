@@ -503,3 +503,8 @@ Displayed term chips, calculated values and formulas now have a subtle #eef1f3 f
 ### Sequence maths tint and padding — 5 September 2026
 
 Refined the flat maths surfaces to approved concept violet #7563a7 at 20% over white, with 3px vertical / 7px horizontal padding. Compound expressions receive one outer padding layer. Borders and shadows remain absent; input feedback unchanged. Guide and generated copies updated; validation skipped as requested.
+
+
+### Sequence lattice alignment — 5 September 2026
+
+Grid previously used a -55% self-height transform while square positions subtracted 5% of their larger container. Both now share one model area below the descriptors, centered at 50% with identical cell coordinates. Grid boundary is an outline so it does not offset the first cell. Reference-square spacing now uses the same responsive --cell value as tile sizes. Published HTML regenerated; validation skipped as requested.
