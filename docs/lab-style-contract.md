@@ -371,3 +371,5 @@ An algorithm mode toggle starts with a real selected mode and matching model sta
 Activity task headings: primary ink #1d1d1f, 14px, weight 500, line-height 1.45, normal letter spacing, sentence case and balanced wrapping. Settings labels remain regular weight. No badge/background or extra title in a controls-only panel.
 
 For adjacent previous/current stage views, use matched padded descriptor headers (12px text, 4px label/value gap) and a lightweight neutral container for reference evidence. Return-area cues appear when a placed item can be returned; use an interaction-blue target highlight during hover rather than permanent verbose drop instructions.
+
+Introduction targets use rounded containers and a restrained two-second interaction-blue halo pulse. Match the halo to the container corners (12px for Sequence stage/material surfaces). Pulse only the current target while guidance is active; retain a static halo for prefers-reduced-motion. Avoid moving individual model objects solely for attention.

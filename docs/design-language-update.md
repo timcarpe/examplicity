@@ -488,3 +488,8 @@ Graph Search, Coordinate, Prime Factors, Sequence and Histogram task headings no
 ### Sequence stage containers — 5 September 2026
 
 Sequence only: previous-stage evidence regained a light bordered container. Both stage descriptor pairs now share a padded, stacked header (12px labels, 4px gap), replacing overlapping absolute positions. Loose-material instructions shortened; the return cue appears only while moving/selecting a placed square, with a blue target highlight over the return area. Model geometry and placement rules unchanged. Generated HTML updated; validation skipped as requested.
+
+
+### Sequence introduction emphasis — 5 September 2026
+
+Previous/next-stage containers, material area and introduction card now use 12px corners. Restored a light boundary around the operated stage. The current introduction target has a slow two-second blue halo pulse instead of bouncing individual squares; reduced-motion users receive a static halo. The highlight still clears when the introduction ends. Guide updated; validation skipped as requested.
