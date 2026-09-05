@@ -1187,6 +1187,31 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 
 </style>
 <!-- LAB_RESOURCE_END id="lab-kit.css" type="stylesheet" -->
+<!-- LAB_CONTRACT_START -->
+<script type="application/json" data-examplicity-lab-contract data-contract-version="1">
+{
+  "schemaVersion": 1,
+  "relationship": "Opening workloads and advancing the clock connects RAM, cache and drive settings to latency, pressure and faults.",
+  "learnerLoop": {
+    "action": "Configure memory, open or close work apps, then step or run the clock.",
+    "modelChange": "The simulated workload, memory pressure and access path change.",
+    "evidence": "Metrics, desktop, architecture panel and log expose timing and fault consequences.",
+    "nextDecision": "Change the workload or configuration to explain the observed performance."
+  },
+  "invariants": [
+    "Metrics and log entries describe the active simulated configuration and workload.",
+    "Closing an app removes its associated simulated memory demand."
+  ],
+  "safeAdaptations": [
+    "Change application stories, parameter values or guidance while retaining observable memory hierarchy consequences."
+  ],
+  "nonGoals": [
+    "Measuring or managing the learner's actual computer memory."
+  ],
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+}
+</script>
+<!-- LAB_CONTRACT_END -->
 </head>
 <body data-lab-layout="standard">
 <main>
@@ -1262,7 +1287,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
       </div>
 
       <div class="control-buttons">
-        <button id="resetButton">Reset</button>
+        <button id="resetButton" data-lab-action="reset">Reset</button>
         <button id="stepButton">Advance 10 cycles</button>
         <button id="runButton" class="primary">Run clock</button>
       </div>
@@ -1288,7 +1313,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 
       <div class="monitor">
         <div class="monitor-bezel">
-          <div id="desktop" class="desktop" aria-label="Interactive operating system desktop"></div>
+          <div id="desktop" class="desktop" aria-label="Interactive operating system desktop" data-lab-role="model" data-lab-manipulative="workload-desktop"></div>
         </div>
       </div>
 

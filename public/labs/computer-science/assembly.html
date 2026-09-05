@@ -535,6 +535,31 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 
 </style>
 <!-- LAB_RESOURCE_END id="lab-kit.css" type="stylesheet" -->
+<!-- LAB_CONTRACT_START -->
+<script type="application/json" data-examplicity-lab-contract data-contract-version="1">
+{
+  "schemaVersion": 1,
+  "relationship": "Editing assembly source connects symbolic instructions to the assembler passes, CPU phases and program input/output.",
+  "learnerLoop": {
+    "action": "Choose or edit a program, then step or run it.",
+    "modelChange": "The source is assembled and the processor state advances through its instruction phases.",
+    "evidence": "The assembly summary, translation table, registers, phases and console expose the result.",
+    "nextDecision": "Fix the source or predict the next instruction effect."
+  },
+  "invariants": [
+    "Source, translated instructions and execution evidence remain consistent.",
+    "Stepping preserves the visible instruction-by-instruction trace."
+  ],
+  "safeAdaptations": [
+    "Change example programs, input values, pacing or explanatory language while retaining the assembler-to-CPU trace."
+  ],
+  "nonGoals": [
+    "Teaching an unspecified real-world assembly dialect beyond the lab's model."
+  ],
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+}
+</script>
+<!-- LAB_CONTRACT_END -->
 </head>
 <body data-lab-layout="standard">
 <main>
@@ -584,7 +609,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
           <option value="140">Fast</option>
         </select>
       </label>
-      <button id="resetButton" class="ui-button" type="button">Reset CPU</button>
+      <button id="resetButton" class="ui-button" type="button" data-lab-action="reset">Reset CPU</button>
       <button id="stepButton" class="ui-button" type="button">Step</button>
       <button id="runButton" class="ui-button primary run" type="button">
         <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6 4.5v11l9-5.5-9-5.5Z"/></svg><span>Run</span>
@@ -607,7 +632,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
         <div class="editor-shell">
           <div id="editorHighlight" class="editor-highlight"></div>
           <div id="lineNumbers" class="line-numbers" aria-hidden="true"></div>
-          <textarea id="sourceEditor" aria-label="Assembly source code" autocomplete="off" autocapitalize="off" spellcheck="false"></textarea>
+          <textarea id="sourceEditor" aria-label="Assembly source code" autocomplete="off" autocapitalize="off" spellcheck="false" data-lab-manipulative="assembly-source"></textarea>
         </div>
         <div class="editor-meta">
           <span id="assemblySummary"><strong>0</strong> memory locations</span>
@@ -636,7 +661,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
         </div>
         <div class="io-box">
           <span class="io-title">Output from OUT</span>
-          <div id="outputConsole" class="output-console" aria-live="polite">—</div>
+          <div id="outputConsole" class="output-console" aria-live="polite" data-lab-role="evidence">—</div>
           <div class="io-note">Printable ASCII is shown directly.</div>
         </div>
       </section>
@@ -691,7 +716,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
           </defs>
           <g id="systemFlowPaths"></g>
         </svg>
-        <section id="cpuBoard" class="cpu-board" aria-label="Central processing unit with connected registers and data pathways">
+        <section id="cpuBoard" class="cpu-board" aria-label="Central processing unit with connected registers and data pathways" data-lab-role="model">
           <div class="board-title">
             <strong>CPU</strong>
             <div class="diagram-key" aria-label="Diagram key">

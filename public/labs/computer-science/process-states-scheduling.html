@@ -603,6 +603,31 @@ body.run-failed .target-row{margin-top:3px}
 }
 
 </style>
+<!-- LAB_CONTRACT_START -->
+<script type="application/json" data-examplicity-lab-contract data-contract-version="1">
+{
+  "schemaVersion": 1,
+  "relationship": "Selecting scheduling and interrupt decisions connects process states to the order and effects of a simulated workload.",
+  "learnerLoop": {
+    "action": "Choose the required decisions and step or run the workload.",
+    "modelChange": "Processes move through scheduler states as simulated time advances.",
+    "evidence": "The lanes, time badge, decision preview and comparison area show the outcome.",
+    "nextDecision": "Revise a scheduling or interrupt choice to meet the challenge."
+  },
+  "invariants": [
+    "Process lanes and time evidence reflect the active scheduling run.",
+    "The simulated run applies the learner's ready-selection and interrupt decisions consistently."
+  ],
+  "safeAdaptations": [
+    "Change workload stories, process names or guidance while preserving decision-led state transitions."
+  ],
+  "nonGoals": [
+    "Scheduling actual operating-system processes."
+  ],
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+}
+</script>
+<!-- LAB_CONTRACT_END -->
 </head>
 <body data-lab-layout="standard">
 <main>
@@ -638,13 +663,13 @@ body.run-failed .target-row{margin-top:3px}
       <div class="rule-rack first"><span class="rack-label">Choose from Ready</span><div id="selectorCards" class="rule-cards"></div></div>
       <div class="rule-rack"><span class="rack-label">Interrupt Running</span><div id="interruptCards" class="rule-cards"></div></div>
       <div id="routineCard" class="routine-card"><span class="eyebrow">Routine formed</span><strong id="routineName">Incomplete scheduler</strong><p id="routineNote">Install both rules. Standard syllabus routines are recognised from their behaviour.</p></div>
-      <div class="rule-actions"><button id="stepBtn" type="button" disabled>Step 1 tick</button><button id="resetBtn" type="button">Reset run</button><button id="runBtn" class="primary" type="button" disabled>Run workload</button></div>
+      <div class="rule-actions"><button id="stepBtn" type="button" disabled>Step 1 tick</button><button id="resetBtn" type="button" data-lab-action="reset">Reset run</button><button id="runBtn" class="primary" type="button" disabled>Run workload</button></div>
     </aside>
 
     <div class="workspace">
       <section class="panel state-panel" aria-labelledby="boardTitle">
         <div class="board-head"><div><strong id="boardTitle">Live process states</strong><span id="boardHint">Only Ready processes can be chosen for the CPU. Waiting time grows only while a card is in Ready. Blocked time is waiting for I/O, not CPU service.</span></div><div id="timeBadge" class="time-badge">t = 0</div></div>
-        <section id="schedulerGate" class="scheduler-gate compact-scheduler" aria-label="Scheduler kernel rule slots and prediction">
+        <section id="schedulerGate" class="scheduler-gate compact-scheduler" aria-label="Scheduler kernel rule slots and prediction" data-lab-role="model">
           <div id="selectSlot" class="rule-slot" data-slot="selector" tabindex="0"><span class="rule-slot-label">Ready rule</span><strong id="selectValue" class="rule-slot-value">No rule installed</strong><span id="selectNote" class="rule-slot-note">Which Ready process leaves the queue?</span></div>
           <div id="decisionPreview" class="decision-preview"></div>
           <div id="interruptSlot" class="rule-slot" data-slot="interrupt" tabindex="0"><span class="rule-slot-label">Interrupt rule</span><strong id="interruptValue" class="rule-slot-value">No rule installed</strong><span id="interruptNote" class="rule-slot-note">Can Running be sent back to Ready?</span></div>

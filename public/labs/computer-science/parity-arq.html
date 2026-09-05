@@ -700,6 +700,31 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 
 </style>
 <!-- LAB_RESOURCE_END id="lab-kit.css" type="stylesheet" -->
+<!-- LAB_CONTRACT_START -->
+<script type="application/json" data-examplicity-lab-contract data-contract-version="1">
+{
+  "schemaVersion": 1,
+  "relationship": "Transmitting a frame with selectable parity and faults connects error detection to ACK/NAK and ARQ retransmission.",
+  "learnerLoop": {
+    "action": "Set the message and parity options, introduce noise if desired, then transmit.",
+    "modelChange": "The data frame, received frame and acknowledgement state change.",
+    "evidence": "Frame views, decoded text and result panel show detection and any resend.",
+    "nextDecision": "Change the error pattern or protocol option and predict the reply."
+  },
+  "invariants": [
+    "Displayed parity and reply evidence derive from the transmitted frame and chosen scheme.",
+    "An ARQ resend follows the lab's visible acknowledgement state."
+  ],
+  "safeAdaptations": [
+    "Change messages, noise examples or prompts while preserving data-frame, check and reply causality."
+  ],
+  "nonGoals": [
+    "Providing real error correction or a live communications protocol."
+  ],
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+}
+</script>
+<!-- LAB_CONTRACT_END -->
 </head>
 <body data-lab-layout="standard">
 <main>
@@ -734,7 +759,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
   <div class="controls">
     <div class="field">
       <label for="message">Message · 1–16 characters</label>
-      <input id="message" type="text" value="NETWORK TEST" maxlength="16" autocomplete="off" spellcheck="false">
+      <input id="message" type="text" value="NETWORK TEST" maxlength="16" autocomplete="off" spellcheck="false" data-lab-manipulative="message">
     </div>
     <div class="field">
       <label for="scheme">Parity scheme</label>
@@ -751,7 +776,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
       </select>
     </div>
     <label class="switch-line"><input id="dropReply" type="checkbox"> Lose the next ACK or NAK</label>
-    <button id="resetAll">Reset transmission</button>
+    <button id="resetAll" data-lab-action="reset">Reset transmission</button>
   </div>
   <div class="meta">
     <span id="messageMeta"></span>
@@ -778,13 +803,13 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
         <div class="track-node sender"></div><div class="track-label sender">SENDER</div>
         <div class="track-node channel"></div><div class="track-label channel">CHANNEL</div>
         <div class="track-node receiver"></div><div class="track-label receiver">RECEIVER</div>
-        <div id="framePacket" class="packet"><span>DATA</span><span id="frameCode" class="packet-code"></span></div>
+        <div id="framePacket" class="packet" data-lab-role="model"><span>DATA</span><span id="frameCode" class="packet-code"></span></div>
         <div id="replyPacket" class="packet reply"><span id="replyCode">ACK</span></div>
       </div>
     </div>
     <aside class="transmission-rail" aria-label="Transmit and inspect received data">
       <button id="deliver" class="primary">Transmit DATA frame</button>
-      <div id="resultPanel" class="rail-result">
+      <div id="resultPanel" class="rail-result" data-lab-role="evidence">
         <div id="resultTitle" class="result-title">Ready to transmit</div>
         <div id="resultDetail" class="result-detail">Change a blue in-transit bit, or send the unaltered frame.</div>
       </div>

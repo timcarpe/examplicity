@@ -485,6 +485,32 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 
 </style>
 <!-- LAB_RESOURCE_END id="lab-kit.css" type="stylesheet" -->
+<!-- LAB_CONTRACT_START -->
+<script type="application/json" data-examplicity-lab-contract data-contract-version="1">
+{
+  "schemaVersion": 1,
+  "relationship": "Moving the mantissa–exponent divider connects a fixed bit budget to precision, range and representation trade-offs.",
+  "learnerLoop": {
+    "action": "Move the divider and inspect the selected floating-point word.",
+    "modelChange": "Bits are allocated differently between mantissa and exponent.",
+    "evidence": "The ruler, word display, normaliser and precision/range explanations update.",
+    "nextDecision": "Choose an allocation that fits the stated measurement need."
+  },
+  "invariants": [
+    "The total word length remains fixed while allocation changes.",
+    "The displayed word, ruler, normalisation and storage feedback remain consistent with the selected mantissa–exponent allocation.",
+    "Precision and range comparisons remain tied to the same represented value and bit budget."
+  ],
+  "safeAdaptations": [
+    "Change the measurement context, wording or guided prompts while retaining the fixed-budget precision/range trade-off."
+  ],
+  "nonGoals": [
+    "Modelling every floating-point standard or hardware implementation."
+  ],
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+}
+</script>
+<!-- LAB_CONTRACT_END -->
 </head>
 <body data-lab-layout="standard">
 <main>
@@ -530,13 +556,13 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
       <span class="endlabel">more precision</span>
       <div id="wordShell" class="word-shell">
         <div id="word" class="word" aria-label="Eight-bit floating-point allocation"></div>
-        <button id="divider" class="divider" type="button" aria-label="Move bits between mantissa and exponent"></button>
+        <button id="divider" class="divider" type="button" aria-label="Move bits between mantissa and exponent" data-lab-manipulative="mantissa-exponent-divider"></button>
         <div id="wordCount" class="word-count"></div>
       </div>
       <span class="endlabel">more range</span>
     </div>
 
-    <div id="instrument" class="instrument">
+    <div id="instrument" class="instrument" data-lab-role="model">
       <svg id="rulerSvg" viewBox="0 0 1120 330" role="img" aria-label="Floating-point ruler showing real measurements and their stored approximations"></svg>
       <div id="instrumentHint" class="instrument-hint"></div>
     </div>
@@ -545,12 +571,12 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
       <div id="selection" class="selection"></div>
       <div id="fit" class="fit"></div>
     </div>
-    <div id="insight" class="insight" role="status" aria-live="polite"></div>
+    <div id="insight" class="insight" role="status" aria-live="polite" data-lab-role="evidence"></div>
 
     <section id="normalizer" class="normalizer" aria-labelledby="storageTitle">
       <div class="normalizer-head">
         <div><strong id="storageTitle">Binary storage representation</strong><span id="storageHint">Selected real value → stored floating-point word. Non-zero values are best stored in normalised form.</span></div>
-        <button id="resetForm" class="reset-form" type="button">Reset form</button>
+        <button id="resetForm" class="reset-form" type="button" data-lab-action="reset">Reset form</button>
       </div>
       <div class="storage-row">
         <div id="storageSource" class="storage-source"><span>Selected value</span><strong>—</strong></div>

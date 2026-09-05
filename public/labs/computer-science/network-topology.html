@@ -704,6 +704,31 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 
 </style>
 <!-- LAB_RESOURCE_END id="lab-kit.css" type="stylesheet" -->
+<!-- LAB_CONTRACT_START -->
+<script type="application/json" data-examplicity-lab-contract data-contract-version="1">
+{
+  "schemaVersion": 1,
+  "relationship": "Constructing a topology and sending a packet connects physical links to connectivity and packet journey outcomes.",
+  "learnerLoop": {
+    "action": "Move nodes, add or remove cables, check the topology and send a packet.",
+    "modelChange": "The network graph and selectable packet path change.",
+    "evidence": "The canvas, feedback and journey text show whether the topology and transfer work.",
+    "nextDecision": "Rewire the graph or choose another source and destination."
+  },
+  "invariants": [
+    "Topology checks and packet journeys use the current set of nodes and links.",
+    "Each visible cable represents a connection in the graph."
+  ],
+  "safeAdaptations": [
+    "Change topology challenges, node labels or prompts while retaining editable graph construction and packet testing."
+  ],
+  "nonGoals": [
+    "Providing a production network simulator or configuration tool."
+  ],
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+}
+</script>
+<!-- LAB_CONTRACT_END -->
 </head>
 <body data-lab-layout="standard">
 <main>
@@ -756,13 +781,13 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
         </div>
         <div class="action-group">
           <button id="undoButton" disabled>Undo</button>
-          <button id="resetButton">Reset</button>
+          <button id="resetButton" data-lab-action="reset">Reset</button>
           <button id="checkButton" class="primary">Check topology</button>
         </div>
       </div>
 
       <div class="canvas-shell">
-        <div id="canvas" class="canvas lab-kit-canvas">
+        <div id="canvas" class="canvas lab-kit-canvas" data-lab-role="model" data-lab-manipulative="topology-canvas">
           <svg id="linkSvg" class="link-svg lab-kit-svg" aria-label="Network cables"></svg>
           <svg id="activitySvg" class="activity-svg lab-kit-svg" aria-hidden="true"></svg>
           <div id="nodeLayer" class="node-layer"></div>

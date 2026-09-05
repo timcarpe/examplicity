@@ -1104,6 +1104,31 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 
 </style>
 <!-- LAB_RESOURCE_END id="lab-kit.css" type="stylesheet" -->
+<!-- LAB_CONTRACT_START -->
+<script type="application/json" data-examplicity-lab-contract data-contract-version="1">
+{
+  "schemaVersion": 1,
+  "relationship": "Programming rover commands and their Huffman codes connects a route's command frequencies to encoded transmission length.",
+  "learnerLoop": {
+    "action": "Build a rover program, edit its command codes and run the decoded transmission.",
+    "modelChange": "The command sequence, bit count and rover position change.",
+    "evidence": "The map, bit tape, score and codebook show the transmitted result.",
+    "nextDecision": "Revise the route or code lengths to reach the goal with fewer bits."
+  },
+  "invariants": [
+    "The bit count follows the current commands and their codes.",
+    "Running the transmission moves the rover according to the decoded command sequence."
+  ],
+  "safeAdaptations": [
+    "Change map layouts, route goals or starter programs while preserving command coding and bit-cost feedback."
+  ],
+  "nonGoals": [
+    "Teaching a complete compression file format or arbitrary prefix-code implementation."
+  ],
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+}
+</script>
+<!-- LAB_CONTRACT_END -->
 </head>
 <body data-lab-layout="standard">
 <main>
@@ -1151,10 +1176,10 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
           <h2>Mars survey sector</h2>
           <div class="small">The rover begins facing east. Rocks are impassable.</div>
         </div>
-        <button id="resetRoverBtn">Reset rover</button>
+        <button id="resetRoverBtn" data-lab-action="reset">Reset rover</button>
       </div>
       <div class="map-scroll">
-        <div id="map"></div>
+        <div id="map" data-lab-role="model"></div>
       </div>
 
     </section>
@@ -1218,7 +1243,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
           <div class="code-row" data-command="F">
             <div class="code-symbol">F</div>
             <div class="code-name"><strong>Forward</strong><span id="countF">used 0 times</span></div>
-            <input class="code-input" id="codeF" maxlength="6" value="00" inputmode="numeric" aria-label="Forward Huffman code">
+            <input class="code-input" id="codeF" maxlength="6" value="00" inputmode="numeric" aria-label="Forward Huffman code" data-lab-manipulative="huffman-code">
           </div>
           <div class="code-row" data-command="L">
             <div class="code-symbol">L</div>

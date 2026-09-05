@@ -483,6 +483,32 @@ button{font:inherit;min-height:34px;padding:0 10px;border:1px solid var(--lab-li
 @media(max-width:900px){.workspace{grid-template-columns:1fr}.map-shell{border-right:0;border-bottom:1px solid var(--lab-line)}.evidence{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.evidence-section{padding:0 7px 0 0;border-bottom:0;border-right:1px solid var(--lab-line)}.evidence-section:last-child{border-right:0}.map-frame{max-width:500px}.next-card{top:45px}}
 @media(max-width:650px){.mission-top{grid-template-columns:1fr;gap:7px}.goal-progress{max-width:200px}.difficulty-bar{grid-template-columns:1fr}.difficulty-switch{justify-self:start}.map-head{display:block}.map-tools{justify-content:flex-start;margin-top:5px}.legend{justify-content:flex-start}.map-shell{padding:6px}.evidence{grid-template-columns:1fr}.evidence-section{padding:0 0 7px;border-right:0;border-bottom:1px solid var(--lab-line)}.status{grid-template-columns:1fr}.sample-score{text-align:left}.turn-strip.show{grid-template-columns:1fr}.turn-values{text-align:left}.tick-label{font-size:14px}.axis-label{font-size:17px}.base-label{font-size:16px}.mid-label{font-size:14px}.delta-label{font-size:14px}.probe-caption{font-size:12px}.beam-label{font-size:12px}.handle-label{font-size:11px}.sample{stroke-width:3}.next-card{top:42px;width:min(320px,calc(100% - 18px))}}
 </style>
+<!-- LAB_CONTRACT_START -->
+<script type="application/json" data-examplicity-lab-contract data-contract-version="1">
+{
+  "schemaVersion": 1,
+  "relationship": "Two endpoints determine distance, midpoint, gradient and a perpendicular bisector whose points are equally distant from both endpoints.",
+  "learnerLoop": {
+    "action": "Move the endpoints, boundary and test point, then calculate the linked quantities.",
+    "modelChange": "The segment and candidate perpendicular boundary update together.",
+    "evidence": "Live equal-distance tests, map labels and checked calculations show whether the boundary is correct.",
+    "nextDecision": "Adjust the boundary or use the computed midpoint and perpendicular gradient to justify it."
+  },
+  "invariants": [
+    "Every point on the perpendicular bisector is equidistant from the two endpoints.",
+    "The midpoint lies on both the segment and its perpendicular bisector."
+  ],
+  "safeAdaptations": [
+    "Use different endpoint pairs and valid target boundaries.",
+    "Change calculation scaffolding while retaining continuous equal-distance evidence."
+  ],
+  "nonGoals": [
+    "Presenting a line as a perpendicular bisector without testing or deriving its equal-distance property."
+  ],
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+}
+</script>
+<!-- LAB_CONTRACT_END -->
 </head>
 <body data-lab-layout="standard">
 <main>
@@ -552,7 +578,7 @@ button{font:inherit;min-height:34px;padding:0 10px;border:1px solid var(--lab-li
         <div class="next-actions"><button id="nextStageButton" class="next-stage" type="button">Next configuration</button></div>
       </div>
       <div class="map-frame">
-        <svg id="map" viewBox="0 0 720 720" role="img" aria-label="Cartesian coordinate map with two bases, a line segment, midpoint, candidate boundary and moving equal-distance test probe">
+        <svg id="map" viewBox="0 0 720 720" role="img" aria-label="Cartesian coordinate map with two bases, a line segment, midpoint, candidate boundary and moving equal-distance test probe" data-lab-role="model" data-lab-manipulative="perpendicular-bisector">
           <g id="gridLayer"></g>
           <g id="geometryLayer">
             <line id="legH" class="triangle-leg"></line><line id="legV" class="triangle-leg"></line>

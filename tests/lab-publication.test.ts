@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
+import { mkdtemp, mkdir, rm, writeFile } from 'node:fs/promises';
+import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
 import {
@@ -44,6 +46,22 @@ test('publication core compiles and validates one packaged lab in memory', async
   assert.equal(validation.checks.contractPreserved, true);
 });
 
+test('publication and CLI core require a contract for every published lab', async () => {
+  const context = await loadPublicationContext(repositoryRoot);
+  const root = await mkdtemp(path.join(os.tmpdir(), 'examplicity-contract-required-'));
+  try {
+    const directory = path.join(root, 'labs-src', 'physics', 'diffraction-through-a-gap');
+    await mkdir(directory, { recursive: true });
+    await writeFile(path.join(directory, 'lab.html'), '<html></html>');
+    await assert.rejects(
+      () => compilePublicationLab({ ...context, root }, 'diffraction-through-a-gap'),
+      /required \.lab\.json sidecar is missing/,
+    );
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
 test('inspect exposes contract loop, hooks and validation', async () => {
   const result = await runLab('inspect', 'fetch-decode-execute');
   assert.equal(result.code, 0, result.stderr);
@@ -53,8 +71,13 @@ test('inspect exposes contract loop, hooks and validation', async () => {
   assert.match(result.stdout, /Model change:/);
   assert.match(result.stdout, /Evidence:/);
   assert.match(result.stdout, /Next decision:/);
+  assert.match(result.stdout, /Sidecar: lab-contracts\/computer-science\/fetch-decode-execute\.lab\.json/);
+  assert.match(result.stdout, /Invariants:/);
+  assert.match(result.stdout, /Safe adaptations:/);
+  assert.match(result.stdout, /Non-goals:/);
   assert.match(result.stdout, /Hooks: roles=/);
-  assert.match(result.stdout, /Validation: pass/);
+  assert.match(result.stdout, /Publication validation: pass/);
+  assert.match(result.stdout, /Behavioral validation: not run/);
   assert.match(result.stdout, /labs-src\/computer-science\/fetch-decode-execute\/lab\.html/);
 });
 

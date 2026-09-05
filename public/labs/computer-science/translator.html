@@ -978,6 +978,31 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 
 </style>
 <!-- LAB_RESOURCE_END id="lab-kit.css" type="stylesheet" -->
+<!-- LAB_CONTRACT_START -->
+<script type="application/json" data-examplicity-lab-contract data-contract-version="1">
+{
+  "schemaVersion": 1,
+  "relationship": "Editing, translating and running pseudocode or Python connects corresponding statements to execution state and diagnostics.",
+  "learnerLoop": {
+    "action": "Load or edit code, choose a view, then step or run the selected language.",
+    "modelChange": "The source, translated counterpart and runtime execution state change.",
+    "evidence": "The paired editors, health indicators, console, variables and diagnostics show the result.",
+    "nextDecision": "Correct the source or compare the equivalent statement in the other language."
+  },
+  "invariants": [
+    "Translation and runtime feedback refer to the currently displayed source.",
+    "Stepping exposes execution one statement at a time."
+  ],
+  "safeAdaptations": [
+    "Change example programs, terminology or guidance while retaining paired code representation and execution evidence."
+  ],
+  "nonGoals": [
+    "Providing a general-purpose compiler or unrestricted Python runtime."
+  ],
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+}
+</script>
+<!-- LAB_CONTRACT_END -->
 </head>
 <body data-lab-layout="standard">
 <main>
@@ -1080,7 +1105,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
     </div>
   </section>
 
-  <section id="workspace" class="panel workspace view-both">
+  <section id="workspace" class="panel workspace view-both" data-lab-role="model">
     <article id="pseudoPane" class="editor-pane pseudo" aria-label="Cambridge pseudocode editor">
       <header class="editor-head" draggable="true" data-editor-language="pseudo" title="Drag onto the other editor to swap positions">
         <div class="editor-title"><strong>Cambridge pseudocode</strong><span class="file-label">main.pseudo</span></div>
@@ -1091,7 +1116,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
         <div class="editor-scroll">
           <pre class="code-highlight" aria-hidden="true"></pre>
           <div class="diagnostic-layer" aria-label="Editor diagnostics"></div>
-          <textarea class="code-input" aria-label="Edit Cambridge pseudocode" autocomplete="off" autocapitalize="off" spellcheck="false" wrap="off"></textarea>
+          <textarea class="code-input" aria-label="Edit Cambridge pseudocode" autocomplete="off" autocapitalize="off" spellcheck="false" wrap="off" data-lab-manipulative="pseudocode-source"></textarea>
           <div class="runtime-diagnostic" hidden role="alert" aria-live="assertive">
             <button class="runtime-diagnostic-dismiss" type="button" aria-label="Dismiss runtime error">×</button>
             <span class="runtime-location"></span><strong></strong><span class="runtime-message"></span><span class="runtime-hint"></span>

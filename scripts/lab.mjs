@@ -31,6 +31,34 @@ const failUsage = (message) => {
 
 const list = (values) => values.length > 0 ? values.join(', ') : 'none';
 const displayPath = (filePath) => path.relative(root, filePath).split(path.sep).join('/');
+const printGuidanceList = (label, values) => {
+  console.log(`${label}:`);
+  if (!values?.length) {
+    console.log('  none');
+    return;
+  }
+  values.forEach((value) => console.log(`  - ${value}`));
+};
+
+const printCurriculum = (curriculum) => {
+  const features = Object.entries(curriculum?.features ?? {});
+  const profiles = Object.entries(curriculum?.profiles ?? {});
+  console.log(`Features: ${list(features.map(([id]) => id))}`);
+  features.forEach(([id, feature]) => {
+    console.log(`  Feature ${id}: ${feature.description}`);
+  });
+  console.log(`Curriculum profiles: ${list(profiles.map(([id]) => id))}`);
+  profiles.forEach(([id, profile]) => {
+    const alignment = profile.alignment.map((entry) => (
+      `${entry.syllabus} ${entry.qualification} sections=${entry.sections.join(', ')}`
+      + (entry.variant ? ` variant=${entry.variant}` : '')
+    )).join('; ');
+    console.log(`  Profile ${id}: ${profile.label}`);
+    console.log(`    Alignment: ${alignment}`);
+    console.log(`    Enabled features: ${list(profile.enabledFeatures)}`);
+    console.log(`    Parameters: ${JSON.stringify(profile.parameters)}`);
+  });
+};
 
 const printInspection = (result) => {
   const { lab, package: labPackage, contract, hooks, checks, stale } = result;
@@ -41,6 +69,7 @@ const printInspection = (result) => {
   console.log(`Topic: ${lab.topic}`);
   console.log(`Format: ${lab.format}`);
   console.log(`Source: ${displayPath(labPackage.sourcePath)}`);
+  console.log(`Sidecar: ${labPackage.sidecarPath ? displayPath(labPackage.sidecarPath) : 'none'}`);
   console.log(`Output: ${displayPath(labPackage.publicOutputPath)}`);
   if (contract) {
     console.log('Contract: v1');
@@ -50,13 +79,16 @@ const printInspection = (result) => {
     console.log(`Model change: ${contract.learnerLoop.modelChange}`);
     console.log(`Evidence: ${contract.learnerLoop.evidence}`);
     console.log(`Next decision: ${contract.learnerLoop.nextDecision}`);
-    console.log(`Features: ${list(Object.keys(contract.curriculum?.features ?? {}))}`);
-    console.log(`Curriculum profiles: ${list(Object.keys(contract.curriculum?.profiles ?? {}))}`);
+    printGuidanceList('Invariants', contract.invariants);
+    printGuidanceList('Safe adaptations', contract.safeAdaptations);
+    printGuidanceList('Non-goals', contract.nonGoals);
+    printCurriculum(contract.curriculum);
   } else {
     console.log('Contract: none');
   }
   console.log(`Hooks: roles=${list(hooks.roles)}; actions=${list(hooks.actions)}; manipulatives=${list(hooks.manipulatives)}; features=${list(hooks.features)}`);
-  console.log(`Validation: ${result.ok ? 'pass' : 'fail'}`);
+  console.log(`Publication validation: ${result.ok ? 'pass' : 'fail'}`);
+  console.log('Behavioral validation: not run (interactive runtime is not executed).');
   if (stale) console.log('  public output: stale');
   console.log(`  standalone: ${checks.standalonePackages ? 'pass' : 'fail'}`);
   console.log(`  runtime resources: ${checks.outputHasNoUnresolvedRuntimeResources && checks.standaloneHasNoUnresolvedRuntimeResources ? 'none unresolved' : 'unresolved'}`);
@@ -66,6 +98,8 @@ const printInspection = (result) => {
 const printValidation = (result) => {
   console.log(`${result.lab.slug}: ${result.ok ? 'validation passed' : 'validation failed'}`);
   console.log(`Output: ${result.stale ? 'stale' : 'current'} (${displayPath(result.package.publicOutputPath)})`);
+  console.log('Publication validation: structural checks only.');
+  console.log('Behavioral validation: not run (interactive runtime is not executed).');
   console.log(`Standalone packaging: ${result.checks.standalonePackages ? 'pass' : 'fail'}`);
   console.log(`Runtime resources: ${result.checks.outputHasNoUnresolvedRuntimeResources && result.checks.standaloneHasNoUnresolvedRuntimeResources ? 'none unresolved' : 'unresolved'}`);
   console.log(`Contract preservation: ${result.checks.contractPreserved ? 'pass' : 'fail'}`);

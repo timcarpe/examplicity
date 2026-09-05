@@ -26,8 +26,6 @@ for (const lab of labs) {
   const packaged = createStandaloneLabHtml({
     source,
     lab,
-    siteHomeUrl: 'https://www.examplicity.org/computer-science/0478',
-    liveLabUrl: `https://www.examplicity.org${labPageHref(lab)}`,
   });
   const packagedBytes = Buffer.byteLength(packaged, 'utf8');
   const sizeWaiver = artifactSizeWaivers.get(lab.slug);

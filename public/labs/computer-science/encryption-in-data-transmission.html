@@ -501,6 +501,31 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 
 </style>
 <!-- LAB_RESOURCE_END id="lab-kit.css" type="stylesheet" -->
+<!-- LAB_CONTRACT_START -->
+<script type="application/json" data-examplicity-lab-contract data-contract-version="1">
+{
+  "schemaVersion": 1,
+  "relationship": "Sending a message in shared-key or public/private-key mode connects key roles to the readable and encrypted states of traffic.",
+  "learnerLoop": {
+    "action": "Choose a mode, edit the message and transmit it.",
+    "modelChange": "The message becomes packet traffic with keys assigned to the selected mode.",
+    "evidence": "Source and cipher previews, key labels, stations and wire state show the transmission.",
+    "nextDecision": "Compare who can use a key or read the message in the other mode."
+  },
+  "invariants": [
+    "The visible key roles match the selected encryption mode.",
+    "The cipher preview and traffic represent the current message."
+  ],
+  "safeAdaptations": [
+    "Change messages, scenarios or explanatory prompts while preserving the contrast between shared and public/private keys."
+  ],
+  "nonGoals": [
+    "Implementing secure real-world cryptography."
+  ],
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+}
+</script>
+<!-- LAB_CONTRACT_END -->
 </head>
 <body data-lab-layout="standard">
 <main>
@@ -551,12 +576,12 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
     <section class="panel workspace">
       <div class="workspace-head">
         <div><strong>Shared line</strong><span>The text on the line is what Bob and Eve both receive.</span></div>
-        <div class="workspace-actions"><button id="resetTraffic" type="button">Clear line</button><button id="resetAll" type="button">Reset lab</button></div>
+        <div class="workspace-actions"><button id="resetTraffic" type="button" data-lab-action="reset">Clear line</button><button id="resetAll" type="button" data-lab-action="reset">Reset lab</button></div>
       </div>
 
       <div class="board-shell">
         <div class="board-stage">
-        <div id="board" class="board lab-kit-canvas" data-grid="square" aria-label="Interactive encryption transmission line">
+        <div id="board" class="board lab-kit-canvas" data-grid="square" aria-label="Interactive encryption transmission line" data-lab-role="model">
           <svg class="links" viewBox="0 0 1020 650" aria-hidden="true">
             <path class="link-base" d="M276 270 H748"/><path class="link-core" d="M276 270 H748"/>
             <path class="branch-base" d="M608 270 V432"/><path class="branch-core" d="M608 270 V432"/>
@@ -571,7 +596,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
             </div>
             <div class="monitor"><div class="screen">
               <div class="screen-title"><span>message before transmission</span><span id="aliceState" class="screen-badge">plain text</span></div>
-              <div class="composer"><textarea id="messageInput" maxlength="28" spellcheck="false" aria-label="Message to transmit">ACCESS CODE 47-B</textarea></div>
+              <div class="composer"><textarea id="messageInput" maxlength="28" spellcheck="false" aria-label="Message to transmit" data-lab-manipulative="message">ACCESS CODE 47-B</textarea></div>
               <div class="source-preview"><span>plain text</span><code id="sourcePreview">ACCESS CODE 47-B</code></div>
               <div class="source-preview"><span>cipher text</span><code id="cipherPreview">same as plain text</code></div>
               <button id="sendPacket" class="send-card" type="button" aria-label="Transmit the current message">

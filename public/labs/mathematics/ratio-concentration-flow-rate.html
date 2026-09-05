@@ -496,6 +496,32 @@ h1{margin:0;font-size:27px;font-weight:630;letter-spacing:-.025em;line-height:1.
 @media(max-width:620px){body{padding:60px 0 76px}main{width:min(100% - 12px,1180px);margin-top:8px}h1{font-size:24px}.sub{font-size:12px}#plant{min-width:760px;min-height:0}.stage-wrap{overflow-x:auto}.pump-control{min-width:330px;margin-left:8px;margin-right:8px}.evidence-actions{width:100%}.evidence-actions button{flex:1}.next-card{top:10px;width:min(310px,calc(100% - 20px))}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}}
 </style>
+<!-- LAB_CONTRACT_START -->
+<script type="application/json" data-examplicity-lab-contract data-contract-version="1">
+{
+  "schemaVersion": 1,
+  "relationship": "Two ingredient flow rates jointly set mixture ratio and total throughput, while the bottling display makes both consequences visible.",
+  "learnerLoop": {
+    "action": "Tune the concentrate and water pumps, then complete the linked rate calculations.",
+    "modelChange": "The mixture composition, total flow and bottle filling update.",
+    "evidence": "Pump settings, mixer monitor, bottle output and answer checks show whether the target is met.",
+    "nextDecision": "Choose which flow rate to change to satisfy the ratio or throughput requirement."
+  },
+  "invariants": [
+    "Total flow is the sum of the two ingredient flows.",
+    "A mixture ratio depends on the relative ingredient flows, not their display order."
+  ],
+  "safeAdaptations": [
+    "Vary achievable recipe ratios, flows and bottle targets.",
+    "Adjust calculation scaffolding while retaining separate composition and throughput evidence."
+  ],
+  "nonGoals": [
+    "Treating ratio and total flow as interchangeable quantities."
+  ],
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+}
+</script>
+<!-- LAB_CONTRACT_END -->
 </head>
 <body data-lab-layout="standard">
 <main>
@@ -529,7 +555,7 @@ h1{margin:0;font-size:27px;font-weight:630;letter-spacing:-.025em;line-height:1.
     <div id="workingDock" class="working-dock"></div>
     <div class="stage-wrap" id="stageWrap">
       <div id="nextCard" class="next-card" hidden><strong>Problem complete</strong><span id="nextCardText"></span><div id="nextUpgrade" class="next-upgrade" hidden><strong id="nextUpgradeTitle"></strong><span id="nextUpgradeText"></span><button id="upgradeLevel" type="button"></button></div><div class="next-actions"><button id="nextProblem" type="button">Next problem</button></div></div>
-      <svg id="plant" viewBox="0 0 1120 650" role="img" aria-labelledby="plantTitle plantDesc">
+      <svg id="plant" viewBox="0 0 1120 650" role="img" aria-labelledby="plantTitle plantDesc" data-lab-role="model" data-lab-manipulative="blending-pumps">
         <title id="plantTitle">Interactive two-ingredient blending and bottling line</title>
         <desc id="plantDesc">Concentrate and water flow from separate tanks into a mixer, then through one nozzle into bottles on a conveyor. Flow settings change mixture ratio and how full each bottle becomes.</desc>
         <defs>

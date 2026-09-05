@@ -665,6 +665,34 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 
 </style>
 <!-- LAB_RESOURCE_END id="lab-kit.css" type="stylesheet" -->
+<!-- LAB_CONTRACT_START -->
+<script type="application/json" data-examplicity-lab-contract data-contract-version="1">
+{
+  "schemaVersion": 1,
+  "relationship": "Moving an object relative to a converging lens changes where principal rays meet and therefore image position, size and orientation; moving a screen tests whether that image can be projected.",
+  "learnerLoop": {
+    "action": "Predict the image, move the object, and move the screen to test the ray construction.",
+    "modelChange": "Object distance determines real, virtual or focal-limit image geometry; screen distance changes ray separation at the screen.",
+    "evidence": "Principal rays, image markings and the screen projection show image type and whether the screen is sharply focused.",
+    "nextDecision": "Explain the result and compare object positions beyond, at and inside the focal landmarks."
+  },
+  "invariants": [
+    "The ray construction, image position, magnification and orientation agree with the same thin-lens geometry.",
+    "A virtual image is shown by backward extensions and cannot be brought to focus on the real screen.",
+    "The focal-limit case remains distinct from a finite real or virtual image."
+  ],
+  "safeAdaptations": [
+    "Adjust prompts, pacing and object examples while retaining object and screen manipulation.",
+    "Add comparison positions within the supported thin-lens model."
+  ],
+  "nonGoals": [
+    "Do not replace the ray investigation with calculation-only exercises.",
+    "Do not imply that aberrations or thick-lens effects are simulated."
+  ],
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+}
+</script>
+<!-- LAB_CONTRACT_END -->
 </head>
 <body data-lab-layout="standard">
 <main>
@@ -702,7 +730,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
   </div>
   <div class="mission-tools">
     <div id="progress" class="progress" aria-label="Investigation progress"></div>
-    <button id="restartButton" type="button">Restart</button>
+    <button id="restartButton" type="button" data-lab-action="reset">Restart</button>
   </div>
 </section>
 
@@ -714,7 +742,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
         <div class="visual-constant">Fixed focal length: f = 10 cm</div>
       </div>
       <div id="stageShell" class="stage-shell">
-        <svg id="stage" class="stage" viewBox="0 0 1040 600" role="img" aria-labelledby="stageTitle stageDesc">
+        <svg id="stage" class="stage" viewBox="0 0 1040 600" role="img" aria-labelledby="stageTitle stageDesc" data-lab-role="model">
           <title id="stageTitle">Optical bench with a converging lens, an object, principal rays and a movable screen</title>
           <desc id="stageDesc">The object and screen can be moved horizontally. F marks each principal focus 10 centimetres from the lens; 2F marks twice the focal length at 20 centimetres. Two coloured rays show whether light converges, remains parallel or diverges after the lens.</desc>
           <defs>
@@ -764,7 +792,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
             <line class="stand" x1="520" y1="466" x2="520" y2="481"></line><rect class="stand-foot" x="493" y="476" width="54" height="9" rx="4"></rect>
             <text class="lens-label" x="520" y="76" text-anchor="middle">thin converging lens</text>
           </g>
-          <g id="objectLayer" data-tip="object" tabindex="0" role="slider" aria-label="Object distance from the lens" aria-valuemin="4.5" aria-valuemax="35" aria-valuenow="20">
+          <g id="objectLayer" data-tip="object" tabindex="0" role="slider" aria-label="Object distance from the lens" aria-valuemin="4.5" aria-valuemax="35" aria-valuenow="20" data-lab-manipulative="object-distance">
             <line id="objectHolder" class="stand" x1="280" y1="310" x2="280" y2="466"></line><rect id="objectFoot" class="stand-foot" x="262" y="459" width="36" height="15" rx="5"></rect>
             <line id="objectStem" class="object-stem" x1="280" y1="310" x2="280" y2="250"></line><path id="objectHead" class="object-head" d="M270 262 L280 250 L290 262"></path>
             <rect id="objectFlag" class="object-flag" x="283" y="270" width="15" height="8" rx="2"></rect><circle id="objectDot" class="object-dot" cx="274" cy="289" r="5"></circle>
@@ -776,7 +804,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
             </g>
             <text id="objectLabel" class="object-label" x="280" y="205" text-anchor="middle">object</text>
           </g>
-          <g id="screenLayer" data-tip="screen" tabindex="0" role="slider" aria-label="Screen distance from the lens" aria-valuemin="4" aria-valuemax="40" aria-valuenow="12">
+          <g id="screenLayer" data-tip="screen" tabindex="0" role="slider" aria-label="Screen distance from the lens" aria-valuemin="4" aria-valuemax="40" aria-valuenow="12" data-lab-manipulative="screen-distance">
             <line id="screenGlow" class="screen-glow" x1="664" y1="83" x2="664" y2="466" hidden></line>
             <rect id="screenPane" class="screen-pane" x="656" y="82" width="16" height="385" rx="5"></rect>
             <line id="screenStand" class="stand" x1="664" y1="467" x2="664" y2="481"></line><rect id="screenFoot" class="stand-foot" x="640" y="476" width="48" height="9" rx="4"></rect>
@@ -874,7 +902,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
       </section>
       <section class="evidence-section">
         <div class="evidence-head"><strong>Live image evidence</strong><span>Image properties follow from where the refracted rays meet—or appear to meet.</span></div>
-        <div id="liveGrid" class="live-grid"></div>
+        <div id="liveGrid" class="live-grid" data-lab-role="evidence"></div>
       </section>
       <section class="evidence-section">
         <div class="evidence-head"><strong>Observation record</strong><span>Each row preserves the cause → ray behaviour → consequence.</span></div>

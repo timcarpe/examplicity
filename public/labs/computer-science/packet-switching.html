@@ -1376,6 +1376,31 @@ input[type="checkbox"]{margin:0}
 
 </style>
 <!-- LAB_RESOURCE_END id="lab-kit.css" type="stylesheet" -->
+<!-- LAB_CONTRACT_START -->
+<script type="application/json" data-examplicity-lab-contract data-contract-version="1">
+{
+  "schemaVersion": 1,
+  "relationship": "Packetising a message and sending it over an editable topology connects headers, payloads, routes and delivery checks.",
+  "learnerLoop": {
+    "action": "Enter a message, set packet options, create packets and send them.",
+    "modelChange": "The message is split into queued packets which travel over the chosen topology.",
+    "evidence": "Packet, route and arrival metrics plus the send queue show the transfer.",
+    "nextDecision": "Adjust payload, checks or topology and compare the delivery result."
+  },
+  "invariants": [
+    "Packets shown in the queue derive from the current message and payload setting.",
+    "Delivery behaviour uses the displayed topology and selected processing options."
+  ],
+  "safeAdaptations": [
+    "Change messages, network stories or constraints while preserving packet creation and route-based evidence."
+  ],
+  "nonGoals": [
+    "Sending data over a real network."
+  ],
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+}
+</script>
+<!-- LAB_CONTRACT_END -->
 </head>
 <body data-lab-layout="standard">
 <main>
@@ -1442,7 +1467,7 @@ input[type="checkbox"]{margin:0}
       <div class="message-wrap">
         <label class="field">
           Message · maximum 72 characters
-          <textarea id="messageInput" rows="4" maxlength="72" spellcheck="false">PACKETS CAN TAKE DIFFERENT ROUTES</textarea>
+          <textarea id="messageInput" rows="4" maxlength="72" spellcheck="false" data-lab-manipulative="message">PACKETS CAN TAKE DIFFERENT ROUTES</textarea>
         </label>
         <div class="message-meta">
           <span id="characterCount">34 / 72 characters</span>
@@ -1542,13 +1567,13 @@ input[type="checkbox"]{margin:0}
         <button id="resetTopology">Reset topology</button>
       </div>
 
-      <div id="networkCanvas" class="network-canvas lab-kit-canvas" data-grid="square">
+      <div id="networkCanvas" class="network-canvas lab-kit-canvas" data-grid="square" data-lab-role="model">
         <svg id="networkSvg" class="network-svg" aria-label="Editable router topology"></svg>
         <div id="nodeLayer" class="node-layer"></div>
         <div id="packetLayer" class="packet-layer"></div>
       </div>
 
-      <div id="networkStatus" class="network-status" role="status" aria-live="polite">
+      <div id="networkStatus" class="network-status" role="status" aria-live="polite" data-lab-role="evidence">
         <strong>Topology ready</strong>
         Use Move, Connect or Remove. Device A and Device B ports are fixed.
       </div>

@@ -502,6 +502,32 @@ button.quiet{background:transparent}
 @media(max-width:540px){.stage-shell{overflow:hidden}.stage{min-width:0}.phase-dock{padding:7px}.phase-modal h2{font-size:14px}.phase-modal p{font-size:9.5px}.modal-actions button{font-size:9px}.stage-note{grid-template-columns:1fr}.stage-note-state{justify-self:start}.comparison-strip{grid-template-columns:1fr auto 1fr}}
 @media(prefers-reduced-motion:reduce){.wheel-group{transition:none}.guide-target{animation:none}}
 </style>
+<!-- LAB_CONTRACT_START -->
+<script type="application/json" data-examplicity-lab-contract data-contract-version="1">
+{
+  "schemaVersion": 1,
+  "relationship": "Spinner outcomes accumulate into relative frequency, which can be compared with a fair probability before using a justified probability for expected frequency.",
+  "learnerLoop": {
+    "action": "Run spins, inspect the running frequency, judge the evidence and forecast prizes.",
+    "modelChange": "Outcome bins, relative-frequency trace and forecast inputs update.",
+    "evidence": "The sample trace, fair reference and checked expected-frequency work show what the data supports.",
+    "nextDecision": "Collect more evidence, revise the bias judgment or calculate the stock forecast."
+  },
+  "invariants": [
+    "Relative frequency is prize outcomes divided by total spins.",
+    "A small sample alone does not prove bias."
+  ],
+  "safeAdaptations": [
+    "Vary reproducible spinner outcomes and sample sizes.",
+    "Adjust prompts while retaining a fair reference and evidence-based bias judgment."
+  ],
+  "nonGoals": [
+    "Claiming causation or certainty from a short random run."
+  ],
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+}
+</script>
+<!-- LAB_CONTRACT_END -->
 </head>
 <body data-lab-layout="standard">
 <main>
@@ -546,7 +572,7 @@ button.quiet{background:transparent}
         <div class="legend" aria-label="Graph legend"><span class="fair"><i></i>fair claim 0.25</span><span class="trace"><i></i>current test</span><span id="ghostLegend" class="ghost" hidden><i></i>fair-spinner trace</span></div>
       </div>
       <div id="stageShell" class="stage-shell" aria-busy="false">
-        <svg id="stage" class="stage" viewBox="0 0 960 540" role="img" aria-label="A four-sector fairground spinner feeds prize and other result bins and a graph of relative frequency over repeated spins">
+        <svg id="stage" class="stage" viewBox="0 0 960 540" role="img" aria-label="A four-sector fairground spinner feeds prize and other result bins and a graph of relative frequency over repeated spins" data-lab-role="model" data-lab-manipulative="spinner-trials">
           <rect id="stageBackground" x="0" y="0" width="960" height="455" fill="#f8fbfd"></rect>
           <g id="spinnerLayer" aria-hidden="true">
             <ellipse class="wheel-shadow" cx="160" cy="220" rx="94" ry="13"></ellipse>

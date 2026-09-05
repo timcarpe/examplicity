@@ -544,7 +544,33 @@ body[data-mode="explore"] .modal-focus{box-shadow:none!important;filter:none!imp
 .side-section{padding:8px 10px}.neuron-flow{gap:4px}.term{padding:6px 7px}.flow-arrow{height:7px}.flow-node{padding:6px 7px}.output-node{padding:6px 8px}.param-intro{margin-bottom:6px}.param-stack{gap:5px}.param-control{padding:6px 7px 7px}.param-track{height:40px;margin-top:5px}.track-line{top:18px}.vector-span{top:17px}.param-control[data-key="theta"] .vector-span{top:18px}.param-handle{top:6px;height:24px}.param-control[data-key="theta"] .param-handle{top:5px;height:27px}.track-zero{top:7px;bottom:7px}.param-note{margin-top:5px;padding:5px 7px}.evidence-table td{padding:5px 6px}
 @container lab-canvas (max-width:700px){.stage{width:100%;min-width:560px;margin:0}.stage-shell{min-height:509px}.side-section{padding:9px 10px}.param-track{height:44px}.track-line{top:20px}.vector-span{top:19px}.param-control[data-key="theta"] .vector-span{top:20px}.param-handle{top:8px;height:25px}.param-control[data-key="theta"] .param-handle{top:6px;height:29px}.track-zero{top:9px;bottom:9px}}
 
-</style></head>
+</style>
+<!-- LAB_CONTRACT_START -->
+<script type="application/json" data-examplicity-lab-contract data-contract-version="1">
+{
+  "schemaVersion": 1,
+  "relationship": "Exploring classified points connects threshold and weight choices to a neuron's decision boundary and its XOR limit.",
+  "learnerLoop": {
+    "action": "Adjust the threshold θ and input weights for classified points.",
+    "modelChange": "Weighted sums, threshold comparisons, binary outputs and the linear decision boundary update together.",
+    "evidence": "The plot, formula and selected-point calculation show how each parameter change affects classification.",
+    "nextDecision": "Adjust another parameter to test the classifications, or use the geometry to explain why one neuron cannot solve XOR."
+  },
+  "invariants": [
+    "The weighted sums, threshold comparisons, binary outputs and displayed decision boundary describe the same parameter state.",
+    "The XOR conclusion remains grounded in the plotted classifications and the linear boundary available to a single neuron."
+  ],
+  "safeAdaptations": [
+    "Change point stories, activity order, guidance or access to open exploration while preserving threshold and weight manipulation, visible calculation evidence and the single-neuron limitation."
+  ],
+  "nonGoals": [
+    "Training a production neural network or covering multi-layer architectures."
+  ],
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+}
+</script>
+<!-- LAB_CONTRACT_END -->
+</head>
 <body data-lab-layout="standard">
 <main>
 <!-- LAB_MANIFEST_HEADER_START -->
@@ -587,12 +613,12 @@ body[data-mode="explore"] .modal-focus{box-shadow:none!important;filter:none!imp
               <button type="button" class="progress-step" data-progress="weights" disabled><b>2</b><span>Weight</span></button>
               <button type="button" class="progress-step" data-progress="xor" disabled><b>3</b><span>XOR limit</span></button>
             </div>
-            <button id="resetTask" type="button">Reset relationship</button>
+            <button id="resetTask" type="button" data-lab-action="reset">Reset relationship</button>
           </div>
         </div>
         <div id="stageShell" class="stage-shell">
           <div class="stage-scroll">
-            <svg id="plot" class="stage" viewBox="0 0 650 590" role="img" aria-labelledby="plotTitle plotDesc">
+            <svg id="plot" class="stage" viewBox="0 0 650 590" role="img" aria-labelledby="plotTitle plotDesc" data-lab-role="model">
               <title id="plotTitle">Single neuron decision boundary</title><desc id="plotDesc">Four input points and a straight decision boundary. The shaded side produces output one.</desc>
             </svg>
           </div>

@@ -72,10 +72,27 @@ observed failure:
 - add `labs-src/AGENTS.md` only when repository agents repeatedly mishandle the
   modification rules.
 
-Contract authoring now uses an optional `contract.json` inside each per-lab source
-package. The compiler embeds it into the published and downloaded HTML; it is
-never maintained in both places. Root and developer `llms.txt` files provide a
-small discovery index without duplicating lab-specific contracts.
+## Catalogue rollout
 
-Do not migrate another lab until the contract variants materially outperform the
-baseline or the contract has been revised and retested.
+The catalogue-wide rollout was explicitly approved on 5 September 2026 before
+the comparison above was run. The experiment remains unevaluated; rollout is
+not evidence that contracts improve adaptation quality.
+
+Each published lab now has an authoritative
+`lab-contracts/<subject>/<slug>.lab.json` sidecar, separate from its
+`labs-src/<subject>/<slug>/lab.html` source folder. The compiler embeds it into
+the published and downloaded HTML; source HTML does not duplicate the contract.
+Root and developer `llms.txt` files provide discovery. The internal CLI shares
+the publication compiler and validator, and `labs:sync:check` verifies contract
+coverage and preservation across the catalogue.
+
+Binary Number Practice now uses contract profiles for its existing IGCSE/AS
+question pools; see [the mapping and verification notes](binary-curriculum.md).
+Syllabus cross-listing alone does not create a runtime curriculum profile.
+The shared runtime facade, named executable cases, and MCP remain deferred.
+
+The reconciliation also corrected implementation-specific contract invariants,
+expanded CLI inspection to include adaptation guidance, and made the standalone
+packager own canonical navigation URLs so entry-point context cannot change the
+downloaded file. These implementation checks do not replace the eight-run AI
+adaptation comparison above.

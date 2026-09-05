@@ -365,7 +365,7 @@ export const extractEmbeddedLabContract = (html: string): LabContractV1 | null =
 export const assertNoEmbeddedLabContract = (html: string) => {
   const contracts = findEmbeddedLabContracts(html);
   if (contracts.length) {
-    fail('Authored lab.html', 'must not embed a Lab Contract when contract.json is the source');
+    fail('Authored lab.html', 'must not embed a Lab Contract when a .lab.json sidecar is the source');
   }
 };
 
@@ -396,22 +396,19 @@ export type LabHookInspection = {
   features: string[];
 };
 
-const hookValuePattern = (attribute: string) => new RegExp(
-  `\\b${attribute}\\s*=\\s*(?:"([^"]*)"|'([^']*)'|([^\\s"'=<>\u0060]+))`,
-  'gi',
-);
-
-const collectHookValues = (html: string, attribute: string) => (
-  [...html.matchAll(hookValuePattern(attribute))].map((match) => match[1] ?? match[2] ?? match[3] ?? '')
-);
-
 export const inspectLabHooks = (html: string): LabHookInspection => {
   if (typeof html !== 'string') fail('Lab HTML', 'must be a string');
+  const markup = html.replace(/<!--[\s\S]*?-->|<(script|style)\b[^>]*>[\s\S]*?<\/\1\s*>/gi, '');
+  const attributes = [...markup.matchAll(/<[a-z][a-z0-9:-]*\b(?:[^>"']|"[^"]*"|'[^']*')*>/gi)]
+    .flatMap(([tag]) => [...tag.matchAll(/([^\s=<>/]+)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+))/g)]);
+  const values = (name: string) => attributes
+    .filter((match) => match[1].toLowerCase() === name)
+    .map((match) => match[2] ?? match[3] ?? match[4] ?? '');
   const inspection = {
-    roles: collectHookValues(html, 'data-lab-role'),
-    actions: collectHookValues(html, 'data-lab-action'),
-    manipulatives: collectHookValues(html, 'data-lab-manipulative'),
-    features: collectHookValues(html, 'data-lab-feature'),
+    roles: values('data-lab-role'),
+    actions: values('data-lab-action'),
+    manipulatives: values('data-lab-manipulative'),
+    features: values('data-lab-feature'),
   };
   const invalidRole = inspection.roles.find((value) => !['model', 'working', 'evidence'].includes(value));
   if (invalidRole) fail('Lab HTML', `data-lab-role has unsupported value "${invalidRole}"`);

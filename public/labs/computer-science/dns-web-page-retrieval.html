@@ -502,6 +502,31 @@ button,input{font:inherit}button{min-height:34px;border:1px solid var(--line);bo
 @media(max-width:560px){main{width:min(100% - 12px,1240px)}.browser-toolbar{height:auto;grid-template-columns:auto 1fr}.browser-toolbar #goBtn{grid-column:1/-1;width:100%}.bookmarks{grid-template-columns:1fr}.bookmark-list{grid-template-columns:1fr}.bookmark-label,.bookmark-hint{display:none}.url-parts{display:grid;grid-template-columns:1fr}.url-map-label{display:none}.engine-grid{grid-template-columns:1fr 12px 1fr}.engine-block:nth-of-type(3),.engine-block:nth-of-type(4){margin-top:4px}.dns-chain{grid-template-columns:1fr}.dns-link-stack{grid-template-columns:1fr 1fr}.server-card{grid-template-columns:48px 1fr}.server-state{grid-column:2}.atlas-hero,.orbit-hero,.field-grid{grid-template-columns:1fr}.atlas-art{display:none}}
 @media(prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}}
 </style>
+<!-- LAB_CONTRACT_START -->
+<script type="application/json" data-examplicity-lab-contract data-contract-version="1">
+{
+  "schemaVersion": 1,
+  "relationship": "Requesting a URL connects its protocol, domain and path to DNS resolution, retrieval and page rendering.",
+  "learnerLoop": {
+    "action": "Enter or choose a URL and send the request.",
+    "modelChange": "The request progresses through resolve, retrieve and render phases.",
+    "evidence": "Phase markers, progress, operation text and browser view show the current work.",
+    "nextDecision": "Inspect which URL part or network service is needed next."
+  },
+  "invariants": [
+    "The displayed phases remain ordered from resolution through retrieval to rendering.",
+    "URL parts shown in the model derive from the requested address."
+  ],
+  "safeAdaptations": [
+    "Change URLs, site stories or pacing while retaining the DNS-to-rendering sequence."
+  ],
+  "nonGoals": [
+    "Acting as a real browser or querying live DNS."
+  ],
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+}
+</script>
+<!-- LAB_CONTRACT_END -->
 </head>
 <body data-lab-layout="standard">
 <main>
@@ -540,24 +565,24 @@ button,input{font:inherit}button{min-height:34px;border:1px solid var(--line);bo
         <span id="phaseRender" class="phase render">Render HTML</span>
       </div>
       <div id="microStatus" class="micro" aria-live="polite"><strong>Ready.</strong> Choose one of the three browser bookmarks, then click Go.</div>
-      <button id="resetBtn" type="button">Reset lab</button>
+      <button id="resetBtn" type="button" data-lab-action="reset">Reset lab</button>
     </div>
     <div class="progress-row">
       <span id="stepCount" class="step-count">STEP 0</span>
       <div class="progress-track" aria-hidden="true"><div id="progressFill"></div></div>
-      <span class="current-transfer"><b>Current</b> <strong id="operationTitle">URL waiting in browser</strong></span>
+      <span class="current-transfer"><b>Current</b> <strong id="operationTitle" data-lab-role="evidence">URL waiting in browser</strong></span>
       <div id="requiredAction" class="required"><span>Required next action</span><strong id="nextLabel">Choose a bookmark, then click Go</strong></div>
     </div>
   </section>
 
   <section class="panel arch-panel">
     <div class="architecture">
-      <section id="browser" class="component browser" aria-label="Web browser">
+      <section id="browser" class="component browser" aria-label="Web browser" data-lab-role="model">
         <div class="component-head"><div><strong>Web browser</strong><span>The URL, returned IP, page request and rendered result stay visible in one place.</span></div><span id="browserState" class="state-chip">ready</span></div>
         <div class="browser-frame">
           <div class="browser-toolbar">
             <div class="browser-dots" aria-hidden="true"><i></i><i></i><i></i></div>
-            <div id="addressShell" class="address-shell"><span class="lock" aria-hidden="true"></span><input id="urlInput" type="text" spellcheck="false" autocomplete="off" value="https://atlas.school/study.html" aria-label="URL"></div>
+            <div id="addressShell" class="address-shell"><span class="lock" aria-hidden="true"></span><input id="urlInput" type="text" spellcheck="false" autocomplete="off" value="https://atlas.school/study.html" aria-label="URL" data-lab-manipulative="url"></div>
             <button id="goBtn" type="button">Go →</button>
           </div>
           <div class="bookmarks" aria-label="Browser bookmarks">

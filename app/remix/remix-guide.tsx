@@ -40,7 +40,7 @@ Please work with me collaboratively:
 2. Briefly explain the learning relationship and learner experience you find.
 3. Ask me who the audience is and what I want to change.
 4. Suggest a concise plan before editing.
-5. Preserve the learning relationship and any important guidance, but feel free to change the implementation when that serves my request.
+5. Preserve the learning relationship, contract invariants, and curriculum alignment unless my request explicitly requires changing them. Keep difficulty and cases within the selected curriculum; you have creative freedom over the implementation when that serves my request.
 6. Return one polished, accessible, standalone HTML file that works offline.
 
 General information about how Examplicity labs are packaged is available at https://www.examplicity.org/developer if useful.
@@ -84,13 +84,9 @@ export default function RemixGuide({ lab, returnHref }: RemixGuideProps) {
       const response = await fetch(labEmbedHref(lab), { cache: 'no-store' });
       if (!response.ok) throw new Error(`Lab download failed with status ${response.status}.`);
 
-      const siteHomeUrl = new URL(returnHref, window.location.origin);
-      const liveLabUrl = new URL(labPageHref(lab), window.location.origin);
       const html = createStandaloneLabHtml({
         source: await response.text(),
         lab,
-        siteHomeUrl: siteHomeUrl.href,
-        liveLabUrl: liveLabUrl.href,
       });
       const objectUrl = URL.createObjectURL(new Blob([html], { type: 'text/html;charset=utf-8' }));
       const link = document.createElement('a');

@@ -690,8 +690,8 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 <!-- LAB_MANIFEST_HEADER_END -->
 <div class="topbar" data-lab-workspace>
     <div class="pill-toggle level-toggle" role="radiogroup" aria-label="Qualification level">
-      <button type="button" role="radio" data-level="gcse" aria-checked="true">IGCSE</button>
-      <button type="button" role="radio" data-level="as" aria-checked="false">AS</button>
+      <button type="button" role="radio" data-curriculum-profile="cambridge-0478-igcse" aria-checked="true">IGCSE</button>
+      <button type="button" role="radio" data-curriculum-profile="cambridge-9618-as" aria-checked="false">AS</button>
     </div>
 
     <span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span>
@@ -702,7 +702,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
     </div>
   </div>
 
-  <section id="questionCard" class="card" data-lab-workspace aria-labelledby="prompt">
+  <section id="questionCard" class="card" data-lab-workspace aria-labelledby="prompt" data-lab-role="working">
     <div class="prompt-row">
       <p id="prompt"></p>
       <button id="helpButton" class="help-button" type="button" aria-label="Show place values and a reminder" aria-expanded="false" aria-describedby="helpTip">?</button>
@@ -711,10 +711,10 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 
     <div id="initialArea" class="initial-area"></div>
 
-    <form id="answerForm" class="answer-block" novalidate>
+    <form id="answerForm" class="answer-block" novalidate data-lab-manipulative="number-answer">
       <div id="answerLabel" class="answer-label"></div>
       <div id="answerArea"></div>
-      <div id="feedback" class="feedback" role="status" aria-live="polite"></div>
+      <div id="feedback" class="feedback" role="status" aria-live="polite" data-lab-role="evidence"></div>
       <div class="actions">
         <button id="checkButton" class="primary" type="submit">Check answer</button>
         <button id="newButton" type="button">New question</button>
@@ -728,9 +728,12 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 <script>
 (() => {
   const $=LabKit.dom.byId;
+  const contract=JSON.parse(document.querySelector("[data-examplicity-lab-contract]").textContent);
+  const profiles=contract.curriculum.profiles;
+  const initialProfile="cambridge-0478-igcse";
   const state={
-    level:"gcse",
-    range:"binary",
+    curriculumProfile:initialProfile,
+    range:profiles[initialProfile].parameters.defaultRange,
     question:null,
     correct:false,
     selectedChoice:null,
@@ -1331,25 +1334,25 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
     });
   }
 
-  const gcseBinaryPool=[
-    "denary-binary","binary-denary","binary-addition","overflow",
-    "shift-left","shift-right","denary-twos","denary-twos",
-    "twos-denary","twos-denary","negate-binary"
-  ];
-
-  const asOnlyPool=[
-    "denary-ones","ones-denary","ones-to-twos","twos-to-ones",
-    "denary-bcd","bcd-denary","prefix-conversion","signed-addition","signed-subtraction",
-    "signed-overflow","arithmetic-left","arithmetic-right","cyclic-left",
-    "cyclic-right","bitwise-and","bitwise-or","bitwise-xor","set-bit","test-bit"
-  ];
-
-  const hexPool=["denary-hex","hex-denary","binary-hex","hex-binary"];
+  const featureTemplates={
+    "integer-conversions":["denary-binary","binary-denary"],
+    "unsigned-arithmetic":["binary-addition","overflow"],
+    "logical-shifts":["shift-left","shift-right"],
+    "twos-complement":["denary-twos","denary-twos","twos-denary","twos-denary","negate-binary"],
+    "ones-complement":["denary-ones","ones-denary","ones-to-twos","twos-to-ones"],
+    "bcd-conversions":["denary-bcd","bcd-denary"],
+    "storage-prefixes":["prefix-conversion"],
+    "signed-arithmetic":["signed-addition","signed-subtraction","signed-overflow"],
+    "arithmetic-shifts":["arithmetic-left","arithmetic-right"],
+    "cyclic-shifts":["cyclic-left","cyclic-right"],
+    "bitwise-operations":["bitwise-and","bitwise-or","bitwise-xor","set-bit","test-bit"],
+    "hexadecimal-conversions":["denary-hex","hex-denary","binary-hex","hex-binary"]
+  };
 
   function activePool(){
-    const pool=state.level==="as"?[...gcseBinaryPool,...asOnlyPool]:[...gcseBinaryPool];
-    if(state.range==="hex") pool.push(...hexPool);
-    return pool;
+    return profiles[state.curriculumProfile].enabledFeatures
+      .filter(feature=>feature!=="hexadecimal-conversions"||state.range==="hex")
+      .flatMap(feature=>featureTemplates[feature]);
   }
 
   function generateQuestion(forcedKey=null){
@@ -1606,6 +1609,8 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 
   function renderQuestion(forcedKey=null){
     state.question=generateQuestion(forcedKey);
+    const feature=Object.keys(featureTemplates).find(id=>featureTemplates[id].includes(state.question.key));
+    $("questionCard").setAttribute("data-lab-feature",feature);
     state.correct=false;
     state.helpPinned=false;
     state.helpPreview=false;
@@ -1687,12 +1692,13 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
     $("helpButton").setAttribute("aria-expanded",String(active));
   }
 
-  function setLevel(level){
-    state.level=level;
+  function setProfile(profileId){
+    if(!Object.hasOwn(profiles,profileId)) throw new Error("Unknown curriculum profile: "+profileId);
+    state.curriculumProfile=profileId;
     state.lastTemplate=null;
     state.recent=[];
-    document.querySelectorAll("[data-level]").forEach(button=>{
-      button.setAttribute("aria-checked",String(button.dataset.level===level));
+    document.querySelectorAll("[data-curriculum-profile]").forEach(button=>{
+      button.setAttribute("aria-checked",String(button.dataset.curriculumProfile===profileId));
     });
     renderQuestion();
   }
@@ -1714,8 +1720,8 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
   });
   $("newButton").addEventListener("click",()=>renderQuestion());
 
-  document.querySelectorAll("[data-level]").forEach(button=>{
-    button.addEventListener("click",()=>setLevel(button.dataset.level));
+  document.querySelectorAll("[data-curriculum-profile]").forEach(button=>{
+    button.addEventListener("click",()=>setProfile(button.dataset.curriculumProfile));
   });
   document.querySelectorAll("[data-range]").forEach(button=>{
     button.addEventListener("click",()=>setRange(button.dataset.range));

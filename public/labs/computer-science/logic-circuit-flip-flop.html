@@ -805,6 +805,31 @@ button:disabled{opacity:.45;cursor:not-allowed}
 }
 </style>
 </style>
+<!-- LAB_CONTRACT_START -->
+<script type="application/json" data-examplicity-lab-contract data-contract-version="1">
+{
+  "schemaVersion": 1,
+  "relationship": "Toggling latch inputs and testing a prediction connects current signals and stored history to flip-flop state.",
+  "learnerLoop": {
+    "action": "Set input switches, make a prediction and release or clock the circuit.",
+    "modelChange": "The latch or flip-flop state and input signals change.",
+    "evidence": "The circuit stage, state evidence and prediction feedback show the stored result.",
+    "nextDecision": "Explain whether current inputs or previous state determined the output."
+  },
+  "invariants": [
+    "The displayed state follows the represented latch or flip-flop input sequence.",
+    "Prediction feedback compares the learner's choice with the resulting state."
+  ],
+  "safeAdaptations": [
+    "Change input sequences, scaffolding or examples while retaining visible state retention and prediction evidence."
+  ],
+  "nonGoals": [
+    "Modelling all sequential logic devices or physical timing characteristics."
+  ],
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+}
+</script>
+<!-- LAB_CONTRACT_END -->
 </head>
 <body data-lab-layout="standard">
 <main>
@@ -840,7 +865,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
     <span id="evidence-zero" class="evidence-chip">Memory</span>
     <span id="evidence-invalid" class="evidence-chip">SR 11</span>
     <span id="evidence-jk" class="evidence-chip">JK toggle</span>
-    <button id="reset-lab" class="quiet-button" type="button">Reset lab</button>
+    <button id="reset-lab" class="quiet-button" type="button" data-lab-action="reset">Reset lab</button>
   </div>
 </section>
 
@@ -860,7 +885,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
       </div>
 
       <div class="stage-shell">
-        <svg id="circuit-stage" class="stage" viewBox="0 0 900 520" role="img" aria-labelledby="stage-title stage-desc">
+        <svg id="circuit-stage" class="stage" viewBox="0 0 900 520" role="img" aria-labelledby="stage-title stage-desc" data-lab-role="model">
           <title id="stage-title">Cross-coupled NOR flip-flop circuit</title>
           <desc id="stage-desc">S and R or J and K control a cross-coupled pair of NOR gates. Live wires, gate outputs, feedback and the stored bit are shown.</desc>
           <defs>
@@ -1085,7 +1110,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
           <strong id="trace-title">Working evidence · state trace</strong>
           <span>Inputs settle first; Q before → after remains visible.</span>
         </div>
-        <ol id="trace-list" class="trace-list" aria-label="State history"></ol>
+        <ol id="trace-list" class="trace-list" aria-label="State history" data-lab-role="evidence"></ol>
         <p id="trace-note" class="trace-note">Each settled state remains here. HOLD rows after SET or RESET are the evidence used to compare stored states.</p>
         <div id="complete-note" class="complete-note" hidden></div>
       </section>

@@ -709,9 +709,35 @@ body{margin:0}
 
 </style>
 <!-- LAB_RESOURCE_END id="lab-kit.css" type="stylesheet" -->
+<!-- LAB_CONTRACT_START -->
+<script type="application/json" data-examplicity-lab-contract data-contract-version="1">
+{
+  "schemaVersion": 1,
+  "relationship": "One proposed meeting instant has different local clock and date representations, and it works only if its full duration fits every participant's availability.",
+  "learnerLoop": {
+    "action": "Place or calculate an organiser start time, send the proposal and inspect each local calendar.",
+    "modelChange": "The single meeting is converted into participant local times and dates.",
+    "evidence": "Linked calendars, fixed UTC offsets and availability checks show whether everyone can attend.",
+    "nextDecision": "Shift the organiser time or justify the conflict or valid overlap."
+  },
+  "invariants": [
+    "All displayed local times refer to the same meeting instant.",
+    "A valid meeting must fit every attendee's entire duration, including date changes."
+  ],
+  "safeAdaptations": [
+    "Vary fixed offsets, availability windows and meeting durations.",
+    "Adjust calculation support while retaining simultaneous local-calendar evidence."
+  ],
+  "nonGoals": [
+    "Geographic time-zone lookup or daylight-saving rule modelling."
+  ],
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+}
+</script>
+<!-- LAB_CONTRACT_END -->
 </head>
 <body data-lab-layout="standard">
-<main>
+<main data-lab-role="model" data-lab-manipulative="meeting-schedule">
 <!-- LAB_MANIFEST_HEADER_START -->
 <header class="lab-manifest-header">
   <div class="lab-manifest-heading">

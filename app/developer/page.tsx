@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 const files = [
   ['labs-src/<subject>/<slug>/lab.html', 'Authored lab. Owns the interface, behaviour, local styles, and lab-specific scripts.'],
-  ['labs-src/<subject>/<slug>/contract.json', 'Optional authoring sidecar. Sole source of adaptation guidance; compilation embeds it into published HTML.'],
+  ['lab-contracts/<subject>/<slug>.lab.json', 'Authoring sidecar in a separate tree. Sole source of adaptation guidance; compilation embeds it into published HTML.'],
   ['app/labs.ts', 'Catalogue record. Owns titles, descriptions, routes, formats, topics, and syllabus alignment used by the site.'],
   ['labs-src/manifest.json', 'Publication registry. Lists published labs, repeats syllabus alignment for an integrity check, and pins the LabKit and publication-profile releases.'],
   ['vendor/lab-kit/0.2.1/', 'Vendored LabKit release. Its manifest records the exact files, sizes, and hashes used during compilation.'],
@@ -24,7 +24,7 @@ const tools = [
   ['Publication compiler', 'scripts/compile-lab-sources.mjs', 'Checks manifest/profile/resource hashes, applies catalogue metadata and the shared frame, then writes public/labs/.'],
   ['Manifest renderer', 'app/lab-content.ts', 'Produces managed head metadata, structured data, lab header, and syllabus chips from app/labs.ts.'],
   ['Standalone packager', 'app/lab-download.ts', 'Adds the download header and footer to compiled HTML without adding a network runtime dependency.'],
-  ['Contract check', 'scripts/check-lab-contracts.mjs', 'Pilot-only check for embedded adaptation guidance, semantic locators, and exact preservation into compiled and downloaded HTML.'],
+  ['Contract check', 'scripts/check-lab-contracts.mjs', 'Catalogue-wide check for embedded adaptation guidance, semantic locators, and exact preservation into compiled and downloaded HTML.'],
   ['Lab CLI', 'scripts/lab.mjs', 'Focused inspect, validate, and build commands over the same package, contract, and publication code as the full build.'],
 ] as const;
 
@@ -63,11 +63,11 @@ export default function DeveloperPage() {
 
           <section id="model" className={styles.section}>
             <h2>Artifact model</h2>
-            <pre className={styles.flow}><code>{`authored package                      catalogue metadata
-labs-src/<subject>/<slug>/           app/labs.ts
-  lab.html
-  contract.json (optional)
-              \\                      /
+            <pre className={styles.flow}><code>{`authored HTML + separate contract + catalogue metadata
+labs-src/<subject>/<slug>/lab.html
+lab-contracts/<subject>/<slug>.lab.json
+app/labs.ts
+                              |
                +-- publication manifest --+
                    labs-src/manifest.json
                               |
@@ -91,7 +91,7 @@ labs-src/<subject>/<slug>/           app/labs.ts
           <section id="anatomy" className={styles.section}>
             <h2>Source anatomy</h2>
             <p>
-              A lab package contains <code>lab.html</code> and, only when needed, <code>contract.json</code>. The
+              Each lab has a source folder containing <code>lab.html</code> and a separate <code>.lab.json</code> sidecar. The
               HTML keeps interaction code local and declares shared resources at the point they are needed. The
               compiler replaces those declarations with pinned inline content and embeds the sidecar contract.
             </p>
@@ -104,7 +104,7 @@ labs-src/<subject>/<slug>/           app/labs.ts
 <link rel="stylesheet" href="./lab-kit.css" data-lab-resource="lab-kit.css">
 <script src="./lab-kit.js" data-lab-resource="lab-kit.js"></script>
 
-<!-- contract.json is separate authoring data; do not duplicate it here -->`}</code></pre>
+<!-- The .lab.json contract is separate authoring data; do not duplicate it here -->`}</code></pre>
             <p className={styles.boundary}>
               Blocks marked <code>LAB_MANIFEST_*</code>, <code>LAB_SYLLABUS_CHIPS_*</code>, and
               <code> LAB_FRAME_STYLES_*</code> are managed publication regions. <code>LAB_CONTRACT_*</code> exists
@@ -132,8 +132,8 @@ npm run test
 npm run build`}</code></pre>
             <p>
               <code>labs:sync:check</code> verifies compiled HTML, frame styles, manifest content, and standalone
-              downloads. <code>npm run build</code> runs that check again through <code>prebuild</code>. The contract
-              check currently covers only the two pilot labs.
+              downloads, including contract coverage and preservation for every published lab.
+              <code> npm run build</code> runs that check again through <code>prebuild</code>.
             </p>
           </section>
 
@@ -179,10 +179,10 @@ npm run build`}</code></pre>
           <section id="interfaces" className={styles.section}>
             <h2>Interfaces and current limits</h2>
             <ul className={styles.plainList}>
-              <li><strong>Standalone runtime:</strong> browser HTML, CSS, JavaScript, and the <code>LabKit</code> global.</li>
+              <li><strong>Standalone runtime:</strong> browser HTML, CSS, JavaScript, and the <code>LabKit</code> global. Binary Number Practice derives its IGCSE/AS question pools from its embedded contract profiles.</li>
               <li><strong>Site API:</strong> no public per-lab state or control API.</li>
               <li><strong>MCP:</strong> no lab MCP server is implemented.</li>
-              <li><strong>Adaptation metadata:</strong> two pilot labs carry an embedded Lab Contract. <Link href="/developer/lab-contract">Read its exact boundary.</Link></li>
+              <li><strong>Adaptation metadata:</strong> every published lab carries an embedded Lab Contract. <Link href="/developer/lab-contract">Read its exact boundary.</Link></li>
               <li><strong>Discovery:</strong> compact indexes are available at <Link href="/llms.txt">/llms.txt</Link> and <Link href="/developer/llms.txt">/developer/llms.txt</Link>.</li>
             </ul>
             <p className={styles.boundary}>

@@ -579,6 +579,31 @@ h1{margin:0;font-size:28px;font-weight:640;letter-spacing:-.03em;line-height:1.1
 @media(max-width:480px){main{width:min(100% - 10px,1380px)}.rack{grid-template-columns:1fr}.shell-header{grid-template-columns:1fr 1fr}.shell-name{grid-column:1/-1}.peel-tab{position:absolute;right:7px;top:7px;width:31px;height:31px;min-height:31px}.header-field{padding-right:5px}.packing-mat{margin:7px;padding:8px}.packet-host{width:100%;padding:4px}.gate{left:10px;grid-template-columns:37px 1fr}.server-window{left:73px}.receiver-packet{width:205px}}
 @media(prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;transition-duration:.001ms!important;scroll-behavior:auto!important}}
 </style>
+<!-- LAB_CONTRACT_START -->
+<script type="application/json" data-examplicity-lab-contract data-contract-version="1">
+{
+  "schemaVersion": 1,
+  "relationship": "Wrapping application data in protocol layers connects TCP/IP encapsulation to a packet's journey and receiver unpacking.",
+  "learnerLoop": {
+    "action": "Select protocol wrappers, send the built packet and peel layers at the receiver.",
+    "modelChange": "The packet gains or loses the selected protocol shells as it moves between hosts.",
+    "evidence": "The packing mat, flight packet, receiver packet and status strip show each layer's role.",
+    "nextDecision": "Add, remove or compare wrappers and explain what the receiver must unpack."
+  },
+  "invariants": [
+    "The packet shells shown in flight and at the receiver match the wrappers selected.",
+    "Receiver peeling removes the outer visible shell in order."
+  ],
+  "safeAdaptations": [
+    "Change application stories, endpoint labels or prompts while preserving layer construction and ordered unpacking."
+  ],
+  "nonGoals": [
+    "Sending a real TCP/IP packet or emulating complete network protocols."
+  ],
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+}
+</script>
+<!-- LAB_CONTRACT_END -->
 </head>
 <body data-lab-layout="standard">
 <main>
@@ -610,7 +635,7 @@ h1{margin:0;font-size:28px;font-weight:640;letter-spacing:-.03em;line-height:1.1
     </div>
     <div class="challenge-actions">
       <button id="compareProcess" type="button" hidden>Compare another process</button>
-      <button id="resetPacket" type="button">Restart lab</button>
+      <button id="resetPacket" type="button" data-lab-action="reset">Restart lab</button>
     </div>
   </section>
 
@@ -640,7 +665,7 @@ h1{margin:0;font-size:28px;font-weight:640;letter-spacing:-.03em;line-height:1.1
 
       <section class="station lab-kit-panel">
         <div class="station-title"><strong>Sender packing mat</strong><span id="packingSubtitle">The purple HTTP request is the Application-layer message. Build outward from it.</span></div>
-        <div id="packingMat" class="packing-mat lab-kit-canvas">
+        <div id="packingMat" class="packing-mat lab-kit-canvas" data-lab-role="model" data-lab-manipulative="packet-wrappers">
           <span class="mat-label">current transmitted object</span>
           <div id="packetHost" class="packet-host"></div>
           <div id="matHint" class="empty-hint">When a shell is added, watch its empty header fields fill. The entire previous object becomes payload.</div>

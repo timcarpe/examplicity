@@ -204,13 +204,9 @@ export default function Catalogue({ initialExam, initialLabSlug, initialSubjectI
       if (!response.ok) throw new Error(`Lab download failed with status ${response.status}.`);
 
       const source = await response.text();
-      const siteHomeUrl = new URL(examView.href, window.location.origin);
-      const liveLabUrl = new URL(labPageHref(activeLab), window.location.origin);
       const html = createStandaloneLabHtml({
         source,
         lab: activeLab,
-        siteHomeUrl: siteHomeUrl.href,
-        liveLabUrl: liveLabUrl.href,
       });
       const objectUrl = URL.createObjectURL(new Blob([html], { type: 'text/html;charset=utf-8' }));
       const link = document.createElement('a');

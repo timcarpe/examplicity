@@ -4,7 +4,7 @@ import styles from '../developer.module.css';
 
 export const metadata: Metadata = {
   title: 'Lab Contract reference | Examplicity',
-  description: 'The embedded adaptation guidance used by the Examplicity Lab Contract pilot.',
+  description: 'The embedded adaptation guidance used across the Examplicity lab catalogue.',
   alternates: { canonical: '/developer/lab-contract' },
 };
 
@@ -43,7 +43,7 @@ export default function LabContractPage() {
 
         <article className={styles.document}>
           <header className={styles.titleBlock}>
-            <p className={styles.eyebrow}>Pilot · contract version 1</p>
+            <p className={styles.eyebrow}>Contract version 1</p>
             <h1>Lab Contract reference</h1>
             <p>
               A Lab Contract is small JSON guidance embedded in a lab. Its reader is a person or model adapting
@@ -68,7 +68,7 @@ export default function LabContractPage() {
           <section id="shape" className={styles.section}>
             <h2>Authoring sidecar</h2>
             <p>
-              Author the contract once at <code>labs-src/&lt;subject&gt;/&lt;slug&gt;/contract.json</code>. Do not copy it
+              Author the contract once at <code>lab-contracts/&lt;subject&gt;/&lt;slug&gt;.lab.json</code>. Do not copy it
               into <code>lab.html</code>; the publication compiler owns the embedded block.
             </p>
             <pre className={styles.codeBlock}><code>{`{
@@ -104,7 +104,7 @@ export default function LabContractPage() {
               </table>
             </div>
             <p>
-              Unknown top-level fields are allowed in version 1 so the pilot can learn from real adaptations.
+              Unknown top-level fields are allowed in version 1 so the format can learn from real adaptations.
               When an optional field is present, its documented shape is validated. See the
               {' '}<Link href="/developer/lab-contract.schema.json">JSON Schema</Link> for the machine-readable form.
             </p>
@@ -112,7 +112,7 @@ export default function LabContractPage() {
 
           <section id="lifecycle" className={styles.section}>
             <h2>Lifecycle and validation</h2>
-            <pre className={styles.flow}><code>{`contract.json (authoritative)
+            <pre className={styles.flow}><code>{`lab-contracts/<subject>/<slug>.lab.json (authoritative)
           | validate + compile
           v
 generated LAB_CONTRACT block in public/labs HTML
@@ -120,10 +120,10 @@ generated LAB_CONTRACT block in public/labs HTML
           v
 contract preserved in standalone HTML`}</code></pre>
             <p>
-              <code>npm run labs:contract:check</code> verifies that each pilot has one valid contract and that its
+              <code>npm run labs:contract:check</code> verifies that each published lab has one valid contract and that its
               meaning is unchanged in the compiled and standalone artifacts. The embedded JSON escapes unsafe
-              script text but parses back to the sidecar value. The check currently covers
-              <code> fetch-decode-execute</code> and <code>straight-line-coordinates-equations</code> only.
+              script text but parses back to the sidecar value. This catalogue-wide check also runs during
+              <code> labs:sync:check</code>.
             </p>
           </section>
 
@@ -140,8 +140,8 @@ contract preserved in standalone HTML`}</code></pre>
               <div><dt><code>data-lab-feature</code></dt><dd>Optional stable ID connecting a surface to a declared curriculum feature.</dd></div>
             </dl>
             <p>
-              The current pilots use role and reset locators. The straight-line pilot also marks its graph as a
-              manipulative. Neither pilot currently declares curriculum features.
+              Labs mark meaningful model, working, and evidence surfaces, with reset and manipulative locators
+              where applicable. These annotations preserve existing behaviour and do not add runtime controls.
             </p>
           </section>
 
@@ -150,12 +150,20 @@ contract preserved in standalone HTML`}</code></pre>
             <p>
               Use <code>curriculum</code> only when one lab contains meaningful syllabus-dependent capabilities.
               A feature names a teaching capability. A profile records syllabus and qualification alignment,
-              enables declared feature IDs, and may carry subject-specific parameters. Difficulty, examples, and
-              assistance are not curriculum features.
+              enables declared feature IDs, and may carry subject-specific parameters. Curriculum determines
+              the permitted content; cases and difficulty vary the challenge within that content; assistance
+              changes the scaffolding and supplied working. Making a case harder does not introduce content
+              from another curriculum.
             </p>
             <p className={styles.boundary}>
-              Curriculum profiles are schema capability, not current pilot content. No profile toggle or profile
-              selection runtime is implemented.
+              Binary Number Practice uses its contract profiles to select the existing IGCSE and AS question
+              features. Its question-range and help controls remain separate from curriculum selection.
+              Other labs may have their own modes; there is no shared profile-selection runtime API yet.
+            </p>
+            <p>
+              Publication checks verify profile syllabus references against the catalogue and validate declared
+              feature references. They do not establish that a feature teaches a syllabus objective correctly.
+              That requires source review and behavioural verification.
             </p>
           </section>
 

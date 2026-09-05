@@ -127,7 +127,7 @@ test('publication manifest owns every live lab in stable order', async () => {
 
 test('publication manifest records every catalogue curriculum mapping', async () => {
   const manifest = JSON.parse(await readFile(publicationManifestPath, 'utf8'));
-  const manifestLabs = new Map(manifest.labs.map((entry: {
+  const manifestLabs = new Map<string, { syllabuses: unknown }>(manifest.labs.map((entry: {
     subject: string;
     slug: string;
     syllabuses: unknown;

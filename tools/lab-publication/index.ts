@@ -23,7 +23,6 @@ const FRAME_START = '<!-- LAB_FRAME_STYLES_START -->';
 const FRAME_END = '<!-- LAB_FRAME_STYLES_END -->';
 const PROFILE_ROOT = 'tools/lab-publication-profile';
 const VENDOR_ROOT = 'vendor';
-const SITE_HOME_URL = 'https://www.examplicity.org/';
 
 type PublicationManifestResource = {
   id: string;
@@ -343,6 +342,31 @@ const resolveTarget = (
 
 const countMarker = (source: string, marker: string) => source.split(marker).length - 1;
 
+export const validateLabCurriculum = (contract: LabContractV1, lab: Lab, hooks: LabHookInspection) => {
+  const curriculum = contract.curriculum;
+  for (const feature of hooks.features) {
+    if (!curriculum?.features[feature]) throw new Error(`${lab.slug}: unknown curriculum feature ${feature}`);
+  }
+  for (const [id, profile] of Object.entries(curriculum?.profiles ?? {})) {
+    for (const alignment of profile.alignment) {
+      const registered = lab.syllabuses.find((item) => item.code === alignment.syllabus
+        && (item.qualification === alignment.qualification
+          || (item.qualification === 'AS/A' && ['AS', 'A'].includes(alignment.qualification))));
+      if (!registered || alignment.sections.some((section) => !registered.sections.some((item) => item.id === section))) {
+        throw new Error(`${lab.slug}: curriculum profile ${id} references unregistered syllabus, qualification or sections`);
+      }
+    }
+  }
+  for (const [id, feature] of Object.entries(curriculum?.features ?? {})) {
+    for (const alignment of feature.alignment ?? []) {
+      const profile = curriculum!.profiles[alignment.profile];
+      if (alignment.sections.some((section) => !profile.alignment.some((item) => item.sections.includes(section)))) {
+        throw new Error(`${lab.slug}: feature ${id} references sections outside profile ${alignment.profile}`);
+      }
+    }
+  }
+};
+
 const inspectContractHooks = (source: string, label: string) => {
   const hooks = inspectLabHooks(source);
   if (
@@ -363,6 +387,9 @@ export const compilePublicationLab = async (
 ): Promise<CompiledPublicationLab> => {
   const resolved = resolveTarget(context, target);
   const labPackage = await resolveLabPackage(context.root, resolved.entry);
+  if (!labPackage.sidecarPath) {
+    throw new Error(`${resolved.entry.subject}/${resolved.entry.slug}: required .lab.json sidecar is missing`);
+  }
   const source = await readFile(labPackage.sourcePath, 'utf8');
   assertNoEmbeddedLabContract(source);
 
@@ -372,9 +399,10 @@ export const compilePublicationLab = async (
   if (labPackage.sidecarPath) {
     contract = parseLabContractV1(
       await readFile(labPackage.sidecarPath, 'utf8'),
-      `${resolved.entry.subject}/${resolved.entry.slug}/contract.json`,
+      labPackage.sidecarPath,
     );
     inspectContractHooks(source, `${resolved.entry.subject}/${resolved.entry.slug}`);
+    validateLabCurriculum(contract, resolved.lab, hooks);
     compilableSource = injectLabContract(source, contract);
   }
 
@@ -397,8 +425,6 @@ export const compilePublicationLab = async (
   const standalone = createStandaloneLabHtml({
     source: output,
     lab: resolved.lab,
-    siteHomeUrl: SITE_HOME_URL,
-    liveLabUrl: `https://www.examplicity.org${resolved.lab.href}`,
   });
 
   return {

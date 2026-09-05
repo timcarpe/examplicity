@@ -509,6 +509,32 @@ button.primary{background:var(--lab-accent);border-color:var(--lab-accent);color
 @media(max-width:650px){.mission{grid-template-columns:1fr}.goal-progress{max-width:260px}.mission-tools{grid-column:auto;justify-content:flex-start}.working{min-width:0}.visual-head{align-items:flex-start;flex-direction:column}.visual-actions{justify-content:flex-start}.map-cue{max-width:390px;right:9px;border-radius:8px}.evidence{grid-template-columns:1fr}.evidence-section:last-child{grid-column:auto}.resultant-grid{grid-template-columns:1fr 1fr}.status{grid-template-columns:1fr}.status-meter{text-align:left}.next-card{left:10px;right:auto;top:10px;width:min(330px,calc(100% - 20px))}.command-strip{min-height:66px}}
 @media(prefers-reduced-motion:reduce){.socket-ring,.prediction-pulse,.rack-flash{animation:none!important}}
 </style>
+<!-- LAB_CONTRACT_START -->
+<script type="application/json" data-examplicity-lab-contract data-contract-version="1">
+{
+  "schemaVersion": 1,
+  "relationship": "Head-to-tail vector commands determine a route, while their resultant displacement depends on components and can remain fixed when route order changes.",
+  "learnerLoop": {
+    "action": "Translate, scale or reverse vector commands, build a route and run the robot.",
+    "modelChange": "The command route, robot path and resultant components update.",
+    "evidence": "The floor trace, target outcome, component display and magnitude working compare path with displacement.",
+    "nextDecision": "Change a command or its order, then decide whether the resultant and route constraint are satisfied."
+  },
+  "invariants": [
+    "A vector's translation does not change its components.",
+    "The resultant components equal the sum of command components, even when order changes."
+  ],
+  "safeAdaptations": [
+    "Vary reusable vector commands, targets and route obstacles.",
+    "Adjust working support while retaining both physical-route and component evidence."
+  ],
+  "nonGoals": [
+    "Treating equal resultants as identical travelled paths."
+  ],
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+}
+</script>
+<!-- LAB_CONTRACT_END -->
 </head>
 <body data-lab-layout="standard">
 <main>
@@ -549,7 +575,7 @@ button.primary{background:var(--lab-accent);border-color:var(--lab-accent);color
     <div class="stage-side">
       <div class="visual-head"><div class="visual-copy"><strong id="visualTitle">Program the robot directly on the floor.</strong><span id="visualHint">Drag a command body to translate it. Drag the round head to scale or reverse it. Drop the tail on the white route socket.</span></div><div class="visual-actions"><button id="undoBtn" type="button">Undo last</button><button id="runBtn" class="primary" type="button">Run route</button></div></div>
       <div class="stage-shell">
-        <svg id="stage" viewBox="0 0 920 650" role="img" aria-labelledby="stageTitle stageDesc">
+        <svg id="stage" viewBox="0 0 920 650" role="img" aria-labelledby="stageTitle stageDesc" data-lab-role="model" data-lab-manipulative="vector-route">
           <title id="stageTitle">Warehouse vector route construction</title>
           <desc id="stageDesc">A coordinate warehouse floor with reusable vectors a and b, a robot route, a resultant displacement, a prediction marker, a storage rack and a target bay.</desc>
           <defs>

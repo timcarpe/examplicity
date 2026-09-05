@@ -498,6 +498,32 @@ button:focus-visible,input:focus-visible,[tabindex="0"]:focus-visible{outline:3p
 @media(max-width:620px){body{padding-top:60px;padding-bottom:76px}.numeric-entry{font-size:16px;min-height:44px}main{width:min(100% - 12px,1180px);margin-top:6px}h1{font-size:24px}.sub{font-size:12px}.lab-manifest-header{grid-template-columns:minmax(0,1fr) auto;gap:8px}.lab-syllabus-chips{display:none}.goal-copy span:last-child{display:none}.goal-top{grid-template-columns:1fr}.goal-meta{justify-content:space-between}.complexity{justify-items:start}.complexity-copy{text-align:left}.chain{margin:0}.reverse-stage{min-width:820px}.projection-svg{height:170px}.next-card{top:10px;width:min(310px,calc(100% - 20px))}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important;scroll-behavior:auto!important}}
 </style>
+<!-- LAB_CONTRACT_START -->
+<script type="application/json" data-examplicity-lab-contract data-contract-version="1">
+{
+  "schemaVersion": 1,
+  "relationship": "Each percentage change applies to the current amount, so a repeated multiplier models compound change and its reciprocal reverses it.",
+  "learnerLoop": {
+    "action": "Apply percentage changes, derive a multiplier and extend or reverse the calculation.",
+    "modelChange": "Successive amounts and the projected sequence update.",
+    "evidence": "The value chain, multiplier comparison and working checks show repeated change from a changing base.",
+    "nextDecision": "Select the multiplier operation needed for the next period or reverse calculation."
+  },
+  "invariants": [
+    "Each new percentage is applied to the previous amount.",
+    "A reverse percentage change uses the reciprocal multiplier, not the opposite percentage."
+  ],
+  "safeAdaptations": [
+    "Vary positive and negative percentage rates and time horizons.",
+    "Adjust working requirements while retaining multiplier-based evidence."
+  ],
+  "nonGoals": [
+    "Adding the same absolute percentage amount at every step."
+  ],
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+}
+</script>
+<!-- LAB_CONTRACT_END -->
 </head>
 <body data-lab-layout="standard">
 <main>
@@ -558,7 +584,7 @@ button:focus-visible,input:focus-visible,[tabindex="0"]:focus-visible{outline:3p
         </div>
         <div class="projection">
           <div class="projection-head"><div><strong>Same states, one repeated multiplier</strong><span id="projectionHint">Enter a multiplier to compare it with the values you just built.</span></div></div>
-          <svg id="projectionSvg" class="projection-svg" viewBox="0 0 720 180" role="img" aria-label="Projection of the repeated percentage multiplier"></svg>
+          <svg id="projectionSvg" class="projection-svg" viewBox="0 0 720 180" role="img" aria-label="Projection of the repeated percentage multiplier" data-lab-role="model" data-lab-manipulative="percentage-multiplier"></svg>
           <div id="projectionControls" class="projection-controls"><label for="horizon">Extend to year</label><input id="horizon" type="range" min="3" max="10" value="6"><output id="horizonOut">6</output></div>
           <div id="formulaBand" class="formula-band"></div>
         </div>

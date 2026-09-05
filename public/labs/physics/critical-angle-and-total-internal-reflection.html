@@ -521,6 +521,34 @@ select,input[type="number"]{padding:0 8px}
 
 </style>
 <!-- LAB_RESOURCE_END id="lab-kit.css" type="stylesheet" -->
+<!-- LAB_CONTRACT_START -->
+<script type="application/json" data-examplicity-lab-contract data-contract-version="1">
+{
+  "schemaVersion": 1,
+  "relationship": "Changing incidence angle and the refractive-index boundary connects refraction to the critical threshold and total internal reflection, with calculation checked against the visible ray behaviour.",
+  "learnerLoop": {
+    "action": "Predict the threshold change, adjust incidence angle, mark the transition and complete critical-angle working.",
+    "modelChange": "The two media and incidence angle determine refracted and reflected rays and whether a critical angle exists.",
+    "evidence": "The ray diagram, regime indicator and recorded calculation expose refraction, the boundary case and total internal reflection.",
+    "nextDecision": "Compare observation with calculation and test a different refractive index or reverse the boundary."
+  },
+  "invariants": [
+    "Angles are measured from the normal and refraction follows the same index ratio used in the calculation.",
+    "A critical angle exists only from higher to lower refractive index; total internal reflection requires exceeding it.",
+    "Guidance levels change calculation support without removing the physical threshold investigation."
+  ],
+  "safeAdaptations": [
+    "Change index examples and prediction wording within the existing optical model.",
+    "Adjust working support while preserving the observe, mark and calculate sequence."
+  ],
+  "nonGoals": [
+    "Do not present total internal reflection as occurring at every boundary or every angle.",
+    "Do not expand into wave interference or a full optical-instrument simulator."
+  ],
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+}
+</script>
+<!-- LAB_CONTRACT_END -->
 </head>
 <body data-lab-layout="standard">
 <main>
@@ -565,7 +593,7 @@ select,input[type="number"]{padding:0 8px}
           <button type="button" data-work-level="2" aria-pressed="false">All</button>
         </div>
       </div>
-      <button type="button" id="resetBtn" class="quiet">Reset</button>
+      <button type="button" id="resetBtn" class="quiet" data-lab-action="reset">Reset</button>
     </div>
   </section>
 
@@ -577,7 +605,7 @@ select,input[type="number"]{padding:0 8px}
           <div id="mediumDisplay" class="medium-display"></div>
         </div>
         <div class="stage-shell">
-          <svg id="stage" class="stage" viewBox="0 0 960 540" role="slider" tabindex="0" aria-label="Angle of incidence" aria-valuemin="5" aria-valuemax="80" aria-valuenow="20" aria-valuetext="20 degrees, refraction">
+          <svg id="stage" class="stage" viewBox="0 0 960 540" role="slider" tabindex="0" aria-label="Angle of incidence" aria-valuemin="5" aria-valuemax="80" aria-valuenow="20" aria-valuetext="20 degrees, refraction" data-lab-role="model" data-lab-manipulative="incidence-angle">
           </svg>
           <div id="guideCard" class="guide-card" hidden><span class="guide-kicker">Direct manipulation</span><strong>Drag the laser around the curved edge.</strong><span>The beam always enters along a radius. Only the incidence angle at the flat face changes.</span></div>
         </div>
@@ -585,9 +613,9 @@ select,input[type="number"]{padding:0 8px}
           <div id="stageNote" class="stage-note-copy"></div>
           <span id="regimeChip" class="stage-note-state refraction">Refraction</span>
         </div>
-        <div id="causalDock" class="causal-dock" aria-label="Cause and effect summary"></div>
+        <div id="causalDock" class="causal-dock" aria-label="Cause and effect summary" data-lab-role="evidence"></div>
       </div>
-      <aside id="workPanel" class="work-panel" aria-label="Critical-angle working area"></aside>
+      <aside id="workPanel" class="work-panel" aria-label="Critical-angle working area" data-lab-role="working"></aside>
     </div>
   </section>
   <div id="announcer" class="visually-hidden" aria-live="polite"></div>

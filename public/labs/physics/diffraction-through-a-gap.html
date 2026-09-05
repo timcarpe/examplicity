@@ -1404,6 +1404,33 @@ body>main{width:min(1200px,calc(100vw - 28px));height:auto;max-height:calc(100vh
 
 </style>
 <!-- LAB_RESOURCE_END id="lab-kit.css" type="stylesheet" -->
+<!-- LAB_CONTRACT_START -->
+<script type="application/json" data-examplicity-lab-contract data-contract-version="1">
+{
+  "schemaVersion": 1,
+  "relationship": "Changing gap width relative to wavelength changes diffraction spread, so controlled comparisons and equal gap-to-wavelength ratios explain the shape of outgoing wavefronts.",
+  "learnerLoop": {
+    "action": "Predict and test narrowing the gap at fixed wavelength, then increasing wavelength at fixed gap, and build a matching-spread case.",
+    "modelChange": "Gap and wavelength determine the ratio and the modelled outgoing wavefront spread.",
+    "evidence": "Animated wavefronts, spread indicators, reference comparisons and ratio working reveal the consequence.",
+    "nextDecision": "Use the evidence to explain which change increased spread and construct another pair with the same ratio."
+  },
+  "invariants": [
+    "Controlled comparisons keep one quantity fixed so the cause of changing spread is visible.",
+    "Smaller gap-to-wavelength ratios yield greater spread; equal ratios give matching spread in the model.",
+    "Incoming and outgoing wavelength remain consistent in the same medium; the display is a teaching model rather than an exact wave-field measurement."
+  ],
+  "safeAdaptations": [
+    "Change numeric examples and guidance while preserving separate-variable tests and ratio comparison.",
+    "Add prediction or explanation prompts grounded in the displayed wavefront evidence."
+  ],
+  "nonGoals": [
+    "Do not turn the model into a quantitative diffraction-intensity measurement or a double-slit interference lab."
+  ],
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+}
+</script>
+<!-- LAB_CONTRACT_END -->
 </head>
 <body data-phase="gap" data-lab-layout="standard">
 <main>
@@ -1453,7 +1480,7 @@ body>main{width:min(1200px,calc(100vw - 28px));height:auto;max-height:calc(100vh
       <span id="stepCompare" class="phase-step"><i></i>3 Compare</span>
     </div>
     <button id="pauseButton" class="ui-button" type="button">Pause waves</button>
-    <button id="resetButton" class="ui-button" type="button">Reset step</button>
+    <button id="resetButton" class="ui-button" type="button" data-lab-action="reset">Reset step</button>
   </div>
 </section>
 
@@ -1473,9 +1500,9 @@ body>main{width:min(1200px,calc(100vw - 28px));height:auto;max-height:calc(100vh
   </div>
 
   <div class="stage-shell">
-    <div class="stage-frame" id="stageFrame">
+    <div class="stage-frame" id="stageFrame" data-lab-role="model">
       <canvas id="waveCanvas" width="900" height="430" aria-label="Animated ripple-tank wavefronts passing through a gap"></canvas>
-      <svg id="overlay" viewBox="0 0 900 430" role="img" aria-label="Adjustable gap, wavelength measurements and diffraction spread">
+      <svg id="overlay" viewBox="0 0 900 430" role="img" aria-label="Adjustable gap, wavelength measurements and diffraction spread" data-lab-manipulative="gap-and-wavelength">
         <defs>
           <marker id="arrowHead" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" fill="#456a7d"></path></marker>
         </defs>
@@ -1618,7 +1645,7 @@ body>main{width:min(1200px,calc(100vw - 28px));height:auto;max-height:calc(100vh
               <div id="targetSpread" class="target"><i></i><strong>Wavefront fan is wider than the reference</strong><span id="targetSpreadValue">same</span></div>
               <div id="targetRatio" class="target"><i></i><strong id="targetRatioLabel">Compare the current gap ÷ wavelength</strong><span id="targetRatioValue">not checked</span></div>
             </div>
-            <div class="working-box" id="workingBox">
+            <div class="working-box" id="workingBox" data-lab-role="working">
               <div class="working-head">
                 <div class="working-title"><strong>Your working</strong><span>observe first, then take over</span></div>
                 <div class="working-switch" role="group" aria-label="How much of the ratio calculation you complete">
@@ -1651,7 +1678,7 @@ body>main{width:min(1200px,calc(100vw - 28px));height:auto;max-height:calc(100vh
         <div class="evidence-list">
           <div id="evidenceGap" class="evidence-row current"><strong>1 Narrow the gap <span>current</span></strong><p id="evidenceGapText">Prediction not recorded.</p></div>
           <div id="evidenceWave" class="evidence-row"><strong>2 Increase wavelength <span>waiting</span></strong><p id="evidenceWaveText">Gap will be held constant.</p></div>
-          <div id="evidenceCompare" class="evidence-row"><strong>3 Wider-gap counterexample <span>waiting</span></strong><p id="evidenceCompareText">Compare two gap-to-wavelength ratios.</p></div>
+          <div id="evidenceCompare" class="evidence-row" data-lab-role="evidence"><strong>3 Wider-gap counterexample <span>waiting</span></strong><p id="evidenceCompareText">Compare two gap-to-wavelength ratios.</p></div>
         </div>
         <p class="model-note">The animated field is a schematic ripple-tank model. It preserves the syllabus relationship between gap size, wavelength and spreading.</p>
       </aside>

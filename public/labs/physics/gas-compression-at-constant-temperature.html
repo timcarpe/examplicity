@@ -490,6 +490,35 @@ body>main{container-name:lab-canvas;container-type:inline-size;width:min(1200px,
 
 </style>
 <!-- LAB_RESOURCE_END id="lab-kit.css" type="stylesheet" -->
+<!-- LAB_CONTRACT_START -->
+<script type="application/json" data-examplicity-lab-contract data-contract-version="1">
+{
+  "schemaVersion": 1,
+  "relationship": "Moving a piston changes the volume of a fixed gas at constant temperature, connecting collision frequency and pressure to the inverse pressure-volume relationship.",
+  "learnerLoop": {
+    "action": "Predict compression or expansion, move the piston, then use gauge readings and working to meet a pressure or volume target.",
+    "modelChange": "Volume changes while the model keeps the gas amount and temperature fixed; pressure and collision-rate evidence respond inversely.",
+    "evidence": "Particle motion, impact indicators, the pressure gauge, graph trace and pressure-volume product reveal the linked change.",
+    "nextDecision": "Compare prediction with observation, calculate a new target, or pin readings to test the relationship in free investigation."
+  },
+  "invariants": [
+    "Pressure and volume satisfy the same constant product in the gauge, graph and calculation.",
+    "Constant temperature is represented by unchanged particle speed, not faster particles during compression.",
+    "Collision-frequency evidence changes with volume and stays distinct from particle-speed evidence.",
+    "Working assistance preserves the need to manipulate the piston and compare physical evidence."
+  ],
+  "safeAdaptations": [
+    "Change target values, wording or working support within the supported volume range.",
+    "Add comparisons of pinned readings that test the inverse relationship."
+  ],
+  "nonGoals": [
+    "Do not model changing temperature, changing gas amount or non-ideal gas behaviour.",
+    "Do not replace the piston investigation with a formula-only quiz."
+  ],
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+}
+</script>
+<!-- LAB_CONTRACT_END -->
 </head>
 <body data-lab-layout="standard">
 <main>
@@ -541,7 +570,7 @@ body>main{container-name:lab-canvas;container-type:inline-size;width:min(1200px,
       </div>
     </div>
     <div id="caseRail" class="case-rail" aria-label="Investigation progress"></div>
-    <button id="resetCase" type="button">Reset investigation</button>
+    <button id="resetCase" type="button" data-lab-action="reset">Reset investigation</button>
   </div>
 </section>
 
@@ -553,7 +582,7 @@ body>main{container-name:lab-canvas;container-type:inline-size;width:min(1200px,
         <div class="visual-key" aria-label="Visual key"><span><i class="gas"></i>gas particles</span><span><i class="hit"></i>piston impacts</span><span><i class="curve"></i>constant-temperature curve</span></div>
       </div>
       <div id="stageShell" class="stage-shell">
-        <svg id="stage" class="stage" viewBox="0 0 1040 620" role="img" aria-labelledby="svgTitle svgDesc">
+        <svg id="stage" class="stage" viewBox="0 0 1040 620" role="img" aria-labelledby="svgTitle svgDesc" data-lab-role="model">
           <title id="svgTitle">Interactive sealed gas cylinder with pressure gauge and pressure-volume graph</title>
           <desc id="svgDesc">Drag the piston horizontally. The gas volume, particle collision frequency, pressure gauge and pressure-volume point update while temperature and particle speed stay constant.</desc>
           <defs>
@@ -575,7 +604,7 @@ body>main{container-name:lab-canvas;container-type:inline-size;width:min(1200px,
             <g id="particleLayer" clip-path="url(#gasClip)"></g>
             <g id="collisionLayer"></g>
             <g id="forceLayer"></g>
-            <g id="piston" class="piston-handle" tabindex="0" role="slider" aria-label="Gas volume controlled by the piston" aria-valuemin="2" aria-valuemax="8" aria-valuenow="6" aria-valuetext="6.00 litres">
+            <g id="piston" class="piston-handle" tabindex="0" role="slider" aria-label="Gas volume controlled by the piston" aria-valuemin="2" aria-valuemax="8" aria-valuenow="6" aria-valuetext="6.00 litres" data-lab-manipulative="gas-volume">
               <rect class="handle-halo" x="-17" y="-25" width="34" height="232" rx="17"/>
               <rect id="pistonWall" x="-10" y="104" width="20" height="190" rx="5" fill="#4f5c64" stroke="#2f3940" stroke-width="2"/>
               <rect x="7" y="178" width="92" height="34" rx="10" fill="url(#metalGrad)" stroke="#6d7a82" stroke-width="2"/>
@@ -601,7 +630,7 @@ body>main{container-name:lab-canvas;container-type:inline-size;width:min(1200px,
             <text id="gaugeValue" x="870" y="258" text-anchor="middle" fill="#7c4a24" font-size="18" font-weight="850">100 kPa</text>
             <text x="870" y="276" text-anchor="middle" fill="#6f7d85" font-size="8.5" font-weight="700">force per unit area</text>
           </g>
-          <g id="graphLayer">
+          <g id="graphLayer" data-lab-role="evidence">
             <rect x="44" y="382" width="708" height="214" rx="12" fill="#fff" stroke="#d3dade"/>
             <text x="62" y="404" fill="#33434d" font-size="10" font-weight="850">PRESSURE–VOLUME GRAPH</text>
             <text id="graphCaption" x="735" y="404" text-anchor="end" fill="#738088" font-size="7.5">same fixed mass · same temperature</text>
@@ -642,7 +671,7 @@ body>main{container-name:lab-canvas;container-type:inline-size;width:min(1200px,
 
     <aside class="evidence-side" aria-label="Investigation guidance and evidence">
       <section id="phaseCard" class="phase-card" aria-live="polite"></section>
-      <section id="workingDock" class="working-dock" aria-label="Working area" aria-live="polite"></section>
+      <section id="workingDock" class="working-dock" aria-label="Working area" aria-live="polite" data-lab-role="working"></section>
       <section class="relationship-card">
         <h3>Action → physical consequence</h3>
         <div class="change-chain">

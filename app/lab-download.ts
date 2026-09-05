@@ -1,12 +1,13 @@
 import { applyLabManifestContent } from './lab-content.ts';
-import type { Lab } from './labs.ts';
+import { labPageHref, type Lab } from './labs.ts';
 
 type StandaloneLabOptions = {
   source: string;
   lab: Lab;
-  siteHomeUrl: string;
-  liveLabUrl: string;
 };
+
+const SITE_HOME_URL = 'https://www.examplicity.org/';
+const SITE_ORIGIN = 'https://www.examplicity.org';
 
 const escapeHtml = (value: string) => value
   .replaceAll('&', '&amp;')
@@ -125,11 +126,9 @@ body {
 export const createStandaloneLabHtml = ({
   source,
   lab,
-  siteHomeUrl,
-  liveLabUrl,
 }: StandaloneLabOptions) => {
-  const homeHref = escapeHtml(siteHomeUrl);
-  const labHref = escapeHtml(liveLabUrl);
+  const homeHref = escapeHtml(SITE_HOME_URL);
+  const labHref = escapeHtml(`${SITE_ORIGIN}${labPageHref(lab)}`);
   const labTitle = escapeHtml(lab.title);
   const manifestSource = applyLabManifestContent(source, lab);
   const closingHead = manifestSource.toLowerCase().lastIndexOf('</head>');

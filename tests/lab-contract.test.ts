@@ -70,9 +70,15 @@ test('validates the small semantic hook vocabulary', () => {
   );
   assert.throws(() => inspectLabHooks('<div data-lab-role="answer"></div>'), /unsupported value/);
   assert.throws(() => inspectLabHooks('<div data-lab-feature="Compare Cases"></div>'), /invalid stable ID/);
+  assert.deepEqual(inspectLabHooks(`
+    <!-- <div data-lab-role="answer"></div> -->
+    <script>const example = '<div data-lab-role="model"></div>';</script>
+    <style>[data-lab-role="working"] { color: red; }</style>
+    <div title='data-lab-role="evidence"'></div>
+  `), { roles: [], actions: [], manipulatives: [], features: [] });
 });
 
-test('requires a package source while preserving the flat public output', async () => {
+test('resolves a separate contract tree while preserving the package source and flat public output', async () => {
   const root = await mkdtemp(path.join(os.tmpdir(), 'examplicity-lab-package-'));
   const identity = { subject: 'computer-science', slug: 'example-lab' };
   const paths = getLabPackagePaths(root, identity);
@@ -82,11 +88,15 @@ test('requires a package source while preserving the flat public output', async 
   const resolved = await resolveLabPackage(root, identity);
   assert.equal(resolved.sourcePath, paths.packageSourcePath);
   assert.equal(resolved.sidecarPath, null);
+  assert.equal(paths.contractPath, path.join(root, 'lab-contracts', 'computer-science', 'example-lab.lab.json'));
+  await mkdir(path.dirname(paths.contractPath), { recursive: true });
+  await writeFile(paths.contractPath, JSON.stringify(contract));
+  assert.equal((await resolveLabPackage(root, identity)).sidecarPath, paths.contractPath);
   assert.equal(resolved.publicOutputPath, path.join(root, 'public', 'labs', 'computer-science', 'example-lab.html'));
 
   const legacySourcePath = path.join(root, 'labs-src', 'computer-science', 'example-lab.html');
   await writeFile(legacySourcePath, '<html></html>');
-  assert.rejects(() => resolveLabPackage(root, identity), /Duplicate lab source/);
+  await assert.rejects(() => resolveLabPackage(root, identity), /Duplicate lab source/);
 });
 
 test('rejects unsafe identities and orphan sidecars', async () => {
@@ -96,7 +106,7 @@ test('rejects unsafe identities and orphan sidecars', async () => {
   );
   const root = await mkdtemp(path.join(os.tmpdir(), 'examplicity-lab-orphan-'));
   const paths = getLabPackagePaths(root, { subject: 'mathematics', slug: 'orphan' });
-  await mkdir(paths.packageDirectory, { recursive: true });
+  await mkdir(path.dirname(paths.contractPath), { recursive: true });
   await writeFile(paths.contractPath, JSON.stringify(contract));
   await assert.rejects(
     () => resolveLabPackage(root, { subject: 'mathematics', slug: 'orphan' }),

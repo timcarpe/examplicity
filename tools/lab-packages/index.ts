@@ -52,7 +52,7 @@ export const getLabPackagePaths = (
   return {
     packageDirectory,
     packageSourcePath: path.join(packageDirectory, 'lab.html'),
-    contractPath: path.join(packageDirectory, 'contract.json'),
+    contractPath: path.join(root, 'lab-contracts', subject, `${slug}.lab.json`),
     publicOutputPath: path.join(root, 'public', 'labs', subject, `${slug}.html`),
   };
 };
@@ -81,7 +81,7 @@ export const resolveLabPackage = async (
   }
   if (hasContract && !hasPackageSource) {
     throw new Error(
-      `Orphan Lab Contract for ${identity.subject}/${identity.slug}: contract.json requires package lab.html`,
+      `Orphan Lab Contract for ${identity.subject}/${identity.slug}: sidecar requires package lab.html`,
     );
   }
   if (!hasPackageSource) {
