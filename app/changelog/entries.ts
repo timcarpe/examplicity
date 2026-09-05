@@ -14,19 +14,6 @@ export const changelogEntries: readonly ChangelogEntry[] = [
       'Refreshed Repeated Percentage Change, Motion Graphs, Bounds, Straight Lines and Recurring Decimals with consistent controls, working cards and movable completion prompts. Restored Bounds’ interval and speed exploration with a better-placed stopwatch and meaningful learning transitions. Percentage changes operate directly on the existing bar in a fitted horizontal sequence. Introductions now explain newly required model and calculation actions. Motion, Histogram and Bounds share stable chart dragging without pickup jumps. Popups prefer empty space, and card headings and chart labels are clearer. Bounds now has compact digital measurement displays, a visible claim, explicit included/excluded interval endpoints and restored proof-entry feedback; its finer proof diagram uses the correct worst-case measurements.',
       'Refreshed Circle Theorems and four Trigonometry labs with consistent working controls, progressive working cards, readable diagram labels, contextual introductions and movable learning transitions. Preserved the geometric constructions and the 3D unfolding model. Flattened candidate-field surfaces and separated 3D concept colours from green success feedback.',
       'Clarified AI remix guidance to preserve each lab’s learning relationships and curriculum, and made downloaded labs link consistently to their live versions with the correct MIT licence notice.',
-    ],
-    internalChanges: [
-      'Documented a three-owner plan for queryable exam evidence, demand summaries and lab adaptations; recorded a source audit that blocks use of incorrect draft mappings pending semantic re-review.',
-      'Published the living design guide and Lab Kit resources under /developer for the next release, with focused component-use rules and interactive specimens. Extended working attention and flat maths surfaces across the reviewed labs. Consolidated refinement CSS into a shared authoring-kit resource embedded into published and downloaded labs. Recorded the accepted five-lab batch and adaptation lessons for future passes, including preserved interaction models, purposeful working, shared resources and focused review.',
-      'Rolled out separate contract sidecars and semantic hooks across all 57 labs, expanded developer guidance and CLI inspection, and validated contract preservation in generated and standalone HTML.',
-      'Mapped the 16 redesigned labs’ current surfaces, quantities, physical input slots, support modes and completion dependencies in optional revision-bound contract metadata. Added passive locators and developer reference documentation; preserved existing curriculum and behaviour.',
-      'Connected Binary Numbers’ existing IGCSE and AS question pools to curriculum profiles, corrected contract invariants, and added focused curriculum and download regression checks. The AI adaptation comparison remains unevaluated.',
-    ],
-  },
-  {
-    date: '2026-09-05',
-    displayDate: '5 September 2026',
-    publicChanges: [
       'Added flip-flop feedback, recursive call-stack and artificial-neuron investigations for Cambridge International A Level Computer Science 9618.',
       'Added Cambridge IGCSE Mathematics 0580 investigations for similarity, relative frequency, expected frequency, replacement and conditional sample spaces.',
       'Added Biology, Chemistry and Physics investigations for natural selection, converging lenses, total internal reflection, diffraction, and constant-temperature gas compression.',
@@ -35,9 +22,15 @@ export const changelogEntries: readonly ChangelogEntry[] = [
       'Made direct and search-result lab links open inside the full Examplicity navigation and footer frame.',
     ],
     internalChanges: [
+      'Documented a three-owner plan for queryable exam evidence, demand summaries and lab adaptations; recorded a source audit that blocks use of incorrect draft mappings pending semantic re-review.',
+      'Published the living design guide and Lab Kit resources under /developer for the next release, with focused component-use rules and interactive specimens. Extended working attention and flat maths surfaces across the reviewed labs. Consolidated refinement CSS into a shared authoring-kit resource embedded into published and downloaded labs. Recorded the accepted five-lab batch and adaptation lessons for future passes, including preserved interaction models, purposeful working, shared resources and focused review.',
+      'Rolled out separate contract sidecars and semantic hooks across all 57 labs, expanded developer guidance and CLI inspection, and validated contract preservation in generated and standalone HTML.',
+      'Mapped the 16 redesigned labs’ current surfaces, quantities, physical input slots, support modes and completion dependencies in optional revision-bound contract metadata. Added passive locators and developer reference documentation; preserved existing curriculum and behaviour.',
+      'Connected Binary Numbers’ existing IGCSE and AS question pools to curriculum profiles, corrected contract invariants, and added focused curriculum and download regression checks. The AI adaptation comparison remains unevaluated.',
       'Updated the shared Lab Kit publication resource and compiled the six approved final artifacts into manifest-owned subject routes with syllabus metadata and standalone downloads.',
       'Added Biology, Chemistry and Physics qualification views, including Co-ordinated Sciences 0654 alignment and verified AS/A routing for 9700, 9701 and 9702.',
       'Aligned repository, package and generated-download license declarations with the MIT License.',
+      'Reconciled the design worktree with canonical framed lab routes and pinned shared-resource line endings so Windows checkouts preserve package hashes.',
     ],
   },
   {

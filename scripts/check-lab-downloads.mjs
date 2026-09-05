@@ -78,7 +78,7 @@ for (const lab of labs) {
     || count(packaged, 'padding-bottom: 58px !important') !== 1
     || count(packaged, '<header class="examplicity-download-header"') !== 1
     || count(packaged, '<footer class="examplicity-download-footer"') !== 1
-    || !footer.includes(`href="https://www.examplicity.org${lab.href}"`)
+    || !footer.includes(`href="https://www.examplicity.org${labPageHref(lab)}"`)
     || !footer.includes('href="https://www.examplicity.org/"')
     || count(packaged, '<!-- LAB_FRAME_STYLES_START -->') !== 1
     || count(packaged, '<!-- LAB_FRAME_STYLES_END -->') !== 1

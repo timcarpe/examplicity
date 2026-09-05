@@ -17,6 +17,6 @@ test('standalone downloads use canonical home and live-lab links', async () => {
   const standalone = createStandaloneLabHtml({ source, lab });
 
   assert.match(standalone, /href="https:\/\/www\.examplicity\.org\/"/);
-  assert.match(standalone, /href="https:\/\/www\.examplicity\.org\/labs\/computer-science\/fetch-decode-execute\.html"/);
+  assert.match(standalone, /href="https:\/\/www\.examplicity\.org\/labs\/computer-science\/fetch-decode-execute" target="_blank"/);
   assert.doesNotMatch(standalone, /computer-science\/0478\?lab=/);
 });
