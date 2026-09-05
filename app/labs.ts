@@ -450,6 +450,10 @@ export const labAppearsInSubject = (lab: Lab, subjectId: SubjectId) => (
   lab.subject === subjectId || lab.catalogueSubjects?.includes(subjectId) === true
 );
 
+export const labPageHref = (lab: Lab) => `/labs/${lab.subject}/${lab.slug}`;
+
+export const labEmbedHref = (lab: Lab) => `${lab.href}?embed=1`;
+
 export const translator: Lab = {
   subject: 'computer-science',
   slug: 'translator',

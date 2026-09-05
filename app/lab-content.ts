@@ -1,4 +1,4 @@
-import { labAppearsInSubject, subjects, syllabusRegistry, type Lab } from './labs.ts';
+import { labAppearsInSubject, labPageHref, subjects, syllabusRegistry, type Lab } from './labs.ts';
 import { productionSiteUrl, siteTitle } from './site.ts';
 
 const headStart = '<!-- LAB_MANIFEST_HEAD_START -->';
@@ -51,7 +51,8 @@ const qualificationLevels = {
   'AS/A': ['AS Level', 'A Level'],
 } as const;
 
-const renderStructuredData = (lab: Lab, canonicalUrl: string) => {
+export const getLabStructuredData = (lab: Lab) => {
+  const canonicalUrl = `${productionSiteUrl}${labPageHref(lab)}`;
   const subject = subjects.find((entry) => entry.id === lab.subject);
   if (!subject) throw new Error(`${lab.slug} references unknown subject ${lab.subject}`);
 
@@ -102,11 +103,15 @@ const renderStructuredData = (lab: Lab, canonicalUrl: string) => {
     },
   };
 
-  return `<script type="application/ld+json" data-lab-manifest="structured-data">${JSON.stringify(structuredData).replace(/</g, '\\u003c')}</script>`;
+  return structuredData;
 };
 
+const renderStructuredData = (lab: Lab) => (
+  `<script type="application/ld+json" data-lab-manifest="structured-data">${JSON.stringify(getLabStructuredData(lab)).replace(/</g, '\\u003c')}</script>`
+);
+
 const renderHead = (lab: Lab) => {
-  const canonicalUrl = `${productionSiteUrl}${lab.href}`;
+  const canonicalUrl = `${productionSiteUrl}${labPageHref(lab)}`;
   const socialImage = `${productionSiteUrl}/opengraph-image`;
   const title = escapeHtml(lab.title);
   const description = escapeHtml(lab.metaDescription);
@@ -126,7 +131,7 @@ const renderHead = (lab: Lab) => {
 <meta name="twitter:title" content="${title}">
 <meta name="twitter:description" content="${description}">
 <meta name="twitter:image" content="${socialImage}">
-${renderStructuredData(lab, canonicalUrl)}
+${renderStructuredData(lab)}
 ${headEnd}`;
 };
 

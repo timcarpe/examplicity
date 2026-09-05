@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
   labAppearsInSubject,
+  labEmbedHref,
+  labPageHref,
   labs,
   qualificationLevels,
   subjects,
@@ -15,7 +17,7 @@ import {
   type SubjectDefinition,
   type SubjectId,
   type Topic,
-} from './labs';
+} from './labs.ts';
 import { createStandaloneLabHtml } from './lab-download';
 import { LabIcon } from './lab-icon';
 import { BugReportDialog } from './bug-report-dialog';
@@ -52,10 +54,11 @@ const viewIncludesExam = (
 
 type CatalogueProps = {
   initialExam: ExamCode;
+  initialLabSlug?: string;
   initialSubjectId: SubjectId;
 };
 
-export default function Catalogue({ initialExam, initialSubjectId }: CatalogueProps) {
+export default function Catalogue({ initialExam, initialLabSlug, initialSubjectId }: CatalogueProps) {
   const router = useRouter();
   const [subjectId, setSubjectId] = useState<SubjectId>(initialSubjectId);
   const [level, setLevel] = useState<QualificationLevel>(() => {
@@ -67,7 +70,9 @@ export default function Catalogue({ initialExam, initialSubjectId }: CataloguePr
       ?? availableLevels(initialSubject)[0]
       ?? qualificationLevels[0];
   });
-  const [activeLab, setActiveLab] = useState<Lab | null>(null);
+  const [activeLab, setActiveLab] = useState<Lab | null>(() => (
+    labs.find((lab) => lab.slug === initialLabSlug && lab.subject === initialSubjectId) ?? null
+  ));
   const [isLoading, setIsLoading] = useState(false);
   const [showMobileNotice, setShowMobileNotice] = useState(true);
   const [downloadStatus, setDownloadStatus] = useState<'idle' | 'preparing' | 'complete' | 'error'>('idle');
@@ -93,6 +98,7 @@ export default function Catalogue({ initialExam, initialSubjectId }: CataloguePr
   }, new Map());
 
   useEffect(() => {
+    if (initialLabSlug) return;
     const frame = window.requestAnimationFrame(() => {
       const initialSubject: SubjectDefinition = subjects.find((item) => item.id === initialSubjectId) ?? subjects[0];
       const savedLevel = readPreference(levelStorageKey(initialSubjectId)) as QualificationLevel | null;
@@ -105,10 +111,11 @@ export default function Catalogue({ initialExam, initialSubjectId }: CataloguePr
       }
     });
     return () => window.cancelAnimationFrame(frame);
-  }, [initialExam, initialSubjectId]);
+  }, [initialExam, initialLabSlug, initialSubjectId]);
 
   useEffect(() => {
     const syncLabFromUrl = () => {
+      if (initialLabSlug) return;
       const slug = new URLSearchParams(window.location.search).get('lab');
       const lab = labs.find((item) => (
         item.slug === slug
@@ -124,7 +131,7 @@ export default function Catalogue({ initialExam, initialSubjectId }: CataloguePr
     syncLabFromUrl();
     window.addEventListener('popstate', syncLabFromUrl);
     return () => window.removeEventListener('popstate', syncLabFromUrl);
-  }, [level, subject.id, view]);
+  }, [initialLabSlug, level, subject.id, view]);
 
   useEffect(() => {
     document.body.style.overflow = activeLab ? 'hidden' : '';
@@ -181,15 +188,6 @@ export default function Catalogue({ initialExam, initialSubjectId }: CataloguePr
     router.push(nextSubject.views[nextExam]!.href);
   };
 
-  const openLab = (lab: Lab) => {
-    setActiveLab(lab);
-    setIsLoading(true);
-    setDownloadStatus('idle');
-    const labUrl = new URL(window.location.href);
-    labUrl.searchParams.set('lab', lab.slug);
-    window.history.pushState({ lab: lab.slug }, '', labUrl);
-  };
-
   const closeLab = () => {
     setActiveLab(null);
     setIsLoading(false);
@@ -202,15 +200,12 @@ export default function Catalogue({ initialExam, initialSubjectId }: CataloguePr
     setDownloadStatus('preparing');
 
     try {
-      const response = await fetch(activeLab.href, { cache: 'no-store' });
+      const response = await fetch(labEmbedHref(activeLab), { cache: 'no-store' });
       if (!response.ok) throw new Error(`Lab download failed with status ${response.status}.`);
 
       const source = await response.text();
-      const siteHomeUrl = new URL(window.location.href);
-      siteHomeUrl.search = '';
-      siteHomeUrl.hash = '';
-      const liveLabUrl = new URL(siteHomeUrl);
-      liveLabUrl.searchParams.set('lab', activeLab.slug);
+      const siteHomeUrl = new URL(examView.href, window.location.origin);
+      const liveLabUrl = new URL(labPageHref(activeLab), window.location.origin);
       const html = createStandaloneLabHtml({
         source,
         lab: activeLab,
@@ -291,7 +286,7 @@ export default function Catalogue({ initialExam, initialSubjectId }: CataloguePr
           key={activeLab.slug}
           onLoad={() => setIsLoading(false)}
           ref={labFrameRef}
-          src={activeLab.href}
+          src={labEmbedHref(activeLab)}
           title={activeLab.title}
         />
         <footer className="lab-shell-footer">
@@ -459,14 +454,9 @@ export default function Catalogue({ initialExam, initialSubjectId }: CataloguePr
             <div className="lab-grid">
               {topicLabs.map((lab) => (
                 <article className="lab-card" key={lab.slug}>
-                  <a
+                  <Link
                     aria-label={`Open ${lab.title}`}
-                    href={`${examView.href}?lab=${encodeURIComponent(lab.slug)}`}
-                    onClick={(event) => {
-                      if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-                      event.preventDefault();
-                      openLab(lab);
-                    }}
+                    href={labPageHref(lab)}
                   >
                     <div className="preview" onPointerMove={movePreview} onPointerLeave={resetPreview}>
                       <LabIcon slug={lab.slug} />
@@ -479,7 +469,7 @@ export default function Catalogue({ initialExam, initialSubjectId }: CataloguePr
                       <span className="arrow" aria-hidden="true">↗</span>
                       <p className="description">{lab.description}</p>
                     </div>
-                  </a>
+                  </Link>
                 </article>
               ))}
             </div>

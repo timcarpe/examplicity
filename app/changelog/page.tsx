@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { changelogEntries } from './entries';
 import { BugReportDialog } from '../bug-report-dialog';
-import { subjects } from '../labs';
+import { subjects } from '../labs.ts';
 
 const homeHref = subjects[0].views[subjects[0].exams[0]]!.href;
 const publicEntries = changelogEntries.filter((entry) => entry.publicChanges.length > 0);

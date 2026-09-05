@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { labs, subjects, type Lab, type SubjectDefinition } from '../labs';
+import { labs, subjects, type Lab, type SubjectDefinition } from '../labs.ts';
 import RemixGuide from './remix-guide';
 
 type RemixPageProps = {

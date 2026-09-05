@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { createStandaloneLabHtml } from '../lab-download';
-import type { Lab } from '../labs';
+import { labEmbedHref, labPageHref, type Lab } from '../labs.ts';
 
 type RemixGuideProps = {
   lab: Lab;
@@ -78,12 +78,11 @@ export default function RemixGuide({ lab, returnHref }: RemixGuideProps) {
     setDownloadStatus('preparing');
 
     try {
-      const response = await fetch(lab.href, { cache: 'no-store' });
+      const response = await fetch(labEmbedHref(lab), { cache: 'no-store' });
       if (!response.ok) throw new Error(`Lab download failed with status ${response.status}.`);
 
       const siteHomeUrl = new URL(returnHref, window.location.origin);
-      const liveLabUrl = new URL(siteHomeUrl);
-      liveLabUrl.searchParams.set('lab', lab.slug);
+      const liveLabUrl = new URL(labPageHref(lab), window.location.origin);
       const html = createStandaloneLabHtml({
         source: await response.text(),
         lab,
@@ -133,7 +132,7 @@ export default function RemixGuide({ lab, returnHref }: RemixGuideProps) {
           plicity
         </Link>
         <div className="header-actions">
-          <Link className="remix-back" href={`${returnHref}?lab=${encodeURIComponent(lab.slug)}`}>Back to lab</Link>
+          <Link className="remix-back" href={labPageHref(lab)}>Back to lab</Link>
         </div>
       </header>
       <section className="remix-intro">

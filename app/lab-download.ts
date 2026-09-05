@@ -1,5 +1,5 @@
 import { applyLabManifestContent } from './lab-content.ts';
-import type { Lab } from './labs';
+import type { Lab } from './labs.ts';
 
 type StandaloneLabOptions = {
   source: string;

@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import Catalogue from '../../catalogue';
 import {
   labAppearsInSubject,
+  labPageHref,
   labs,
   subjects,
   syllabusAlignmentIncludesLevel,
@@ -10,7 +11,7 @@ import {
   type QualificationLevel,
   type SubjectDefinition,
   type SubjectId,
-} from '../../labs';
+} from '../../labs.ts';
 import { siteDescription, siteTitle, siteUrl } from '../../site';
 
 type PageProps = {
@@ -116,7 +117,7 @@ export default async function SubjectCatalogue({ params }: PageProps) {
           '@type': 'LearningResource',
           name: lab.title,
           description: lab.metaDescription,
-          url: `${siteUrl}${lab.href}`,
+          url: `${siteUrl}${labPageHref(lab)}`,
           inLanguage: 'en-GB',
           isAccessibleForFree: true,
           interactivityType: 'active',

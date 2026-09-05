@@ -2,7 +2,7 @@ import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { createStandaloneLabHtml } from '../app/lab-download.ts';
-import { labs } from '../app/labs.ts';
+import { labPageHref, labs } from '../app/labs.ts';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const count = (source, value) => source.split(value).length - 1;
@@ -27,7 +27,7 @@ for (const lab of labs) {
     source,
     lab,
     siteHomeUrl: 'https://www.examplicity.org/computer-science/0478',
-    liveLabUrl: `https://www.examplicity.org/computer-science/0478?lab=${lab.slug}`,
+    liveLabUrl: `https://www.examplicity.org${labPageHref(lab)}`,
   });
   const packagedBytes = Buffer.byteLength(packaged, 'utf8');
   const sizeWaiver = artifactSizeWaivers.get(lab.slug);
@@ -61,7 +61,7 @@ for (const lab of labs) {
     || count(packaged, '<!-- LAB_SYLLABUS_CHIPS_START -->') !== 1
     || structuredDataMatches.length !== 1
     || structuredData?.['@type'] !== 'LearningResource'
-    || structuredData?.url !== `https://www.examplicity.org${lab.href}`
+    || structuredData?.url !== `https://www.examplicity.org${labPageHref(lab)}`
     || structuredData?.name !== lab.title
     || structuredData?.description !== lab.metaDescription
     || structuredData?.educationalAlignment?.length !== lab.syllabuses.length
