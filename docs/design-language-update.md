@@ -1,6 +1,19 @@
 # Examplicity design update — lean plan
 
-Target: `codex/llm-first-v0.1`. Scope: shared design language across the site and every lab in the current manifest (57 at review). Implementation is in progress. The second pilot pass has been accepted, with the Working, stage and copy refinements recorded below. The other labs remain queued for subsequent batches.
+Target: `codex/llm-first-v0.1`. Scope: shared design language across the site and every lab in the current manifest (57 at review). Implementation is in progress. Batch 2 (Repeated Percentage Change, Motion Graphs, Bounds, Straight Lines and Recurring Decimals) is accepted by the user at site commit `3ffcee4` and canonical kit/guide commit `0bea909`. The other labs remain queued for subsequent batches.
+
+## Current adaptation approach — accepted batch 2
+
+This section records the user's rollout preferences. The canonical visual reference remains `Lab Creation/docs/design-language/examplicity-living-style-guide-v3.html`, with reusable implementation in `packages/lab-kit/src/lab-design.css` and `lab-design.js`. The style guide describes appearance and interaction patterns; it does not define task authority or workflow scope. Historical revision notes below include superseded approaches.
+
+- Root implements directly in batches of five, records a concise change list, commits, and supplies review links. Each batch receives user review. Surface novel situations that cannot be resolved from the agreed intent; avoid routine handoff and approval overhead.
+- Before changing a lab, read the HTML and trace learner action → model change → working/evidence → next decision, including later stages and Working levels. A style adoption is incomplete if it misses the interaction or removes its purpose. If a regression is suspected, inspect relevant Git history and user-authorized originals before concluding that a feature never existed.
+- Preserve the causal model: fit the existing visual to its canvas, keep horizontal relationships horizontal, and let the page handle vertical flow. Do not add a separate slider when the model itself should be manipulated. Ordinary SVG chart labels, controls and interactions are in scope; complex illustrations such as jars and routers do not need a cosmetic redraw.
+- Reuse shared CSS and runtime for recurring features. Roughly 90% shared styling is a soft goal, not a quota. Keep geometry, mathematical constraints and learning state local; replace repeated one-off mechanics when the shared resource already covers them.
+- Audit copy by purpose. Keep one goal, consequential state and explanations that help learners reason. Remove narration of what the model already shows. Working needs visible progression even at None; clean spacing must not become missing explanation. Introduce newly required operations, including later ones, with target-anchored tooltips; pulses alone are insufficient.
+- Check the actual changed path, not just the opening screen: off-centre pickup, later-stage actions, working feedback and completion placement where affected. Use focused checks proportionate to the change, rather than a repeated broad suite. Record exactly what was checked and any limits. Preserve standalone embedding of shared CSS and JS.
+
+Approved examples: Percentage for direct bar action and fitted horizontal composition; Motion/Histogram/Bounds for shared pickup-offset dragging; Bounds for meaningful learning transitions and empty-space popup placement; Straight Lines and Recurring for retained explanatory working. These are examples of intent, not templates to copy wholesale.
 
 ## Agreed rules
 
@@ -13,7 +26,7 @@ Target: `codex/llm-first-v0.1`. Scope: shared design language across the site an
 
 1. **Establish the standard.** Update shared styling and the existing style guidance alongside Binary, Coordinate and Graph Search. Correct the supplied examples' feedback and responsive defects. Review these three labs with the user before continuing.
 2. **Apply it throughout.** Update site controls and supporting pages, then every lab in small related batches. Include local styles: the labs' bespoke feedback needs individual attention. Simplify dense interface layouts where needed, while preserving their learning models. Continue under the agreed standard; raise substantive ambiguity as it arises.
-3. **Verify and finish.** Confirm every manifest lab has been checked, resolve outstanding issues, run the existing full checks and review the combined Git diff. Update the changelog to describe the delivered changes.
+3. **Review and finish.** Track accepted batches, resolve outstanding issues and review the combined Git diff. Use focused checks during rollout and appropriate release checks at completion. Update the changelog to describe delivered changes.
 
 ## Git and scope control
 
@@ -28,7 +41,7 @@ Preserve unrelated work. Edit maintainable sources and regenerate published lab 
 - **Working:** main learning interaction, relevant feedback states, reset and completion work. Check keyboard equivalents and assistance modes where present.
 - **Portable:** published and downloaded HTML retain presentation and behaviour, including offline use.
 
-Check changed labs before each batch commit and record completion. Shared-style changes require checking their effects across all labs before the update is complete. Use existing sync/download checks and relevant tests per batch; run full tests, lint and build at completion. Add focused regression tests only where a behaviour change or defect warrants them.
+Apply these checks proportionately to the changed behavior and representative consumers of a shared change. Record checks and limitations with the batch. Use the existing publication pipeline for packaging; reserve broader testing for a concrete unresolved risk or release work. Add a regression test only where it protects meaningful behavior.
 
 ## Known corrections
 

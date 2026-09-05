@@ -391,6 +391,8 @@ Form-field focus darkens the existing border within its colour family, with no e
 
 ## Model space, predictions and explanatory working
 
+Shared appearance must support the model's causal relationships. Fit the existing visual into its canvas before changing its composition or adding controls. Use the operated object itself when it naturally expresses the action. Ordinary SVG chart text and handles follow the shared typography and interaction language; complex illustrations retain their meaningful design. Keep explanations that connect actions, calculations and evidence, while removing text that merely narrates an already visible result. Working remains informative and shows progression at None as well as Some and All. The accepted examples demonstrate these principles, not a universal lab layout.
+
 - Canvas surfaces are white or transparent, without a grey enclosing box.
   A model should fill its allotted area with modest padding; chart text uses
   the approved sans family and regular weight, sized for the rendered chart.
