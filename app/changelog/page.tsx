@@ -50,7 +50,7 @@ export default function ChangelogPage() {
         </div>
         <span>
           IGCSE, AS &amp; A Level exam practice and concept labs. ·{' '}
-          <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>
+          <a href="https://opensource.org/license/mit">MIT License</a>
         </span>
       </footer>
     </main>

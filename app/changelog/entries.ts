@@ -14,11 +14,13 @@ export const changelogEntries: readonly ChangelogEntry[] = [
       'Added Cambridge IGCSE Mathematics 0580 investigations for similarity, relative frequency, expected frequency, replacement and conditional sample spaces.',
       'Added Biology, Chemistry and Physics investigations for natural selection, converging lenses, total internal reflection, diffraction, and constant-temperature gas compression.',
       'Improved prime-factor progression and expanded replacement and similarity practice while preserving each lab’s direct manipulation and evidence trail.',
+      'Relicensed Examplicity under the MIT License.',
       'Made direct and search-result lab links open inside the full Examplicity navigation and footer frame.',
     ],
     internalChanges: [
       'Updated the shared Lab Kit publication resource and compiled the six approved final artifacts into manifest-owned subject routes with syllabus metadata and standalone downloads.',
       'Added Biology, Chemistry and Physics qualification views, including Co-ordinated Sciences 0654 alignment and verified AS/A routing for 9700, 9701 and 9702.',
+      'Aligned repository, package and generated-download license declarations with the MIT License.',
     ],
   },
   {
