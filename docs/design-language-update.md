@@ -441,3 +441,8 @@ Uses the existing guide's working-progression pattern: 12px padding, 8px corners
 ### Rounded settings correction — 5 September 2026
 
 Binary exam/range controls and Coordinate, Prime Factors, Sequence and Histogram Working controls now share fully rounded grey tracks and white selected pills, 12px regular text, 3px inset and roomier horizontal padding. No options, curriculum profiles or learning state changed. Updated the canonical HTML guide, written companion and generated developer copies. Validation remains skipped as requested.
+
+
+### Toggle contrast correction — 5 September 2026
+
+Working now uses dark grey `#424245` selected pills; Binary’s exam toggle uses blue `#4569aa`. Both have white selected text, a grey track, rounded shape and regular labels. Binary’s question-range setting stays grey. Colour identity differs by purpose; green remains correctness feedback. Updated canonical guide and generated examples; validation skipped as requested.

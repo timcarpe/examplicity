@@ -215,9 +215,8 @@ with redundant labels, helper paragraphs and numeric counters removed.
   visible and operating the model is still required. Preserve each lab's
   existing meaning of Some and All. Do not add artificial levels to a lab.
 - Use the opt-in `.lab-working-toggle` from `public/labs/lab-frame.css`: a
-  `#f7f8fa` group, `#e7e8eb` boundary, white selected segment with a `#d2d2d7`
-  border, regular 12px labels and an overall 42px control height. Keep the
-  selected segment neutral; no blue fill, bold microtitle or explanatory line.
+  `#f7f8fa` group, `#e7e8eb` boundary, dark grey `#424245` selected segment with white text and no visible
+  border, regular 12px labels and an overall 42px control height. Use regular-weight labels without a bold microtitle or explanatory line.
   Buttons expose `aria-pressed` and retain a visible keyboard focus outline.
 - Place optional `.lab-stage-progress` directly to the right of the toggle in
   the right side of the activity top bar. Small empty circles denote upcoming stages,
@@ -361,4 +360,4 @@ they do not require another visible paragraph.
    is incomplete before interaction, cannot advance immediately, and completes
    only after the level-appropriate learner action.
 
-Working and exam settings share the living guide’s smooth pill toggle: fully rounded track and selected segment, neutral grey background, white selection without a visible segment border, 42px height with 3px inset, and 12px regular-weight text. Preserve existing options and earned availability.
+Working and exam settings share the living guide’s smooth pill toggle: fully rounded track and selected segment, neutral grey background, white selected text and no visible segment border; Working uses dark grey `#424245`, while exam uses blue `#4569aa`, 42px height with 3px inset, and 12px regular-weight text. Preserve existing options and earned availability.

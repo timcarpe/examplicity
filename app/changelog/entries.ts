@@ -10,7 +10,7 @@ export const changelogEntries: readonly ChangelogEntry[] = [
     date: '2026-09-05',
     displayDate: '5 September 2026',
     publicChanges: [
-      'Updated Binary Numbers, Coordinate Geometry, Graph Search, Prime Factors, Sequences and Histograms with clearer working areas and consistent progress feedback. Added lightweight action and calculation cards, rounded Working and exam toggles with regular-weight labels, movable completion cards and improved chart dragging and readability.',
+      'Updated Binary Numbers, Coordinate Geometry, Graph Search, Prime Factors, Sequences and Histograms with clearer working areas and consistent progress feedback. Added lightweight action and calculation cards, rounded grey Working and blue exam toggles with regular-weight labels, movable completion cards and improved chart dragging and readability.',
       'Clarified AI remix guidance to preserve each lab’s learning relationships and curriculum, and made downloaded labs link consistently to their live versions with the correct MIT licence notice.',
     ],
     internalChanges: [
