@@ -5,7 +5,7 @@ Date: 5 September 2026.
 
 ## Outcome and scope
 
-Use exam evidence to align existing maths lab working areas and presentation with curriculum requirements, while preserving useful investigations. Make the supporting catalogue queryable without asking an LLM to read a complete HTML page or subject dataset.
+Build concept- and syllabus-centred exam evidence for both existing and future labs. Use it to compare curriculum-specific task demands and align existing maths lab working areas and presentation while preserving useful investigations. Make the supporting catalogue queryable without asking an LLM to read a complete HTML page or subject dataset.
 
 - Cover Cambridge IGCSE Mathematics 0580, 2025–2027, including Core/Extended and calculator/non-calculator distinctions.
 - Add Cambridge 9709 Pure Mathematics for the 2026–2027 examination cycle. Source the official syllabus and published updates. Distinguish Pure 1, Pure 2 and Pure 3 and their AS/A routes; do not imply that Pure alone covers the complete A Level qualification.
@@ -40,9 +40,14 @@ The storage owner proposes the smallest schema covering:
 | Syllabus and objective | Exam code, cycle/version, qualification/component, exact objective and locator |
 | Paper | Session/year/component/variant, question paper or mark scheme, source path/URL and hash |
 | Question evidence | Stable ID, paper/page/question-part locator, objective references, observed task and visual conventions, mark-scheme evidence and uncertainty |
+| Concept/idea mapping and comparison | Many-to-many links from question parts to objectives and concepts/ideas, whether or not a lab exists; evidence-backed similarities, differences and uncertain equivalences across curriculum profiles |
 | Lab alignment | Explicit idea ID and live-lab slug, profile/feature references, supporting question IDs, adaptation category, proposed changes and review status |
 
 Question notes capture givens/unknowns, angle units, notation, graph/diagram conventions, expected working, answer form/precision and calculator conditions where relevant. Do not require meaningless fields for every question. Keep observations distinct from inferred recommendations and preserve conflicting evidence.
+
+Every question and subpart in an analysed paper must have a home in the evidence corpus, including shared instructions, diagrams or data needed to interpret its parts. Use exact syllabus objectives as the primary anchor; concept and existing idea links are many-to-many and may remain explicitly unresolved. A lab link is optional. Do not discard material that lacks a current lab or invent a new lab idea merely to house it. Track per-paper completeness and outstanding extraction, mapping and mark-scheme gaps separately; an inventory entry alone is not completed analysis. This requirement supersedes any lab-relevance filter in the sampling brief below.
+
+Support a bounded concept/objective comparison query and corresponding human review view across IGCSE Core/Extended and 9709 Pure AS/A components. Compare task families, givens/unknowns, operations, notation and units, diagram/graph presentation, expected working, calculator conditions, answer precision and accepted marking methods. Each comparison must retain its question evidence and distinguish observed commonality, supported differences and uncertain equivalence. Similar topic names do not establish equivalent curricular demand, and AS/A is not a universal difficulty ladder. Concepts absent from some curricula remain visible as unsupported or not applicable, not forced matches.
 
 Provide a filtered JSON CLI with list/get operations, compact default results, explicit detail/evidence expansion, deterministic ordering and bounded output. Support filters for subject, lab/idea, syllabus cycle, objective, component, adaptation category and review status. Return IDs and locators for follow-up retrieval. Examples of required queries: one lab with its evidence; questions for an objective; straightforward adaptations; missing or unreviewed evidence.
 
