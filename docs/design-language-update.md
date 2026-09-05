@@ -451,3 +451,8 @@ Working now uses dark grey `#424245` selected pills; Binary’s exam toggle uses
 ### Toggle container shadow — 5 September 2026
 
 Added `0 1px 3px rgba(29,29,31,.08)` to the five reviewed labs’ rounded toggle containers (including Binary exam/range). Segments remain shadow-free. Updated the canonical guide, starter CSS and written companion; regenerated published labs and guide copies. Validation skipped as requested.
+
+
+### Activity top panels — 5 September 2026
+
+Six reviewed sources and generated HTML: strengthened toggle-container borders to 1px #d2d2d7; top-panel buttons now have rounded borders, subtle shadows and consistent padding, including Sequence Reset this pattern. Binary settings and New question now sit inside its card top panel (Check answer remains with the answer). Graph Search’s existing mission/actions form the top of its workspace panel. Updated canonical guide and companion; learning logic and available settings unchanged. Validation skipped as requested.

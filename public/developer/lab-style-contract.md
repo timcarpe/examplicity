@@ -363,3 +363,5 @@ they do not require another visible paragraph.
 Working and exam settings share the living guide’s smooth pill toggle: fully rounded track and selected segment, neutral grey background, white selected text and no visible segment border; Working uses dark grey `#424245`, while exam uses blue `#4569aa`, 42px height with 3px inset, and 12px regular-weight text. Preserve existing options and earned availability.
 
 Toggle containers use a subtle outer shadow: `0 1px 3px rgba(29,29,31,.08)`. Apply it to the shared rounded track, not to individual segments. Working remains grey and exam blue.
+
+Activity top panels sit above the model and working area. Put task/actions at left and existing Working/exam settings at right, followed by genuine stage markers. Do not invent settings or stages. Toggle tracks have a 1px `#d2d2d7` border. Top-panel action buttons share the rounded shape, thin border and subtle container shadow, with regular 12px labels, minimum 40px height and 8px 14px padding. Retain active, disabled and keyboard-focus states.
