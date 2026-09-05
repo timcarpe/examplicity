@@ -466,3 +466,8 @@ Restored standard control corners for the six reviewed labs’ top-panel action 
 ### Action priority and algorithm toggle — 5 September 2026
 
 Six reviewed labs: New question/New problem blue; Reset and other secondary top-panel actions white with blue text. Disabled actions have muted grey treatment and no shadow. Working stays grey, exam stays blue. Graph Search algorithm buttons now form one blue segmented toggle with pressed state and priority tooltips; clicks still start the selected search and busy state still disables switching. Guide and published copies updated. Validation skipped as requested.
+
+
+### Disabled action correction — 5 September 2026
+
+Six reviewed labs: disabled-action rules now override primary ID selectors and hover styling. Disabled New question/New problem and busy Graph Search modes use pale grey with muted grey text, neutral border and no shadow; native disabled behaviour is retained. White/blue remains an enabled secondary action only. Guide and generated copies updated; validation skipped as requested.
