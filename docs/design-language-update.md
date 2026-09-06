@@ -66,3 +66,10 @@ The previous 52 labs were adapted in reviewed batches across mathematics and com
 - Enabled shared CSS selection for all 57 labs; retained the canonical remix primitives and all local models/styles/runtime code. Published HTML is 12.9 MB smaller than the pilot baseline.
 - Random spot check: Selection Pressure, Non-right Triangles, Scatter, TCP/IP and Translator. All 16 opening/interaction/reset/theme comparisons match full CSS after fixing nested pseudo-class preservation centrally. No additional lab redesigns.
 - Updated packaging tests, shared policy and generated kit resources; removed Translator's obsolete size allowance. Details and local evidence paths are in `docs/css-packaging-feasibility.md`.
+
+### Parity / ARQ follow-up — 6 September 2026
+
+- Source: `labs-src/computer-science/parity-arq/lab.html`. Preserved three parallel matrices and all error/retry behavior. Start with the user-approved one-block `NETWORK` message; still accept 16 characters/two blocks.
+- Aligned configuration/reset and frame actions into separate rows. Kept live phase/protocol beside the path, revealed result/decoded evidence only on arrival, and moved optional encoding/ARQ prose into a disclosure. Removed three automatic guidance popups; shared attention now follows the first error action, transmit and retry.
+- Shared `lab-design.css` owns spacing, menu alignment and compact parity layout. Canonical text/HTML guides and authoring bundle updated, then synchronized and compiled for standalone downloads. Opening matrices moved about 260px higher at 1422×1030.
+- Browser checks: clean ACK, detected error/NAK and resend, lost reply/timeout, undetected two-bit row error, odd parity, 16-character input and 700px layout. No runtime errors or guidance popups; all 57 contract checks passed. Review locally before release.

@@ -597,55 +597,26 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 <!-- LAB_MANIFEST_HEADER_END -->
 <span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span>
 <span data-lab-authored-subtitle-slot hidden></span>
-<section class="lab-activity-bar sim-top"><div class="lab-activity-task"><strong id="labTaskTitle">Test which transmission errors parity detects and how ARQ responds.</strong></div><div class="sim-top-tools"><button id="resetAll" data-lab-reset-target=".sim-tool-row" data-lab-action="reset" class="lab-action">Reset transmission</button></div></section>
+<section class="lab-activity-bar sim-top"><div class="lab-activity-task"><strong id="labTaskTitle">Test which transmission errors parity detects and how ARQ responds.</strong></div></section>
 
 <section class="panel">
-  <div class="sim-tool-row controls">
-    <div class="field">
-      <label for="message">Message · 1–16 characters</label>
-      <input id="message" type="text" value="NETWORK TEST" maxlength="16" autocomplete="off" spellcheck="false" data-lab-manipulative="message">
-    </div>
-    <div class="field">
-      <label for="scheme">Parity scheme</label>
-      <select id="scheme">
-        <option value="row">Parity rows</option>
-        <option value="block" selected>Parity blocks</option>
-      </select>
-    </div>
-    <div class="field">
-      <label for="parityMode">Parity rule</label>
-      <select id="parityMode">
-        <option value="even" selected>Even parity</option>
-        <option value="odd">Odd parity</option>
-      </select>
-    </div>
-    <label class="switch-line"><input id="dropReply" type="checkbox"> Lose the next ACK or NAK</label>
-
-  <div class="channel-tools stage-tools">
-        <button id="randomOne" data-lab-intro="parity-flip" data-lab-intro-title="Introduce a transmission error" data-lab-intro-copy="Flip a random channel bit or select one in the blue copy. The sender stays unchanged. Transmit to test detection." class="lab-action">Flip 1 random bit</button>
-        <button id="undoNoise" class="lab-action">Undo</button>
-        <button id="clearNoise" class="lab-action">Clear errors</button>
-      </div><button id="deliver" class="lab-action primary" data-lab-intro="parity-send" data-lab-intro-title="Compare the received frame" data-lab-intro-copy="Transmit unchanged or altered data. Inspect the parity checks and reply, then use ARQ resend when offered." data-priority="primary">Transmit DATA frame</button><button id="arqButton" hidden data-lab-intro="parity-resend" data-lab-intro-title="Retry from the sender" data-lab-intro-copy="Resend the original frame after a NAK or timeout. The received result updates from this new transmission." class="lab-action" data-priority="primary">ARQ resend</button></div>
-  <div class="meta">
-    <span id="messageMeta"></span>
-    <div id="protocol" class="protocol"></div>
-    <div class="parity-legend" aria-label="Parity bit colors">
-      <span class="parity-key row">Row parity · P column</span>
-      <span id="columnParityKey" class="parity-key column">Column parity · parity byte</span>
-    </div>
+  <div class="sim-tool-row parity-settings">
+    <div class="field"><label for="message">Message · 1–16 characters</label><input id="message" type="text" value="NETWORK" maxlength="16" autocomplete="off" spellcheck="false" data-lab-manipulative="message"></div>
+    <div class="field"><label for="scheme">Parity scheme</label><select id="scheme"><option value="row">Parity rows</option><option value="block" selected>Parity blocks</option></select></div>
+    <div class="field"><label for="parityMode">Parity rule</label><select id="parityMode"><option value="even" selected>Even parity</option><option value="odd">Odd parity</option></select></div>
+    <label class="switch-line"><input id="dropReply" type="checkbox"> Lose the next reply</label>
+    <button id="resetAll" data-lab-reset-target=".parity-settings" data-lab-action="reset" class="lab-action">Reset transmission</button>
+  </div>
+  <div class="lab-tool-bar parity-actions">
+    <div class="lab-tool-buttons"><button id="randomOne" class="lab-action">Flip 1 random bit</button><button id="undoNoise" class="lab-action">Undo</button><button id="clearNoise" class="lab-action">Clear errors</button></div>
+    <div class="lab-tool-buttons"><button id="deliver" class="lab-action" data-priority="primary">Transmit frame</button><button id="arqButton" hidden class="lab-action" data-priority="primary">ARQ resend</button></div>
   </div>
 </section>
 
 <section class="panel transmission-panel" aria-live="polite">
   <div class="transmission-layout">
     <div class="transmission-main">
-      <div class="transmission-head">
-        <div>
-          <div class="sim-legacy transmission-title">Live transmission line</div>
-
-        </div>
-        <div id="streamPreview" class="stream-preview" title="Current transmitted bitstream"></div>
-      </div>
+      <div class="transmission-head"><div id="phaseLabel" role="status">Select a channel bit to flip it, or transmit unchanged.</div><div id="protocol" class="protocol"></div></div>
       <div class="transmission-track" aria-hidden="true">
         <div class="track-line"></div>
         <div class="track-node sender"></div><div class="track-label sender">SENDER</div>
@@ -657,31 +628,17 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
     </div>
 
   </div>
-<aside class="lab-evidence-strip transmission-rail" aria-label="Transmit and inspect received data"><section class="lab-evidence-card"><h2>Current transmission</h2><div id="phaseLabel">Frame encoded. Edit the blue channel copy or transmit it unchanged.</div></section>
-
-      <div id="resultPanel" class="rail-result" data-lab-role="evidence">
-        <div id="resultTitle" class="result-title">Ready to transmit</div>
-        <div id="resultDetail" class="result-detail">Change a blue in-transit bit, or send the unaltered frame.</div>
-      </div>
-
-      <div class="decoded">
-        <span class="decoded-label">Decoded text</span>
-        <span id="decodedText" class="decoded-value">—</span>
-        <span class="decoded-label">Original</span>
-        <span id="originalText" class="decoded-original">NETWORK TEST</span>
-        <span id="decodedNote" class="decoded-note">Transmit the frame to decode the received 7-bit characters.</span>
-      </div>
-    <section class="lab-evidence-card"><h2>Reply and retry</h2><div class="arq-explainer">
-  <strong>How ARQ responds</strong>
-  <span>ACK accepts the frame; NAK reports a detected error; no reply causes a timeout. A NAK or timeout triggers a resend. Undetected corruption cannot trigger ARQ.</span>
-</div></section></aside></section>
+<aside class="lab-evidence-strip transmission-rail" id="transmissionEvidence" aria-label="Received result" hidden>
+  <div id="resultPanel" class="rail-result" data-lab-role="evidence"><div id="resultTitle" class="result-title"></div><div id="resultDetail" class="result-detail"></div></div>
+  <div class="decoded"><span class="decoded-label">Received</span><span id="decodedText" class="decoded-value">—</span><span class="decoded-label">Original</span><span id="originalText" class="decoded-original">NETWORK</span><span id="decodedNote" class="decoded-note"></span></div>
+</aside></section>
 
 <section class="panel stage-panel">
   <div class="sim-parity-grid stage-grid">
     <div class="stage locked-stage">
       <div class="stage-head">
-        <div class="stage-title-line"><div class="stage-title">Sender</div><span class="access-chip">Locked source</span></div>
-        <div class="stage-note">parity generated<br>before transmission</div>
+        <div class="stage-title-line"><div class="stage-title">Sender</div><span class="access-chip">Original</span></div>
+
       </div>
       <div id="senderBlocks" class="blocks"></div>
     </div>
@@ -691,7 +648,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
     <div class="stage editable-stage">
       <div class="stage-head">
         <div class="stage-title-line"><div class="stage-title">In transit</div><span class="access-chip editable">Editable</span></div>
-        <div class="stage-note">only this blue copy<br>can be changed</div>
+
       </div>
 
       <div id="channelBlocks" class="blocks"></div>
@@ -701,7 +658,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 
     <div id="receiverStage" class="stage locked-stage">
       <div class="stage-head">
-        <div class="stage-title-line"><div class="stage-title">Receiver</div><span id="receiverAccess" class="access-chip">Locked · waiting</span></div>
+        <div class="stage-title-line"><div class="stage-title">Receiver</div><span id="receiverAccess" class="access-chip">Waiting</span></div>
         <div class="stage-note" id="receiverNote">row + column<br>parity checks</div>
       </div>
       <div id="receiverBlocks" class="blocks"></div>
@@ -711,7 +668,10 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 
 
 
-<div class="footer" id="footerText"></div>
+<div class="parity-footnotes">
+  <div class="meta"><span id="messageMeta"></span><div class="parity-legend" aria-label="Parity bit colors"><span class="parity-key row">Row parity · P column</span><span id="columnParityKey" class="parity-key column">Column parity · parity byte</span></div></div>
+  <details><summary>Frame encoding and ARQ</summary><p id="footerText"></p><p>ACK accepts the frame; NAK reports a detected error. A NAK or a timeout allows the sender to retry. Undetected corruption cannot trigger ARQ.</p><div id="streamPreview" class="stream-preview" aria-label="Transmitted bitstream"></div></details>
+</div>
 </main>
 
 
@@ -731,6 +691,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
   let history=[];
   let busy=false;
   let animationRun=0;
+  let hasInteracted=false;
 
   const target=()=>$("parityMode").value==="even"?0:1;
   const isBlock=()=>$("scheme").value==="block";
@@ -906,6 +867,17 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
     $("replyCode").textContent="ACK";
   }
 
+  function updateAttention(){
+    let next=null;
+    if(!busy){
+      if(!senderGroups.length) next=$("message");
+      else if(!$("arqButton").hidden) next=$("arqButton");
+      else if(!receiverGroups && (changedBitCount() || $("dropReply").checked)) next=$("deliver");
+      else if(!hasInteracted) next=$("randomOne");
+    }
+    LabDesign.attention(document.querySelector("main"),next?[next]:[]);
+  }
+
   function setBusy(value){
     busy=value;
     document.body.classList.toggle("busy",value);
@@ -916,6 +888,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
       $("clearNoise").disabled=changedBitCount()===0;
       $("deliver").disabled=!senderGroups.length;
     }
+    updateAttention();
   }
 
   function updateStreamPreview(){
@@ -927,7 +900,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
   function markPrepared(){
     receiverGroups=null;
     $("arqButton").hidden=true;
-    $("receiverAccess").textContent="Locked · waiting";
+    $("receiverAccess").textContent="Waiting";
     $("receiverStage").classList.remove("checking");
     resetPackets();
     initialProtocol();
@@ -936,13 +909,14 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
       setPhase(`${changes} channel bit${changes===1?" has":"s have"} been changed. Transmit to test the frame.`,2,1);
       setResult("","Interference added",`${changes} blue in-transit bit${changes===1?" differs":"s differ"} from the locked sender copy.`);
     }else{
-      setPhase("Frame encoded. Edit the blue channel copy or transmit it unchanged.",2,1);
+      setPhase("Select a channel bit to flip it, or transmit unchanged.",2,1);
       setResult("","Ready to transmit","Change a blue in-transit bit, or send the unaltered frame.");
     }
   }
 
   function flipBit(groupIndex,row,column,isParityRow){
     if(busy) return;
+    hasInteracted=true;
     history.push({groupIndex,row,column,isParityRow});
     if(isParityRow) channelGroups[groupIndex].parityRow[column]^=1;
     else channelGroups[groupIndex].rows[row][column]^=1;
@@ -1098,7 +1072,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
     if(!receiverGroups){
       $("decodedText").textContent="—";
       $("decodedText").classList.remove("changed");
-      $("decodedNote").textContent="Transmit the frame to decode the received 7-bit characters.";
+      $("decodedNote").textContent="";
       return;
     }
     const received=decode(receiverGroups);
@@ -1106,8 +1080,8 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
     $("decodedText").textContent=received||"—";
     $("decodedText").classList.toggle("changed",differs);
     $("decodedNote").textContent=differs
-      ? `Received data decodes to "${received}", not "${original}". Acceptance depends on the active parity checks.`
-      : "The received character data matches the original message.";
+      ? "Received text differs from the original."
+      : "Message unchanged.";
   }
 
   function updateMeta(){
@@ -1128,6 +1102,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
   }
 
   function render(){
+    $("transmissionEvidence").hidden=!receiverGroups;
     renderStage("senderBlocks","sender");
     renderStage("channelBlocks","channel");
     renderStage("receiverBlocks","receiver");
@@ -1139,9 +1114,11 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
       $("clearNoise").disabled=changedBitCount()===0;
       $("deliver").disabled=!senderGroups.length;
     }
+    updateAttention();
   }
 
   function reset(){
+    hasInteracted=false;
     animationRun++;
     setBusy(false);
     const text=cleanMessage($("message").value);
@@ -1151,12 +1128,12 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
     receiverGroups=null;
     history=[];
     $("arqButton").hidden=true;
-    $("receiverAccess").textContent="Locked · waiting";
+    $("receiverAccess").textContent="Waiting";
     $("receiverStage").classList.remove("checking");
     resetPackets();
     if(text){
       initialProtocol();
-      setPhase("Frame encoded. Edit the blue channel copy or transmit it unchanged.",2,1);
+      setPhase("Select a channel bit to flip it, or transmit unchanged.",2,1);
       setResult("","Ready to transmit","Change a blue in-transit bit, or send the unaltered frame.");
     }else{
       protocol([{text:"Enter a message to begin"}]);
@@ -1240,16 +1217,18 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 
   async function deliver(){
     if(busy||!channelGroups.length) return;
+    hasInteracted=true;
     const token=++animationRun;
     setBusy(true);
     receiverGroups=null;
-    $("receiverAccess").textContent="Locked · waiting";
+    $("receiverAccess").textContent="Waiting";
     render();
     if(!await animateData(token,"DATA")) return;
 
     receiverGroups=cloneGroups(channelGroups);
-    $("receiverAccess").textContent="Locked · checking";
+    $("receiverAccess").textContent="Checking";
     $("receiverStage").classList.add("checking");
+    setResult("","Checking parity","The receiver recalculates the active checks.");
     render();
     setPhase("Receiver recalculates parity and compares every active check.",4,3);
     if(!await wait(720,token)) return;
@@ -1261,7 +1240,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
     const drop=$("dropReply").checked;
     const reply=checks.pass?"ACK":"NAK";
     $("receiverStage").classList.remove("checking");
-    $("receiverAccess").textContent=checks.pass?"Locked · accepted":"Locked · rejected";
+    $("receiverAccess").textContent=checks.pass?"Accepted":"Rejected";
 
     if(!checks.pass){
       lastOutcome="Error detected; frame rejected";
@@ -1305,13 +1284,14 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
     render();
     if(!await animateData(token,"RESEND")) return;
     receiverGroups=cloneGroups(senderGroups);
-    $("receiverAccess").textContent="Locked · checking";
+    $("receiverAccess").textContent="Checking";
     $("receiverStage").classList.add("checking");
+    setResult("","Checking parity","The receiver recalculates the active checks.");
     render();
     setPhase("Receiver checks the retransmitted frame.",4,3);
     if(!await wait(650,token)) return;
     $("receiverStage").classList.remove("checking");
-    $("receiverAccess").textContent="Locked · accepted";
+    $("receiverAccess").textContent="Accepted";
     setResult("good","ARQ recovery complete","The sender retransmitted the original frame. The receiver's parity checks pass and ACK returns successfully.");
     protocol([{type:"data",text:"RESEND"},{type:"ack",text:"ACK received"}]);
     if(!await animateReply(token,"ACK",false)) return;
@@ -1327,7 +1307,8 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
   $("scheme").addEventListener("change",reset);
   $("parityMode").addEventListener("change",reset);
   $("dropReply").addEventListener("change",()=>{
-    setPhase($("dropReply").checked?"The next receiver reply will disappear in the channel.":"The next receiver reply will travel back to the sender.",2,1);
+    setPhase($("dropReply").checked?"The next reply will be lost: transmit to test the timeout.":"The next reply will travel back to the sender.",2,1);
+    updateAttention();
   });
   $("resetAll").addEventListener("click",reset);
   $("randomOne").addEventListener("click",randomFlip);

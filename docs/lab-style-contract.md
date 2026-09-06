@@ -101,6 +101,7 @@ Checkpoints represent real stages. Place them farthest right, with current/compl
 - Only put grips on existing geometry. Offscreen/degenerate lines need stable parameter controls; freeze them during a proof if the lab requires it.
 - Completion cards describe a real achievement or transition, not “evidence ready”. Prefer unused model space and no blocking backdrop. Keep them movable using the shared four-way handle, pointer and keyboard support.
 - Modal actions use regular 12px text, content-sized centered buttons and 10px × 18px padding. Primary actions remain blue. Suppress old positioning animations when the shared helper owns placement.
+- For protocol workbenches, align configuration in one row and frame actions in a second row near the model. Keep the live phase beside the transmission path; reveal result/decoded cards when data arrives. Put optional protocol detail in a disclosure, and preserve sender/channel/receiver comparisons.
 - Some explanations work better inline. `lab-working-context` can keep a short current requirement above a simulation. Keep genuine editing popups, such as a flowchart statement chooser.
 
 ## Shared component lookup
