@@ -977,8 +977,9 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 </style>
 <!-- LAB_FRAME_STYLES_END -->
 <link rel="stylesheet" href="./lab-kit.css" data-lab-resource="lab-kit.css">
+<!-- LAB_DESIGN_COMPONENTS -->
 </head>
-<body data-lab-layout="standard">
+<body data-lab-layout="standard" class="lab-adopt-v3 lab-computing lab-builder computing-huffman-rover">
 <main>
 <!-- LAB_MANIFEST_HEADER_START -->
 <header class="lab-manifest-header">
@@ -1001,7 +1002,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 <span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span>
   <span data-lab-authored-subtitle-slot hidden></span>
 
-  <div class="mission">Goal: Reach the beacon with the shortest valid bitstream.</div>
+<section class="panel lab-activity-bar"><div class="lab-activity-task"><strong>Reach the beacon with the shortest valid bitstream.</strong></div></section><div class="lab-computing-tools">        <button id="executeBtn" data-lab-intro="rover-run" data-lab-intro-title="Decode your transmission" data-lab-intro-copy="Run the bitstream to see each code move the rover. Change commands or code lengths to reduce the total." data-priority="primary" class="lab-action execute">Run decoded transmission</button>        <button id="resetRoverBtn" data-lab-action="reset" class="lab-action">Reset rover</button></div>
 
   <section class="panel tape-panel">
     <div class="tape-top">
@@ -1014,7 +1015,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
         <div id="bitTape" aria-label="Encoded bitstream"></div>
       </div>
     </div>
-    <div id="decoderStatus">Ready. Run the transmission to watch the rover decode it from left to right.</div>
+    <div id="decoderStatus">Ready to decode.</div>
   </section>
 
   <div class="workspace">
@@ -1024,7 +1025,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
           <h2>Mars survey sector</h2>
           <div class="small">The rover begins facing east. Rocks are impassable.</div>
         </div>
-        <button id="resetRoverBtn" data-lab-action="reset">Reset rover</button>
+
       </div>
       <div class="map-scroll">
         <div id="map" data-lab-role="model"></div>
@@ -1044,16 +1045,16 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
         </div>
         <div class="meter"><div id="meterFill"></div></div>
         <div id="scoreText">7 bits above the shortest possible bitstream of 19 bits.</div>
-        <button id="executeBtn" class="execute">Run decoded transmission</button>
+
       </section>
 
       <section class="panel program-panel">
         <h2>Program the rover</h2>
         <div class="instructions">
-          Every command moves exactly one grid square. Left, Right and Back change the rover's heading before it moves.
+          Every command moves one square after the indicated turn.
         </div>
 
-        <div class="command-grid">
+        <div class="command-grid" data-lab-intro="rover-commands" data-lab-intro-title="Program the route" data-lab-intro-copy="Add a command with these buttons or F, L, R and B keys. Every command turns as labelled, then moves one square.">
           <button class="cmd cmd-f" data-command="F">
             <span class="icon">F</span>
             <span>Forward<small>keep heading + move</small></span>
@@ -1073,9 +1074,9 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
         </div>
 
         <div class="program-tools">
-          <button id="undoBtn">Undo</button>
-          <button id="clearBtn">Clear</button>
-          <button id="starterBtn">Starter route</button>
+          <button id="undoBtn" class="lab-action">Undo</button>
+          <button id="clearBtn" class="lab-action">Clear</button>
+          <button id="starterBtn" class="lab-action">Starter route</button>
         </div>
 
         <div id="program" aria-label="Programmed rover commands"></div>
@@ -1084,26 +1085,26 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
       <section class="panel code-panel">
         <h2>Huffman codebook</h2>
         <div class="instructions">
-          Assign a binary code to every command. The four codes must be prefix-free so the rover knows exactly when one instruction ends.
+          A code must not begin another code: this lets the decoder recognise where each command ends.
         </div>
 
-        <div class="code-table">
-          <div class="code-row" data-command="F">
+        <div class="code-table" data-lab-intro="rover-codes" data-lab-intro-title="Shorter codes for frequent commands" data-lab-intro-copy="Edit the codebook. No complete command code may be the start of another code; the frequency counts help you choose short codes.">
+          <div class="code-row lab-work-card" data-work-state="needed" data-command="F">
             <div class="code-symbol">F</div>
             <div class="code-name"><strong>Forward</strong><span id="countF">used 0 times</span></div>
             <input class="code-input" id="codeF" maxlength="6" value="00" inputmode="numeric" aria-label="Forward Huffman code" data-lab-manipulative="huffman-code">
           </div>
-          <div class="code-row" data-command="L">
+          <div class="code-row lab-work-card" data-work-state="needed" data-command="L">
             <div class="code-symbol">L</div>
             <div class="code-name"><strong>Left</strong><span id="countL">used 0 times</span></div>
             <input class="code-input" id="codeL" maxlength="6" value="01" inputmode="numeric" aria-label="Left Huffman code">
           </div>
-          <div class="code-row" data-command="R">
+          <div class="code-row lab-work-card" data-work-state="needed" data-command="R">
             <div class="code-symbol">R</div>
             <div class="code-name"><strong>Right</strong><span id="countR">used 0 times</span></div>
             <input class="code-input" id="codeR" maxlength="6" value="10" inputmode="numeric" aria-label="Right Huffman code">
           </div>
-          <div class="code-row" data-command="B">
+          <div class="code-row lab-work-card" data-work-state="needed" data-command="B">
             <div class="code-symbol">B</div>
             <div class="code-name"><strong>Back</strong><span id="countB">used 0 times</span></div>
             <input class="code-input" id="codeB" maxlength="6" value="11" inputmode="numeric" aria-label="Back Huffman code">
@@ -1111,7 +1112,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
         </div>
 
         <div id="codeStatus" class="code-status ok" role="status" aria-live="polite">Valid prefix-free codebook.</div>
-        <button id="resetCodesBtn">Reset to 2-bit codes</button>
+        <button id="resetCodesBtn" class="lab-action">Reset to 2-bit codes</button>
       </section>
 
     </div>
@@ -1450,7 +1451,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
       const bits = encodedBits(result.codes);
       renderTapeString(bits);
       $("bitCount").textContent = `${bits.length} ${bits.length===1 ? "bit" : "bits"}`;
-      $("decoderStatus").textContent = "Ready. Run the transmission to watch the rover decode it from left to right.";
+      $("decoderStatus").textContent = "Ready to decode.";
     }else{
       $("bitTape").innerHTML = "";
       $("bitCount").textContent = "invalid";

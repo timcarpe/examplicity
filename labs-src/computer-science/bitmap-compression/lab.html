@@ -642,8 +642,9 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 </style>
 <!-- LAB_FRAME_STYLES_END -->
 <link rel="stylesheet" href="./lab-kit.css" data-lab-resource="lab-kit.css">
+<!-- LAB_DESIGN_COMPONENTS -->
 </head>
-<body data-lab-layout="standard">
+<body data-lab-layout="standard" class="lab-adopt-v3 lab-computing lab-builder computing-bitmap-compression">
 <main>
 <!-- LAB_MANIFEST_HEADER_START -->
 <header class="lab-manifest-header">
@@ -672,6 +673,11 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 <span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span>
   <span data-lab-authored-subtitle-slot hidden></span>
 
+<section class="panel lab-activity-bar"><div class="lab-activity-task"><strong>Compare how the same bitmap is stored.</strong></div>      <div class="mode-tabs lab-toggle" data-active-class="active" data-kind="mode" aria-label="Encoding">
+        <button class="modeBtn active" data-mode="normal">Uncompressed</button>
+        <button class="modeBtn" data-mode="rle">RLE</button>
+        <button class="modeBtn" data-mode="huffman">Huffman</button>
+      </div></section>
   <div class="layout">
     <section class="panel paint-panel">
       <h2>Paint the bitmap</h2>
@@ -687,7 +693,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
         </label>
         <label>
           Colour depth
-          <select id="depthInput">
+          <select id="depthInput" class="lab-menu-select">
             <option value="1">1-bit</option>
             <option value="2">2-bit</option>
             <option value="4">4-bit</option>
@@ -695,10 +701,10 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
             <option value="24" selected>24-bit</option>
           </select>
         </label>
-        <button id="importBtn" type="button">Import image</button>
+        <button id="importBtn" type="button" class="lab-action">Import image</button>
         <input id="imageInput" type="file" accept="image/*" hidden>
-        <button id="sampleBtn">Load sample</button>
-        <button id="clearBtn">Clear</button>
+        <button id="sampleBtn" data-priority="primary" class="lab-action">Load sample</button>
+        <button id="clearBtn" class="lab-action">Clear</button>
         <div id="importStatus" class="tiny import-status" role="status" aria-live="polite">
           Images are reduced to fit within 20 × 20 pixels.
         </div>
@@ -714,18 +720,14 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
       </div>
 
       <div class="bitmap-wrap">
-        <div id="bitmap" role="grid" tabindex="0" aria-label="Paintable bitmap. Use the arrow keys to choose a pixel and Enter or Space to paint." data-lab-role="model" data-lab-manipulative="bitmap-grid"></div>
+        <div data-lab-intro="bitmap-paint" data-lab-intro-title="Change the image" data-lab-intro-copy="Choose a paint colour, then drag across pixels. Arrow keys select a pixel; Enter paints it. Compare the encoded size as you paint." id="bitmap" role="grid" tabindex="0" aria-label="Paintable bitmap. Use the arrow keys to choose a pixel and Enter or Space to paint." data-lab-role="model" data-lab-manipulative="bitmap-grid"></div>
       </div>
     </section>
 
     <section class="panel">
       <h2>Encoding</h2>
 
-      <div class="mode-tabs">
-        <button class="modeBtn active" data-mode="normal">Uncompressed</button>
-        <button class="modeBtn" data-mode="rle">RLE</button>
-        <button class="modeBtn" data-mode="huffman">Huffman</button>
-      </div>
+
 
       <div class="size-box">
         <div class="size-top">
@@ -972,9 +974,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
         paint();
       });
 
-      cell.addEventListener("pointerenter", () => {
-        if (painting) paint();
-      });
+
 
       row.appendChild(cell);
       }
@@ -1018,7 +1018,17 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
     if (activePixel.x !== previous.x || activePixel.y !== previous.y) syncActivePixel(false);
   });
 
-  window.addEventListener("pointerup", () => painting = false);
+  $("bitmap").addEventListener("pointermove",e=>{
+    if(!painting)return;
+    const cell=document.elementFromPoint(e.clientX,e.clientY)?.closest('[data-pixel-x]');
+    if(!cell||!$("bitmap").contains(cell))return;
+    const x=Number(cell.dataset.pixelX),y=Number(cell.dataset.pixelY);
+    if(getPixel(x,y)===paintColour)return;
+    setPixel(x,y,paintColour);cell.style.background=paintColour;
+    cell.setAttribute('aria-label',`Column ${x+1}, row ${y+1}, colour ${paintColour}`);
+    activePixel={x,y};syncActivePixel(false);update();
+  });
+  ['pointerup','pointercancel'].forEach(type=>window.addEventListener(type,()=>painting=false));
 
   function loadSample() {
     width = 12;
@@ -1469,12 +1479,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
     const convertedPaint=quantizeColour(paintColour);
     if(convertedPaint!==paintColour) convertedColours.add(paintColour);
     if(convertedColours.size){
-      alert(
-        convertedColours.size+" selected colour"+(convertedColours.size===1?" was":"s were")+
-        " not available at "+colourDepth+"-bit depth and "+
-        (convertedColours.size===1?"was":"were")+" converted to the nearest supported colour"+
-        (convertedColours.size===1?".":"s.")
-      );
+      $("importStatus").textContent=convertedColours.size+" colours converted to the nearest supported colour at "+colourDepth+"-bit depth.";
     }
     storedPixels=convertedPixels;
     paintColour=convertedPaint;

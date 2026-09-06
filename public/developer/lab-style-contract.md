@@ -704,3 +704,16 @@ surface; ready/waiting stay neutral with explicit labels. Show the CPU-reference
 page at the core, and the transferred page on its storage path. Do not depict a
 waiting requester as occupying the CPU throughout an I/O operation. A brief
 model disclosure should identify sampled work and simplified timing.
+
+### Construction and comparison workspaces
+
+Use the shared `lab-builder` adapter with `lab-computing` for editable models
+paired with evidence. Preserve purposeful relationships: rack/circuit/truth table,
+flowchart/factory, rover/program/codebook, bitmap/encoding, stored/reconstructed tables.
+Use `lab-toggle` with `data-kind="mode"` for actual modes and
+`lab-action data-priority="primary"` for the main run/check action. Editing
+actions belong below the goal. A table may wrap into relation panels and retain
+horizontal data scrolling; the operated board itself should fit its container.
+Code/bitstream panes can have a bounded height. Keep model colours (for example
+painted pixels) as data. Remove repeated commands once the real target has a
+shared first-use tooltip; retain key rules, pass criteria and causal feedback.

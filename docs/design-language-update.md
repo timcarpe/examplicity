@@ -1,6 +1,6 @@
 # Examplicity design update — lean plan
 
-Target: `codex/llm-first-v0.1`. Shared rollout across 57 manifest labs. Batches 1–5 are accepted; Batch 6 contains five computing labs for review. Historical notes below preserve earlier decisions and corrections.
+Target: `codex/llm-first-v0.1`. Shared rollout across 57 manifest labs. Batches 1–6 are accepted; Batch 7 contains five construction/representation labs for review. Historical notes below preserve earlier decisions and corrections.
 
 ## Current adaptation approach
 
@@ -1148,3 +1148,36 @@ Review-refinement implementation: `ab1bced0b32d86b998a2d004935a38044bf7fde4`; ca
 - Browser: boot/run/pause/10-cycle step and independent core/transfer readouts
   pass at 1422, 900 and 390px without horizontal overflow. All 57 lab publication,
   standalone download and contract checks pass, as do developer/bundle checks.
+
+### Batch 7 — five construction and representation labs
+
+Batch 6, including the concurrent OS Memory revision, is accepted.
+
+- Bitmap: shared goal/mode bar, readable comparison and flat header material;
+  bounded bitstream code pane. Fixed captured-pointer drag painting and replaced
+  depth-conversion alert with inline status. Pixel/encoding calculations retained.
+- Huffman Rover: retained map, decoder, program and codebook relationships and
+  artwork. Shared execution controls, regular labels, flat code fields and hints;
+  removed editable badges, coloured side rails and score gradient.
+- Database: retained relation/registrar comparison and normal-form explanation.
+  Readable wrapping relation panels, stage-specific hints and full feedback surfaces;
+  removed fraction/guidance counters and duplicate relation footer descriptions.
+- Logic: retained rack/circuit/truth-table composition. Shared challenge toggle,
+  editing bar, placement/wiring cues and readable values; operated board fits width.
+- Automated Systems: retained growing flowchart beside factory. Shared challenge
+  controls, statement dropdown, context surface and cues; fewer repeated commands,
+  readable diagram labels and full feedback surfaces. Factory art/arrows retained.
+- Shared presentation lives in canonical lab-design.css under the opt-in lab-builder
+  adapter. Five sources add component markers/hooks; five sidecars map observed
+  behaviour without adding exam interpretation or artificial Working levels.
+- Review choices: database tables and encoding code panes retain useful scrolling;
+  operated canvases fit. Dense flowchart geometry is preserved, not replaced with
+  a generic working sidebar. Huffman's fixed 19-bit mission optimum is unchanged.
+- Sound Sampling's scoped download allowance is 1.5 MB for the larger shared CSS;
+  its offline audio and the general 512 KB allowance are unchanged.
+- Validation: bitmap drag/keyboard painting and encoding modes; rover valid/invalid
+  codes and execution; complete database extraction/edit with Undo; keyboard-wired
+  AND gate and truth-table checking; all four factory challenge simulations pass.
+  Desktop 1422px, tablet 900px and phone 390px have no page or canvas overflow.
+  No browser page errors. Publication, standalone packaging and observational
+  contract checks pass for all 57 labs; developer mirrors and authoring bundle match.

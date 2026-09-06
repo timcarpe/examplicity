@@ -1,9 +1,102 @@
 {
   "schemaVersion": 1,
   "relationship": "Programming rover commands and their Huffman codes connects a route's command frequencies to encoded transmission length.",
-  "learnerLoop": { "action": "Build a rover program, edit its command codes and run the decoded transmission.", "modelChange": "The command sequence, bit count and rover position change.", "evidence": "The map, bit tape, score and codebook show the transmitted result.", "nextDecision": "Revise the route or code lengths to reach the goal with fewer bits." },
-  "invariants": ["The bit count follows the current commands and their codes.", "Running the transmission moves the rover according to the decoded command sequence."],
-  "safeAdaptations": ["Change map layouts, route goals or starter programs while preserving command coding and bit-cost feedback."],
-  "nonGoals": ["Teaching a complete compression file format or arbitrary prefix-code implementation."],
-  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+  "learnerLoop": {
+    "action": "Build a rover program, edit its command codes and run the decoded transmission.",
+    "modelChange": "The command sequence, bit count and rover position change.",
+    "evidence": "The map, bit tape, score and codebook show the transmitted result.",
+    "nextDecision": "Revise the route or code lengths to reach the goal with fewer bits."
+  },
+  "invariants": [
+    "The bit count follows the current commands and their codes.",
+    "Running the transmission moves the rover according to the decoded command sequence."
+  ],
+  "safeAdaptations": [
+    "Change map layouts, route goals or starter programs while preserving command coding and bit-cost feedback."
+  ],
+  "nonGoals": [
+    "Teaching a complete compression file format or arbitrary prefix-code implementation."
+  ],
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract",
+  "implementation": {
+    "reviewedRevision": "464512d",
+    "surfaces": {
+      "task": {
+        "kind": "given",
+        "selectors": [
+          ".lab-activity-task"
+        ],
+        "description": "Reach the beacon with the shortest valid transmission.",
+        "visibility": "Visible in the corresponding editing, simulation or result state."
+      },
+      "controls": {
+        "kind": "control",
+        "selectors": [
+          ".command-grid",
+          ".program-tools",
+          ".code-table",
+          "#executeBtn",
+          "#resetRoverBtn"
+        ],
+        "description": "Append commands, edit prefix codes, reset and run the decoder.",
+        "visibility": "Visible in the corresponding editing, simulation or result state."
+      },
+      "model": {
+        "kind": "model",
+        "selectors": [
+          "#map",
+          "#program",
+          "#bitTape"
+        ],
+        "description": "Fixed obstacle map, programmed route and consuming bitstream.",
+        "visibility": "Visible in the corresponding editing, simulation or result state."
+      },
+      "evidence": {
+        "kind": "evidence",
+        "selectors": [
+          "#codeStatus",
+          "#scoreBits",
+          "#scoreText",
+          "#decoderStatus"
+        ],
+        "description": "Prefix validity, command frequencies, route cost and actual decoded outcome.",
+        "visibility": "Visible in the corresponding editing, simulation or result state."
+      }
+    },
+    "quantities": {
+      "codes": {
+        "description": "Learner-assigned movement codes.",
+        "domain": "Four nonempty prefix-free binary strings, each field limited to six characters.",
+        "source": "Codebook fields.",
+        "inputSlots": [
+          "#codeF",
+          "#codeL",
+          "#codeR",
+          "#codeB"
+        ],
+        "output": "#bitTape, #codeStatus and score."
+      },
+      "cost": {
+        "description": "Transmitted bit count.",
+        "domain": "Sum of code lengths over the programmed route; valid routes compared against fixed 19-bit mission optimum.",
+        "source": "Program and codebook.",
+        "output": "#scoreBits, #bitCount, #optimality."
+      }
+    },
+    "modes": {
+      "editing": "Program and codebook can be edited until execution begins.",
+      "execution": "Bitwise decoding; each complete code turns and moves the rover one square.",
+      "support": "No Working or exam toggle."
+    },
+    "dependencies": [
+      "Invalid prefix codes disable execution.",
+      "Route simulation determines whether cost can be scored; actual execution still shows obstacles.",
+      "Reset rover cancels a run; starter route restores the supplied program.",
+      "Model artwork and command meanings are retained. Shared hints introduce execution, command entry and codebook editing."
+    ],
+    "completion": "Execution ends at an obstacle, after consuming the stream, or at the beacon; score compares valid routes with the fixed optimum.",
+    "limitations": [
+      "This is a fixed mission with a stated optimum, not a general-purpose Huffman-tree builder."
+    ]
+  }
 }

@@ -349,8 +349,9 @@ td{height:39px;padding:0 8px;color:#34434c;font:700 10px ui-monospace,SFMono-Reg
 @media(max-width:620px){body{padding-bottom:76px;padding-top:60px}main{width:min(100% - 12px,1280px);margin-top:8px}.relation{min-width:240px}.board{padding:8px;gap:8px}h1{font-size:24px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important;scroll-behavior:auto!important}}
 </style>
+<!-- LAB_DESIGN_COMPONENTS -->
 </head>
-<body data-lab-layout="standard">
+<body data-lab-layout="standard" class="lab-adopt-v3 lab-computing lab-builder computing-database-normalisation">
 <main>
 <!-- LAB_MANIFEST_HEADER_START -->
 <header class="lab-manifest-header">
@@ -373,19 +374,20 @@ td{height:39px;padding:0 8px;color:#34434c;font:700 10px ui-monospace,SFMono-Reg
 <span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span>
   <span data-lab-authored-subtitle-slot hidden></span>
 
-  <section class="panel challenge" aria-live="polite">
-    <div>
+  <section class="panel challenge lab-activity-bar" aria-live="polite">
+    <div class="lab-activity-task">
       <span id="challengeKicker" class="challenge-kicker">Guided example · 1 of 4</span>
       <strong id="challengeTitle">Make one student name require one edit.</strong>
       <p id="challengeCopy">Student S104 appears twice. Drag one highlighted “Mina Patel” cell onto the other copy.</p>
     </div>
-    <div class="challenge-actions">
-      <span id="challengeProgress" class="challenge-progress">Guidance: explicit</span>
-      <button id="undo" class="ui-button" type="button" disabled>Undo</button>
-      <button id="reset" class="ui-button" type="button" data-lab-action="reset">Reset</button>
-    </div>
+
   </section>
 
+    <div class="challenge-actions lab-computing-tools">
+      <span id="challengeProgress" class="challenge-progress">Guidance: explicit</span>
+      <button id="undo" class="lab-action ui-button" type="button" disabled>Undo</button>
+      <button id="reset" class="lab-action ui-button" type="button" data-lab-action="reset">Reset</button>
+    </div>
   <section class="panel nf-trail" aria-label="Normal form progression">
     <div id="nf1" class="nf-stage active"><div class="nf-stage-head"><strong>1NF</strong><span class="nf-state">current</span></div><p>Atomic values; one row per enrolment. Repeated student and course facts are still stored in the relationship table.</p></div>
     <div id="nf2" class="nf-stage"><div class="nf-stage-head"><strong>2NF</strong><span class="nf-state">next</span></div><p>Every non-key fact depends on the whole composite key, not only StudentID or CourseID.</p></div>
@@ -409,7 +411,7 @@ td{height:39px;padding:0 8px;color:#34434c;font:700 10px ui-monospace,SFMono-Reg
   </section>
 
   <section class="panel join-panel" aria-labelledby="joinTitle">
-    <div class="join-head"><strong id="joinTitle">Registrar view · same enrolments, reconstructed from the stored relations</strong><span id="joinNote">Normalisation changes where facts are stored, not what the registrar can read.</span></div>
+    <div class="join-head"><strong id="joinTitle">Registrar view</strong><span id="joinNote">Normalisation changes where facts are stored, not what the registrar can read.</span></div>
     <div class="join-scroll"><table><thead><tr id="joinHead"></tr></thead><tbody id="joinBody"></tbody></table></div>
   </section>
 </main>
@@ -543,7 +545,11 @@ td{height:39px;padding:0 8px;color:#34434c;font:700 10px ui-monospace,SFMono-Reg
 
   function setEvidence(cls,symbol,title,text){const box=$("evidence");box.className="evidence"+(cls?" "+cls:"");$("evidenceSymbol").textContent=symbol;$("evidenceTitle").textContent=title;$("evidenceText").textContent=text;state.lastEvidence={cls,symbol,title,text}}
   function restoreEvidence(){if(state.lastEvidence){const e=state.lastEvidence;setEvidence(e.cls,e.symbol,e.title,e.text);return}const s=currentSpec();if(state.stage==="student")setEvidence("","S104 · Mina Patel × 2","Same student, same fact, stored twice","The highlighted rows share StudentID S104. Merging the two name cells will store StudentName once per StudentID.");else if(state.stage==="course")setEvidence("","C101 · Databases × 2","Look for a repeated course fact","The two C101 rows belong to different students but describe the same course. Merge the two Databases cells.");else if(state.stage==="grade")setEvidence("","B ≠ one fact","Predict before you merge","Both cells say B, but the student–course keys are different. Test whether repeated value means duplicated fact.");else if(state.stage==="tutor")setEvidence("","COURSE still repeats a fact","2NF is not the end","Look for one descriptive value repeated across different courses but attached to the same TutorID.");else if(state.stage==="verify")setEvidence("good","T7 · TutorName × 1","One authoritative tutor row","Edit the single T7 TutorName cell. The derived registrar view should change in every T7 enrolment.");else setEvidence("good","1NF → 2NF → 3NF","Structural outcome","Atomic rows remain; partial dependencies moved to STUDENT/COURSE; the transitive TutorID → TutorName dependency moved to TUTOR.")}
-  function renderAll(){renderChallenge();renderNF();renderConsequences();renderBoard();renderJoin();restoreEvidence();$("undo").disabled=!state.history.length}
+  function renderAll(){renderChallenge();renderNF();renderConsequences();renderBoard();renderJoin();restoreEvidence();$("undo").disabled=!state.history.length;
+    const spec=currentSpec(),scope=$("board");
+    const targets=state.stage==='verify'?[scope.querySelector('.editable-name')]:state.stage==='complete'?[]:[scope.querySelector('td.fact-cell')];
+    LabDesign.introduce(scope,targets,'database-'+state.stage,state.stage==='verify'?'Test one stored edit':'Test a dependency',spec.copy);
+  }
 
   function sameCell(a,b){return a&&b&&a.dataset.relation===b.dataset.relation&&a.dataset.rowindex===b.dataset.rowindex&&a.dataset.field===b.dataset.field}
   function determinantValues(td,det){const rel=state.relations[td.dataset.relation],row=rel.rows[Number(td.dataset.rowindex)];return det.map(f=>row[f])}

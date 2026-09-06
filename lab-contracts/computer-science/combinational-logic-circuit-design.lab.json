@@ -1,9 +1,102 @@
 {
   "schemaVersion": 1,
   "relationship": "Constructing a gate circuit connects input combinations and Boolean behaviour to a challenge's required output.",
-  "learnerLoop": { "action": "Place and wire gates, toggle inputs and check the circuit.", "modelChange": "The circuit topology and its signals change.", "evidence": "The board, output expression and challenge feedback reveal the circuit's behaviour.", "nextDecision": "Alter gates or wiring to satisfy the required logic." },
-  "invariants": ["Signals and expressions reflect the circuit currently on the board.", "Checking evaluates the learner-built circuit against the active challenge."],
-  "safeAdaptations": ["Change challenge conditions, available gate examples or guidance while retaining editable circuit construction and checking."],
-  "nonGoals": ["Simulating analogue electronics or arbitrary physical circuit layouts."],
-  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+  "learnerLoop": {
+    "action": "Place and wire gates, toggle inputs and check the circuit.",
+    "modelChange": "The circuit topology and its signals change.",
+    "evidence": "The board, output expression and challenge feedback reveal the circuit's behaviour.",
+    "nextDecision": "Alter gates or wiring to satisfy the required logic."
+  },
+  "invariants": [
+    "Signals and expressions reflect the circuit currently on the board.",
+    "Checking evaluates the learner-built circuit against the active challenge."
+  ],
+  "safeAdaptations": [
+    "Change challenge conditions, available gate examples or guidance while retaining editable circuit construction and checking."
+  ],
+  "nonGoals": [
+    "Simulating analogue electronics or arbitrary physical circuit layouts."
+  ],
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract",
+  "implementation": {
+    "reviewedRevision": "464512d",
+    "surfaces": {
+      "task": {
+        "kind": "given",
+        "selectors": [
+          "#challenge-title",
+          "#challenge-hint",
+          "#challenge-tabs"
+        ],
+        "description": "Circuit requirement and selectable challenges.",
+        "visibility": "Visible in the corresponding editing, simulation or result state."
+      },
+      "controls": {
+        "kind": "control",
+        "selectors": [
+          "#gate-palette",
+          "#input-a",
+          "#input-b",
+          "#input-c",
+          "#check-circuit",
+          "#undo-action",
+          "#clear-board"
+        ],
+        "description": "Gate placement, input switches, full truth-table check and editing actions.",
+        "visibility": "Visible in the corresponding editing, simulation or result state."
+      },
+      "model": {
+        "kind": "model",
+        "selectors": [
+          "#circuit-board"
+        ],
+        "description": "Placed gates and wired ports; port selection supports keyboard as well as dragging.",
+        "visibility": "Visible in the corresponding editing, simulation or result state."
+      },
+      "evidence": {
+        "kind": "evidence",
+        "selectors": [
+          "#truth-body",
+          "#expression-text",
+          "#live-output",
+          "#check-feedback"
+        ],
+        "description": "Every input combination, intermediate gate values, expression and assessed match.",
+        "visibility": "Visible in the corresponding editing, simulation or result state."
+      }
+    },
+    "quantities": {
+      "inputs": {
+        "description": "Live binary input states.",
+        "domain": "A/B for two-input challenges; A/B/C for secure entry and experiment.",
+        "source": "Input switches.",
+        "inputSlots": [
+          "#input-a",
+          "#input-b",
+          "#input-c"
+        ],
+        "output": "Live signal and truth-table row."
+      },
+      "truth": {
+        "description": "Complete circuit truth table.",
+        "domain": "Four or eight input combinations with derived intermediate/output values.",
+        "source": "Constructed gates and wires.",
+        "output": "#truth-body and check result."
+      }
+    },
+    "modes": {
+      "challenge": "Two-key safe, workshop fan, secure entry and open experiment.",
+      "support": "No Working/exam toggle; intermediate gate columns provide evidence."
+    },
+    "dependencies": [
+      "Rack symbols preserve the shapes used by placed gates.",
+      "Wiring updates expression and truth rows; editing clears checked feedback.",
+      "All target rows must match to pass. Experiment has no target.",
+      "Shared hints introduce placement and subsequent wiring; rack, board and truth table retain their purposeful relationship."
+    ],
+    "completion": "A target challenge passes when the connected circuit matches every input combination.",
+    "limitations": [
+      "Circuit constructions are combinational; cyclic or incomplete wiring cannot produce a complete truth table."
+    ]
+  }
 }

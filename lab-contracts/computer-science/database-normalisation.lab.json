@@ -1,9 +1,90 @@
 {
   "schemaVersion": 1,
   "relationship": "Restructuring the data board connects repeated facts and dependencies to first, second and third normal form.",
-  "learnerLoop": { "action": "Move through the normalisation challenge and use undo or reset when needed.", "modelChange": "The table structure and normal-form progress change.", "evidence": "The board, evidence panel, consequences and join explanation expose the result.", "nextDecision": "Identify the remaining dependency or repetition to remove." },
-  "invariants": ["Normal-form evidence reflects the current table arrangement.", "The lab preserves the relationship between separated records through the displayed join."],
-  "safeAdaptations": ["Change the data scenario, field names or scaffolding while retaining the visible progression through normal forms."],
-  "nonGoals": ["Building a live database management system."],
-  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+  "learnerLoop": {
+    "action": "Move through the normalisation challenge and use undo or reset when needed.",
+    "modelChange": "The table structure and normal-form progress change.",
+    "evidence": "The board, evidence panel, consequences and join explanation expose the result.",
+    "nextDecision": "Identify the remaining dependency or repetition to remove."
+  },
+  "invariants": [
+    "Normal-form evidence reflects the current table arrangement.",
+    "The lab preserves the relationship between separated records through the displayed join."
+  ],
+  "safeAdaptations": [
+    "Change the data scenario, field names or scaffolding while retaining the visible progression through normal forms."
+  ],
+  "nonGoals": [
+    "Building a live database management system."
+  ],
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract",
+  "implementation": {
+    "reviewedRevision": "464512d",
+    "surfaces": {
+      "task": {
+        "kind": "given",
+        "selectors": [
+          "#challengeTitle",
+          ".nf-trail"
+        ],
+        "description": "Current dependency task and explanatory 1NF/2NF/3NF progression.",
+        "visibility": "Visible in the corresponding editing, simulation or result state."
+      },
+      "controls": {
+        "kind": "control",
+        "selectors": [
+          "#undo",
+          "#reset"
+        ],
+        "description": "Undo stored structural edits or restart the example.",
+        "visibility": "Visible in the corresponding editing, simulation or result state."
+      },
+      "model": {
+        "kind": "model",
+        "selectors": [
+          "#board"
+        ],
+        "description": "Stored relations; matching cells support drag or keyboard selection to test merging.",
+        "visibility": "Visible in the corresponding editing, simulation or result state."
+      },
+      "evidence": {
+        "kind": "evidence",
+        "selectors": [
+          ".consequences",
+          "#evidence",
+          "#joinBody"
+        ],
+        "description": "Stored-copy counts, dependency feedback and reconstructed registrar view.",
+        "visibility": "Visible in the corresponding editing, simulation or result state."
+      }
+    },
+    "quantities": {
+      "copies": {
+        "description": "Stored copies of the named fact.",
+        "domain": "Derived from active relations.",
+        "source": "Student/tutor extraction.",
+        "output": "#studentCopiesText, #tutorCopiesText."
+      },
+      "relations": {
+        "description": "Keys and stored attributes.",
+        "domain": "ENROLMENT, STUDENT, COURSE and TUTOR for the fixed four-row dataset.",
+        "source": "Dependency-valid cell merges.",
+        "output": "#board and joined registrar view."
+      }
+    },
+    "modes": {
+      "stages": "Student extraction, course extraction, repeated-grade probe, tutor extraction, one-name edit, complete.",
+      "support": "Guidance fades with stages; no selectable Working or exam mode."
+    },
+    "dependencies": [
+      "A merge compares both value and determinant keys; equal grades for different enrolments stay separate.",
+      "Student/course extractions establish partial-key separation; tutor extraction removes the transitive dependency.",
+      "The verify stage permits editing T7 TutorName; one stored edit updates three joined rows.",
+      "Stage-specific shared tooltips replace repeated commands; table scrolling is retained on narrow screens while the relation board wraps."
+    ],
+    "completion": "The final tutor-name edit records completion and updates the registrar view.",
+    "limitations": [
+      "Fixed guided dataset. The grade probe intentionally rejects merging while advancing the concept check."
+    ]
+  }
 }

@@ -10,6 +10,7 @@ export const changelogEntries: readonly ChangelogEntry[] = [
     date: '2026-09-06',
     displayDate: '6 September 2026',
     publicChanges: [
+      'Refined Bitmap Compression, Huffman Rover, Database Normalisation, Combinational Logic and Automated Systems with shared controls, targeted interaction cues and more readable evidence while preserving their intended layouts and models. Fixed continuous bitmap drag painting and made colour conversion feedback inline.',
       'Unified CPU value sizing and padding; clarified index labels, memory loading and desktop interaction cues; improved scheduler rule contrast and explanations, matched supported lab dropdown menus to the homepage, and clarified memory paths. Memory Management now shows other ready work executing during page transfers, with separate CPU references and running/ready/waiting states.',
       'Refined Assembly, Fetch–Decode–Execute, Memory Management, Process Scheduling and Software Stack with shared controls, targeted hints, less repeated text and rebalanced workspaces while retaining their hardware, queues and construction models.',
       'Refocused the developer reference and its plain-text companion on adapting labs and creating new activities from examples, with a compact GitHub contribution card, reasoning-model recommendations and direct links from the Remix prompt. Matched the site header and footer and added section tracking to the page navigation.',

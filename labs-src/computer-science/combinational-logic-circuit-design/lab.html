@@ -468,8 +468,9 @@ button.primary { border-color: var(--lab-accent); background: var(--lab-accent);
 }
 </style>
 <link rel="stylesheet" href="./lab-kit.css" data-lab-resource="lab-kit.css">
+<!-- LAB_DESIGN_COMPONENTS -->
 </head>
-<body data-lab-layout="standard">
+<body data-lab-layout="standard" class="lab-adopt-v3 lab-computing lab-builder computing-combinational-logic-circuit-design">
   <main>
 <!-- LAB_MANIFEST_HEADER_START -->
 <header class="lab-manifest-header">
@@ -498,26 +499,27 @@ button.primary { border-color: var(--lab-accent); background: var(--lab-accent);
 <span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span>
     <span data-lab-authored-subtitle-slot hidden></span>
 
-    <section class="challenge-bar panel" aria-labelledby="challenge-title">
-      <div class="challenge-copy">
+    <section class="challenge-bar panel lab-activity-bar" aria-labelledby="challenge-title">
+      <div class="challenge-copy lab-activity-task">
         <strong id="challenge-title">Unlock a two-key safe</strong>
         <span id="challenge-hint">A and B are separate keys. The safe should unlock only while both keys are on.</span>
       </div>
-      <div id="challenge-tabs" class="challenge-tabs" aria-label="Circuit challenges"></div>
+      <div id="challenge-tabs" class="challenge-tabs lab-toggle" data-active-class="active" data-kind="mode" aria-label="Circuit challenges"></div>
     </section>
 
+        <div class="rack-actions lab-computing-tools">
+          <button id="undo-action" type="button" disabled class="lab-action">Undo</button>
+          <button id="delete-selected" type="button" disabled class="lab-action">Delete selected</button>
+          <button id="clear-board" type="button" class="lab-action">Clear board</button>
+        </div>
     <div class="lab-grid">
       <aside class="panel gate-rack" aria-labelledby="rack-title">
         <div class="section-heading">
           <strong id="rack-title">Gate rack</strong>
           <span>Drag a gate onto the board, or click it once to add.</span>
         </div>
-        <div id="gate-palette" class="gate-palette"></div>
-        <div class="rack-actions">
-          <button id="undo-action" type="button" disabled>Undo</button>
-          <button id="delete-selected" type="button" disabled>Delete selected</button>
-          <button id="clear-board" type="button">Clear board</button>
-        </div>
+        <div data-lab-intro="logic-gates" data-lab-intro-title="Place a logic gate" data-lab-intro-copy="Drag a gate onto the board, or select a gate to add it. Its shape is the same in the rack and on the circuit." id="gate-palette" class="gate-palette"></div>
+
         <p class="rack-help">Connect by dragging from an output circle to an input circle. You can also select the two circles.</p>
       </aside>
 
@@ -575,7 +577,7 @@ button.primary { border-color: var(--lab-accent); background: var(--lab-accent);
             <tbody id="truth-body"></tbody>
           </table>
         </div>
-        <button id="check-circuit" class="primary" type="button">Check circuit</button>
+        <button id="check-circuit" data-priority="primary" data-priority="primary" class="lab-action" type="button">Check circuit</button>
         <p id="check-feedback" class="check-feedback">Every input combination must match.</p>
       </aside>
     </div>
@@ -638,7 +640,7 @@ function renderPalette() {
   Object.keys(gateTypes).forEach((type) => {
     const button = document.createElement("button");
     button.type = "button";
-    button.className = "gate-choice";
+    button.className = "gate-choice lab-placeable-card";
     button.innerHTML = `${gateIcon(type)}<span>${type}</span>`;
     button.setAttribute("aria-label", `Add ${type} gate`);
     button.addEventListener("click", () => {
@@ -959,7 +961,7 @@ function createPort(kind, nodeId, input, x, y, label) {
   group.append(svg("circle", { class: "port-hit", r: 22 }));
   group.append(svg("circle", { class: "port-dot", r: 8 }));
   const text = svg("text", { x: kind === "output" ? -13 : 13, y: 4, "text-anchor": kind === "output" ? "end" : "start" });
-  text.textContent = label;
+  text.textContent = kind === "input" && nodeId !== "OUT" ? label : "";
   group.append(text);
   group.addEventListener("pointerdown", (event) => beginWirePointer(event, kind, nodeId, input));
   group.addEventListener("keydown", (event) => {
@@ -1158,6 +1160,7 @@ function renderAll() {
   renderTable();
   elements.undo.disabled = state.history.length === 0;
   elements.deleteSelected.disabled = !state.selected;
+  LabDesign.introduce(elements.boardShell,state.gates.length?[elements.board.querySelector('.port[data-kind="output"]')]:[],"logic-wiring","Connect the circuit","Drag from an output circle to an input circle, or select the two ports. Connect the gates to output Y, then check every truth-table row.");
 }
 
 function checkCircuit() {

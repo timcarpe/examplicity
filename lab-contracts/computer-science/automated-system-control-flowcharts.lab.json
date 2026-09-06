@@ -1,9 +1,100 @@
 {
   "schemaVersion": 1,
   "relationship": "Building a flowchart connects control decisions and operations to an automated-system challenge and its test run.",
-  "learnerLoop": { "action": "Place, connect and configure flowchart symbols, then run the challenge test.", "modelChange": "The chart structure and selected symbol configuration change.", "evidence": "The chart, challenge status and test result show whether the control logic works.", "nextDecision": "Revise a branch, operation or connection to meet the goal." },
-  "invariants": ["A test evaluates the chart the learner constructed.", "Flowchart connections remain the representation of the control flow."],
-  "safeAdaptations": ["Change the challenge scenario, guidance or available examples while preserving editable flowchart construction and testing."],
-  "nonGoals": ["Simulating physical hardware beyond the represented automated control logic."],
-  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+  "learnerLoop": {
+    "action": "Place, connect and configure flowchart symbols, then run the challenge test.",
+    "modelChange": "The chart structure and selected symbol configuration change.",
+    "evidence": "The chart, challenge status and test result show whether the control logic works.",
+    "nextDecision": "Revise a branch, operation or connection to meet the goal."
+  },
+  "invariants": [
+    "A test evaluates the chart the learner constructed.",
+    "Flowchart connections remain the representation of the control flow."
+  ],
+  "safeAdaptations": [
+    "Change the challenge scenario, guidance or available examples while preserving editable flowchart construction and testing."
+  ],
+  "nonGoals": [
+    "Simulating physical hardware beyond the represented automated control logic."
+  ],
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract",
+  "implementation": {
+    "reviewedRevision": "464512d",
+    "surfaces": {
+      "task": {
+        "kind": "given",
+        "selectors": [
+          "#challenge-title",
+          "#challenge-goal",
+          "#challenge-pass",
+          ".scenario"
+        ],
+        "description": "Current challenge, pass criteria and bottle acceptance context.",
+        "visibility": "Visible in the corresponding editing, simulation or result state."
+      },
+      "controls": {
+        "kind": "control",
+        "selectors": [
+          "#palette",
+          "#config-operation",
+          "#run-test",
+          "#reset-line",
+          "#auto-layout"
+        ],
+        "description": "Place/configure symbols, connect the chart, arrange it and run the physical test.",
+        "visibility": "Visible in the corresponding editing, simulation or result state."
+      },
+      "model": {
+        "kind": "model",
+        "selectors": [
+          "#flowchart",
+          "#factory-svg"
+        ],
+        "description": "Growing controller chart beside the bottle line and active sensor/processor/actuator.",
+        "visibility": "Visible in the corresponding editing, simulation or result state."
+      },
+      "evidence": {
+        "kind": "evidence",
+        "selectors": [
+          "#flow-feedback",
+          "#test-feedback",
+          "#challenge-tabs",
+          "#batch"
+        ],
+        "description": "Connection/statement diagnostics, route evidence and stage pass state.",
+        "visibility": "Visible in the corresponding editing, simulation or result state."
+      }
+    },
+    "quantities": {
+      "mass": {
+        "description": "Test bottle mass.",
+        "domain": "Acceptance from 490 to 510 g inclusive; supplied challenge tests include out-of-range bottles.",
+        "source": "Stage test cases.",
+        "output": "Sensor reading, processor decision and ship/reject route."
+      },
+      "chart": {
+        "description": "Configured graph of flowchart statements.",
+        "domain": "Terminator, input/output, process and decision nodes; directed connections.",
+        "source": "Palette, statement menu and ports.",
+        "inputSlots": [
+          "#config-operation"
+        ],
+        "output": "#flowchart and animated factory consequences."
+      }
+    },
+    "modes": {
+      "stages": "Sense, Decide, Act and Repeat unlock sequentially while retaining the chart.",
+      "support": "No Working or exam selector."
+    },
+    "dependencies": [
+      "Each stage checks symbol type, statement and connections before running its physical cases.",
+      "Decision YES and NO branches remain distinct; repeat branches reconnect to the pressure-sensor input.",
+      "Editing/configuration and physical test controls stay below the goal; shared targeted hints introduce placement, configuration and wiring.",
+      "The chart expands down the page; the factory and its SVG device artwork remain paired with it."
+    ],
+    "completion": "All four challenge tests pass, including correct repeat routing.",
+    "limitations": [
+      "A fixed automated bottle-line teaching model. Model-specific symbol geometry and directed arrows are retained."
+    ]
+  }
 }
