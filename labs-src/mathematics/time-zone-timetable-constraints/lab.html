@@ -791,7 +791,7 @@ body{margin:0}
     }
     const localAvailStart=localMs(person.availStart,person.offset),localAvailEnd=localMs(person.availEnd,person.offset);
     return `<article class="calendar-card ${organizer?'organizer':''}" data-person="${index}">
-      <div class="calendar-card-head"><div><span class="person-role">${person.role}</span><strong class="person-city">${person.city}</strong><span class="person-meta">${offsetLabel(person.offset)} · ${person.notation==='24'?'24-hour':'12-hour'} calendar</span></div><div class="person-state"><strong>${dateLabel(localAvailStart)}</strong>${rangeLabel(person.availStart,person.availEnd,person)}</div></div>
+      <div class="calendar-card-head"><div><span class="person-role">${organizer?'Organiser · your calendar':person.role}</span><strong class="person-city">${person.city}</strong><span class="person-meta">${offsetLabel(person.offset)} · ${person.notation==='24'?'24-hour':'12-hour'} calendar</span></div><div class="person-state"><strong>${dateLabel(localAvailStart)}</strong>${rangeLabel(person.availStart,person.availEnd,person)}</div></div>
       <div class="date-strip">${segments.map(s=>{const l=(s.start-person.windowLocalStart)/(WINDOW_MIN*MIN)*100,w=(s.end-s.start)/(WINDOW_MIN*MIN)*100;return `<div class="date-segment" style="left:${l}%;width:${w}%">${s.label}</div>`}).join('')}</div>
       <div class="timeline-shell">
         <div class="timeline ${organizer?'organizer-timeline':''} ${state.proposalStart!=null?'has-proposal':''} ${organizer&&state.mode==='calculate'&&state.proposalStart==null?'calculate-empty':''}" data-timeline="${index}" aria-label="${person.city} local calendar">
@@ -800,9 +800,9 @@ body{margin:0}
           ${meetings}
         </div>
         <div class="axis">${axis.map(t=>`<span class="axis-tick ${t.pct<1?'edge-start':t.pct>99?'edge-end':''}" style="left:${clamp(t.pct,0,100)}%">${timeLabel(t.t,person.notation)}</span>`).join('')}</div>
-        ${organizer?`<div class="adjust-row"><button type="button" data-shift="-15" ${state.proposalStart==null||state.mode!=='guided'?'disabled':''}>15 min earlier</button><button type="button" data-shift="15" ${state.proposalStart==null||state.mode!=='guided'?'disabled':''}>15 min later</button><span class="proposal-readout">${state.proposalStart==null?'no proposal placed':rangeLabel(state.proposalStart,state.proposalStart+state.request.duration*MIN,person)}</span></div>`:''}
+        ${organizer?`<div class="adjust-row"><button type="button" data-shift="-15" ${state.proposalStart==null||state.mode!=='guided'?'disabled':''}>15 min earlier</button><button type="button" data-shift="15" ${state.proposalStart==null||state.mode!=='guided'?'disabled':''}>15 min later</button><span class="proposal-readout">${state.proposalStart==null?'':rangeLabel(state.proposalStart,state.proposalStart+state.request.duration*MIN,person)}</span></div>`:''}
       </div>
-      <div class="response ${resp.cls}"><strong>${resp.title}</strong>${resp.detail}</div>
+      ${state.lastSentStart==null?'':`<div class="response ${resp.cls}"><strong>${resp.title}</strong>${resp.detail}</div>`}
     </article>`;
   }
   function ensureTypedDraft(){
@@ -1112,6 +1112,7 @@ body{margin:0}
   }
   function renderSummary(){
     const box=$('summary'),latestSuccess=state.lastSentStart!=null&&state.request.people.every(p=>fits(p,state.lastSentStart)),copy=box.querySelector('div');
+    box.hidden=state.lastSentStart==null&&state.proposalStart==null;
     box.className='summary'+(state.lastSentStart==null?'':latestSuccess?' good':' bad');
     if(state.lastSentStart==null){
       if(state.proposalStart==null)copy.innerHTML=state.mode==='guided'?'<strong>Choose a start.</strong><span>Place the fixed meeting in the organiser calendar.</span>':'<strong>Calculate the organiser start.</strong><span>The highlighted calculation step is waiting for your time.</span>';

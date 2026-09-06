@@ -415,6 +415,11 @@ button.quiet{background:transparent}
 <section class="panel lab" aria-label="Spinner audit lab">
   <div class="workspace">
     <div class="stage-side">
+      <section class="lab-context" aria-labelledby="claimContextTitle">
+        <div class="lab-context-heading"><h2 id="claimContextTitle">Claim under test</h2><div id="mechanismChip" class="mechanism-chip"><span>Reference mechanism</span></div></div>
+        <p id="claimContextStatement">A fair spinner awards a prize with probability 1 ÷ 4 = 0.25.</p>
+        <p id="claimContextCriterion" class="lab-context-detail">Compare the running relative frequency with 0.25 as the number of spins increases.</p>
+      </section>
       <div class="visual-head">
         <div class="visual-copy"><strong>Spinner → outcomes → running relative frequency</strong><span>Each result stays visible in the bins and becomes the next point on the graph.</span></div>
         <div class="legend" aria-label="Graph legend"><span class="fair"><i></i>fair claim 0.25</span><span class="trace"><i></i>current test</span><span id="ghostLegend" class="ghost" hidden><i></i>fair-spinner trace</span></div>
@@ -497,12 +502,7 @@ button.quiet{background:transparent}
 
     <aside class="workbench lab-sidebar" aria-label="Persistent evidence and working area">
       <div id="phaseDock" class="phase-dock"><section id="phaseModal" class="phase-modal" role="region" aria-label="Current audit step" aria-live="polite" tabindex="-1"></section></div>
-      <section class="work-section">
-        <div class="eyebrow">Fair claim</div>
-        <div class="claim-equation"><strong>1 ÷ 4 = 0.25</strong><span>probability of PRIZE</span></div>
-        <div class="claim-copy">If the spinner is fair, each equal sector is equally likely. The graph should settle near 0.25 over many spins.</div>
-        <div id="mechanismChip" class="mechanism-chip"><i></i><span>Reference mechanism</span></div>
-      </section>
+
       <section class="work-section">
         <div class="eyebrow">Live evidence</div>
         <div class="live-grid"><div class="live-stat prize"><span>Prize outcomes</span><strong id="prizeCount">0</strong></div><div class="live-stat"><span>Total spins</span><strong id="trialCount">0</strong></div></div>
@@ -595,6 +595,11 @@ button.quiet{background:transparent}
   function renderMission(){
     const [k,t,h]=phaseInfo[state.phase]||phaseInfo.predictSmall;
     $("missionKicker").textContent=k;$("missionTitle").textContent=t;$("missionHint").textContent=h;renderProgress();
+    const forecast=["forecast","forecastReady","complete"].includes(state.phase);
+    $("claimContextTitle").textContent=forecast?"Forecast to test":state.mechanismRevealed?"Audit finding":"Claim under test";
+    $("claimContextStatement").textContent=forecast?`With a prize probability estimate of 0.40, predict the prize stock for ${state.futureN} visitors.`:state.mechanismRevealed?"The booth's long-run evidence supports P(prize) ≈ 0.40.":"A fair spinner awards a prize with probability 1 ÷ 4 = 0.25.";
+    $("claimContextCriterion").textContent=forecast?"Calculate the expected count, then compare it with the actual event. Expected does not mean guaranteed.":state.mechanismRevealed?"Compare this with the fair claim of 0.25; a short sample alone did not establish the bias.":"Compare the running relative frequency with 0.25 as the sample grows. A short-run difference alone does not establish bias.";
+
   }
   function chartPoint(trial,value){const x=315+(trial/200)*605,y=350-value*292;return{x,y}}
   function tracePath(results){
@@ -728,7 +733,7 @@ button.quiet{background:transparent}
   function bindModalControls(){
     const ps=$("predictionSlider");if(ps)ps.addEventListener("input",e=>{state.prediction=Number(e.target.value);$("predictionOutput").textContent=fmt(state.prediction,2);renderChart();renderComparison()});
     const fs=$("futureSlider");if(fs){
-      fs.addEventListener("input",e=>{state.futureN=Number(e.target.value);state.answer="";state.forecastFeedback="";const out=$("futureOutput"),cell=$("futureCell"),ans=$("expectedAnswer");if(out)out.textContent=state.futureN;if(cell)cell.textContent=state.futureN;if(ans)ans.value="";renderForecast()});
+      fs.addEventListener("input",e=>{state.futureN=Number(e.target.value);state.answer="";state.forecastFeedback="";const out=$("futureOutput"),cell=$("futureCell"),ans=$("expectedAnswer");if(out)out.textContent=state.futureN;if(cell)cell.textContent=state.futureN;if(ans)ans.value="";renderForecast();renderMission()});
       fs.addEventListener("change",()=>{state.expected=null;state.actual=null;renderAll()});
     }
     const ans=$("expectedAnswer");if(ans){ans.addEventListener("input",e=>{state.answer=e.target.value;state.forecastFeedback="";$("forecastEquation").innerHTML=`<strong>0.400</strong> × ${state.futureN} = ${state.answer||'?'}`})}

@@ -842,3 +842,27 @@ user review. No new curriculum alignment is part of this batch.
   exhaustive pointer replay across every generated problem.
 - The living HTML guide and concise contract document the reusable patterns.
   Generated site resources and downloads are synchronized from Lab Creation.
+
+
+### Batch 4 review refinements — 6 September 2026
+
+- Shared mission titles now use regular 16px approved blue ink. Added a flat
+  `lab-context` strip for a persistent claim and its test criterion above the
+  canvas. Relative Frequency moves the sidebar claim here and changes it to
+  audit findings/forecast context as the task changes, without leaking bias.
+- Shared auto/fixed value padding, flat nested relationship explanations and
+  centred operation indices. Removed the seam above the Solids workspace.
+- Solids' initial drag copy is supplied by its tooltip; evolving mathematical
+  evidence remains. Removed duplicate Sets/Replacement commands and the
+  redundant Scatter release instruction.
+- Time Zones labels the organiser as the learner's calendar in its heading;
+  initial waiting/choose-start footers disappear. Actual proposal readiness,
+  acceptance/conflict and incorrect-working feedback remain available.
+- Vectors fits the existing floor more tightly in its SVG viewBox, preserving
+  coordinates and pointer conversion; the relationship card has no inner box.
+- These patterns are documented in the canonical HTML guide and style contract.
+
+- Focused browser validation passed for changing claim/forecast context (including
+  live sample-size changes), preserved proposal feedback, vector completion,
+  centred indices, auto-value padding and the closed panel seam. Checked updated
+  pages at desktop and 390px widths; shared headings also checked on Sequences.

@@ -370,7 +370,7 @@ Activity top panels sit above the model and working area. Put task/actions at le
 
 An algorithm mode toggle starts with a real selected mode and matching model state (Graph Search defaults to Dijkstra on load/reset), not an unselected pair or a merely cosmetic selection.
 
-Activity task headings: primary ink #1d1d1f, 14px, weight 500, line-height 1.45, normal letter spacing, sentence case and balanced wrapping. Settings labels remain regular weight. No badge/background or extra title in a controls-only panel.
+Activity task headings: approved blue ink #315b91, 16px, regular weight 400, line-height 1.5, normal letter spacing, sentence case and balanced wrapping. Settings labels remain regular weight. No badge/background or extra title in a controls-only panel.
 
 For adjacent previous/current stage views, use matched padded descriptor headers (12px text, 4px label/value gap) and a lightweight neutral container for reference evidence. Return-area cues appear when a placed item can be returned; use an interaction-blue target highlight during hover rather than permanent verbose drop instructions.
 
@@ -517,3 +517,19 @@ state. `lab-investigation` provides shared action, sidebar, evidence and select
 adapters; each lab supplies layout relationships and learning-state changes.
 Long calculation chains flow down the page without scrollable model canvases.
 Paired calendars can stack as full-width lanes to keep dates and clocks readable.
+
+
+### Mission title and persistent context strip
+
+The mission title uses 16px regular approved blue ink and 1.5 line height.
+`lab-context` sits directly above the model when a persistent claim, test
+criterion or goal needs more context than that immediate task. Its heading is
+15px regular; the statement and criterion are 14px. Use a flat 10% concept-blue
+tint, 12px × 16px padding and no border. Update context with the test phase;
+avoid duplicating an adequate mission title. Keep this region independent of
+the settings bar so differing lab layouts can adopt it.
+
+Inside an evidence card, relationship explanations are padding-driven, without
+a second border or surface. Auto/fixed value surfaces need 8px × 10px padding.
+Remove persistent drag commands once a targeted introduction covers them;
+retain causal explanations, live errors and the requirements for completion.
