@@ -1036,3 +1036,6 @@ collision/jam/backoff, rapid stepping and narrow/reduced-motion presentation.
 Compiler, embedded style/content, download and contract checks passed for all 57
 labs; developer resources and authoring bundle checks passed. Implementation maps
 describe the revised controls and layouts without changing exam alignment.
+
+Correction implementation: `cf84a1e`; canonical kit and guide: `a1e4b1a`.
+The ten implementation maps are pinned to the corrected source revision.
