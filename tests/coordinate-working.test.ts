@@ -10,7 +10,8 @@ test('Coordinate working follows the endpoints while the drawn line remains inde
   const elements = new Map([...html.matchAll(/\bid="([^"]+)"/g)].map((match) => {
     const classes = new Set<string>();
     return [match[1], {
-      textContent: '', innerHTML: '', value: '', hidden: false, className: '', style: {},
+      textContent: '', innerHTML: '', value: '', hidden: false, className: '', style: {}, dataset: {},
+      querySelector() { return { textContent: '' }; },
       setAttribute() {}, addEventListener() {},
       classList: {
         toggle(name: string, on: boolean) { if (on) classes.add(name); else classes.delete(name); },

@@ -1,5 +1,6 @@
-import { createHmac, randomUUID } from 'node:crypto';
+import { randomUUID } from 'node:crypto';
 import { neon } from '@neondatabase/serverless';
+import { clientIp, ipFingerprint } from './request-identity.ts';
 
 import {
   MAX_REQUEST_BYTES,
@@ -154,21 +155,6 @@ function hasValidPageUrl(request: Request, pageUrl: string | undefined): boolean
 function serializedField(value: BugReportPayload[keyof BugReportPayload] | undefined): string | null {
   if (value === undefined) return null;
   return JSON.stringify(value) ?? null;
-}
-
-export function clientIp(request: Request, isVercel = process.env.VERCEL === '1'): string {
-  const forwarded = isVercel
-    ? request.headers.get('x-vercel-forwarded-for')
-    : request.headers.get('x-vercel-forwarded-for') ?? request.headers.get('x-forwarded-for');
-  const candidate = forwarded?.split(',')[0]?.trim();
-  if (!candidate || candidate.length > 64 || !/^[0-9a-f:.]+$/i.test(candidate)) {
-    return 'unknown';
-  }
-  return candidate.toLowerCase();
-}
-
-export function ipFingerprint(ip: string, salt: string): string {
-  return createHmac('sha256', salt).update(`bug-report:v1\0${ip}`).digest('hex');
 }
 
 export async function POST(request: Request) {

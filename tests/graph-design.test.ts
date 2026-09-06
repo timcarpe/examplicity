@@ -16,6 +16,8 @@ type StubElement = {
   addEventListener: () => void;
   classList: { toggle: () => void };
   className: string;
+  dataset: Record<string, string>;
+  querySelector: () => StubElement;
   disabled: boolean;
   hidden: boolean;
   replaceChildren: () => void;
@@ -30,6 +32,8 @@ function createElement(): StubElement {
     addEventListener() {},
     classList: { toggle() {} },
     className: '',
+    dataset: {},
+    querySelector: createElement,
     disabled: false,
     hidden: false,
     replaceChildren() {},
@@ -44,7 +48,7 @@ async function loadGraphRuntime() {
   const match = html.match(/<script data-lab-source>\s*([\s\S]*?)<\/script>/);
   assert.ok(match, 'graph lab source script should exist');
   const instrumented = match[1].replace(
-    /\s*renderAll\(\);\s*\}\)\(\);\s*$/,
+    /\s*startSearch\("dijkstra"\);\s*\}\)\(\);\s*$/,
     '\n  globalThis.__graphDesignTest = { startSearch, chooseFrontier, getCanReveal: () => canReveal, getSearch: () => search, setSearch: value => { search = value; } };\n})();\n',
   );
   assert.notEqual(instrumented, match[1], 'test runtime should expose the real chooseFrontier function');
@@ -133,7 +137,8 @@ test('Graph Search reveals actual evidence and retains the last relaxation calcu
     runtime.startSearch('astar');
     assert.equal(elements.get('comparison')!.hidden, true);
     assert.equal(elements.get('relaxation')!.hidden, true);
-    assert.equal(elements.get('settled-section')!.hidden, true);
+    assert.equal(elements.get('settled-section')!.hidden, false);
+    assert.equal(elements.get('settled-section')!.dataset.complete, 'false', 'show the upcoming settled-order evidence');
 
     await runtime.chooseFrontier('S');
     assert.equal(elements.get('comparison')!.hidden, true);

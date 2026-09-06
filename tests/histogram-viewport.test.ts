@@ -47,13 +47,16 @@ test('Histogram completion card is outside the graph scroller', async () => {
 for (const type of ['bar', 'point', 'read']) {
   test(`Histogram ${type} drag preserves off-centre pickup and pointer ownership`, async () => {
     const html = await readFile(sourcePath, 'utf8');
-    const handlers = html.slice(html.indexOf('function startDrag(e)'), html.indexOf('function keyboardStage(e)'));
+    const handlers = html.slice(html.indexOf('function startDrag(e,p)'), html.indexOf('function keyboardStage(e)'));
+    const shared = (await readFile('public/developer/lab-kit/0.3.0/src/lab-design.js', 'utf8')).split('/* Shared progressive-card')[0];
+    const listeners = new Map<string, (event: unknown) => void>();
     const state = { stage: type === 'read' ? 'quartile' : 'class', guide: null, drag: null, classIndex: 0, barDensities: [2], pointTotals: [0, 20], readX: 2, quartileIndex: 0 };
     const captured = new Set<number>();
     let completed = 0;
     const context = {
       state, cfg: { histBottom: 100, histTop: 0, cfBottom: 100, cfTop: 0 },
-      stage: { setPointerCapture: (id: number) => captured.add(id), hasPointerCapture: (id: number) => captured.has(id), releasePointerCapture: (id: number) => captured.delete(id) },
+      window: {},
+      stage: { addEventListener: (type: string, callback: (event: unknown) => void) => listeners.set(type, callback), classList: { add() {}, remove() {} }, setPointerCapture: (id: number) => captured.add(id), hasPointerCapture: (id: number) => captured.has(id), releasePointerCapture: (id: number) => captured.delete(id) },
       eventPoint: (e: { clientX: number; clientY: number }) => ({ x: e.clientX, y: e.clientY }),
       ownership: () => ({ density: 'drag', total: 'drag' }), renderAll() {},
       yDensity: (v: number) => 100 - v * 10, yCF: (v: number) => 100 - v,
@@ -65,7 +68,10 @@ for (const type of ['bar', 'point', 'read']) {
       clamp: (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v)),
       maybeCompleteClass: () => completed++, maybeCompleteQuartile: () => completed++,
     };
-    const { startDrag, moveDrag, endDrag } = runInNewContext(`${handlers};({startDrag,moveDrag,endDrag})`, context);
+    runInNewContext(`${shared}; const LabDesign=window.LabDesign; LabDesign.svgPoint=(_stage,e)=>eventPoint(e); ${handlers}; LabDesign.bindSvgDrag(stage,{start:startDrag,move:moveDrag,end:endDrag});`, context);
+    const startDrag = listeners.get('pointerdown')!;
+    const moveDrag = listeners.get('pointermove')!;
+    const endDrag = listeners.get('pointercancel')!;
     const selector = type === 'bar' ? '[data-bar-handle]' : type === 'point' ? '[data-point-handle]' : '[data-read-handle]';
     const node = { dataset: { barHandle: '0', pointHandle: '0' } };
     const event = { isPrimary: true, button: 0, pointerId: 1, clientX: 27, clientY: 88, target: { closest: (s: string) => s === selector ? node : null }, preventDefault() {} };

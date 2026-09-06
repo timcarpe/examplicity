@@ -2,7 +2,8 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 
 import { MAX_REQUEST_BYTES } from '../app/bug-report-contract.ts';
-import { clientIp, ipFingerprint, POST } from '../app/api/bug-reports/route.ts';
+import { POST } from '../app/api/bug-reports/route.ts';
+import { clientIp, ipFingerprint } from '../app/api/bug-reports/request-identity.ts';
 
 const endpoint = 'https://example.test/api/bug-reports';
 

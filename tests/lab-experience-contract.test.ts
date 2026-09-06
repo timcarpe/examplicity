@@ -25,7 +25,10 @@ test('guided repeated-percentage problems start incomplete and require model int
   assert.match(source, /changes:Array\(c\.periods\)\.fill\(null\)/);
   assert.doesNotMatch(source, /changes:Array\(c\.periods\)\.fill\(null\)\.map/);
   assert.match(source, /operator:'',inverseFactor:level===0\?multiplierExpected\(c\):null/);
-  assert.match(source, /data-apply-guided>Apply this change<\/button>/);
+  assert.match(source, /function wireChangeBar\(card,c,i,base,max\)/);
+  assert.match(source, /bar\.setAttribute\('role','slider'\)/);
+  assert.match(source, /if\(progress>=\.98\)setChange\(i,amount\)/);
+  assert.doesNotMatch(source, /data-apply-guided/);
   assert.match(source, /function enableGuidedReverseChoice\(\)/);
 });
 
@@ -113,9 +116,10 @@ test('primary visual histories do not gain incidental overflow', async () => {
   const automated = await readAuthoredLab('computer-science', 'automated-system-control-flowcharts');
   const processStates = await readAuthoredLab('computer-science', 'process-states-scheduling');
 
-  assert.match(automated, /\.run-popup\{display:none;/);
-  assert.match(automated, /\.run-popup\.show\{display:block;/);
-  assert.match(automated, /shell\.scrollTop\+shell\.clientHeight-el\.offsetHeight-inset/);
+  assert.match(automated, /id="factory-working" class="lab-working-context"/);
+  assert.ok(automated.indexOf('id="factory-working"') < automated.indexOf('id="factory-svg"'));
+  assert.match(automated, /function showWorkingStep\(node,title,detail,kind=''\)\{setTestFeedback\(kind,title,detail\)\}/);
+  assert.doesNotMatch(automated, /class="run-popup/);
 
   assert.match(processStates, /\.timeline-scroll\{overflow:hidden;/);
   assert.match(processStates, /\.timeline\{min-width:0;width:100%;/);
