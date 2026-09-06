@@ -683,3 +683,4 @@ same process list or repeating eligibility descriptions beneath state names.
 - Use a serif capital I for index identifiers such as I1 and IX. `Lab Index I`
   selects the local Georgia glyph for U+0049 only; other characters retain the
   surrounding sans or monospace font. No font download is required.
+`data-lab-value` uses one regular 18-unit SVG text size with 7-unit horizontal and 3-unit vertical padding. The shared fitter reduces only unusually long values to the available component width; ordinary numbers, instructions and ALU/CU states keep the same size.

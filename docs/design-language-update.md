@@ -1111,3 +1111,4 @@ Review-refinement implementation: `ab1bced0b32d86b998a2d004935a38044bf7fde4`; ca
 - Canonical visual guide and style contract document the treatments. CSS remains
   bundled into downloadable HTML. Unsupported browsers retain native menus.
 - Packaging: Sound Sampling remains an offline audio artifact; its existing scoped cap rises by 10 KB to 1.485 MB for shared CSS. The general download limit is unchanged.
+- Follow-up: CPU register, ALU and CU values now share an 18-unit SVG text size and 7/3-unit material padding via shared CSS/runtime. Only long values shrink to their component width. No lab-local changes were needed.

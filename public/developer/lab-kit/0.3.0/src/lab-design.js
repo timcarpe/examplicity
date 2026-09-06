@@ -126,8 +126,20 @@ window.LabDesign = {
       let frame;
       const fit = () => { cancelAnimationFrame(frame); frame = requestAnimationFrame(() => {
         if (!value.isConnected) return;
-        const b = value.getBBox();
-        Object.entries({x:b.x-7,y:b.y-3,width:b.width+14,height:b.height+6}).forEach(([k,v])=>surface.setAttribute(k,v));
+        value.style.removeProperty('--lab-value-fit-size');
+        const css = getComputedStyle(value), px = Number(css.getPropertyValue('--lab-value-padding-x')) || 7, py = Number(css.getPropertyValue('--lab-value-padding-y')) || 3;
+        let b = value.getBBox();
+        const component = [...value.parentElement.children].find(el => el.tagName === 'rect' && !el.classList.contains('lab-svg-value-surface'));
+        // Ordinary values share one size; unusually long instructions still fit their component.
+        if (component) {
+          const box = component.getBBox(), centre = b.x + b.width / 2;
+          const available = 2 * Math.min(centre - box.x, box.x + box.width - centre) - 2 * px - 8;
+          if (available > 0 && b.width > available) {
+            value.style.setProperty('--lab-value-fit-size', parseFloat(css.fontSize) * available / b.width + 'px');
+            b = value.getBBox();
+          }
+        }
+        Object.entries({x:b.x-px,y:b.y-py,width:b.width+2*px,height:b.height+2*py}).forEach(([k,v])=>surface.setAttribute(k,v));
       }); };
       new MutationObserver(fit).observe(value, {childList:true,characterData:true,subtree:true});
       new ResizeObserver(fit).observe(value.ownerSVGElement);
