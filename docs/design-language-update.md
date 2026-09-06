@@ -1096,3 +1096,5 @@ Batch 6 implementation: `dd9d94ed84014c88004b994586577a523df8e342`; canonical ki
 - Software Stack accepted; no local source change. Presentation patterns documented in both canonical guides. Removed exact duplicate shared working-card/action declarations while retaining their final cascade position.
 
 Validation: both FDE models still complete all three supplied programs; memory boots, progresses workloads and shows a nonzero 6px bar; all three Scheduler targets, rule drag and arrival keyboard control pass. SVG backgrounds refit around changing values; readout/log placement checked in the browser. No horizontal page overflow or canvas scrolling at 900/390px in those flows.
+
+Review-refinement implementation: `ab1bced0b32d86b998a2d004935a38044bf7fde4`; canonical styling/runtime/guides: `78a80b0`. All 57 download/contract checks, developer sync and authoring bundle checks pass. Exact duplicate shared declarations were removed, so the download-size allowance remains unchanged.
