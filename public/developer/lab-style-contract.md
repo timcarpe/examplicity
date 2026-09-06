@@ -85,6 +85,8 @@ Use lightweight step cards to distinguish current, completed and upcoming work, 
 
 Available unattempted cards pulse their needed border until interaction with their input or associated model. Remember dismissal through redraws; restart it for a fresh activity. Locked, reference, wrong and completed cards stay static. Reduced motion uses a static border.
 
+Prediction choices count as working at None: pulse the containing card as well as introducing the actionable target. Science adapters derive this from the shared `.lab-intro-target`, so the border settles when that introduction is consumed.
+
 Checkpoints represent real stages. Place them farthest right, with current/complete/upcoming states and useful hover, focus and tap details. Show completed evidence and the current task; do not reveal future answers or create skip-ahead navigation. Omit “1/4”, internal phase names and redundant progress headings. Lab state owns completion; shared styling renders it.
 
 ## Interaction and transitions

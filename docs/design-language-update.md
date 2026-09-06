@@ -15,11 +15,15 @@ This record describes implementation and review. It does not add styling rules o
 
 ## Current batch: final five science labs — awaiting user review
 
+Review refinements: named, wider Lens grips with single-line focal labels; four readable Critical Angle measurement cards; Diffraction uses its canvas grips with live wavelength labels; Gas cue aligned to piston; Selection has larger beak examples, stronger bar contrast, a taller frequency plot and compact comparison values. Removed the redundant orange-control explainer and mission gap. All five first-decision cards now pulse via shared styling until their first interaction.
+
+Focused check: first-action pulse starts/stops on all five, Lens grip pickup, four measurement fills, Diffraction keyboard grips through both discoveries, Gas cue coordinates, and Selection chart/evidence geometry. No browser errors on these paths.
+
 | Lab source slug | What changed |
 | --- | --- |
 | converging-lens-imaging | Current prediction/action beside bench; observation record beneath it; shared checkpoints and hints; regular chart text; object/screen pickup offsets. Retained ray construction, projection evidence and generated practice. |
 | critical-angle-and-total-internal-reflection | Shared Working control, model reset, four progression cards/checkpoints and contextual hints; readable ray labels; rotation retains pickup angle. Preserved prediction, both-side observation, marking and calculation. |
-| diffraction-through-a-gap | Tank remains beside working; Run/Reset near tank; working control in header only during comparison; readable evidence and unclipped layout. Retained wave field, direct grips and alternative range controls. |
+| diffraction-through-a-gap | Tank remains beside working; Run/Reset near tank; working control in header only during comparison; readable evidence and unclipped layout. Direct canvas grips support dragging and keyboard adjustment; duplicate range controls are hidden. |
 | gas-compression-at-constant-temperature | Causal chain beneath apparatus, calculations beside it, shared completion card and hints, model reset, regular labels and padded values. Piston retains pickup offset. Preserved earned working levels and pV model. |
 | selection-pressure-and-trait-frequency | Current decision and mechanism beside linked plots; comparison evidence below; shared checkpoints with existing revisit gates; readable labels and natural page height. Preserved selection/inheritance stages and free experiment. |
 

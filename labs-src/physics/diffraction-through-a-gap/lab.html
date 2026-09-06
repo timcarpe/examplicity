@@ -1260,7 +1260,7 @@ body>main{width:min(1200px,calc(100vw - 28px));height:auto;max-height:calc(100vh
           <line id="lambdaCapEnd" class="lambda-cap" x1="118" y1="53" x2="118" y2="71"></line>
           <circle id="lambdaHalo" class="lambda-handle-halo" r="16" cx="118" cy="62"></circle>
           <circle id="lambdaHandle" class="lambda-handle" r="8" cx="118" cy="62"></circle>
-          <text class="measure-label" x="84" y="42">wavelength λ</text>
+          <text id="lambdaGripValue" class="measure-label" x="84" y="36">λ = 0.8 cm</text>
 
         </g>
         <g id="outgoingMeasure">
@@ -1287,7 +1287,7 @@ body>main{width:min(1200px,calc(100vw - 28px));height:auto;max-height:calc(100vh
     </div>
   </div>
 
-  <div class="controls">
+  <div class="controls" hidden>
     <label id="gapControl" class="control-card">
       <span class="control-title"><strong>Gap width</strong><span></span></span>
       <output id="gapValue" class="control-value" for="gapRange">4.8 cm</output>
@@ -1759,6 +1759,7 @@ body>main{width:min(1200px,calc(100vw - 28px));height:auto;max-height:calc(100vh
     $("lambdaValue").textContent = `${fmt(state.lambda,1)} cm`;
     $("gapRange").value = fmt(state.gap,1);
     $("lambdaRange").value = fmt(state.lambda,1);
+    $("lambdaGripValue").textContent = `λ = ${fmt(state.lambda,1)} cm`;
     $("relationText").textContent = spreadSentence();
     $("relationBar").style.width = `${clamp(spreadAngle() / 87 * 100, 4, 100)}%`;
   }
@@ -2226,7 +2227,7 @@ function renderDesign(){
     const index=['gap','wave','compare'].indexOf(state.phase),working=document.querySelector('.working-switch');working.hidden=state.phase!=='compare';
     LabDesign.checkpoints($('scienceCheckpoints'),['Narrow the gap','Increase wavelength','Build a counterexample'],index,i=>[state.gapDone,state.waveDone,state.challengeSuccess][i]);
     const prediction=state.phase==='gap'?!state.gapPrediction:state.phase==='wave'?!state.wavePrediction:false;
-    const target=prediction?$(state.phase+'Phase').querySelector('.prediction-row'):state.phase==='wave'?$('lambdaHandle'):state.phase==='gap'?$('gapTopHandle'):document.querySelector('#workingBox input:not(:disabled)')||$('gapTopHandle');
+    const target=prediction?$(state.phase+'Phase').querySelector('.prediction-row'):state.phase==='wave'?$('lambdaMeasure'):state.phase==='gap'?$('gapTopHandle'):document.querySelector('#workingBox input:not(:disabled)')||$('gapTopHandle');
     LabDesign.introduce(document.querySelector('main'),target?[target]:[],'diffraction-'+state.phase+'-'+(prediction?'predict':'operate'),prediction?'Predict the spread':'Change the wave setup',prediction?'Choose the expected change before moving the control.':state.phase==='wave'?'Drag the wavelength grip; the gap stays fixed. Compare the outgoing wavefronts.':state.phase==='gap'?'Drag a gap edge inward and compare the outgoing spreading.':'Use a wider gap and increase wavelength enough to beat the reference, then test your setup.');
   }
 

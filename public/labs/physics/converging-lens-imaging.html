@@ -3337,6 +3337,50 @@ html:has(body.lab-science),body.lab-science{height:auto;overflow:visible}
 .science-gas .completion-evidence{font:400 12px/1.45 var(--lab-font-sans);border:0;padding:8px;background:var(--lab-surface);border-radius:6px}
 .science-gas .completion-actions{justify-content:center;gap:8px}
 .science-selection .history-row{padding:7px 8px;font:400 11px/1.4 var(--lab-font-sans);border:0;background:var(--lab-surface);border-radius:6px}
+/* Science review: clear first decisions, direct grips, and compact comparison evidence. */
+.lab-science :is(.phase-panel,.phase-card,.work-step,.coach,.stage-card):has(.lab-intro-target){animation:workingAttention 2s ease-in-out infinite;border-color:var(--lab-needed-line)}
+.lab-science :is(.prediction-options,.prediction-row,.prediction-grid,.choice-grid,.claim-options).lab-intro-target{outline:none;box-shadow:none}
+.science-critical .live-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 4px}
+.science-critical .live-card{padding:12px;border:0;border-radius:8px;background:var(--lab-surface-muted)}
+.science-critical .live-card.incident{background:color-mix(in srgb,var(--lab-concept-amber) 18%,white)}
+.science-critical .live-card.refracted{background:var(--lab-accent-soft)}
+.science-critical .live-card.critical-readout{background:var(--lab-surface-muted)}
+.science-critical .live-card.power{background:color-mix(in srgb,var(--lab-concept-violet) 18%,white)}
+.science-critical .live-card>span{font:400 12px/1.4 var(--lab-font-sans);color:var(--lab-ink-secondary)}
+.science-critical .live-card>strong{display:block;margin:6px 0;font:400 16px/1.35 var(--lab-font-sans);color:var(--lab-ink)}
+.science-critical .live-card>small{font:400 11px/1.4 var(--lab-font-sans);color:var(--lab-ink-secondary)}
+.science-lens .stage :is(.object-label,.screen-label){display:block;fill:var(--lab-ink);paint-order:stroke;stroke:white;stroke-width:4px;stroke-linejoin:round}
+.science-lens .stage :is(.focus-rail-sub,.landmark-side){display:none}
+.science-lens .drag-cue{opacity:1;pointer-events:all;cursor:grab}.science-lens .drag-cue.active{animation:none;filter:none}
+.science-lens .drag-cue-text{fill:var(--lab-ink)!important;stroke:none!important;text-transform:none}
+.science-lens .locked-control .drag-cue{opacity:.65;pointer-events:none}
+.science-lens .drag-cue-bg{fill:white;stroke-width:2}
+.science-lens .drag-cue.active .drag-cue-bg{fill:var(--lab-accent-soft);stroke:var(--lab-accent)}
+.science-lens .stage :is(.object-grip,.screen-handle){opacity:0}
+.science-lens .focus-rail-label{fill:var(--lab-ink)}
+.science-diffraction .lab.panel{grid-template-areas:'head head' 'stage work'}
+.science-diffraction :is(.gap-handle,.lambda-handle){fill:white;stroke:var(--lab-accent);stroke-width:3px}
+.science-diffraction :is(.gap-handle-halo,.lambda-handle-halo){fill:var(--lab-accent-soft);stroke:var(--lab-accent-line)}
+.science-diffraction .gap-label-bg{fill:white;stroke:var(--lab-accent-line);stroke-width:1}
+.science-diffraction .gap-label{fill:var(--lab-ink)}
+.science-selection main{gap:0}
+.science-selection .stage-shell{aspect-ratio:960/650}
+.science-selection .science-support{grid-template-columns:1fr;margin:8px 16px 16px;align-items:start}
+.science-selection :is(.meaning-section,.preview-key,.trait-band-caption){display:none!important}
+.science-selection .science-support .side-heading{padding-bottom:6px}
+.science-selection .preview-metrics{grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}
+.science-selection .metric{padding:8px}.science-selection .metric .delta{display:none}
+.science-selection .history{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.science-selection .history-row{flex:1;font-size:11px}.science-selection .history-row:nth-child(n+2){display:none}
+.science-selection .trait-bird{width:46px;height:28px}
+.science-selection .trait-band-top{grid-template-columns:46px minmax(0,1fr);gap:8px}
+.science-selection .stage .bar-current{opacity:1;stroke:var(--lab-accent);stroke-width:1.3px}
+.science-selection .stage .bar-parent{fill:none;fill-opacity:0;stroke:var(--lab-concept-violet);stroke-width:3px}
+.science-selection .stage .bar-current.band-low{fill:color-mix(in srgb,var(--lab-accent) 55%,white)}
+.science-selection .stage .bar-current.band-mid{fill:color-mix(in srgb,var(--lab-accent) 78%,white)}
+.science-selection .stage .bar-current.band-high{fill:var(--lab-accent)}
+@media(max-width:960px){.science-diffraction .lab.panel{grid-template-areas:'head' 'stage' 'work'}.science-selection .preview-metrics{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(prefers-reduced-motion:reduce){.lab-science :is(.phase-panel,.phase-card,.work-step,.coach,.stage-card):has(.lab-intro-target){animation:none;border-color:var(--lab-needed-line)}}
 
 </style>
 <script data-lab-design-runtime>
@@ -3884,8 +3928,8 @@ window.LabDesign = {
             <rect id="objectFlag" class="object-flag" x="283" y="270" width="15" height="8" rx="2"></rect><circle id="objectDot" class="object-dot" cx="274" cy="289" r="5"></circle>
             <circle id="objectGrip" class="object-grip" cx="280" cy="474" r="10"></circle><line id="objectHit" class="object-hit" x1="280" y1="218" x2="280" y2="483"></line>
             <g id="objectDragCue" class="drag-cue object" transform="translate(280 474)" aria-hidden="true">
-              <rect class="drag-cue-bg" x="-39" y="-13" width="78" height="26" rx="13"></rect>
-              <path class="drag-cue-chevron" d="M -27 0 L -20 -5 M -27 0 L -20 5 M 27 0 L 20 -5 M 27 0 L 20 5"></path>
+              <rect class="drag-cue-bg" x="-56" y="-14" width="112" height="28" rx="13"></rect>
+              <path class="drag-cue-chevron" d="M -45 0 L -39 -5 M -45 0 L -39 5 M 45 0 L 39 -5 M 45 0 L 39 5"></path>
               <text id="objectDragCueText" class="drag-cue-text" x="0" y="3.5" text-anchor="middle">move</text>
             </g>
             <text id="objectLabel" class="object-label" x="280" y="205" text-anchor="middle">object</text>
@@ -3896,13 +3940,13 @@ window.LabDesign = {
             <line id="screenStand" class="stand" x1="664" y1="467" x2="664" y2="481"></line><rect id="screenFoot" class="stand-foot" x="640" y="476" width="48" height="9" rx="4"></rect>
             <circle id="screenGrip" class="screen-handle" cx="664" cy="474" r="10"></circle><line id="screenHitArea" class="object-hit" x1="664" y1="72" x2="664" y2="487"></line>
             <g id="screenDragCue" class="drag-cue screen" transform="translate(664 474)" aria-hidden="true">
-              <rect class="drag-cue-bg" x="-39" y="-13" width="78" height="26" rx="13"></rect>
-              <path class="drag-cue-chevron" d="M -27 0 L -20 -5 M -27 0 L -20 5 M 27 0 L 20 -5 M 27 0 L 20 5"></path>
+              <rect class="drag-cue-bg" x="-56" y="-14" width="112" height="28" rx="13"></rect>
+              <path class="drag-cue-chevron" d="M -45 0 L -39 -5 M -45 0 L -39 5 M 45 0 L 39 -5 M 45 0 L 39 5"></path>
               <text id="screenDragCueText" class="drag-cue-text" x="0" y="3.5" text-anchor="middle">move</text>
             </g>
             <circle id="screenHitOne" class="screen-hit-one" cx="664" cy="0" r="6"></circle><circle id="screenHitTwo" class="screen-hit-two" cx="664" cy="0" r="6"></circle>
             <line id="screenSpread" class="screen-spread" x1="680" y1="0" x2="680" y2="0"></line><text id="screenSpreadLabel" class="screen-spread-label" x="686" y="0"></text>
-            <text id="screenLabel" class="screen-label" x="664" y="66" text-anchor="middle">screen</text><text id="screenReadout" class="screen-readout" x="664" y="573" text-anchor="middle"></text>
+            <text id="screenLabel" class="screen-label" x="664" y="78" text-anchor="middle">screen</text><text id="screenReadout" class="screen-readout" x="664" y="573" text-anchor="middle"></text>
           </g>
           <g id="distanceLayer"><line id="objectDistanceLine" class="distance-line" y1="388" y2="388"></line><line id="screenDistanceLine" class="distance-line" y1="412" y2="412"></line><text id="objectDistanceLabel" class="distance-label" y="383" text-anchor="middle"></text><text id="screenDistanceLabel" class="distance-label" y="407" text-anchor="middle"></text></g>
           <g id="labelRails" aria-label="Fixed landmarks and current distances">
@@ -3912,19 +3956,19 @@ window.LabDesign = {
             <g id="focusOverlay" role="group" aria-label="Fixed focal landmarks. F is the principal focus 10 centimetres from the lens on each side. 2F is twice the focal length, 20 centimetres from the lens on each side.">
               <g class="focus-landmark" data-tip="2f-object" tabindex="0" aria-label="Object-side 2F, 20 centimetres from the lens">
                 <line class="focus-connector" x1="280" y1="322" x2="280" y2="514"></line><circle class="focus-point" cx="280" cy="310" r="4.5"></circle>
-                <rect class="focus-chip" x="237" y="512" width="86" height="30" rx="8"></rect><text class="focus-rail-label" x="280" y="528" text-anchor="middle">2F</text><text class="focus-rail-sub" x="280" y="540" text-anchor="middle">20 cm</text>
+                <rect class="focus-chip" x="223" y="514" width="114" height="27" rx="8"></rect><text class="focus-rail-label" x="280" y="532" text-anchor="middle">2F · 20 cm</text><text class="focus-rail-sub" x="280" y="540" text-anchor="middle">20 cm</text>
               </g>
               <g class="focus-landmark" data-tip="f-object" tabindex="0" aria-label="Object-side F, the principal focus 10 centimetres from the lens">
                 <line class="focus-connector" x1="400" y1="322" x2="400" y2="514"></line><circle class="focus-point" cx="400" cy="310" r="4.5"></circle>
-                <rect class="focus-chip" x="357" y="512" width="86" height="30" rx="8"></rect><text class="focus-rail-label" x="400" y="528" text-anchor="middle">F</text><text class="focus-rail-sub" x="400" y="540" text-anchor="middle">10 cm</text>
+                <rect class="focus-chip" x="343" y="514" width="114" height="27" rx="8"></rect><text class="focus-rail-label" x="400" y="532" text-anchor="middle">F · 10 cm</text><text class="focus-rail-sub" x="400" y="540" text-anchor="middle">10 cm</text>
               </g>
               <g class="focus-landmark" data-tip="f-image" tabindex="0" aria-label="Image-side F, the principal focus 10 centimetres from the lens">
                 <line class="focus-connector" x1="640" y1="322" x2="640" y2="514"></line><circle class="focus-point" cx="640" cy="310" r="4.5"></circle>
-                <rect class="focus-chip" x="597" y="512" width="86" height="30" rx="8"></rect><text class="focus-rail-label" x="640" y="528" text-anchor="middle">F</text><text class="focus-rail-sub" x="640" y="540" text-anchor="middle">10 cm</text>
+                <rect class="focus-chip" x="583" y="514" width="114" height="27" rx="8"></rect><text class="focus-rail-label" x="640" y="532" text-anchor="middle">F · 10 cm</text><text class="focus-rail-sub" x="640" y="540" text-anchor="middle">10 cm</text>
               </g>
               <g class="focus-landmark" data-tip="2f-image" tabindex="0" aria-label="Image-side 2F, 20 centimetres from the lens">
                 <line class="focus-connector" x1="760" y1="322" x2="760" y2="514"></line><circle class="focus-point" cx="760" cy="310" r="4.5"></circle>
-                <rect class="focus-chip" x="717" y="512" width="86" height="30" rx="8"></rect><text class="focus-rail-label" x="760" y="528" text-anchor="middle">2F</text><text class="focus-rail-sub" x="760" y="540" text-anchor="middle">20 cm</text>
+                <rect class="focus-chip" x="703" y="514" width="114" height="27" rx="8"></rect><text class="focus-rail-label" x="760" y="532" text-anchor="middle">2F · 20 cm</text><text class="focus-rail-sub" x="760" y="540" text-anchor="middle">20 cm</text>
               </g>
             </g>
             <rect class="measure-rail-bg" x="70" y="552" width="920" height="42" rx="10"></rect>
@@ -4667,7 +4711,7 @@ window.LabDesign = {
     setTextPos('objectLabel',x,205,'object');
     $('objectRailValue').textContent=`u = ${fmt(state.u,1)} cm`;
     $('objectDragCue').setAttribute('transform',`translate(${x} 474)`);
-    const objectActive=state.free||state.step==='moveObject';$('objectDragCue').classList.toggle('active',objectActive);$('objectDragCueText').textContent=objectActive?'drag':'move';
+    const objectActive=state.free||state.step==='moveObject';$('objectDragCue').classList.toggle('active',objectActive);$('objectDragCueText').textContent='Object';
     $('objectLayer').setAttribute('aria-valuenow',fmt(state.u,1));$('objectLayer').setAttribute('aria-valuetext',`${fmt(state.u,1)} centimetres, ${regionFor()}`);
   }
 
@@ -4681,12 +4725,12 @@ window.LabDesign = {
     $('screenGlow').hidden=!sharp;
     const lo=Math.min(clamp(y1,FIELD_TOP+6,FIELD_BOTTOM-6),clamp(y2,FIELD_TOP+6,FIELD_BOTTOM-6)), hi=Math.max(clamp(y1,FIELD_TOP+6,FIELD_BOTTOM-6),clamp(y2,FIELD_TOP+6,FIELD_BOTTOM-6));
     setLine('screenSpread',x+16,lo,x+16,hi);setTextPos('screenSpreadLabel',x+22,(lo+hi)/2+3,`${fmt(raySeparationCm(),1)} cm`,'start');
-    setTextPos('screenLabel',x,66,sharp?'sharp screen':'screen');setTextPos('screenReadout',x,573,`${fmt(state.screen,1)} cm`);
+    setTextPos('screenLabel',x,78,sharp?'sharp screen':'screen');setTextPos('screenReadout',x,573,`${fmt(state.screen,1)} cm`);
     $('screenRailValue').textContent=`${fmt(state.screen,1)} cm`;
     $('screenDragCue').setAttribute('transform',`translate(${x} 474)`);
     $('screenLayer').setAttribute('aria-valuenow',fmt(state.screen,1));$('screenLayer').setAttribute('aria-valuetext',`${fmt(state.screen,1)} centimetres from the lens; ray separation ${fmt(raySeparationCm(),1)} centimetres`);
     const screenActive=state.free||['moveScreen','sampleNear','sampleFar','sampleVirtual'].includes(state.step);
-    $('screenDragCue').classList.toggle('active',screenActive);$('screenDragCueText').textContent=screenActive?'drag':'move';
+    $('screenDragCue').classList.toggle('active',screenActive);$('screenDragCueText').textContent='Screen';
     $('screenLayer').classList.toggle('locked-control',!screenActive);$('objectLayer').classList.toggle('locked-control',!state.free&&state.step!=='moveObject');
   }
 
