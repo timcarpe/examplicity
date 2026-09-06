@@ -210,7 +210,7 @@ with redundant labels, helper paragraphs and numeric counters removed.
   right, in that left-to-right order. Keep the label, toggle and markers together.
   They belong to the activity, not to the calculation column. Do not duplicate
   them inside the working area or add a “Checkpoint” heading.
-- Place **Working** in a minimal centered label above the pill, above
+- Place **Working** in a minimal centered label above the control, above
   **None / Some / All**. Use regular 11px text and no colon or helper paragraph.
   None means the learner supplies no written calculations; the working remains
   visible and operating the model is still required. Preserve each lab's
@@ -363,11 +363,11 @@ they do not require another visible paragraph.
    is incomplete before interaction, cannot advance immediately, and completes
    only after the level-appropriate learner action.
 
-Working and exam settings share the living guide’s smooth pill toggle: fully rounded track and selected segment, neutral grey background, white selected text and no visible segment border; Working and exam both use near-black `#1d1d1f`, 42px height with 3px inset, and 12px regular-weight text. Preserve existing options and earned availability.
+Working and exam settings share a compact rounded-rectangle segmented control, based on Critical Angle: 10px track corners, 7px segment corners, 3px inset, and regular 12px text. Selected segments use site charcoal `#1d1d1f` with white text on a light neutral track. Each segment is at least 32px high. Center only the word Working or Exam above the track, in regular 11px text with 8px separation. Preserve existing options and earned availability.
 
 Toggle containers use a subtle outer shadow: `0 1px 3px rgba(29,29,31,.08)`. Apply it to the shared rounded track, not to individual segments. Working and exam use neutral near-black selection.
 
-Activity top panels sit above the model and working area. Put task/actions at left and settings together at right. Order settings left to right: additional choices, Working, exam, checkpoints. Checkpoints are farthest right; omit unavailable controls. Working has a minimal centered label above the pill, regular 11px text, with no label border or background; exam pills use the same label treatment. Do not invent settings or stages. Toggle tracks have a 1px `#d2d2d7` border. Top-panel action buttons keep standard 8px control corners, a thin darker border and the subtle container shadow. Prefer blue #4569aa with white text for primary actions (including New question); use white with blue #315b91 text for secondary actions such as Reset. Grey actions are rare differentiation only. Disabled actions use #eef1f3 background, #6e6e73 text, #d2d2d7 border and no shadow. Disabled rules override primary and hover styling; white/blue is an enabled secondary action only. Preserve native disabled semantics and readable labels instead of relying on opacity. Labels stay regular 12px. Algorithm modes can use the rounded blue segmented toggle with the same track border and shadow; preserve existing action semantics. Keep minimum 40px height and 8px 14px padding. Retain active, disabled and keyboard-focus states.
+Activity top panels sit above the model and working area. Put the task at left and settings together at right. Model reset actions belong beside the model or its existing tools below this goal bar; do not create an empty full-width container for one reset. Order settings left to right: additional choices, Working, exam, checkpoints. Checkpoints are farthest right; omit unavailable controls. Working has a minimal centered label above the control, regular 11px text, with no label border or background; exam controls use the same label treatment. Do not invent settings or stages. Toggle tracks have a 1px `#d2d2d7` border. Top-panel action buttons keep standard 8px control corners, a thin darker border and the subtle container shadow. Prefer blue #4569aa with white text for primary actions (including New question); use white with blue #315b91 text for secondary actions such as Reset. Grey actions are rare differentiation only. Disabled actions use #eef1f3 background, #6e6e73 text, #d2d2d7 border and no shadow. Disabled rules override primary and hover styling; white/blue is an enabled secondary action only. Preserve native disabled semantics and readable labels instead of relying on opacity. Labels stay regular 12px. Algorithm modes can use the rounded blue segmented toggle with the same track border and shadow; preserve existing action semantics. Keep minimum 40px height and 8px 14px padding. Retain active, disabled and keyboard-focus states.
 
 An algorithm mode toggle starts with a real selected mode and matching model state (Graph Search defaults to Dijkstra on load/reset), not an unselected pair or a merely cosmetic selection.
 
@@ -824,3 +824,12 @@ Separate required facts from the selected item's live facts. Yellow indicates un
 Use data-lab-attention on task-owned buttons or SVG student cards to pulse the actionable border until that target is used; mark only movable, unfinished students. Preserve a static border with reduced motion. Navigation checkpoints retain keyboard access, gated progression and useful task/status tooltips.
 
 Venn set identities use approved blue and violet tints with white student cards, regular labels and light boundaries. Reserve green/red for correctness. Circuit outputs can be heavier than feedback paths, with current bit values beside each output; preserve crossing gaps and junctions. Chart annotations need separate vertical space from axes, probes and residual evidence.
+
+
+### Reset placement and recurring-decimal evidence
+
+A single reset can sit in a model heading or a reserved corner above the operated visual. Keep clear of manipulatives. Related model controls can share a padding-driven toolbar; use 10px corners when a visible surface is needed, and avoid overlapping outer panel corners. An explicit `data-lab-reset-target` selector moves the existing button into its model host without replacing its listeners. The lab owns the destination; shared CSS owns the button and spacing. Do not move controls based on their wording alone.
+
+Completion dialogs use regular 12px action text, centered content-sized buttons, 10px by 18px padding and shared primary blue. Keep the movable heading and learner outcome; remove legacy green action overrides and decorative arrows. A field's check or x sits centered vertically inside its own input, not on the surrounding card.
+
+For long division, use aligned rows showing remainder in, multiplication by ten, next digit and remainder out. Mark the same returning remainder with the same approved violet tint. Pair each replayed row with its generated digit. A zero remainder explains termination; a repeated remainder explains the repeated digit cycle. Keep prime-factor reasoning optional under a disclosure instead of competing with the main evidence. Thin approved violet lines can link matching recurring tails; unfinished alignment uses the working tone.

@@ -341,7 +341,7 @@ button:focus-visible,.tape-track:focus-visible{outline:3px solid var(--lab-focus
 .reset-case{min-height:30px;font-size:9px}
 
 .workbench{position:relative;margin-top:10px;overflow:hidden}
-.next-card{position:absolute;z-index:20;left:50%;top:14px;transform:translateX(-50%);width:min(350px,calc(100% - 28px));padding:11px 12px;border:1px solid #9cc7aa;border-radius:12px;background:rgba(247,252,248,.985);box-shadow:0 12px 30px rgba(29,29,31,.16);text-align:center;animation:nextCardIn .2s ease-out}.next-card[hidden]{display:none}.next-card>strong{display:block;color:#2e6d4b;font-size:11px}.next-card>span{display:block;margin:3px auto 0;max-width:38ch;color:#52705f;font-size:8.5px;line-height:1.3}.next-upgrade{margin-top:9px;padding:9px;border:1px solid #b7c8df;border-radius:9px;background:#f3f7fc;text-align:left}.next-upgrade[hidden]{display:none}.next-upgrade strong{display:block;color:#365b88;font-size:11px}.next-upgrade span{display:block;margin-top:3px;color:#607184;font-size:9px;line-height:1.38}.next-actions{display:grid;gap:6px;margin-top:8px}.next-card button{width:100%;min-height:32px;font-size:9px;font-weight:900}.next-card #nextProblem{background:var(--lab-good);border-color:var(--lab-good);color:#fff}.next-card.has-upgrade #nextProblem{background:#fff;border-color:#9cc7aa;color:#2e6d4b}.next-upgrade button{margin-top:7px;background:var(--lab-accent);border-color:var(--lab-accent);color:#fff}.next-card #nextProblem::after{content:"  →"}@keyframes nextCardIn{from{opacity:0;transform:translate(-50%,-6px)}to{opacity:1;transform:translate(-50%,0)}}
+.next-card{position:absolute;z-index:20;left:50%;top:14px;transform:translateX(-50%);width:min(350px,calc(100% - 28px));padding:11px 12px;border:1px solid #9cc7aa;border-radius:12px;background:rgba(247,252,248,.985);box-shadow:0 12px 30px rgba(29,29,31,.16);text-align:center;animation:nextCardIn .2s ease-out}.next-card[hidden]{display:none}.next-card>strong{display:block;color:#2e6d4b;font-size:11px}.next-card>span{display:block;margin:3px auto 0;max-width:38ch;color:#52705f;font-size:8.5px;line-height:1.3}.next-upgrade{margin-top:9px;padding:9px;border:1px solid #b7c8df;border-radius:9px;background:#f3f7fc;text-align:left}.next-upgrade[hidden]{display:none}.next-upgrade strong{display:block;color:#365b88;font-size:11px}.next-upgrade span{display:block;margin-top:3px;color:#607184;font-size:9px;line-height:1.38}.next-actions{display:grid;gap:6px;margin-top:8px}.next-card button{width:100%;min-height:32px;font-size:9px;font-weight:900}.next-upgrade button{margin-top:7px;background:var(--lab-accent);border-color:var(--lab-accent);color:#fff}@keyframes nextCardIn{from{opacity:0;transform:translate(-50%,-6px)}to{opacity:1;transform:translate(-50%,0)}}
 .target-strip{padding:10px 11px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center;border-bottom:1px solid var(--lab-line);background:#fbfcfd}
 .target-label{color:var(--lab-muted);font-size:9px;font-weight:850;text-transform:uppercase;letter-spacing:.06em}
 .target-value{font:900 25px/1.05 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:.01em;white-space:nowrap}
@@ -622,7 +622,7 @@ button:focus-visible,.tape-track:focus-visible{outline:3px solid var(--lab-focus
     <div class="mission-copy"><strong id="missionTitle"></strong><span id="missionHint" hidden></span></div>
     <div class="case-actions">
       <div class="complexity"><div class="complexity-copy"><strong>Working:</strong><span id="complexityHelp"></span></div><div class="complexity-switch lab-toggle" data-kind="working" role="group" aria-label="Working"><button type="button" data-work-level="0" class="active" aria-pressed="true">None</button><button type="button" data-work-level="1" aria-pressed="false">Some</button><button type="button" data-work-level="2" aria-pressed="false">All</button></div></div>
-      <button id="resetCase" class="reset-case lab-action" type="button">Reset</button>
+      <button id="resetCase" data-lab-reset-target=".target-strip" class="reset-case lab-action" type="button">Reset</button>
     </div>
   </section>
 
@@ -632,7 +632,7 @@ button:focus-visible,.tape-track:focus-visible{outline:3px solid var(--lab-focus
       <div class="target-source">
         <div class="target-source-copy"><span class="target-label">Recurring decimal</span><div id="targetValue" class="target-value"></div></div>
       </div>
-      <div class="goal-route" aria-label="Goal: align the same infinite tail, subtract it, then recover the exact fraction">
+      <div class="goal-route" hidden aria-label="Goal: align the same infinite tail, subtract it, then recover the exact fraction">
         <div id="goalAlign" class="goal-step"><div class="goal-mini-tail"><i></i><i></i></div><div class="goal-step-label"><strong>same tail</strong><span>line up the repeat</span></div></div>
         <div class="goal-arrow">→</div>
         <div id="goalSubtract" class="goal-step"><div class="goal-mini-minus">−</div><div class="goal-step-label"><strong>subtract</strong><span>remove the shared tail</span></div></div>
@@ -669,7 +669,7 @@ button:focus-visible,.tape-track:focus-visible{outline:3px solid var(--lab-focus
     <div class="proof-body">
       <div class="verifier">
         <div class="verifier-head">
-          <div><strong>Why the digits repeat</strong><span>Same remainder → same next digit → same future.</span></div>
+          <div><strong>Why the digits repeat</strong><span>Divide the remainder × 10 by the denominator. Each row produces one decimal digit.</span></div>
           <div class="verify-actions">
             <button id="derivedVerify" class="active lab-action" type="button">This fraction</button>
             <button id="counterVerify" type="button" class="lab-action">Compare 7/40</button>
@@ -678,10 +678,10 @@ button:focus-visible,.tape-track:focus-visible{outline:3px solid var(--lab-focus
         </div>
         <div class="division-scroll"><div id="divisionStage" class="division-stage"></div></div>
         <div id="traceNote" class="trace-note"></div>
-        <div class="factor-lens">
+        <details class="lab-division-factors"><summary>Why some fractions terminate</summary><div class="factor-lens">
           <div id="factorBox" class="factor-box"></div>
           <div id="terminationBox" class="factor-box termination-box"></div>
-        </div>
+        </div></details>
       </div>
     </div>
   </section>
@@ -937,7 +937,7 @@ button:focus-visible,.tape-track:focus-visible{outline:3px solid var(--lab-focus
     }
   }
   function answerExact(key,expected){return Number.isFinite(session()[key])&&Math.abs(session()[key]-expected)<1e-9}
-  function solveInput(key,label,expected){const wrap=document.createElement('label');wrap.className='solve-entry solve-card action';const title=document.createElement('span');title.textContent=label;const input=document.createElement('input');input.type='text';input.inputMode=Number.isInteger(expected)?'numeric':'decimal';input.autocomplete='off';input.dataset.labIntro='recurring-answer-'+key;input.dataset.labIntroTitle=label;input.dataset.labIntroCopy='Use the aligned-tail subtraction and the calculation chain to supply this part of the exact fraction.';input.dataset.answer=key;input.placeholder='?';input.value=session()[key]??'';const mark=document.createElement('span');mark.className='field-status';mark.setAttribute('aria-hidden','true');const update=()=>{const status=answerExact(key,expected)?'good':session()[key]!==null?'bad':'action';wrap.classList.remove('action','good','bad');wrap.classList.add(status);input.classList.toggle('good',status==='good');input.classList.toggle('bad',status==='bad');mark.textContent=status==='good'?'✓':status==='bad'?'×':''};update();input.addEventListener('input',()=>{const value=Number(input.value);session()[key]=input.value.trim()!==''&&Number.isFinite(value)?value:null;update();renderGoalRoute();renderAction();renderProof();renderNextCard()});wrap.append(title,input,mark);return wrap}
+  function solveInput(key,label,expected){const wrap=document.createElement('label');wrap.className='solve-entry solve-card action';const title=document.createElement('span');title.textContent=label;const input=document.createElement('input');input.type='text';input.inputMode=Number.isInteger(expected)?'numeric':'decimal';input.autocomplete='off';input.dataset.labIntro='recurring-answer-'+key;input.dataset.labIntroTitle=label;input.dataset.labIntroCopy='Use the aligned-tail subtraction and the calculation chain to supply this part of the exact fraction.';input.dataset.answer=key;input.placeholder='?';input.value=session()[key]??'';const mark=document.createElement('span');mark.className='field-status';mark.setAttribute('aria-hidden','true');const update=()=>{const status=answerExact(key,expected)?'good':session()[key]!==null?'bad':'action';wrap.classList.remove('action','good','bad');wrap.classList.add(status);input.classList.toggle('good',status==='good');input.classList.toggle('bad',status==='bad');mark.textContent=status==='good'?'✓':status==='bad'?'×':''};update();input.addEventListener('input',()=>{const value=Number(input.value);session()[key]=input.value.trim()!==''&&Number.isFinite(value)?value:null;update();renderGoalRoute();renderAction();renderProof();renderNextCard()});const control=document.createElement("span");control.className="lab-field-control";control.append(input,mark);wrap.append(title,control);return wrap}
   function workingComplete(){const s=session();if(!s.solved)return false;if(state.workingLevel===0)return true;if(!answerExact('numAnswer',current().num)||!answerExact('denAnswer',current().den))return false;return state.workingLevel===1||answerExact('coefAnswer',difference().coef)&&answerExact('resultAnswer',difference().n/difference().d)}
   function challengeComplete(){return workingComplete()}
 
@@ -1011,7 +1011,7 @@ button:focus-visible,.tape-track:focus-visible{outline:3px solid var(--lab-focus
 
   function resetCase(){state.currentSession=makeSession(current());renderAll()}
 
-  function renderMission(){const c=current(),help=['Off · the finite equation and fraction are revealed','Some · write the exact fraction','All · write the finite equation and exact fraction'];$("missionTitle").textContent=`Convert 0.${c.prefix}${c.repeat} recurring to an exact fraction.`;$("missionHint").textContent=state.workingLevel===0?'Align identical recurring tails, subtract, then follow the revealed fraction steps.':state.workingLevel===1?'Align and subtract, then write the exact fraction in simplest form.':'Align and subtract, then supply the finite equation and exact fraction.';$("targetValue").innerHTML=targetMarkup(c);$("complexityHelp").textContent=help[state.workingLevel];document.querySelectorAll('[data-work-level]').forEach(button=>{const active=Number(button.dataset.workLevel)===state.workingLevel;button.classList.toggle('active',active);button.setAttribute('aria-pressed',String(active))})}
+  function renderMission(){const c=current(),help=['Off · the finite equation and fraction are revealed','Some · write the exact fraction','All · write the finite equation and exact fraction'];$("missionTitle").textContent=`Convert the recurring decimal to an exact fraction.`;$("missionHint").textContent=state.workingLevel===0?'Align identical recurring tails, subtract, then follow the revealed fraction steps.':state.workingLevel===1?'Align and subtract, then write the exact fraction in simplest form.':'Align and subtract, then supply the finite equation and exact fraction.';$("targetValue").innerHTML=targetMarkup(c);$("complexityHelp").textContent=help[state.workingLevel];document.querySelectorAll('[data-work-level]').forEach(button=>{const active=Number(button.dataset.workLevel)===state.workingLevel;button.classList.toggle('active',active);button.setAttribute('aria-pressed',String(active))})}
 
   function proofValues(){
     const c=current(),s=session(),diff=difference();const rawFraction=simplify(diff.n,diff.d*diff.coef);return {c,s,diff,rawFraction};
@@ -1053,26 +1053,20 @@ button:focus-visible,.tape-track:focus-visible{outline:3px solid var(--lab-focus
     if(!trace.steps.length){const fixed=document.createElement("span");fixed.className="trace-fixed";fixed.textContent=" exact";decimal.appendChild(fixed)}
     stage.appendChild(decimal);
 
-    const line=document.createElement("div");line.className="division-line";
-    trace.nodes.forEach((r,i)=>{
-      const node=document.createElement("div");node.className=`remainder-node${r===0?" zero":""}${trace.repeatStart!==null&&(i===trace.repeatStart||i===trace.repeatEnd)?" repeat":""}`;node.dataset.index=i;node.innerHTML=`<div><span>remainder</span><strong>${r}</strong></div>`;line.appendChild(node);
-      if(i<trace.steps.length){const st=trace.steps[i],step=document.createElement("div");step.className="division-step";step.dataset.index=i;step.innerHTML=`<div class="op">${st.before}×10 = ${st.expanded}<br>${st.expanded} ÷ ${f.d} →</div><div class="digit-out">${st.digit}</div>`;line.appendChild(step)}
+    const table=document.createElement("table");table.className="lab-division-table";
+    table.innerHTML='<caption>Long division by '+f.d+'</caption><thead><tr><th>Remainder in</th><th>× 10</th><th>Next digit</th><th>Remainder out</th></tr></thead>';
+    const body=document.createElement('tbody');
+    trace.steps.forEach((st,i)=>{
+      const row=document.createElement('tr');row.className='division-step';row.dataset.index=i;
+      const repeated=trace.repeatStart!==null?trace.nodes[trace.repeatStart]:null;
+      row.innerHTML=`<td><span class="lab-math-surface${st.before===repeated?' is-repeat':''}">${st.before}</span></td><td>${st.expanded}</td><td><span class="lab-math-surface">${st.digit}</span></td><td><span class="lab-math-surface${st.next===repeated?' is-repeat':''}">${st.next}</span></td>`;
+      body.appendChild(row);
     });
-    stage.appendChild(line);
-    if(trace.repeatStart!==null){
-      const bracket=document.createElement("div");bracket.className="repeat-bracket";bracket.id="repeatBracket";bracket.innerHTML=`<span>Matching remainder rings mark where the digit cycle repeats.</span>`;stage.appendChild(bracket);
-      requestAnimationFrame(()=>positionBracket(trace));
-    }
+    table.appendChild(body);stage.appendChild(table);
     const struct=decimalStructure(f.n,f.d),valueText=struct.repeat.length?`${struct.integer}.${struct.prefix}<span class="repeat-inline">${struct.repeat}</span>…`:struct.prefix.length?`${struct.integer}.${struct.prefix}`:struct.integer;
     if(trace.terminates)$("traceNote").innerHTML=`<strong>${f.n}/${f.d} = ${valueText}</strong> · remainder 0 → decimal stops.`;
     else $("traceNote").innerHTML=`<strong>${f.n}/${f.d} = ${valueText}</strong> · remainder ${trace.nodes[trace.repeatEnd]} returns, so the same digit sequence starts again.`;
     renderFactorLens(f,trace);startTrace();
-  }
-
-  function positionBracket(trace){
-    const stage=$("divisionStage"),line=stage.querySelector(".division-line"),bracket=$("repeatBracket");if(!line||!bracket)return;
-    const startNode=line.querySelector(`.remainder-node[data-index="${trace.repeatStart}"]`),endNode=line.querySelector(`.remainder-node[data-index="${trace.repeatEnd}"]`);if(!startNode||!endNode)return;
-    startNode.classList.add('cycle-endpoint');endNode.classList.add('cycle-endpoint');
   }
 
   function startTrace(){
@@ -1109,7 +1103,7 @@ button:focus-visible,.tape-track:focus-visible{outline:3px solid var(--lab-focus
   function setVerifier(mode){session().verifier=mode;renderVerifier()}
 
   function suggestedWorkLevel(){return challengeComplete()&&state.workingLevel<2&&state.solvedAtLevel[state.workingLevel]+1>=3?state.workingLevel+1:-1}
-  function renderNextCard(){const card=$("nextCard"),upgrade=$("nextUpgrade"),next=suggestedWorkLevel();card.hidden=!challengeComplete();if(card.hidden)return;$("nextCardText").textContent=`The recurring tail cancels and the exact value is ${current().num}/${current().den}.`;card.classList.toggle("has-upgrade",next>0);upgrade.hidden=next<0;if(next>0){$("nextUpgradeTitle").textContent=next===1?"Ready to write some working?":"Ready to write all the working?";$("nextUpgradeText").textContent=next===1?"After cancelling the tail, write the exact fraction yourself. This prompt will return after each completed problem until you increase the working required.":"Supply both sides of the finite equation before writing the exact fraction.";$("upgradeLevel").textContent=next===1?"Try some working":"Write all the working";$("upgradeLevel").dataset.level=String(next)}}
+  function renderNextCard(){const card=$("nextCard"),upgrade=$("nextUpgrade"),next=suggestedWorkLevel();card.hidden=!challengeComplete();if(card.hidden)return;$("nextCardText").textContent=`The recurring tail cancels and the exact value is ${current().num}/${current().den}.`;card.classList.toggle("has-upgrade",next>0);upgrade.hidden=next<0;if(next>0){$("nextUpgradeTitle").textContent=next===1?"Ready to write some working?":"Ready to write all the working?";$("nextUpgradeText").textContent=next===1?"After cancelling the tail, write the exact fraction yourself. ":"Supply both sides of the finite equation before writing the exact fraction.";$("upgradeLevel").textContent=next===1?"Try some working":"Try all working";$("upgradeLevel").dataset.level=String(next)}}
   function renderAll(){renderMission();renderGoalRoute();renderPlaceGrid();renderRows();renderResult();renderSubtractGesture();renderSolveFlow();renderAction();renderProof();renderNextCard()}
   function startProblem(seed=((Date.now()+state.problemNumber*7919)>>>0)||1){state.problem=makeProblem(seed);state.currentSession=makeSession(state.problem);renderAll()}
   function advanceProblem(){if(!challengeComplete())return;state.solvedAtLevel[state.workingLevel]++;state.problemNumber++;startProblem()}
@@ -1125,7 +1119,6 @@ button:focus-visible,.tape-track:focus-visible{outline:3px solid var(--lab-focus
   $("derivedVerify").addEventListener("click",()=>setVerifier("derived"));
   $("counterVerify").addEventListener("click",()=>setVerifier("counter"));
   $("replayTrace").addEventListener("click",startTrace);
-  window.addEventListener("resize",()=>{if(!$("proofPanel").classList.contains("show"))return;const f=verifierFraction(),t=divisionTrace(f.n,f.d);if(t.repeatStart!==null)positionBracket(t)});
 
   window.__recurringLab={
     setProblem:(seed=1,level=state.workingLevel)=>{state.workingLevel=Math.max(0,Math.min(2,level));state.problem=makeProblem(seed>>>0||1);state.currentSession=makeSession(state.problem);renderAll()},

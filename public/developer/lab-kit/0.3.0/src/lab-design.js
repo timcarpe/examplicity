@@ -108,6 +108,13 @@ window.LabDesign = {
   }
   function normalizeSettingHeaders() {
     document.body.classList.add("lab-settings-adopt");
+    document.querySelectorAll('[data-lab-reset-target]').forEach(button => {
+      const host = document.querySelector(button.dataset.labResetTarget);
+      if (!host || host.contains(button)) return;
+      button.classList.add('lab-action', 'lab-reset-action');
+      host.classList.add('lab-reset-host');
+      host.appendChild(button);
+    });
       // Flatten only setting wrappers for visual ordering; preserve nodes and event owners.
       document.querySelectorAll('.lab-activity-bar').forEach(bar => {
         const groups = [
