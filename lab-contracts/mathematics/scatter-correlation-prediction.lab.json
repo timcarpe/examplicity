@@ -10,5 +10,41 @@
   "invariants": ["A fitted line must represent the whole observed cloud rather than a selected pair of points.", "Correlation can support an estimate but does not establish causation."],
   "safeAdaptations": ["Vary paired datasets with visible observed ranges.", "Adjust working support while preserving a learner-controlled line of best fit."],
   "nonGoals": ["Presenting extrapolation or correlation as certain causal prediction."],
-  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract",
+  "implementation": {
+    "reviewedRevision": "74a5e39",
+    "surfaces": {
+      "task": {"selectors": ["#datasetLabel", "#phaseLabel", "#supportLabel", "#missionTitle", "#missionHint"], "kind": "given", "description": "Current generated dataset, prediction case and support level prompt.", "visibility": "Shown for the current dataset."},
+      "model": {"selectors": ["#plot"], "kind": "model", "description": "Observed point cloud, draggable line of best fit, observed-range boundary and prediction probe.", "visibility": "Present throughout; range/probe elements vary by case."},
+      "working": {"selectors": ["#workContent", "#interactionGuide"], "kind": "working", "description": "Correlation choice, fit-balance checks, prediction and optional range/gap entries.", "visibility": "Generated working content follows the case and support level."},
+      "evidence": {"selectors": ["#footerEvidence", "#footerStatus", "#workContent", "#plot"], "kind": "evidence", "description": "Whole-cloud fit evidence, correlation selection, range boundary and prediction/gap feedback expose what the data supports.", "visibility": "Evidence updates after line/probe changes and working checks."},
+      "completion": {"selectors": ["#nextCard"], "kind": "completion", "description": "Solved case and next dataset or support upgrade.", "visibility": "Shown only when the case-specific completion check passes."},
+      "settings": {"selectors": ["[data-support]", "#resetCase"], "kind": "control", "description": "Support selection and dataset reset.", "visibility": "Support buttons are shown for the current case; some levels unlock after solved cases."},
+      "inputs": {"selectors": ["#workContent input", "#workContent .correlation-choices button"], "kind": "input", "description": "Generated correlation, prediction, range and extrapolation comparison entries.", "visibility": "Input slots appear only for the selected support and case phase."}
+    },
+    "quantities": {
+      "observations": {"description": "Paired x,y observations forming the entire point cloud.", "domain": "Coordinate pairs.", "source": "Generated dataset rendered in #plot.", "output": "Point cloud and observed x-range boundary."},
+      "fit-line": {"description": "Line position and tilt used to represent the whole cloud.", "domain": "Coordinate line with draggable position/tilt.", "source": "Learner moves generated [data-drag=move] and [data-drag=tilt] handles.", "output": "Line, residual/balance evidence and fit readiness.", "inputSlots": ["#plot [data-drag=move]", "#plot [data-drag=tilt]"]},
+      "correlation-direction": {"description": "Selected positive, negative, no-trend or case-appropriate correlation claim.", "domain": "Categorical correlation choice.", "source": "Generated buttons in .correlation-choices.", "output": "Correlation feedback and correlationComplete check.", "inputSlots": ["#workContent .correlation-choices button"]},
+      "prediction": {"description": "Predicted y at the generated query x, or inside/outside gap comparisons in extrapolation.", "domain": "Coordinate y value or gap values.", "source": "Probe position and generated working inputs when support is Some/All.", "output": "Probe label, prediction feedback and comparison cards.", "inputSlots": ["#workContent .working-equation input", "#workContent .comparison-card input"]},
+      "observed-range": {"description": "Lower and upper observed x limits used to distinguish interpolation from extrapolation.", "domain": "Coordinate x values.", "source": "Point dataset; All support exposes range fields after a fit.", "output": "Range boundary and range-work feedback.", "inputSlots": ["#workContent .range-fields input"]}
+    },
+    "modes": {
+      "none": "Support 0 shows the fit and evidence while prediction/range answers are source-supplied.",
+      "some": "Support 1 requires the generated prediction or extrapolation comparison entries but keeps the observed range shown.",
+      "all": "Support 2 additionally requires the generated lower/upper observed-range entries.",
+      "case-types": "The source generates standard, zero-correlation and extrapolation cases; extrapolation requires two saved fits and an outside-range choice."
+    },
+    "dependencies": [
+      "A fit must satisfy the source's whole-cloud quality heuristic and the selected correlation direction before the standard case is fitReady.",
+      "Standard completion also requires the probe at the query and any selected support inputs; zero-correlation completion requires the no-trend choice.",
+      "Extrapolation requires saving a second distinct fit, seeing both inside and outside probe states, correct comparison work and choosing outside.",
+      "The next card appears only from isComplete(); support upgrades and next datasets are offered through that card."
+    ],
+    "completion": "The source isComplete() check combines case-specific fit/probe/correlation conditions with support-gated working; when true, #nextCard is shown and the solved count may unlock a higher support level.",
+    "limitations": [
+      "Fit quality and prediction use source tolerances/heuristics rather than a typed equation or exact statistical calculation.",
+      "Working inputs, correlation choices and range/gap cards are generated later under #workContent and do not all have stable IDs."
+    ]
+  }
 }

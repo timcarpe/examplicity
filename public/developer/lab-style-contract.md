@@ -496,3 +496,24 @@ Geometry review refinement: calculation and candidate-table surfaces are flat ma
 
 
 Rounded measurement instruments use compact inline seven-segment readings with explicit displayed precision (including trailing zeros), separate true values, and a shared coordinate scale for rulers, bounds and proof markers. Place the stopwatch in empty space. Mark included/excluded bounds explicitly and distinguish approach to an upper limit from equality. Keep the investigation's claim and criterion visible; these are necessary context, not redundant narration. The shared digitalReadout renderer supplies SVG segments without external fonts or images.
+
+
+### Investigation sidebars and date selections
+
+Persistent prediction, decision and calculation cards belong beside the model.
+Reserve movable completion cards for an actual transition. Reference values
+use neutral or concept-tinted material; being supplied is not evidence of a
+correct learner attempt. Show the current physical task even at Working None,
+then update its state from the model. Keep the claim and meaningful evidence;
+replace duplicate dragging instructions with the shared target introduction.
+
+Use the shared rounded select control for dates and discrete choices: regular
+12px labels, a thin neutral border, small chevron and subtle shadow. Focus
+darkens the field border without an extra black outline. Retain native keyboard
+and touch selection; the operating system owns the open option menu.
+
+`LabDesign.checkpoints` renders compact hover/focus progress details from lab
+state. `lab-investigation` provides shared action, sidebar, evidence and select
+adapters; each lab supplies layout relationships and learning-state changes.
+Long calculation chains flow down the page without scrollable model canvases.
+Paired calendars can stack as full-width lanes to keep dates and clocks readable.

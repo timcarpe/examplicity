@@ -10,5 +10,40 @@
   "invariants": ["Replacement restores the relevant counter before the next draw.", "Conditional probability is calculated from outcomes consistent with the given event."],
   "safeAdaptations": ["Vary bag contents, first-draw conditions and replacement rules.", "Change scaffolding while keeping both draw states visibly distinct."],
   "nonGoals": ["Using the original sample space after the condition changes it."],
-  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract",
+  "implementation": {
+    "reviewedRevision": "74a5e39",
+    "surfaces": {
+      "task": {"selectors": ["#problemText", "#problemSub", "#supportLabel"], "kind": "given", "description": "Current bag scenario, condition, target colour and replacement rule.", "visibility": "Shown for the current scenario."},
+      "model": {"selectors": ["#bag", "#drawSlot"], "kind": "model", "description": "Physical coloured counters show the bag, drawn counter and whether it is returned.", "visibility": "Present throughout; counter slots change by draw/rule/target phase."},
+      "working": {"selectors": ["#workArea", "#stepRail"], "kind": "working", "description": "Drag sequence for first draw, replacement decision and favourable-outcome marking.", "visibility": "Always present; the active drop target is generated for the current phase."},
+      "evidence": {"selectors": ["#bagEvidence", "#bagState", "#drawState", "#workArea .live-prob"], "kind": "evidence", "description": "Before/after bag states, drawn-counter status and live favourable/denominator fraction expose the conditional sample space.", "visibility": "State labels and live probability update during the drag sequence."},
+      "completion": {"selectors": ["#workArea #nextProblem", "#nextAction"], "kind": "completion", "description": "Completed conditional sample space and next paired/new scenario action.", "visibility": "Next action is generated only after all required favourable counters are marked."},
+      "controls": {"selectors": ["[data-drag-kind]", "#resetButton"], "kind": "control", "description": "Physical counter drags and scenario reset.", "visibility": "Only counters valid for the active phase are draggable."}
+    },
+    "quantities": {
+      "drawn-counter": {"description": "The specific physical counter drawn under the stated condition.", "domain": "One generated red or blue token ID.", "source": "Bag counters with data-drag-kind=draw and data-id.", "output": "#drawSlot, #drawState and the drawn token's after-state.", "inputSlots": ["#bag [data-drag-kind=draw]", "#firstDrawDrop"]},
+      "replacement-state": {"description": "Whether that same physical counter is returned to the bag before the target draw.", "domain": "Return or keep out; no numeric input.", "source": "The rule-stage token drag target.", "output": "#bagState, #bag count and the visible bag contents.", "inputSlots": ["#drawSlot [data-drag-kind=rule]", "#bag [data-drag-kind=rule]"]},
+      "conditional-denominator": {"description": "Number of counters remaining in the bag after applying the rule.", "domain": "Whole-number sample-space size.", "source": "Current bag token membership after draw/replacement.", "output": "#workArea .live-prob denominator and bag counters."},
+      "favourable-outcomes": {"description": "Physical remaining tokens matching the target colour.", "domain": "Whole-number count and token IDs.", "source": "Target-stage draggable counters selected from the current bag.", "output": "#workArea .live-prob numerator and selected counter state.", "inputSlots": ["#bag [data-drag-kind=favourable]", "#favourableDrop"]},
+      "conditional-probability": {"description": "Favourable outcomes divided by the post-rule bag size.", "domain": "Fraction.", "source": "Computed from the current physical token state.", "output": "Live fraction in #workArea."}
+    },
+    "modes": {
+      "guided": "The initial pass highlights the next valid counter/drop and supplies the phase instruction; completion still uses the physical counter sequence.",
+      "independent": "After the first paired case, the next pass is labelled Independent; the same draw/rule/target mechanics and checks remain active.",
+      "replacement-pair": "The first scenario is followed by a second pass with the replacement rule changed, then a new generated scenario begins.",
+      "support": "No None/Some/All selector exists; Guided/Independent is the source's only support distinction."
+    },
+    "dependencies": [
+      "Only a counter matching the condition colour can be drawn; the exact physical token is carried into the rule stage.",
+      "The rule stage must return or keep out that token before target marking begins; replacement changes the denominator.",
+      "Target marking counts only tokens of the requested colour, and every such remaining token must be marked before completion.",
+      "#nextProblem is generated after completion and advances the paired step or generates a new scenario."
+    ],
+    "completion": "The source phase becomes complete when every target-colour token in targetTokens() is selected after the draw and replacement rule; the live conditional fraction and #nextProblem are then shown.",
+    "limitations": [
+      "Bag counts and token IDs are generated for each scenario (2–4 of each colour, total at most 6), so individual counter selectors are state-dependent.",
+      "There is no typed fraction answer; the fraction is computed from physical membership and marking."
+    ]
+  }
 }

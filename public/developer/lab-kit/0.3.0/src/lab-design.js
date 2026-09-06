@@ -1,5 +1,18 @@
 /* Shared model dragging: retain the point grabbed while the model rerenders. */
 window.LabDesign = {
+  checkpoints(host, labels, current, completed = index => index < current, detail = '') {
+    host.classList.add('lab-checkpoints'); host.removeAttribute('aria-hidden');
+    host.replaceChildren(...labels.map((label, index) => {
+      const dot = document.createElement('span'); dot.className = 'lab-checkpoint'; dot.tabIndex = 0;
+      dot.dataset.complete = String(completed(index)); dot.setAttribute('aria-current', String(index === current));
+      const status = completed(index) ? 'Completed' : index === current ? 'In progress' : 'Upcoming';
+      dot.setAttribute('aria-label', label + ': ' + status);
+      const tooltip = document.createElement('span'); tooltip.className = 'lab-checkpoint-detail'; tooltip.setAttribute('role', 'tooltip');
+      const title = document.createElement('strong'); title.textContent = label;
+      const copy = document.createElement('span'); copy.textContent = status + (index === current && detail ? '. ' + detail : '');
+      tooltip.append(title, copy); dot.append(tooltip); return dot;
+    }));
+  },
   digitalReadout(root, value, { x, y, label }) {
     const ns = 'http://www.w3.org/2000/svg';
     const append = (parent, tag, attributes) => {
@@ -137,9 +150,9 @@ window.LabDesign = {
       const [x, y] = popupPosition(hint, document.querySelector('main') || document.body, introduction.getBoundingClientRect());
       hint.style.left = x + 'px'; hint.style.top = y + 'px';
     }
-    const cardSelector = '.calc-step,.solve-card,.derive-step,.work-step,.working-step';
+    const cardSelector = '.calc-step,.solve-card,.derive-step,.work-step,.working-step,.lab-work-card,.lab-investigation .work-section,.lab-investigation .evidence-section,.lab-investigation .work-block';
     let queued = false;
-    const key = card => [...card.querySelectorAll('input')].map(input => input.id || input.name || [...input.attributes].filter(a => a.name.startsWith('data-')).map(a => a.name + a.value).join(':')).join('|') || card.querySelector('.step-head,.derive-step-head')?.textContent;
+    const key = card => card.id || [...card.querySelectorAll('input')].map(input => input.id || input.name || [...input.attributes].filter(a => a.name.startsWith('data-')).map(a => a.name + a.value).join(':')).join('|') || card.querySelector('.step-head,.derive-step-head,.work-step-head,.eyebrow,strong')?.textContent;
     function refresh() {
       queued = false;
       document.querySelectorAll(cardSelector).forEach(card => {
@@ -176,16 +189,23 @@ window.LabDesign = {
       const target = event.target.closest('[data-lab-intro]') || event.target.closest('svg')?.querySelector('.lab-intro-target');
       if (target && event.key !== 'Tab') { introduced.add(target.dataset.labIntro); clearIntroduction(); schedule(); }
     }, true);
-    window.addEventListener('resize', schedule);
+    window.addEventListener('resize', () => {
+      // A viewport change invalidates automatic placement, while a card the
+      // learner has moved must retain its chosen position.
+      document.querySelectorAll('.next-card').forEach(card => {
+        if (!moved.has(card)) placed.delete(card);
+      });
+      schedule();
+    });
     document.addEventListener('lab-introduction-change', schedule);
     window.addEventListener('scroll', schedule, true);
     document.addEventListener('focusin', event => {
-      if (!event.target.matches('input,textarea,button')) return;
+      if (!event.target.matches('input,textarea,select,button')) return;
       const card = event.target.closest(cardSelector);
       if (card) { touched.add(key(card)); card.dataset.interacted = 'true'; }
     });
     document.addEventListener('pointerdown', event => {
-      const input = event.target.closest('input');
+      const input = event.target.closest('input,select,textarea,button,[data-lab-intro]');
       const card = input?.closest(cardSelector);
       if (card) { touched.add(key(card)); card.dataset.interacted = 'true'; }
     });

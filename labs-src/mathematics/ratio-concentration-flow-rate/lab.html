@@ -363,8 +363,9 @@ h1{margin:0;font-size:27px;font-weight:630;letter-spacing:-.025em;line-height:1.
 @media(max-width:620px){body{padding:60px 0 76px}main{width:min(100% - 12px,1180px);margin-top:8px}h1{font-size:24px}.sub{font-size:12px}#plant{min-width:760px;min-height:0}.stage-wrap{overflow-x:auto}.pump-control{min-width:330px;margin-left:8px;margin-right:8px}.evidence-actions{width:100%}.evidence-actions button{flex:1}.next-card{top:10px;width:min(310px,calc(100% - 20px))}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}}
 </style>
+<!-- LAB_DESIGN_COMPONENTS -->
 </head>
-<body data-lab-layout="standard">
+<body data-lab-layout="standard" class="lab-adopt-v3 lab-investigation lab-blend">
 <main>
 <!-- LAB_MANIFEST_HEADER_START -->
 <header class="lab-manifest-header">
@@ -387,13 +388,13 @@ h1{margin:0;font-size:27px;font-weight:630;letter-spacing:-.025em;line-height:1.
 <span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span>
   <span data-lab-authored-subtitle-slot hidden></span>
 
-  <section class="panel mission" aria-live="polite">
+  <section class="panel mission lab-activity-bar" aria-live="polite">
     <div class="mission-copy"><strong id="missionTitle"></strong><span id="missionHint"></span></div>
-    <div class="mission-tools"><div class="complexity"><div class="complexity-copy"><strong>Working required</strong><span id="complexityHelp"></span></div><div class="complexity-switch" role="group" aria-label="Working required"><button type="button" data-work-level="0" class="active" aria-pressed="true">Off</button><button type="button" data-work-level="1" aria-pressed="false">Some</button><button type="button" data-work-level="2" aria-pressed="false">All</button></div></div><button id="resetCase" type="button">Reset</button></div>
+    <div class="mission-tools"><div class="complexity"><div class="complexity-copy"><strong>Working:</strong><span id="complexityHelp"></span></div><div class="complexity-switch lab-toggle" data-kind="working" role="group" aria-label="Working:"><button type="button" data-work-level="0" class="active" aria-pressed="true">None</button><button type="button" data-work-level="1" aria-pressed="false">Some</button><button type="button" data-work-level="2" aria-pressed="false">All</button></div></div><button id="resetCase" type="button">Reset</button></div>
   </section>
 
   <section class="panel system" aria-label="Interactive blending line">
-    <div id="workingDock" class="working-dock"></div>
+
     <div class="stage-wrap" id="stageWrap">
       <div id="nextCard" class="next-card" hidden><strong>Problem complete</strong><span id="nextCardText"></span><div id="nextUpgrade" class="next-upgrade" hidden><strong id="nextUpgradeTitle"></strong><span id="nextUpgradeText"></span><button id="upgradeLevel" type="button"></button></div><div class="next-actions"><button id="nextProblem" type="button">Next problem</button></div></div>
       <svg id="plant" viewBox="0 0 1120 650" role="img" aria-labelledby="plantTitle plantDesc" data-lab-role="model" data-lab-manipulative="blending-pumps">
@@ -570,6 +571,7 @@ h1{margin:0;font-size:27px;font-weight:630;letter-spacing:-.025em;line-height:1.
       </div>
     </div>
 
+    <aside id="workingDock" class="working-dock lab-sidebar" aria-label="Flow working"></aside>
     <div class="evidence">
       <div id="actionLine" class="action-line" role="status" aria-live="polite"></div>
     </div>
@@ -726,7 +728,8 @@ h1{margin:0;font-size:27px;font-weight:630;letter-spacing:-.025em;line-height:1.
     const stateText=under?'underfilled':over?'overflowing':'exact fill';$('resultState').textContent=stateText;$('resultState').setAttribute('class',`bottle-result-state ${under?'warn':over?'bad':'good'}`);
   }
 
-  function renderAll(){renderMission();renderRecipeBlocks();renderWorking();renderStatic();renderResultBottle();renderNextCard()}
+  function introduceInteraction(){const root=document.querySelector('main'),fields=[...$('workingDock').querySelectorAll('input:not(:disabled)')]; LabDesign.introduce(root,fields.length?fields:[$('concFlow'),$('waterFlow')].filter(e=>!e.disabled),'blend-'+state.workingLevel,fields.length?'Calculate the required flow':'Adjust the two pumps',fields.length?'Use bottle volume and filling time, then split the total in the requested ratio.':'Change each pump rate to match both the recipe and bottle volume.'); $('workingDock').querySelectorAll('.working-step').forEach((card,i)=>card.dataset.workState=solved()?'good':i===0?'reference':card.querySelector('input.bad')?'bad':'needed');}
+function renderAll(){renderMission();renderRecipeBlocks();renderWorking();renderStatic();renderResultBottle();renderNextCard();introduceInteraction()}
 
   // Equal-volume teaching markers retain ingredient identity through the mixer.
   function initParticles(id,count,cls){const g=$(id);particleSets[id]=[];for(let i=0;i<count;i++){const c=document.createElementNS(svgNS,'circle');c.setAttribute('r',id==='mixParticles'?5:5.5);c.setAttribute('class',`particle ${cls||''}`);g.appendChild(c);particleSets[id].push(c)}}

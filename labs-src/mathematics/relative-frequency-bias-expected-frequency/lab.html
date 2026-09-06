@@ -375,8 +375,9 @@ button.quiet{background:transparent}
 @media(max-width:540px){.stage-shell{overflow:hidden}.stage{min-width:0}.phase-dock{padding:7px}.phase-modal h2{font-size:14px}.phase-modal p{font-size:9.5px}.modal-actions button{font-size:9px}.stage-note{grid-template-columns:1fr}.stage-note-state{justify-self:start}.comparison-strip{grid-template-columns:1fr auto 1fr}}
 @media(prefers-reduced-motion:reduce){.wheel-group{transition:none}.guide-target{animation:none}}
 </style>
+<!-- LAB_DESIGN_COMPONENTS -->
 </head>
-<body data-lab-layout="standard">
+<body data-lab-layout="standard" class="lab-adopt-v3 lab-investigation lab-frequency">
 <main>
 <!-- LAB_MANIFEST_HEADER_START -->
 <header class="lab-manifest-header">
@@ -399,7 +400,7 @@ button.quiet{background:transparent}
 <span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span>
 <span data-lab-authored-subtitle-slot hidden></span>
 
-<section class="panel mission" aria-live="polite">
+<section class="panel mission lab-activity-bar" aria-live="polite">
   <div class="mission-copy">
     <div class="mission-kicker"><span id="missionKicker">Audit 1 of 4</span></div>
     <strong id="missionTitle">Predict what a fair spinner should look like in the data.</strong>
@@ -419,7 +420,7 @@ button.quiet{background:transparent}
         <div class="legend" aria-label="Graph legend"><span class="fair"><i></i>fair claim 0.25</span><span class="trace"><i></i>current test</span><span id="ghostLegend" class="ghost" hidden><i></i>fair-spinner trace</span></div>
       </div>
       <div id="stageShell" class="stage-shell" aria-busy="false">
-        <svg id="stage" class="stage" viewBox="0 0 960 540" role="img" aria-label="A four-sector fairground spinner feeds prize and other result bins and a graph of relative frequency over repeated spins" data-lab-role="model" data-lab-manipulative="spinner-trials">
+        <svg data-lab-readable-chart="12" id="stage" class="stage" viewBox="0 0 960 540" role="img" aria-label="A four-sector fairground spinner feeds prize and other result bins and a graph of relative frequency over repeated spins" data-lab-role="model" data-lab-manipulative="spinner-trials">
           <rect id="stageBackground" x="0" y="0" width="960" height="455" fill="#f8fbfd"></rect>
           <g id="spinnerLayer" aria-hidden="true">
             <ellipse class="wheel-shadow" cx="160" cy="220" rx="94" ry="13"></ellipse>
@@ -490,11 +491,12 @@ button.quiet{background:transparent}
           </g>
         </svg>
       </div>
-      <div id="phaseDock" class="phase-dock"><section id="phaseModal" class="phase-modal" role="region" aria-label="Current audit step" aria-live="polite" tabindex="-1"></section></div>
+
       <div class="stage-note" role="status" aria-live="polite"><div id="stageNoteCopy" class="stage-note-copy"><strong>Next:</strong> set a prediction below the visual, then run the test.</div><div id="stageNoteState" class="stage-note-state">No spins yet</div></div>
     </div>
 
-    <aside class="workbench" aria-label="Persistent evidence and working area">
+    <aside class="workbench lab-sidebar" aria-label="Persistent evidence and working area">
+      <div id="phaseDock" class="phase-dock"><section id="phaseModal" class="phase-modal" role="region" aria-label="Current audit step" aria-live="polite" tabindex="-1"></section></div>
       <section class="work-section">
         <div class="eyebrow">Fair claim</div>
         <div class="claim-equation"><strong>1 ÷ 4 = 0.25</strong><span>probability of PRIZE</span></div>
@@ -691,7 +693,7 @@ button.quiet{background:transparent}
   }
   function slider(value,target){return `<div class="modal-control"><label><span>Predicted relative frequency after ${target} spins</span><output id="predictionOutput">${fmt(value,2)}</output></label><input id="predictionSlider" class="guide-target" type="range" min="0" max="1" step="0.01" value="${value}" aria-label="Predicted relative frequency after ${target} spins"><div class="modal-scale"><span>0</span><span>fair claim 0.25</span><span>1</span></div></div>`}
   function modal(kicker,title,copy,inner,actions,tone=""){
-    const root=$("phaseModal"),dock=$("phaseDock");dock.hidden=false;root.hidden=false;root.dataset.tone=tone;root.innerHTML=`<div class="modal-copy"><div class="modal-kicker">${kicker}</div><h2>${title}</h2><p>${copy}</p></div><div class="modal-work">${inner||""}<div class="modal-actions">${actions||""}</div></div>`;
+    const root=$("phaseModal"),dock=$("phaseDock");dock.hidden=false;root.hidden=false;root.dataset.tone=tone;root.classList.add('lab-work-card');root.dataset.workState=tone==='good'?'good':tone==='bad'?'bad':'needed';root.innerHTML=`<div class="modal-copy"><div class="modal-kicker">${kicker}</div><h2>${title}</h2><p>${copy}</p></div><div class="modal-work">${inner||""}<div class="modal-actions">${actions||""}</div></div>`;
   }
   function renderModal(){
     if(state.busy){const root=$("phaseModal"),dock=$("phaseDock");root.hidden=true;root.innerHTML="";dock.hidden=true;return}
@@ -707,7 +709,7 @@ button.quiet{background:transparent}
     else if(state.phase==="biasReveal")modal("Relationship revealed","The long-run outcomes exposed the bias","The hidden mechanism was set to P(PRIZE) = 0.40. The experimental relative frequency 80/200 = 0.400 estimated it.",'<div class="modal-evidence"><strong>relative frequency ≈ probability</strong><span>Repeated trials provide an estimate; they do not reveal a mechanism from one result.</span></div>','<button class="primary guide-target" data-action="start-forecast">Use the estimate</button>',"good");
     else if(state.phase==="forecast"){
       const expected=Math.round(.4*state.futureN),valid=state.answer!==""&&Number(state.answer)===expected;
-      modal("Show your working","How many prize tickets should be stocked?","Use expected frequency = probability × number of trials. The booth estimate is 0.400.",`<div class="forecast-control"><label><span>Expected visitors / spins</span><output id="futureOutput">${state.futureN}</output></label><input id="futureSlider" class="guide-target" type="range" min="50" max="200" step="10" value="${state.futureN}" aria-label="Number of future spins"></div><div class="formula"><span class="cell">80</span><b>÷</b><span class="cell">200</span><b>×</b><span id="futureCell" class="cell">${state.futureN}</span><b>=</b><input id="expectedAnswer" class="${state.forecastFeedback?'invalid':''}" type="number" inputmode="numeric" value="${state.answer}" aria-label="Expected number of prizes"></div>${state.forecastFeedback?`<div class="feedback-line bad">${state.forecastFeedback}</div>`:''}`,'<button class="primary guide-target" data-action="check-forecast">Check forecast</button>');
+      modal("Show your working","How many prize tickets should be stocked?","Use expected frequency = probability × number of trials. The booth estimate is 0.400.",`<div class="forecast-control"><label><span>Expected visitors / spins</span><output id="futureOutput">${state.futureN}</output></label><input id="futureSlider" class="guide-target" type="range" min="50" max="200" step="10" value="${state.futureN}" aria-label="Number of future spins"></div><div class="formula"><span class="cell">80</span><b>÷</b><span class="cell">200</span><b>×</b><span id="futureCell" class="cell">${state.futureN}</span><b>=</b><input id="expectedAnswer" class="${state.forecastFeedback?'invalid':''}" type="number" inputmode="numeric" value="${state.answer}" aria-label="Expected number of prizes"></div>${state.forecastFeedback?`<div class="feedback-line bad">${state.forecastFeedback}</div>`:''}`,'<button class="primary guide-target" data-action="check-forecast">Check forecast</button>',state.forecastFeedback?"bad":"");
     }
     else if(state.phase==="forecastReady")modal("Calculated consequence",`Stock ${state.expected} prize tickets`,`0.400 × ${state.futureN} = ${state.expected}. The stock bar now represents the expected frequency, not a guaranteed result.`,`<div class="modal-evidence"><strong>0.400 × ${state.futureN} = ${state.expected}</strong><span>Run one future event to see whether the actual frequency is identical.</span></div>`,'<button class="primary guide-target" data-action="run-event">Run the event</button>',"good");
     else if(state.phase==="complete"){
@@ -731,7 +733,8 @@ button.quiet{background:transparent}
     }
     const ans=$("expectedAnswer");if(ans){ans.addEventListener("input",e=>{state.answer=e.target.value;state.forecastFeedback="";$("forecastEquation").innerHTML=`<strong>0.400</strong> × ${state.futureN} = ${state.answer||'?'}`})}
   }
-  function renderAll(){renderMission();renderSpinner();renderCounts();renderChart();renderComparison();renderMechanismChip();renderForecast();renderLog();renderStageNote();renderModal();$("stageShell").setAttribute("aria-busy",state.busy?"true":"false");$("resetLab").disabled=state.busy}
+  function introduceInteraction(){const target=$('phaseModal').querySelector('input:not(:disabled),button:not(:disabled)'); LabDesign.introduce(document.querySelector('main'),[target].filter(Boolean),'frequency-'+state.phase,'Test the current claim',state.phase==='forecast'?'Use the estimated probability and crowd size to calculate the stock.':'Record a prediction or choose the next evidence test; compare the resulting trace with the claim.'); LabDesign.checkpoints($('progressRail'),['Short-run variation','Fair long run','Test for bias','Expected frequency'],phaseGroup(),i=>i<phaseGroup()||state.phase==='complete',$('missionTitle').textContent);}
+function renderAll(){renderMission();renderSpinner();renderCounts();renderChart();renderComparison();renderMechanismChip();renderForecast();renderLog();renderStageNote();renderModal();$("stageShell").setAttribute("aria-busy",state.busy?"true":"false");$("resetLab").disabled=state.busy;introduceInteraction()}
 
   function spinVisual(outcome){
     const target=outcome?-45:[45,135,225][state.results.length%3],current=((state.wheelRotation%360)+360)%360,desired=((target%360)+360)%360,delta=(desired-current+360)%360;

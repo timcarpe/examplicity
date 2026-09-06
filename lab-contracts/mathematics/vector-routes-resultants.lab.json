@@ -10,5 +10,42 @@
   "invariants": ["A vector's translation does not change its components.", "The resultant components equal the sum of command components, even when order changes."],
   "safeAdaptations": ["Vary reusable vector commands, targets and route obstacles.", "Adjust working support while retaining both physical-route and component evidence."],
   "nonGoals": ["Treating equal resultants as identical travelled paths."],
-  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract",
+  "implementation": {
+    "reviewedRevision": "74a5e39",
+    "surfaces": {
+      "task": {"selectors": ["#routeNumber", "#conceptLabel", "#difficultyLabel", "#progressText"], "kind": "given", "description": "Current vector-route stage, concept and progress.", "visibility": "Shown for the current generated route."},
+      "model": {"selectors": ["#stage", "#worldLayer", "#routeLayer", "#resultantLayer", "#robotLayer"], "kind": "model", "description": "Grid, reusable vector sources, command route, resultant and robot trace show path and displacement.", "visibility": "Present throughout; source/route layers vary by stage and order."},
+      "working": {"selectors": ["#commandStrip", "#resultBox", "#magBox"], "kind": "working", "description": "Ordered command slots plus component and magnitude calculation entries.", "visibility": "Command strip is present throughout; magnitude work appears at All."},
+      "evidence": {"selectors": ["#status", "#expression", "#xChain", "#yChain", "#routeDistance", "#resultDistance", "#odometer", "#relationship"], "kind": "evidence", "description": "Live vector sums, route/displacement distances, collision/miss status and order relationship show the distinction between path and resultant.", "visibility": "Updates after command reorder, source translation, prediction movement and route runs."},
+      "completion": {"selectors": ["#nextCard"], "kind": "completion", "description": "Successful route, insight and next route/support upgrade.", "visibility": "Shown only after a valid run, correct prediction and required working checks."},
+      "settings": {"selectors": ["[data-work-level]", "#resetStage", "#runBtn", "#undoBtn", "#earlierBtn", "#laterBtn"], "kind": "control", "description": "Working support, route run/undo, command reorder and reset controls.", "visibility": "Controls are shown for the current route; run and reorder actions operate on the generated command strip."},
+      "inputs": {"selectors": ["#stage [data-source-body]", "#stage [data-source-handle]", "#stage [data-prediction]", "#commandStrip .command-chip", "#rxInput", "#ryInput", "#magInput"], "kind": "input", "description": "Reusable vector/source controls, prediction marker, command order and resultant entries.", "visibility": "Source and command controls are generated for each route; answer inputs are always rendered but are checked only at their selected level."
+      }
+    },
+    "quantities": {
+      "source-vectors": {"description": "Reusable vector components and, on scalar stages, the scalar multiplier.", "domain": "Signed grid components and scalar.", "source": "Generated source bodies/handles in #stage.", "output": "Source labels, route segments and component chains.", "inputSlots": ["#stage [data-source-body]", "#stage [data-source-handle]"]},
+      "route-order": {"description": "Filled command sequence and head-to-tail endpoint, including subtraction or fractional scalar commands where supplied.", "domain": "Ordered vector operations.", "source": "Command chips dropped into #commandStrip and earlier/later controls.", "output": "#expression, #xChain/#yChain, route trace and final position.", "inputSlots": ["#commandStrip .command-chip", "#earlierBtn", "#laterBtn"]},
+      "prediction": {"description": "Predicted finishing point for the route.", "domain": "Grid coordinate marker.", "source": "Movable generated [data-prediction] marker.", "output": "Prediction feedback and run outcome.", "inputSlots": ["#stage [data-prediction]"]},
+      "resultant-components": {"description": "Resultant rx and ry obtained by summing the ordered command components.", "domain": "Signed grid components.", "source": "Auto calculation plus #rxInput/#ryInput when Working Some/All.", "output": "#rxAuto, #ryAuto, #xChain, #yChain and #resultBox.", "inputSlots": ["#rxInput", "#ryInput"]},
+      "magnitude": {"description": "Displacement magnitude from resultant components, distinct from travelled route distance.", "domain": "Grid units, √(rx²+ry²).", "source": "Auto result and #magInput at Working All.", "output": "#magAuto, #magBox, #routeDistance, #resultDistance and #odometer.", "inputSlots": ["#magInput"]}
+    },
+    "modes": {
+      "none": "Source level 0 shows component and magnitude calculations while the learner builds and runs the route.",
+      "some": "Source level 1 requires resultant component entries rx and ry.",
+      "all": "Source level 2 additionally requires the magnitude entry.",
+      "route-types": "The five source stages cover order/addition, subtraction, scalar multiplication, same-resultant paths and fractional scalars with magnitude; stage flags also require translation, safe order or collision constraints as supplied."
+    },
+    "dependencies": [
+      "Every command slot must be filled and the prediction marker moved before Run; route data recomputes from the current order and source vectors.",
+      "A run can fail for collision, missed target or prediction mismatch; after a successful route, pending working answers still block completion.",
+      "At Some, rx/ry must be checked; at All, magnitude is checked after component work. Working checks become pending again after relevant changes.",
+      "The source next card appears only when the last run is valid, prediction is correct, any stage translation requirement is met and no working check is pending."
+    ],
+    "completion": "The source phaseComplete check requires lastRunValid, a successful run, correct prediction, any route-specific translatedUsed flag and no pending working checks; #nextCard then exposes the next route and possible level upgrade.",
+    "limitations": [
+      "Collision uses the source's segment/rack geometry and margin; prediction is a snapped grid marker rather than a typed coordinate.",
+      "Source vectors, command chips and stage-specific constraints are generated from the current route, so per-command IDs are not fixed."
+    ]
+  }
 }

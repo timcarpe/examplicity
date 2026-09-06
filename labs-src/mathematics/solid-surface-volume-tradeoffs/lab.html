@@ -396,8 +396,9 @@ h1{margin:0;font-size:clamp(26px,3vw,40px);font-weight:650;letter-spacing:-.045e
 }
 </style>
 <link rel="stylesheet" href="./lab-kit.css" data-lab-resource="lab-kit.css">
+<!-- LAB_DESIGN_COMPONENTS -->
 </head>
-<body data-lab-layout="standard">
+<body data-lab-layout="standard" class="lab-adopt-v3 lab-investigation lab-solids">
 <main>
 <!-- LAB_MANIFEST_HEADER_START -->
 <header class="lab-manifest-header">
@@ -420,13 +421,13 @@ h1{margin:0;font-size:clamp(26px,3vw,40px);font-weight:650;letter-spacing:-.045e
 <span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span>
 <span data-lab-authored-subtitle-slot hidden></span>
 
-<section class="panel mission">
+<section class="panel mission lab-activity-bar">
   <div class="mission-copy">
     <span id="problemKicker" class="mission-kicker"></span>
     <strong id="missionTitle"></strong>
     <span id="missionHint"></span>
   </div>
-  <div class="mission-tools"><div class="complexity"><div class="complexity-copy"><strong>Working required</strong><span id="complexityHelp"></span></div><div class="complexity-switch" role="group" aria-label="Working required"><button type="button" data-work-level="0" class="active" aria-pressed="true">Off</button><button type="button" data-work-level="1" aria-pressed="false">Some</button><button type="button" data-work-level="2" aria-pressed="false">All</button></div></div><button id="resetProblem" type="button">Reset</button></div>
+  <div class="mission-tools"><div class="complexity"><div class="complexity-copy"><strong>Working:</strong><span id="complexityHelp"></span></div><div class="complexity-switch lab-toggle" data-kind="working" role="group" aria-label="Working:"><button type="button" data-work-level="0" class="active" aria-pressed="true">None</button><button type="button" data-work-level="1" aria-pressed="false">Some</button><button type="button" data-work-level="2" aria-pressed="false">All</button></div></div><button id="resetProblem" type="button">Reset</button></div>
 </section>
 
 <div id="interactionGuide" class="interaction-guide" hidden aria-live="polite">
@@ -441,11 +442,11 @@ h1{margin:0;font-size:clamp(26px,3vw,40px);font-weight:650;letter-spacing:-.045e
   </div>
 </div>
 
-<section class="workspace">
+<section class="workspace lab-solid-layout"><div class="lab-solid-models">
   <section class="panel visual-panel">
     <div class="visual-head"><strong>Uniform cross-section → solid</strong><span id="solidHeadNote"></span></div>
     <div class="solid-shell">
-      <svg id="solidSvg" viewBox="0 0 760 430" role="img" aria-labelledby="solidTitle solidDesc" data-lab-role="model" data-lab-manipulative="prism-dimensions">
+      <svg data-lab-readable-chart="12" id="solidSvg" viewBox="0 0 760 430" role="img" aria-labelledby="solidTitle solidDesc" data-lab-role="model" data-lab-manipulative="prism-dimensions">
         <title id="solidTitle">Interactive rectangular prism</title>
         <desc id="solidDesc">The learner changes the prism length or reshapes its rectangular cross-section while the linked volume and surface representations update.</desc>
         <g id="solidLayer"></g>
@@ -466,16 +467,17 @@ h1{margin:0;font-size:clamp(26px,3vw,40px);font-weight:650;letter-spacing:-.045e
   <section class="panel visual-panel">
     <div class="skin-head"><strong>Same solid → outer material laid flat</strong><span>two end caps + the lengthwise strip</span></div>
     <div class="skin-shell">
-      <svg id="skinSvg" viewBox="0 0 560 350" role="img" aria-labelledby="skinTitle skinDesc">
+      <svg data-lab-readable-chart="12" id="skinSvg" viewBox="0 0 560 350" role="img" aria-labelledby="skinTitle skinDesc">
         <title id="skinTitle">Unwrapped prism surface</title>
         <desc id="skinDesc">The two end faces contribute two cross-section areas while the side strip has length times cross-section perimeter.</desc>
         <g id="skinLayer"></g>
       </svg>
     </div>
   </section>
-</section>
+</div>
 
-<section id="workingDock" class="panel working-dock" aria-label="Calculation working"></section>
+<section id="workingDock" class="working-dock lab-sidebar" aria-label="Calculation working"></section>
+</section>
 
 
 </main>
@@ -534,10 +536,10 @@ function renderSolid(){
     g.append(line(ax(minL),axisY,ax(maxL),axisY,'svg-axis'));
     for(let v=minL;v<=maxL;v+=2){g.append(line(ax(v),axisY-5,ax(v),axisY+5,'svg-axis'),text(ax(v),axisY+19,String(v),'svg-small',{'text-anchor':'middle'}))}
     g.append(text(ax(state.L),axisY-10,`L ${fmt(state.L)} cm`,'svg-value',{'text-anchor':'middle'}));
-    const locked=state.workingLevel>0,[hx,hy]=backC;g.append(line(frontC[0],frontC[1],hx,hy,'handle-arrow'));const hit=add('circle',{id:'lengthHandleHit',cx:hx,cy:hy,r:22,class:`handle-hit${locked?' locked':''}`}),handle=add('circle',{id:'lengthHandle',cx:hx,cy:hy,r:9,class:`handle${locked?' locked':' active'}`,tabindex:locked?-1:0,role:'slider','aria-label':'Prism length','aria-valuemin':4,'aria-valuemax':22,'aria-valuenow':fmt(state.L,1)});g.append(hit,handle,text(hx+16,hy-12,locked?'length set by working':'drag length','svg-small'));
+    const locked=state.workingLevel>0,[hx,hy]=backC;g.append(line(frontC[0],frontC[1],hx,hy,'handle-arrow'));const hit=add('circle',{id:'lengthHandleHit',cx:hx,cy:hy,r:22,class:`handle-hit${locked?' locked':''}`}),handle=add('circle',{id:'lengthHandle',cx:hx,cy:hy,r:9,class:`handle${locked?' locked':' active'}`,tabindex:locked?-1:0,role:'slider','aria-label':'Prism length','aria-valuemin':4,'aria-valuemax':22,'aria-valuenow':fmt(state.L,1)});g.append(hit,handle);
   }else{
     const boxY=342;g.append(add('rect',{x:82,y:boxY,width:430,height:64,rx:9,class:'fixed-chip'}),text(96,boxY+17,'LOCKED IN THIS DESIGN','svg-kicker'),text(96,boxY+40,`A = ${fmt(p.A)} cm²   ·   L = ${fmt(p.L)} cm`,'svg-value'),text(96,boxY+57,`V = ${fmt(p.targetV,0)} cm³ fixed while the shape changes`,'svg-label'));
-    const x=f[1][0],y=(f[1][1]+f[2][1])/2;g.append(line(x-26,y,x+26,y,'handle-arrow'));const wh=add('circle',{id:'widthHandleHit',cx:x,cy:y,r:22,class:'handle-hit'}),wc=add('circle',{id:'widthHandle',cx:x,cy:y,r:9,class:'handle active',tabindex:0,role:'slider','aria-label':'Cross-section width with area locked','aria-valuemin':fmt(p.minW,1),'aria-valuemax':fmt(p.maxW,1),'aria-valuenow':fmt(state.w,1)});g.append(wh,wc,text(x+18,y+34,'drag','svg-small'));
+    const x=f[1][0],y=(f[1][1]+f[2][1])/2;g.append(line(x-26,y,x+26,y,'handle-arrow'));const wh=add('circle',{id:'widthHandleHit',cx:x,cy:y,r:22,class:'handle-hit'}),wc=add('circle',{id:'widthHandle',cx:x,cy:y,r:9,class:'handle active',tabindex:0,role:'slider','aria-label':'Cross-section width with area locked','aria-valuemin':fmt(p.minW,1),'aria-valuemax':fmt(p.maxW,1),'aria-valuenow':fmt(state.w,1)});g.append(wh,wc);
   }
 }
 function renderSkin(){
@@ -643,7 +645,7 @@ function answerState(key){if(state.answers[key]==='')return'pending';return isCo
 function autoWork(label,value,unit=''){return`<div class="work-box auto"><span>${label}</span><div class="auto-value-line"><strong>${value}${unit?` <small>${unit}</small>`:''}</strong><i class="work-status" aria-hidden="true">✓</i></div></div>`}
 function fixedWork(label,value,unit=''){return`<div class="work-box fixed"><span>${label}</span><div class="auto-value-line"><strong>${value}${unit?` <small>${unit}</small>`:''}</strong><i class="work-status" aria-hidden="true">✓</i></div></div>`}
 function entryWork(key,label,unit='',enabled=true){const st=enabled?answerState(key):'disabled',mark=st==='good'?'✓':st==='bad'?'×':'';return`<label class="work-box entry ${st}"><span>${label}</span><div class="work-entry-line"><input data-answer="${key}" inputmode="decimal" autocomplete="off" value="${state.answers[key]}" placeholder="?" aria-label="${label} ${unit}" ${enabled?'':'disabled'}><i class="work-status" aria-hidden="true">${mark}</i></div></label>`}
-function stepState(keys=[],locked=false){if(locked)return'locked';const owned=keys.filter(k=>requiredKeys().includes(k));if(!owned.length)return'work-done';if(owned.some(k=>state.answers[k]!==''&&!isCorrect(k)))return'work-bad';if(owned.every(isCorrect))return'work-done';return'work-pending'}
+function stepState(keys=[],locked=false){if(locked)return'locked';const owned=keys.filter(k=>requiredKeys().includes(k));if(!owned.length)return'reference';if(owned.some(k=>state.answers[k]!==''&&!isCorrect(k)))return'work-bad';if(owned.every(isCorrect))return'work-done';return'work-pending'}
 function step(title,num,scope,explain,formula,boxes,note,stateClass){return`<section class="work-step ${stateClass}"><div class="work-step-head"><span class="step-num">${num}</span><strong>${title}</strong><span class="work-scope">${scope}</span></div><div class="work-explain">${explain}</div><div class="work-formula ${scope==='rectangle'?'specific':'general'}">${formula}</div><div class="work-values ${boxes.length===1?'one':boxes.length===3?'three':''}">${boxes.join('')}</div>${note?`<div class="work-note ${note.includes('stays')||note.includes('fixed')?'invariant':'change'}">${note}</div>`:''}</section>`}
 function renderWorking(){
   const p=current(),m=metrics(),dock=$('workingDock'),level=state.workingLevel,req=requiredKeys();
@@ -697,14 +699,16 @@ function renderWorking(){
   else if(state.bad.length)summary='<strong>Revise the red box.</strong> Empty learner boxes stay yellow; correct boxes turn green ✓.';
   else summary='<strong>Your working is active.</strong> Complete the yellow box'+(req.length===1?'':'es')+'; dependent steps unlock when their inputs are ready.';
   dock.innerHTML=`<div class="working-head"><div><strong>${heading}</strong><span class="working-intro">${intro}</span></div><span class="work-count">${count}</span></div><div class="work-flow">${step1}${step2}${step3}${step4}</div><div class="working-summary ${complete?'good':level>0?'warn':''}">${summary}</div>`;
+  if(level===0){const card=dock.querySelectorAll('.work-step')[1];card.dataset.workState=state.solved?'good':'needed';}
 }
 function expectedFor(key){const p=current(),m=metrics();if(key==='A')return m.A;if(key==='P')return m.P;if(key==='side')return m.side;if(key==='SA')return m.SA;if(key==='V')return p.type==='extrude'?p.targetV:p.targetV;if(key==='L')return p.type==='extrude'?p.targetL:p.L;return NaN}
 function requiredKeys(){const p=current();if(state.workingLevel===0)return[];if(p.type==='extrude')return state.workingLevel===1?['L']:['A','P','L','side','SA'];return state.workingLevel===1?['SA']:['A','P','V','side','SA']}
 function toleranceFor(key){return key==='P'?.11:key==='side'?.55:key==='SA'?.55:key==='V'?.11:.03}
 function refreshWorkingState(){const keys=requiredKeys();state.bad=keys.filter(k=>state.answers[k]!==''&&!isCorrect(k));state.checked=keys.some(k=>state.answers[k]!=='');state.workingOK=keys.length>0&&keys.every(isCorrect)}
 function renderMission(){const p=current(),level=state.workingLevel;$('problemKicker').textContent=p.type==='extrude'?'Extrusion':'Reshape';$('complexityHelp').textContent=['Off · calculations revealed','Some · key result','All · full chain'][level];document.querySelectorAll('[data-work-level]').forEach(b=>{const active=Number(b.dataset.workLevel)===level;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active))});if(p.type==='extrude'){$('missionTitle').textContent=`Build a ${fmt(p.targetV,0)} cm³ case from a ${fmt(p.w)} cm × ${fmt(p.h)} cm cross-section without using more than ${fmt(p.budgetSA,0)} cm² of material.`;if(level===0)$('missionHint').textContent='Drag the length. Watch the green calculation chain show which terms change and which stay fixed.';else if(level===1)$('missionHint').textContent='Complete the yellow L box so your calculation controls the extrusion; the later worked steps will update from it.';else $('missionHint').textContent='Complete the yellow boxes left to right. Correct cross-section results unlock length, side strip and surface-area working.';$('solidHeadNote').textContent=level===0?'length is learner-controlled':'length is controlled by the calculation'}else{$('missionTitle').textContent=`Keep the ${fmt(p.targetV,0)} cm³ capacity fixed while reshaping the rectangular cross-section to use no more than ${fmt(p.budgetSA,0)} cm² of material.`;if(level===0)$('missionHint').textContent='Drag the width. Height compensates automatically; use the green working to compare A, P, V, side strip and total surface.';else if(level===1)$('missionHint').textContent='Choose a shape, then complete its yellow surface-area box. Change the shape again to test the relationship.';else $('missionHint').textContent='Choose a shape, then complete the yellow chain. Change shape again: correct A and V should stay valid while P, side strip and SA need updating.';$('solidHeadNote').textContent='A and L are invariant; perimeter changes'}}
-function renderNextCard(){const card=$('nextCard');if(!state.solved){card.hidden=true;card.classList.remove('has-upgrade');return}card.hidden=false;const s=state.solvedSnapshot,p=current();$('nextCardText').textContent=p.type==='extrude'?`The same length gives ${fmt(s.V,0)} cm³ inside and ${fmt(s.SA,0)} cm² outside.`:`A and L stayed fixed, so V stayed ${fmt(s.V,0)} cm³ while lower P reduced the surface to ${fmt(s.SA,1)} cm².`;const next=suggestedWorkLevel(),up=$('nextUpgrade');card.classList.toggle('has-upgrade',next>0);up.hidden=next<0;if(next===1){$('nextUpgradeTitle').textContent='Ready to write some working?';$('nextUpgradeText').textContent=p.type==='extrude'?'Next problems will hand you the length calculation.':'Next problems will hand you the final surface-area calculation.';$('upgradeWorking').textContent='Next + some working'}else if(next===2){$('nextUpgradeTitle').textContent='Ready to write the full chain?';$('nextUpgradeText').textContent='Rectangle quantities and prism calculations become yours in sequence.';$('upgradeWorking').textContent='Next + all working'}if(next>=0)$('upgradeWorking').dataset.level=String(next);requestAnimationFrame(positionCompletionModal)}
-function renderAll(){refreshWorkingState();markSolved();renderMission();renderSolid();renderSkin();renderBands();renderEvidence();renderWorking();renderNextCard();renderStartGuide()}
+function renderNextCard(){const card=$('nextCard');if(!state.solved){card.hidden=true;card.classList.remove('has-upgrade');return}card.hidden=false;const s=state.solvedSnapshot,p=current();$('nextCardText').textContent=p.type==='extrude'?`The same length gives ${fmt(s.V,0)} cm³ inside and ${fmt(s.SA,0)} cm² outside.`:`A and L stayed fixed, so V stayed ${fmt(s.V,0)} cm³ while lower P reduced the surface to ${fmt(s.SA,1)} cm².`;const next=suggestedWorkLevel(),up=$('nextUpgrade');card.classList.toggle('has-upgrade',next>0);up.hidden=next<0;if(next===1){$('nextUpgradeTitle').textContent='Ready to write some working?';$('nextUpgradeText').textContent=p.type==='extrude'?'Next problems will hand you the length calculation.':'Next problems will hand you the final surface-area calculation.';$('upgradeWorking').textContent='Try some working'}else if(next===2){$('nextUpgradeTitle').textContent='Ready to write the full chain?';$('nextUpgradeText').textContent='Rectangle quantities and prism calculations become yours in sequence.';$('upgradeWorking').textContent='Try all working'}if(next>=0)$('upgradeWorking').dataset.level=String(next);document.dispatchEvent(new Event('lab-introduction-change'))}
+function introduceInteraction(){const fields=[...$('workingDock').querySelectorAll('input:not(:disabled)')],target=current().type==='reshape'?$('widthHandle'):state.workingLevel===0?$('lengthHandle'):null;LabDesign.introduce(document.querySelector('main'),target?[target]:fields,'solids-'+current().type+'-'+state.workingLevel,target?'Change the solid':'Calculate the solid dimensions',target?(current().type==='reshape'?'Drag the width: height compensates to keep volume fixed. Compare the laid-flat material.':'Drag the end handle to change length. Compare capacity with the side strip and end caps.'):'Complete the highlighted calculation. The length result controls the same extrusion and its material use.');}
+function renderAll(){refreshWorkingState();markSolved();renderMission();renderSolid();renderSkin();renderBands();renderEvidence();renderWorking();renderNextCard();renderStartGuide();introduceInteraction()}
 function invalidateAfterGeometry(kind){state.checked=false;state.bad=[];state.workingOK=false;state.workMessage='';if(current().type==='reshape'){if(state.workingLevel===1)state.answers.SA='';if(state.workingLevel===2){state.answers.P='';state.answers.side='';state.answers.SA='';/* A and V remain valid because A and L are invariant. */}}else if(kind==='length'&&state.workingLevel===2){state.answers.side='';state.answers.SA=''}}
 function setLength(v,source='direct',doRender=true){if(current().type!=='extrude')return;const before=state.L;let next=snap(v,.1);if(source==='drag'||source==='key')next=snapInteractionValue(next,'length');state.L=clamp(next,4,22);if(Math.abs(state.L-before)<.001)return;if(source==='drag'||source==='key')state.moves++;if(source!=='entry')invalidateAfterGeometry('length');else{state.checked=false;state.bad=[];state.workingOK=false;state.workMessage='';if(state.workingLevel===2){state.answers.side='';state.answers.SA=''}}if(doRender)renderAll()}
 function setWidth(v,source='direct'){const p=current();if(p.type!=='reshape')return;const oldW=state.w,before=metrics();let next=snap(v,.1);if(source==='drag'||source==='key')next=snapInteractionValue(next,'width');state.w=clamp(next,p.minW,p.maxW);state.h=p.A/state.w;if(Math.abs(state.w-oldW)<.00001)return;const after=metrics();if(source==='drag'||source==='key')state.moves++;state.lastChange={beforeP:before.P,beforeSA:before.SA,afterP:after.P,afterSA:after.SA};invalidateAfterGeometry('shape');if(state.workingLevel===2&&state.answers.V&&close(valueOf('V'),p.targetV,.11))state.workMessage='Volume working remains valid because A and L did not change. Recalculate P and SA for the new shape.';renderAll()}
@@ -712,10 +716,19 @@ function startPointer(e){if(e.target.id==='lengthHandle'||e.target.id==='lengthH
 function movePointer(e){const solid=$('solidSvg');if(state.lengthDrag?.id===e.pointerId){e.preventDefault();const p=svgPoint(solid,e),geo=solidGeometry(),vx=8,vy=-3.2,mag=Math.hypot(vx,vy),ux=vx/mag,uy=vy/mag,dx=p.x-geo.frontC[0],dy=p.y-geo.frontC[1],proj=(dx*ux+dy*uy)/mag;setLength(proj,'drag')}else if(state.widthDrag?.id===e.pointerId){e.preventDefault();const p=svgPoint(solid,e),geo=solidGeometry(),w=2*(p.x-geo.cx)/geo.scale;setWidth(w,'drag')}}
 function endPointer(e){if(state.lengthDrag?.id===e.pointerId)state.lengthDrag=null;if(state.widthDrag?.id===e.pointerId)state.widthDrag=null}
 function advanceProblem(level=state.workingLevel){state.workingLevel=clamp(Number(level)||0,0,2);state.problemNumber++;startProblem()}
-$('solidSvg').addEventListener('pointerdown',startPointer);$('solidSvg').addEventListener('pointermove',movePointer);$('solidSvg').addEventListener('pointerup',endPointer);$('solidSvg').addEventListener('pointercancel',endPointer);
+let activeSolidHandle=null;
+LabDesign.bindSvgDrag($('solidSvg'),{
+ start(event){const id=event.target.id,geo=solidGeometry();
+  if((id==='lengthHandle'||id==='lengthHandleHit')&&current().type==='extrude'&&state.workingLevel===0){activeSolidHandle='length';dismissStartGuide();return{x:geo.backC[0],y:geo.backC[1]};}
+  if((id==='widthHandle'||id==='widthHandleHit')&&current().type==='reshape'){activeSolidHandle='width';dismissStartGuide();return{x:geo.f[1][0],y:geo.cy};}
+  return null;
+ },
+ move(point){const geo=solidGeometry();if(activeSolidHandle==='length'){const dx=point.x-geo.cx,dy=point.y-geo.cy;setLength((dx*8+dy*-3.2)/(8*8+3.2*3.2),'drag');}else if(activeSolidHandle==='width')setWidth(2*(point.x-geo.cx)/geo.scale,'drag');},
+ end(){activeSolidHandle=null;}
+});
 $('solidSvg').addEventListener('keydown',e=>{if(e.target.id==='lengthHandle'&&state.workingLevel===0&&(e.key==='ArrowRight'||e.key==='ArrowUp'||e.key==='ArrowLeft'||e.key==='ArrowDown')){dismissStartGuide();e.preventDefault();setLength(state.L+((e.key==='ArrowRight'||e.key==='ArrowUp')?.2:-.2),'key');requestAnimationFrame(()=>$('lengthHandle')?.focus())}if(e.target.id==='widthHandle'&&(e.key==='ArrowRight'||e.key==='ArrowUp'||e.key==='ArrowLeft'||e.key==='ArrowDown')){dismissStartGuide();e.preventDefault();setWidth(state.w+((e.key==='ArrowRight'||e.key==='ArrowUp')?.2:-.2),'key');requestAnimationFrame(()=>$('widthHandle')?.focus())}});
 $('workingDock').addEventListener('input',e=>{const key=e.target.dataset.answer;if(!key)return;dismissStartGuide();const caret=e.target.selectionStart??e.target.value.length;state.answers[key]=e.target.value;state.workMessage='';if(key==='L'&&current().type==='extrude'){const n=Number(e.target.value);if(Number.isFinite(n)&&e.target.value.trim()!=='')setLength(n,'entry',false)}renderAll();const fresh=document.querySelector(`[data-answer="${key}"]`);if(fresh&&!fresh.disabled){fresh.focus({preventScroll:true});const at=Math.min(caret,fresh.value.length);fresh.setSelectionRange(at,at)}});
-$('resetProblem').addEventListener('click',()=>freshProblem(current()));document.querySelectorAll('[data-work-level]').forEach(button=>button.addEventListener('click',()=>{state.workingLevel=clamp(Number(button.dataset.workLevel)||0,0,2);freshProblem(current())}));$('nextProblem').addEventListener('click',()=>advanceProblem(state.workingLevel));$('upgradeWorking').addEventListener('click',()=>advanceProblem(Number($('upgradeWorking').dataset.level)));window.addEventListener('resize',()=>requestAnimationFrame(()=>{renderStartGuide();positionInteractionGuide();positionCompletionModal()}));
+$('resetProblem').addEventListener('click',()=>freshProblem(current()));document.querySelectorAll('[data-work-level]').forEach(button=>button.addEventListener('click',()=>{state.workingLevel=clamp(Number(button.dataset.workLevel)||0,0,2);freshProblem(current())}));$('nextProblem').addEventListener('click',()=>advanceProblem(state.workingLevel));$('upgradeWorking').addEventListener('click',()=>advanceProblem(Number($('upgradeWorking').dataset.level)));window.addEventListener('resize',()=>requestAnimationFrame(()=>{renderStartGuide();positionInteractionGuide()}));
 startProblem();
 window.__surfaceVolumeLab={
  getState:()=>({problemNumber:state.problemNumber,workingLevel:state.workingLevel,solvedAtLevel:[...state.solvedAtLevel],problem:{...current()},w:state.w,h:state.h,L:state.L,moves:state.moves,answers:{...state.answers},checked:state.checked,bad:[...state.bad],workingOK:state.workingOK,solved:state.solved,metrics:metrics(),visualSuccess:visualSuccess(),suggested:suggestedWorkLevel(),startGuideOpen:state.startGuideOpen,guideSeen:{...guideSeen},guideHidden:$('interactionGuide')?.hidden??true,reshapeSuccessInterval:reshapeSuccessInterval()}),

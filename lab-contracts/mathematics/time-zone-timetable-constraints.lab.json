@@ -7,8 +7,159 @@
     "evidence": "Linked calendars, fixed UTC offsets and availability checks show whether everyone can attend.",
     "nextDecision": "Shift the organiser time or justify the conflict or valid overlap."
   },
-  "invariants": ["All displayed local times refer to the same meeting instant.", "A valid meeting must fit every attendee's entire duration, including date changes."],
-  "safeAdaptations": ["Vary fixed offsets, availability windows and meeting durations.", "Adjust calculation support while retaining simultaneous local-calendar evidence."],
-  "nonGoals": ["Geographic time-zone lookup or daylight-saving rule modelling."],
-  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+  "invariants": [
+    "All displayed local times refer to the same meeting instant.",
+    "A valid meeting must fit every attendee's entire duration, including date changes."
+  ],
+  "safeAdaptations": [
+    "Vary fixed offsets, availability windows and meeting durations.",
+    "Adjust calculation support while retaining simultaneous local-calendar evidence."
+  ],
+  "nonGoals": [
+    "Geographic time-zone lookup or daylight-saving rule modelling."
+  ],
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract",
+  "implementation": {
+    "reviewedRevision": "74a5e39",
+    "surfaces": {
+      "task": {
+        "selectors": [
+          "#requestTitle",
+          "#requestRule",
+          "#meetingToken",
+          "#meetingDuration"
+        ],
+        "kind": "given",
+        "description": "Current organiser request, attendee duration and meeting token.",
+        "visibility": "Shown for the current generated timetable problem."
+      },
+      "model": {
+        "selectors": [
+          "#calendarGrid"
+        ],
+        "kind": "model",
+        "description": "Linked local-time calendars, availability windows and placed/sent meeting blocks.",
+        "visibility": "Present throughout. None permits calendar placement; Some/All use the calculated organiser start and keep linked calendars visible."
+      },
+      "working": {
+        "selectors": [
+          "#calcContent",
+          "#calcReference"
+        ],
+        "kind": "working",
+        "description": "Offset shifts, converted availability windows, latest starts, common overlap and final-start calculation.",
+        "visibility": "None reveals the supplied method after a successful proposal, with compact method steps beforehand. Some/All show the selected calculation fields and supplied reference values."
+      },
+      "evidence": {
+        "selectors": [
+          "#summary",
+          "#calendarGrid",
+          "#typedStatus"
+        ],
+        "kind": "evidence",
+        "description": "Calendar placements, sent meeting blocks, attendee fit/conflict summary and typed-start feedback show feasibility.",
+        "visibility": "Summary changes after placing or sending; typed status exists in calculate mode."
+      },
+      "completion": {
+        "selectors": [
+          "#nextCard"
+        ],
+        "kind": "completion",
+        "description": "Accepted timetable and next request/working upgrade.",
+        "visibility": "Shown only when every attendee fits the duration and the selected working checks pass."
+      },
+      "settings": {
+        "selectors": [
+          "[data-work-level]",
+          "#resetButton",
+          "#sendButton"
+        ],
+        "kind": "control",
+        "description": "One grey Working: None / Some / All toggle, reset and send.",
+        "visibility": "Always available; there is no separate method toggle."
+      },
+      "inputs": {
+        "selectors": [
+          "#meetingToken",
+          "#typedDate",
+          "#typedHour",
+          "#typedMinute",
+          "#calcContent [data-work-shift]",
+          "#calcContent [data-work-date]",
+          "#calcContent [data-work-clock]"
+        ],
+        "kind": "input",
+        "description": "Organizer placement or typed start and generated calculation slots.",
+        "visibility": "Token dragging is available in guided mode; typed and calculation slots are generated for calculate mode."
+      }
+    },
+    "quantities": {
+      "meeting-start": {
+        "description": "One organiser-local start instant for the fixed meeting duration.",
+        "domain": "Date and local clock time; may cross a date boundary in another city.",
+        "source": "Dragged #meetingToken or typed #typedDate/#typedHour/#typedMinute; final calculation fields use finalStart.",
+        "output": "Organizer meeting block, #summary and sent blocks.",
+        "inputSlots": [
+          "#meetingToken",
+          "#typedDate",
+          "#typedHour",
+          "#typedMinute",
+          "#calcContent [data-work-date=finalStart]",
+          "#calcContent [data-work-clock=finalStart]"
+        ]
+      },
+      "duration": {
+        "description": "Whole meeting duration that must fit every attendee's availability.",
+        "domain": "Minutes; source generates 60, 75 or 90.",
+        "source": "#meetingDuration/state.request.duration.",
+        "output": "Meeting block width and fits/overlap checks."
+      },
+      "offset-shifts": {
+        "description": "Organiser minus participant UTC offset differences for local-clock conversion.",
+        "domain": "Signed hours and minutes.",
+        "source": "Fixed city offsets in the source; generated shift work entries.",
+        "output": "#calcContent shift fields and converted participant times.",
+        "inputSlots": [
+          "#calcContent [data-work-shift]"
+        ]
+      },
+      "converted-windows": {
+        "description": "Participant availability starts/ends expressed against the organiser reference date/time.",
+        "domain": "Date/time instants.",
+        "source": "Fixed availability windows plus offset conversion.",
+        "output": "Calendar availability, converted-window work fields and sent fit checks.",
+        "inputSlots": [
+          "#calcContent [data-work-date]",
+          "#calcContent [data-work-clock]"
+        ]
+      },
+      "common-window": {
+        "description": "Latest valid start for each attendee and intersection commonLo/commonHi.",
+        "domain": "Date/time start interval.",
+        "source": "Converted availability ends minus duration, then max starts/min latest starts.",
+        "output": "#calcContent intersection fields, calendar feasibility and #summary.",
+        "inputSlots": [
+          "#calcContent [data-work-date]",
+          "#calcContent [data-work-clock]"
+        ]
+      }
+    },
+    "modes": {
+      "none": "None (data-work-level=0) retains calendar placement. Send a proposal to inspect participant responses; the full supplied method appears after a successful proposal.",
+      "some": "Some (data-work-level=2) requires shift2, conv2s, latest2, commonHi and finalStart. Matching reference calculations remain supplied.",
+      "all": "All (data-work-level=4) requires shift1/2, conv1s/e, conv2s/e, latest0/1/2, commonLo/Hi and finalStart.",
+      "scope": "Fixed city offsets and explicit availability windows; DST/geographic lookup is outside the model."
+    },
+    "dependencies": [
+      "A proposal is accepted only when its entire duration fits every attendee; Some/All also require every selected work key and finalStart to pass.",
+      "The single Working toggle owns placement versus calculation support. Changing levels clears the current attempt, preserving the existing reset semantics.",
+      "The Send proposal action stores the meeting blocks; valid timetable and working together enable the completion card.",
+      "After two successes, None may offer Try some working and Some may offer Try all working. Availability checks and day rollover remain identical."
+    ],
+    "completion": "The source shows #nextCard when timetableSuccess and workingReady are both true; timetableSuccess requires every attendee's full duration to fit, while guided workingReady is true and calculate checks its selected fields.",
+    "limitations": [
+      "Offsets are fixed constants; there is no DST, geographic lookup or timezone-rule calculation.",
+      "Internal helper state retains guided/calculate and numeric 2/4 identifiers; the learner-facing settings expose only None/Some/All."
+    ]
+  }
 }

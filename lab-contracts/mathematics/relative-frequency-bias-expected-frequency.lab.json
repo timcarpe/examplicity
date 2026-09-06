@@ -10,5 +10,40 @@
   "invariants": ["Relative frequency is prize outcomes divided by total spins.", "A small sample alone does not prove bias."],
   "safeAdaptations": ["Vary reproducible spinner outcomes and sample sizes.", "Adjust prompts while retaining a fair reference and evidence-based bias judgment."],
   "nonGoals": ["Claiming causation or certainty from a short random run."],
-  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract",
+  "implementation": {
+    "reviewedRevision": "74a5e39",
+    "surfaces": {
+      "task": {"selectors": ["#missionTitle", "#missionHint", "#progressRail"], "kind": "given", "description": "Current fair/bias audit prompt and fixed progress through the evidence phases.", "visibility": "Shown throughout the audit."},
+      "model": {"selectors": ["#stage", "#spinnerLayer", "#binLayer", "#chart", "#forecastLayer"], "kind": "model", "description": "Spinner outcomes, bins, relative-frequency plot and stock forecast are rendered from the scripted sequences.", "visibility": "Present throughout; forecast layers become relevant in the forecast phases."},
+      "working": {"selectors": ["#phaseDock", "#comparisonWork", "#forecastWork"], "kind": "working", "description": "Phase-specific prediction, fair-versus-booth comparison and expected-frequency entries.", "visibility": "A persistent sidebar card shows the current prediction, decision or calculation."},
+      "evidence": {"selectors": ["#evidenceLog", "#relativeFraction", "#comparisonWork", "#forecastWork", "#stageNoteCopy"], "kind": "evidence", "description": "Counts, relative frequencies, sample-size comparison and forecast check record what the data supports.", "visibility": "Relevant evidence is shown as each scripted phase is completed."},
+      "completion": {"selectors": ["#phaseModal", "#stageNoteState"], "kind": "completion", "description": "Complete phase with actual future result after the checked forecast.", "visibility": "The persistent phase card shows completion only after the future event is run; the duplicate canvas footer is hidden."},
+      "controls": {"selectors": ["#resetLab", "#phaseModal input", "#phaseModal button[data-action]"], "kind": "control", "description": "Phase actions, prediction/forecast inputs and reset.", "visibility": "Action buttons and inputs are generated for the active phase."}
+    },
+    "quantities": {
+      "spin-counts": {"description": "Prize outcomes and total spins for each fair or booth sample.", "domain": "Whole-number counts and prize/total relative frequency.", "source": "Scripted fairSequence and biasSequence are run by phase actions.", "output": "#prizeCount, #trialCount, #relativeFraction, #relativeDecimal and SVG count labels."},
+      "fair-reference": {"description": "The stated fair spinner probability used to interpret the samples.", "domain": "Probability 1/4 (0.25).", "source": "Fair claim in the phase content.", "output": "Fair reference and comparison work in #comparisonWork."},
+      "predicted-frequency": {"description": "Learner prediction of relative frequency before the short or large fair run.", "domain": "Unitless frequency from 0 to 1.", "source": "Generated #predictionSlider in prediction phases.", "output": "#predictionOutput and later sample evidence.", "inputSlots": ["#phaseModal #predictionSlider"]},
+      "expected-prize-count": {"description": "Expected prize count for a selected future number of spins.", "domain": "Expected count, calculated as 0.4 × n in the forecast phase.", "source": "#futureSlider and exact #expectedAnswer entry.", "output": "#forecastEquation and #forecastResult.", "inputSlots": ["#phaseModal #futureSlider", "#phaseModal #expectedAnswer"]},
+      "future-outcome": {"description": "Actual prize count in the future event used to compare with the expected count.", "domain": "Whole-number prize count over the selected future sample.", "source": "Scripted futureSequence after forecast check.", "output": "#actualValueSvg and the final evidence note."}
+    },
+    "modes": {
+      "audit": "The source has a fixed phase sequence: predict a small fair sample, run 12, run 200 fair trials, test a 20-spin booth sample, collect 200 booth spins, judge bias, then forecast and run a future event.",
+      "prediction": "Prediction sliders are supplied in the short/large sample phases; an incorrect early claim gives feedback and does not advance the audit.",
+      "forecast": "The future sample slider and expected-count input are supplied only in forecast phases; the expected answer must match the source's rounded 0.4 × n check.",
+      "support": "No None/Some/All or learner-selected support mode exists in this source; phase actions are the available working controls."
+    },
+    "dependencies": [
+      "The short fair sample must be marked not enough evidence; claiming it proves bias only produces feedback.",
+      "The 20-spin booth sample must be followed by collecting 200 spins; at 200, only the biased judgement advances.",
+      "Forecast check must pass before the future event can run; the counterexample route changes n and reruns the forecast.",
+      "The source uses fixed scripted sequences, so phase counts and outcomes are deterministic at this revision."
+    ],
+    "completion": "The source enters phase complete only after the checked expected-frequency forecast and runFuture action; the final actual count and forecast evidence remain visible in the complete phase.",
+    "limitations": [
+      "The sample outcomes are scripted sequences rather than runtime random trials.",
+      "Phase controls and their IDs are generated inside #phaseModal, so later prediction and forecast selectors are state-dependent."
+    ]
+  }
 }

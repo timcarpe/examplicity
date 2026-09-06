@@ -544,8 +544,9 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 </style>
 <!-- LAB_FRAME_STYLES_END -->
 <link rel="stylesheet" href="./lab-kit.css" data-lab-resource="lab-kit.css">
+<!-- LAB_DESIGN_COMPONENTS -->
 </head>
-<body data-lab-layout="standard">
+<body data-lab-layout="standard" class="lab-adopt-v3 lab-investigation lab-scatter">
 <main>
 <!-- LAB_MANIFEST_HEADER_START -->
 <header class="lab-manifest-header">
@@ -567,14 +568,14 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 <!-- LAB_MANIFEST_HEADER_END -->
 <span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span><span data-lab-authored-subtitle-slot hidden></span>
 
-<section class="panel mission" aria-live="polite">
+<section class="panel mission lab-activity-bar" aria-live="polite">
   <div class="mission-copy">
     <div class="setup-meta"><span id="datasetLabel">Practice 1</span><span id="phaseLabel" class="phase">Fit the cloud</span><span id="supportLabel" class="support">Working shown</span></div>
     <strong id="missionTitle"></strong>
     <span id="missionHint"></span>
   </div>
   <div class="mission-actions">
-    <div class="complexity"><span>Working required</span><div class="complexity-switch" role="group" aria-label="Working required"><button type="button" data-support="0" class="active" aria-pressed="true">Off</button><button type="button" data-support="1" aria-pressed="false">Some</button><button type="button" data-support="2" aria-pressed="false">All</button></div></div>
+    <div class="complexity"><span>Working:</span><div class="complexity-switch lab-toggle" data-kind="working" role="group" aria-label="Working:"><button type="button" data-support="0" class="active" aria-pressed="true">None</button><button type="button" data-support="1" aria-pressed="false">Some</button><button type="button" data-support="2" aria-pressed="false">All</button></div></div>
     <button id="resetCase" type="button">Reset dataset</button>
   </div>
 </section>
@@ -592,11 +593,11 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
           <strong id="nextTitle">Practice complete</strong>
           <div class="next-actions"><button id="nextDataset" type="button">Another dataset</button><button id="upgradeSupport" type="button" hidden></button><button id="keepExploring" class="quiet" type="button">Adjust fit</button></div>
         </div>
-        <svg id="plot" viewBox="0 0 920 650" role="img" aria-labelledby="plotTitle plotDesc" data-lab-role="model" data-lab-manipulative="best-fit-line"></svg>
+        <svg data-lab-readable-chart="12" id="plot" viewBox="0 0 920 650" role="img" aria-labelledby="plotTitle plotDesc" data-lab-role="model" data-lab-manipulative="best-fit-line"></svg>
       </div>
       <div class="stage-footer"><div id="footerEvidence"><strong>Next action:</strong> drag the ruler through the whole cloud.</div><span id="footerStatus" class="footer-status">Waiting for a fit</span></div>
     </section>
-    <aside class="work-panel" aria-label="Persistent evidence and working area">
+    <aside class="work-panel lab-sidebar" aria-label="Persistent evidence and working area">
       <div class="work-head"><div class="work-head-top"><strong>Reasoning &amp; working</strong><span id="workBadge" class="work-badge">working shown</span></div><p>The visual decisions stay the same; only written working is handed over.</p></div>
       <div id="workContent"></div>
       <div class="evidence-boundary"><strong>Evidence boundary:</strong> paired observations can show an association and support an estimate. They do not, by themselves, show that one variable causes the other.</div>
@@ -769,7 +770,7 @@ function drawGrid(root){
   add(root,'line',{x1:plotBox.x,y1:plotBox.y,x2:plotBox.x,y2:plotBox.y+plotBox.h,class:'axis'});
   for(let x=x0;x<=x1+1e-9;x+=c.xStep){add(root,'text',{x:sx(x),y:plotBox.y+plotBox.h+20,class:'tick-label','text-anchor':'middle'},fmt(x,x%1?1:0))}
   for(let y=y0;y<=y1+1e-9;y+=c.yStep){add(root,'text',{x:plotBox.x-12,y:sy(y)+3,class:'tick-label','text-anchor':'end'},fmt(y,y%1?1:0))}
-  add(root,'text',{x:plotBox.x+plotBox.w/2,y:plotBox.y+plotBox.h+54,class:'axis-label','text-anchor':'middle'},c.xLabel);
+  add(root,'text',{x:plotBox.x+plotBox.w/2,y:plotBox.y+plotBox.h+66,class:'axis-label','text-anchor':'middle'},c.xLabel);
   add(root,'text',{x:25,y:plotBox.y+plotBox.h/2,class:'axis-label','text-anchor':'middle',transform:`rotate(-90 25 ${plotBox.y+plotBox.h/2})`},c.yLabel);
   add(root,'line',{x1:sx(min),y1:plotBox.y+plotBox.h+28,x2:sx(max),y2:plotBox.y+plotBox.h+28,class:'observed-bracket'});
   add(root,'line',{x1:sx(min),y1:plotBox.y+plotBox.h+22,x2:sx(min),y2:plotBox.y+plotBox.h+34,class:'observed-cap'});
@@ -831,7 +832,7 @@ function drawProbe(root){
   const x=state.probeX??c.xDomain[0],lines=c.kind==='extrapolation'?[state.firstLine,state.secondLine]:[state.line],vals=lines.map(l=>predictionValue(l,x));
   add(root,'line',{x1:sx(x),y1:plotBox.y,x2:sx(x),y2:plotBox.y+plotBox.h,class:'probe-line'});
   vals.forEach((v,i)=>{add(root,'line',{x1:plotBox.x,y1:sy(v),x2:sx(x),y2:sy(v),class:'probe-horizontal'});add(root,'circle',{cx:sx(x),cy:sy(v),r:6,class:'probe-point'});if(c.kind==='extrapolation'){const g=add(root,'g',{}),yy=sy(v)+(i===0?-15:17);add(g,'rect',{x:sx(x)-31,y:yy-12,width:62,height:18,rx:8,class:`compare-pill ${i===0?'first':'second'}`});add(g,'text',{x:sx(x),y:yy+1,class:'compare-text'},`fit ${i+1}: ${fmt(v,c.answerDigits)}`)}});
-  const handle=add(root,'g',{tabindex:0,role:'slider','aria-label':'Move the prediction probe along the x-axis'});add(handle,'circle',{cx:sx(x),cy:plotBox.y+plotBox.h,r:14,class:'probe-handle'});add(handle,'circle',{cx:sx(x),cy:plotBox.y+plotBox.h,r:25,class:'handle-hit'});handle.addEventListener('pointerdown',e=>{state.probeDragging=true;state.drag={kind:'probe',pointerId:e.pointerId};handle.setPointerCapture?.(e.pointerId);e.preventDefault()});handle.addEventListener('keydown',e=>{if(!['ArrowLeft','ArrowRight'].includes(e.key))return;e.preventDefault();const step=current().xStep/5*(e.shiftKey?5:1);state.probeX=clamp((state.probeX??current().xDomain[0])+(e.key==='ArrowRight'?step:-step),current().xDomain[0],current().xDomain[1]);afterProbeMove(false)});
+  const handle=add(root,'g',{tabindex:0,role:'slider','aria-label':'Move the prediction probe along the x-axis'});add(handle,'circle',{cx:sx(x),cy:plotBox.y+plotBox.h,r:14,class:'probe-handle'});add(handle,'circle',{cx:sx(x),cy:plotBox.y+plotBox.h,r:25,class:'handle-hit'});handle.addEventListener('pointerdown',e=>{state.probeDragging=true;state.drag={kind:'probe',pointerId:e.pointerId,offsetX:svgPoint(e).x-sx(x)};handle.setPointerCapture?.(e.pointerId);e.preventDefault()});handle.addEventListener('keydown',e=>{if(!['ArrowLeft','ArrowRight'].includes(e.key))return;e.preventDefault();const step=current().xStep/5*(e.shiftKey?5:1);state.probeX=clamp((state.probeX??current().xDomain[0])+(e.key==='ArrowRight'?step:-step),current().xDomain[0],current().xDomain[1]);afterProbeMove(false)});
   const target=probeTargetX(),reached=Math.abs(x-target)<=c.xStep*.13;
   const labelX=sx(x),labelY=plotBox.y+plotBox.h+5;add(root,'rect',{x:labelX-34,y:labelY+12,width:68,height:20,rx:9,class:'probe-label-bg'});add(root,'text',{x:labelX,y:labelY+26,class:'probe-label'},reached?`x = ${fmt(target,target%1?1:0)}`:`x = ${fmt(x,1)}`);
 }
@@ -848,7 +849,7 @@ function renderCorrelationStep(flow){
 function renderFitStep(flow,q){
   const c=current(),ready=c.kind==='zero'?state.attempts>0:q.good,tone=c.kind==='zero'?(state.noTrendChosen?'good':state.attempts?'warn':'active'):(ready?'good':state.attempts?'warn':'active'),s=step(c.kind==='zero'?'Straight-line trend':'Line of best fit',2,tone),fb=fitFeedback(q);const value=html('div','step-value');
   if(c.kind==='zero')value.innerHTML=state.noTrendChosen?'<strong>No usable straight-line trend</strong>':'Test whether any straight ruler stays close to the full cloud.';
-  else if(q.good)value.innerHTML='<strong>Full cloud balanced</strong>';else value.textContent=state.attempts?fb.text:'Drag the move and tilt handles, then release.';
+  else if(q.good)value.innerHTML='<strong>Full cloud balanced</strong>';else value.textContent=state.attempts?fb.text:'Balance observations above and below the line across the whole cloud.';
   s.appendChild(value);
   if(state.evidenceVisible||!state.drag){const grid=html('div','balance-grid');q.segments.forEach((seg,i)=>{const chip=html('div','balance-chip');chip.innerHTML=`<span>${['left','middle','right'][i]}</span><strong>${seg.above}↑ ${seg.below}↓</strong>`;grid.appendChild(chip)});s.appendChild(grid)}
   const note=html('div','step-note');note.textContent=c.kind==='zero'?(q.maeNorm>.17?'Long residual ticks show that the crosses do not cluster around the ruler.':'Balanced sides alone do not create positive or negative correlation.'):fb.text;s.appendChild(note);
@@ -941,7 +942,8 @@ function renderCompletion(){
   const card=$('nextCard'),complete=isComplete()&&!state.completionDismissed;card.hidden=!complete;if(!complete)return;const upgrade=upgradeOffer();$('nextTitle').textContent='Practice complete';$('upgradeSupport').hidden=upgrade<0;if(upgrade>=0){$('upgradeSupport').textContent=upgrade===1?'Some working next':'Full working next';$('upgradeSupport').dataset.level=String(upgrade)}$('nextDataset').textContent='Another dataset';$('keepExploring').hidden=false
 }
 function setSupportLevel(level){level=clamp(Number(level)||0,0,2);if(level===state.support)return;state.support=level;state.completionDismissed=false;renderAll()}
-function renderAll(){state.lastQuality=quality();renderMission();renderPlot();renderWork();renderFooter();renderGuide();renderCompletion();window.__scatterLabSnapshot=getSnapshot()}
+function introduceInteraction(){const root=document.querySelector('main'); const targets=state.fitReady||state.secondSaved?[...$('plot').querySelectorAll('[aria-label="Move the prediction probe along the x-axis"]')]:[...$('plot').querySelectorAll('[data-drag][tabindex="0"]')]; const inputs=[...$('workContent').querySelectorAll('input:not(:disabled)')]; LabDesign.introduce(root,targets.length?targets:inputs,'scatter-'+state.phase,targets.length?(state.fitReady||state.secondSaved?'Read from the fitted line':'Fit the whole cloud'):'Complete the prediction',targets.length?(state.fitReady||state.secondSaved?'Move the probe to the requested x value and compare estimates inside and outside the observed range.':'Move the middle handle to shift the line; move its end handle to tilt it. Release to inspect the residual evidence.'):'Use the line and observed data range to complete the highlighted working.');}
+function renderAll(){state.lastQuality=quality();renderMission();renderPlot();renderWork();renderFooter();renderGuide();renderCompletion();window.__scatterLabSnapshot=getSnapshot();introduceInteraction()}
 function afterLineChange(released=false){state.fitReady=false;state.completionDismissed=false;state.noTrendChosen=false;if(released){state.attempts++;state.evidenceVisible=true;const q=quality();if(current().kind==='standard'&&q.good&&correlationComplete()){state.fitReady=true;state.phase='predict';state.probeX=current().xDomain[0]}if(current().kind==='extrapolation'&&state.phase==='fit-first'&&q.good&&!correlationComplete()){}renderAll()}else renderAll()}
 function afterProbeMove(released){const c=current(),target=probeTargetX();if(released&&Math.abs(state.probeX-target)<=c.xStep*.28)state.probeX=target;if(c.kind==='extrapolation'&&released&&state.phase==='compare'&&Math.abs(state.probeX-target)<=c.xStep*.13){if(!state.seenInside)state.seenInside=true;else state.seenOutside=true}state.completionDismissed=false;renderAll()}
 function alternateDistinct(){if(!state.firstLine)return false;const c=current(),outside=Math.abs(predictionValue(state.firstLine,c.outside)-predictionValue(state.line,c.outside)),inside=Math.abs(predictionValue(state.firstLine,c.inside)-predictionValue(state.line,c.inside));return outside>=yRange()*.1&&inside<=yRange()*.045}
@@ -951,8 +953,8 @@ function nextCase({upgrade=null,forcedFocus=null}={}){state.solvedAtSupport[stat
 function getSnapshot(){const q=state.lastQuality||quality(),c=current();return {questionNumber:state.questionNumber,caseId:c.id,seed:c.seed,focus:c.focusLabel,kind:c.kind,support:state.support,phase:state.phase,line:{...state.line},fitGood:q.good,quality:{meanNorm:q.meanNorm,maeNorm:q.maeNorm,above:q.above,below:q.below,segments:q.segments.map(s=>({above:s.above,below:s.below,mean:s.mean}))},probeX:state.probeX,complete:isComplete(),firstLine:state.firstLine,secondLine:state.secondLine,seenInside:state.seenInside,seenOutside:state.seenOutside}}
 window.addEventListener('pointermove',e=>{
   if(!state.drag)return;const p=svgPoint(e),c=current();
-  if(state.drag.kind==='probe'){state.probeX=clamp(ix(p.x),c.xDomain[0],c.xDomain[1]);afterProbeMove(false);return}
-  const dy=iy(p.y)-iy(state.drag.start.y);if(state.drag.kind==='move')state.line.mid=clamp(state.drag.mid+dy,c.yDomain[0]-yRange()*.3,c.yDomain[1]+yRange()*.3);else if(state.drag.kind==='tilt'){const centre=(xMin()+xMax())/2,half=(xMax()-xMin())/2,newRight=iy(p.y);state.line.slope=(newRight-state.drag.mid)/half;state.line.mid=state.drag.mid}afterLineChange(false)
+  if(state.drag.kind==='probe'){state.probeX=clamp(ix(p.x-(state.drag.offsetX||0)),c.xDomain[0],c.xDomain[1]);afterProbeMove(false);return}
+  const dy=iy(p.y)-iy(state.drag.start.y);if(state.drag.kind==='move')state.line.mid=clamp(state.drag.mid+dy,c.yDomain[0]-yRange()*.3,c.yDomain[1]+yRange()*.3);else if(state.drag.kind==='tilt'){const centre=(xMin()+xMax())/2,half=(xMax()-xMin())/2,newRight=state.drag.mid+state.drag.slope*half+dy;state.line.slope=(newRight-state.drag.mid)/half;state.line.mid=state.drag.mid}afterLineChange(false)
 });
 function endPointer(e){if(!state.drag||state.drag.pointerId!==e.pointerId)return;const kind=state.drag.kind;state.drag=null;if(kind==='probe'){state.probeDragging=false;afterProbeMove(true)}else afterLineChange(true)}
 window.addEventListener('pointerup',endPointer);window.addEventListener('pointercancel',endPointer);

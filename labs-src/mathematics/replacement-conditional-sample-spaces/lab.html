@@ -639,8 +639,9 @@ body>main{margin-top:8px;margin-bottom:12px;width:min(1200px,calc(100% - 18px))}
   .problem-meta{gap:4px!important}
 }
 </style>
+<!-- LAB_DESIGN_COMPONENTS -->
 </head>
-<body>
+<body class="lab-adopt-v3 lab-investigation lab-replacement">
 <main data-lab-role="model" data-lab-manipulative="conditional-sample-space">
 <!-- LAB_MANIFEST_HEADER_START -->
 <header class="lab-manifest-header">
@@ -662,17 +663,19 @@ body>main{margin-top:8px;margin-bottom:12px;width:min(1200px,calc(100% - 18px))}
 <span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span>
 <span data-lab-authored-subtitle-slot hidden></span>
 
-<section class="panel problem-bar" aria-live="polite">
+<section class="panel problem-bar lab-activity-bar" aria-live="polite">
   <div>
     <div class="problem-meta"><span id="problemNumber">Problem 1 of 6</span><span>·</span><span id="supportLabel">Guided</span></div>
     <strong id="problemText"></strong>
     <p id="problemSub"></p>
   </div>
+    <div id="stepRail" class="step-rail" aria-label="Problem progress"></div>
   <button id="resetButton" type="button">Reset this problem</button>
 </section>
 
 <section class="panel lab" data-lab-workspace>
-  <div id="stepRail" class="step-rail" aria-label="Problem progress"></div>
+
+  <div class="lab-replacement-layout"><div class="lab-replacement-model">
   <section id="nextAction" class="next-action" aria-live="polite">
     <span id="actionKicker" class="action-kicker"></span>
     <strong id="actionTitle"></strong>
@@ -697,7 +700,9 @@ body>main{margin-top:8px;margin-bottom:12px;width:min(1200px,calc(100% - 18px))}
     </section>
   </div>
 
-  <section id="workArea" class="work-area" aria-live="polite"></section>
+  </div>
+  <section id="workArea" class="work-area lab-sidebar" aria-live="polite"></section>
+  </div>
 </section>
 </main>
 <script src="./lab-kit.js" data-lab-resource="lab-kit.js"></script>
@@ -927,7 +932,8 @@ function renderGuidance(){
  document.querySelector('.bag-card')?.classList.toggle('attention',state.phase==='draw'||(state.phase==='rule'&&p().rule==='return')||state.phase==='target');
  document.querySelector('.draw-card')?.classList.toggle('cause-focus',state.phase==='rule');
 }
-function renderAll(){renderProblem();renderSteps();renderAction();renderBag();renderDraw();renderWorkArea();renderGuidance();bindDrags()}
+function introduceInteraction(){const target=document.querySelector('[data-drag-kind]'); LabDesign.introduce(document.querySelector('main'),[target].filter(Boolean),'replacement-'+state.phase,$('actionTitle').textContent,'Drag the counter to the highlighted destination. The next sample space updates after the drop.'); LabDesign.checkpoints($('stepRail'),['First draw','Apply replacement rule','Favourable outcomes','Probability'],phaseIndex(),i=>i<phaseIndex()||state.phase==='complete',$('actionCopy').textContent); $('workArea').classList.add('lab-sidebar'); $('workArea').dataset.workState=state.feedback?'bad':state.phase==='complete'?'good':'needed';}
+function renderAll(){renderProblem();renderSteps();renderAction();renderBag();renderDraw();renderWorkArea();renderGuidance();bindDrags();introduceInteraction()}
 function resetProgress(){if(drag){drag.ghost?.remove();drag=null}state.phase='draw';state.drawnId=null;state.appliedRule=null;state.selected=new Set();state.feedback='';state.preview=null;renderAll()}
 function resetProblem(){resetProgress()}
 function nextProblem(){

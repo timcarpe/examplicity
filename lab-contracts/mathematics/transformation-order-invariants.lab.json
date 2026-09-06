@@ -10,5 +10,43 @@
   "invariants": ["Each transformation preserves the properties specified by its type.", "The same ordered sequence gives the same image for every corresponding point."],
   "safeAdaptations": ["Vary coordinate figures and valid transformation parameters.", "Adjust working support while retaining visible source, intermediate and target images."],
   "nonGoals": ["Assuming transformation compositions commute without testing their order."],
-  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract",
+  "implementation": {
+    "reviewedRevision": "74a5e39",
+    "surfaces": {
+      "task": {"selectors": ["#goalKicker", "#missionTitle", "#missionHint", "#progressText"], "kind": "given", "description": "Current transformation goal, stage and route progress.", "visibility": "Shown for the current generated stage."},
+      "model": {"selectors": ["#stageSvg", "#gridLayer", "#targetLayer", "#shapeLayer", "#controlLayer"], "kind": "model", "description": "Source/target shapes, grid, transformation handles and ordered operation cards.", "visibility": "Present throughout; composition order controls vary by stage."},
+      "working": {"selectors": ["#commandContent", "#operationDock"], "kind": "working", "description": "Defining parameter entries, angle/order choices and intermediate/final transformation calculations.", "visibility": "Dynamic content follows route, stage and working level."},
+      "evidence": {"selectors": ["#evidenceGrid", "#statusBar", "#liveCommand", "#liveInvariant", "#missReadout"], "kind": "evidence", "description": "Point correspondence, invariant readouts, target miss and ordered-operation result show whether the geometry matches.", "visibility": "Updates with handle movement, working checks and order changes."},
+      "completion": {"selectors": ["#completionLayer", "#completionModal"], "kind": "completion", "description": "Stage completion, route progression and support upgrade.", "visibility": "Shown only when the stage's visual and working conditions pass."},
+      "settings": {"selectors": ["[data-route]", "[data-work-level]", "#resetStageBtn"], "kind": "control", "description": "Core/Extended route, working support and stage reset.", "visibility": "Route and support controls are shown for the current run."},
+      "inputs": {"selectors": ["#stageSvg [data-drag]", "#commandContent input[data-answer]", "#operationDock [data-order-slot]", "#swapOrderBtn"], "kind": "input", "description": "Geometric handles and generated parameter/order fields.", "visibility": "Selectors are generated for the active transformation stage."
+      }
+    },
+    "quantities": {
+      "reflection": {"description": "Mirror line definition and, at All, midpoint/equal-distance evidence.", "domain": "Coordinate line or oblique line parameters.", "source": "Reflection stage and generated [data-drag] controls.", "output": "Reflected points, target miss and #evidenceGrid.", "inputSlots": ["#commandContent input[data-answer=mirror]", "#commandContent input[data-answer=line]", "#commandContent input[data-answer=midpoint]", "#commandContent input[data-answer=equalDistance]"]},
+      "rotation": {"description": "Rotation centre, radius check and signed quarter-turn angle.", "domain": "Coordinates, distances and degrees.", "source": "Rotation stage handle/choice and generated work fields.", "output": "Rotated shape, point correspondence and invariant evidence.", "inputSlots": ["#commandContent input[data-answer=centre]", "#commandContent input[data-answer=radius2]", "#commandContent input[data-answer=angle]", "#commandContent [data-angle-choice]"]},
+      "translation": {"description": "Translation vector components Δx and Δy.", "domain": "Signed coordinate units.", "source": "Translation handle and generated vector work.", "output": "Translated shape and vector evidence.", "inputSlots": ["#commandContent input[data-answer=vector]", "#commandContent input[data-answer=dx]", "#commandContent input[data-answer=dy]"]},
+      "enlargement": {"description": "Centre, image vector and signed scale factor for enlargement.", "domain": "Coordinates and unitless factor.", "source": "Enlargement centre/scale handles and generated work.", "output": "Enlarged shape, centre/vector evidence and target miss.", "inputSlots": ["#commandContent input[data-answer=centre]", "#commandContent input[data-answer=imageVector]", "#commandContent input[data-answer=factor]"]},
+      "composition-order": {"description": "Intermediate point, final point and resultant/order choice for composition or commuting translations.", "domain": "Ordered coordinate transformations.", "source": "Generated operation cards, order slots and swap action.", "output": "#evidenceGrid, target shape and completion check.", "inputSlots": ["#commandContent input[data-answer=midPoint]", "#commandContent input[data-answer=finalPoint]", "#commandContent input[data-answer=resultant]", "#operationDock [data-order-slot]", "#swapOrderBtn"]}
+    },
+    "modes": {
+      "core": "Core route has reflection, rotation, translation and enlargement stages.",
+      "extended": "Extended route adds oblique reflection, negative enlargement and composition/commutation order stages.",
+      "none": "Working level 0 shows the defining calculation while the learner manipulates the geometric model.",
+      "some": "Working level 1 requires the stage's key result (for example mirror, angle, vector or final point).",
+      "all": "Working level 2 requires the stage's full generated chain, including invariants or intermediate/resultant values where applicable."
+    },
+    "dependencies": [
+      "Stage completion requires the transformed points to fall within the source visual tolerance and workingReady() to pass for the selected level.",
+      "Reflection, rotation, translation and enlargement use stage-specific defining quantities; generated answer keys and visual handles change by stage.",
+      "Composition stages require the selected order to match the target; the commute stage additionally requires a swap action before completion.",
+      "Completion modal blocks the stage until nextStageBtn/upgrade action advances the route; reset returns the current stage to its initial state."
+    ],
+    "completion": "The source isStageComplete() combines visualSuccess with workingReady(); the commute stage also requires swapCount>0. When true, #completionLayer/#completionModal opens with next-stage and possible upgrade actions.",
+    "limitations": [
+      "Transformation parameters, operation cards and answer inputs are generated per stage; selectors such as [data-drag] and data-answer keys are state-dependent.",
+      "Visual matching uses a point-miss tolerance and stage-specific exact choices, not a general symbolic transformation parser."
+    ]
+  }
 }

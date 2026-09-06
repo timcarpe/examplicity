@@ -582,8 +582,9 @@ body{margin:0}
 @media(max-width:390px){.formula-row{grid-template-columns:1fr;gap:3px}.formula-expression{justify-content:flex-start}.method-value{min-width:74px}.work-level-toggle{grid-template-columns:1fr 1fr}.calc-reference strong{font-size:10.5px}}
 </style>
 <link rel="stylesheet" href="./lab-kit.css" data-lab-resource="lab-kit.css">
+<!-- LAB_DESIGN_COMPONENTS -->
 </head>
-<body data-lab-layout="standard">
+<body data-lab-layout="standard" class="lab-adopt-v3 lab-investigation lab-timetable">
 <main data-lab-role="model" data-lab-manipulative="meeting-schedule">
 <!-- LAB_MANIFEST_HEADER_START -->
 <header class="lab-manifest-header">
@@ -606,20 +607,14 @@ body{margin:0}
 <span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span>
 <span data-lab-authored-subtitle-slot hidden></span>
 
-<section class="panel request-panel" aria-labelledby="requestTitle">
+<section class="panel request-panel lab-activity-bar" aria-labelledby="requestTitle">
   <div class="request-copy">
     <span id="requestKicker" class="request-kicker">Scheduling request</span>
     <strong id="requestTitle"></strong>
     <span id="requestRule">Everyone must be available for the entire meeting. The UTC offsets on the calendars are fixed for this request.</span>
   </div>
   <div class="request-tools">
-    <div class="mode-control">
-      <span>Answer mode</span>
-      <div class="mode-toggle" role="group" aria-label="Answer input mode">
-        <button id="guidedMode" type="button" class="active">Place on calendar</button>
-        <button id="calculateMode" type="button">Calculate start</button>
-      </div>
-    </div>
+    <div class="complexity"><span>Working:</span><div class="lab-toggle" data-kind="working" role="group" aria-label="Working"><button type="button" data-work-level="0" aria-pressed="true">None</button><button type="button" data-work-level="2" aria-pressed="false">Some</button><button type="button" data-work-level="4" aria-pressed="false">All</button></div></div>
     <div id="meetingToken" class="meeting-token" aria-label="Meeting duration">
       <span>Meeting to schedule</span>
       <strong id="meetingDuration"></strong>
@@ -644,19 +639,11 @@ body{margin:0}
       </div>
       <div class="source-note">Offsets are supplied by the scheduling request. Daylight-saving rules and geographic time-zone lookup are outside this lab.</div>
     </div>
-    <aside class="calc-panel" aria-live="polite">
+    <aside class="calc-panel lab-sidebar" aria-live="polite">
       <div class="calc-head">
-        <div class="calc-head-top"><strong>Exam method</strong><span id="calcBadge" class="calc-badge">method</span></div>
+        <div class="calc-head-top"><strong>Meeting working</strong><span id="calcBadge" class="calc-badge">method</span></div>
         <div id="calcReference" class="calc-reference"></div>
-        <div class="work-level-control" aria-label="Calculation working difficulty">
-          <div class="work-level-copy"><strong>Working difficulty</strong><span id="workLevelHelp">Starter · one calculation</span></div>
-          <div class="work-level-toggle" role="group" aria-label="Choose calculation working difficulty">
-            <button type="button" data-work-level="1">Starter</button>
-            <button type="button" data-work-level="2">Paired</button>
-            <button type="button" data-work-level="3">Most</button>
-            <button type="button" data-work-level="4">Full</button>
-          </div>
-        </div>
+        <span id="workLevelHelp" hidden></span>
       </div>
       <div id="calcContent"></div>
     </aside>
@@ -786,7 +773,7 @@ body{margin:0}
     </div>`;
   }
   function responseFor(person){
-    if(state.lastSentStart==null)return {cls:'',title:person.role==='Organiser'?'Your local calendar':'Waiting for proposal',detail:person.role==='Organiser'?(state.mode==='guided'?'Place the meeting inside your available band.':'Enter the start time above; calendar placement is disabled.'):'No converted meeting time is shown yet.'};
+    if(state.lastSentStart==null)return {cls:'',title:person.role==='Organiser'?'Your local calendar':'Waiting for proposal',detail:person.role==='Organiser'?(state.mode==='guided'?'Place the meeting inside your available band.':'Enter the organiser start in the working area.'):'No converted meeting time is shown yet.'};
     const ok=fits(person,state.lastSentStart),overlap=overlapMinutes(person,state.lastSentStart),d=state.request.duration;
     if(ok)return {cls:'accept',title:'Accepts the proposal',detail:`All ${d} minutes fit this local availability window.`};
     if(overlap===0){const end=state.lastSentStart+d*MIN;if(end<=person.availStart)return {cls:'decline',title:'Declines the proposal',detail:'The meeting finishes before this person becomes available.'};return {cls:'decline',title:'Declines the proposal',detail:'The meeting starts after this person is no longer available.'}}
@@ -931,9 +918,9 @@ body{margin:0}
   }
   const WORK_LEVELS={
     1:{name:'Starter',help:'one calculation',keys:['shift2']},
-    2:{name:'Paired',help:'worked example + your matching item',keys:['shift2','conv2s','latest2','commonHi']},
+    2:{name:'Some',help:'worked example + your matching item',keys:['shift2','conv2s','latest2','commonHi']},
     3:{name:'Most',help:'only a few worked examples remain',keys:['shift1','shift2','conv1s','conv1e','conv2s','conv2e','latest1','latest2','commonLo','commonHi']},
-    4:{name:'Full',help:'complete the whole method',keys:['shift1','shift2','conv1s','conv1e','conv2s','conv2e','latest0','latest1','latest2','commonLo','commonHi']}
+    4:{name:'All',help:'complete the whole method',keys:['shift1','shift2','conv1s','conv1e','conv2s','conv2e','latest0','latest1','latest2','commonLo','commonHi']}
   };
   function allWork(){
     const e=methodExpected();
@@ -971,7 +958,7 @@ body{margin:0}
   }
   const STEP_KEYS=[['shift1','shift2'],['conv1s','conv1e','conv2s','conv2e'],['latest0','latest1','latest2'],['commonLo','commonHi'],['finalStart']];
   function stepState(stepIndex){
-    if(state.mode!=='calculate')return '';
+    if(state.mode!=='calculate')return methodReveal()?'work-good':stepIndex===4?'pending':'';
     refreshWorkStates();
     const req=STEP_KEYS[stepIndex].filter(isRequired);
     if(!req.length)return 'scaffolded';
@@ -1050,11 +1037,12 @@ body{margin:0}
     const cfg=WORK_LEVELS[state.workLevel];
     $('workLevelHelp').textContent=`${cfg.name} · ${cfg.help}`;
     document.querySelectorAll('[data-work-level]').forEach(b=>{
-      const on=Number(b.dataset.workLevel)===state.workLevel;b.classList.toggle('active',on);b.setAttribute('aria-pressed',String(on));
+      const on=Number(b.dataset.workLevel)===(state.mode==='guided'?0:state.workLevel);b.classList.toggle('active',on);b.setAttribute('aria-pressed',String(on));
     });
   }
   function renderCalcPanel(){
     const panel=$('calcContent'),e=methodExpected(),org=e.org,show=methodReveal();
+    panel.closest('.calc-panel').dataset.workingLevel=state.mode==='guided'?'0':String(state.workLevel);
     $('calcBadge').textContent=state.mode==='calculate'?WORK_LEVELS[state.workLevel].name.toLowerCase():show?'worked method':'method';
     $('calcReference').innerHTML=`<strong>Keep every line in ${org.city} 24-hour time.</strong><span>Carry the day when midnight is crossed.</span>`;
     renderWorkLevelControl();
@@ -1109,7 +1097,7 @@ body{margin:0}
   function render(){
     const r=state.request,org=r.people[0],workspace=document.querySelector('[data-lab-workspace]');
     workspace.classList.toggle('calculate-mode',state.mode==='calculate');
-    $('guidedMode').classList.toggle('active',state.mode==='guided');$('calculateMode').classList.toggle('active',state.mode==='calculate');
+
     $('requestKicker').textContent=`Scheduling request ${state.requestNo+1}`;
     $('requestTitle').textContent=`Schedule a ${r.duration}-minute ${r.title} so all three people can attend.`;
     $('meetingDuration').textContent=`${r.duration} minutes`;
@@ -1120,7 +1108,7 @@ body{margin:0}
     const changed=state.proposalStart!=null&&(state.lastSentStart==null||state.proposalStart!==state.lastSentStart);
     $('sendButton').disabled=state.proposalStart==null||!changed;
     $('sendButton').textContent=state.lastSentStart==null?'Send proposal':'Send revised proposal';
-    bindInteractive();renderSummary();renderCalcPanel();renderNextCard();
+    bindInteractive();renderSummary();renderCalcPanel();renderNextCard();const targets=state.mode==='guided'?[document.querySelector('.organizer-timeline')]:[...$('calcContent').querySelectorAll('input:not(:disabled),select:not(:disabled)')];LabDesign.introduce(document.querySelector('main'),targets.filter(Boolean),'timetable-'+state.mode+'-'+state.workLevel,state.mode==='guided'?'Place the meeting':'Convert into one clock',state.mode==='guided'?'Tap a start time on the organiser calendar, or drag the meeting there. Send the proposal to reveal the other local times.':'Enter the highlighted clock shifts and dates in organiser time. Carry the day across midnight, then send a start within the common window.');
   }
   function renderSummary(){
     const box=$('summary'),latestSuccess=state.lastSentStart!=null&&state.request.people.every(p=>fits(p,state.lastSentStart)),copy=box.querySelector('div');
@@ -1133,13 +1121,7 @@ body{margin:0}
       else copy.innerHTML=`<strong>Everyone accepts.</strong><span>${state.mode==='guided'?'The exam method now fills in beside the calendars.':'Your working and the timetable agree.'}</span>`;
     }else{const declines=state.request.people.filter(p=>!fits(p,state.lastSentStart)).map(p=>p.city).join(' and ');copy.innerHTML=`<strong>${declines} ${declines.includes(' and ')?'decline':'declines'}.</strong><span>Revise the organiser start and send again.</span>`}
   }
-  function nextWorkLevelSuggestion(){
-    if(state.mode==='guided')return state.correctCount>=2?1:0;
-    if(state.workLevel===1&&state.workSolved[1]>=1)return 2;
-    if(state.workLevel===2&&state.workSolved[2]>=2)return 3;
-    if(state.workLevel===3&&state.workSolved[3]>=2)return 4;
-    return 0;
-  }
+  function nextWorkLevelSuggestion(){return state.mode==='guided'?(state.correctCount>=2?2:0):state.workLevel===2&&state.workSolved[2]>=2?4:0;}
   function renderNextCard(){
     const card=$('nextCard'),upgrade=$('nextUpgrade');
     const timetableSuccess=state.lastSentStart!=null&&state.request.people.every(p=>fits(p,state.lastSentStart));
@@ -1154,11 +1136,11 @@ body{margin:0}
     const target=nextWorkLevelSuggestion(),showUpgrade=target>0;
     upgrade.hidden=!showUpgrade;card.classList.toggle('has-upgrade',showUpgrade);
     if(showUpgrade){
-      const title=target===1?'Ready to calculate one result?':target===2?'Ready for paired working?':target===3?'Ready for less scaffolding?':'Ready for full exam working?';
+      const title=target===2?'Try some working':'Try all working';
       const text=target===1?'Start with one clock-shift calculation; every later step remains worked for you.':target===2?'Each stage keeps a worked example beside the item you calculate.':target===3?'Most results are now yours; only a few examples remain.':'No worked results remain: complete the whole five-step method yourself.';
       $('nextUpgrade').querySelector('strong').textContent=title;
       $('nextUpgrade').querySelector('span').textContent=text;
-      $('nextUpgradeButton').textContent=target===1?'Start calculation working':target===2?'Use paired working':target===3?'Use most working':'Use full working';
+      $('nextUpgradeButton').textContent=target===2?'Try some working':'Try all working';
       $('nextUpgradeButton').dataset.level=String(target);
     }
   }
@@ -1205,12 +1187,12 @@ body{margin:0}
   function resetProposal(){clearAttempt();render()}
   function nextRequest(){state.requestNo++;state.request=generateRequest(state.requestNo);state.awarded=false;clearAttempt();render()}
   function setMode(mode,advance=false){if(!['guided','calculate'].includes(mode)||state.mode===mode&&!advance)return;state.mode=mode;if(advance){nextRequest();return}clearAttempt();render()}
-  function setWorkLevel(level,{advance=false}={}){level=clamp(Number(level)||1,1,4);state.workLevel=level;state.mode='calculate';if(advance){nextRequest();return}clearAttempt();render()}
+  function setWorkLevel(level,{advance=false}={}){level=Number(level)||0;state.workLevel=level===4?4:2;state.mode=level===0?'guided':'calculate';if(advance){nextRequest();return}clearAttempt();render()}
   $('sendButton').addEventListener('click',sendProposal);
   $('resetButton').addEventListener('click',resetProposal);
   $('nextButton').addEventListener('click',nextRequest);
-  $('guidedMode').addEventListener('click',()=>setMode('guided'));
-  $('calculateMode').addEventListener('click',()=>setMode('calculate'));
+
+
   document.querySelectorAll('[data-work-level]').forEach(b=>b.addEventListener('click',()=>setWorkLevel(Number(b.dataset.workLevel))));
   $('nextUpgradeButton').addEventListener('click',()=>setWorkLevel(Number($('nextUpgradeButton').dataset.level||1),{advance:true}));
   function init(){state.request=generateRequest(0);render()}

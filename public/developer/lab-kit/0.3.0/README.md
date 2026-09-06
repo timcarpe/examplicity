@@ -208,3 +208,12 @@ non-negative fixed-point measurement with inline seven-segment SVG and an
 accessible label. Pass the recorded precision explicitly (for example `12.40`);
 it preserves trailing zeros. `.lab-digital-display` supplies the concept colour
 and flat face. Keep rounding rules, true-value state and ruler geometry local.
+
+
+Investigation adoption uses `lab-investigation` for shared rounded actions and
+date selects, right-side working cards and fitted charts. Keep supplied reference
+values distinct from learner success. `LabDesign.checkpoints(host, labels,
+current, completed, detail)` supplies accessible compact progress; labs retain
+ownership of phase semantics. `bindSvgDrag` also supports extrusion/reshaping
+handles without pickup jumps. These CSS/JS resources are compiled inline in
+standalone downloads. Visual examples live in the design guide.

@@ -6,7 +6,7 @@ Target: `codex/llm-first-v0.1`. Scope: shared design language across the site an
 
 This section records the user's rollout preferences. The canonical visual reference remains `Lab Creation/docs/design-language/examplicity-living-style-guide-v3.html`, with reusable implementation in `packages/lab-kit/src/lab-design.css` and `lab-design.js`. The style guide describes appearance and interaction patterns; it does not define task authority or workflow scope. Historical revision notes below include superseded approaches.
 
-- Root implements directly in batches of five, records a concise change list, commits, and supplies review links. Each batch receives user review. Surface novel situations that cannot be resolved from the agreed intent; avoid routine handoff and approval overhead.
+- Root implements directly in batches of ten, records a concise change list, commits, and supplies review links. Each batch receives user review. Surface novel situations that cannot be resolved from the agreed intent; avoid routine handoff and approval overhead.
 - Before changing a lab, read the HTML and trace learner action → model change → working/evidence → next decision, including later stages and Working levels. A style adoption is incomplete if it misses the interaction or removes its purpose. If a regression is suspected, inspect relevant Git history and user-authorized originals before concluding that a feature never existed.
 - Map that current implementation first in the existing `lab-contracts/<subject>/<slug>.lab.json` sidecar: coherent surfaces, quantities versus input slots, given versus learner-produced values, mode differences, dependencies and completion. Refresh it after adaptation. This map documents observed behaviour; exam alignment is a separate review. The shape is documented at `/developer/lab-contract#implementation`, not in the visual style guide.
 - Preserve the causal model: fit the existing visual to its canvas, keep horizontal relationships horizontal, and let the page handle vertical flow. Do not add a separate slider when the model itself should be manipulated. Ordinary SVG chart labels, controls and interactions are in scope; complex illustrations such as jars and routers do not need a cosmetic redraw.
@@ -781,3 +781,64 @@ baseline unless the lab behaviour itself changes.
   None/Some finer evidence. Broad device/profile coverage was not repeated.
   The style guide, kit README, implementation sidecar and inline downloads
   record/preserve the updated behaviour.
+
+
+## Batch 4 — ten mathematics labs, change list before implementation
+
+- Ratio/flow: move the flow calculation beside the plant, preserve tanks/pumps,
+  and introduce the actual pump or answer operation. Keep bottle evidence.
+- Relative frequency: put predictions and forecast decisions in the persistent
+  right sidebar, retain trial evidence and the fair-versus-biased comparison.
+- Replacement: retain counter dragging and changing sample spaces; group the
+  live probability work on the right with compact top-bar stage checkpoints.
+- Scatter: readable fitted chart, shared drag/cue treatment, concise working
+  decisions and persistent limits on what correlation can establish.
+- Sets: interface-only refinement, preserving the current message/membership
+  model; the learning-model overhaul remains a separate follow-up.
+- Similarity: retain predictions, unit-cube layers and unlocked support; clarify
+  progressive work and distinguish concept factors from correctness.
+- Solids: keep solid and skin together on the left, calculation chain on the
+  right; preserve input-controlled extrusion and equal-volume reshaping.
+- Time Zones: user chose None/Some/All. None retains calendar placement and
+  revealed method; Some uses the existing paired calculations; All uses the
+  full chain. Sending a valid proposal remains necessary. Restyle date selects
+  with the homepage's rounded form, regular type and subtle elevation.
+- Transformations: consistent top bar, blue Core/Extended toggle, grey Working,
+  readable coordinate evidence and shared movable completion card.
+- Vectors: preserve robot, head-to-tail commands and collision consequences;
+  use targeted introductions and progressive component/magnitude working.
+
+All ten receive source-backed implementation maps in their existing sidecars.
+Shared changes live in Lab Creation's CSS/JS; source adapters retain the model
+and local state. Verify changed paths and packaging, then submit this batch for
+user review. No new curriculum alignment is part of this batch.
+
+### Batch 4 review notes — 6 September 2026
+
+- Shared `lab-design.css` owns the new shell, rounded controls, sidebar cards,
+  reference/formula surfaces, field focus, dates and responsive compositions.
+  `lab-design.js` adds accessible checkpoint details and extends card attention
+  to these adapters. Lab source changes connect existing state and move regions.
+- Time Zones uses None for calendar placement, Some for the existing paired
+  calculations and All for the full chain. None shows compact method steps
+  until successful send reveals the calculations. Calendars use full-width
+  lanes so their clock labels remain readable. Dates retain native selection.
+- Relative Frequency uses a persistent prediction/decision card, including red
+  feedback for a wrong forecast. Replacement retains changing denominators and
+  Sets retains membership/rule tasks. These three keep their task-driven support;
+  no new None/Some/All learning modes were invented.
+- Solids uses the shared SVG drag helper, preserving pickup position through
+  rerenders. Scatter preserves pickup offset for tilt and prediction handles.
+  Similarity keeps retained observations below the model and progression actions
+  in the working sidebar. Supplied values are reference material, not earned
+  success. Complex plant, bag, student and robot illustrations remain intact.
+- Browser checks cover all ten initial layouts, 768px and 390px widths, with no script
+  errors or scrollable canvases. Time Zones was completed through actual fields,
+  native date selects and Send at all levels, including wrong answers. Frequency
+  was replayed through short/long samples, rejected claims and the final forecast.
+  Solids pickup was checked by mouse; seeded source hooks exercised both models
+  and every support level. Source hooks also checked Similarity, Transformations,
+  Vectors and Replacement completion/dependencies; these are not a claim of
+  exhaustive pointer replay across every generated problem.
+- The living HTML guide and concise contract document the reusable patterns.
+  Generated site resources and downloads are synchronized from Lab Creation.

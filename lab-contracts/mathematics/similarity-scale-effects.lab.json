@@ -10,5 +10,42 @@
   "invariants": ["Similar solids keep one common linear scale factor across corresponding edges.", "Area and volume factors are respectively the square and cube of that factor."],
   "safeAdaptations": ["Vary positive scale factors and prototype dimensions.", "Adjust working support while preserving the linked length, area and volume representations."],
   "nonGoals": ["Applying the linear scale factor directly to area or volume."],
-  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract",
+  "implementation": {
+    "reviewedRevision": "74a5e39",
+    "surfaces": {
+      "task": {"selectors": ["#missionTitle", "#missionHint", "#problemLabel", "#workLabel"], "kind": "given", "description": "Current scale problem, target and working prompt.", "visibility": "Shown for the current generated trial."},
+      "model": {"selectors": ["#stage", "#benchLayer", "#targetLayer", "#prototypeLayer", "#productionLayer"], "kind": "model", "description": "Prototype, scaled solid, unit layers and annotations update as the scale handle changes.", "visibility": "Present throughout; result/layer controls follow the solved state."},
+      "working": {"selectors": ["#workChain", "#workActions"], "kind": "working", "description": "Scale-factor, area and volume prediction/calculation entries for the selected working level.", "visibility": "Always present; generated prediction buttons and answer fields depend on phase and level."},
+      "evidence": {"selectors": ["#evidenceStack", "#relationshipDock", "#recordList"], "kind": "evidence", "description": "Linked edge/face/volume annotations, recorded trials and similarity relationship show linear, square and cube factors.", "visibility": "Evidence updates during resizing and after a successful trial."},
+      "completion": {"selectors": ["#relationshipDock", "#workActions"], "kind": "completion", "description": "Solved scale trial, next trial and optional counterexample action.", "visibility": "Completion actions appear after target and working/prediction checks pass."},
+      "settings": {"selectors": ["[data-work-level]", "#resetProblem", "#layerButton", "#similarReset"], "kind": "control", "description": "Working support, reset, layer view and counterexample restore controls.", "visibility": "Some/All and counterexample/layer controls unlock from source progression."},
+      "inputs": {"selectors": ["#stage #handleGroup", "#workChain input[data-answer]", "#workChain [data-predict]"], "kind": "input", "description": "Generated scale/height handle and prediction/calculation inputs.", "visibility": "Handle is present for the active geometry; generated entries follow the current trial."
+      }
+    },
+    "quantities": {
+      "linear-scale": {"description": "Common edge scale from prototype edge 2 to the production edge/height.", "domain": "Positive scale factor k and corresponding edge length.", "source": "Generated scale target and #handleGroup interaction.", "output": "Solid dimensions, edge annotation and k in #evidenceStack/#workChain.", "inputSlots": ["#stage #handleGroup", "#workChain input[data-answer=k]"]},
+      "area-factor": {"description": "Corresponding face-area factor k², with prototype/production face values.", "domain": "Area units and square scale factor.", "source": "Computed from the common linear scale; predicted by data-predict=area at the initial stage.", "output": "Face annotation, #evidenceStack and #workChain.", "inputSlots": ["#workChain [data-predict=area]", "#workChain input[data-answer=area]", "#workChain input[data-answer=face]"]},
+      "volume-factor": {"description": "Solid-volume factor k³ and corresponding volume values.", "domain": "Cubic units and cube scale factor.", "source": "Computed from production/prototype dimensions; predicted by data-predict=volume.", "output": "Volume annotation, #evidenceStack and #workChain.", "inputSlots": ["#workChain [data-predict=volume]", "#workChain input[data-answer=volume]", "#workChain input[data-answer=solid]"]},
+      "counterexample": {"description": "A stretch in one dimension used to show unequal ratios and loss of similarity.", "domain": "Dimension ratio and non-similar solid measures.", "source": "Generated stretch counterexample after the source threshold.", "output": "#similarityState, #evidenceStack and #similarReset."
+      }
+    },
+    "modes": {
+      "none": "Source level 0 is labelled Shown: the edge is manipulated and the relationship evidence is displayed; prediction choices may be required before resizing.",
+      "some": "Source level 1 is labelled Some: the learner supplies the linear scale factor k.",
+      "all": "Source level 2 is labelled All: the learner supplies k plus generated area/volume/factor fields.",
+      "trial-types": "The source also generates direct edge trials and reverse area/volume trials at All; a stretch counterexample and separate-layer view appear only from solved progression."
+    },
+    "dependencies": [
+      "At level 0, required area/volume prediction choices precede resize when the trial asks for them; targetMet requires the target edge or the counterexample's restore height.",
+      "Completion requires targetMet, requiredCorrect, predictionCorrect and no active stretch counterexample; geometry changes invalidate prior working checks.",
+      "Working fields are generated in #workChain and recordCurrent captures successful observations; Some/All unlock from solved counts.",
+      "The stretch counterexample is opened only after the source's level-2 solve threshold and must be restored before the local trial can complete."
+    ],
+    "completion": "The source problemComplete check opens the solved result in #relationshipDock/#workActions when target, working and prediction conditions pass; next trial and level upgrade actions are then available.",
+    "limitations": [
+      "The scale handle and prediction buttons are generated for the current trial; prediction controls are identified by data-predict rather than fixed IDs.",
+      "Separate-layer mode is a visual representation action and does not add an answer quantity."
+    ]
+  }
 }
