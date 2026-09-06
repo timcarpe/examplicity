@@ -20,5 +20,76 @@
     "Do not present total internal reflection as occurring at every boundary or every angle.",
     "Do not expand into wave interference or a full optical-instrument simulator."
   ],
-  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract",
+  "implementation": {
+    "reviewedRevision": "dc02ec96e0ca610123d0becc0c06c3542ce2565d",
+    "surfaces": {
+      "goal": {
+        "selectors": [
+          "#missionTitle"
+        ],
+        "kind": "given",
+        "description": "Find the critical threshold for the supplied media.",
+        "visibility": "Present in the current investigation; child controls follow the mode and state."
+      },
+      "model": {
+        "selectors": [
+          "#stage"
+        ],
+        "kind": "model",
+        "description": "Rotatable ray, boundary, angular readings and relative reflected/transmitted power.",
+        "visibility": "Present in the current investigation; child controls follow the mode and state."
+      },
+      "working": {
+        "selectors": [
+          "#workPanel"
+        ],
+        "kind": "working",
+        "description": "Predict, observe both regimes, mark threshold and calculate.",
+        "visibility": "Present in the current investigation; child controls follow the mode and state."
+      },
+      "progress": {
+        "selectors": [
+          "#scienceCheckpoints"
+        ],
+        "kind": "evidence",
+        "description": "Four task stages, derived from actual local completion state.",
+        "visibility": "Present in the current investigation; child controls follow the mode and state."
+      }
+    },
+    "quantities": {
+      "incidence": {
+        "description": "Incidence angle from the normal.",
+        "domain": "5–80 degrees.",
+        "source": "Learner rotates the ray.",
+        "output": "Refraction, reflection and regime update.",
+        "inputSlots": [
+          "#stage"
+        ]
+      },
+      "critical-angle": {
+        "description": "Observed threshold and calculated critical angle.",
+        "domain": "asin(n outside / n inside), when a critical angle exists.",
+        "source": "Media indices supplied; learner marks threshold; None shows calculation, Some asks angle, All asks formula/ratio/angle.",
+        "output": "Comparison of marked threshold and calculation.",
+        "inputSlots": [
+          "#workPanel input"
+        ]
+      }
+    },
+    "modes": {
+      "none": "Predict, observe both regimes and mark; calculation supplied.",
+      "some": "Also calculate the critical angle.",
+      "all": "Select the ratio formula, enter sine ratio and angle.",
+      "comparison": "Second medium pair, then fresh practice and free media exploration."
+    },
+    "dependencies": [
+      "Both escaping light and total internal reflection must be observed before marking.",
+      "Accepted threshold precedes recording/calculation completion."
+    ],
+    "completion": "finishRound requires exploration and a marked threshold; numerical checking follows the selected working level.",
+    "limitations": [
+      "Ideal planar-boundary optics; displayed power is model evidence, not a separate learner answer."
+    ]
+  }
 }

@@ -280,8 +280,9 @@ button.primary{background:var(--lab-accent);border-color:var(--lab-accent);color
 }
 </style>
 <link rel="stylesheet" href="./lab-kit.css" data-lab-resource="lab-kit.css">
+<!-- LAB_DESIGN_COMPONENTS -->
 </head>
-<body>
+<body class="lab-adopt-v3 lab-science science-lens">
 <main>
 <!-- LAB_MANIFEST_HEADER_START -->
 <header class="lab-manifest-header">
@@ -301,19 +302,19 @@ button.primary{background:var(--lab-accent);border-color:var(--lab-accent);color
 <!-- LAB_MANIFEST_HEADER_END -->
 <span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span><span data-lab-authored-subtitle-slot hidden></span>
 
-<section class="panel mission" aria-live="polite">
-  <div class="mission-copy">
+<section class="panel mission lab-activity-bar" aria-live="polite">
+  <div class="mission-copy lab-activity-task">
     <div class="mission-kicker"><span id="phaseKicker">Investigation 1 of 4</span><span id="phaseMode"></span></div>
     <strong id="missionTitle">Predict the image, then test it on the bench.</strong>
     <span id="missionHint">Use the focal marks, the ray intersection and the screen image as one connected piece of evidence.</span>
   </div>
   <div class="mission-tools">
     <div id="progress" class="progress" aria-label="Investigation progress"></div>
-    <button id="restartButton" type="button" data-lab-action="reset">Restart</button>
+    <button id="restartButton" data-lab-reset-target=".visual-head" type="button" data-lab-action="reset">Restart</button>
   </div>
 </section>
 
-<section class="panel lab" data-lab-workspace>
+<section class="panel lab" data-lab-actions data-lab-workspace>
   <div class="workspace">
     <div id="stageSide" class="stage-side">
       <div class="visual-head">
@@ -321,7 +322,7 @@ button.primary{background:var(--lab-accent);border-color:var(--lab-accent);color
         <div class="visual-constant">Fixed focal length: f = 10 cm</div>
       </div>
       <div id="stageShell" class="stage-shell">
-        <svg id="stage" class="stage" viewBox="0 0 1040 600" role="img" aria-labelledby="stageTitle stageDesc" data-lab-role="model">
+        <svg id="stage" class="stage" data-lab-readable-chart="11" viewBox="0 0 1040 600" role="img" aria-labelledby="stageTitle stageDesc" data-lab-role="model">
           <title id="stageTitle">Optical bench with a converging lens, an object, principal rays and a movable screen</title>
           <desc id="stageDesc">The object and screen can be moved horizontally. F marks each principal focus 10 centimetres from the lens; 2F marks twice the focal length at 20 centimetres. Two coloured rays show whether light converges, remains parallel or diverges after the lens.</desc>
           <defs>
@@ -434,8 +435,13 @@ button.primary{background:var(--lab-accent);border-color:var(--lab-accent);color
         </svg>
         <div id="guideCard" class="guide-card left" hidden><strong id="guideTitle"></strong><span id="guideText"></span></div>
       </div>
-      <div id="conceptTooltip" class="concept-tooltip" role="tooltip" aria-hidden="true"><span class="tip-kicker">Quick explanation</span><strong id="conceptTooltipTitle"></strong><span id="conceptTooltipText"></span><span id="conceptTooltipSide" class="tip-side"></span></div>
+      <section class="science-observations"><h3>Observation record</h3><div id="journal" class="journal"></div></section>
+<div id="conceptTooltip" class="concept-tooltip" role="tooltip" aria-hidden="true"><span class="tip-kicker">Quick explanation</span><strong id="conceptTooltipTitle"></strong><span id="conceptTooltipText"></span><span id="conceptTooltipSide" class="tip-side"></span></div>
       <div class="stage-note" role="status" aria-live="polite"><div id="stageNoteCopy" class="stage-note-copy"></div><div id="stageNoteState" class="stage-note-state"></div></div>
+
+    </div>
+
+    <aside class="evidence-panel" aria-label="Lens evidence and observation record">
       <div id="phaseDock" class="phase-dock">
         <section id="predictionPanel" class="phase-panel" aria-labelledby="predictionTitle">
           <div class="phase-kicker"><span>Predict before testing</span><span id="predictionProgress" class="phase-progress"></span></div>
@@ -469,10 +475,7 @@ button.primary{background:var(--lab-accent);border-color:var(--lab-accent);color
           </div>
         </section>
       </div>
-    </div>
-
-    <aside class="evidence-panel" aria-label="Lens evidence and observation record">
-      <section class="evidence-section projection-section">
+<section class="evidence-section projection-section">
         <div class="evidence-head"><strong>What reaches the screen</strong><span>The two coloured dots are the same point of the object arriving by two different rays.</span></div>
         <div class="screen-card">
           <div class="screen-bezel"><div class="screen-face"><div class="screen-grid"></div><div id="diffuseSpot" class="diffuse-spot"></div><div id="projectionGlyph" class="projection-glyph"><span class="projection-flag"></span><span class="projection-dot"></span></div><div id="screenOverlay" class="screen-overlay"></div></div></div>
@@ -485,7 +488,7 @@ button.primary{background:var(--lab-accent);border-color:var(--lab-accent);color
       </section>
       <section class="evidence-section">
         <div class="evidence-head"><strong>Observation record</strong><span>Each row preserves the cause → ray behaviour → consequence.</span></div>
-        <div id="journal" class="journal"></div>
+
       </section>
     </aside>
   </div>
@@ -850,16 +853,12 @@ button.primary{background:var(--lab-accent);border-color:var(--lab-accent);color
     $('journal').innerHTML=coreRows+practiceRow;
   }
 
-  function renderProgress(){
-    let html=PHASES.map((_,i)=>`<span class="progress-step ${state.completed[i]?'done':!state.free&&!state.practice&&i===state.phase?'current':''}" aria-label="${state.completed[i]?'completed':i===state.phase?'current':'not yet completed'} investigation ${i+1}">${state.completed[i]?'✓':i+1}</span>`).join('');
-    if(state.practiceStarted)html+=`<span class="progress-step practice ${state.practice?'current':'done'}" aria-label="${state.practice?'current practice level':'practice available'}">L${state.practice?activePhase().level:state.practiceLevel}</span>`;
-    $('progress').innerHTML=html;
-  }
+  function renderProgress(){LabDesign.checkpoints($('progress'),['Beyond 2F','Between F and 2F','At F','Inside F'],state.free||state.practice?-1:state.phase,i=>state.completed[i],state.step==='success'?'Image evidence recorded':'Predict, then test on the optical bench');}
 
   function stageInstruction(){
     const p=activePhase();
     if(state.free)return {title:'Free exploration',text:'Use the visible ↔ handles to move the object or screen. Read the two ray-hit dots to decide whether a sharp projection is possible.',side:'left'};
-    if(state.step==='predict')return {title:'Start with a prediction ↓',text:'Choose one option in the panel below the bench. That unlocks the object’s ↔ handle.',side:'right'};
+    if(state.step==='predict')return {title:'Start with a prediction ↓',text:'Choose one option in the working panel. That unlocks the object’s ↔ handle.',side:'right'};
     if(state.step==='moveObject')return {title:p.action,text:`Drag the highlighted ↔ handle. Live object distance: <b>${fmt(state.u,1)} cm</b>.`,side:p.targetU>=20?'right':'left'};
     if(state.step==='moveScreen')return {title:'Now make the projection sharp',text:`Slide the screen until the blue and orange ray hits overlap at the ray intersection. Separation: <b>${fmt(raySeparationCm(),1)} cm</b>.`,side:'left'};
     if(state.step==='sampleNear')return {title:'Take the near-screen reading',text:'Place the screen at 12 cm and note the separation of the two ray hits.',side:'left'};
@@ -900,7 +899,7 @@ button.primary{background:var(--lab-accent);border-color:var(--lab-accent);color
     else if(state.step==='moveScreen'){copy=`<strong>Read the consequence.</strong> At this screen position the two ray hits are ${fmt(raySeparationCm(),1)} cm apart.`;stateText=isSharp()?'sharp':'refocus';tone=isSharp()?'good':'warn'}
     else if(state.step==='sampleNear'||state.step==='sampleFar'){copy=`<strong>At object-side F, the rays are parallel.</strong> Current screen separation: ${fmt(raySeparationCm(),1)} cm.`;stateText=`sample ${state.samples.length+1} of 2`}
     else if(state.step==='sampleVirtual'){copy=`<strong>Inside object-side F, the rays diverge.</strong> Current screen separation: ${fmt(raySeparationCm(),1)} cm; dashed lines show where they appear to come from.`;stateText='test screen'}
-    else if(state.step==='success'){copy='<strong>Evidence recorded.</strong> The panel below connects the object position, ray behaviour and image consequence.';stateText='observation complete';tone='good'}
+    else if(state.step==='success'){copy='<strong>Evidence recorded.</strong> The working panel connects the object position, ray behaviour and image consequence.';stateText='observation complete';tone='good'}
     else{copy=`<strong>${g.kind==='real'?'Real rays meet':'No real rays meet on the screen side'}.</strong> Keep moving either control to test the relationship.`;stateText='free exploration';tone='good'}
     $('stageNoteCopy').innerHTML=copy;$('stageNoteState').textContent=stateText;$('stageNoteState').className=`stage-note-state ${tone}`;
   }
@@ -1011,7 +1010,7 @@ button.primary{background:var(--lab-accent);border-color:var(--lab-accent);color
   $('stageShell').addEventListener('scroll',()=>hideConceptTip(true),{passive:true});
 
   function renderAll(){
-    renderObject();renderRays();renderImage();renderScreen();renderDistances();renderTarget();renderPrevious();renderProjection();renderEvidence();renderProgress();renderMission();renderGuide();renderStageNote();renderPredictionPanel();renderActionPanel();renderSuccessPanel();renderFreePanel();
+    renderObject();renderRays();renderImage();renderScreen();renderDistances();renderTarget();renderPrevious();renderProjection();renderEvidence();renderProgress();renderMission();renderGuide();renderStageNote();renderPredictionPanel();renderActionPanel();renderSuccessPanel();renderFreePanel();renderDesign();
   }
 
   function choosePrediction(key){hideConceptTip(true);state.prediction=key;state.step='moveObject';renderAll()}
@@ -1063,9 +1062,9 @@ button.primary{background:var(--lab-accent);border-color:var(--lab-accent);color
   function restart(){hideConceptTip(true);Object.assign(state,{phase:0,step:'predict',prediction:null,u:20,screen:12,dragging:null,completed:[false,false,false,false],journal:[null,null,null,null],samples:[],previous:null,free:false,coreOutcomes:[null,null,null,null],practice:false,practiceStarted:false,practiceProblem:null,practiceAttempt:0,practiceLevel:1,practiceCorrectStreak:0,practiceMissStreak:0,practiceHistory:[],practiceLevelNote:'',lastPracticeSignature:null});renderAll()}
 
   function pointFromEvent(event){const svg=$('stage'),r=svg.getBoundingClientRect();return {x:(event.clientX-r.left)*1040/r.width,y:(event.clientY-r.top)*600/r.height}}
-  function beginObjectDrag(event){if(!state.free&&state.step!=='moveObject')return;hideConceptTip(true);state.dragging={kind:'object',id:event.pointerId};$('stage').setPointerCapture?.(event.pointerId);event.preventDefault()}
-  function beginScreenDrag(event){if(!state.free&&!['moveScreen','sampleNear','sampleFar','sampleVirtual'].includes(state.step))return;hideConceptTip(true);state.dragging={kind:'screen',id:event.pointerId};$('stage').setPointerCapture?.(event.pointerId);event.preventDefault()}
-  function onPointerMove(event){if(!state.dragging||state.dragging.id!==event.pointerId)return;hideConceptTip(true);const p=pointFromEvent(event);if(state.dragging.kind==='object')state.u=clamp((LENS_X-p.x)/SCALE,OBJECT_MIN,OBJECT_MAX);else state.screen=clamp((p.x-LENS_X)/SCALE,SCREEN_MIN,SCREEN_MAX);renderAll();event.preventDefault()}
+  function beginObjectDrag(event){if(!state.free&&state.step!=='moveObject')return;hideConceptTip(true);state.dragging={kind:'object',id:event.pointerId,offset:(LENS_X-pointFromEvent(event).x)/SCALE-state.u};$('stage').setPointerCapture?.(event.pointerId);event.preventDefault()}
+  function beginScreenDrag(event){if(!state.free&&!['moveScreen','sampleNear','sampleFar','sampleVirtual'].includes(state.step))return;hideConceptTip(true);state.dragging={kind:'screen',id:event.pointerId,offset:(pointFromEvent(event).x-LENS_X)/SCALE-state.screen};$('stage').setPointerCapture?.(event.pointerId);event.preventDefault()}
+  function onPointerMove(event){if(!state.dragging||state.dragging.id!==event.pointerId)return;hideConceptTip(true);const p=pointFromEvent(event);if(state.dragging.kind==='object')state.u=clamp((LENS_X-p.x)/SCALE-state.dragging.offset,OBJECT_MIN,OBJECT_MAX);else state.screen=clamp((p.x-LENS_X)/SCALE-state.dragging.offset,SCREEN_MIN,SCREEN_MAX);renderAll();event.preventDefault()}
   function endPointer(event){if(!state.dragging||state.dragging.id!==event.pointerId)return;const kind=state.dragging.kind;state.dragging=null;try{$('stage').releasePointerCapture?.(event.pointerId)}catch{}if(kind==='object')maybeMatchObject();else maybeMatchScreen();renderAll()}
   function nudge(kind,delta){if(kind==='object'){if(!state.free&&state.step!=='moveObject')return;state.u=clamp(state.u+delta,OBJECT_MIN,OBJECT_MAX);maybeMatchObject()}else{if(!state.free&&!['moveScreen','sampleNear','sampleFar','sampleVirtual'].includes(state.step))return;state.screen=clamp(state.screen+delta,SCREEN_MIN,SCREEN_MAX);maybeMatchScreen()}renderAll()}
   function keyboardControl(kind,event){const step=event.shiftKey ? .1 : .5;let delta=0;if(event.key==='ArrowLeft')delta=kind==='object'?step:-step;if(event.key==='ArrowRight')delta=kind==='object'?-step:step;if(!delta)return;event.preventDefault();nudge(kind,delta)}
@@ -1075,6 +1074,13 @@ button.primary{background:var(--lab-accent);border-color:var(--lab-accent);color
   $('objectLayer').addEventListener('keydown',e=>keyboardControl('object',e));$('screenLayer').addEventListener('keydown',e=>keyboardControl('screen',e));
   $('continueButton').addEventListener('click',continueJourney);$('restartButton').addEventListener('click',restart);$('freeExploreButton').addEventListener('click',beginFreeExploration);$('freshPracticeButton').addEventListener('click',beginPractice);
   window.addEventListener('resize',renderAll);
+
+function renderDesign(){
+    const target=state.step==='predict'?$('predictionOptions'):state.step==='moveObject'?$('objectLayer'):['moveScreen','sampleNear','sampleFar','sampleVirtual'].includes(state.step)?$('screenLayer'):null;
+    const instruction=stageInstruction();
+    const plain=document.createElement('div');plain.innerHTML=instruction?.text||'';
+    LabDesign.introduce(document.querySelector('main'),target?[target]:[],'lens-'+state.phase+'-'+state.step,instruction?.title.replace(' ↓','')||'Inspect the image',state.step==='predict'?'Choose where the image should form, then test the prediction with the object and screen.':plain.textContent);
+  }
 
   window.__lensLab={
     getState:()=>JSON.parse(JSON.stringify({...state,geometry:imageGeometry(),separation:raySeparationCm()})),

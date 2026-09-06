@@ -20,5 +20,93 @@
     "Do not portray adaptation as individuals deliberately acquiring a needed trait.",
     "Do not extend this population model into a full genetic or ecological simulator."
   ],
-  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract",
+  "implementation": {
+    "reviewedRevision": "dc02ec96e0ca610123d0becc0c06c3542ce2565d",
+    "surfaces": {
+      "goal": {
+        "selectors": [
+          "#missionTitle"
+        ],
+        "kind": "given",
+        "description": "Directional, stabilising or disruptive population goal.",
+        "visibility": "Present in the current investigation; child controls follow the mode and state."
+      },
+      "model": {
+        "selectors": [
+          "#stage"
+        ],
+        "kind": "model",
+        "description": "Seed environment, inherited adult variation and adult/likely-parent histogram aligned by trait.",
+        "visibility": "Present in the current investigation; child controls follow the mode and state."
+      },
+      "decision": {
+        "selectors": [
+          "#stageCard",
+          "#claimOptions",
+          "#stageCardActions"
+        ],
+        "kind": "working",
+        "description": "Prediction and current selection/inheritance/next-generation action beside the plots.",
+        "visibility": "Present in the current investigation; child controls follow the mode and state."
+      },
+      "evidence": {
+        "selectors": [
+          "#evidenceSection",
+          "#processSection",
+          "#history"
+        ],
+        "kind": "evidence",
+        "description": "Mean/spread/middle-frequency comparison, causal mechanism and generation history.",
+        "visibility": "Present in the current investigation; child controls follow the mode and state."
+      },
+      "progress": {
+        "selectors": [
+          "#scienceCheckpoints"
+        ],
+        "kind": "completion",
+        "description": "Three investigation checkpoints; previously unlocked investigations remain revisitable.",
+        "visibility": "Present in the current investigation; child controls follow the mode and state."
+      }
+    },
+    "quantities": {
+      "environment": {
+        "description": "Seed-size peak centres and widths.",
+        "domain": "Trait axis 4–16 mm; width constrained to 0.55–3 mm.",
+        "source": "Learner changes one or two food sources.",
+        "output": "Changes food access and likely reproductive contribution.",
+        "inputSlots": [
+          "#stage [data-handle]"
+        ]
+      },
+      "trait-frequency": {
+        "description": "Distribution of inherited beak depth in 72 adults.",
+        "domain": "Continuous bounded trait; histogram frequencies.",
+        "source": "Adults retain their values; selected parents produce similar offspring with variation.",
+        "output": "Next-generation mean, spread and middle/tail frequencies."
+      },
+      "prediction": {
+        "description": "Expected direction or shape of population change.",
+        "domain": "Mean increase, narrower distribution, or split distribution.",
+        "source": "Learner chooses before guided testing.",
+        "output": "Compared with observed generation outcome.",
+        "inputSlots": [
+          "#claimOptions"
+        ]
+      }
+    },
+    "modes": {
+      "guided": "Three successive selection patterns; first generation explicitly separates selection and inheritance. No Working toggle.",
+      "free": "One/two sources and repeated generations; returning restores guided state."
+    },
+    "dependencies": [
+      "Predict and change the food environment enough to produce a useful parent preview.",
+      "Selection precedes offspring production; offspring must replace adults before frequencies change.",
+      "Completion requires several generations and the relevant measured distribution change."
+    ],
+    "completion": "Directional: ≥3 generations and mean increase ≥1.65 mm; stabilising uses generation/spread criterion; disruptive: ≥4 generations, enlarged spread, reduced middle and both tails retained.",
+    "limitations": [
+      "Population size fixed; simplified heritable trait model. No claim that adult birds change their beaks, and no genetic-drift or Hardy–Weinberg model."
+    ]
+  }
 }

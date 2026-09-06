@@ -21,5 +21,98 @@
     "Do not model changing temperature, changing gas amount or non-ideal gas behaviour.",
     "Do not replace the piston investigation with a formula-only quiz."
   ],
-  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract",
+  "implementation": {
+    "reviewedRevision": "dc02ec96e0ca610123d0becc0c06c3542ce2565d",
+    "surfaces": {
+      "goal": {
+        "selectors": [
+          "#missionTitle"
+        ],
+        "kind": "given",
+        "description": "Current volume/pressure investigation.",
+        "visibility": "Present in the current investigation; child controls follow the mode and state."
+      },
+      "apparatus": {
+        "selectors": [
+          "#stage",
+          "#piston"
+        ],
+        "kind": "model",
+        "description": "Sealed particles, piston, pressure gauge, impact frequency and p–V graph.",
+        "visibility": "Present in the current investigation; child controls follow the mode and state."
+      },
+      "working": {
+        "selectors": [
+          "#phaseCard",
+          "#workingDock"
+        ],
+        "kind": "working",
+        "description": "Prediction followed by supplied or learner-calculated pressure/volume and marker.",
+        "visibility": "Present in the current investigation; child controls follow the mode and state."
+      },
+      "evidence": {
+        "selectors": [
+          "#chainVolume",
+          "#chainImpacts",
+          "#chainPressure",
+          "#equationUnlock"
+        ],
+        "kind": "evidence",
+        "description": "Causal chain and invariant under the apparatus.",
+        "visibility": "Present in the current investigation; child controls follow the mode and state."
+      },
+      "completion": {
+        "selectors": [
+          "#completionLayer",
+          "#completionCard"
+        ],
+        "kind": "completion",
+        "description": "Movable next-investigation prompt.",
+        "visibility": "After target reached and any required marker/working is accepted."
+      }
+    },
+    "quantities": {
+      "volume": {
+        "description": "Gas volume controlled by piston.",
+        "domain": "2–8 L.",
+        "source": "Starting/target values from current case; learner moves piston.",
+        "output": "Gauge, graph and particle impacts update.",
+        "inputSlots": [
+          "#piston"
+        ]
+      },
+      "pressure": {
+        "description": "Pressure p = K/V, with K fixed.",
+        "domain": "Pressure in kPa; pV = 600 kPa·L.",
+        "source": "Measured from current volume; later calculated before moving piston.",
+        "output": "Same value on gauge, graph and work."
+      },
+      "working": {
+        "description": "Product p₁V₁ and required pressure or volume.",
+        "domain": "Two scalar steps of one invariant calculation.",
+        "source": "Some supplies product; All asks product and target value.",
+        "output": "Accepted work places a prediction marker before physical test.",
+        "inputSlots": [
+          "#workingDock input"
+        ]
+      }
+    },
+    "modes": {
+      "observe": "Compression and expansion establish relationship before calculation levels unlock.",
+      "none": "Guided gauge test or supplied calculation; physical piston action remains.",
+      "some": "Enter target pressure/volume using supplied product.",
+      "all": "Also calculate the product.",
+      "free": "Pin readings and inspect the same fixed-temperature model."
+    },
+    "dependencies": [
+      "Observational prediction precedes piston movement.",
+      "Earned calculation support follows the first two tests.",
+      "Owned values must place an accepted marker before piston verification."
+    ],
+    "completion": "maybeComplete checks targetReached and working/marker prerequisites; release snaps within target tolerance. Generated practice retains support.",
+    "limitations": [
+      "Fixed temperature, particle count and piston area; idealised impact illustration, not a molecular dynamics solver."
+    ]
+  }
 }

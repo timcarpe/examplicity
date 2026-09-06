@@ -10,6 +10,7 @@ export const changelogEntries: readonly ChangelogEntry[] = [
     date: '2026-09-06',
     displayDate: '6 September 2026',
     publicChanges: [
+      'Refreshed Lens Imaging, Critical Angle, Diffraction, Gas Compression and Selection Pressure with clearer predictions, readable evidence, consistent checkpoints and contextual interaction hints while preserving their scientific models.',
       'Unified right-aligned Working, exam and checkpoint controls with compact rounded settings, centered labels and charcoal selection; simplified Binary’s range menu and value hints. Made neuron boundaries directly draggable with reliable parameter controls when the line leaves view, clarified floating-point normalisation goals and lost-bit feedback, corrected flip-flop wiring, and improved recursive frame labels and programming consoles in light and dark themes.',
       'Added Core and Extended choices to Rounded Measurements and Bounds: practise measurement intervals in Core or continue through the full speed-bound investigation in Extended, with working support controlled separately. Editing a Core endpoint clears the previous check feedback without interrupting typing.',
       'Refined Floating Point, Flip-Flops, Recursive Call Stacks, Artificial Neurons, Python Practice and the Pseudocode/Python Translator with shared controls, clearer evidence, readable code and targeted interaction cues while preserving their learning sequences and workbench layouts.',
@@ -22,6 +23,7 @@ export const changelogEntries: readonly ChangelogEntry[] = [
       'Unified Time Zones under Working: None / Some / All, made its calendars and date controls easier to read, restored its full calendar-and-working width, and preserved the complete-meeting availability checks. Recurring Decimals now explains repeating digits with aligned long-division evidence, clearer field feedback and consistent completion actions; resets sit beside their models.',
     ],
     internalChanges: [
+      'Consolidated the styling reference and rollout record; added five science implementation maps and shared science adapters, packaged into standalone labs and developer resources.',
       'Added six observational behaviour maps and shared computing/programming adapters; synchronized the living guides, authoring bundle and standalone resources. Retained offline interpreters and scoped package allowances for their embedded resources.',
       'Added revision-pinned behaviour maps for five construction and representation labs, a shared builder adapter and matching guide examples; synchronized the authoring bundle and standalone resources. Updated Bitmap and Automated Systems review revisions after the inline working and shared chip refinement, including the restored flowchart item chooser.',
       'Added five current-behaviour implementation maps and a shared computing-workspace adapter; documented space balancing and preserved the standalone resource packaging. Added focused concurrency and page-ownership checks for the memory simulation.',

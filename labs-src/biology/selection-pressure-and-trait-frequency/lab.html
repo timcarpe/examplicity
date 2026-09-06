@@ -209,9 +209,10 @@ main{container-name:lab-canvas;container-type:inline-size;width:calc(100vw - var
 
 </style>
 <link rel="stylesheet" href="./lab-kit.css" data-lab-resource="lab-kit.css">
+<!-- LAB_DESIGN_COMPONENTS -->
 </head>
 
-<body>
+<body class="lab-adopt-v3 lab-science science-selection">
 <main>
 <!-- LAB_MANIFEST_HEADER_START -->
 <header class="lab-manifest-header">
@@ -233,41 +234,53 @@ main{container-name:lab-canvas;container-type:inline-size;width:calc(100vw - var
 <!-- LAB_MANIFEST_HEADER_END -->
 <span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span><span data-lab-authored-subtitle-slot hidden></span>
 
-<section class="panel mission" aria-live="polite">
-  <div class="mission-copy">
+<section class="panel mission lab-activity-bar" aria-live="polite">
+  <div class="mission-copy lab-activity-task">
     <div class="mission-meta"><span id="challengeLabel">Investigation 1 of 3</span><span id="selectionMode" class="mode">Directional selection</span><span id="generationLabel" class="generation">Generation 0</span></div>
     <strong id="missionTitle">Make deeper beaks more common without changing any adult bird.</strong>
     <span id="missionHint">Predict → change food → inspect likely parents → reproduce → explain the population change.</span>
   </div>
-  <div class="mission-actions">
+  <div class="mission-actions"><div id="scienceCheckpoints"></div>
     <div id="challengeSteps" class="challenge-steps" aria-label="Guided investigations"></div>
-    <button id="freeModeBtn" class="free-mode-btn" type="button">Free experiment</button>
-    <button id="resetChallengeBtn" type="button" data-lab-action="reset">Reset</button>
+
+    <button id="resetChallengeBtn" data-lab-reset-target=".visual-head" type="button" data-lab-action="reset">Reset</button>
   </div>
 </section>
 
-<section class="panel lab">
+<section class="panel lab" data-lab-actions>
   <div class="workspace" data-lab-workspace>
     <div class="stage-side">
       <div class="visual-head">
         <div class="visual-copy"><strong>Trait = beak depth</strong><span>Deeper beaks crack larger seeds. Orange changes seed sizes; purple shows likely parents; blue adults change only after offspring replace them.</span></div>
-        <div class="legend" aria-label="Graph legend"><span><i class="resource"></i>seed sizes</span><span><i class="current"></i>adults</span><span><i class="parents"></i>likely parents</span><span><i class="previous"></i>previous</span></div>
+        <button id="freeModeBtn" class="free-mode-btn" type="button">Free experiment</button>
+<div class="legend" aria-label="Graph legend"><span><i class="resource"></i>seed sizes</span><span><i class="current"></i>adults</span><span><i class="parents"></i>likely parents</span><span><i class="previous"></i>previous</span></div>
       </div>
       <div id="stageShell" class="stage-shell">
-        <svg id="stage" class="stage" viewBox="0 0 960 530" preserveAspectRatio="xMidYMin meet" role="img" aria-labelledby="stageTitle stageDescription" data-lab-role="model" data-lab-manipulative="seed-environment">
+        <svg id="stage" class="stage" data-lab-readable-chart="11" viewBox="0 0 960 530" preserveAspectRatio="xMidYMin meet" role="img" aria-labelledby="stageTitle stageDescription" data-lab-role="model" data-lab-manipulative="seed-environment">
           <title id="stageTitle">Natural selection model linking seed availability, differential reproductive contribution and inherited beak-depth frequency</title>
           <desc id="stageDescription">Orange handles change the seed-size environment. Peak means the most common seed size and width means seed-size variety. Birds retain their inherited beak depths while food access changes. The purple distribution previews likely parent contribution; the blue distribution changes after reproduction.</desc>
         </svg>
         <div id="guideCard" class="guide-card" hidden aria-live="polite"><strong id="guideTitle"></strong><span id="guideCopy"></span></div>
       </div>
+<div class="science-support"><section class="side-section meaning-section">
+        <div class="side-heading"><strong>What the orange controls mean</strong><span>real food environment</span></div>
+        <div class="meaning-grid"><div><b>Peak</b><span>most common seed size</span></div><div><b>Width</b><span>variety of seed sizes</span></div><div><b>Two peaks</b><span>two distinct seed supplies</span></div></div>
+        <div id="environmentMeaning" class="environment-meaning"></div>
+      </section><section id="evidenceSection" class="side-section evidence-section" data-lab-role="evidence">
+        <div class="side-heading"><strong>Adults vs likely parents</strong><span id="previewStatus" class="preview-status">Predict first</span></div>
+        <div class="preview-key"><span>adult population</span><span>likely parents</span></div>
+        <div class="metrics preview-metrics"><div class="metric current-metric"><span>Mean</span><strong><b id="meanValue">—</b><small>mm</small></strong><em id="meanDelta" class="delta">current</em></div><div class="metric parent-metric"><span>Mean</span><strong><b id="parentMeanValue">—</b><small>mm</small></strong><em id="parentDelta" class="delta">vs current</em></div><div class="metric current-metric"><span>Spread</span><strong><b id="sdValue">—</b><small>mm SD</small></strong><em id="sdDelta" class="delta">current</em></div><div class="metric parent-metric"><span>Spread</span><strong><b id="parentSdValue">—</b><small>mm SD</small></strong><em id="parentSdDelta" class="delta">vs current</em></div><div class="metric current-metric"><span>Middle band</span><strong><b id="centreValue">—</b><small>%</small></strong><em id="centreDelta" class="delta">8.5–11.5 mm</em></div><div class="metric parent-metric"><span>Middle band</span><strong><b id="parentCentreValue">—</b><small>%</small></strong><em id="parentCentreDelta" class="delta">vs current</em></div></div>
+        <div id="history" class="history"></div>
+      </section></div>
+
+    </div>
+
+    <aside class="work-side" aria-label="Population evidence and real-world meaning">
       <section id="stageCard" class="stage-card" role="region" aria-label="Investigation guidance" aria-live="polite">
         <div class="stage-card-head"><div><span id="stageCardKicker" class="stage-card-kicker"></span><strong id="stageCardTitle"></strong></div><button id="stageCardClose" class="stage-card-close" type="button" aria-label="Dismiss this note">×</button></div>
         <span id="stageCardCopy" class="stage-card-copy"></span><div id="claimOptions" class="claim-options" hidden></div><div id="stageCardActions" class="stage-card-actions"></div>
       </section>
-    </div>
-
-    <aside class="work-side" aria-label="Population evidence and real-world meaning">
-      <section class="side-section trait-section">
+<section class="side-section trait-section">
         <div class="side-heading"><strong>Beak depth in this population</strong><span>adult % · likely-parent %</span></div>
         <div class="trait-band-strip" aria-label="Beak depth bands">
           <div class="trait-band low"><div class="trait-band-top"><svg class="trait-bird" viewBox="0 0 28 16" aria-hidden="true"><circle class="body" cx="10" cy="8" r="5"></circle><path class="beak" d="M14 6 L19 8 L14 10 Z"></path><circle class="eye" cx="11.8" cy="6.6" r=".8"></circle></svg><div class="trait-band-copy"><strong>Shallow</strong><span>best with smaller seeds</span></div></div><div class="band-values"><b id="bandLowPct">—%</b><em id="bandLowParent">—%</em></div></div>
@@ -277,18 +290,9 @@ main{container-name:lab-canvas;container-type:inline-size;width:calc(100vw - var
         <div id="traitBandCaption" class="trait-band-caption">Trait = beak depth, not beak versus no beak. These colours match the birds and adult histogram.</div>
       </section>
 
-      <section class="side-section meaning-section">
-        <div class="side-heading"><strong>What the orange controls mean</strong><span>real food environment</span></div>
-        <div class="meaning-grid"><div><b>Peak</b><span>most common seed size</span></div><div><b>Width</b><span>variety of seed sizes</span></div><div><b>Two peaks</b><span>two distinct seed supplies</span></div></div>
-        <div id="environmentMeaning" class="environment-meaning"></div>
-      </section>
 
-      <section id="evidenceSection" class="side-section evidence-section" data-lab-role="evidence">
-        <div class="side-heading"><strong>Adults vs likely parents</strong><span id="previewStatus" class="preview-status">Predict first</span></div>
-        <div class="preview-key"><span>adult population</span><span>likely parents</span></div>
-        <div class="metrics preview-metrics"><div class="metric current-metric"><span>Mean</span><strong><b id="meanValue">—</b><small>mm</small></strong><em id="meanDelta" class="delta">current</em></div><div class="metric parent-metric"><span>Mean</span><strong><b id="parentMeanValue">—</b><small>mm</small></strong><em id="parentDelta" class="delta">vs current</em></div><div class="metric current-metric"><span>Spread</span><strong><b id="sdValue">—</b><small>mm SD</small></strong><em id="sdDelta" class="delta">current</em></div><div class="metric parent-metric"><span>Spread</span><strong><b id="parentSdValue">—</b><small>mm SD</small></strong><em id="parentSdDelta" class="delta">vs current</em></div><div class="metric current-metric"><span>Middle band</span><strong><b id="centreValue">—</b><small>%</small></strong><em id="centreDelta" class="delta">8.5–11.5 mm</em></div><div class="metric parent-metric"><span>Middle band</span><strong><b id="parentCentreValue">—</b><small>%</small></strong><em id="parentCentreDelta" class="delta">vs current</em></div></div>
-        <div id="history" class="history"></div>
-      </section>
+
+
 
       <section id="processSection" class="side-section process-section">
         <div class="side-heading"><strong>Same mechanism every time</strong><span id="phaseStatus">Start with variation</span></div>
@@ -568,8 +572,8 @@ function freeCard(){const running=state.phase!=='idle';return{kind:'free',kicker
 function defaultCard(){if(state.freeMode)return freeCard();if(!state.prediction)return predictionCard();if(state.success)return null;if(state.phase!=='idle')return state.card;if(state.generation>0)return{kicker:`Generation ${state.generation}`,title:'Run another generation or reshape the seed environment.',copy:'These adults are the previous offspring. Keeping the same pressure tests whether the trend accumulates; changing it tests whether selection can reverse.',actions:[{label:'Run next generation',primary:true,fn:runGeneration},{label:'Restore starting seeds',fn:restorePressure}]};if(!state.changedPressure)return{kicker:'Adjust the seed environment',title:state.challenge===2?'Create two distinct seed supplies.':'Shape which seed sizes are easiest to find.',copy:realWorldInstruction()+' Drag the orange circle for the most common seed size and the triangles for seed-size variety. Watch purple likely parents change while blue adults stay fixed.',actions:[]};if(!previewReady())return{kicker:'Keep adjusting',title:'Make the selective difference visible before reproducing.',copy:previewInstruction()+' The blue adult population is still unchanged.',actions:[{label:'Restore starting seeds',fn:restorePressure}]};return{kicker:'Parent bias is visible',title:'Selection pressure changed who is likely to reproduce first.',copy:previewObservation()+' The blue adult population is still unchanged.',actions:[{label:'Run selection',primary:true,fn:runGeneration},{label:'Keep adjusting seeds',fn:()=>{state.card=null;state.guide='pressure';renderAll()}}]}}
 function renderCard(){const card=$('stageCard'),display=state.card||defaultCard();if(!display){card.hidden=true;return}card.hidden=false;const guided=!state.freeMode;card.className='stage-card '+(display.kind==='free'?'free ':display.kind==='prediction'?'prediction ':'')+(display.tone||'')+(guided?' signal-strip':'');$('stageCardKicker').textContent=display.kicker||'';$('stageCardTitle').textContent=display.title||'';$('stageCardCopy').textContent=display.copy||'';$('stageCardClose').hidden=!state.card||display.required===true||display.kind==='prediction'||display.kind==='free';const opts=$('claimOptions'),actions=$('stageCardActions');clear(opts);clear(actions);opts.classList.remove('next-choice-signal');if(display.predictions){opts.hidden=false;if(guided)opts.classList.add('next-choice-signal');display.predictions.forEach(p=>{const b=document.createElement('button');b.type='button';b.textContent=p.text;if(state.prediction===p.id)b.className='selected';b.addEventListener('click',()=>choosePrediction(p.id));opts.appendChild(b)})}else if(display.freeControls){opts.hidden=false;const row=document.createElement('div');row.className='free-control-row';[1,2].forEach(n=>{const b=document.createElement('button');b.type='button';b.textContent=n===1?'1 source':'2 sources';b.className=activePeakCount()===n?'active':'';b.addEventListener('click',()=>setFreeSources(n));row.appendChild(b)});[{label:'Run 1',primary:true,fn:()=>runFreeBatch(1)},{label:'Run 5',fn:()=>runFreeBatch(5)},{label:'Reset',fn:resetFreeExperiment}].forEach(a=>{const b=document.createElement('button');b.type='button';b.textContent=a.label;if(a.primary)b.className='primary';b.addEventListener('click',a.fn);row.appendChild(b)});opts.appendChild(row)}else opts.hidden=true;let signalled=false;(display.actions||[]).forEach(a=>{const b=document.createElement('button');b.type='button';b.textContent=a.label;if(a.primary)b.className=a.tone==='good'?'good':'primary';if(guided&&a.primary&&!signalled){b.classList.add('next-action-signal');b.setAttribute('aria-description','Recommended next action');signalled=true}b.disabled=!!a.disabled;b.addEventListener('click',a.fn);actions.appendChild(b)})}
 function choosePrediction(id){if(state.freeMode||state.generation>0||state.phase!=='idle')return;state.prediction=id;state.changedPressure=false;state.card=null;state.guide='pressure';renderAll();requestAnimationFrame(scrollPressureIntoView)}
-function fitStageBox(){const shell=$('stageShell');if(!shell)return;const shellW=shell.clientWidth,shellH=shell.clientHeight;if(!shellW||!shellH)return;let w=Math.max(shellW,660);if(shellW>=660)w=Math.min(w,shellH*960/530);w=Math.max(660,w);stage.style.width=w+'px';stage.style.height=(w*530/960)+'px'}
-function positionGuide(){const card=$('guideCard');card.hidden=true;const sub=document.querySelector('.visual-copy span');if(!sub)return;if(state.phase==='selection')sub.textContent='Selection is visible: green-ringed adults enter the parent pool; adult beak depths do not change.';else if(state.phase==='offspring')sub.textContent='Inheritance is visible: offspring cluster near successful parent beak depths before replacing the adults.';else if(state.freeMode)sub.textContent='Directly edit orange peak(s) and width(s), then run any number of generations from the guidance strip below.';else if(!state.prediction)sub.textContent='Choose one prediction in the flashing box below the model.';else if(state.guide==='pressure')sub.textContent='Flashing orange controls are next: circle = most common seed size; triangles = seed-size variety.';else if(previewReady())sub.textContent='The parent bias is strong enough. Use the flashing action below to run selection.';else sub.textContent='Watch purple likely parents respond immediately while the blue adult population remains fixed until reproduction.'}
+function fitStageBox(){stage.style.width='100%';stage.style.height='auto'}
+function positionGuide(){const card=$('guideCard');card.hidden=true;const sub=document.querySelector('.visual-copy span');if(!sub)return;if(state.phase==='selection')sub.textContent='Selection is visible: green-ringed adults enter the parent pool; adult beak depths do not change.';else if(state.phase==='offspring')sub.textContent='Inheritance is visible: offspring cluster near successful parent beak depths before replacing the adults.';else if(state.freeMode)sub.textContent='Directly edit orange peak(s) and width(s), then run any number of generations from the working panel.';else if(!state.prediction)sub.textContent='Choose one prediction in the working panel.';else if(state.guide==='pressure')sub.textContent='Flashing orange controls are next: circle = most common seed size; triangles = seed-size variety.';else if(previewReady())sub.textContent='The parent bias is strong enough. Use the working action to run selection.';else sub.textContent='Watch purple likely parents respond immediately while the blue adult population remains fixed until reproduction.'}
 function maybeShowPreviewCard(){if(state.freeMode||!state.prediction||state.phase!=='idle')return;state.card=null;state.guide=previewReady()?'run':'pressure';renderAll()}
 function runGeneration(){if(state.phase!=='idle'||state.success||(!state.freeMode&&(!state.prediction||(state.generation===0&&(!state.changedPressure||!previewReady())))))return;state.card=null;const gen=makeGeneration();state.survivors=gen.selected;state.offspring=gen.offspring;state.phase='selection';if(!state.freeMode&&!state.mechanismLearned&&state.challenge===0&&state.generation===0){state.card={required:true,tone:'phase',kicker:'Selection happens first',title:'Who reaches the parent pool?',copy:'Green-ringed adults get enough food to contribute offspring; crossed adults do not. Compare their inherited beak depths with the seed sizes. No adult changed its beak.',actions:[{label:'Produce offspring',primary:true,fn:continueInheritance}]};renderAll();return}renderAll();delay(continueInheritance,620)}
 function continueInheritance(){if(state.phase!=='selection')return;state.card=null;state.phase='offspring';if(!state.freeMode&&!state.mechanismLearned&&state.challenge===0&&state.generation===0){state.card={required:true,tone:'phase',kicker:'Inheritance follows selection',title:'Offspring resemble the successful parents.',copy:'Their beak depths cluster near parent values, with small inherited variation. The adult population still has not been replaced yet.',actions:[{label:'Make offspring the next generation',primary:true,fn:commitGeneration}]};renderAll();return}renderAll();delay(commitGeneration,720)}
@@ -579,9 +583,16 @@ function showSuccessCard(){const c=challenges[state.challenge],pred=c.prediction
 function runFreeBatch(n){if(!state.freeMode||state.phase!=='idle')return;state.batchRemaining=clamp(Number(n)||1,1,5);runGeneration()}
 function startChallenge(index){clearTimers();state.freeMode=false;state.challenge=clamp(Number(index)||0,0,2);state.generation=0;state.seed=9137+state.challenge*1337;state.population=initialPopulation(state.seed);state.previousPopulation=null;state.baseline=metrics(state.population);state.metrics=metrics(state.population);state.peaks=challenges[state.challenge].peaks.map(p=>({...p}));state.prediction=null;state.phase='idle';state.survivors=[];state.offspring=[];state.history=[];state.changedPressure=false;state.success=false;state.card=null;state.guide=null;state.batchRemaining=0;renderAll();requestAnimationFrame(()=>$('stageShell').scrollTo({left:0,top:0}))}
 function restorePressure(){if(state.phase!=='idle')return;if(state.freeMode){if(activePeakCount()===2)state.peaks=[{c:7.7,w:1.45,a:1},{c:12.3,w:1.45,a:1}];else state.peaks=[{c:10,w:2.25,a:1}];state.changedPressure=false;state.card=null;state.guide='pressure';renderAll();return}state.peaks=challenges[state.challenge].peaks.map(p=>({...p}));state.changedPressure=false;state.card=null;state.guide='pressure';renderAll()}
-function renderAll(){state.metrics=metrics(state.population);renderHeader();renderMeaning();renderProcess();renderMetrics();renderStage();fitStageBox();renderCard();positionGuide()}
+function renderAll(){state.metrics=metrics(state.population);renderHeader();renderMeaning();renderProcess();renderMetrics();renderStage();fitStageBox();renderCard();positionGuide();renderDesign()}
 
 $('freeModeBtn').addEventListener('click',()=>state.freeMode?exitFreeExperiment():enterFreeExperiment());$('resetChallengeBtn').addEventListener('click',()=>state.freeMode?resetFreeExperiment():startChallenge(state.challenge));$('stageCardClose').addEventListener('click',()=>{if(state.card?.required)return;state.card=null;renderAll()});window.addEventListener('resize',()=>{fitStageBox();positionGuide()});
+
+function renderDesign(){
+    LabDesign.checkpoints($('scienceCheckpoints'),['Directional selection','Stabilising selection','Disruptive selection'],state.freeMode?-1:state.challenge,i=>state.completedChallenges?.[i]);
+    $('scienceCheckpoints').querySelectorAll('.lab-checkpoint').forEach((dot,i)=>{const enabled=!state.freeMode&&i<=state.maxUnlocked&&state.phase==='idle';dot.setAttribute('role','button');dot.setAttribute('aria-disabled',String(!enabled));const revisit=()=>{if(enabled)startChallenge(i)};dot.addEventListener('click',revisit);dot.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();revisit()}})});
+    const target=state.success||state.freeMode?null:!state.prediction?$('claimOptions'):state.phase==='idle'&&!previewReady()?stage.querySelector('[data-handle="centre"]'):$('stageCardActions').querySelector('button:not(:disabled)');
+    LabDesign.introduce(document.querySelector('main'),target?[target]:[],'selection-'+state.challenge+'-'+(!state.prediction?'predict':state.phase==='idle'&&!previewReady()?'pressure':state.phase),!state.prediction?'Predict the population change':'Follow selection across generations',!state.prediction?'Predict how the inherited trait distribution will change. Adults do not change their own beaks.':state.phase==='idle'&&!previewReady()?'Drag the seed-size peak or its width grips. Compare the likely parents with the current adult population.':'Continue the selection and inheritance step, then compare the next generation.');
+  }
 
 window.__LAB_TEST__={
   getState:()=>JSON.parse(JSON.stringify({challenge:state.challenge,generation:state.generation,population:state.population,baseline:state.baseline,metrics:state.metrics,peaks:state.peaks,prediction:state.prediction,phase:state.phase,success:state.success,freeMode:state.freeMode,maxUnlocked:state.maxUnlocked,completedChallenges:state.completedChallenges,activePeaks:activePeakCount(),card:state.card?{title:state.card.title,tone:state.card.tone}:null})),

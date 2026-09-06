@@ -19,5 +19,95 @@
   "nonGoals": [
     "Do not turn the model into a quantitative diffraction-intensity measurement or a double-slit interference lab."
   ],
-  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract",
+  "implementation": {
+    "reviewedRevision": "dc02ec96e0ca610123d0becc0c06c3542ce2565d",
+    "surfaces": {
+      "goal": {
+        "selectors": [
+          "#missionTitle"
+        ],
+        "kind": "given",
+        "description": "Current discovery or wider-gap counterexample.",
+        "visibility": "Present in the current investigation; child controls follow the mode and state."
+      },
+      "tank": {
+        "selectors": [
+          "#stageFrame"
+        ],
+        "kind": "model",
+        "description": "Wave field and direct gap/wavelength grips; alternative range inputs below.",
+        "visibility": "Present in the current investigation; child controls follow the mode and state."
+      },
+      "working": {
+        "selectors": [
+          "#gapPhase",
+          "#wavePhase",
+          "#comparePhase",
+          "#workingBox"
+        ],
+        "kind": "working",
+        "description": "Prediction stages, counterexample requirements and numerical comparison.",
+        "visibility": "Present in the current investigation; child controls follow the mode and state."
+      },
+      "evidence": {
+        "selectors": [
+          "#evidenceGap",
+          "#evidenceWave",
+          "#evidenceCompare"
+        ],
+        "kind": "evidence",
+        "description": "Recorded gap, wavelength and ratio consequences.",
+        "visibility": "Present in the current investigation; child controls follow the mode and state."
+      },
+      "result": {
+        "selectors": [
+          "#challengeFeedback"
+        ],
+        "kind": "completion",
+        "description": "Test verdict and next generated example.",
+        "visibility": "After a counterexample test."
+      }
+    },
+    "quantities": {
+      "gap": {
+        "description": "Opening width g.",
+        "domain": "0.5–5.5 cm.",
+        "source": "Generated starting value; learner adjusts when unlocked.",
+        "output": "Outgoing spread and g/λ comparison."
+      },
+      "wavelength": {
+        "description": "Incoming wavelength λ.",
+        "domain": "0.4–2.8 cm.",
+        "source": "Fixed during gap discovery; learner changes during wavelength and comparison stages.",
+        "output": "Wave spacing and diffraction consequence."
+      },
+      "ratio": {
+        "description": "Current g/λ substitution and result.",
+        "domain": "Dimensionless scalar.",
+        "source": "None supplies values; Some asks ratio; All asks gap, wavelength and ratio.",
+        "output": "Checked alongside the physical counterexample.",
+        "inputSlots": [
+          "#workGapInput",
+          "#workLambdaInput",
+          "#workRatioInput"
+        ]
+      }
+    },
+    "modes": {
+      "gap": "Predict, then narrow gap with wavelength fixed.",
+      "wave": "Predict, then increase wavelength with gap fixed.",
+      "compare": "Wider gap must produce more spreading than the retained reference.",
+      "working": "None/Some/All only in comparison; generated examples retain the selected level."
+    },
+    "dependencies": [
+      "Prediction unlocks the current manipulator.",
+      "Discovery thresholds require an actual change, not a prediction alone.",
+      "Comparison requires a wider gap, a wider fan and correct requested working."
+    ],
+    "completion": "Gap discovery uses g/λ ≤ 1.22; wavelength discovery ≤ 1.35. Counterexample test compares width and spread with the generated reference and checks owned fields.",
+    "limitations": [
+      "Schematic ripple-tank field and spreading relation; not a numerical wave solver."
+    ]
+  }
 }

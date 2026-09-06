@@ -20,5 +20,95 @@
     "Do not replace the ray investigation with calculation-only exercises.",
     "Do not imply that aberrations or thick-lens effects are simulated."
   ],
-  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract",
+  "implementation": {
+    "reviewedRevision": "dc02ec96e0ca610123d0becc0c06c3542ce2565d",
+    "surfaces": {
+      "goal": {
+        "selectors": [
+          "#missionTitle"
+        ],
+        "kind": "given",
+        "description": "Current prediction or apparatus task.",
+        "visibility": "Present in the current investigation; child controls follow the mode and state."
+      },
+      "bench": {
+        "selectors": [
+          "#stage",
+          "#objectLayer",
+          "#screenLayer"
+        ],
+        "kind": "model",
+        "description": "Object, lens, rays, focal landmarks and screen on one optical axis.",
+        "visibility": "Present in the current investigation; child controls follow the mode and state."
+      },
+      "task": {
+        "selectors": [
+          "#phaseDock",
+          "#predictionOptions"
+        ],
+        "kind": "working",
+        "description": "Prediction, physical test and result replace one another beside the bench.",
+        "visibility": "Present in the current investigation; child controls follow the mode and state."
+      },
+      "evidence": {
+        "selectors": [
+          "#projectionGlyph",
+          "#liveGrid",
+          "#journal"
+        ],
+        "kind": "evidence",
+        "description": "Projection sharpness, image geometry and persistent observation record.",
+        "visibility": "Present in the current investigation; child controls follow the mode and state."
+      },
+      "completion": {
+        "selectors": [
+          "#successPanel",
+          "#continueButton"
+        ],
+        "kind": "completion",
+        "description": "Recorded image evidence and next investigation or practice.",
+        "visibility": "Visible after the required object position and screen test."
+      }
+    },
+    "quantities": {
+      "object-distance": {
+        "description": "Distance u from the fixed lens.",
+        "domain": "4.5–35 cm; f = 10 cm.",
+        "source": "Target given; learner moves the object.",
+        "output": "Determines real, focal-limit or virtual image geometry.",
+        "inputSlots": [
+          "#objectLayer"
+        ]
+      },
+      "screen-distance": {
+        "description": "Distance of the physical screen from the lens.",
+        "domain": "4–40 cm on the image side.",
+        "source": "Learner moves the screen after positioning the object.",
+        "output": "Ray separation and projected image test whether light meets there.",
+        "inputSlots": [
+          "#screenLayer"
+        ]
+      },
+      "image": {
+        "description": "Image distance, magnification, orientation and projectability.",
+        "domain": "Thin-lens geometry, including parallel rays at F.",
+        "source": "Computed from the same object distance and fixed focal length.",
+        "output": "Rays, image marker, live values and projection agree."
+      }
+    },
+    "modes": {
+      "guided": "Four successive object regions, each with prediction and physical test.",
+      "practice": "Generated image-region, relationship and mixed examples after guided work.",
+      "free": "Preset or direct object/screen changes; return to generated practice. No Working visibility toggle."
+    },
+    "dependencies": [
+      "Prediction unlocks object movement; matching the target unlocks screen testing.",
+      "Real images require focus; at F requires screen samples at 12 and 32 cm; virtual case tests the screen at 8 cm."
+    ],
+    "completion": "completePhase records the current ray evidence after maybeMatchObject and maybeMatchScreen satisfy that case.",
+    "limitations": [
+      "Thin-lens model; does not model aberrations or thick lenses."
+    ]
+  }
 }

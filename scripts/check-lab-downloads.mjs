@@ -10,15 +10,15 @@ const artifactLimitBytes = 512 * 1024;
 const licenseNotice = (await readFile(path.join(root, 'LICENSE'), 'utf8')).trim().replaceAll('\r\n', '\n');
 const artifactSizeWaivers = new Map([
   ['translator', {
-    maxBytes: 645_000,
+    maxBytes: 670_000,
     reason: 'Reviewed unchanged offline translation/interpreter engine plus embedded shared workbench styles and interaction helpers.',
   }],
   ['python-programming-practice', {
-    maxBytes: 1_485_000,
+    maxBytes: 1_510_000,
     reason: 'Reviewed unchanged offline Skulpt runtime and standard-library payload plus embedded shared workbench styles and interaction helpers.',
   }],
   ['sound-sampling', {
-    maxBytes: 1_565_000,
+    maxBytes: 1_600_000,
     reason: 'Reviewed unchanged offline audio payload plus embedded shared design resources, including computing construction/comparison workspaces, programming workbenches and native revealed-menu styling.',
   }],
 ]);

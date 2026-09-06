@@ -105,8 +105,9 @@ body>main{container-name:lab-canvas;container-type:inline-size;width:min(1200px,
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.001ms!important}}
 </style>
 <link rel="stylesheet" href="./lab-kit.css" data-lab-resource="lab-kit.css">
+<!-- LAB_DESIGN_COMPONENTS -->
 </head>
-<body>
+<body class="lab-adopt-v3 lab-science science-gas">
 <main>
 <!-- LAB_MANIFEST_HEADER_START -->
 <header class="lab-manifest-header">
@@ -126,8 +127,8 @@ body>main{container-name:lab-canvas;container-type:inline-size;width:min(1200px,
 <!-- LAB_MANIFEST_HEADER_END -->
 <span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span><span data-lab-authored-subtitle-slot hidden></span>
 
-<section class="panel mission" aria-live="polite">
-  <div class="mission-copy">
+<section class="panel mission lab-activity-bar" aria-live="polite">
+  <div class="mission-copy lab-activity-task">
     <div class="mission-kicker"><span id="missionPhase">Investigation 1 of 4</span><span id="missionLevel">Predict → test</span></div>
     <strong id="missionTitle">Predict what happens when the gas volume is halved.</strong>
     <span id="missionHint">Record a prediction first. Then move the piston to the marked volume and use the gauge, particles and graph as evidence.</span>
@@ -135,18 +136,18 @@ body>main{container-name:lab-canvas;container-type:inline-size;width:min(1200px,
   <div class="mission-tools">
     <div class="complexity">
       <div class="complexity-copy"><strong>Working required</strong><span id="complexityHelp">None · observe first</span></div>
-      <div class="complexity-switch" role="group" aria-label="Working required">
+      <div class="complexity-switch lab-toggle" data-kind="working" role="group" aria-label="Working required">
         <button type="button" data-work-level="0" class="active" aria-pressed="true">None</button>
         <button type="button" data-work-level="1" aria-pressed="false">Some</button>
         <button type="button" data-work-level="2" aria-pressed="false">All</button>
       </div>
     </div>
     <div id="caseRail" class="case-rail" aria-label="Investigation progress"></div>
-    <button id="resetCase" type="button" data-lab-action="reset">Reset investigation</button>
+    <button id="resetCase" data-lab-reset-target=".visual-head" type="button" data-lab-action="reset">Reset investigation</button>
   </div>
 </section>
 
-<section class="panel lab" data-lab-workspace>
+<section class="panel lab" data-lab-actions data-lab-workspace>
   <div class="workspace">
     <section class="stage-side">
       <div class="visual-head">
@@ -154,7 +155,7 @@ body>main{container-name:lab-canvas;container-type:inline-size;width:min(1200px,
         <div class="visual-key" aria-label="Visual key"><span><i class="gas"></i>gas particles</span><span><i class="hit"></i>piston impacts</span><span><i class="curve"></i>constant-temperature curve</span></div>
       </div>
       <div id="stageShell" class="stage-shell">
-        <svg id="stage" class="stage" viewBox="0 0 1040 620" role="img" aria-labelledby="svgTitle svgDesc" data-lab-role="model">
+        <svg id="stage" class="stage" data-lab-readable-chart="11" viewBox="0 0 1040 620" role="img" aria-labelledby="svgTitle svgDesc" data-lab-role="model">
           <title id="svgTitle">Interactive sealed gas cylinder with pressure gauge and pressure-volume graph</title>
           <desc id="svgDesc">Drag the piston horizontally. The gas volume, particle collision frequency, pressure gauge and pressure-volume point update while temperature and particle speed stay constant.</desc>
           <defs>
@@ -168,8 +169,8 @@ body>main{container-name:lab-canvas;container-type:inline-size;width:min(1200px,
           <g id="cylinderLayer">
             <rect x="54" y="52" width="682" height="302" rx="21" fill="url(#bathGrad)" stroke="#9ac9c5" stroke-width="2"/>
             <path class="bath-wave" d="M74 80 C92 72 108 88 126 80 S160 72 178 80 S212 88 230 80 S264 72 282 80 S316 88 334 80 S368 72 386 80 S420 88 438 80 S472 72 490 80 S524 88 542 80 S576 72 594 80 S628 88 646 80 S680 72 700 80"/>
-            <text x="78" y="75" fill="#2f6863" font-size="10" font-weight="800">CONSTANT-TEMPERATURE BATH · 300 K</text>
-            <text x="699" y="75" text-anchor="end" fill="#5d817e" font-size="8">energy transferred so average particle speed stays unchanged</text>
+            <text x="78" y="75" fill="#2f6863" font-size="10" font-weight="800">Temperature held at 300 K</text>
+
             <rect x="84" y="96" width="642" height="214" rx="16" fill="url(#metalGrad)" stroke="#6f7e87" stroke-width="2"/>
             <rect id="gasChamber" x="104" y="112" width="500" height="182" rx="5" fill="url(#gasGrad)" stroke="#7fa9c8" stroke-width="1.5"/>
             <rect x="91" y="112" width="18" height="182" rx="5" fill="#64727a"/>
@@ -182,13 +183,13 @@ body>main{container-name:lab-canvas;container-type:inline-size;width:min(1200px,
               <rect x="7" y="178" width="92" height="34" rx="10" fill="url(#metalGrad)" stroke="#6d7a82" stroke-width="2"/>
               <rect x="83" y="166" width="30" height="58" rx="10" fill="#59666e" stroke="#313b41" stroke-width="2"/>
               <path d="M-5 116 L-5 282" stroke="#a9b3b8" stroke-width="3"/>
-              <text x="53" y="199" text-anchor="middle" fill="#39464d" font-size="8" font-weight="850">DRAG</text>
+              <text x="53" y="199" text-anchor="middle" fill="#39464d" font-size="8" font-weight="850">↔</text>
             </g>
             <rect x="712" y="138" width="18" height="130" rx="7" fill="#64727a"/>
             <path d="M128 329 H690" stroke="#9aa7ae" stroke-width="2"/>
             <g id="volumeScale"></g>
             <g id="volumeTarget"></g>
-            <text x="407" y="348" text-anchor="middle" fill="#66757d" font-size="8" font-weight="800">GAS VOLUME / L</text>
+            <text x="407" y="348" text-anchor="middle" fill="#66757d" font-size="8" font-weight="800"></text>
           </g>
           <g id="gaugeLayer">
             <path d="M704 255 C748 255 748 210 773 210" fill="none" stroke="#71828b" stroke-width="7"/>
@@ -200,12 +201,12 @@ body>main{container-name:lab-canvas;container-type:inline-size;width:min(1200px,
             <circle cx="870" cy="184" r="9" fill="#56636b" stroke="#fff" stroke-width="3"/>
             <text x="870" y="236" text-anchor="middle" fill="#52616a" font-size="10" font-weight="850">PRESSURE</text>
             <text id="gaugeValue" x="870" y="258" text-anchor="middle" fill="#7c4a24" font-size="18" font-weight="850">100 kPa</text>
-            <text x="870" y="276" text-anchor="middle" fill="#6f7d85" font-size="8.5" font-weight="700">force per unit area</text>
+
           </g>
           <g id="graphLayer" data-lab-role="evidence">
             <rect x="44" y="382" width="708" height="214" rx="12" fill="#fff" stroke="#d3dade"/>
             <text x="62" y="404" fill="#33434d" font-size="10" font-weight="850">PRESSURE–VOLUME GRAPH</text>
-            <text id="graphCaption" x="735" y="404" text-anchor="end" fill="#738088" font-size="7.5">same fixed mass · same temperature</text>
+
             <g id="graphGrid"></g>
             <path id="graphCurve" class="graph-path" d=""/>
             <path id="graphTrace" class="graph-trace" d=""/>
@@ -218,7 +219,7 @@ body>main{container-name:lab-canvas;container-type:inline-size;width:min(1200px,
           <g id="collisionEvidence">
             <rect x="770" y="382" width="236" height="214" rx="12" fill="#fff" stroke="#d3dade"/>
             <text x="788" y="404" fill="#33434d" font-size="10" font-weight="850">PISTON IMPACTS</text>
-            <text x="988" y="404" text-anchor="end" fill="#738088" font-size="7.5">same particles · same speed</text>
+
             <rect x="788" y="420" width="200" height="58" rx="8" fill="#fff7ef" stroke="#edd5bd"/>
             <line x1="798" y1="466" x2="978" y2="466" stroke="#d9b996" stroke-width="2"/>
             <g id="impactPulses"></g>
@@ -230,9 +231,18 @@ body>main{container-name:lab-canvas;container-type:inline-size;width:min(1200px,
           </g>
         </svg>
         <div id="interactionGuide" class="interaction-guide" hidden aria-live="polite"><div id="guideConnector" class="guide-connector" aria-hidden="true"></div><div id="guideCard" class="guide-card"><span id="guideKicker" class="guide-kicker">Now test it</span><strong id="guideTitle">Drag the piston wall to the marked volume.</strong><span id="guideCopy">Watch the particle impacts, gauge needle and graph point move together.</span></div></div>
-        <div id="completionLayer" class="completion-layer" hidden><section id="completionCard" class="completion-card" role="dialog" aria-modal="false" aria-live="polite"><span id="completionKicker" class="completion-kicker">Evidence observed</span><strong id="completionTitle"></strong><span id="completionText"></span><div id="completionEvidence" class="completion-evidence"></div><div class="completion-actions"><button id="exploreFree" type="button" hidden>Explore freely</button><button id="nextCase" class="good" type="button">Next investigation</button></div></section></div>
+        <div id="completionLayer" class="completion-layer" hidden><section id="completionCard" class="completion-card next-card" role="dialog" aria-modal="false" aria-live="polite"><span id="completionKicker" class="completion-kicker">Evidence observed</span><strong id="completionTitle"></strong><span id="completionText"></span><div id="completionEvidence" class="completion-evidence"></div><div class="completion-actions"><button id="exploreFree" type="button" hidden>Explore freely</button><button id="nextCase" class="primary" data-priority="primary" type="button">Next investigation</button></div></section></div>
       </div>
-      <div class="stage-readout" aria-label="Live measurements">
+      <section class="relationship-card">
+        <h3>Action → physical consequence</h3>
+        <div class="change-chain">
+          <div class="chain-step"><span>Volume</span><strong id="chainVolume">6.00 → 6.00 L</strong></div><div class="chain-arrow"></div>
+          <div class="chain-step"><span>Impact rate</span><strong id="chainImpacts">12 → 12 /s</strong></div><div class="chain-arrow"></div>
+          <div class="chain-step"><span>Pressure</span><strong id="chainPressure">100 → 100 kPa</strong></div>
+        </div>
+        <div id="relationshipSentence" class="relationship-sentence">Move the piston after recording a prediction. The chain will show what changed and why.</div>
+      </section>
+<div class="stage-readout" aria-label="Live measurements">
         <div id="volumeReadoutBox" class="readout changed"><span>Gas volume</span><strong id="volumeReadout">6.00 L</strong></div>
         <div id="pressureReadoutBox" class="readout changed"><span>Pressure</span><strong id="pressureReadout">100 kPa</strong></div>
         <div id="impactReadoutBox" class="readout changed"><span>Piston impacts</span><strong id="impactReadout">12 / model s</strong></div>
@@ -244,15 +254,7 @@ body>main{container-name:lab-canvas;container-type:inline-size;width:min(1200px,
     <aside class="evidence-side" aria-label="Investigation guidance and evidence">
       <section id="phaseCard" class="phase-card" aria-live="polite"></section>
       <section id="workingDock" class="working-dock" aria-label="Working area" aria-live="polite" data-lab-role="working"></section>
-      <section class="relationship-card">
-        <h3>Action → physical consequence</h3>
-        <div class="change-chain">
-          <div class="chain-step"><span>Volume</span><strong id="chainVolume">6.00 → 6.00 L</strong></div><div class="chain-arrow"></div>
-          <div class="chain-step"><span>Impact rate</span><strong id="chainImpacts">12 → 12 /s</strong></div><div class="chain-arrow"></div>
-          <div class="chain-step"><span>Pressure</span><strong id="chainPressure">100 → 100 kPa</strong></div>
-        </div>
-        <div id="relationshipSentence" class="relationship-sentence">Move the piston after recording a prediction. The chain will show what changed and why.</div>
-      </section>
+
       <section class="invariants">
         <h3>What stays constant</h3>
         <div class="invariant-grid">
@@ -337,7 +339,8 @@ body>main{container-name:lab-canvas;container-type:inline-size;width:min(1200px,
     for(let i=0;i<18;i++){const angle=(i*137.5%360)*Math.PI/180,speed=74;const p={x:INNER_LEFT+24+Math.random()*420,y:TOP+17+Math.random()*(BOTTOM-TOP-34),vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed,el:svg('circle',{r:5,class:'particle'})};state.particles.push(p);particleLayer.append(p.el)}
     renderCaseRail();
   }
-  function renderCaseRail(){const host=$('caseRail');host.innerHTML='';CASES.forEach((_,i)=>{const d=document.createElement('span');d.className=`case-dot ${state.solved[i]?'done':''} ${i===state.caseIndex&&!state.free?'active':''}`;d.title=CASES[i].label;host.append(d)})}
+  function renderCaseRail(){LabDesign.checkpoints($('caseRail'),CASES.map(c=>c.label),state.free?-1:state.caseIndex,i=>state.solved[i]);}
+
   function resetParticles(){const right=volumeToX(state.volume)-15;state.particles.forEach((p,i)=>{p.x=INNER_LEFT+16+Math.random()*Math.max(35,right-INNER_LEFT-28);p.y=TOP+16+Math.random()*(BOTTOM-TOP-32);const a=(i*137.5%360)*Math.PI/180;p.vx=Math.cos(a)*74;p.vy=Math.sin(a)*74})}
   function positionStageForCase(){requestAnimationFrame(()=>{const shell=$('stageShell'),stage=$('stage');if(!shell||!stage||shell.scrollWidth<=shell.clientWidth+2)return;const scale=stage.getBoundingClientRect().width/1040;let focus=volumeToX(state.volume);if(!state.free&&c().id!=='gauge')focus=(volumeToX(c().startV)+volumeToX(c().targetV))/2;shell.scrollLeft=clamp(focus*scale-shell.clientWidth/2,0,shell.scrollWidth-shell.clientWidth)})}
   function revealStage(){positionStageForCase();requestAnimationFrame(()=>{const shell=$('stageShell');if(!shell)return;const r=shell.getBoundingClientRect();if(r.top<0||r.bottom>innerHeight)shell.scrollIntoView({block:'center',behavior:'auto'})})}
@@ -364,7 +367,8 @@ body>main{container-name:lab-canvas;container-type:inline-size;width:min(1200px,
     const dx=target.x-sx,dy=target.y-sy,len=Math.max(8,Math.hypot(dx,dy)-5),ang=Math.atan2(dy,dx)*180/Math.PI;
     line.style.left=`${sx}px`;line.style.top=`${sy}px`;line.style.width=`${len}px`;line.style.transform=`rotate(${ang}deg)`;
   }
-  function positionCompletionCard(shell){const card=$('completionCard');if(!card)return;const pad=innerWidth<=620?9:12;card.style.right='auto';card.style.left=`${shell.scrollLeft+Math.max(pad,shell.clientWidth-card.offsetWidth-pad)}px`}
+  function positionCompletionCard(shell){ /* Shared completion placement owns this card. */ }
+
   function startCase(index=state.caseIndex,level=null){state.caseIndex=clamp(index,0,CASES.length-1);state.free=false;state.workingLevel=level===null?recommendedWorkingLevel(state.caseIndex):clamp(Number(level)||0,0,2);if(state.caseIndex===3)state.practiceLevel=state.workingLevel;state.volume=c().startV;state.freeStartV=state.volume;state.prediction=null;state.trace=[state.volume];state.markerP=null;state.markerV=null;state.markerPlaced=false;state.work={product:'',pressure:'',volume:''};if(c().working&&state.workingLevel===0){state.markerP=c().targetP;state.markerPlaced=true}state.flashes=[];$('completionLayer').hidden=true;$('interactionGuide').hidden=true;$('piston').classList.remove('guide','dragging');resetParticles();renderAll();positionStageForCase();}
   function phaseMarkup(){
     const cfg=c();
@@ -372,7 +376,7 @@ body>main{container-name:lab-canvas;container-type:inline-size;width:min(1200px,
     if(cfg.working){return `<div class="phase-kicker"><span>Calculation challenge</span><span>${cfg.generated?`practice ${state.practiceNumber}`:'final investigation'}</span></div><h2>Predict the pressure at ${fmt(cfg.targetV,2)} L.</h2><p>The working area stays directly below this prompt. Your calculated marker remains on the gauge and graph while the experiment reveals the measured pressure.</p><div class="action-cue"><span class="cue-index">1</span><strong>Start in the working area below</strong><small>${state.workingLevel===0?'The worked calculation is revealed for you.':'Complete the yellow '+(state.workingLevel===1?'result':'boxes')+' before testing.'}</small></div>`}
     const need=!state.prediction;
     const after=state.caseIndex===2&&state.workingLevel>0?'Prediction recorded. Complete the yellow working below, then place your calculated volume marker.':'Prediction recorded. The piston is unlocked; test it against the physical evidence.';
-    return `<div class="phase-kicker"><span>Prediction</span><span>${cfg.label}</span></div><h2>${cfg.question}</h2><p>The lab records the choice without judging it. The physical system supplies the verdict.</p>${need?'<div class="action-cue"><span class="cue-index">1</span><strong>Choose one prediction</strong><small>This unlocks the next interaction.</small></div>':''}<div class="prediction-grid ${need?'cue-target':''}">${cfg.choices.map(([value,label])=>`<button type="button" data-prediction="${value}" class="${state.prediction===value?'selected':''}">${label}</button>`).join('')}</div><div class="prediction-note ${state.prediction?'ready':''}">${state.prediction?after:'Choose before changing the gas.'}</div>`
+    return `<div class="phase-kicker"><span>Prediction</span><span>${cfg.label}</span></div><h2>${cfg.question}</h2><p>Compare your prediction with the gauge after moving the piston.</p>${need?'<div class="action-cue"><span class="cue-index">1</span><strong>Choose one prediction</strong><small>This unlocks the next interaction.</small></div>':''}<div class="prediction-grid ${need?'cue-target':''}">${cfg.choices.map(([value,label])=>`<button type="button" data-prediction="${value}" class="${state.prediction===value?'selected':''}">${label}</button>`).join('')}</div><div class="prediction-note ${state.prediction?'ready':''}">${state.prediction?after:'Choose before changing the gas.'}</div>`
   }
   function attachPhaseEvents(){
     document.querySelectorAll('[data-prediction]').forEach(btn=>btn.addEventListener('click',()=>{state.prediction=btn.dataset.prediction;renderAll();if(canDrag())revealStage()}));
@@ -389,14 +393,14 @@ body>main{container-name:lab-canvas;container-type:inline-size;width:min(1200px,
   function renderWorkingDock(){
     const host=$('workingDock'),cfg=c(),level=state.free?0:state.workingLevel;
     host.className=`working-dock ${level>0&&!state.free?'needs-work':''}`;
-    if(state.free){host.innerHTML=`<div class="working-head"><div><strong>Working area</strong><span>No calculation is required in the open investigation. Use pinned readings to test p × V.</span></div><b class="work-level-pill">None</b></div><div class="equation-line">p × V = ${fmt(pressure(state.volume)*state.volume,0)} kPa·L</div><div class="work-flow">${autoWork('current volume',fmt(state.volume,2),'L')}${autoWork('current pressure',fmt(pressure(state.volume),0),'kPa')}</div>`;return}
-    if(state.caseIndex<2){host.innerHTML=`<div class="working-head"><div><strong>Working area</strong><span>First build the relationship from two opposite physical tests. Calculation ownership unlocks afterwards.</span></div><b class="work-level-pill">None</b></div><div class="work-flow">${autoWork('start volume',fmt(cfg.startV,2),'L')}${autoWork('start pressure',fmt(pressure(cfg.startV),0),'kPa')}</div><div class="working-feedback">No yellow boxes yet. Predict → move → compare the collision and pressure evidence.</div>`;return}
+    if(state.free){host.innerHTML=`<div class="working-head"><div><strong>Pressure and volume</strong><span>No calculation is required in the open investigation. Use pinned readings to test p × V.</span></div><b class="work-level-pill">None</b></div><div class="equation-line">p × V = ${fmt(pressure(state.volume)*state.volume,0)} kPa·L</div><div class="work-flow">${autoWork('current volume',fmt(state.volume,2),'L')}${autoWork('current pressure',fmt(pressure(state.volume),0),'kPa')}</div>`;return}
+    if(state.caseIndex<2){host.innerHTML=`<div class="working-head"><div><strong>Pressure and volume</strong><span>First build the relationship from two opposite physical tests. Calculation ownership unlocks afterwards.</span></div><b class="work-level-pill">None</b></div><div class="work-flow">${autoWork('start volume',fmt(cfg.startV,2),'L')}${autoWork('start pressure',fmt(pressure(cfg.startV),0),'kPa')}</div><div class="working-feedback">Compare the starting values with the live readings.</div>`;return}
     if(level===0){
       const copy=cfg.id==='gauge'?'Use the gauge to find 150 kPa. The target volume stays hidden so the physical evidence does the work.':'The calculation is shown. Test the worked pressure against the physical system.';
       let body='';
       if(cfg.working){const p1=pressure(cfg.startV);body=`<div class="equation-line">p₁V₁ = p₂V₂</div><div class="work-flow">${autoWork('p₁ × V₁',`${fmt(p1,0)} × ${fmt(cfg.startV,2)} = ${fmt(K,0)}`,'kPa·L')}${autoWork('p₂',`${fmt(K,0)} ÷ ${fmt(cfg.targetV,2)} = ${fmt(cfg.targetP,0)}`,'kPa')}</div><div class="working-feedback good">Worked marker placed at ${fmt(cfg.targetP,0)} kPa. Drag the piston to ${fmt(cfg.targetV,2)} L and compare.</div>`;}
       else body=`<div class="work-flow">${autoWork('known pressure',fmt(cfg.targetP,0),'kPa')}${autoWork('target volume','hidden','')}</div><div class="working-feedback">${copy}</div>`;
-      host.innerHTML=`<div class="working-head"><div><strong>Working area</strong><span>${copy}</span></div><b class="work-level-pill">None</b></div>${body}`;return
+      host.innerHTML=`<div class="working-head"><div><strong>Pressure and volume</strong><span>${copy}</span></div><b class="work-level-pill">None</b></div>${body}`;return
     }
     const enabled=workingPrerequisiteMet();
     const productStatus='',candidateStatus='';
@@ -410,7 +414,7 @@ body>main{container-name:lab-canvas;container-type:inline-size;width:min(1200px,
       const p1=pressure(cfg.startV);flow=(level===2?workEntry('product','p₁ × V₁',state.work.product,'kPa·L',true,productStatus):autoWork('p₁ × V₁',`${fmt(p1,0)} × ${fmt(cfg.startV,2)} = ${fmt(K,0)}`,'kPa·L'))+workEntry('pressure','predicted p₂',state.work.pressure,'kPa',true,candidateStatus);
       button='<button id="placeWorkMarker" class="primary" type="button">Place pressure marker</button>';
     }
-    host.innerHTML=`<div class="working-head"><div><strong>Working area</strong><span>${intro}${!enabled?' Record the qualitative prediction above first.':''}</span></div><b class="work-level-pill">${level===1?'Some':'All'}</b></div><div class="equation-line">p₁V₁ = p₂V₂</div><div class="work-flow">${flow}</div><div class="working-actions">${button}</div><div id="workingFeedback" class="working-feedback">${!enabled?'The yellow working unlocks after your prediction.':'Enter the yellow '+(level===1?'result':'values')+', place the marker, then test it. A wrong marker stays visible.'}</div>`;
+    host.innerHTML=`<div class="working-head"><div><strong>Pressure and volume</strong><span>${intro}${!enabled?' Record the qualitative prediction above first.':''}</span></div><b class="work-level-pill">${level===1?'Some':'All'}</b></div><div class="equation-line">p₁V₁ = p₂V₂</div><div class="work-flow">${flow}</div><div class="working-actions">${button}</div><div id="workingFeedback" class="working-feedback">${!enabled?'The yellow working unlocks after your prediction.':'Enter the yellow '+(level===1?'result':'values')+', place the marker, then test it. A wrong marker stays visible.'}</div>`;
     const first=[...host.querySelectorAll('.work-box.entry:not(.locked)')].find(el=>!el.querySelector('input').value.trim());if(first)first.classList.add('guide-work-target');
     host.querySelectorAll('[data-work-input]').forEach(input=>input.addEventListener('input',e=>{state.work[e.target.dataset.workInput]=e.target.value;state.markerP=null;state.markerV=null;state.markerPlaced=false;renderTargets()}));
     $('placeWorkMarker')?.addEventListener('click',placeWorkMarker);
@@ -481,11 +485,11 @@ body>main{container-name:lab-canvas;container-type:inline-size;width:min(1200px,
     else if(cfg.id==='gauge')$('missionHint').textContent=state.workingLevel===0?'Predict the direction, then use the gauge to find 150 kPa. No calculation is required.':state.workingLevel===1?'Predict the direction, complete the one yellow volume result, place its marker, then test it with the gauge.':'Predict the direction, complete both yellow calculation boxes, place your marker, then test it with the gauge.';
     else $('missionHint').textContent=state.workingLevel===0?`The worked pressure marker is shown. Move to ${fmt(cfg.targetV,2)} L and test whether the physical system agrees.`:state.workingLevel===1?`Complete the one yellow pressure result, place your marker, then test it at ${fmt(cfg.targetV,2)} L.`:`Complete both yellow calculation boxes, place your pressure marker, then test it at ${fmt(cfg.targetV,2)} L.`;
     if(rebuildPhase){$('phaseCard').innerHTML=phaseMarkup();attachPhaseEvents()}$('phaseCard').classList.toggle('needs-action',!state.free&&!cfg.working&&!state.prediction);renderWorkingDock();renderWorkingFeedback();renderCaseRail();
-    if(cfg.id==='gauge'){$('guideKicker').textContent=state.workingLevel>0?'3 · Test your result':'2 · Control the gas';$('guideTitle').textContent='Drag the piston wall until pressure reaches 150 kPa.';$('guideCopy').textContent=state.workingLevel>0?'Compare the purple calculated volume marker with the gauge target and collision evidence.':'Use the gauge or live pressure readout. Notice what happens to particle impacts.'}else if(cfg.working){$('guideKicker').textContent='2 · Test your calculation';$('guideTitle').textContent=`Drag the piston wall to ${fmt(cfg.targetV,2)} L.`;$('guideCopy').textContent='Your pressure marker stays fixed while the gauge and graph reveal the measured pressure.'}else{$('guideKicker').textContent='2 · Now test it';$('guideTitle').textContent='Drag the piston wall to the marked volume.';$('guideCopy').textContent='Watch the particle impacts, gauge needle and graph point move together.'}const showGuide=canDrag()&&!targetReached()&&!state.free&&!state.solved[state.caseIndex]&&!state.drag;$('interactionGuide').hidden=!showGuide;if(showGuide)$('piston').classList.add('guide');else if(!state.drag)$('piston').classList.remove('guide');positionOverlayCards()
+    if(cfg.id==='gauge'){$('guideKicker').textContent=state.workingLevel>0?'3 · Test your result':'2 · Control the gas';$('guideTitle').textContent='Drag the piston wall until pressure reaches 150 kPa.';$('guideCopy').textContent=state.workingLevel>0?'Compare the purple calculated volume marker with the gauge target and collision evidence.':'Use the gauge or live pressure readout. Notice what happens to particle impacts.'}else if(cfg.working){$('guideKicker').textContent='2 · Test your calculation';$('guideTitle').textContent=`Drag the piston wall to ${fmt(cfg.targetV,2)} L.`;$('guideCopy').textContent='Your pressure marker stays fixed while the gauge and graph reveal the measured pressure.'}else{$('guideKicker').textContent='2 · Now test it';$('guideTitle').textContent='Drag the piston wall to the marked volume.';$('guideCopy').textContent='Watch the particle impacts, gauge needle and graph point move together.'}const showGuide=canDrag()&&!targetReached()&&!state.free&&!state.solved[state.caseIndex]&&!state.drag;$('interactionGuide').hidden=!showGuide;if(showGuide)$('piston').classList.add('guide');else if(!state.drag)$('piston').classList.remove('guide');positionOverlayCards();renderDesign()
   }
   function eventPoint(e){const svgEl=$('stage'),r=svgEl.getBoundingClientRect();return{x:(e.clientX-r.left)/r.width*1040,y:(e.clientY-r.top)/r.height*620}}
-  $('piston').addEventListener('pointerdown',e=>{if(!canDrag())return;e.preventDefault();state.drag={id:e.pointerId};$('piston').setPointerCapture?.(e.pointerId);$('piston').classList.add('dragging');$('piston').classList.remove('guide');$('interactionGuide').hidden=true});
-  $('piston').addEventListener('pointermove',e=>{if(state.drag?.id!==e.pointerId)return;e.preventDefault();const pt=eventPoint(e);setVolume(xToVolume(pt.x),'drag')});
+  $('piston').addEventListener('pointerdown',e=>{if(!canDrag())return;e.preventDefault();state.drag={id:e.pointerId,offset:eventPoint(e).x-volumeToX(state.volume)};$('piston').setPointerCapture?.(e.pointerId);$('piston').classList.add('dragging');$('piston').classList.remove('guide');$('interactionGuide').hidden=true});
+  $('piston').addEventListener('pointermove',e=>{if(state.drag?.id!==e.pointerId)return;e.preventDefault();const pt=eventPoint(e);setVolume(xToVolume(pt.x-state.drag.offset),'drag')});
   function endDrag(e){if(state.drag?.id!==e.pointerId)return;state.drag=null;$('piston').classList.remove('dragging');if(targetReached())state.volume=c().targetV;renderAll(false);maybeComplete()}
   $('piston').addEventListener('pointerup',endDrag);$('piston').addEventListener('pointercancel',endDrag);
   $('piston').addEventListener('keydown',e=>{if(!canDrag())return;if(!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End'].includes(e.key))return;e.preventDefault();if(e.key==='Home')setVolume(MIN_V,'key');else if(e.key==='End')setVolume(MAX_V,'key');else setVolume(state.volume+((e.key==='ArrowRight'||e.key==='ArrowUp')?.05:-.05),'key');requestAnimationFrame(()=>$('piston').focus());maybeComplete()});
@@ -499,6 +503,11 @@ body>main{container-name:lab-canvas;container-type:inline-size;width:min(1200px,
   function animation(now){const dt=Math.min(.035,(now-state.lastTime)/1000);state.lastTime=now;state.pulsePhase+=dt*8;const right=volumeToX(state.volume)-15;for(const p of state.particles){p.x+=p.vx*dt;p.y+=p.vy*dt;if(p.x<INNER_LEFT+7){p.x=INNER_LEFT+7;p.vx=Math.abs(p.vx)}if(p.x>right){p.x=right;p.vx=-Math.abs(p.vx);state.flashes.push({x:right+1,y:p.y,life:1})}if(p.y<TOP+7){p.y=TOP+7;p.vy=Math.abs(p.vy)}if(p.y>BOTTOM-7){p.y=BOTTOM-7;p.vy=-Math.abs(p.vy)}p.el.setAttribute('cx',p.x);p.el.setAttribute('cy',p.y)}
     const host=$('collisionLayer');host.innerHTML='';state.flashes=state.flashes.filter(f=>{f.life-=dt*3.2;if(f.life<=0)return false;const g=svg('g',{transform:`translate(${f.x} ${f.y})`,opacity:f.life});g.append(svg('line',{x1:-11,y1:0,x2:-2,y2:0,class:'collision-flash live'}));g.append(svg('line',{x1:-8,y1:-8,x2:-2,y2:-2,class:'collision-flash live'}));g.append(svg('line',{x1:-8,y1:8,x2:-2,y2:2,class:'collision-flash live'}));host.append(g);return true});
     if(Math.floor(state.pulsePhase*2)%2===0)renderImpactPanel(impactRate(state.volume));requestAnimationFrame(animation)}
+function renderDesign(){
+    const cfg=c(),target=!state.prediction&&!state.free?$('phaseCard').querySelector('.prediction-grid'):canDrag()?$('piston'):$('workingDock').querySelector('input');
+    LabDesign.introduce(document.querySelector('main'),state.solved[state.caseIndex]&&!state.free?[]:target?[target]:[],'gas-'+state.caseIndex+'-'+(!state.prediction?'predict':canDrag()?'piston':'working'),!state.prediction?'Predict the pressure':'Test the pressure–volume relationship',!state.prediction?'Choose how pressure changes before moving the piston.':canDrag()?'Drag the piston to the target. Compare the gauge, impacts and pressure–volume point.':'Calculate the required value, place its marker, then test it with the piston.');
+  }
+
   initStatic();startCase(0);requestAnimationFrame(animation);
   window.__gasCompressionLab={
     getState:()=>({caseIndex:state.caseIndex,workingLevel:state.workingLevel,volume:state.volume,pressure:pressure(state.volume),prediction:state.prediction,solved:[...state.solved],markerP:state.markerP,markerV:state.markerV,markerPlaced:state.markerPlaced,work:{...state.work},free:state.free,freeStartV:state.freeStartV,pins:[...state.pins],practiceNumber:state.practiceNumber,practiceLevel:state.practiceLevel,problem:{...c()}}),

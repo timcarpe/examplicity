@@ -1157,8 +1157,9 @@ body>main{width:min(1200px,calc(100vw - 28px));height:auto;max-height:calc(100vh
 }
 </style>
 <link rel="stylesheet" href="./lab-kit.css" data-lab-resource="lab-kit.css">
+<!-- LAB_DESIGN_COMPONENTS -->
 </head>
-<body data-lab-layout="standard" data-phase="gap">
+<body data-lab-layout="standard" data-phase="gap" class="lab-adopt-v3 lab-science science-diffraction">
 <main>
 <!-- LAB_MANIFEST_HEADER_START -->
 <header class="lab-manifest-header">
@@ -1181,30 +1182,36 @@ body>main{width:min(1200px,calc(100vw - 28px));height:auto;max-height:calc(100vh
 <span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span>
 <span data-lab-authored-subtitle-slot hidden></span>
 
-<section class="panel mission" aria-live="polite">
-  <div class="mission-copy">
+<section class="panel mission lab-activity-bar" aria-live="polite">
+  <div class="mission-copy lab-activity-task">
     <div id="missionKicker" class="problem-kicker">Investigation 1 · change one variable</div>
     <strong id="missionTitle">Find the gap width that makes the outgoing wavefronts curve strongly.</strong>
     <span id="missionHint">Predict first. Then drag either edge of the gap while wavelength stays fixed.</span>
   </div>
-  <div class="mission-tools">
+  <div class="mission-tools"><div class="working-switch lab-toggle" data-kind="working" role="group" aria-label="How much of the ratio calculation you complete">
+                  <button type="button" data-work-level="0" class="active" aria-pressed="true">None</button>
+                  <button type="button" data-work-level="1" aria-pressed="false">Some</button>
+                  <button type="button" data-work-level="2" aria-pressed="false">All</button>
+                </div>
+<div id="scienceCheckpoints"></div>
     <div class="phase-track" aria-label="Lab progress">
       <span id="stepGap" class="phase-step current"><i></i>1 Gap</span>
       <span id="stepWave" class="phase-step"><i></i>2 Wavelength</span>
       <span id="stepCompare" class="phase-step"><i></i>3 Compare</span>
     </div>
-    <button id="pauseButton" class="ui-button" type="button">Pause waves</button>
-    <button id="resetButton" class="ui-button" type="button" data-lab-action="reset">Reset step</button>
+
+    <button id="resetButton" data-lab-reset-target=".visual-head" class="ui-button" type="button" data-lab-action="reset">Reset step</button>
   </div>
 </section>
 
-<section class="panel lab" data-lab-workspace>
+<section class="panel lab" data-lab-actions data-lab-workspace>
   <div class="visual-head">
     <div class="visual-copy">
       <strong>Ripple tank: plane wavefronts pass through one adjustable gap</strong>
       <span>The water depth is unchanged, so the wavefront spacing before and after the gap is the same.</span>
     </div>
-    <div class="readouts" aria-live="polite">
+    <button id="pauseButton" class="ui-button" type="button">Pause waves</button>
+<div class="readouts" aria-live="polite">
       <span class="readout">gap <b id="gapChip">4.8 cm</b></span>
       <span class="readout">wavelength <b id="lambdaChip">0.8 cm</b></span>
       <span class="readout">gap ÷ λ <b id="ratioChip">6.00</b></span>
@@ -1216,7 +1223,7 @@ body>main{width:min(1200px,calc(100vw - 28px));height:auto;max-height:calc(100vh
   <div class="stage-shell">
     <div class="stage-frame" id="stageFrame" data-lab-role="model">
       <canvas id="waveCanvas" width="900" height="430" aria-label="Animated ripple-tank wavefronts passing through a gap"></canvas>
-      <svg id="overlay" viewBox="0 0 900 430" role="img" aria-label="Adjustable gap, wavelength measurements and diffraction spread" data-lab-manipulative="gap-and-wavelength">
+      <svg id="overlay" data-lab-readable-chart="11" viewBox="0 0 900 430" role="img" aria-label="Adjustable gap, wavelength measurements and diffraction spread" data-lab-manipulative="gap-and-wavelength">
         <defs>
           <marker id="arrowHead" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" fill="#456a7d"></path></marker>
         </defs>
@@ -1254,7 +1261,7 @@ body>main{width:min(1200px,calc(100vw - 28px));height:auto;max-height:calc(100vh
           <circle id="lambdaHalo" class="lambda-handle-halo" r="16" cx="118" cy="62"></circle>
           <circle id="lambdaHandle" class="lambda-handle" r="8" cx="118" cy="62"></circle>
           <text class="measure-label" x="84" y="42">wavelength λ</text>
-          <text id="lambdaDragLabel" class="measure-note" x="84" y="84">drag the end</text>
+
         </g>
         <g id="outgoingMeasure">
           <line id="outLambdaLine" class="lambda-line outgoing" x1="504" y1="331" x2="538" y2="331"></line>
@@ -1282,7 +1289,7 @@ body>main{width:min(1200px,calc(100vw - 28px));height:auto;max-height:calc(100vh
 
   <div class="controls">
     <label id="gapControl" class="control-card">
-      <span class="control-title"><strong>Gap width</strong><span>drag the two gap edges</span></span>
+      <span class="control-title"><strong>Gap width</strong><span></span></span>
       <output id="gapValue" class="control-value" for="gapRange">4.8 cm</output>
       <input id="gapRange" type="range" min="0.5" max="5.5" step="0.1" value="4.8" aria-label="Gap width in centimetres">
       <span id="gapLock" class="lock-state">Adjustable after your prediction</span>
@@ -1362,11 +1369,7 @@ body>main{width:min(1200px,calc(100vw - 28px));height:auto;max-height:calc(100vh
             <div class="working-box" id="workingBox" data-lab-role="working">
               <div class="working-head">
                 <div class="working-title"><strong>Your working</strong><span>observe first, then take over</span></div>
-                <div class="working-switch" role="group" aria-label="How much of the ratio calculation you complete">
-                  <button type="button" data-work-level="0" class="active" aria-pressed="true">None</button>
-                  <button type="button" data-work-level="1" aria-pressed="false">Some</button>
-                  <button type="button" data-work-level="2" aria-pressed="false">All</button>
-                </div>
+
               </div>
               <div class="working-grid" aria-label="Gap divided by wavelength calculation">
                 <label id="workGapField" class="work-field"><span>gap g</span><strong id="workGapAuto" class="work-auto">1.6</strong><input id="workGapInput" type="number" step="0.1" inputmode="decimal" autocomplete="off" aria-label="Gap value used in the calculation"><small id="workGapState" class="work-state">shown</small></label>
@@ -2009,7 +2012,7 @@ body>main{width:min(1200px,calc(100vw - 28px));height:auto;max-height:calc(100vh
     renderWavePhase();
     renderChallenge();
     evidenceMarkup();
-    requestAnimationFrame(positionStageForViewport);
+    renderDesign();
   }
 
   function changeGap(value, source = "control") {
@@ -2219,6 +2222,14 @@ body>main{width:min(1200px,calc(100vw - 28px));height:auto;max-height:calc(100vh
   $("stageFrame").parentElement.addEventListener("pointerdown", () => { state.userStageScrolled = true; }, { passive: true });
   $("stageFrame").parentElement.addEventListener("wheel", () => { state.userStageScrolled = true; }, { passive: true });
   window.addEventListener("resize", () => { state.userStageScrolled = false; renderAll(); });
+function renderDesign(){
+    const index=['gap','wave','compare'].indexOf(state.phase),working=document.querySelector('.working-switch');working.hidden=state.phase!=='compare';
+    LabDesign.checkpoints($('scienceCheckpoints'),['Narrow the gap','Increase wavelength','Build a counterexample'],index,i=>[state.gapDone,state.waveDone,state.challengeSuccess][i]);
+    const prediction=state.phase==='gap'?!state.gapPrediction:state.phase==='wave'?!state.wavePrediction:false;
+    const target=prediction?$(state.phase+'Phase').querySelector('.prediction-row'):state.phase==='wave'?$('lambdaHandle'):state.phase==='gap'?$('gapTopHandle'):document.querySelector('#workingBox input:not(:disabled)')||$('gapTopHandle');
+    LabDesign.introduce(document.querySelector('main'),target?[target]:[],'diffraction-'+state.phase+'-'+(prediction?'predict':'operate'),prediction?'Predict the spread':'Change the wave setup',prediction?'Choose the expected change before moving the control.':state.phase==='wave'?'Drag the wavelength grip; the gap stays fixed. Compare the outgoing wavefronts.':state.phase==='gap'?'Drag a gap edge inward and compare the outgoing spreading.':'Use a wider gap and increase wavelength enough to beat the reference, then test your setup.');
+  }
+
   window.__diffractionLab = {
     state,
     setPhase,
