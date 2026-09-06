@@ -408,8 +408,9 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 </style>
 <!-- LAB_FRAME_STYLES_END -->
 <link rel="stylesheet" href="./lab-kit.css" data-lab-resource="lab-kit.css">
+<!-- LAB_DESIGN_COMPONENTS -->
 </head>
-<body data-lab-layout="standard">
+<body data-lab-layout="standard" class="lab-adopt-v3 lab-computing computing-assembly">
 <main>
 <!-- LAB_MANIFEST_HEADER_START -->
 <header class="lab-manifest-header">
@@ -436,10 +437,11 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
     </div>
   </header>
 
-  <section class="panel toolbar" aria-label="Program and execution controls">
+  <section class="panel mission lab-activity-bar"><div class="mission-copy"><strong id="labTaskTitle">Trace how an assembly program changes registers and memory.</strong></div></section>
+  <section class="panel toolbar lab-computing-tools" aria-label="Program and execution controls">
     <div class="toolbar-left">
       <label class="field">Example program
-        <select id="exampleSelect">
+        <select id="exampleSelect" class="lab-menu-select">
           <option value="add" selected>Add and store</option>
           <option value="count">Count to five</option>
           <option value="indirect">Indirect addressing</option>
@@ -451,15 +453,15 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
     </div>
     <div class="toolbar-right">
       <label class="field">Auto speed
-        <select id="speedSelect">
+        <select id="speedSelect" class="lab-menu-select">
           <option value="420" selected>Slow</option>
           <option value="260">Normal</option>
           <option value="140">Fast</option>
         </select>
       </label>
-      <button id="resetButton" class="ui-button" type="button" data-lab-action="reset">Reset CPU</button>
-      <button id="stepButton" class="ui-button" type="button">Step</button>
-      <button id="runButton" class="ui-button primary run" type="button">
+      <button id="resetButton" class="ui-button lab-action" type="button" data-lab-action="reset">Reset CPU</button>
+      <button id="stepButton" class="ui-button lab-action " type="button" data-lab-intro="assembly-step" data-lab-intro-title="Trace one micro-operation" data-lab-intro-copy="Step through the supplied program. Follow the highlighted register and bus, then inspect the changed value.">Step</button>
+      <button id="runButton" class="ui-button primary run lab-action" type="button" data-priority="primary">
         <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6 4.5v11l9-5.5-9-5.5Z"/></svg><span>Run</span>
       </button>
       <div class="validation-wrap">
@@ -472,7 +474,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
   <div class="workspace">
     <section class="panel editor-panel">
       <div class="panel-head">
-        <div><strong>Assembly source</strong><span style="text-align:left">Edit a simple Cambridge-style program, then trace it.</span></div>
+        <div><strong>Assembly source</strong></div>
         <span id="sourceStatus">Ready</span>
       </div>
 
@@ -480,7 +482,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
         <div class="editor-shell">
           <div id="editorHighlight" class="editor-highlight"></div>
           <div id="lineNumbers" class="line-numbers" aria-hidden="true"></div>
-          <textarea id="sourceEditor" aria-label="Assembly source code" autocomplete="off" autocapitalize="off" spellcheck="false" data-lab-manipulative="assembly-source"></textarea>
+          <textarea id="sourceEditor" aria-label="Assembly source code" autocomplete="off" autocapitalize="off" spellcheck="false" data-lab-manipulative="assembly-source" class="" data-lab-intro="assembly-source" data-lab-intro-title="Change the program" data-lab-intro-copy="Edit the source or choose an example. Assembly errors appear beside the source; Run executes the valid program."></textarea>
         </div>
         <div class="editor-meta">
           <span id="assemblySummary"><strong>0</strong> memory locations</span>
@@ -488,18 +490,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
         </div>
       </div>
 
-      <section class="translation" aria-label="Two-pass assembler label resolution">
-        <div class="translation-head">
-          <strong>Label and address view</strong>
-          <div class="pass-chips">
-            <span id="passOneChip" class="pass-chip">Pass 1 · 0 labels</span>
-            <span id="passTwoChip" class="pass-chip">Pass 2 · waiting</span>
-          </div>
-        </div>
-        <div id="symbols" class="symbols"></div>
-        <div id="translationBody" class="translation-scroll"></div>
-        <div class="encoding-note">Pass 1 records labels; Pass 2 substitutes each label’s address. This lab preserves Cambridge-style mnemonics and addressing modes without showing machine-code encoding.</div>
-      </section>
+
 
       <section class="io-panel" aria-label="Program input and output">
         <div class="io-box">
@@ -528,7 +519,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 
     <section class="panel architecture-panel">
       <div class="panel-head">
-        <div><strong>Von Neumann architecture trace</strong><span style="text-align:left">Highlighted paths show each register transfer and system-bus movement.</span></div>
+        <div><strong>Von Neumann architecture trace</strong></div>
         <div class="architecture-status">
           <span id="runStatus" class="status-pill">Ready</span>
           <span id="tickStatus" class="status-pill">Tick 0</span>
@@ -627,7 +618,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
             <path id="wireMdrData" class="data-path external-data" d="M690 260H760" marker-start="url(#arrowSmall)" marker-end="url(#arrowSmall)"/>
             <path id="wireCuControl" class="control-path external-control" d="M440 385H460V465H730V385H760" marker-start="url(#arrowSmall)" marker-end="url(#arrowSmall)"/>
 
-            <g id="regACC" class="diagram-component">
+            <g id="regACC" class="diagram-component"><title>Accumulator</title>
               <rect class="diagram-box" x="35" y="50" width="170" height="70" rx="10"/>
               <text x="48" y="72" class="diagram-name">ACC</text>
               <text x="48" y="87" class="diagram-full">Accumulator</text>
@@ -662,7 +653,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
             <g id="unitALU" class="diagram-component">
               <rect class="diagram-unit" x="270" y="55" width="170" height="150" rx="14"/>
               <text x="355" y="100" class="unit-name">ALU</text>
-              <text x="355" y="119" class="unit-full">Arithmetic and Logic Unit</text>
+              <text x="355" y="119" class="unit-full">Arithmetic + logic</text>
               <text id="aluMain" x="355" y="151" class="unit-value">idle</text>
               <text id="aluNote" x="355" y="174" class="diagram-note">calculates and compares</text>
             </g>
@@ -675,7 +666,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
               <text id="cuNote" x="355" y="434" class="diagram-note">decodes and sends control signals</text>
             </g>
 
-            <g id="regPC" class="diagram-component">
+            <g id="regPC" class="diagram-component"><title>Program Counter</title>
               <rect class="diagram-box" x="520" y="35" width="170" height="70" rx="10"/>
               <text x="533" y="57" class="diagram-name">PC</text>
               <text x="533" y="72" class="diagram-full">Program Counter</text>
@@ -683,26 +674,26 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
               <text id="pcNote" x="605" y="102" class="diagram-note">next instruction</text>
             </g>
 
-            <g id="regMAR" class="diagram-component">
+            <g id="regMAR" class="diagram-component"><title>Memory Address Register</title>
               <rect class="diagram-box" x="520" y="125" width="170" height="70" rx="10"/>
               <text x="533" y="147" class="diagram-name">MAR</text>
-              <text x="533" y="162" class="diagram-full">Memory Address Register</text>
+              <text x="533" y="162" class="diagram-full">Memory address</text>
               <text id="marMain" x="605" y="183" class="diagram-value">—</text>
               <text id="marNote" x="605" y="192" class="diagram-note">memory location</text>
             </g>
 
-            <g id="regMDR" class="diagram-component">
+            <g id="regMDR" class="diagram-component"><title>Memory Data Register</title>
               <rect class="diagram-box" x="520" y="225" width="170" height="70" rx="10"/>
               <text x="533" y="247" class="diagram-name">MDR</text>
-              <text x="533" y="262" class="diagram-full">Memory Data Register</text>
+              <text x="533" y="262" class="diagram-full">Memory data</text>
               <text id="mdrMain" x="605" y="283" class="diagram-value">—</text>
               <text id="mdrNote" x="605" y="292" class="diagram-note">data or instruction</text>
             </g>
 
-            <g id="regCIR" class="diagram-component">
+            <g id="regCIR" class="diagram-component"><title>Current Instruction Register</title>
               <rect class="diagram-box" x="520" y="330" width="170" height="80" rx="10"/>
               <text x="533" y="352" class="diagram-name">CIR</text>
-              <text x="533" y="367" class="diagram-full">Current Instruction Register</text>
+              <text x="533" y="367" class="diagram-full">Current instruction</text>
               <text id="cirMain" x="605" y="390" class="diagram-value">—</text>
               <text id="cirNote" x="605" y="402" class="diagram-note">instruction being decoded</text>
             </g>
@@ -724,11 +715,23 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 
       <section class="micro-card" aria-live="polite">
         <div id="microPhase" class="micro-phase fetch">FETCH</div>
-        <div class="operation"><code id="operationNotation">PC contains the entry location</code><p id="operationNote">Press Step for one micro-operation, or Run for automatic execution.</p></div>
+        <div class="operation"><code id="operationNotation">PC contains the entry location</code><p id="operationNote">The next instruction begins at the address held in PC.</p></div>
         <div class="tick-box"><strong id="operationTick">Tick 0</strong><span id="operationInstruction">before instruction 1</span></div>
       </section>
     </section>
-  </div>
+  <section class="translation" aria-label="Two-pass assembler label resolution">
+        <div class="translation-head">
+          <strong>Label and address view</strong>
+          <div class="pass-chips">
+            <span id="passOneChip" class="pass-chip">Pass 1 · 0 labels</span>
+            <span id="passTwoChip" class="pass-chip">Pass 2 · waiting</span>
+          </div>
+        </div>
+        <div id="symbols" class="symbols"></div>
+        <div id="translationBody" class="translation-scroll"></div>
+        <div class="encoding-note">Pass 1 records labels; Pass 2 substitutes each label’s address. This lab preserves Cambridge-style mnemonics and addressing modes without showing machine-code encoding.</div>
+      </section>
+</div>
 
 </main>
 
@@ -1025,7 +1028,7 @@ RESULT: B00000000`
     stopRunning();runtimeError=null;waitingForInput=false;microQueue=[];currentDecoded=null;currentInstructionAddress=null;inputCursor=0;outputText="";tickCount=0;instructionCount=0;visual=emptyVisual();
     if(!compilation?.valid){memory=[];cpu={PC:0,MAR:null,MDR:null,CIR:null,ACC:0,IX:0,STATUS:{eq:null,relation:null},ALU:"idle",CU:"blocked",halted:false};renderAll();return}
     memory=cloneMemory();cpu={PC:compilation.entry,MAR:null,MDR:null,CIR:null,ACC:0,IX:0,STATUS:{eq:null,relation:null},ALU:"idle",CU:"ready",halted:false};
-    setOperation("fetch","PC contains the entry location","Press Step for one micro-operation, or Run for automatic execution.");renderAll();
+    setOperation("fetch","PC contains the entry location","The next instruction begins at the address held in PC.");renderAll();
   }
 
   function runtimeStop(message){runtimeError=message;stopRunning();cpu.CU="error";setOperation("execute","Execution stopped",message);visual=emptyVisual();renderAll()}

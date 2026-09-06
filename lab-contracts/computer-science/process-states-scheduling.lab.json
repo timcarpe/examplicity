@@ -1,9 +1,107 @@
 {
   "schemaVersion": 1,
   "relationship": "Selecting scheduling and interrupt decisions connects process states to the order and effects of a simulated workload.",
-  "learnerLoop": { "action": "Choose the required decisions and step or run the workload.", "modelChange": "Processes move through scheduler states as simulated time advances.", "evidence": "The lanes, time badge, decision preview and comparison area show the outcome.", "nextDecision": "Revise a scheduling or interrupt choice to meet the challenge." },
-  "invariants": ["Process lanes and time evidence reflect the active scheduling run.", "The simulated run applies the learner's ready-selection and interrupt decisions consistently."],
-  "safeAdaptations": ["Change workload stories, process names or guidance while preserving decision-led state transitions."],
-  "nonGoals": ["Scheduling actual operating-system processes."],
-  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+  "learnerLoop": {
+    "action": "Choose the required decisions and step or run the workload.",
+    "modelChange": "Processes move through scheduler states as simulated time advances.",
+    "evidence": "The lanes, time badge, decision preview and comparison area show the outcome.",
+    "nextDecision": "Revise a scheduling or interrupt choice to meet the challenge."
+  },
+  "invariants": [
+    "Process lanes and time evidence reflect the active scheduling run.",
+    "The simulated run applies the learner's ready-selection and interrupt decisions consistently."
+  ],
+  "safeAdaptations": [
+    "Change workload stories, process names or guidance while preserving decision-led state transitions."
+  ],
+  "nonGoals": [
+    "Scheduling actual operating-system processes."
+  ],
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract",
+  "implementation": {
+    "reviewedRevision": "3131fbb",
+    "surfaces": {
+      "task": {
+        "selectors": [
+          "#challengeTitle",
+          "#challengeBrief",
+          "#challengeTabs",
+          "#targetRow"
+        ],
+        "kind": "given",
+        "description": "Three performance challenges and an unscored experiment, with live target evidence above the workspace.",
+        "visibility": "Present in the corresponding simulation or construction state."
+      },
+      "rules": {
+        "selectors": [
+          "#selectorCards",
+          "#interruptCards",
+          "#selectSlot",
+          "#interruptSlot"
+        ],
+        "kind": "control",
+        "description": "Drag or select a Ready rule and an interrupt rule; source, drag preview and installed rule share their icon.",
+        "visibility": "Present in the corresponding simulation or construction state."
+      },
+      "model": {
+        "selectors": [
+          "#readyLane",
+          "#cpuContent",
+          "#blockedLane",
+          "#decisionPreview"
+        ],
+        "kind": "model",
+        "description": "Ready, Running and Blocked remain horizontally related, with the predicted dispatch/pre-emption decision.",
+        "visibility": "Present in the corresponding simulation or construction state."
+      },
+      "evidence": {
+        "selectors": [
+          "#timeline",
+          "#eventStrip",
+          "#routineName"
+        ],
+        "kind": "evidence",
+        "description": "State history, previous-run comparison, causal events and the recognised routine.",
+        "visibility": "Present in the corresponding simulation or construction state."
+      }
+    },
+    "quantities": {
+      "wait": {
+        "description": "Time a process spends Ready rather than Running or Blocked.",
+        "domain": "Integer ticks per process; mean Ready wait in the Convoy target.",
+        "source": "Selected rule pair applied to the workload.",
+        "output": "Timeline metrics and challenge target."
+      },
+      "response": {
+        "description": "Delay between arrival and first CPU service.",
+        "domain": "Nonnegative integer ticks.",
+        "source": "Arrival time and first dispatch.",
+        "output": "Response metrics and the Late Arrival/Interactive targets."
+      },
+      "arrival": {
+        "description": "Process admission time in Experiment.",
+        "domain": "0–10 ticks before the run starts.",
+        "source": "Arrival diamond drag or arrow keys.",
+        "output": "Ready admission order and timeline.",
+        "inputSlots": [
+          ".arrival-marker.draggable"
+        ]
+      }
+    },
+    "modes": {
+      "rules": "Oldest Ready, shortest original job or least CPU left, paired with no interrupt, shorter-remaining pre-emption or a two-tick slice.",
+      "challenges": "Convoy mean wait ≤2.25; Editor response 0; Interactive maximum response ≤5; Experiment without a pass/fail target.",
+      "support": "No separate Working or exam toggle."
+    },
+    "dependencies": [
+      "Both rules are required to run.",
+      "Changing a rule during an unfinished run requires reset; previous completed evidence can be compared.",
+      "I/O blocking removes eligibility until completion, then returns the process to Ready."
+    ],
+    "completion": "A finite workload completes when every process finishes; actual target metrics determine pass/fail and challenge checks.",
+    "limitations": [
+      "One CPU, visible job estimates and no context-switch cost or priorities.",
+      "On narrow screens the timeline keeps all ticks and colour/hatching; fewer printed tick numbers avoid collisions."
+    ]
+  }
 }

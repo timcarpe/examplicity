@@ -855,8 +855,9 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 </style>
 <!-- LAB_FRAME_STYLES_END -->
 <link rel="stylesheet" href="./lab-kit.css" data-lab-resource="lab-kit.css">
+<!-- LAB_DESIGN_COMPONENTS -->
 </head>
-<body data-lab-layout="standard">
+<body data-lab-layout="standard" class="lab-adopt-v3 lab-computing computing-fetch-decode-execute">
 <main>
 <!-- LAB_MANIFEST_HEADER_START -->
 <header class="lab-manifest-header">
@@ -885,6 +886,43 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 <span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span>
 <span data-lab-authored-subtitle-slot hidden></span>
 
+<section class="panel mission lab-activity-bar"><div class="mission-copy"><strong id="labTaskTitle">Follow each instruction from memory through fetch, decode and execute.</strong></div></section>
+  <div class="clock-controls lab-computing-tools">
+          <label>
+            <span>Program</span>
+            <select id="programSelect" data-lab-manipulative="program" class="lab-menu-select">
+              <option value="addstore" selected>Add and store</option>
+              <option value="subtract">Subtract and store</option>
+              <option value="multiply">Multiply by repeated addition</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Instruction model</span>
+            <select id="displayMode" class="lab-menu-select">
+              <option value="simple" selected>IGCSE immediate operands</option>
+              <option value="assembly">Assembly direct addresses</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Clock speed</span>
+            <select id="speed" class="lab-menu-select">
+              <option value="1150">Slow</option>
+              <option value="720" selected>Normal</option>
+              <option value="430">Fast</option>
+            </select>
+          </label>
+
+          <div class="clock-buttons">
+            <button id="resetBtn" data-lab-action="reset" class="lab-action">Reset</button>
+            <button id="stepBtn" class="primary lab-action " data-lab-intro="fde-tick" data-lab-intro-title="Advance the clock" data-lab-intro-copy="Each tick performs one micro-operation. Follow the highlighted paths and read the resulting register values.">Next tick</button>
+            <button id="runBtn" class="play-button lab-action" data-priority="primary">
+              <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6 4.7v10.6L15 10 6 4.7Z"/></svg>
+              <span>Auto run</span>
+            </button>
+          </div>
+        </div>
 <section class="panel lab-panel">
   <div class="architecture">
     <div class="arch-grid" data-lab-role="model">
@@ -912,42 +950,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
           </svg>
         </div>
 
-        <div class="clock-controls">
-          <label>
-            <span>Program</span>
-            <select id="programSelect" data-lab-manipulative="program">
-              <option value="addstore" selected>Add and store</option>
-              <option value="subtract">Subtract and store</option>
-              <option value="multiply">Multiply by repeated addition</option>
-            </select>
-          </label>
 
-          <label>
-            <span>Instruction model</span>
-            <select id="displayMode">
-              <option value="simple" selected>IGCSE immediate operands</option>
-              <option value="assembly">Assembly direct addresses</option>
-            </select>
-          </label>
-
-          <label>
-            <span>Clock speed</span>
-            <select id="speed">
-              <option value="1150">Slow</option>
-              <option value="720" selected>Normal</option>
-              <option value="430">Fast</option>
-            </select>
-          </label>
-
-          <div class="clock-buttons">
-            <button id="resetBtn" data-lab-action="reset">Reset</button>
-            <button id="stepBtn" class="primary">Next tick</button>
-            <button id="runBtn" class="play-button">
-              <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6 4.7v10.6L15 10 6 4.7Z"/></svg>
-              <span>Auto run</span>
-            </button>
-          </div>
-        </div>
 
         <div class="clock-status" data-lab-role="evidence">
           <div class="phase-strip">
@@ -955,9 +958,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
             <span id="phaseDecode" class="phase decode">Decode</span>
             <span id="phaseExecute" class="phase execute">Execute</span>
           </div>
-          <div id="microText" class="micro" aria-live="polite">
-            <strong>Ready.</strong> PC contains the next instruction location.
-          </div>
+
         </div>
       </section>
 
@@ -1028,38 +1029,38 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
           </g>
 
           <!-- Registers -->
-          <g id="regACC">
+          <g id="regACC"><title>Accumulator</title>
             <rect class="box" x="288" y="72" width="140" height="78" rx="10"/>
             <text x="301" y="93" class="reg-name">ACC</text>
             <text x="301" y="108" class="reg-full">Accumulator</text>
             <text id="accValue" x="358" y="136" class="reg-value">0</text>
           </g>
 
-          <g id="regMDR">
+          <g id="regMDR"><title>Memory Data Register</title>
             <rect class="box" x="536" y="72" width="150" height="78" rx="10"/>
             <text x="549" y="93" class="reg-name">MDR</text>
-            <text x="549" y="108" class="reg-full">Memory Data Register</text>
+            <text x="549" y="108" class="reg-full">Memory data</text>
             <text id="mdrValue" x="611" y="136" class="reg-value">—</text>
           </g>
 
-          <g id="regCIR">
+          <g id="regCIR"><title>Current Instruction Register</title>
             <rect class="box" x="398" y="214" width="160" height="72" rx="10"/>
             <text x="411" y="235" class="reg-name">CIR</text>
-            <text x="411" y="250" class="reg-full">Current Instruction Register</text>
+            <text x="411" y="250" class="reg-full">Current instruction</text>
             <text id="cirValue" x="478" y="276" class="reg-value">—</text>
           </g>
 
-          <g id="regPC">
+          <g id="regPC"><title>Program Counter</title>
             <rect class="box" x="288" y="352" width="140" height="78" rx="10"/>
             <text x="301" y="373" class="reg-name">PC</text>
             <text x="301" y="388" class="reg-full">Program Counter</text>
             <text id="pcValue" x="358" y="416" class="reg-value">I1</text>
           </g>
 
-          <g id="regMAR">
+          <g id="regMAR"><title>Memory Address Register</title>
             <rect class="box" x="546" y="352" width="140" height="78" rx="10"/>
             <text x="559" y="373" class="reg-name">MAR</text>
-            <text x="559" y="388" class="reg-full">Memory Address Register</text>
+            <text x="559" y="388" class="reg-full">Memory address</text>
             <text id="marValue" x="616" y="416" class="reg-value">—</text>
           </g>
         </svg>
@@ -1342,7 +1343,6 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
   function setOperation(title,note){
     $("operation").textContent=title;
     $("operationNote").textContent=note;
-    $("microText").innerHTML=`<strong>${title}</strong> ${note}`;
   }
 
   function enqueueFetch(){
@@ -1709,7 +1709,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 
     setOperation(
       `PC contains ${displayAddress(state.PC)}`,
-      "The Program Counter holds the next instruction location. Press Next tick to begin."
+      "The Program Counter holds the next instruction location."
     );
 
     $("stepBtn").disabled=false;

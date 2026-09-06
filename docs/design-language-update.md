@@ -1,12 +1,12 @@
 # Examplicity design update — lean plan
 
-Target: `codex/llm-first-v0.1`. Scope: shared design language across the site and every lab in the current manifest (57 at review). Implementation is in progress. Batch 2 (Repeated Percentage Change, Motion Graphs, Bounds, Straight Lines and Recurring Decimals) is accepted by the user at site commit `3ffcee4` and canonical kit/guide commit `0bea909`. Batch 3 (five geometry/trigonometry labs) is ready for user review at site `7a15bda` and kit `11baf3a`; subsequent labs remain queued.
+Target: `codex/llm-first-v0.1`. Shared rollout across 57 manifest labs. Batches 1–5 are accepted; Batch 6 contains five computing labs for review. Historical notes below preserve earlier decisions and corrections.
 
-## Current adaptation approach — accepted batch 2
+## Current adaptation approach
 
 This section records the user's rollout preferences. The canonical visual reference remains `Lab Creation/docs/design-language/examplicity-living-style-guide-v3.html`, with reusable implementation in `packages/lab-kit/src/lab-design.css` and `lab-design.js`. The style guide describes appearance and interaction patterns; it does not define task authority or workflow scope. Historical revision notes below include superseded approaches.
 
-- Root implements directly in batches of ten, records a concise change list, commits, and supplies review links. Each batch receives user review. Surface novel situations that cannot be resolved from the agreed intent; avoid routine handoff and approval overhead.
+- Root implements directly in batches of five, records a concise change list, commits, and supplies review links. Each batch receives user review. Surface novel situations that cannot be resolved from the agreed intent; avoid routine handoff and approval overhead.
 - Before changing a lab, read the HTML and trace learner action → model change → working/evidence → next decision, including later stages and Working levels. A style adoption is incomplete if it misses the interaction or removes its purpose. If a regression is suspected, inspect relevant Git history and user-authorized originals before concluding that a feature never existed.
 - Map that current implementation first in the existing `lab-contracts/<subject>/<slug>.lab.json` sidecar: coherent surfaces, quantities versus input slots, given versus learner-produced values, mode differences, dependencies and completion. Refresh it after adaptation. This map documents observed behaviour; exam alignment is a separate review. The shape is documented at `/developer/lab-contract#implementation`, not in the visual style guide.
 - Preserve the causal model: fit the existing visual to its canvas, keep horizontal relationships horizontal, and let the page handle vertical flow. Do not add a separate slider when the model itself should be manipulated. Ordinary SVG chart labels, controls and interactions are in scope; complex illustrations such as jars and routers do not need a cosmetic redraw.
@@ -1064,3 +1064,23 @@ authoring bundle resources are current.
 
 Restoration implementation: `dd106a0`; canonical shared guide/kit: `749893e`.
 Seven affected implementation maps are pinned to this source revision.
+
+
+## Batch 6 — five computing workspaces
+
+Batch 5 restoration accepted by the user (implementation `dd106a0`, map pin `3131fbb`). This batch returns to five labs per review.
+
+Change list before implementation:
+- Assembly: retain source editor, two-pass view and CPU/bus/RAM arrangement; add a concise goal, shared program/speed menus and execution buttons, readable interface labels and a first-step hint.
+- Fetch–Decode–Execute: retain physical CPU/RAM and clock trace; put program/model/speed actions below the goal, show each micro-operation explanation once, preserve immediate/direct operand models.
+- Memory Management: retain desktop beside memory hierarchy, current/next queue and decision log; shared configuration/actions and readable surrounding labels; hint clock startup and subsequent workloads.
+- Process States and Scheduling: retain draggable rule construction, three state lanes and comparative timeline; shared challenge controls, clearer target evidence and card typography; matching rule drag preview and installed icon.
+- Software Stack: retain monitor/tower, software bank and nested stack; shared target/reset controls, readable part labels and contextual hints; preserve shared artwork across bank and placed items.
+
+No invented Working/exam modes, new grading rules or hardware redraws. Useful code/table/log and parts-menu scrolling remains; operated diagrams fit their containers. Shared presentation lives in the canonical lab-design stylesheet; local changes are semantic hooks, minimal control moves and state-aware hints. Current-behaviour maps accompany the five source files.
+
+Batch 6 refinement after user direction: rebalance underused and crowded areas, not only reskin controls. Assembly gives more width to the CPU and less to the editor; FDE narrows its bus corridor and pairs clock evidence; Software Stack has a smaller computer scene and wider parts bank. Scheduler trims repeated state explanations while preserving task criteria and causal feedback. Memory keeps current/next action cards side by side, enlarges tiny labels, and removes duplicate route text already in the log. All presentation is in canonical shared CSS. Local source hooks retain each existing learning model; five sidecars map observed current behaviour.
+
+Review note: Software Stack retains its existing deterministic utility-failure teaching cases (for example, missing antivirus triggers a malware diagnostic). This batch changes presentation, not those pedagogical rules.
+
+Batch 6 validation: six Assembly examples halt with expected values/output; both FDE models complete all three programs; Memory boots and processes work/stress events; all three Scheduler targets pass with the expected rule pairs, rule drag and arrival keyboard controls work; valid Software Stack boots and opens Image Editor. Reviewed desktop and 900/390px layouts; no horizontal page overflow or operated-canvas scroll remains. Source-editor scrolling is retained. All 57 published/downloaded labs, contract sidecars, developer resources and the canonical authoring bundle pass their focused checks. Sound Sampling's unchanged embedded audio plus the shared CSS is 1,466,264 bytes; its existing scoped download allowance increases from 1,450,000 to 1,475,000 bytes. No audio assets changed.

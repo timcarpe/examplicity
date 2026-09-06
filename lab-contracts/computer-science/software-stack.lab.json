@@ -1,9 +1,92 @@
 {
   "schemaVersion": 1,
   "relationship": "Powering the computer and opening an application connects boot stages and software layers to the target application's operation.",
-  "learnerLoop": { "action": "Choose a target application, power on and interact with the displayed software stack.", "modelChange": "The boot and application state advance through the represented layers.", "evidence": "The screen, stack list, hardware base and status reveal the active layer relationship.", "nextDecision": "Identify the layer needed for the selected application to work." },
-  "invariants": ["The visible stack describes the current boot and application state.", "Application behaviour is presented through the represented software layers."],
-  "safeAdaptations": ["Change target applications, boot stories or explanatory labels while preserving the layer-to-operation relationship."],
-  "nonGoals": ["Booting or controlling the learner's actual computer."],
-  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+  "learnerLoop": {
+    "action": "Choose a target application, power on and interact with the displayed software stack.",
+    "modelChange": "The boot and application state advance through the represented layers.",
+    "evidence": "The screen, stack list, hardware base and status reveal the active layer relationship.",
+    "nextDecision": "Identify the layer needed for the selected application to work."
+  },
+  "invariants": [
+    "The visible stack describes the current boot and application state.",
+    "Application behaviour is presented through the represented software layers."
+  ],
+  "safeAdaptations": [
+    "Change target applications, boot stories or explanatory labels while preserving the layer-to-operation relationship."
+  ],
+  "nonGoals": [
+    "Booting or controlling the learner's actual computer."
+  ],
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract",
+  "implementation": {
+    "reviewedRevision": "3131fbb",
+    "surfaces": {
+      "task": {
+        "selectors": [
+          "#missionText",
+          "#targetApplication"
+        ],
+        "kind": "given",
+        "description": "Build a bootable platform and open one of six target applications.",
+        "visibility": "Present in the corresponding simulation or construction state."
+      },
+      "parts": {
+        "selectors": [
+          "#bankCards",
+          "#stackList"
+        ],
+        "kind": "control",
+        "description": "Software layers and function cards share the same SVG icons in the bank, drag image and placed stack.",
+        "visibility": "Present in the corresponding simulation or construction state."
+      },
+      "model": {
+        "selectors": [
+          "#screen",
+          "#hardwareBase",
+          "#powerButton"
+        ],
+        "kind": "model",
+        "description": "Preserved monitor and tower above the ordered software stack; power tests it.",
+        "visibility": "Present in the corresponding simulation or construction state."
+      },
+      "evidence": {
+        "selectors": [
+          "#selectionStatus",
+          "#screen"
+        ],
+        "kind": "evidence",
+        "description": "Selected/locked state and staged boot diagnostics, desktop or application result.",
+        "visibility": "Present in the corresponding simulation or construction state."
+      }
+    },
+    "quantities": {
+      "layers": {
+        "description": "Ordered software platform.",
+        "domain": "Selected bank layers and applications; firmware at the base, OS above it, utilities between OS and applications.",
+        "source": "Drag or select-and-place software cards.",
+        "output": "Nested stack and staged boot result."
+      },
+      "functions": {
+        "description": "Functions assigned inside OS or utility layers.",
+        "domain": "Available function cards including distractors.",
+        "source": "Cards placed inside the chosen layer.",
+        "output": "Boot diagnostics or successful application launch."
+      }
+    },
+    "modes": {
+      "target": "Image Editor, Word Processor, Web Browser, Spreadsheet, Presentation Software or Media Player.",
+      "power": "Power off permits editing; power on tests and locks construction.",
+      "support": "No Working or exam toggle; successful launch reveals the software categories."
+    },
+    "dependencies": [
+      "Bank, preview and placed parts reuse iconSVG.",
+      "Boot checks layer order, OS functions, utilities and target application in sequence.",
+      "Power off before changing a tested stack; Reset clears and reshuffles the construction."
+    ],
+    "completion": "A successful boot and target application launch reveals the software categories.",
+    "limitations": [
+      "Diagnostic failures are deterministic teaching cases, including simplified outcomes for missing utility functions.",
+      "This is a conceptual boot/dependency model rather than an executable operating system."
+    ]
+  }
 }

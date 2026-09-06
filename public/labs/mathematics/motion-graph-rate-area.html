@@ -845,7 +845,7 @@ body>main{margin-top:10px}
 .lab-adopt-v3 .lab-activity-bar .lab-toggle>button[aria-pressed="true"]{background:var(--lab-ink-secondary,#424245);color:#fff}
 .lab-adopt-v3 .lab-activity-bar .lab-toggle[data-kind="mode"]>button[aria-pressed="true"]{background:var(--lab-accent-hover,#4569aa);color:#fff}
 .lab-adopt-v3 .lab-activity-bar+:is(.lab,.workbench){margin-top:0;border-top:0;border-radius:0 0 12px 12px;padding:20px 24px;position:relative}
-.lab-adopt-v3 :is(.workspace,.recurring-workspace){display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,320px);gap:24px;align-items:start}
+.lab-adopt-v3:not(.lab-computing) :is(.workspace,.recurring-workspace){display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,320px);gap:24px;align-items:start}
 .lab-adopt-v3 :is(.stage-wrap,.interaction-pane){min-width:0;position:relative}
 .lab-adopt-v3 :is(.calc-panel,.method-panel){padding:0 0 0 20px;min-width:0;border:0;border-left:1px solid var(--lab-line-subtle,#e7e8eb);background:transparent}
 .lab-adopt-v3 :is(.calc-head,.method-head){padding:0 0 12px;border:0;background:transparent}
@@ -878,7 +878,7 @@ body>main{margin-top:10px}
 .lab-adopt-v3 .next-card .lab-dialog-move{position:absolute;top:6px;right:6px;width:32px;min-width:32px;height:32px;min-height:32px;margin:0;padding:0;border:0;border-radius:8px;background:transparent;color:var(--lab-muted,#6e6e73);cursor:grab;touch-action:none;font-size:16px;font-weight:400}
 .lab-adopt-v3 .next-card .lab-dialog-move:active{cursor:grabbing}
 .lab-adopt-v3 .goal-editor{flex-basis:100%;font-size:14px}
-@media(max-width:900px){.lab-adopt-v3 :is(.workspace,.recurring-workspace){grid-template-columns:minmax(0,1fr)}.lab-adopt-v3 :is(.calc-panel,.method-panel){padding:18px 0 0;border-left:0;border-top:1px solid var(--lab-line-subtle,#e7e8eb)}}
+@media(max-width:900px){.lab-adopt-v3:not(.lab-computing) :is(.workspace,.recurring-workspace){grid-template-columns:minmax(0,1fr)}.lab-adopt-v3 :is(.calc-panel,.method-panel){padding:18px 0 0;border-left:0;border-top:1px solid var(--lab-line-subtle,#e7e8eb)}}
 @media(max-width:620px){.lab-adopt-v3 :is(.mission,.goal-panel).lab-activity-bar,.lab-adopt-v3 .lab-activity-bar+:is(.lab,.workbench){padding:16px}.lab-adopt-v3 :is(.mission-actions,.mission-tools,.case-actions){margin-left:0;justify-content:flex-end;width:100%}.lab-adopt-v3 .lab-activity-bar .lab-toggle>button{padding-inline:9px}}
 @media(prefers-reduced-motion:reduce){.lab-adopt-v3 :is(.calc-step,.solve-card,.derive-step){animation:none!important}}
 
@@ -1443,7 +1443,7 @@ input.lab-intro-target{outline:none;animation:none}
 .lab-simulation .sim-tool-row{display:flex;align-items:end;gap:12px;flex-wrap:wrap;margin:0;padding:16px 24px;background:white;border-top:0;border-radius:0;box-shadow:none;min-width:0}
 .lab-simulation .sim-tool-row>:is(.field,.toggles){flex:0 1 auto;min-width:0;max-width:100%}
 .lab-simulation .sim-tool-row :is(label,.field>label){font:400 12px/1.4 var(--lab-font-sans,sans-serif);color:var(--lab-ink-secondary,#424245)}
-.lab-simulation select{appearance:none;max-width:100%;height:auto;min-height:40px;padding:8px 34px 8px 14px;border:1px solid var(--lab-line,#d2d2d7);border-radius:999px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath d='m4 6 4 4 4-4' fill='none' stroke='%236e6e73' stroke-width='1.5'/%3E%3C/svg%3E") no-repeat right 10px center;color:var(--lab-ink,#1d1d1f);font:400 12px/1.4 var(--lab-font-sans,sans-serif);box-shadow:0 1px 3px #1d1d1f14}
+.lab-simulation select,.lab-computing .lab-menu-select{appearance:none;max-width:100%;height:auto;min-height:40px;padding:8px 34px 8px 14px;border:1px solid var(--lab-line,#d2d2d7);border-radius:999px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath d='m4 6 4 4 4-4' fill='none' stroke='%236e6e73' stroke-width='1.5'/%3E%3C/svg%3E") no-repeat right 10px center;color:var(--lab-ink,#1d1d1f);font:400 12px/1.4 var(--lab-font-sans,sans-serif);box-shadow:0 1px 3px #1d1d1f14}
 .lab-simulation select:hover{border-color:var(--lab-line-strong,#a7a7ad)}
 .lab-simulation :is(input:not([type=checkbox]),textarea,select):focus-visible{outline:none!important;box-shadow:none!important;border-color:var(--lab-accent-pressed,#3a5d99)!important}
 .lab-simulation :is(.sim-composition,.lab-grid){margin:0;border-top:0;border-radius:0 0 12px 12px;background:white}
@@ -2000,6 +2000,204 @@ input.lab-intro-target{outline:none;animation:none}
 .sim-packet-switching .packet-id{font:400 12px/1.3 var(--lab-font-sans)}
 .sim-tcp-ip-encapsulation .payload-mark{display:none}
 @media(min-width:761px) and (max-width:900px){.sim-tcp-ip-encapsulation .wire-line{left:12px;right:12px;top:50%;bottom:auto;width:auto;height:5px;transform:translateY(-50%)}.sim-tcp-ip-encapsulation .flight-packet{left:8px;top:50%;transform:translate(0,-50%)}.sim-tcp-ip-encapsulation .flight-packet.arrive{left:calc(100% - 76px);top:50%}}
+
+
+/* Computing workspaces: presentation only; editors, hardware, queues and stacks retain their composition. */
+.lab-computing{font-family:var(--lab-font-sans);font-weight:400;--accent:var(--lab-accent);--accent-soft:var(--lab-accent-soft);--good:var(--lab-good);--bad:var(--lab-bad);--warn:var(--lab-warn)}
+.lab-computing main{width:min(1380px,calc(100% - 32px));max-width:1380px;margin-inline:auto}
+.lab-computing .panel{border-color:var(--lab-line);border-radius:12px;box-shadow:none}
+.lab-computing .lab-computing-tools{display:flex;align-items:end;justify-content:flex-start;flex-wrap:wrap;gap:12px;padding:16px 20px;margin:0 0 12px;background:var(--lab-surface);border:1px solid var(--lab-line);border-top:0;border-radius:0 0 12px 12px;box-shadow:none}
+.lab-computing-tools :is(.field,label){min-width:0;max-width:100%;font:400 12px/1.4 var(--lab-font-sans);letter-spacing:normal;text-transform:none}
+.lab-computing-tools label>span{font:inherit;display:block;margin-bottom:5px}
+.lab-computing-tools :is(.toolbar-right,.clock-buttons,.control-buttons){display:flex;align-items:end;flex-wrap:wrap;gap:8px;margin-left:auto}
+.lab-computing .lab-action{height:auto;letter-spacing:normal;text-transform:none;gap:6px}
+.lab-computing .lab-action svg{width:16px;height:16px;fill:currentColor}
+.lab-computing :is(.panel-head,.panel-heading,.section-head,.platform-heading,.board-head,.timeline-head,.work-monitor-head){padding-bottom:12px;gap:12px}
+.lab-computing :is(.panel-head,.panel-heading,.section-head,.platform-heading,.board-head,.timeline-head,.work-monitor-head,.log-head,.translation-head,.module-head) strong{font:400 15px/1.4 var(--lab-font-sans);letter-spacing:normal;text-transform:none}
+.lab-computing :is(.panel-head,.panel-heading,.section-head,.platform-heading,.board-head,.timeline-head,.work-monitor-head)>span,.lab-computing :is(.flow-title,.board-head>div,.timeline-head>div)>span{font:400 12px/1.45 var(--lab-font-sans);letter-spacing:normal}
+.lab-computing :is(.phase,.clock-pill,.status-pill,.pass-chip,.field>label,.io-title,.io-box label,.rack-label,.rule-slot-label,.eyebrow){font:400 12px/1.4 var(--lab-font-sans);letter-spacing:normal;text-transform:none}
+.lab-computing :is(.encoding-note,.io-note,.arch-note,.arch-key,.footer-note,.grid-note,.symbol-empty,.editor-meta,.resolved-detail,.ram-meta,.ram-address small,.mode-tag){font:400 11px/1.45 var(--lab-font-sans);letter-spacing:normal;text-transform:none}
+.lab-computing :is(.operation p,.operation-note,.event-strip span,.routine-card p){font:400 14px/1.45 var(--lab-font-sans)}
+.lab-computing :is(.operation,.operation code){font-weight:400}
+.lab-computing .lab-computing-context{padding:12px 20px;background:white;border:1px solid var(--lab-line);border-top:0;border-radius:0 0 12px 12px}
+.lab-computing .lab-placeable-card{position:relative;cursor:grab;border:1px solid var(--lab-line);border-radius:10px;background:var(--lab-surface);box-shadow:0 1px 3px #1d1d1f12}
+.lab-computing .lab-placeable-card[draggable="true"]::after{content:'⠿';position:absolute;right:6px;top:6px;color:var(--lab-accent);font:400 16px/1 var(--lab-font-sans);pointer-events:none}
+.lab-computing .lab-placeable-card[draggable="false"]{cursor:default}
+.lab-computing .lab-placeable-card:focus-visible{outline:none;border-color:var(--lab-accent-hover);box-shadow:none}
+.computing-assembly :is(#sourceEditor,.line-numbers){font-weight:400;font-size:12px}
+.computing-assembly #sourceEditor:focus-visible{outline:none;box-shadow:none}
+.computing-assembly .editor-shell:focus-within{border-color:var(--lab-line-strong)}
+.computing-assembly :is(.translation-table th,.translation-table td,.translation-table .addr,.translation-table .source,.translation-table .resolved,.symbol-chip,.ram-word,.ram-address,.reference-group code,.output-console,.io-box input){font-size:12px;font-weight:400;line-height:1.4;letter-spacing:normal;text-transform:none}
+.computing-assembly .reference summary,.computing-assembly .reference-group strong{font:400 12px/1.4 var(--lab-font-sans)}
+.computing-assembly .reference-group{border:0;background:var(--lab-surface-muted);padding:8px}
+.computing-assembly .computer-grid{grid-template-columns:minmax(0,1fr) 95px minmax(170px,.45fr)}
+.computing-assembly .cpu-board{overflow:hidden}
+.computing-assembly .cpu-diagram{width:100%;min-width:0;max-width:100%}
+.computing-assembly .cpu-diagram :is(.diagram-name,.diagram-full,.diagram-note,.unit-name,.unit-full,.path-label){font-family:var(--lab-font-sans);font-weight:400}
+.computing-assembly .cpu-diagram :is(.diagram-full,.diagram-note,.unit-full,.path-label){font-size:14px;fill:var(--lab-ink-secondary)}
+.computing-assembly :is(.bus-head,.bus-head span:last-child,.bus-value){font-size:11px;font-weight:400;white-space:normal}
+.computing-assembly .micro-card{background:var(--lab-surface-muted);border:0}
+.computing-fetch-decode-execute .clock-title strong{font:400 15px/1.4 var(--lab-font-sans)}
+.computing-fetch-decode-execute .clock-title span{font:400 12px/1.45 var(--lab-font-sans)}
+.computing-fetch-decode-execute .clock-status{padding:8px 0 0}
+.computing-fetch-decode-execute .cpu-svg text{font-family:var(--lab-font-sans);font-weight:400}
+.computing-fetch-decode-execute :is(.reg-full,.unit-subtitle,.cpu-note){font-size:15px}
+.computing-fetch-decode-execute :is(.ram-address,.ram-value,.ram-cell,.ram-table,.bus-name,.bus-label,.bus-value,.micro-operation-label){font-size:12px;font-weight:400;letter-spacing:normal}
+.computing-fetch-decode-execute .step-card{background:var(--lab-surface-muted);border:0;padding:14px}
+.computing-memory-management .control-panel{padding:0 0 12px;border-top:0;border-radius:0 0 12px 12px}
+.computing-memory-management .control-grid{border:0;border-bottom:1px solid var(--lab-line-subtle);border-radius:0;margin:0 0 12px}
+.computing-memory-management .metrics{margin:0 12px}
+.computing-memory-management :is(.metric>span,.latency-step>span,.comparison-state,.comparison-values small,.slowdown-copy,.gate-status,.cache-head span,.cache-link,.bus-label,.drive-copy span){font:400 11px/1.4 var(--lab-font-sans);letter-spacing:normal;text-transform:none}
+.computing-memory-management :is(.metric>strong,.latency-step>strong,.comparison-values strong,.cache-head strong,.drive-copy strong){font:400 14px/1.4 var(--lab-font-sans)}
+.computing-memory-management :is(.work-card-title,.work-title,.work-name){font:400 14px/1.4 var(--lab-font-sans)}
+.computing-memory-management :is(.work-card,.activity-log){font-size:12px;font-weight:400}
+.computing-memory-management .desktop-shortcuts{gap:8px;flex-wrap:wrap}
+.computing-software-stack .mission-actions{margin-left:0;justify-content:flex-start}
+.computing-software-stack :is(.bank-name,.layer-name,.chip-name){font:400 14px/1.4 var(--lab-font-sans)}
+.computing-software-stack :is(.bank-badge,.layer-badge,.chip-badge,.layer-note,.contents-label,.drop-hint,.stack-placeholder){font:400 11px/1.4 var(--lab-font-sans);letter-spacing:normal;text-transform:none}
+.computing-software-stack .bank-card{padding:10px 20px 10px 10px;min-height:70px}
+.computing-software-stack .bank-inner{width:100%;gap:8px}
+.computing-software-stack .bank-icon{flex-shrink:0}
+.computing-software-stack .selection-status{font:400 12px/1.45 var(--lab-font-sans);background:var(--lab-accent-soft);border:0;border-radius:8px}
+.computing-software-stack .selection-status:empty{display:none}
+.computing-software-stack .selection-status strong{font-weight:400}
+.computing-software-stack .layer-contents{border:0;padding:10px;background:var(--lab-surface-muted)}
+.computing-software-stack .content-chip{padding:6px 8px;border:0;border-radius:8px;background:white}
+.computing-software-stack .hardware-base strong{font:400 15px/1.4 var(--lab-font-sans)}
+.computing-software-stack .hardware-base span{font:400 11px/1.4 var(--lab-font-sans)}
+.computing-process-states-scheduling .lab-grid{grid-template-columns:235px minmax(0,1fr);gap:12px;margin-top:12px}
+.computing-process-states-scheduling .workspace{gap:12px}
+.computing-process-states-scheduling .rule-actions{margin:0;padding:0}
+.computing-process-states-scheduling :is(.rule-panel,.state-panel,.timeline-panel){padding:12px}
+.computing-process-states-scheduling .state-board{grid-template-columns:minmax(0,1.25fr) 24px minmax(0,1fr) 24px minmax(0,1fr);gap:5px}
+.computing-process-states-scheduling :is(.rule-card,.rule-ghost){display:grid;grid-template-columns:34px minmax(0,1fr);gap:8px;padding:10px;border-radius:10px;background:white;letter-spacing:normal;text-transform:none}
+.computing-process-states-scheduling .rule-card{border:1px solid var(--lab-line);box-shadow:0 1px 3px #1d1d1f12;touch-action:none;cursor:grab}
+.computing-process-states-scheduling .rule-card.installed{background:var(--lab-accent-soft);border-color:var(--lab-accent)}
+.computing-process-states-scheduling :is(.rule-card strong,.rule-ghost strong,.rule-slot-value,.process-copy strong,.lane-title strong,.event-strip strong,.routine-card strong){font:400 14px/1.35 var(--lab-font-sans)}
+.computing-process-states-scheduling :is(.rule-card small,.rule-ghost small,.rule-slot-note,.process-copy small,.lane-title span,.process-foot,.process-foot span,.io-status,.decision-metric span,.prediction-line,.decision-preview,.transition,.timeline-legend,.lane-empty,.cpu-empty,.failure-point span){font:400 11px/1.4 var(--lab-font-sans);letter-spacing:normal;text-transform:none}
+.computing-process-states-scheduling .rule-icon{width:34px;height:34px;font:400 11px/34px var(--lab-font-sans);text-align:center;background:var(--lab-accent-soft);border:0;border-radius:8px;box-shadow:none}
+.computing-process-states-scheduling .rule-slot-value{display:flex;align-items:center;gap:6px}
+.computing-process-states-scheduling .rule-slot-value .rule-icon{flex-shrink:0}
+.computing-process-states-scheduling .scheduler-gate.compact-scheduler{grid-template-columns:minmax(160px,1fr) minmax(0,1.1fr) minmax(160px,1fr);padding:8px;gap:8px;background:var(--lab-surface-muted);border:0}
+.computing-process-states-scheduling .target-row{margin:0;gap:8px}
+.computing-process-states-scheduling .target-chip{padding:8px 10px;border:0;border-radius:10px;box-shadow:none}
+.computing-process-states-scheduling .target-copy b{font:400 14px/1.4 var(--lab-font-sans);white-space:normal}
+.computing-process-states-scheduling .target-copy small{font:400 12px/1.4 var(--lab-font-sans)!important}
+.computing-process-states-scheduling .target-chip.pending{background:var(--lab-warn-soft)}
+.computing-process-states-scheduling .target-chip.good{background:var(--lab-good-soft)}
+.computing-process-states-scheduling .target-chip.bad{background:var(--lab-bad-soft)}
+.computing-process-states-scheduling :is(.target-mark,.target-chip.good .target-mark,.target-chip.bad .target-mark){border:0;background:none;font-weight:400}
+.computing-process-states-scheduling .failure-insight{background:var(--lab-bad-soft);border:0;padding:12px;box-shadow:none}
+.computing-process-states-scheduling .failure-point b{font:400 14px/1.4 var(--lab-font-sans);letter-spacing:normal;text-transform:none}
+.computing-process-states-scheduling .failure-rules{font:400 11px/1.4 var(--lab-font-sans)!important}
+.computing-process-states-scheduling .process-card.ready{background:color-mix(in srgb,var(--p) 6%,white)}
+.computing-process-states-scheduling .process-card.done{background:var(--lab-surface-muted)}
+.computing-process-states-scheduling .process-top{grid-template-columns:30px minmax(0,1fr)}
+.computing-process-states-scheduling .process-avatar{width:30px;height:30px;background:color-mix(in srgb,var(--p) 14%,white);box-shadow:none}
+.computing-process-states-scheduling .process-avatar svg{width:23px;height:23px}
+.computing-process-states-scheduling :is(.rank-chip,.next-chip,.watch-chip,.trait-chip,.burst,.decision-metric b,.decision-metric strong,.time-badge){font:400 11px/1.4 var(--lab-font-sans);letter-spacing:normal;text-transform:none}
+.computing-process-states-scheduling .decision-metrics{gap:5px}
+.computing-process-states-scheduling .decision-metric{border:0;min-height:0;padding:5px}
+.computing-process-states-scheduling .event-strip{padding:10px;border:0;background:var(--lab-accent-soft)}
+.computing-process-states-scheduling .transition-strip{gap:6px;margin-top:10px}
+.computing-process-states-scheduling .transition{padding:8px;border:0;background:var(--lab-surface-muted)}
+.computing-process-states-scheduling .transition b{font:400 12px/1.4 var(--lab-font-sans)}
+.computing-process-states-scheduling :is(.time-label,.trace-metric,.trace-copy strong,.trace-copy span,.metric-head){font:400 11px/1.4 var(--lab-font-sans)}
+.computing-process-states-scheduling .time-row,.computing-process-states-scheduling .trace-row{grid-template-columns:90px repeat(24,minmax(0,1fr)) 56px 56px}
+.computing-process-states-scheduling .trace-label{grid-template-columns:1fr;padding-right:4px}
+.computing-process-states-scheduling .trace-icon{display:none}
+.computing-process-states-scheduling .trace-tag{inset:0;display:grid;place-items:center;padding:0;font:400 11px/1 var(--lab-font-sans);background:none}
+.computing-process-states-scheduling .trace-cell{height:34px}
+@media(max-width:1120px){.computing-process-states-scheduling .lab-grid{grid-template-columns:1fr}.computing-process-states-scheduling .rule-panel{position:static;display:grid;grid-template-columns:1fr 1fr;gap:12px}.computing-process-states-scheduling .section-head,.computing-process-states-scheduling .routine-card{grid-column:1/-1}.computing-process-states-scheduling .rule-rack{margin:0}}
+@media(max-width:900px){.computing-assembly .computer-grid{grid-template-columns:1fr}.computing-assembly .bus-bridge{grid-template-columns:repeat(3,minmax(0,1fr))}.computing-assembly .cpu-board{overflow:hidden}.lab-computing .lab-computing-tools{padding:12px}.lab-computing-tools :is(.toolbar-right,.clock-buttons,.control-buttons){margin-left:0}}
+@media(max-width:650px){.lab-computing main{width:calc(100% - 20px)}.lab-computing-tools label{flex:1 1 180px}.lab-computing-tools select{width:100%}.computing-process-states-scheduling .state-board,.computing-process-states-scheduling .scheduler-gate.compact-scheduler{grid-template-columns:1fr}.computing-process-states-scheduling .rule-panel{grid-template-columns:1fr}.computing-process-states-scheduling .transition-strip{grid-template-columns:1fr 1fr}.computing-process-states-scheduling .time-row,.computing-process-states-scheduling .trace-row{grid-template-columns:66px repeat(24,minmax(0,1fr)) 36px 36px}.computing-process-states-scheduling .trace-tag{display:none}.computing-process-states-scheduling .time-label:not(:nth-child(4n+2)){visibility:hidden}.computing-process-states-scheduling .metric-head{font-size:11px;overflow-wrap:anywhere;text-overflow:clip}.computing-software-stack .bank-panel{max-height:none;position:static;overflow:visible}.computing-assembly .bus-bridge{grid-template-columns:1fr}}
+
+/* Dense annotations stay readable without changing the hardware or its transfer paths. */
+.lab-computing .panel-head div>span{font:400 12px/1.4 var(--lab-font-sans)}
+.computing-assembly :is(.micro-phase,.tick-box,.tick-box strong){font:400 11px/1.4 var(--lab-font-sans);letter-spacing:normal}
+.computing-assembly .phase{font-family:var(--lab-font-sans);font-weight:400}
+.computing-assembly .cpu-diagram :is(.diagram-full,.unit-full){font-size:16px}
+.computing-assembly .cpu-diagram .diagram-name{font-size:18px}
+.computing-assembly .cpu-diagram .diagram-value{font-size:20px;font-weight:400}
+.computing-assembly .cpu-diagram .diagram-note{display:none}
+.computing-assembly .cpu-diagram .unit-value{font-size:16px;font-weight:400}
+.computing-fetch-decode-execute :is(.clock-level-label,.clock-flow,.bus-head,.bus-head .direction){font:400 11px/1.4 var(--lab-font-sans)}
+.computing-fetch-decode-execute .decoder-text{font-size:13px}
+.computing-software-stack .mission-actions>button{order:0}
+.computing-software-stack .bank-icon{width:30px;height:30px}
+.computing-software-stack .bank-icon svg{width:22px;height:22px}
+.computing-software-stack .power-label{font:400 11px/1.4 var(--lab-font-sans)}
+.computing-memory-management :is(#comparisonState,#slowdownCompare,.work-slot-label,.work-actor,.work-route,.work-cycle-copy,.module-head>span,.cache-head>span,#cpuRequest,.log-route-label,.route-node,.log-cycle-range){font:400 11px/1.4 var(--lab-font-sans);letter-spacing:normal;text-transform:none}
+.computing-memory-management .work-copy strong{font:400 14px/1.4 var(--lab-font-sans)}
+.computing-memory-management .work-copy p{font:400 12px/1.4 var(--lab-font-sans)}
+.computing-memory-management .work-monitor{background:var(--lab-accent-soft);border:0;padding:12px}
+.computing-memory-management .work-card{border:0;border-radius:10px;box-shadow:none;padding:10px}
+.computing-memory-management .bus-label{display:block;font:400 11px/1.3 var(--lab-font-sans);text-align:center;overflow-wrap:anywhere}
+.computing-memory-management .bus-label span{display:block}
+.computing-memory-management .mem-cell{font:400 11px/1.3 var(--lab-font-sans);min-height:26px}
+.computing-memory-management .storage-grid .mem-cell{font:400 11px/1.3 var(--lab-font-sans)}
+.computing-memory-management .log-panel :is(strong,b,p,small){font:400 12px/1.4 var(--lab-font-sans)}
+.computing-process-states-scheduling :is(#readyLane,#cpuContent,#blockedLane) .process-copy strong{font:400 14px/1.35 var(--lab-font-sans)}
+.computing-process-states-scheduling :is(#readyLane,#cpuContent,#blockedLane) :is(.process-copy small,.decision-metric span,.process-foot span,.burst,.burst.cpu::after,.burst.io::after){font:400 11px/1.35 var(--lab-font-sans);letter-spacing:normal;text-transform:none}
+.computing-process-states-scheduling :is(#readyLane,#cpuContent,#blockedLane) .burst{height:auto;min-height:18px;padding:2px;white-space:normal}
+.computing-process-states-scheduling #readyLane .burst::after{content:none}
+.computing-process-states-scheduling :is(#readyLane,#cpuContent,#blockedLane) .decision-metric strong{font:400 14px/1.4 var(--lab-font-sans)}
+.computing-process-states-scheduling :is(#readyLane,#cpuContent,#blockedLane) .decision-metric{padding:5px;border:0}
+.computing-process-states-scheduling :is(.lane-count,.cpu-label,.prediction-line b,.prediction-line strong,.flow-label){font:400 11px/1.4 var(--lab-font-sans);letter-spacing:normal;text-transform:none}
+.computing-process-states-scheduling .decision-preview{border:0;background:none}
+.computing-process-states-scheduling .flow-label{writing-mode:vertical-rl}
+.computing-process-states-scheduling .flow-channel{min-width:0}
+.computing-process-states-scheduling .decision-metric.active::after{content:none}
+
+/* Balance occupied space against the information learners need to compare. */
+@media(min-width:1251px){.computing-assembly .workspace{grid-template-columns:340px minmax(0,1fr);gap:12px}}
+.computing-assembly .computer-grid{align-items:start;grid-template-columns:minmax(0,1fr) 100px 190px}
+.computing-assembly .cpu-board{min-height:0}
+.computing-assembly .bus-bridge{min-height:430px}
+.computing-assembly .ram-scroll{min-height:0;max-height:430px}
+.computing-assembly .translation-head{align-items:start;flex-wrap:wrap;gap:6px}
+.computing-assembly .pass-chips{justify-content:flex-start}
+.computing-assembly .micro-card{grid-template-columns:minmax(0,1fr) auto}
+.computing-assembly .micro-phase{display:none}
+.computing-fetch-decode-execute .arch-grid{grid-template-columns:minmax(0,1fr) 140px 300px;column-gap:20px}
+.computing-fetch-decode-execute .bus-head{flex-wrap:wrap;gap:3px}
+.computing-fetch-decode-execute .clock-module{display:grid;grid-template-columns:minmax(200px,1fr) minmax(300px,480px);gap:8px 20px;align-items:center}
+.computing-fetch-decode-execute .clock-head{display:contents}
+.computing-fetch-decode-execute .clock-title{grid-column:1;grid-row:1}
+.computing-fetch-decode-execute .clock-readout{grid-column:2;grid-row:1;justify-content:flex-end}
+.computing-fetch-decode-execute .clock-trace{grid-column:2;grid-row:2;margin:0}
+.computing-fetch-decode-execute .clock-status{grid-column:1;grid-row:2;border:0;padding:0}
+.computing-software-stack .lab-grid{grid-template-columns:minmax(0,1.5fr) minmax(390px,1fr)}
+.computing-software-stack .computer-stage{min-height:0;grid-template-columns:minmax(0,1fr) 112px;gap:16px;padding:14px;background:var(--lab-surface-strong)}
+.computing-software-stack .monitor-neck{height:30px}
+.computing-software-stack .tower{width:110px;height:275px;margin-bottom:8px}
+.computing-software-stack .tower::before{height:55px}
+.computing-software-stack .tower-logo{top:87px}
+.computing-software-stack .power-cluster{top:109px}
+.computing-software-stack .tower-vents{height:75px;bottom:20px}
+.computing-software-stack .stack-stage{width:100%}
+.computing-software-stack .bank-card{min-height:58px}
+.computing-software-stack .hardware-base>div:first-child{display:grid;gap:3px}
+.computing-memory-management .work-copy p{margin-block:6px}
+.computing-memory-management .work-route{display:none}
+.computing-memory-management .work-cards{gap:12px}
+.computing-memory-management .flow-head{display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,360px)}
+.computing-memory-management .log-timing span,.computing-memory-management .log-copy span{font:400 11px/1.45 var(--lab-font-sans)}
+.computing-memory-management .log-panel .log-cycle-range{font:400 11px/1.4 var(--lab-font-sans)!important}
+.computing-memory-management .log-entry{padding:12px;gap:12px}
+@media(max-width:1250px){.computing-assembly .workspace{grid-template-columns:1fr}.computing-assembly .editor-panel{display:grid;grid-template-columns:1fr 1fr;gap:12px}.computing-assembly .editor-panel>.panel-head{grid-column:1/-1}.computing-assembly .editor-main,.computing-assembly .translation{margin:0}.computing-assembly .reference{grid-column:1/-1}}
+@media(max-width:980px){.computing-software-stack .lab-grid{grid-template-columns:1fr}.computing-software-stack .bank-cards{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:900px){.computing-fetch-decode-execute .arch-grid{grid-template-columns:minmax(0,1fr) 105px minmax(160px,.6fr)}.computing-assembly .computer-grid{grid-template-columns:1fr}.computing-assembly .bus-bridge{min-height:0}.computing-memory-management .workspace{grid-template-columns:1fr}}
+@media(max-width:650px){.computing-fetch-decode-execute .arch-grid{grid-template-columns:1fr;grid-template-areas:"clock" "cpu" "buses" "ram"}.computing-fetch-decode-execute .clock-module{grid-template-columns:1fr}.computing-fetch-decode-execute :is(.clock-title,.clock-readout,.clock-trace,.clock-status){grid-column:1;grid-row:auto}.computing-assembly .editor-panel{display:block}.computing-assembly .translation{margin-top:12px}.computing-software-stack .bank-cards{grid-template-columns:1fr 1fr}.computing-software-stack .computer-stage{grid-template-columns:minmax(0,1fr) 68px;gap:10px;padding:10px}.computing-software-stack .tower{transform:scale(.6);transform-origin:bottom left;margin-right:-44px}.computing-software-stack .monitor-bezel{padding:6px 6px 12px}.computing-software-stack .monitor-foot{width:90px}.computing-memory-management .flow-head{display:block}.computing-memory-management .time-comparison{margin-top:8px}}
+
+.computing-assembly .workspace>.translation{grid-column:1/-1;margin-top:0}
+.computing-assembly .workspace>.translation .translation-head{align-items:center;flex-wrap:nowrap}
+.computing-assembly .ram-meta{flex-wrap:wrap}
+.computing-assembly .ram-type{font-weight:400;letter-spacing:normal;text-transform:none}
+.computing-fetch-decode-execute .cpu-shell{overflow:visible}
+.computing-fetch-decode-execute .cpu-svg{width:100%;max-width:100%;min-width:0}
+@media(min-width:651px) and (max-width:900px){.computing-fetch-decode-execute .arch-grid{grid-template-areas:"clock clock clock" "cpu buses ram"}.computing-fetch-decode-execute .bus-bridge{grid-template-columns:1fr;margin-top:60px}.computing-fetch-decode-execute .bus-line{left:-20px;right:-20px}}
+@media(max-width:650px){.computing-process-states-scheduling .challenge-tabs.lab-toggle{width:100%;height:auto;flex-wrap:wrap;justify-content:flex-start;border-radius:18px}.computing-process-states-scheduling .challenge-tabs.lab-toggle button{flex:1 1 auto;min-width:0;padding-inline:8px}.computing-process-states-scheduling .challenge-bar{padding:16px}.computing-process-states-scheduling .lab-computing-context{padding:12px}.computing-process-states-scheduling .target-row,.computing-process-states-scheduling .target-chip{min-width:0;max-width:100%}.computing-assembly .workspace>.translation .translation-head{flex-wrap:wrap}}
 
 </style>
 <script data-lab-design-runtime>

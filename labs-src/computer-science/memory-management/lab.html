@@ -1060,8 +1060,9 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 </style>
 <!-- LAB_FRAME_STYLES_END -->
 <link rel="stylesheet" href="./lab-kit.css" data-lab-resource="lab-kit.css">
+<!-- LAB_DESIGN_COMPONENTS -->
 </head>
-<body data-lab-layout="standard">
+<body data-lab-layout="standard" class="lab-adopt-v3 lab-computing computing-memory-management">
 <main>
 <!-- LAB_MANIFEST_HEADER_START -->
 <header class="lab-manifest-header">
@@ -1090,11 +1091,12 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 <span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span>
   <span data-lab-authored-subtitle-slot hidden></span>
 
+  <section class="panel mission lab-activity-bar"><div class="mission-copy"><strong id="labTaskTitle">Compare how cache, RAM and storage serve a changing workload.</strong></div></section>
   <section class="panel control-panel">
-    <div class="control-grid">
+    <div class="control-grid lab-computing-tools">
       <div class="field">
         <label for="ramConfig">RAM configuration</label>
-        <select id="ramConfig">
+        <select id="ramConfig" class="lab-menu-select">
           <option value="16">4 GB · 16 blocks</option>
           <option value="32" selected>8 GB · 32 blocks</option>
           <option value="48">12 GB · 48 blocks</option>
@@ -1103,7 +1105,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 
       <div class="field">
         <label for="cacheConfig">CPU cache configuration</label>
-        <select id="cacheConfig">
+        <select id="cacheConfig" class="lab-menu-select">
           <option value="small">Small · 2 / 4 / 8</option>
           <option value="standard" selected>Standard · 4 / 8 / 16</option>
           <option value="large">Large · 6 / 12 / 24</option>
@@ -1112,7 +1114,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 
       <div class="field">
         <label for="driveConfig">Storage device</label>
-        <select id="driveConfig">
+        <select id="driveConfig" class="lab-menu-select">
           <option value="ssd" selected>SSD</option>
           <option value="hdd">Hard disk drive</option>
         </select>
@@ -1120,7 +1122,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 
       <div class="field">
         <label for="cycleSpeed">Clock animation</label>
-        <select id="cycleSpeed">
+        <select id="cycleSpeed" class="lab-menu-select">
           <option value="10">10 cycles · 0.01 s</option>
           <option value="50">10 cycles · 0.05 s</option>
           <option value="100">10 cycles · 0.10 s</option>
@@ -1131,13 +1133,13 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 
       <div class="field">
         <label>Latency model</label>
-        <button id="explainButton" style="width:100%">Log latency assumptions</button>
+        <button id="explainButton" style="width:100%" class="lab-action">Log latency assumptions</button>
       </div>
 
       <div class="control-buttons">
-        <button id="resetButton" data-lab-action="reset">Reset</button>
-        <button id="stepButton">Advance 10 cycles</button>
-        <button id="runButton" class="primary">Run clock</button>
+        <button id="resetButton" data-lab-action="reset" class="lab-action">Reset</button>
+        <button id="stepButton" class="lab-action">Advance 10 cycles</button>
+        <button id="runButton" class="primary lab-action " data-priority="primary" data-lab-intro="memory-clock" data-lab-intro-title="Boot the computer" data-lab-intro-copy="Run the clock to load the operating system into RAM. Pause or advance ten cycles at a time to inspect each memory action.">Run clock</button>
       </div>
     </div>
 
@@ -1156,7 +1158,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
     <section class="panel desktop-panel">
       <div class="panel-head">
         <strong>Interactive desktop</strong>
-        <span>Open programs and create workloads here.<br>Task Manager colours match the allocated blocks.</span>
+        <span>Task Manager colours match allocated blocks.</span>
       </div>
 
       <div class="monitor">
@@ -1167,9 +1169,9 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 
 
       <div class="desktop-shortcuts">
-        <button id="workdayButton">Open work apps</button>
-        <button id="stressButton">Stress memory</button>
-        <button id="recoverButton">Close background apps</button>
+        <button id="workdayButton" class="lab-action " data-lab-intro="memory-workload" data-lab-intro-title="Create a workload" data-lab-intro-copy="Open work apps once boot finishes. Compare cache hits, allocated RAM and page faults as you add or close applications.">Open work apps</button>
+        <button id="stressButton" class="lab-action">Stress memory</button>
+        <button id="recoverButton" class="lab-action">Close background apps</button>
       </div>
     </section>
 
@@ -1177,7 +1179,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
       <div class="panel-head flow-head">
         <div class="flow-title">
           <strong>Live data flow</strong>
-          <span>Hover or select a Task Manager process to trace all of its allocated blocks.</span>
+          <span></span>
         </div>
         <div class="time-comparison" aria-live="polite">
           <span id="comparisonState" class="comparison-state">No current action</span>
@@ -1193,7 +1195,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
         <div class="work-monitor-head">
           <div>
             <strong>Current work queue</strong>
-            <span>The first slot is executing now; the second previews the next queued memory action.</span>
+
           </div>
           <span id="gateStatus" class="gate-status">clock paused</span>
         </div>
@@ -1323,7 +1325,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
         <strong>OS decision log</strong>
         <span>Each record shows the start and end of the path, cycle cost and simulated time.</span>
       </div>
-      <button id="clearLogButton">Clear log</button>
+      <button id="clearLogButton" class="lab-action">Clear log</button>
     </div>
     <div id="activityLog" class="activity-log" aria-live="polite"></div>
   </section>
@@ -2847,7 +2849,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
           <div class="desktop-off-inner">
             <div class="desktop-power-symbol"></div>
             <strong>Computer ready to boot</strong>
-            <p>Press Run clock or Advance 10 cycles. The firmware will then load Orbit OS pages from ${drive.label} into RAM.</p>
+
           </div>
         </div>`;
       return;

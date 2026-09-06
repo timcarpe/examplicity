@@ -693,8 +693,9 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 </style>
 <!-- LAB_FRAME_STYLES_END -->
 <link rel="stylesheet" href="./lab-kit.css" data-lab-resource="lab-kit.css">
+<!-- LAB_DESIGN_COMPONENTS -->
 </head>
-<body data-lab-layout="standard">
+<body data-lab-layout="standard" class="lab-adopt-v3 lab-computing computing-software-stack">
 <main>
 <!-- LAB_MANIFEST_HEADER_START -->
 <header class="lab-manifest-header">
@@ -723,14 +724,16 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 <span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span>
   <span data-lab-authored-subtitle-slot hidden></span>
 
-  <section class="panel mission-panel">
+  <section class="panel mission-panel mission lab-activity-bar">
     <div class="mission-copy">
-      <strong id="missionText">Goal: Build a working software stack, then open the Image Editor.</strong>
+      <strong id="missionText">Build a working software stack, then open the Image Editor.</strong>
     </div>
-    <div class="mission-actions">
+
+  </section>
+<div class="mission-actions lab-computing-tools">
       <label>
         <span>Target application</span>
-        <select id="targetApplication">
+        <select id="targetApplication" class="lab-menu-select">
           <option value="image" selected>Image Editor</option>
           <option value="word">Word Processor</option>
           <option value="browser">Web Browser</option>
@@ -739,9 +742,8 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
           <option value="media">Media Player</option>
         </select>
       </label>
-      <button id="resetLab" class="ui-button" data-lab-action="reset">Reset</button>
+      <button id="resetLab" class="ui-button lab-action" data-lab-action="reset">Reset</button>
     </div>
-  </section>
 
   <div class="lab-grid">
     <section class="panel computer-panel">
@@ -761,7 +763,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
         <div class="tower">
           <div class="tower-logo">ASTRA</div>
           <div class="power-cluster">
-            <button id="powerButton" class="power-button" aria-label="Turn computer on">
+            <button id="powerButton" class="power-button " aria-label="Turn computer on" data-lab-intro="software-power" data-lab-intro-title="Test your stack" data-lab-intro-copy="Power on to test the stack and open the target application. Turn power off again before changing its layers or functions.">
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M12 2v9"/>
                 <path d="M7.4 5.7a8 8 0 1 0 9.2 0"/>
@@ -777,7 +779,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
       <section class="platform-section">
         <div class="platform-heading">
           <strong>Software stack</strong>
-          <span>Drag software cards into the stack. Place OS functions and utility functions inside their matching layers.</span>
+
         </div>
         <div class="stack-stage">
           <div id="stackList" class="stack-list" aria-label="Software stack"></div>
@@ -795,7 +797,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
     <aside id="bankPanel" class="panel bank-panel">
       <div class="panel-heading">
         <strong>Software items</strong>
-        <span>Arrange items, then test by turning the computer on.</span>
+
       </div>
       <div id="selectionStatus" class="selection-status" role="status" aria-live="polite">
         Drag a card, or select one and then select its destination.
@@ -894,7 +896,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
   }
 
   function targetApplication(){ return $("targetApplication").value; }
-  function updateMission(){ $("missionText").textContent = `Goal: Build a working software stack, then open the ${appInfo[targetApplication()].label}.`; }
+  function updateMission(){ $("missionText").textContent = `Build a working software stack, then open the ${appInfo[targetApplication()].label}.`; }
   function isLayerId(id){ return !!layerItems[id]; }
   function isContentId(id){ return !!contentItems[id]; }
   function isApplicationId(id){ return !!layerItems[id] && layerItems[id].kind==="application"; }
@@ -991,13 +993,14 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
       box.innerHTML="<strong>Categories revealed.</strong> You can now compare your solution with the correct software groupings.";
       return;
     }
-    box.textContent="Drag a card, or select one and then select its destination.";
+    box.textContent="";
   }
 
   function makeBankCard(kind,id){
     const item = kind==="layer" ? layerItems[id] : contentItems[id];
     const card=document.createElement("div");
-    card.className="bank-card";
+    card.className="bank-card lab-placeable-card";
+    card.dataset.labIntro="software-part";card.dataset.labIntroTitle="Build the software stack";card.dataset.labIntroCopy="Drag a software item into the stack, or select it and then its destination. Function cards fit inside a software layer.";
     if(selected && selected.kind===kind && selected.id===id) card.classList.add("selected");
     if(categoriesRevealed){
       card.classList.add(categoryMeta(kind,id).className);
@@ -1337,6 +1340,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
   }
 
   function renderAll(){
+    const power=$("powerButton");if(stack.length)power.dataset.labIntro="software-power";else delete power.dataset.labIntro;
     renderStack();
     renderBank();
     $("bankPanel").classList.toggle("locked",!editing);

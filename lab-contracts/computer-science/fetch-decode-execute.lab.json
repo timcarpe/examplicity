@@ -19,5 +19,78 @@
   "nonGoals": [
     "Expanding into advanced processor architecture unless it directly supports understanding the fetch-decode-execute cycle."
   ],
-  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract",
+  "implementation": {
+    "reviewedRevision": "3131fbb",
+    "surfaces": {
+      "task": {
+        "selectors": [
+          "#labTaskTitle",
+          "#programSelect",
+          "#displayMode"
+        ],
+        "kind": "given",
+        "description": "Goal, three example programs and immediate/direct instruction models.",
+        "visibility": "Present in the corresponding simulation or construction state."
+      },
+      "controls": {
+        "selectors": [
+          "#stepBtn",
+          "#runBtn",
+          "#speed"
+        ],
+        "kind": "control",
+        "description": "Advance one micro-operation or run the clock.",
+        "visibility": "Present in the corresponding simulation or construction state."
+      },
+      "model": {
+        "selectors": [
+          ".cpu-svg",
+          "#ramTable",
+          ".clock-trace",
+          ".phase-strip"
+        ],
+        "kind": "model",
+        "description": "CPU, buses and RAM stay adjacent; clock and phase strip show execution progression.",
+        "visibility": "Present in the corresponding simulation or construction state."
+      },
+      "evidence": {
+        "selectors": [
+          "#operation",
+          "#operationNote",
+          "#accValue"
+        ],
+        "kind": "evidence",
+        "description": "One current-operation explanation and resulting accumulator value.",
+        "visibility": "Present in the corresponding simulation or construction state."
+      }
+    },
+    "quantities": {
+      "accumulator": {
+        "description": "Accumulator value.",
+        "domain": "Program arithmetic: supplied add yields 13, subtract 12, multiply 12.",
+        "source": "Active program executed through the micro-operation queue.",
+        "output": "#accValue and RAM result."
+      },
+      "clock": {
+        "description": "Completed teaching ticks.",
+        "domain": "One micro-operation per tick.",
+        "source": "Next tick or Auto run.",
+        "output": "#tickCount and clock trace."
+      }
+    },
+    "modes": {
+      "operand": "Immediate operands use CIR; direct addressing fetches operands from memory.",
+      "program": "Add/store, subtract/store and multiplication by repeated addition.",
+      "support": "No Working or assessed exam-level toggle; the instruction-model menu changes the machine trace."
+    },
+    "dependencies": [
+      "Changing program or instruction model resets CPU and memory.",
+      "Decode schedules the instruction-specific execution transfers."
+    ],
+    "completion": "STOP halts and disables further stepping/running until reset.",
+    "limitations": [
+      "Each teaching tick is a micro-operation rather than a literal physical clock-cycle implementation."
+    ]
+  }
 }

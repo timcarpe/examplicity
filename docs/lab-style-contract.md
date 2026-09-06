@@ -610,3 +610,32 @@ Next/Play, construction tools, Undo/Reset/Test and optional packet processing
 with the model controls below it. Exam remains farthest right, then Working,
 then any additional mode controls. A parts shelf may be beside the canvas when
 that makes the drag source and destination clearer.
+
+
+### Computing workspaces: balance without erasing relationships
+
+The shared `lab-computing` adapter preserves authored editors, hardware diagrams,
+queues and software stacks; it does not apply the generic working-sidebar grid.
+Use the common goal bar, `lab-computing-tools`, `lab-menu-select` and
+`lab-action` for surrounding controls. Simulated desktop windows and physical
+power switches retain their model-specific appearance.
+
+Conservative adaptation still includes reducing repetition and redistributing
+space. Give dense diagrams room reclaimed from oversized editors, empty bus
+corridors or oversized scenery. Keep related model regions adjacent. A monitor
+can be more compact without losing its bezel, stand or readable screen. Parts
+banks and nested stacks need enough width for legible labels and placement.
+
+Show an explanation once, at the evidence it explains. Keep task context,
+performance criteria, decision comparisons and failure causes; remove repeated
+commands when a targeted interaction tooltip supplies them. A target strip above
+the workspace can report pending, met or missed criteria without adding Working
+levels to an exploratory lab. Supplied facts remain neutral.
+
+Use 15px regular section headings, 14px explanations and part names, 12px controls
+and 11px secondary labels. Account for SVG scaling. Shorten redundant wording in
+register labels before shrinking text; retain full names in accessible descriptions.
+Keep meaningful process identities, state hatching and transfer paths. Editor,
+memory-table, log and parts-menu scrolling can be useful; the operated hardware
+diagram fits the available canvas. A narrow timeline can retain every tick while
+reducing printed tick numbers and exposing full state descriptions on cells.

@@ -1,9 +1,109 @@
 {
   "schemaVersion": 1,
   "relationship": "Opening workloads and advancing the clock connects RAM, cache and drive settings to latency, pressure and faults.",
-  "learnerLoop": { "action": "Configure memory, open or close work apps, then step or run the clock.", "modelChange": "The simulated workload, memory pressure and access path change.", "evidence": "Metrics, desktop, architecture panel and log expose timing and fault consequences.", "nextDecision": "Change the workload or configuration to explain the observed performance." },
-  "invariants": ["Metrics and log entries describe the active simulated configuration and workload.", "Closing an app removes its associated simulated memory demand."],
-  "safeAdaptations": ["Change application stories, parameter values or guidance while retaining observable memory hierarchy consequences."],
-  "nonGoals": ["Measuring or managing the learner's actual computer memory."],
-  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+  "learnerLoop": {
+    "action": "Configure memory, open or close work apps, then step or run the clock.",
+    "modelChange": "The simulated workload, memory pressure and access path change.",
+    "evidence": "Metrics, desktop, architecture panel and log expose timing and fault consequences.",
+    "nextDecision": "Change the workload or configuration to explain the observed performance."
+  },
+  "invariants": [
+    "Metrics and log entries describe the active simulated configuration and workload.",
+    "Closing an app removes its associated simulated memory demand."
+  ],
+  "safeAdaptations": [
+    "Change application stories, parameter values or guidance while retaining observable memory hierarchy consequences."
+  ],
+  "nonGoals": [
+    "Measuring or managing the learner's actual computer memory."
+  ],
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract",
+  "implementation": {
+    "reviewedRevision": "3131fbb",
+    "surfaces": {
+      "task": {
+        "selectors": [
+          "#labTaskTitle",
+          "#ramConfig",
+          "#cacheConfig",
+          "#driveConfig"
+        ],
+        "kind": "given",
+        "description": "Workload comparison goal and selectable memory/storage configuration.",
+        "visibility": "Present in the corresponding simulation or construction state."
+      },
+      "controls": {
+        "selectors": [
+          "#stepButton",
+          "#runButton",
+          "#cycleSpeed",
+          "#workdayButton",
+          "#stressButton",
+          "#recoverButton"
+        ],
+        "kind": "control",
+        "description": "Boot/advance the machine and create or close workloads.",
+        "visibility": "Present in the corresponding simulation or construction state."
+      },
+      "model": {
+        "selectors": [
+          "#desktop",
+          "#architecturePanel",
+          "#workCards"
+        ],
+        "kind": "model",
+        "description": "Interactive desktop beside storage, page file, RAM and cache; current and next queued memory actions remain paired.",
+        "visibility": "Present in the corresponding simulation or construction state."
+      },
+      "evidence": {
+        "selectors": [
+          "#hitMetric",
+          "#faultMetric",
+          "#pressureMetric",
+          ".activity-log"
+        ],
+        "kind": "evidence",
+        "description": "Cache hits, page faults, memory pressure and causal OS log.",
+        "visibility": "Present in the corresponding simulation or construction state."
+      }
+    },
+    "quantities": {
+      "cycles": {
+        "description": "Completed simulation cycles.",
+        "domain": "Each gate advances up to 10 cycles; action latency follows the current teaching configuration.",
+        "source": "Clock and queued actions.",
+        "output": "#cyclesMetric, work-card progress and decision log."
+      },
+      "memory": {
+        "description": "Allocated physical memory and page-file blocks.",
+        "domain": "16, 32 or 48 RAM blocks representing 4, 8 or 12 GB.",
+        "source": "RAM configuration and workload allocation/eviction.",
+        "output": "RAM/page-file maps and usage counters.",
+        "inputSlots": [
+          "#ramConfig"
+        ]
+      },
+      "latency": {
+        "description": "Relative teaching access cost.",
+        "domain": "L1 1, L2 5, L3 14, RAM 45 cycles; storage and page-file transfers are longer.",
+        "source": "Cache hits/misses and selected SSD/HDD.",
+        "output": "Current action, latency reference and simulation/hardware comparison."
+      }
+    },
+    "modes": {
+      "configuration": "Three RAM sizes, three cache configurations, SSD/HDD, five clock animation speeds.",
+      "workload": "Boot, open work apps, stress memory and close background apps, plus desktop application interactions.",
+      "support": "Open simulation without Working, exam toggle or terminal score."
+    },
+    "dependencies": [
+      "Starting the clock loads the OS before workload shortcuts become available.",
+      "Allocation and access events update the hierarchy, queued work, metrics and decision log.",
+      "Configuration changes reset the simulation."
+    ],
+    "completion": "No terminal gate; learners compare access routes and memory pressure over repeated workloads.",
+    "limitations": [
+      "Relative teaching latencies and approximate hardware comparison are simplified rather than hardware benchmarks.",
+      "Desktop process identities remain aligned with allocated block colours."
+    ]
+  }
 }
