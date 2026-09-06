@@ -1183,3 +1183,21 @@ Batch 6, including the concurrent OS Memory revision, is accepted.
   contract checks pass for all 57 labs; developer mirrors and authoring bundle match.
 - Commits: site implementation `44805d3`; canonical shared kit and guides `97ab2ba`.
   The five maps pin their reviewed revision to the site implementation commit.
+
+### Batch 7 review — inline factory working and shared chips
+
+- Huffman Rover, Database Normalisation and Combinational Logic accepted.
+- Bitmap baseline/size change now uses the shared flat lab-chip component.
+- Automated Systems: one clear routing goal; stage goal, test criterion, shared
+  routing chips and live working readout above the bottle line. Removed the
+  chart/device explanation popups and duplicate completion/feedback panels.
+  Build guidance and the statement editor are inline. Batch results also use
+  shared chips. Physical art, stage progression and test logic are retained.
+- Shared CSS and both canonical guides document chips and this optional inline
+  simulation pattern. Updated the observational map and offline distributions.
+- Browser checks: four stages, invalid chart, inline configuration and chips;
+  1422/900/390px fit, no page errors. The desktop bottle line remains beside
+  and within the initial chart's vertical extent.
+- All 57 publication, download and contract checks pass. Sound Sampling's
+  specific allowance is now 1.51 MB to include the shared components (actual
+  package about 1.501 MB); the general download limit is unchanged.

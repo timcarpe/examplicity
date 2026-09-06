@@ -14,7 +14,7 @@ const artifactSizeWaivers = new Map([
     reason: 'Reviewed offline Skulpt runtime and standard-library payload.',
   }],
   ['sound-sampling', {
-    maxBytes: 1_500_000,
+    maxBytes: 1_510_000,
     reason: 'Reviewed unchanged offline audio payload plus embedded shared design resources, including computing construction/comparison workspaces and native revealed-menu styling.',
   }],
 ]);

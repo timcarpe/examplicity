@@ -717,3 +717,22 @@ horizontal data scrolling; the operated board itself should fit its container.
 Code/bitstream panes can have a bounded height. Keep model colours (for example
 painted pixels) as data. Remove repeated commands once the real target has a
 shared first-use tooltip; retain key rules, pass criteria and causal feedback.
+
+### Compact chips and inline simulation working
+
+Use lab-chip for short informational values or rules: regular 12px text,
+4px/8px padding, 6px corners and a flat borderless surface. Neutral is the
+default; data-tone="violet" and data-tone="amber" use direct 20% concept
+tints. good/bad describe an observed result, not an untested routing rule.
+Group related chips with lab-chip-row; chips are not buttons or toggles.
+
+Where repeated popups interrupt a simulation, lab-working-context places
+the stage goal, short requirement and one lab-working-readout above the
+physical model. The readout replaces its content as execution proceeds and
+retains the outcome. Use data-state="working|correct|mistake|ready" for the
+existing yellow/green/red/neutral states. Reserve enough readout height to
+avoid moving the model during ordinary updates; let unusually long text flow.
+Keep the physical model beside its controller, not below it. Automated Systems
+uses inline build guidance and configuration instead of first-use popups; this
+is a simulation-specific alternative, not a replacement for targeted tooltips
+elsewhere.
