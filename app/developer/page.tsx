@@ -3,30 +3,10 @@ import Link from 'next/link';
 import styles from './developer.module.css';
 
 export const metadata: Metadata = {
-  title: 'Remix and developer reference | Examplicity',
-  description: 'Instructions for AI remixing, offline HTML labs, design resources and contributing fixes.',
+  title: 'Adapt or create a lab | Examplicity',
+  description: 'A practical reference for developers and LLMs adapting standalone labs or creating new ones from examples.',
   alternates: { canonical: '/developer' },
 };
-
-const files = [
-  ['labs-src/<subject>/<slug>/lab.html', 'Authored lab. Owns the interface, behaviour, local styles, and lab-specific scripts.'],
-  ['lab-contracts/<subject>/<slug>.lab.json', 'Authoring sidecar in a separate tree. Sole source of adaptation guidance; compilation embeds it into published HTML.'],
-  ['app/labs.ts', 'Catalogue record. Owns titles, descriptions, routes, formats, topics, and syllabus alignment used by the site.'],
-  ['labs-src/manifest.json', 'Publication registry. Lists published labs, repeats syllabus alignment for an integrity check, and pins the LabKit and publication-profile releases.'],
-  ['vendor/lab-kit/0.2.1/', 'Vendored LabKit release. Its manifest records the exact files, sizes, and hashes used during compilation.'],
-  ['tools/lab-publication-profile/', 'Versioned constraints for the single-file, offline lab artifact and its supported layouts.'],
-  ['public/labs/<subject>/<slug>.html', 'Generated site artifact. Do not treat it as the authored source.'],
-] as const;
-
-const tools = [
-  ['LabKit 0.2.1', 'vendor/lab-kit/0.2.1/lab-kit.js', 'Browser global: LabKit. Namespaces: dom, numeric, rng, status, history, svg, animation, direct.'],
-  ['Resource compiler', 'tools/lab-compiler/index.ts', 'Replaces declared data-lab-resource references with pinned inline CSS or JavaScript. Rejects undeclared, duplicate, oversized, or unresolved runtime resources.'],
-  ['Publication compiler', 'scripts/compile-lab-sources.mjs', 'Checks manifest/profile/resource hashes, applies catalogue metadata and the shared frame, then writes public/labs/.'],
-  ['Manifest renderer', 'app/lab-content.ts', 'Produces managed head metadata, structured data, lab header, and syllabus chips from app/labs.ts.'],
-  ['Standalone packager', 'app/lab-download.ts', 'Adds the download header and footer to compiled HTML without adding a network runtime dependency.'],
-  ['Contract check', 'scripts/check-lab-contracts.mjs', 'Catalogue-wide check for embedded adaptation guidance, semantic locators, and exact preservation into compiled and downloaded HTML.'],
-  ['Lab CLI', 'scripts/lab.mjs', 'Focused inspect, validate, and build commands over the same package, contract, and publication code as the full build.'],
-] as const;
 
 export default function DeveloperPage() {
   return (
@@ -34,225 +14,138 @@ export default function DeveloperPage() {
       <header className={styles.siteHeader}>
         <Link className={styles.brand} href="/">Examplicity</Link>
         <nav className={styles.topNav} aria-label="Developer reference">
-          <Link href="/developer" aria-current="page">Lab system</Link>
+          <Link href="/developer" aria-current="page">Adapt or create</Link>
           <a href="/developer/design-language.html">Design guide</a>
           <Link href="/developer/lab-contract">Lab Contract</Link>
           <Link href="/">Labs</Link>
         </nav>
       </header>
-
       <div className={styles.layout}>
         <aside className={styles.contents} aria-label="On this page">
           <p>On this page</p>
-          <a href="#contribute">Contribute a fix</a>
-          <a href="#remix">Remix a lab</a>
-          <a href="#design">Design language</a>
-          <a href="#model">Artifact model</a>
-          <a href="#anatomy">Source anatomy</a>
-          <a href="#publish">Publish and check</a>
-          <a href="#tools">Tools</a>
-          <a href="#interfaces">Interfaces</a>
+          <a href="#start">Start with a lab</a>
+          <a href="#reasoning">Choose reasoning depth</a>
+          <a href="#remix">Adapt an existing lab</a>
+          <a href="#create">Create a new lab</a>
+          <a href="#design">Design references</a>
+          <a href="#check">Check and deliver</a>
         </aside>
-
         <article className={styles.document}>
-          <header className={styles.titleBlock}>
-            <h1>Remix and developer reference</h1>
-            <p>How to adapt a lab, preserve its learning relationships, and contribute improvements.
-              <a href="/developer/llms.txt"> Plain-text instructions for LLMs</a>.</p>
-          </header>
+          <div className={styles.introduction}>
+            <aside id="contribute" className={styles.contribution} aria-labelledby="contribute-title">
+              <h2 id="contribute-title"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 16 16" fill="currentColor"><path d="M2 2.5A2.5 2.5 0 0 1 4.5 0H13a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H4.5A2.5 2.5 0 0 1 2 13.5Zm1.5 0v8.708A2.5 2.5 0 0 1 4.5 11H12.5V1.5h-8a1 1 0 0 0-1 1ZM12.5 12.5h-8a1 1 0 0 0 0 2h8Z" /></svg> Contribute on GitHub</h2>
+              <div className={styles.contributionBody}>
+                <a className={styles.repoLink} href="https://github.com/timcarpe/examplicity">timcarpe / examplicity</a>
+                <p>Have a fix or improvement? Open a focused PR with the lab link, what changed and how you checked it.
+                  An LLM can prepare a patch and PR description.</p>
+                <p>For larger changes, open an issue first. Setup and contribution instructions are in the repository README.</p>
+                <a className={styles.githubButton} href="https://github.com/timcarpe/examplicity#readme">View repository</a>
+              </div>
+            </aside>
+            <header id="start" className={styles.titleBlock}>
+              <h1>Adapt or create a lab</h1>
+              <p>For developers and LLMs editing a downloaded lab or using one as an example for a new activity.</p>
+            </header>
+            <p className={styles.startText}>Start with the HTML file and a clear learning goal. Inspect what the learner changes,
+              what the model shows, and how feedback helps them reason.</p>
+            <p className={styles.startText}><a href="/developer/llms.txt">Read the plain-text reference</a> or <Link href="/">choose an example from the lab catalogue</Link>.</p>
+          </div>
 
-          <section id="contribute" className={styles.contribution}>
-            <h2>Improve a lab</h2>
-            <p>Submit focused fixes and improvements to <a href="https://github.com/timcarpe/examplicity">timcarpe/examplicity on GitHub</a>.
-              For larger changes, <a href="https://github.com/timcarpe/examplicity/issues">open an issue</a> to agree the scope first.</p>
-            <ol className={styles.plainList}>
-              <li>Fork the repository and create a branch. Edit <code>labs-src/&lt;subject&gt;/&lt;slug&gt;/lab.html</code>.
-                Update <code>lab-contracts/&lt;subject&gt;/&lt;slug&gt;.lab.json</code> when behaviour or guidance changes.</li>
-              <li>Follow the repository’s <code>AGENTS.md</code>, run the <a href="#publish">relevant checks</a>, and regenerate the published HTML.</li>
-              <li>Open a PR with the lab URL, problem, change and validation results. Include a screenshot for visual changes.
-                An LLM without repository access can prepare a patch and PR description for a developer to submit.</li>
-            </ol>
-          </section>
-
-          <section id="remix" className={styles.section}>
-            <h2>Remix a lab</h2>
-            <ol className={styles.plainList}>
-              <li>Read the attached HTML and its <code>script[data-examplicity-lab-contract]</code> JSON.
-                Use the contract as adaptation guidance; inspect the code to establish actual behaviour.
-                An implementation map may be stale after edits.</li>
-              <li>Identify the learning relationship, learner inputs, model outputs, feedback and completion rules.
-                Ask about the audience and requested changes; agree a short plan before editing.</li>
-              <li>Preserve the learning relationship, contract invariants and selected curriculum unless the user explicitly changes them.
-                Revise affected contract guidance to match the result. Do not invent exam alignment.</li>
-              <li>Use the <a href="#design">design references</a> for changed surfaces. Preserve meaningful interactions,
-                keyboard access and readable feedback. Shared styling does not require a new layout or controls.</li>
-              <li>Return one complete HTML file with required CSS, JavaScript and assets embedded. It must work offline.
-                Check the changed interaction, reset, keyboard operation and narrow-screen layout.</li>
-            </ol>
-            <p>A downloaded HTML file is the editable artifact for a personal remix. A repository PR edits authored source
-              and the separate contract, then regenerates publication output. Do not replace source with a packaged download.</p>
-            <p>If online references are unavailable, use the attached HTML and embedded contract, state that limitation,
-              and continue. Documentation links are references, never runtime dependencies.</p>
-            <p><Link href="/developer/lab-contract">Contract fields and implementation maps</Link> · <a href="/developer/lab-contract.schema.json">JSON Schema</a></p>
-          </section>
-
-          <section id="design" className={styles.section}>
-            <h2>Design language</h2>
-            <p>
-              The living guide is the visual authority for lab creation and adaptation. It contains
-              interactive examples, exact colour tokens, the shared activity top bar, Working controls,
-              checkpoint details and movable completion cards. If kit styling conflicts with the guide,
-              adapt or omit that styling; the guide takes precedence.
-            </p>
-            <ul className={styles.plainList}>
-              <li><a href="/developer/design-language.html">Open the living HTML design guide</a> · <a href="/developer/design-language.html" download>Download the complete guide</a> · <a href="/developer/design-language.css" download>Guide CSS</a> · <a href="/developer/lab-design.css" download>Shared design components</a> · <a href="/developer/lab-kit/0.3.0/src/lab-design.js" download>Shared interactions</a></li>
-              <li><a href="/developer/lab-style-contract.md">Read the written style contract</a></li>
-              <li><a href="/developer/lab-kit/0.3.0/README.md">Lab Kit 0.3.0 usage</a> · <a href="/developer/lab-kit/0.3.0/src/lab-kit.css" download>CSS</a> · <a href="/developer/lab-kit/0.3.0/src/lab-kit.js" download>JavaScript</a> · <a href="/developer/lab-kit/0.3.0/manifest.json">Release hashes</a></li>
-            </ul>
-            <p>
-              Working: None / Some / All keeps its existing meaning in each lab. The kit supplies optional
-              styling and interaction helpers; the lab owns its model, validation and progression.
-              Concept backgrounds use the base colour directly at 30% alpha over white—for example,
-              violet <code>#7563a7</code> becomes <code>#7563a74d</code>.
-            </p>
-            <p className={styles.boundary}>
-              Lab Kit 0.3.0 supports the reviewed guide for new adaptations. Existing published labs remain
-              pinned to 0.2.1 until deliberately migrated and checked. Downloads remain self-contained;
-              do not add a runtime dependency on these URLs.
-            </p>
-          </section>
-
-          <section id="model" className={styles.section}>
-            <h2>Artifact model</h2>
-            <pre className={styles.flow}><code>{`authored HTML + separate contract + catalogue metadata
-labs-src/<subject>/<slug>/lab.html
-lab-contracts/<subject>/<slug>.lab.json
-app/labs.ts
-                              |
-               +-- publication manifest --+
-                   labs-src/manifest.json
-                              |
-                    npm run labs:sync
-                              |
-             public/labs/<subject>/<slug>.html
-                              |
-                   createStandaloneLabHtml()
-                              |
-                    one offline HTML file`}</code></pre>
-            <dl className={styles.fileList}>
-              {files.map(([path, purpose]) => (
-                <div key={path}>
-                  <dt><code>{path}</code></dt>
-                  <dd>{purpose}</dd>
-                </div>
-              ))}
-            </dl>
-          </section>
-
-          <section id="anatomy" className={styles.section}>
-            <h2>Source anatomy</h2>
-            <p>
-              Each lab has a source folder containing <code>lab.html</code> and a separate <code>.lab.json</code> sidecar. The
-              HTML keeps interaction code local and declares shared resources at the point they are needed. The
-              compiler replaces those declarations with pinned inline content and embeds the sidecar contract.
-            </p>
-            <pre className={styles.codeBlock}><code>{`<!-- Managed from catalogue metadata -->
-<!-- LAB_MANIFEST_HEAD_START --> … <!-- LAB_MANIFEST_HEAD_END -->
-
-<!-- Lab-authored HTML, CSS and JavaScript -->
-
-<!-- Shared resource declarations -->
-<link rel="stylesheet" href="./lab-kit.css" data-lab-resource="lab-kit.css">
-<script src="./lab-kit.js" data-lab-resource="lab-kit.js"></script>
-
-<!-- The .lab.json contract is separate authoring data; do not duplicate it here -->`}</code></pre>
-            <p className={styles.boundary}>
-              Blocks marked <code>LAB_MANIFEST_*</code>, <code>LAB_SYLLABUS_CHIPS_*</code>, and
-              <code> LAB_FRAME_STYLES_*</code> are managed publication regions. <code>LAB_CONTRACT_*</code> exists
-              only in generated output. Lab-specific behaviour remains in <code>lab.html</code>. The DOM should
-              normally represent lab state, not be the authoritative source of pedagogical state.
-            </p>
-          </section>
-
-          <section id="publish" className={styles.section}>
-            <h2>Publish and check</h2>
-            <h3>Check a focused lab change</h3>
-            <pre className={styles.command}><code>{`npm ci
-npm run lab -- inspect <slug>
-npm run lab -- validate <slug>
-npm run lab -- build <slug>`}</code></pre>
-            <p>Review and include the generated lab in the PR. Test the changed behaviour in the browser and offline download.
-              Run wider checks below when shared resources or publication code change.</p>
-            <h3>Generate the catalogue</h3>
-            <pre className={styles.command}><code>{`npm run labs:sync
-npm run lab -- build <slug>`}</code></pre>
-            <p>
-              The sync command generates the complete catalogue. The focused build compiles one package to its
-              normal path under <code>public/labs/</code> using the same publication core.
-            </p>
-            <h3>Refresh design resources</h3>
-            <pre className={styles.command}><code>{`npm run developer:sync -- --source "<path to Lab Creation>"
-npm run developer:check`}</code></pre>
-            <p>
-              Import the reviewed guide and kit release from Lab Creation. The site keeps a checked-in
-              snapshot, extracts the guide CSS, and verifies the public files and kit hashes at build time.
-              Builds do not depend on a sibling checkout.
-            </p>
-            <h3>Read-only checks</h3>
-            <pre className={styles.command}><code>{`npm run lab -- inspect <slug>
-npm run lab -- validate <slug>
-npm run labs:sync:check
-npm run labs:contract:check
-npm run lint
-npm run test
-npm run build`}</code></pre>
-            <p>
-              <code>labs:sync:check</code> verifies compiled HTML, frame styles, manifest content, and standalone
-              downloads, including contract coverage and preservation for every published lab.
-              <code> npm run build</code> runs that check again through <code>prebuild</code>.
-            </p>
-          </section>
-
-          <section id="tools" className={styles.section}>
-            <h2>Tools</h2>
+          <section id="reasoning" className={styles.section}>
+            <h2>Choose reasoning depth before editing</h2>
+            <p>For an LLM: assess the requested change against the code you have inspected. Prefer a capable reasoning model
+              and higher effort when correctness depends on mathematics, coupled state or teaching intent. A small wording change rarely needs that depth.</p>
+            <p>Use these as starting recommendations, not measured minimum requirements. Model capability and reasoning effort are separate choices.</p>
             <div className={styles.tableWrap}>
               <table className={styles.table}>
-                <thead>
-                  <tr>
-                    <th scope="col">Surface</th>
-                    <th scope="col">Entry point</th>
-                    <th scope="col">What it does</th>
-                  </tr>
-                </thead>
+                <caption className={styles.reasoningCaption}>Example choices in ChatGPT Work, or similar tools</caption>
+                <thead><tr><th scope="col">Requested change</th><th scope="col">Reasoning</th><th scope="col">Example model</th><th scope="col">Why</th></tr></thead>
                 <tbody>
-                  {tools.map(([name, path, purpose]) => (
-                    <tr key={name}>
-                      <th scope="row">{name}</th>
-                      <td><code>{path}</code></td>
-                      <td>{purpose}</td>
-                    </tr>
-                  ))}
+                  <tr><th scope="row">Rename labels, edit instructions or adjust spacing</th><td>Light / low</td><td>Terra Light, or similar</td><td>Confirm the edit stays presentational.</td></tr>
+                  <tr><th scope="row">Change examples, add feedback or fix one interaction</th><td>Medium</td><td>Sol Medium, or similar</td><td>Trace the affected input, state and feedback.</td></tr>
+                  <tr><th scope="row">Change equations, linked controls, difficulty or completion rules</th><td>High / extra high</td><td>Sol High or Astra Extra High, where available, or similar</td><td>Check coupled behaviour and learning invariants.</td></tr>
+                  <tr><th scope="row">Create a new simulation or diagnose a bug spanning several modes</th><td>High / extra high; deeper review if needed</td><td>Astra Extra High, or a similarly capable reasoning model</td><td>Plan the model, test representative cases and verify the result.</td></tr>
                 </tbody>
               </table>
             </div>
-            <p>
-              Typical LabKit use is direct: <code>const $ = LabKit.dom.byId</code>,
-              <code> LabKit.numeric.clamp(...)</code>, or <code>LabKit.svg.point(...)</code>. The vendored file is
-              the authoritative API surface; there is not yet a separate generated API reference.
-            </p>
-
+            <p>Explain the recommendation briefly in terms of the task: “Changing difficulty here affects question generation,
+              hints and completion. I recommend a higher-reasoning model so those stay consistent; I’ll check each affected path.”</p>
+            <p>Do not infer your model identity, active reasoning setting or the user’s available models. If those are unknown,
+              describe the capability needed and ask the user to select it if available. Do not claim that you switched models or settings.
+              If the user stays with the current model, work in smaller steps and make verification limits clear.</p>
+            <p>Reassess if the work reveals coupled behaviour, conflicting assumptions or repeated failed fixes. Deeper reasoning can take longer
+              and use more allowance; it cannot replace running the lab or checking subject accuracy.</p>
+            <p>These task examples are our recommendations. Names and settings vary by product and account;
+              see <a href="https://learn.chatgpt.com/docs/models">OpenAI’s model and reasoning guidance</a> (checked 6 September 2026).</p>
           </section>
 
-          <section id="interfaces" className={styles.section}>
-            <h2>Interfaces and current limits</h2>
-            <ul className={styles.plainList}>
-              <li><strong>Standalone runtime:</strong> browser HTML, CSS, JavaScript, and the <code>LabKit</code> global. Binary Number Practice derives its IGCSE/AS question pools from its embedded contract profiles.</li>
-              <li><strong>Site API:</strong> no public per-lab state or control API.</li>
-              <li><strong>MCP:</strong> no lab MCP server is implemented.</li>
-              <li><strong>Adaptation metadata:</strong> every published lab carries an embedded Lab Contract. <Link href="/developer/lab-contract">Read its exact boundary.</Link></li>
-              <li><strong>Discovery:</strong> compact indexes are available at <Link href="/llms.txt">/llms.txt</Link> and <Link href="/developer/llms.txt">/developer/llms.txt</Link>.</li>
-            </ul>
+          <section id="remix" className={styles.section}>
+            <h2>Adapt an existing lab</h2>
+            <ol className={styles.plainList}>
+              <li><strong>Read before editing.</strong> Inspect the HTML, CSS and JavaScript. If present, read the JSON in
+                <code> script[data-examplicity-lab-contract]</code>. It describes the learning relationship and adaptation guidance;
+                check the implementation against it because a map can become stale.</li>
+              <li><strong>Agree the change.</strong> Ask about the audience, prior knowledge and intended change where these are unclear.
+                Briefly explain the current learner experience and propose a focused plan.</li>
+              <li><strong>Preserve the learning relationship.</strong> Keep the model’s causal relationships, meaningful interactions,
+                feedback and completion rules unless the requested change calls for revising them. Preserve contract invariants
+                and selected curriculum unless explicitly changed; do not invent exam alignment.</li>
+              <li><strong>Edit the complete HTML.</strong> Make the requested changes and update affected embedded guidance.
+                Keep unrelated behaviour intact. Use the design references when changing the interface.</li>
+            </ol>
+            <p>If the contract and code disagree, explain the discrepancy before relying on either.
+              If no contract exists, describe what you can establish from the implementation and ask about unclear teaching intent.</p>
+            <p><Link href="/developer/lab-contract">Read the contract fields</Link> · <Link href="/developer/lab-contract#implementation">Read an implementation map</Link></p>
+          </section>
 
+          <section id="create" className={styles.section}>
+            <h2>Create a new lab from an example</h2>
+            <ol className={styles.plainList}>
+              <li><strong>Define one learning goal.</strong> Agree the audience, concept and what the learner should discover or practise.
+                Identify an action, the evidence it produces, and what demonstrates understanding.</li>
+              <li><strong>Choose a useful example.</strong> Select for the interaction you need, such as manipulating a model,
+                tracing a process or completing supported working. Run and inspect it before reusing a pattern.</li>
+              <li><strong>Reuse selectively.</strong> Borrow relevant layout, controls or feedback. Build the new model around its own
+                concept; do not copy unrelated modes, stages or completion rules.</li>
+              <li><strong>Make the new identity explicit.</strong> Replace the title, description, instructions and lab-specific metadata.
+                Do not carry over the example’s identifiers, canonical URL or curriculum claims as if they describe the new lab.
+                Retain applicable licence and attribution notices for reused code.</li>
+              <li><strong>Document the new learning relationship.</strong> If including a Lab Contract, write guidance that describes
+                the new lab and keep it consistent with the implementation. Use the schema as a field reference.</li>
+            </ol>
+            <p>Useful starting points: <Link href="/labs/computer-science/binary-numbers">Binary Numbers</Link> for practice and feedback,
+              <Link href="/labs/mathematics/coordinate-distance-midpoint-perpendicular"> Coordinate Geometry</Link> for direct manipulation,
+              and <Link href="/labs/computer-science/dijkstra-a-star-graph-search"> Graph Search</Link> for algorithm traces.</p>
+            <p><a href="/developer/lab-contract.schema.json">Lab Contract JSON Schema</a></p>
+          </section>
+
+          <section id="design" className={styles.section}>
+            <h2>Use the design references</h2>
+            <p>The living guide provides visual examples and component behaviour. Follow it for changed surfaces;
+              when kit styling conflicts with the guide, adapt or omit that styling. Preserve a lab-specific layout when it helps explain the concept.</p>
+            <ul className={styles.plainList}>
+              <li><a href="/developer/design-language.html">Living design guide</a> — interactive examples of controls, working, feedback and completion.</li>
+              <li><a href="/developer/lab-style-contract.md">Written style reference</a> — layout, typography, accessibility and interaction guidance.</li>
+              <li><a href="/developer/lab-design.css">Shared component CSS</a> and <a href="/developer/lab-kit/0.3.0/src/lab-design.js">interaction helpers</a> — reuse only what the activity needs.</li>
+              <li><a href="/developer/lab-kit/0.3.0/README.md">Lab Kit usage</a> — optional helpers; inspect the version already embedded before replacing anything.</li>
+            </ul>
+            <p>Keep labels readable, keyboard focus visible and feedback understandable without colour alone.
+              Do not introduce Working levels, stages or extra controls merely because an example has them.</p>
+          </section>
+
+          <section id="check" className={styles.section}>
+            <h2>Check and deliver one HTML file</h2>
+            <ul className={styles.plainList}>
+              <li>Embed required CSS, JavaScript and assets. Open the saved file without a network connection and check that it works and retains its appearance.</li>
+              <li>Try the main learner action, expected feedback, completion and reset. For an adaptation, check the affected existing modes too.</li>
+              <li>Check keyboard operation, readable text and a narrow-screen layout without page-level horizontal overflow.</li>
+              <li>Keep contract guidance and visible instructions consistent with the result. Describe what changed, what you checked and any remaining limitation.</li>
+            </ul>
+            <p>Return the complete downloadable HTML file. Keep links to this reference in its <code>&lt;head&gt;</code> for future adaptations:</p>
+            <pre className={styles.command}><code>{`<link rel="help" href="https://www.examplicity.org/developer">
+<link rel="help" type="text/plain" href="https://www.examplicity.org/developer/llms.txt">`}</code></pre>
+            <p>Documentation links are references, not runtime dependencies. If you cannot access them, say so and continue from the supplied
+              HTML and embedded guidance. Do not claim to have run checks that your tools cannot perform.</p>
           </section>
         </article>
       </div>

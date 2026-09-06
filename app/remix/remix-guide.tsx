@@ -39,7 +39,7 @@ Please work with me collaboratively:
 1. Inspect the attached HTML. If it contains an embedded Lab Contract (the script marked data-examplicity-lab-contract), read it as guidance for adaptation rather than as a fixed implementation specification.
 2. Briefly explain the learning relationship and learner experience you find.
 3. Ask me who the audience is and what I want to change.
-4. Suggest a concise plan before editing.
+4. Suggest a concise plan before editing. For changes involving model logic, mathematics or learning progression, briefly recommend an appropriate reasoning depth using https://www.examplicity.org/developer#reasoning. Do not claim to know or change the active model or setting unless your tools establish that.
 5. Preserve the learning relationship, contract invariants, and curriculum alignment unless my request explicitly requires changing them. Keep difficulty and cases within the selected curriculum; you have creative freedom over the implementation when that serves my request.
 6. Return one polished, accessible, standalone HTML file that works offline.
 

@@ -1,59 +1,68 @@
-# Examplicity Lab Development
+# Adapt or create an Examplicity lab
 
-> Instructions for remixing standalone labs and contributing repository changes.
+> For developers and LLMs editing a downloaded HTML lab or using one as an example for a new activity.
 
-## Remix workflow
+## Start with a lab
 
-1. Read the attached HTML and script[data-examplicity-lab-contract] JSON. The contract guides adaptation; inspect code for actual behaviour. Implementation maps can be stale after edits.
-2. Identify the learning relationship, inputs, outputs, feedback and completion. Ask about audience and requested changes; agree a short plan.
-3. Preserve learning relationships, invariants and selected curriculum unless the user explicitly changes them. Update affected contract guidance. Do not invent exam alignment.
-4. Consult design references for changed surfaces. Preserve meaningful interactions, keyboard access and readable feedback; do not add controls just to match an example.
-5. Return one complete offline HTML file with required CSS, JavaScript and assets embedded. Check changed interactions, reset, keyboard operation and narrow-screen layout.
-6. If references are unavailable, say so and continue from the HTML and contract. Documentation URLs are not runtime dependencies.
+Read the HTML, CSS and JavaScript. Identify what the learner changes, what the model shows, and how feedback helps them reason. If present, inspect script[data-examplicity-lab-contract] JSON for the learning relationship and adaptation guidance. Check it against actual behaviour; implementation maps can become stale. Explain discrepancies before relying on them. Without a contract, describe observed behaviour and ask about unclear teaching intent.
 
-## Contribute a fix
+## Choose reasoning depth
 
-- Repository: https://github.com/timcarpe/examplicity
-- Submit focused fixes and improvements as PRs. Open an issue to agree larger changes first: https://github.com/timcarpe/examplicity/issues
-- Fork and create a branch; follow AGENTS.md. Edit labs-src/<subject>/<slug>/lab.html and update lab-contracts/<subject>/<slug>.lab.json when behaviour or guidance changes.
-- Run npm ci, npm run lab -- inspect <slug>, npm run lab -- validate <slug>, and npm run lab -- build <slug>. Review and include generated output; check changed behaviour in the browser and offline download.
-- Describe the lab URL, problem, change and validation; include screenshots for visual changes. An LLM without repository access can prepare a patch and PR description.
-- Personal remixes edit downloaded HTML. Repository PRs edit source and regenerate output; do not replace source with a packaged download.
+For an LLM: assess the change against inspected code. Prefer a capable reasoning model and higher effort for mathematics, coupled state or teaching intent. Model capability and effort are separate choices. These are starting recommendations, not measured minimum requirements:
 
+- Rename labels, edit instructions or adjust spacing: Light / low. ChatGPT Work example: Terra Light, or similar. Confirm the edit stays presentational.
+- Change examples, add feedback or fix one interaction: Medium. ChatGPT Work example: Sol Medium, or similar. Trace the affected input, state and feedback.
+- Change equations, linked controls, difficulty or completion rules: High / extra high. ChatGPT Work example: Sol High or Astra Extra High, where available, or similar. Check coupled behaviour and learning invariants.
+- Create a new simulation or diagnose a bug spanning several modes: High / extra high; deeper review if needed. ChatGPT Work example: Astra Extra High, or a similarly capable reasoning model. Plan the model, test representative cases and verify the result.
 
-## Core references
+Explain the task-specific reason briefly: "Changing difficulty affects question generation, hints and completion. I recommend a higher-reasoning model so those stay consistent; I will check each affected path."
+Do not infer your identity, active effort or account options, or claim to switch them. If unknown, describe the capability needed and ask the user to select it if available. If they keep the current model, work in smaller steps and state verification limits.
+Reassess when coupled behaviour, conflicting assumptions or repeated failed fixes emerge. More reasoning can take longer and use more allowance; it does not replace execution or subject validation.
+These examples are our recommendations. Names/settings vary by product/account. [Official model guidance](https://learn.chatgpt.com/docs/models), checked 6 September 2026.
 
-- [Remix instructions](https://www.examplicity.org/developer#remix): Adaptation workflow and offline requirements.
-- [Contribution instructions](https://www.examplicity.org/developer#contribute): Source ownership and focused PRs.
-- [Publication checks](https://www.examplicity.org/developer#publish): Build and validation commands.
-- [Living design guide](https://www.examplicity.org/developer/design-language.html): Visual authority, exact concept colours, activity bar, Working and stage controls, feedback and movable completion cards.
-- [Guide stylesheet](https://www.examplicity.org/developer/design-language.css): Exact copyable starter CSS extracted from the living guide; use its markup for Working, stages and completion cards.
-- [Written style contract](https://www.examplicity.org/developer/lab-style-contract.md): Adaptation rules; the style guide takes precedence over conflicting kit styling.
-- [Lab Kit 0.3.0](https://www.examplicity.org/developer/lab-kit/0.3.0/README.md): Optional guide-aligned authoring capabilities. Existing publication remains pinned to 0.2.1 until deliberately migrated.
-- [Lab Contract](https://www.examplicity.org/developer/lab-contract): Adaptation guidance, fields, semantic locators, and lifecycle.
-- [Lab Contract v1 schema](https://www.examplicity.org/developer/lab-contract.schema.json): Machine-readable JSON Schema.
+## Adapt an existing lab
 
-## Repository model
+1. Clarify audience, prior knowledge and requested changes where unknown. Briefly explain the current experience and agree a focused plan.
+2. Preserve causal relationships, meaningful interactions, feedback and completion unless the requested change calls for revising them. Preserve contract invariants and selected curriculum unless explicitly changed. Do not invent exam alignment.
+3. Edit the complete HTML and update affected embedded guidance. Keep unrelated behaviour intact. Consult the design references for interface changes.
 
-- `labs-src/<subject>/<slug>/lab.html`: Maintainable lab source.
-- `lab-contracts/<subject>/<slug>.lab.json`: Authoritative adaptation guidance in a separate tree.
-- `app/labs.ts`: Catalogue metadata and site syllabus alignment.
-- `labs-src/manifest.json`: Publication registry and pinned tool releases.
-- `public/labs/<subject>/<slug>.html`: Generated site artifact; not an authoring source.
-- `vendor/lab-kit/0.2.1/`: Pinned browser helpers used by compiled labs.
-- `tools/lab-publication-profile/`: Constraints for the offline single-HTML artifact.
+## Create a new lab from an example
 
-## Commands
+1. Agree one learning goal, audience and concept. Identify a learner action, the evidence it produces and what demonstrates understanding.
+2. Choose an example for a relevant interaction: direct manipulation, tracing a process or supported working. Run and inspect it before reuse.
+3. Borrow useful layout, controls or feedback; build the model around the new concept. Do not copy unrelated modes, stages or completion rules.
+4. Replace the title, description, instructions and lab-specific metadata. Do not carry over the example's identifiers, canonical URL or curriculum claims as the new lab's identity. Retain applicable licence and attribution notices for reused code.
+5. If including a Lab Contract, write guidance for the new learning relationship and keep it consistent with implementation. Use the schema for field definitions.
 
-- `npm run labs:sync`: Generate publication artifacts.
-- `npm run labs:sync:check`: Check compilation, managed content, styles, standalone downloads, and catalogue-wide contract preservation.
-- `npm run labs:contract:check`: Check sidecar contracts and their compiled/downloaded copies.
-- `npm run lab -- inspect <slug>`: Inspect a lab package and its contract.
-- `npm run lab -- validate <slug>`: Run focused validation for one lab.
-- `npm run lab -- build <slug>`: Compile one lab to its normal public path.
+## Examples
 
-## Current interfaces
+- [Lab catalogue](https://www.examplicity.org/): Choose and download a relevant example.
+- [Binary Numbers](https://www.examplicity.org/labs/computer-science/binary-numbers): Practice and feedback.
+- [Coordinate Geometry](https://www.examplicity.org/labs/mathematics/coordinate-distance-midpoint-perpendicular): Direct manipulation.
+- [Graph Search](https://www.examplicity.org/labs/computer-science/dijkstra-a-star-graph-search): Algorithm traces.
 
-- Compiled labs expose the `LabKit` browser global.
-- No public per-lab state or control API is implemented.
-- No Examplicity lab MCP server is implemented.
+## Design references
+
+- [Living guide](https://www.examplicity.org/developer/design-language.html): Visual examples and component behaviour; takes precedence over conflicting kit styling.
+- [Written style reference](https://www.examplicity.org/developer/lab-style-contract.md): Layout, typography, accessibility and interactions.
+- [Component CSS](https://www.examplicity.org/developer/lab-design.css) and [interaction helpers](https://www.examplicity.org/developer/lab-kit/0.3.0/src/lab-design.js): Reuse only what the activity needs.
+- [Lab Kit usage](https://www.examplicity.org/developer/lab-kit/0.3.0/README.md): Optional helpers. Inspect the version already embedded before replacing it.
+- [Lab Contract](https://www.examplicity.org/developer/lab-contract) and [implementation maps](https://www.examplicity.org/developer/lab-contract#implementation): Adaptation guidance and observed behaviour.
+- [Contract schema](https://www.examplicity.org/developer/lab-contract.schema.json): Field reference.
+
+Preserve layouts that help explain the concept. Keep labels readable, keyboard focus visible and feedback understandable without colour alone. Do not introduce Working levels, stages or controls just because an example has them.
+
+## Check and deliver
+
+- Return one complete downloadable HTML file with required CSS, JavaScript and assets embedded. Open it offline and check behaviour and appearance.
+- Try the main action, feedback, completion and reset, plus affected existing modes for adaptations.
+- Check keyboard operation, readable text and narrow-screen layout without page-level horizontal overflow.
+- Keep embedded guidance and instructions consistent. State what changed, what was checked and any limitations. Do not claim checks your tools cannot perform.
+- Keep documentation references in the head:
+  <link rel="help" href="https://www.examplicity.org/developer">
+  <link rel="help" type="text/plain" href="https://www.examplicity.org/developer/llms.txt">
+- References are not runtime dependencies. If unavailable, say so and continue with the supplied HTML and embedded guidance.
+
+## Contribute
+
+[GitHub repository and README](https://github.com/timcarpe/examplicity#readme): Setup and contribution instructions. Submit focused fixes with the lab URL, change and checks; an LLM can prepare a patch and PR description. Open an issue to agree larger changes first.
