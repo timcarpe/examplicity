@@ -596,11 +596,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 <!-- LAB_MANIFEST_HEADER_END -->
 <span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span>
   <span data-lab-authored-subtitle-slot hidden></span>
-<section class="lab-activity-bar sim-top"><div class="lab-activity-task"><strong id="scenarioTitle">Two stations both hear silence</strong></div><div class="sim-top-tools"><label class="lab-menu-field" for="scenarioSelect"><span>Scenario</span><select id="scenarioSelect"><option value="singleA">A sends to C</option><option value="singleB">B sends to C</option><option value="collision">A and C contend</option></select></label><div class="run-buttons">
-        <button id="nextButton" data-lab-intro="csma-next" data-lab-intro-title="Follow a station’s decision" data-lab-intro-copy="Use Next for one event or Play for the full exchange. Compare what each station hears locally." class="lab-action" data-priority="primary">Next</button>
-        <button id="playButton" class="lab-action primary">Play</button>
-        <button id="resetButton" data-lab-action="reset" class="lab-action">Reset</button>
-      </div><div id="labProgress" class="lab-checkpoints"></div></div></section>
+<section class="lab-activity-bar sim-top"><div class="lab-activity-task"><strong id="scenarioTitle">Two stations both hear silence</strong></div><div class="sim-top-tools"><div id="labProgress" class="lab-checkpoints"></div></div></section>
 
   <section class="sim-legacy panel challenge">
     <div>
@@ -611,7 +607,11 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 
   </section>
 
-  <section class="sim-composition panel stage">
+  <div class="lab-tool-bar lab-secondary-bar"><div class="lab-tool-buttons"><label class="lab-menu-field" for="scenarioSelect"><span>Scenario</span><select id="scenarioSelect"><option value="singleA">A sends to C</option><option value="singleB">B sends to C</option><option value="collision">A and C contend</option></select></label><div class="run-buttons">
+        <button id="nextButton" data-lab-intro="csma-next" data-lab-intro-title="Follow a station’s decision" data-lab-intro-copy="Use Next for one event or Play for the full exchange. Compare what each station hears locally." class="lab-action" data-priority="primary">Next</button>
+        <button id="playButton" class="lab-action primary">Play</button>
+        <button id="resetButton" data-lab-action="reset" class="lab-action">Reset</button>
+      </div></div></div><section class="sim-composition panel stage">
     <div class="sim-legacy stage-head">
       <div>
         <strong>Shared Ethernet cable</strong>
@@ -952,7 +952,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
         element.className=isCollision?"csma-wave csma-collision":"csma-wave";
         element.innerHTML=isCollision
           ? '<span class="csma-trail"></span><span class="csma-damage-front left">‹</span><span class="csma-damage-front right">›</span><span class="csma-impact" role="img" aria-label="Collision: both frames damaged"><span>×</span></span><span class="csma-impact-label">Both frames damaged</span>'
-          : '<span class="csma-trail"></span><span class="csma-packet"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2.5" y="2" width="11" height="12" rx="2"/><path d="M5 5h6M5 8h6M5 11h3"/></svg><span class="csma-owner"></span></span>';
+          : '<span class="csma-trail"></span><span class="csma-packet lab-packet-marker"><span class="csma-owner"></span></span>';
         layer.append(element);
         const trail=element.querySelector(".csma-trail");trail.style.left=canvasPercent(origin)+"%";trail.style.width="0%";
         element.querySelectorAll(".csma-packet,.csma-damage-front").forEach(marker=>marker.style.left=canvasPercent(origin)+"%");
@@ -964,7 +964,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
       if(packet){
         packet.title=isJam?`Jam signal from ${source}`:item.label;
         packet.setAttribute("aria-label",packet.title);
-        element.querySelector(".csma-owner").textContent=isJam?"Jam":source;
+        element.querySelector(".csma-owner").textContent=isJam?"Jam":`${source} → ${destination||"?"}`;
         packet.classList.toggle("is-damaged",!!collision&&!enteringCollision);
         packet.style.setProperty("--collision-offset",source==="A"?"-22px":"22px");
       }

@@ -601,11 +601,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 <!-- LAB_MANIFEST_HEADER_END -->
 <span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span>
   <span data-lab-authored-subtitle-slot hidden></span>
-<section class="lab-activity-bar sim-top"><div class="lab-activity-task"><strong id="missionTitle">Goal: Connect at least four stations to one shared backbone.</strong></div><div class="sim-top-tools"><div class="action-group">
-          <button id="undoButton" disabled class="lab-action">Undo</button>
-          <button id="resetButton" data-lab-action="reset" class="lab-action">Reset</button>
-          <button id="checkButton" class="lab-action primary" data-priority="primary">Check topology</button>
-        </div><div id="taskTabs" class="lab-toggle task-tabs" aria-label="Topology goals" data-kind="mode" data-active-class="active"></div></div></section>
+<section class="lab-activity-bar sim-top"><div class="lab-activity-task"><strong id="missionTitle">Goal: Connect at least four stations to one shared backbone.</strong></div><div class="sim-top-tools"><div id="taskTabs" class="lab-toggle task-tabs" aria-label="Topology goals" data-kind="mode" data-active-class="active"></div></div></section>
 
   <section class="sim-legacy panel mission">
     <div>
@@ -615,32 +611,19 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 
   </section>
 
-  <div class="lab-grid">
-    <aside class="lab-sidebar panel palette" aria-label="Construction evidence">
-      <div class="sim-legacy palette-head">
-        <strong>Parts</strong>
-        <span>Drag a part onto the workspace, or tap it to add.</span>
-      </div>
+  <div class="lab-grid"><aside class="panel palette lab-parts-menu" aria-label="Network parts"><div class="palette-head"><strong>Parts</strong></div><div id="partList" class="part-list"></div><div id="paletteNote" class="sim-legacy"></div></aside>
 
-      <div id="paletteNote" class="sim-legacy palette-note">Choose Cable, then drag between two parts. You can also select one part and then another.</div>
-    <section class="lab-evidence-card"><h2>Construction evidence</h2><div id="feedback" class="feedback" role="status" aria-live="polite">
-        <strong>Start with the parts.</strong>
-        <span>Add the required devices, connect them, then check your topology.</span>
-      </div></section><section class="lab-evidence-card"><h2>Test a packet route</h2><div id="testPanel" class="test-panel" hidden>
-        <label for="sourceSelect">From</label>
-        <select id="sourceSelect"></select>
-        <label for="destinationSelect">To</label>
-        <select id="destinationSelect"></select>
-        <button id="sendButton" class="lab-action primary" data-lab-intro="topology-send" data-lab-intro-title="Test your construction" data-lab-intro-copy="Choose different source and destination stations, send a packet, and observe the route." data-priority="primary">Send packet</button>
-        <div id="journeyText"><strong>Network ready.</strong> Choose two stations and send a packet.</div>
-      </div></section><section class="lab-evidence-card"><h2>Network behaviour</h2><div class="teaching-note">Stations send and receive. Switches, bridges and shared buses can carry packets onward. In Hybrid, add direct mesh links over an existing bus or star and compare which route the packet chooses.</div></section></aside>
 
-    <section class="panel workspace"><div class="lab-tool-bar"><div class="lab-tool-buttons tool-group" aria-label="Workspace tools" data-active-class="active-tool">
+    <section class="panel workspace"><div class="lab-tool-bar topology-tools"><div class="lab-tool-buttons tool-group" aria-label="Workspace tools" data-active-class="active-tool">
           <button id="moveTool" class="lab-action active-tool">Move</button>
           <button id="cableTool" data-lab-intro="topology-cable" data-lab-intro-title="Connect two parts" data-lab-intro-copy="Choose Cable, then select two parts or drag between them. Check the topology before sending a packet." class="lab-action">Cable</button>
           <button id="deleteTool" class="lab-action danger">Delete</button>
           <button id="meshLayerTool" hidden title="Use the stations already here and add every direct link between them." class="lab-action">Mesh layer</button>
-        </div><div id="partList" class="part-list"></div></div>
+        </div><div class="action-group">
+          <button id="undoButton" disabled class="lab-action">Undo</button>
+          <button id="resetButton" data-lab-action="reset" class="lab-action">Reset</button>
+          <button id="checkButton" class="lab-action primary" data-priority="primary">Check topology</button>
+        </div></div>
       <div class="toolbar">
 
 
@@ -660,7 +643,17 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 
 
 
-    </section>
+    <div class="topology-evidence lab-evidence-strip"><section class="lab-evidence-card"><h2>Construction evidence</h2><div id="feedback" class="feedback" role="status" aria-live="polite">
+        <strong>Start with the parts.</strong>
+        <span>Add the required devices, connect them, then check your topology.</span>
+      </div></section><section class="lab-evidence-card"><h2>Test a packet route</h2><div id="testPanel" class="test-panel" hidden>
+        <label for="sourceSelect">From</label>
+        <select id="sourceSelect"></select>
+        <label for="destinationSelect">To</label>
+        <select id="destinationSelect"></select>
+        <button id="sendButton" class="lab-action primary" data-lab-intro="topology-send" data-lab-intro-title="Test your construction" data-lab-intro-copy="Choose different source and destination stations, send a packet, and observe the route." data-priority="primary">Send packet</button>
+        <div id="journeyText"><strong>Network ready.</strong> Choose two stations and send a packet.</div>
+      </div></section><section class="lab-evidence-card"><h2>Network behaviour</h2><div class="teaching-note">Stations send and receive. Switches, bridges and shared buses can carry packets onward. In Hybrid, add direct mesh links over an existing bus or star and compare which route the packet chooses.</div></section></div></section>
   </div>
 </main>
 
@@ -918,7 +911,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
       button.dataset.type=type;
       button.title=`${placedCount(type)} placed · up to ${rule.max}`;
       const countText=`${placedCount(type)}/${rule.max}`;
-      button.innerHTML=`<span class="part-icon">${meta.icon}</span><span class="part-copy"><strong>${meta.name}</strong><span>${meta.copy}</span></span><span class="part-count">${countText}</span>`;
+      button.innerHTML=`<span class="part-preview ${type}-node" aria-hidden="true">${partNodeMarkup({type,label:meta.name,id:"preview"})}</span><span class="part-copy"><strong>${meta.name}</strong><span>${meta.copy}</span></span><span class="part-count">${countText}</span>`;
       button.addEventListener("pointerdown",event=>startPaletteDrag(event,type,button));
       button.addEventListener("keydown",event=>{
         if((event.key==="Enter"||event.key===" ")&&!button.disabled){
@@ -1086,7 +1079,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
     if(node.type==="bridge"){
       return `<div class="node-shell"><div class="hardware-top"><span class="node-title">${node.label}</span><i class="hardware-led"></i></div><div class="bridge-body"><span class="bridge-segment"></span><span class="bridge-arrow">↔</span><span class="bridge-segment"></span></div><div class="node-status">idle</div></div>`;
     }
-    return `<div class="node-shell"><div class="bus-heading"><span class="node-title">${node.label} · shared backbone</span><small>terminated at both ends</small></div><div class="bus-cable"><i class="bus-terminator left"></i><i class="bus-core"></i><span class="bus-taps">${busTapMarkup(node)}</span><i class="bus-terminator right"></i></div><div class="node-status">idle</div></div>`;
+    return `<div class="node-shell"><div class="bus-heading"><span class="node-title">${node.label}${node.id==="preview"?"":" · shared backbone"}</span><small>terminated at both ends</small></div><div class="bus-cable"><i class="bus-terminator left"></i><i class="bus-core"></i><span class="bus-taps">${busTapMarkup(node)}</span><i class="bus-terminator right"></i></div><div class="node-status">idle</div></div>`;
   }
 
   function renderNodes(){
@@ -1217,7 +1210,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
       typeof value==="object"?value.span==="wide":currentTask().id==="bus"
     );
     return {
-      station:{x:52,y:37},
+      station:{x:58,y:37},
       switch:{x:76,y:35},
       bridge:{x:56,y:33},
       bus:{x:wideBus?410:230,y:49}
@@ -1435,7 +1428,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
       paletteDrag.moved=true;
       const ghost=document.createElement("div");
       ghost.className="part-ghost";
-      ghost.textContent=`Add ${PARTS[paletteDrag.type].name}`;
+      ghost.innerHTML=`<div class="part-preview ${paletteDrag.type}-node">${partNodeMarkup({type:paletteDrag.type,label:PARTS[paletteDrag.type].name,id:"preview"})}</div>`;
       document.body.appendChild(ghost);
       paletteDrag.ghost=ghost;
       paletteDrag.button.classList.add("dragging-source");
@@ -2136,7 +2129,10 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
   });
   window.addEventListener("resize",()=>requestAnimationFrame(renderLinks));
 
+  function fitConstructionCanvas(){const canvas=$("canvas"),width=canvas.parentElement.clientWidth;canvas.style.width=Math.max(960,width)+"px";canvas.style.zoom=Math.min(1,width/960);renderLinks()}
+  new ResizeObserver(fitConstructionCanvas).observe($("canvas").parentElement);
   renderAll();
+  fitConstructionCanvas();
   setStartingFeedback();
 })();
 </script>

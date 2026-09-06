@@ -12,7 +12,7 @@ export const changelogEntries: readonly ChangelogEntry[] = [
     publicChanges: [
       'Refocused the developer reference and its plain-text companion on adapting labs and creating new activities from examples, with a compact GitHub contribution card, reasoning-model recommendations and direct links from the Remix prompt. Matched the site header and footer and added section tracking to the page navigation.',
       'Refreshed ten Mathematics labs covering ratio and flow, relative frequency, conditional probability, scatter diagrams, sets, similarity, solids, time zones, transformations and vectors with shared controls, clearer working and targeted interaction hints.',
-      'Refreshed nine networking simulations and Sound Sampling, preserving intentional comparison layouts, separating model tools from goal bars, improving device and connection clarity, fixing device drag release, and keeping evidence readable.',
+      'Refreshed nine networking simulations and Sound Sampling, restoring established device artwork and intentional comparison layouts, matching draggable parts to placed items, separating model tools from goal bars, clarifying collisions and flipped bits, and fixing device drag release.',
       'Unified Time Zones under Working: None / Some / All, made its calendars and date controls easier to read, and preserved the complete-meeting availability checks.',
     ],
     internalChanges: [

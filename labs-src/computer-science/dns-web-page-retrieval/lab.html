@@ -697,16 +697,18 @@ button,input{font:inherit}button{min-height:34px;border:1px solid var(--line);bo
     const root=document.querySelector(".architecture"),svg=$("transferConnections"),base=root.getBoundingClientRect();
     svg.setAttribute("viewBox",`0 0 ${base.width} ${base.height}`);svg.replaceChildren();
     if(base.width<850)return;
-    const server=document.querySelector(".server-card.active,.server-card.good,.server-card.warn")||document.querySelector(".server-card");
-    [["queryBus",$("browser"),$("dns1")],["ipBus",$("browser"),$("dns1")],["requestBus",$("browser"),server],["htmlBus",$("browser"),server]].forEach(([id,from,to])=>{
-      const route=$(id),track=route?.querySelector(".bus-track");if(!track||!to)return;
-      const t=track.getBoundingClientRect(),a=from.getBoundingClientRect(),b=to.getBoundingClientRect(),y=t.top+t.height/2-base.top;
-      const ay=Math.max(a.top+16,Math.min(a.bottom-16,t.top+t.height/2))-base.top;
-      const by=Math.max(b.top+16,Math.min(b.bottom-16,t.top+t.height/2))-base.top;
-      const x1=a.right-base.left,x2=t.left-base.left,x3=t.right-base.left,x4=b.left-base.left;
-      const path=document.createElementNS("http://www.w3.org/2000/svg","path");
-      path.setAttribute("d",`M${x1} ${ay} H${(x1+x2)/2} V${y} H${x2} M${x3} ${y} H${(x3+x4)/2} V${by} H${x4}`);
-      path.dataset.route=id;path.classList.toggle("active",route.classList.contains("active"));svg.append(path);
+    const browser=document.querySelector(".browser-frame");
+    ["queryBus","ipBus","requestBus","htmlBus"].forEach(id=>{
+      const route=$(id),track=route.querySelector(".bus-track"),t=track.getBoundingClientRect(),a=browser.getBoundingClientRect();
+      const y=t.top+t.height/2-base.top,ay=Math.max(a.top+20,Math.min(a.bottom-20,t.top+t.height/2))-base.top;
+      const x1=a.right-base.left,x2=t.left-base.left,x3=t.right-base.left;
+      const path=(d,active,target)=>{const el=document.createElementNS("http://www.w3.org/2000/svg","path");el.setAttribute("d",d);el.dataset.route=id;el.dataset.target=target;el.classList.toggle("active",active);svg.append(el)};
+      path(`M${x1} ${ay} H${(x1+x2)/2} V${y} H${x2}`,route.classList.contains("active"),"browser");
+      const destinations=id==="queryBus"||id==="ipBus"?[$("dns1")]:[...document.querySelectorAll(".server-card")];
+      destinations.forEach(target=>{
+        const b=target.getBoundingClientRect(),x4=b.left-base.left,by=b.top+b.height/2-base.top;
+        path(`M${x3} ${y} H${(x3+x4)/2} V${by} H${x4}`,route.classList.contains("active")&&(target.id==="dns1"||target.matches(".active,.good,.warn")),target.id);
+      });
     });
   }
   new ResizeObserver(queueConnections).observe(document.querySelector(".architecture"));

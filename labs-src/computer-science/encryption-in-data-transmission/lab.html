@@ -544,7 +544,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
   const $=LabKit.dom.byId;
   const reduceMotion=window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
   const pause=ms=>new Promise(resolve=>setTimeout(resolve,reduceMotion?Math.min(ms,18):ms));
-  const keyIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="12" r="4"/><path d="M12 12h9M17 12v3M20 12v2"/></svg>';
+  const keyIcon='<svg viewBox="0 0 80 36" aria-hidden="true"><path class="key-metal" d="M30 8a15 15 0 1 0 0 20l5-5h10v7h9v-7h9v-7h10V9H35z"/><circle class="key-hole" cx="17" cy="18" r="6"/></svg>';
   const state={mode:"sym",locations:new Map(),selectedKey:null,drag:null,busy:false,transmissionNo:0,captures:[],latest:null,completed:new Set(),animationToken:0,wireUnits:[],bobUnits:[],eveUnits:[]};
   const metas={
     k1:{kind:"secret",label:"Shared secret K7",copy:"copy A · same secret"},k2:{kind:"secret",label:"Shared secret K7",copy:"copy B · same secret"},k3:{kind:"secret",label:"Shared secret K7",copy:"spare copy · same secret"},
@@ -588,7 +588,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
   function startDrag(event,id,source){if(event.button>0||state.busy)return;event.preventDefault();state.drag={id,source,pointerId:event.pointerId,startX:event.clientX,startY:event.clientY,moved:false,ghost:null};source.setPointerCapture?.(event.pointerId)}
   function dropTarget(x,y){return [$("aliceBay"),$("bobBay"),$("eveBay"),$("secretTray"),$("publicTray"),$("privateTray")].filter(el=>!el.hidden&&el.offsetParent!==null).find(el=>{const r=el.getBoundingClientRect();return x>=r.left&&x<=r.right&&y>=r.top&&y<=r.bottom})||null}
   function clearDropReady(){document.querySelectorAll(".drop-ready").forEach(el=>el.classList.remove("drop-ready"))}
-  function dragMove(event){const d=state.drag;if(!d||d.pointerId!==event.pointerId)return;if(!d.moved&&Math.hypot(event.clientX-d.startX,event.clientY-d.startY)>5){d.moved=true;d.source.classList.add("dragging");d.ghost=document.createElement("div");d.ghost.className="drag-ghost";d.ghost.textContent=metas[d.id].label;document.body.append(d.ghost)}if(d.ghost){d.ghost.style.left=event.clientX+"px";d.ghost.style.top=event.clientY+"px"}clearDropReady();dropTarget(event.clientX,event.clientY)?.classList.add("drop-ready")}
+  function dragMove(event){const d=state.drag;if(!d||d.pointerId!==event.pointerId)return;if(!d.moved&&Math.hypot(event.clientX-d.startX,event.clientY-d.startY)>5){d.moved=true;d.source.classList.add("dragging");d.ghost=document.createElement("div");d.ghost.className="drag-ghost";d.ghost.innerHTML=d.source.outerHTML;d.ghost.querySelectorAll("[tabindex]").forEach(el=>el.removeAttribute("tabindex"));document.body.append(d.ghost)}if(d.ghost){d.ghost.style.left=event.clientX+"px";d.ghost.style.top=event.clientY+"px"}clearDropReady();dropTarget(event.clientX,event.clientY)?.classList.add("drop-ready")}
   function dragEnd(event){const d=state.drag;if(!d||d.pointerId!==event.pointerId)return;d.source.classList.remove("dragging");d.ghost?.remove();clearDropReady();if(d.moved){d.source.dataset.suppress="1";setTimeout(()=>delete d.source.dataset.suppress,0);const target=dropTarget(event.clientX,event.clientY);if(target){const bay=target.dataset.bay;placeKey(d.id,bay==="tray"?"tray":bay)}}state.drag=null}
   window.addEventListener("pointermove",dragMove);window.addEventListener("pointerup",dragEnd);window.addEventListener("pointercancel",dragEnd);
 
@@ -615,7 +615,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
     await move(token,608,270,230);
     const clone=createStreamToken(raw,packet.encrypted?"cipher":"plain");setPos(clone,608,270);clone.classList.add("visible");
     const toBob=move(token,748,270,290).then(()=>{state.bobUnits[index]=raw;renderLiveBuffers(packet);token.classList.add("arrive");setTimeout(()=>token.remove(),120)});
-    const toEve=move(clone,608,590,320).then(()=>{state.eveUnits[index]=raw;renderLiveBuffers(packet);clone.classList.add("arrive");setTimeout(()=>clone.remove(),120)});
+    const toEve=move(clone,608,document.querySelector(".device.eve").offsetTop,320).then(()=>{state.eveUnits[index]=raw;renderLiveBuffers(packet);clone.classList.add("arrive");setTimeout(()=>clone.remove(),120)});
     await Promise.all([toBob,toEve]);
   }
   function renderLiveBuffers(packet){
@@ -673,7 +673,11 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
     const shouldFit=true,scale=shouldFit?Math.min(1,shell.clientWidth/1020):1;
     shell.classList.toggle("is-fitted",shouldFit);
     stage.style.width=(shouldFit?shell.clientWidth:1020)+"px";
-    const eve=board.querySelector(".eve"),height=Math.max(840,eve.offsetTop+eve.offsetHeight+24);
+    const eve=board.querySelector(".eve");
+    const endpointBottom=Math.max(...[...board.querySelectorAll(".device.alice,.device.bob")].map(device=>device.offsetTop+device.offsetHeight));
+    eve.style.top=Math.max(590,endpointBottom+28)+"px";
+    board.querySelectorAll(".branch-base,.branch-core").forEach(path=>path.setAttribute("d",`M608 270 V${eve.offsetTop}`));
+    const height=Math.max(840,eve.offsetTop+eve.offsetHeight+24);
     board.style.height=height+"px";
     board.querySelector(".links").setAttribute("viewBox",`0 0 1020 ${height}`);
     stage.style.height=Math.ceil(height*scale)+"px";
@@ -682,6 +686,8 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
   };
   new ResizeObserver(fitBoard).observe(document.querySelector(".board-shell"));
   new ResizeObserver(fitBoard).observe(document.querySelector(".device.eve"));
+  const endpointResize=new ResizeObserver(fitBoard);
+  document.querySelectorAll(".device.alice,.device.bob").forEach(device=>endpointResize.observe(device));
   fitBoard();
   renderModeTabs();renderKeys();updateAlicePreview();evaluateEndpoints();updateGoals();
 })();

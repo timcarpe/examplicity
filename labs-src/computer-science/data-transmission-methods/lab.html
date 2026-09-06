@@ -929,7 +929,7 @@ h1{margin:0;font-size:27px;letter-spacing:-.025em}
             <div class="transceiver-title"><span>BYTE TRANSCEIVER</span><i class="${node.status!=="idle"?"on":""}"></i></div>
             <div class="byte-screen">
               <div class="byte-row"><label>TX</label><div class="bit-register">${node.txBits.map((bit,index)=>`<button class="bit-cell tx" data-action="toggle-bit" data-node="${node.id}" data-bit-index="${index}" title="Toggle transmitted bit ${7-index}">${bit}</button>`).join("")}</div></div>
-              <div class="byte-row"><label>RX</label><div class="bit-register">${node.rxBits.map((bit,index)=>`<span class="bit-cell ${node.rxStates[index]||"wait"}">${bit===null?"·":bit}</span>`).join("")}</div></div>
+              <div class="byte-row"><label>RX</label><div class="bit-register">${node.rxBits.map((bit,index)=>`<span class="bit-cell ${node.rxStates[index]||"wait"}" title="${node.rxStates[index]==="changed"?`Bit flipped by interference: ${1-bit} → ${bit}`:node.rxStates[index]==="lost"?"Bit lost":node.rxStates[index]==="late"?"Bit arrived late":"Received bit"}">${bit===null?"·":bit}</span>`).join("")}</div></div>
             </div>
             <div class="protocol-screen"><strong>${node.protocolTitle}</strong><br>${node.protocolDetail}</div>
             <div class="device-status"><strong>${node.statusTitle}</strong>${node.statusDetail}</div>

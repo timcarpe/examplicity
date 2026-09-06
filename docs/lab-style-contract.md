@@ -559,8 +559,8 @@ that class into `aria-pressed`; the lab still owns selection and availability.
 Preserve a comparison's spatial relationship: function determines composition.
 The shared language does not prescribe a right sidebar. Packet Switching keeps
 sender, router network and receiver in three columns at desktop widths. TCP/IP
-keeps the shell rack, packing mat, link and receiver together; a compact moving
-list of remaining layers has its own lane beside the detailed gate reads. DNS 1
+keeps the shell rack, packing mat, link and receiver together; the nested packet
+travels upward through the original receiver gates as its shells are removed. DNS 1
 and DNS 2 remain side by side. Parity aligns all three matrices and places
 transmission evidence in a horizontal strip above them.
 
@@ -578,12 +578,16 @@ An optional detailed walkthrough can sit below the model it explains. Preserve
 useful causal explanation; remove duplicate procedural commands once an
 interaction hint owns them.
 
-Simple device illustrations use flat approved concept tints, white readable
-screens, thin strokes and rounded corners. Physical parts retain their distinct
-silhouettes and connector identities. A draggable token combines a grip, grab
+Preserve established device artwork, including monitor bezels, stands, ports,
+key silhouettes and restrained depth. Flat UI surfaces are not a reason to
+flatten physical objects. Reuse the same artwork for a palette item, its drag
+preview and its placed state; counts and labels may differ. Network Topology
+uses a distinct parts shelf beside a bounded canvas. Encryption uses large
+key-shaped SVGs in the tray, drag preview and bay. A draggable token combines a grip, grab
 cursor and the shared first-interaction hint; that hint belongs to the token,
 not its reset/return action. Transfer paths meet actual device/track endpoints
-and distinguish direction and signal state without competing glow or gradients.
+and distinguish direction and signal state. Preserve meaningful illustration
+shading; avoid adding decorative gradients to controls or panels.
 Space for captures and variable content grows with that content; do not crop
 device shadows or overlay a second device on the first.
 
@@ -593,9 +597,16 @@ narrow widths retain the logical order and essential comparisons. Device
 annotations need readable rendered sizes, accounting for any model scaling.
 These are presentation patterns, not a task-scope or approval policy.
 
-Packet collision presentation: use small travelling frame markers with faint
+Packet collision presentation: `lab-packet-marker` shares Packet Switching's
+round travelling marker, pulsing ring and compact identity badge with CSMA. Use faint
 reached-signal trails. At a clash, both frames stop and become visibly damaged;
 a red impact and outward corruption cues precede distinct amber Jam markers.
 Do not let intact packet markers pass through a collision. Pause long enough
 to distinguish clash, detection, jam, random wait and retry. Reduced motion
 retains those states without travel or impact animation.
+
+The goal bar is not an overflow shelf for model actions. Put scenario selection,
+Next/Play, construction tools, Undo/Reset/Test and optional packet processing
+with the model controls below it. Exam remains farthest right, then Working,
+then any additional mode controls. A parts shelf may be beside the canvas when
+that makes the drag source and destination clearer.

@@ -1039,3 +1039,25 @@ describe the revised controls and layouts without changing exam alignment.
 
 Correction implementation: `cf84a1e`; canonical kit and guide: `a1e4b1a`.
 The ten implementation maps are pinned to the corrected source revision.
+
+## Batch 5 restoration after review
+
+- Removed shared overrides that flattened Topology and Packet Switching devices or replaced TCP/IP’s original receiver sequence. Retained shared controls and interaction hints.
+- Topology: distinct left parts menu, bounded fitted canvas, original device artwork reused in menu and drag preview; editing and validation controls above canvas, evidence below.
+- Packet Switching: narrower device columns, original monitors/routers, matching router palette, processing options above the model and compact packet cards.
+- TCP/IP: original packing mat and nested packet moving upward through receiver gates; readable fields and status below model.
+- DNS: narrower infrastructure column, restored server detail, all web-server branches visibly connected to the browser.
+- CSMA: scenario/playback below goal; shares Packet Switching’s round pulsing packet marker, retaining collision damage, jam and backoff.
+- Encryption: restored monitor bezels and device depth; same key-shaped SVG in tray/preview/bay; Eve and its branch move down when endpoints grow.
+- Transmission: flipped RX bits regain red contrast, a change symbol and an original-to-received hover explanation. Approved device treatment retained; Sound remains unchanged.
+
+Most presentation changes live in canonical lab-design.css. Lab edits move existing elements, reuse artwork, and keep connection/drag geometry aligned. The guide describes these styles and examples; it does not prescribe workflow scope.
+
+Checks: seven affected-lab interaction smoke tests passed, including DNS repair,
+collision progression, topology validation, checksum rejection/retry and TCP/IP
+unpacking. The six layout changes fit at 1422/900/390px without page overflow,
+canvas scrolling or script errors. Pointer checks confirmed matching artwork
+through Topology and key dragging/placement. Four full encryption captures fit
+with 27px clearance above Eve and no clipped screen/key content. All 57 compiled,
+style, content, standalone-download and contract checks passed; developer and
+authoring bundle resources are current.

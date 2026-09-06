@@ -470,10 +470,7 @@ h1{margin:0;font-size:28px;font-weight:640;letter-spacing:-.03em;line-height:1.1
 <!-- LAB_MANIFEST_HEADER_END -->
 <span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span>
   <span data-lab-authored-subtitle-slot hidden></span>
-<section class="lab-activity-bar sim-top"><div class="lab-activity-task"><strong id="challengeTitle">Get the browser request to the web-server process</strong></div><div class="sim-top-tools"><div class="challenge-actions">
-      <button id="compareProcess" type="button" hidden data-lab-intro="tcp-process" data-lab-intro-title="Compare another process" data-lab-intro-copy="Build for the mail process on the same server, then compare which destination information changes." class="lab-action">Compare another process</button>
-      <button id="resetPacket" type="button" data-lab-action="reset" class="lab-action">Restart lab</button>
-    </div></div></section>
+<section class="lab-activity-bar sim-top"><div class="lab-activity-task"><strong id="challengeTitle">Get the browser request to the web-server process</strong></div><div class="sim-top-tools"></div></section>
 
   <section class="sim-legacy panel challenge-bar">
     <div class="challenge-copy">
@@ -483,7 +480,10 @@ h1{margin:0;font-size:28px;font-weight:640;letter-spacing:-.03em;line-height:1.1
 
   </section>
 
-  <section class="panel lab-board lab-kit-canvas" data-grid="square" aria-label="Interactive TCP IP encapsulation workshop">
+  <div class="lab-tool-bar lab-secondary-bar"><div class="challenge-actions">
+      <button id="compareProcess" type="button" hidden data-lab-intro="tcp-process" data-lab-intro-title="Compare another process" data-lab-intro-copy="Build for the mail process on the same server, then compare which destination information changes." class="lab-action">Compare another process</button>
+      <button id="resetPacket" type="button" data-lab-action="reset" class="lab-action">Restart lab</button>
+    </div></div><section class="panel lab-board lab-kit-canvas" data-grid="square" aria-label="Interactive TCP IP encapsulation workshop">
     <div class="board-head">
       <div class="endpoint">
         <div class="device-icon" aria-hidden="true"><svg viewBox="0 0 40 30"><rect x="4" y="3" width="32" height="21" rx="3"/><path d="M20 24v4M13 28h14"/></svg></div>
@@ -535,13 +535,14 @@ h1{margin:0;font-size:28px;font-weight:640;letter-spacing:-.03em;line-height:1.1
           <div class="gate link" data-gate="link"><div class="gate-icon">ETH</div><div class="gate-copy"><strong>Link</strong><span>destination MAC identifies this network interface</span><div class="gate-read">waiting</div></div></div>
           <div id="receiverPacket" class="receiver-packet"></div>
         </div>
-      <section class="lab-evidence-card"><h2>Transmission evidence</h2><div id="statusStrip" class="status-strip">
+      </section>
+    </div>
+
+<div id="statusStrip" class="status-strip">
       <span class="status-light"></span>
       <div class="status-copy"><strong id="statusTitle">Bare HTTP request</strong><span id="statusDetail">The browser has produced application data. Add shells around it and watch what each layer contributes.</span></div>
       <span id="statusKey" class="status-key">HTTP message only</span>
-    </div></section></section>
     </div>
-
     <section id="comparisonPanel" class="compare-panel" hidden aria-live="polite">
       <div class="compare-head"><div><strong>What changed when the destination process changed?</strong><span>Both messages went to the same server computer and the same network interface.</span></div><span>successful packet comparison</span></div>
       <div class="compare-grid">
@@ -680,11 +681,10 @@ h1{margin:0;font-size:28px;font-weight:640;letter-spacing:-.03em;line-height:1.1
   }
   function showReceiverPacket(wrappers,step=0){
     const host=$('receiverPacket');
-    host.innerHTML='<span class="receiver-object-label">Outside first</span>'+[...wrappers].reverse().map(type=>`<span class="receiver-layer ${type}">${defs[type].protocol}</span>`).join('')+`<span class="receiver-layer app">${currentService().protocol}</span>`;
+    host.innerHTML=packetMarkup(wrappers,{interactive:false});
     host.classList.add('visible');
-    const layers=['link','internet','transport','application'];
-    const gate=document.querySelector(`.gate[data-gate="${layers[Math.min(step,3)]}"]`);
-    host.style.top=gate.offsetTop+'px';host.style.bottom='auto';
+    const bottoms=[18,80,145,210];
+    host.style.bottom=`${bottoms[Math.min(step,bottoms.length-1)]}px`;
   }
   function structuralFailure(expected,actual){
     const expectedName=defs[expected].protocol,actualName=actual?defs[actual].protocol:currentService().protocol;
