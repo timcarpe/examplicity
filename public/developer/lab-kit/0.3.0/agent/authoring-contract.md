@@ -70,21 +70,20 @@ Core instructional and operable labels use the living guide's 14 px body, 12 px
 short-label and 11 px secondary-annotation defaults. Microtype is for
 nonessential metadata only.
 
-The [living design guide](https://www.examplicity.org/developer/design-language.html)
-is the visual authority. Copy its activity bar, working toggle, stage markers,
-concept surfaces and completion-card markup and stylesheet exactly; the kit
-does not offer alternate variants. Do not create competing palette values or
+The canonical `src/lab-design.css` and `src/lab-design.js` resources own
+recurring activity bars, working toggles, stage markers, concept surfaces and
+completion-card behavior. Use their shared classes and helpers; use the living
+guide as a visual reference without copying its whole specimen structure. Do
+not create competing palette values or
 decorative feedback rails. Use an idle working area with spacing, then a
 complete yellow/red/green surface only when a working item has meaningful
 state. Concept backgrounds may use only a direct alpha version of the
 approved concept colour, such as `#7563a74d` for violet, when they identify a
 meaningful model grouping.
 
-The reviewed starter stylesheet is
-`https://www.examplicity.org/developer/design-language.css`. When the
-authoring or publication route embeds it, load it after the kit CSS so the
-guide takes precedence. The delivered lab remains standalone: do not leave it
-as a runtime network dependency.
+The publication route embeds the reviewed shared design resources after the
+base kit and local layout CSS. The delivered lab remains standalone: do not
+leave developer URLs as runtime dependencies.
 
 When `None`/`Some`/`All` working is meaningful, place the compact neutral
 toggle in the top activity region. If learning has real stages, small progress
@@ -162,7 +161,7 @@ instead of redesigning them during ingestion.
 
 ## Shared design components
 
-`src/lab-design.css` is the canonical implementation for the reviewed design refinements. Include it **after** base kit/tokens and local layout styles. Inline it in exported HTML; never leave a network stylesheet dependency in a downloaded lab. The site compiler expands `<!-- LAB_DESIGN_COMPONENTS -->` at the end of the source head into this stylesheet. Existing kit 0.2.1 runtime pins do not change.
+`src/lab-design.css` is the canonical implementation for recurring design components. The site compiler expands `<!-- LAB_DESIGN_COMPONENTS -->` at the end of the source head into this stylesheet and `src/lab-design.js`, then packages the shared CSS used by that lab. Authors include the marker rather than pasting these files into source HTML. Existing compatible base-runtime 0.2.1 declarations and the design/distribution 0.3.0 release are separate versioned layers.
 
 New labs use `.lab-toggle` with `data-kind="working|exam|mode"`, `.lab-action` with optional `data-priority="primary"`, `.lab-work-card` with `data-work-state="needed|good|bad|reference"` and `data-interacted="true"`, `.lab-math-surface`, `.lab-stage-surface`, `.lab-stage-heading` and `.lab-guide-target`. Use native button/input state and update the attributes from real learner state. Stop attention on pointer/keyboard interaction, reset for a new activity, and keep geometry/learning logic local. The stylesheet includes compatibility selectors for the six reviewed labs.
 

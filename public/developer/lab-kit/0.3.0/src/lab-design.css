@@ -95,27 +95,27 @@
 /* working-attention */
 /* Unattempted working draws attention through its border, never moving the content. */
 .calc-panel .calc-step.pending:not([data-interacted="true"]),.calc-panel .work-progress:not([data-complete="true"]):not([data-interacted="true"]){animation:workingBorderPulse 2s ease-in-out infinite}
-@keyframes workingBorderPulse{0%,100%{border-color:var(--lab-needed-line,#d8c36a);box-shadow:0 0 0 0 rgba(216,195,106,0)}50%{border-color:var(--lab-needed,#946200);box-shadow:0 0 0 3px rgba(216,195,106,.18)}}
+@keyframes workingBorderPulse{0%,100%{outline:2px solid var(--lab-work-attention,var(--lab-needed,#946200));outline-offset:3px;box-shadow:0 0 0 4px color-mix(in srgb,var(--lab-work-attention,var(--lab-needed,#946200)) 10%,transparent)}50%{outline:2px solid var(--lab-work-attention,var(--lab-needed,#946200));outline-offset:3px;box-shadow:0 0 0 9px color-mix(in srgb,var(--lab-work-attention,var(--lab-needed,#946200)) 22%,transparent)}}
 @media(prefers-reduced-motion:reduce){.calc-panel .calc-step,.calc-panel .work-progress{animation:none!important}}
 
 /* working-refinements */
 #answerForm[data-work-state="current"]:not([data-attention-used="true"]){animation:workingAttention 2s ease-in-out infinite}
-@keyframes workingAttention{0%,100%{border-color:var(--lab-needed-line,#d8c36a);box-shadow:none}50%{border-color:var(--lab-needed,#946200);box-shadow:0 0 0 3px rgba(216,195,106,.18)}}
+@keyframes workingAttention{0%,100%{outline:2px solid var(--lab-work-attention,var(--lab-needed,#946200));outline-offset:3px;box-shadow:0 0 0 4px color-mix(in srgb,var(--lab-work-attention,var(--lab-needed,#946200)) 10%,transparent)}50%{outline:2px solid var(--lab-work-attention,var(--lab-needed,#946200));outline-offset:3px;box-shadow:0 0 0 9px color-mix(in srgb,var(--lab-work-attention,var(--lab-needed,#946200)) 22%,transparent)}}
 @media(prefers-reduced-motion:reduce){#answerForm[data-work-state="current"]{animation:none!important}}
 .decision-card.needed:not([data-attention-used="true"]){animation:workingAttention 2s ease-in-out infinite}
-@keyframes workingAttention{0%,100%{border-color:var(--lab-needed-line,#d8c36a);box-shadow:none}50%{border-color:var(--lab-needed,#946200);box-shadow:0 0 0 3px rgba(216,195,106,.18)}}
+
 @media(prefers-reduced-motion:reduce){.decision-card.needed{animation:none!important}}
 #relax-equation{padding:3px 7px;border:0;border-radius:4px;background:color-mix(in srgb,var(--lab-concept-violet,#7563a7) 20%,white);box-shadow:none}
 .readout-line.owned:not(.correct):not(.incorrect):not([data-attention-used="true"]),.work-progress:not([data-complete="true"]):not([data-attention-used="true"]){animation:workingAttention 2s ease-in-out infinite}
-@keyframes workingAttention{0%,100%{border-color:var(--lab-needed-line,#d8c36a);box-shadow:none}50%{border-color:var(--lab-needed,#946200);box-shadow:0 0 0 3px rgba(216,195,106,.18)}}
+
 @media(prefers-reduced-motion:reduce){.readout-line.owned:not(.correct):not(.incorrect),.work-progress:not([data-complete="true"]){animation:none!important}}
 .auto-value{padding:3px 7px;border:0;border-radius:4px;background:color-mix(in srgb,var(--lab-concept-violet,#7563a7) 20%,white);box-shadow:none}
 .output-card.working-required.in-progress:not([data-attention-used="true"]),.work-progress:not([data-complete="true"]):not([data-attention-used="true"]){animation:workingAttention 2s ease-in-out infinite}
-@keyframes workingAttention{0%,100%{border-color:var(--lab-needed-line,#d8c36a);box-shadow:none}50%{border-color:var(--lab-needed,#946200);box-shadow:0 0 0 3px rgba(216,195,106,.18)}}
+
 @media(prefers-reduced-motion:reduce){.output-card.working-required.in-progress,.work-progress:not([data-complete="true"]){animation:none!important}}
 .product-line:not(:has(input)){padding:3px 7px;border:0;border-radius:4px;background:color-mix(in srgb,var(--lab-concept-violet,#7563a7) 20%,white);box-shadow:none}
 .working-panel .work-step.current:not([data-attention-used="true"]){animation:workingAttention 2s ease-in-out infinite}
-@keyframes workingAttention{0%,100%{border-color:var(--lab-needed-line,#d8c36a);box-shadow:none}50%{border-color:var(--lab-needed,#946200);box-shadow:0 0 0 3px rgba(216,195,106,.18)}}
+
 .working-panel .step-value{width:fit-content;padding:3px 7px;border:0;border-radius:4px;background:color-mix(in srgb,var(--lab-concept-violet,#7563a7) 20%,white);box-shadow:none}
 @media(prefers-reduced-motion:reduce){.working-panel .work-step{animation:none!important}}
 
@@ -141,6 +141,9 @@
 .lab-work-card[data-work-state="good"]{border-color:var(--lab-good-line,#9cc7aa);background:var(--lab-good-surface,#f7fcf8)}
 .lab-work-card[data-work-state="bad"]{border-color:var(--lab-bad-line,#d8aaa4);background:var(--lab-bad-surface,#fff8f7)}
 .lab-work-card[data-work-state="needed"]:not([data-interacted="true"]){animation:workingAttention 2s ease-in-out infinite}
+/* Red attention is reserved for an actionable correction, not every mistake. */
+.lab-work-card[data-work-state="bad"],.lab-sequence-target:is(.bad,.incorrect,[data-state="mistake"],[data-work-state="bad"]){--lab-work-attention:var(--lab-bad,#b42318)}
+.lab-work-card[data-work-state="bad"][data-lab-attention="true"]:not([data-interacted="true"]){animation:workingAttention 2s ease-in-out infinite}
 .lab-work-card:has(input) .lab-card-status{display:none}
 .lab-stage-surface{border:1px solid var(--lab-line,#d2d2d7);border-radius:12px;background:var(--lab-surface-muted,#f7f8fa)}
 .lab-stage-heading{display:flex;flex-direction:column;gap:4px;padding:12px 12px 8px;font:400 12px/1.45 var(--lab-font-sans,sans-serif)}

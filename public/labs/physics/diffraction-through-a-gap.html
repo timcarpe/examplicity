@@ -1618,11 +1618,7 @@ body>main{width:min(1200px,calc(100vw - 28px));height:auto;max-height:calc(100vh
 /* Unattempted working draws attention through its border, never moving the content. */
 
 /* working-refinements */
-@keyframes workingAttention{0%,100%{border-color:var(--lab-needed-line,#d8c36a);box-shadow:none}50%{border-color:var(--lab-needed,#946200);box-shadow:0 0 0 3px rgba(216,195,106,.18)}}
-@keyframes workingAttention{0%,100%{border-color:var(--lab-needed-line,#d8c36a);box-shadow:none}50%{border-color:var(--lab-needed,#946200);box-shadow:0 0 0 3px rgba(216,195,106,.18)}}
-@keyframes workingAttention{0%,100%{border-color:var(--lab-needed-line,#d8c36a);box-shadow:none}50%{border-color:var(--lab-needed,#946200);box-shadow:0 0 0 3px rgba(216,195,106,.18)}}
-@keyframes workingAttention{0%,100%{border-color:var(--lab-needed-line,#d8c36a);box-shadow:none}50%{border-color:var(--lab-needed,#946200);box-shadow:0 0 0 3px rgba(216,195,106,.18)}}
-@keyframes workingAttention{0%,100%{border-color:var(--lab-needed-line,#d8c36a);box-shadow:none}50%{border-color:var(--lab-needed,#946200);box-shadow:0 0 0 3px rgba(216,195,106,.18)}}
+@keyframes workingAttention{0%,100%{outline:2px solid var(--lab-work-attention,var(--lab-needed,#946200));outline-offset:3px;box-shadow:0 0 0 4px color-mix(in srgb,var(--lab-work-attention,var(--lab-needed,#946200)) 10%,transparent)}50%{outline:2px solid var(--lab-work-attention,var(--lab-needed,#946200));outline-offset:3px;box-shadow:0 0 0 9px color-mix(in srgb,var(--lab-work-attention,var(--lab-needed,#946200)) 22%,transparent)}}
 
 /* field-feedback-only */
 
@@ -1641,6 +1637,9 @@ body>main{width:min(1200px,calc(100vw - 28px));height:auto;max-height:calc(100vh
 .lab-work-card[data-work-state="good"]{border-color:var(--lab-good-line,#9cc7aa);background:var(--lab-good-surface,#f7fcf8)}
 .lab-work-card[data-work-state="bad"]{border-color:var(--lab-bad-line,#d8aaa4);background:var(--lab-bad-surface,#fff8f7)}
 .lab-work-card[data-work-state="needed"]:not([data-interacted="true"]){animation:workingAttention 2s ease-in-out infinite}
+/* Red attention is reserved for an actionable correction, not every mistake. */
+.lab-work-card[data-work-state="bad"],.lab-sequence-target:is(.bad,.incorrect,[data-state="mistake"]){--lab-work-attention:var(--lab-bad,#b42318)}
+.lab-work-card[data-work-state="bad"][data-lab-attention="true"]:not([data-interacted="true"]){animation:workingAttention 2s ease-in-out infinite}
 .lab-work-card:has(input) .lab-card-status{display:none}
 .lab-guide-target{border-radius:12px;outline:2px solid var(--lab-accent,#5277b8);outline-offset:3px;animation:labGuideAttention 2s ease-in-out infinite}
 @keyframes labGuideAttention{0%,100%{box-shadow:0 0 0 4px rgba(82,119,184,.10)}50%{box-shadow:0 0 0 9px rgba(82,119,184,.22)}}

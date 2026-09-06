@@ -67,8 +67,9 @@ The manifest records bytes and SHA-256 hashes for the package sources. It omits
 itself to avoid a circular hash. A lab package should copy the kit version and
 the relevant file hashes into its own build provenance.
 
-Agents start at `agent/README.md` and must consume the complete listed release
-context before authoring. Those instructions are part of the release manifest.
+Repository automation starts at `agent/README.md`. Portable ChatGPT authoring
+uses its lab-specific `LAB_PACKET.md` plus synchronized resource copies; it
+does not require repository-only agent files.
 
 ## CSS capability contract
 
@@ -79,17 +80,15 @@ geometry. Their defaults map to the living v3 guide tokens; do not introduce a
 second palette in a lab. A lab may map the `--lab-kit-*` aliases to the current
 shared tokens when the site supplies them.
 
-The [living design guide](https://www.examplicity.org/developer/design-language.html)
-owns activity-bar, working-toggle, stage-marker, concept-surface and completion
-card markup and CSS. Use its copyable stylesheet and markup exactly. The kit
-does not provide alternate variants for those components.
+`src/lab-design.css` and `src/lab-design.js` own recurring activity-bar,
+working-toggle, stage-marker, concept-surface, attention and completion-card
+behavior. Use their shared classes and helpers without copying a specimen's
+page structure. The living design guide demonstrates visual intent; it is not
+a workflow authority or a required layout.
 
-The reviewed starter stylesheet is published at
-`https://www.examplicity.org/developer/design-language.css`. When an authoring
-or publication route embeds that stylesheet, load it after the kit CSS so the
-guide takes precedence. Do not leave either URL as a delivered runtime
-dependency: the publication compiler embeds approved resources into the final
-standalone lab.
+The reviewed design resources are published through the developer area. The
+publication compiler embeds the approved version after the base kit and local
+layout CSS. Do not leave developer URLs as delivered runtime dependencies.
 
 Use `.lab-kit-canvas` on a primary operated visual region when it needs the
 shared light surface, line, radius and inset definition. Add
@@ -156,7 +155,7 @@ an authentic system should behave.
 
 ## Shared design components
 
-`src/lab-design.css` is the canonical implementation for the reviewed design refinements. Include it **after** base kit/tokens and local layout styles. Inline it in exported HTML; never leave a network stylesheet dependency in a downloaded lab. The site compiler expands `<!-- LAB_DESIGN_COMPONENTS -->` at the end of the source head into this stylesheet. Existing kit 0.2.1 runtime pins do not change.
+`src/lab-design.css` is the canonical implementation for recurring design components. The site compiler expands `<!-- LAB_DESIGN_COMPONENTS -->` at the end of the source head into this stylesheet and `src/lab-design.js`, then packages the shared CSS used by that lab. Authors include the marker rather than pasting these files into source HTML. Existing compatible base-runtime 0.2.1 declarations and the design/distribution 0.3.0 release are separate versioned layers.
 
 New labs use `.lab-toggle` with `data-kind="working|exam|mode"`, `.lab-action` with optional `data-priority="primary"`, `.lab-work-card` with `data-work-state="needed|good|bad|reference"` and `data-interacted="true"`, `.lab-math-surface`, `.lab-stage-surface`, `.lab-stage-heading` and `.lab-guide-target`. Use native button/input state and update the attributes from real learner state. Stop attention on pointer/keyboard interaction, reset for a new activity, and keep geometry/learning logic local. The stylesheet includes compatibility selectors for the six reviewed labs.
 

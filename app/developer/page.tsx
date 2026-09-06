@@ -117,8 +117,8 @@ export default function DeveloperPage() {
 
           <section id="design" className={styles.section}>
             <h2>Use the design references</h2>
-            <p>The living guide provides visual examples and component behaviour. Follow it for changed surfaces;
-              when kit styling conflicts with the guide, adapt or omit that styling. Preserve a lab-specific layout when it helps explain the concept.</p>
+            <p>The living guide provides visual examples and component behaviour. Reuse the canonical shared CSS and helpers for recurring patterns;
+              treat the guide as a reference rather than a page template. Preserve a lab-specific layout when it helps explain the concept.</p>
             <ul className={styles.plainList}>
               <li><a href="/developer/design-language.html">Living design guide</a> — interactive examples of controls, working, feedback and completion.</li>
               <li><a href="/developer/lab-style-contract.md">Written style reference</a> — layout, typography, accessibility and interaction guidance.</li>
