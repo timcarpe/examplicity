@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
+import { DESIGN_CSS_PILOT, packageDesignCss, type DesignCssPolicy } from './design-css.ts';
 import { applyLabManifestContent } from '../../app/lab-content.ts';
 import { createStandaloneLabHtml } from '../../app/lab-download.ts';
 import { labs, type Lab } from '../../app/labs.ts';
@@ -413,7 +414,14 @@ export const compilePublicationLab = async (
     const designScript = await readFile(path.join(context.root, 'public/developer/lab-kit/0.3.0/src/lab-design.js'), 'utf8');
     compilableSource = compilableSource.replace('<!-- LAB_DESIGN_COMPONENTS -->', `<style data-lab-design>\n${design}\n</style>\n<script data-lab-design-runtime>\n${designScript}\n</script>`);
   }
-  const compiledSource = compileLabResources(compilableSource, context.kit.resources).source;
+  let compiledSource = compileLabResources(compilableSource, context.kit.resources).source;
+  const designBlock = compiledSource.match(/<style data-lab-design>\n([\s\S]*?)\n<\/style>/);
+  if (designBlock && DESIGN_CSS_PILOT.has(resolved.entry.slug)) {
+    const policy: DesignCssPolicy = JSON.parse(await readFile(path.join(context.root,
+      'public/developer/lab-kit/0.3.0/src/lab-design-purge.json'), 'utf8'));
+    const css = await packageDesignCss(designBlock[1], compiledSource, policy);
+    compiledSource = compiledSource.replace(designBlock[0], `<style data-lab-design>\n${css}\n</style>`);
+  }
   if (check) compileLabResources(compiledSource, context.kit.resources, { check: true });
 
   const withManifest = applyLabManifestContent(compiledSource, resolved.lab);

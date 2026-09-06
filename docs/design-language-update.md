@@ -53,4 +53,10 @@ The previous 52 labs were adapted in reviewed batches across mathematics and com
 - Fixed Histogram's overlapping bar value/density text and drag handle. `barGraphic` now reserves handle clearance, uses one compact count in shallow/narrow bars, and shows the extra density line only when it fits. The bridge and working retain density information; arithmetic and interaction are unchanged.
 - No other confirmed opening-view column breakage, off-canvas reset placement, horizontal page overflow or browser errors in the sampled states. Floating Point and Huffman secondary resets belong to lower sections and were retained.
 - Approved follow-up: Transmission Methods' Add device starts C over A/B. Place new devices in free space and grow the canvas only when needed, preserving existing device positions. No layout or device positions changed here.
-- Evidence is local at `D:/Cambridge Labs/visual-audit14/`. This was a quick desktop pass, not a complete later-state or responsive audit. CSS packaging feasibility is recorded separately in `docs/css-packaging-feasibility.md`; production packaging is unchanged.
+- Evidence is local at `D:/Cambridge Labs/visual-audit14/`. This was a quick desktop pass, not a complete later-state or responsive audit.
+
+## Selective CSS packaging pilot — 6 September 2026
+
+- Added PurgeCSS to publication for Binary, Recursive Call Stacks and Gas only. Shared CSS is selected at packaging; local styles, models and runtimes remain intact. The other 54 labs retain the full stylesheet.
+- Canonical `lab-design-purge.json` preserves common remix primitives and ships with the kit, authoring bundle and developer resources. Both style guides explain the boundary. Removed Recursive's download-size allowance.
+- Added packaging tests and compared full/reduced offline files across 29 initial, later, narrow and added-component states. Fixed dataset attribute extraction and compound pseudo-class preservation found by those comparisons. Sizes, limits and reproduction commands: `docs/css-packaging-feasibility.md`; local screenshots and comparison evidence: `D:/Cambridge Labs/purge-pilot/`.

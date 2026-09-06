@@ -7,12 +7,15 @@ Purpose: consistent presentation without changing the learning model. This is a 
 | Resource | Purpose |
 | --- | --- |
 | `packages/lab-kit/src/lab-design.css` | Canonical shared components and legacy adapters |
+| `packages/lab-kit/src/lab-design-purge.json` | Remix primitives retained by selective CSS packaging |
 | `packages/lab-kit/src/lab-design.js` | Shared attention, hints, dragging and settings layout |
 | `examplicity-living-style-guide-v3.html` | Interactive visual examples; loads the shared stylesheet |
 | Site `labs-src/<subject>/<slug>/lab.html` | Lab geometry, state, interactions and explanatory content |
 | Site `lab-contracts/<subject>/<slug>.lab.json` | Observed learner loop and implementation map; separate from exam alignment |
 
 Prefer shared components for recurring features. Keep scientific calculations, constraints, geometry and meaningful layout differences local. Do not copy generated styles into a second source. Publication embeds declared resources into the standalone HTML; downloaded labs must retain their styling and operation offline.
+
+Selective packaging may remove unused shared CSS after scanning the lab markup and scripts, including embedded runtimes. The shared purge policy keeps common controls, fields, working/evidence cards, formulas, chips, checkpoints and interaction cues available for remixing. Design tokens remain available; lab-specific adapters require source usage. Keep dynamic class names literal or explicitly safelist them. A downloaded pilot is a lab plus reusable primitives, not the entire component library; substantial new layouts can be repackaged from the full kit. Do not prune from an opening DOM snapshot alone.
 
 ## Layout and hierarchy
 

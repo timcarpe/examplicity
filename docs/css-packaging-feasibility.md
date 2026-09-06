@@ -1,28 +1,31 @@
-# Selective CSS packaging — feasibility
+# Selective CSS packaging — pilot
 
-Reviewed 6 September 2026. Assessment only; packaging behaviour is unchanged.
+Implemented 6 September 2026 using PurgeCSS 8.0.0. The pilot covers Binary Numbers, Recursive Call Stacks and Gas Compression. The other 54 labs retain full shared CSS.
 
-## Current path
+## Packaging
 
-`tools/lab-publication/index.ts` replaces `LAB_DESIGN_COMPONENTS` with the whole shared stylesheet and runtime. Both catalogue downloads and AI Remix fetch that published HTML, then `createStandaloneLabHtml` adds the download header/footer. Publication and download checks require self-contained CSS/JS.
+`tools/lab-publication/design-css.ts` selects shared CSS during publication, after runtime resources are embedded. It scans markup and scripts, excluding style blocks and HTML comments. JavaScript `dataset` names are converted to their HTML attribute names. The reduced CSS replaces only the shared design block; local CSS, frame, kit and simulation scripts remain intact. Downloads and AI Remix consume the same self-contained published HTML. No browser dependency, network stylesheet or new download endpoint is introduced.
 
-The shared stylesheet is **295,020 bytes** (about 295 KB), repeated in all 57 published labs. Shared runtime is 21,268 bytes. A read-only CSS parser estimate found **72–85 KB per lab** in rules scoped to unrelated body adapters. This is an opportunity estimate, not a validated stripped bundle: generic selectors and future states still need dependency review.
+The canonical allowlist is `Lab Creation/packages/lab-kit/src/lab-design-purge.json`, distributed through the kit manifest and authoring bundle. It preserves common actions/settings, fields, working/evidence cards, formula surfaces, chips, context, checkpoints, hints, completion cards and grips. Component descendants and transient states remain available even when absent from a lab. Unrelated adapter prefixes still require source usage. Tokens and font definitions remain; unused keyframes are removed unless used by retained shared rules or local CSS/scripts.
 
-## Existing solution and recommended pilot
+PurgeCSS 8 needs explicit `:is`/`:where` preservation for compound pseudo-class rules such as field focus; unused inner selectors are still removed. Regression tests cover this and dynamically assigned attributes.
 
-[PurgeCSS](https://purgecss.com/configuration) already accepts HTML/JavaScript and CSS strings and returns a reduced stylesheet. Its [safelist](https://purgecss.com/safelisting) can retain selectors for dynamic states. This is a practical packaging-time option; no manual per-lab CSS copying is needed.
+## Measured output
 
-1. At packaging, analyse the lab's markup and scripts plus shared runtime. Exclude inline `<style>` blocks from the scanned content, otherwise the stylesheet itself makes unused selectors appear used.
-2. Reduce the shared CSS with that content and a small shared safelist for generated classes/attributes. Initially retain keyframes, variables and font definitions. Keep the full canonical CSS unchanged.
-3. Inline the resulting CSS into the standalone HTML. Use the same packager for catalogue downloads and AI Remix. Cache by lab/source and shared-resource revision if assembly runs on demand.
-4. Pilot on Binary, Recursive Call Stacks and Gas. Inspect rejected selectors, compare representative opening/later states and check offline downloads before expanding. The figures above are adapter estimates, not measured PurgeCSS output.
+Uncompressed bytes, including standalone header/footer:
 
-The lean integration point is the existing publication packager: determine the subset once while producing each lab, and let downloads keep using that prepared HTML. If selection must happen specifically when Download is clicked, a server packaging route can do the same operation and return the one-file result; it adds a route/cache and changes to both download clients. Live embeds could later use cacheable external CSS independently, but that would change the current self-contained publication check.
+| Lab | Full download | Pilot download | Reduction | Shared CSS after pruning |
+| --- | ---: | ---: | ---: | ---: |
+| Binary Numbers | 428,995 | 184,102 | 57.1% | 50,127 |
+| Recursive Call Stacks | 527,854 | 297,973 | 43.6% | 65,139 |
+| Gas Compression | 440,988 | 204,475 | 53.6% | 58,507 |
 
-## Guardrails
+The full shared stylesheet is 295,020 bytes. Recursive now fits the standard 512 KiB limit without a waiver.
 
-- Do not remove selectors solely because they miss the initial DOM or screenshot. Labs create classes, fields, modals and SVG elements during interaction.
-- Preserve cascade order, responsive/dark/reduced-motion rules and animation dependencies.
-- Keep one source of truth and one offline HTML. Referencing a remote stylesheet from the downloaded file would change that contract.
-- Generated names assembled from fragments need explicit safelisting; scanning scripts alone cannot prove every later state is covered. If that becomes unwieldy, explicit component sections in the canonical stylesheet are the conservative fallback.
-- Savings beyond the scoped-adapter estimate are plausible but unmeasured. No dependency, production pruning or packaging route was added in this pass.
+## Evidence and extension
+
+- Nine targeted packaging/publication/download tests pass. Run `node --test --experimental-strip-types tests/lab-design-css.test.ts tests/lab-publication.test.ts tests/lab-download.test.ts`.
+- Offline Edge comparison: 29 matched computed-style snapshots across initial states, Binary help/range/exam/generated questions, Recursive frames/Some/All/exploration, Gas prediction/completion/working, 600px layouts and injected remix primitives. Opening screenshots inspected. No runtime errors or external runtime requests. Evidence: `D:/Cambridge Labs/purge-pilot/`; driver: `D:/Cambridge Labs/purge-compare.cjs`.
+- Run `npm run labs:compile:check`, `npm run labs:downloads:check` and `npm run developer:check` after regeneration.
+
+Add labs to `DESIGN_CSS_PILOT` only after comparing their representative dynamic states with full CSS. Names assembled from fragments may need explicit safelisting; static scanning cannot prove every possible state. Preserve additions through the canonical policy rather than lab-specific CSS copies. This pilot does not attempt to prune local lab styles or interpreters, and a substantial remix introducing a new layout may need repackaging with the full kit.

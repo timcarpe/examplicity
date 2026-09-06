@@ -13,6 +13,7 @@ const sourcePaths = [
   "src/lab-kit.css",
   "src/lab-design.css",
   "src/lab-design.js",
+  "src/lab-design-purge.json",
   "src/lab-kit.js",
   "tools/build-manifest.mjs"
 ];
@@ -32,7 +33,8 @@ const manifest = {
     browserScript: "src/lab-kit.js",
     css: "src/lab-kit.css",
     designCss: "src/lab-design.css",
-    designScript: "src/lab-design.js"
+    designScript: "src/lab-design.js",
+    designPurgePolicy: "src/lab-design-purge.json"
   },
   runtime: {
     global: "LabKit",
