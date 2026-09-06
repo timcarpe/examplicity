@@ -1289,6 +1289,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
           <div class="cpu-core">
             <span>CPU CORE</span>
             <strong id="cpuProcess">Operating system</strong>
+            <div id="corePage" class="lab-core-page"></div>
             <small id="cpuRequest">waiting for a memory request</small>
           </div>
         </section>
@@ -1314,7 +1315,8 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
       </div>
 
       <div class="arch-note">
-        This simulation compares relative latency: cache shows recently used pages, the page file sits on secondary storage, and each action remains active for its stated cycle cost.
+        Cache cells represent accesses to pages, not whole pages stored inside the CPU. Each action remains active for its stated teaching cycle cost.
+        <details class="lab-model-note"><summary>About this cache model</summary><p>Application accesses can replace OS references in cache; the OS pages remain in RAM. Paging operations are summarised without simulating the OS instruction fetches that perform them. Real CPU caches hold small cache lines, not the large page blocks shown here.</p></details>
       </div>
     </section>
   <section class="panel log-panel" aria-label="OS decision log">
@@ -2365,7 +2367,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
     cpuActor=ownerDef(owner).name;
     if(!page) return;
 
-    activeOwner=owner;
+    // A fallback CPU access must not change the learner-selected foreground app.
     currentPageId=page.id;
 
     const cacheHit=findCache(page.id);
@@ -3013,7 +3015,11 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 
     $("cpuProcess").textContent=cpuActor;
     const page=currentPageId?pages.get(currentPageId):null;
-    $("cpuRequest").textContent=page ? page.label : "waiting for a memory request";
+    const reading=activeCacheLinks.includes("linkL1Core"),fault=lastPath==="Page fault";
+    $("corePage").innerHTML=page ? cellMarkup({page,kind:"core",active:false})+'<span>'+escapeHtml(page.label)+'</span>' : "";
+    $("corePage").hidden=!page;
+    $("corePage").dataset.state=reading?"reading":fault?"waiting":"managing";
+    $("cpuRequest").textContent=!page?"No page requested":reading?(currentAction?(lastPath==="RAM"?"Fetching from RAM":("Reading from "+lastPath+" cache")):("Last read from "+lastPath)):fault?"Waiting for page in RAM":(currentAction?"OS managing this page":"Last page managed by OS");
   }
 
   function renderBus(id,state,pageBus=false){
@@ -3118,6 +3124,34 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
       renderDesktop();
     },Math.max(1,minimum-(now-lastDesktopRender)));
   }
+
+  // Route connections from device edges, independent of card height and responsive layout.
+  const map=document.querySelector('.system-map');
+  const connections=[['storageBus','.device-card','.ram-stick',.28],['pageBus','.pagefile-card','.ram-stick',.76],['ramCpuBus','.ram-stick','.cpu-chip',.5]].map(([id,from,to,port])=>{
+    const bus=$(id),svg=document.createElementNS('http://www.w3.org/2000/svg','svg'),path=document.createElementNS(svg.namespaceURI,'path');
+    svg.setAttribute('class','lab-connection-layer');svg.setAttribute('aria-hidden','true');
+    path.setAttribute('class','lab-connection-path');svg.append(path);bus.append(svg);
+    return {bus,svg,path,from:map.querySelector(from),to:map.querySelector(to),port};
+  });
+  let connectionFrame;
+  function placeConnections(){cancelAnimationFrame(connectionFrame);connectionFrame=requestAnimationFrame(()=>{
+    const root=map.getBoundingClientRect(),stacked=matchMedia('(max-width:700px)').matches;
+    connections.forEach(({svg,path,from,to,port})=>{
+      const a=from.getBoundingClientRect(),b=to.getBoundingClientRect();
+      svg.setAttribute('viewBox',`0 0 ${root.width} ${root.height}`);
+      let d;
+      if(stacked){
+        const x=a.left+a.width/2-root.left,y=a.bottom-root.top,endX=from.matches('.ram-stick')?b.left+b.width/2-root.left:x,endY=b.top-root.top,mid=(y+endY)/2;
+        d=`M ${x} ${y} V ${mid} H ${endX} V ${endY}`;
+      }else{
+        const x=a.right-root.left,y=a.top+a.height/2-root.top,endX=b.left-root.left,endY=b.top+b.height*port-root.top,mid=(x+endX)/2;
+        d=`M ${x} ${y} H ${mid} V ${endY} H ${endX}`;
+      }
+      path.setAttribute('d',d);
+    });
+  });}
+  const connectionResize=new ResizeObserver(placeConnections);
+  [map,...new Set(connections.flatMap(c=>[c.from,c.to]))].forEach(el=>connectionResize.observe(el));
 
   function renderAll(){
     renderSimulationFrame();
@@ -3356,6 +3390,8 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
     state:()=>({
       machineState,
       systemBootPages:[...systemBootPages],
+      caches:Object.fromEntries(Object.entries(caches).map(([level,entries])=>[level,entries.map(entry=>({...entry}))])),
+      cpuActor,activeOwner,currentPageId,activeCacheLinks:[...activeCacheLinks],
       ramSlots:[...ramSlots],
       pagefileSlots:[...pagefileSlots],
       pages:[...pages.values()].map(page=>({...page})),

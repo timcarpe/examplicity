@@ -684,3 +684,15 @@ same process list or repeating eligibility descriptions beneath state names.
   selects the local Georgia glyph for U+0049 only; other characters retain the
   surrounding sans or monospace font. No font download is required.
 `data-lab-value` uses one regular 18-unit SVG text size with 7-unit horizontal and 3-unit vertical padding. The shared fitter reduces only unusually long values to the available component width; ordinary numbers, instructions and ALU/CU states keep the same size.
+
+### Device paths and core evidence
+
+Use thin neutral, arrow-free connections anchored to the actual device edges.
+Right-angle segments can bridge unequal heights; active colour and moving dashes
+identify transfers. Keep reduced-motion paths static. On a narrow display, retain
+the same source/destination relationship when arranging branches vertically.
+
+A core readout should pair the referenced page identity tile with its source
+(cache or RAM). Distinguish fetching/reading from OS management and a page-fault
+wait. Explain model simplifications in a compact disclosure, rather than implying
+that a page being moved by the OS is the OS instruction being executed.

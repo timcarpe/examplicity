@@ -2251,3 +2251,39 @@ svg text[data-lab-value]{font-size:var(--lab-value-fit-size,var(--lab-value-font
 .computing-memory-management .desktop-icon{padding:2px}
 .computing-memory-management .app-glyph{width:28px;height:28px;margin-bottom:2px}
 .computing-assembly :is(.operation code,.reference code,.translation-table code,#sourceEditor){font-family:"Lab Index I",var(--mono,monospace)}
+
+/* Device connections: neutral, thin segments; colour/motion belong to live transfer state. */
+.lab-connection-layer{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+.lab-connection-path{fill:none;stroke:var(--lab-line-strong,#a7a7ad);stroke-width:3;stroke-linecap:butt;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.bus.active .lab-connection-path{stroke:var(--lab-accent,#5277b8);stroke-dasharray:6 4;animation:lab-connection-flow .7s linear infinite}
+.bus.active.page-bus .lab-connection-path{stroke:var(--lab-concept-violet,#7563a7)}
+.bus.active.to-left .lab-connection-path{animation-direction:reverse}
+@keyframes lab-connection-flow{to{stroke-dashoffset:-20}}
+@media(prefers-reduced-motion:reduce){.bus.active .lab-connection-path{animation:none}}
+.computing-memory-management .system-map{position:relative}
+.computing-memory-management .bus{position:static}
+.computing-memory-management .bus :is(.bus-line,.bus-arrow-left,.bus-arrow-right){display:none}
+.computing-memory-management .bus-label,.computing-memory-management .bus-value{position:relative;z-index:1;background:white;border:0;border-radius:4px}
+.computing-memory-management .cache-link::before{bottom:-7px;border-radius:0;box-shadow:none}
+.computing-memory-management .route-arrow::after{display:none}
+@media(max-width:700px){
+  .computing-memory-management .system-map{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:"storage pagefile" "bus-sr bus-pr" "ram ram" "bus-rc bus-rc" "cpu cpu";gap:12px}
+  .computing-memory-management :is(.device-card,.pagefile-card){align-self:end}
+  .computing-memory-management .pagefile-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .computing-memory-management .bus{min-height:60px;display:flex;align-items:center;justify-content:space-around;gap:12px}
+  .computing-memory-management .bus-label{padding:2px 4px;max-width:70px}
+  .computing-memory-management .bus-track{height:auto;margin:0;max-width:70px}
+  .computing-memory-management .bus-value{top:0;white-space:normal}
+}
+
+/* A referenced page uses the same identity tile as its source and cached copies. */
+.lab-core-page{display:flex;align-items:center;justify-content:center;gap:8px;padding:7px;margin:8px 0 5px;border:0;border-radius:6px;background:var(--lab-surface-muted,#f7f8fa);font:400 12px/1.35 var(--lab-font-sans,sans-serif)}
+.lab-core-page[hidden]{display:none}
+.lab-core-page .mem-cell{flex:0 0 32px;min-height:28px}
+.lab-core-page[data-state="reading"]{background:var(--lab-accent-soft,#eef2fa)}
+.lab-core-page[data-state="waiting"]{background:var(--lab-needed-surface,#fffdf4)}
+.lab-model-note{margin-top:10px;font:400 12px/1.45 var(--lab-font-sans,sans-serif)}
+.lab-model-note summary{cursor:pointer;color:var(--lab-accent-ink,#315b91)}
+.lab-model-note p{margin:7px 0 0}
+.computing-memory-management .cpu-core>strong{font:400 14px/1.4 var(--lab-font-sans)}
+.lab-core-page>span{font:400 12px/1.35 var(--lab-font-sans,sans-serif);color:var(--lab-ink,#1d1d1f)}

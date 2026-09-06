@@ -1112,3 +1112,19 @@ Review-refinement implementation: `ab1bced0b32d86b998a2d004935a38044bf7fde4`; ca
   bundled into downloadable HTML. Unsupported browsers retain native menus.
 - Packaging: Sound Sampling remains an offline audio artifact; its existing scoped cap rises by 10 KB to 1.485 MB for shared CSS. The general download limit is unchanged.
 - Follow-up: CPU register, ALU and CU values now share an 18-unit SVG text size and 7/3-unit material padding via shared CSS/runtime. Only long values shrink to their component width. No lab-local changes were needed.
+
+### OS Memory paths and cache evidence — 6 September 2026
+
+- Shared CSS supplies thin arrow-free paths, active transfer dashes, core page
+  material and a compact model disclosure. Local geometry anchors Storage/RAM,
+  Page file/RAM and RAM/CPU paths to device edges on resize. Narrow layouts keep
+  storage and page file as parallel inputs to RAM. Cache/core links close their gaps.
+- CPU readout pairs the matching page tile with fetching/reading source, page-fault
+  wait or OS-management state. Cache replacement is unchanged. Fixed fallback accesses overwriting the learner-selected foreground application.
+- Reviewed limitation: foreground accesses replace cache entries; OS memory
+  management does not itself issue OS instruction accesses. RAM-pinned OS pages
+  are not cache-pinned. Cache cells are page proxies, not physical cache lines.
+- Evidence: putCache/promoteToCache, bestAccessOwner/prepareNextAction,
+  handleAccess/handleLoad/evictPage, renderCpu. Read-only debug state now includes
+  cache entries and the actor/current page. Canonical guides document presentation.
+- Verification: real action handlers over 180 actions displaced OS entries from L1/L2 while all six OS pages remained in RAM. Browser checks covered live reads/management, edge connections at 1422/900/390 widths and standalone packaging.

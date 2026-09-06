@@ -3014,6 +3014,42 @@ svg text[data-lab-value]{font-size:var(--lab-value-fit-size,var(--lab-value-font
 .computing-memory-management .app-glyph{width:28px;height:28px;margin-bottom:2px}
 .computing-assembly :is(.operation code,.reference code,.translation-table code,#sourceEditor){font-family:"Lab Index I",var(--mono,monospace)}
 
+/* Device connections: neutral, thin segments; colour/motion belong to live transfer state. */
+.lab-connection-layer{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+.lab-connection-path{fill:none;stroke:var(--lab-line-strong,#a7a7ad);stroke-width:3;stroke-linecap:butt;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.bus.active .lab-connection-path{stroke:var(--lab-accent,#5277b8);stroke-dasharray:6 4;animation:lab-connection-flow .7s linear infinite}
+.bus.active.page-bus .lab-connection-path{stroke:var(--lab-concept-violet,#7563a7)}
+.bus.active.to-left .lab-connection-path{animation-direction:reverse}
+@keyframes lab-connection-flow{to{stroke-dashoffset:-20}}
+@media(prefers-reduced-motion:reduce){.bus.active .lab-connection-path{animation:none}}
+.computing-memory-management .system-map{position:relative}
+.computing-memory-management .bus{position:static}
+.computing-memory-management .bus :is(.bus-line,.bus-arrow-left,.bus-arrow-right){display:none}
+.computing-memory-management .bus-label,.computing-memory-management .bus-value{position:relative;z-index:1;background:white;border:0;border-radius:4px}
+.computing-memory-management .cache-link::before{bottom:-7px;border-radius:0;box-shadow:none}
+.computing-memory-management .route-arrow::after{display:none}
+@media(max-width:700px){
+  .computing-memory-management .system-map{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:"storage pagefile" "bus-sr bus-pr" "ram ram" "bus-rc bus-rc" "cpu cpu";gap:12px}
+  .computing-memory-management :is(.device-card,.pagefile-card){align-self:end}
+  .computing-memory-management .pagefile-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .computing-memory-management .bus{min-height:60px;display:flex;align-items:center;justify-content:space-around;gap:12px}
+  .computing-memory-management .bus-label{padding:2px 4px;max-width:70px}
+  .computing-memory-management .bus-track{height:auto;margin:0;max-width:70px}
+  .computing-memory-management .bus-value{top:0;white-space:normal}
+}
+
+/* A referenced page uses the same identity tile as its source and cached copies. */
+.lab-core-page{display:flex;align-items:center;justify-content:center;gap:8px;padding:7px;margin:8px 0 5px;border:0;border-radius:6px;background:var(--lab-surface-muted,#f7f8fa);font:400 12px/1.35 var(--lab-font-sans,sans-serif)}
+.lab-core-page[hidden]{display:none}
+.lab-core-page .mem-cell{flex:0 0 32px;min-height:28px}
+.lab-core-page[data-state="reading"]{background:var(--lab-accent-soft,#eef2fa)}
+.lab-core-page[data-state="waiting"]{background:var(--lab-needed-surface,#fffdf4)}
+.lab-model-note{margin-top:10px;font:400 12px/1.45 var(--lab-font-sans,sans-serif)}
+.lab-model-note summary{cursor:pointer;color:var(--lab-accent-ink,#315b91)}
+.lab-model-note p{margin:7px 0 0}
+.computing-memory-management .cpu-core>strong{font:400 14px/1.4 var(--lab-font-sans)}
+.lab-core-page>span{font:400 12px/1.35 var(--lab-font-sans,sans-serif);color:var(--lab-ink,#1d1d1f)}
+
 </style>
 <script data-lab-design-runtime>
 /* Shared model dragging: retain the point grabbed while the model rerenders. */
@@ -3400,13 +3436,15 @@ window.LabDesign = {
     "dependencies": [
       "Starting the clock loads the OS before workload shortcuts become available.",
       "Allocation and access events update the hierarchy, queued work, metrics and decision log.",
-      "Configuration changes reset the simulation.",
-      "The first opened desktop application dismisses the shared icon introduction across subsequent redraws."
+      "Configuration changes reset the simulation. Temporary fallback accesses preserve the learner-selected foreground application.",
+      "The first opened desktop application dismisses the shared icon introduction across subsequent redraws.",
+      "Core evidence distinguishes cache/RAM reads, waiting for a page fault, and OS page management; edge-anchored paths resize with the devices."
     ],
     "completion": "No terminal gate; learners compare access routes and memory pressure over repeated workloads.",
     "limitations": [
       "Relative teaching latencies and approximate hardware comparison are simplified rather than hardware benchmarks.",
-      "Desktop process identities remain aligned with allocated block colours."
+      "Desktop process identities remain aligned with allocated block colours.",
+      "Cache entries are page-level teaching proxies. OS page-management operations do not simulate their own instruction fetches; foreground application accesses can displace OS cache references while OS pages remain resident in RAM."
     ]
   }
 }
@@ -3640,6 +3678,7 @@ window.LabDesign = {
           <div class="cpu-core">
             <span>CPU CORE</span>
             <strong id="cpuProcess">Operating system</strong>
+            <div id="corePage" class="lab-core-page"></div>
             <small id="cpuRequest">waiting for a memory request</small>
           </div>
         </section>
@@ -3665,7 +3704,8 @@ window.LabDesign = {
       </div>
 
       <div class="arch-note">
-        This simulation compares relative latency: cache shows recently used pages, the page file sits on secondary storage, and each action remains active for its stated cycle cost.
+        Cache cells represent accesses to pages, not whole pages stored inside the CPU. Each action remains active for its stated teaching cycle cost.
+        <details class="lab-model-note"><summary>About this cache model</summary><p>Application accesses can replace OS references in cache; the OS pages remain in RAM. Paging operations are summarised without simulating the OS instruction fetches that perform them. Real CPU caches hold small cache lines, not the large page blocks shown here.</p></details>
       </div>
     </section>
   <section class="panel log-panel" aria-label="OS decision log">
@@ -5121,7 +5161,7 @@ window.LabDesign = {
     cpuActor=ownerDef(owner).name;
     if(!page) return;
 
-    activeOwner=owner;
+    // A fallback CPU access must not change the learner-selected foreground app.
     currentPageId=page.id;
 
     const cacheHit=findCache(page.id);
@@ -5769,7 +5809,11 @@ window.LabDesign = {
 
     $("cpuProcess").textContent=cpuActor;
     const page=currentPageId?pages.get(currentPageId):null;
-    $("cpuRequest").textContent=page ? page.label : "waiting for a memory request";
+    const reading=activeCacheLinks.includes("linkL1Core"),fault=lastPath==="Page fault";
+    $("corePage").innerHTML=page ? cellMarkup({page,kind:"core",active:false})+'<span>'+escapeHtml(page.label)+'</span>' : "";
+    $("corePage").hidden=!page;
+    $("corePage").dataset.state=reading?"reading":fault?"waiting":"managing";
+    $("cpuRequest").textContent=!page?"No page requested":reading?(currentAction?(lastPath==="RAM"?"Fetching from RAM":("Reading from "+lastPath+" cache")):("Last read from "+lastPath)):fault?"Waiting for page in RAM":(currentAction?"OS managing this page":"Last page managed by OS");
   }
 
   function renderBus(id,state,pageBus=false){
@@ -5874,6 +5918,34 @@ window.LabDesign = {
       renderDesktop();
     },Math.max(1,minimum-(now-lastDesktopRender)));
   }
+
+  // Route connections from device edges, independent of card height and responsive layout.
+  const map=document.querySelector('.system-map');
+  const connections=[['storageBus','.device-card','.ram-stick',.28],['pageBus','.pagefile-card','.ram-stick',.76],['ramCpuBus','.ram-stick','.cpu-chip',.5]].map(([id,from,to,port])=>{
+    const bus=$(id),svg=document.createElementNS('http://www.w3.org/2000/svg','svg'),path=document.createElementNS(svg.namespaceURI,'path');
+    svg.setAttribute('class','lab-connection-layer');svg.setAttribute('aria-hidden','true');
+    path.setAttribute('class','lab-connection-path');svg.append(path);bus.append(svg);
+    return {bus,svg,path,from:map.querySelector(from),to:map.querySelector(to),port};
+  });
+  let connectionFrame;
+  function placeConnections(){cancelAnimationFrame(connectionFrame);connectionFrame=requestAnimationFrame(()=>{
+    const root=map.getBoundingClientRect(),stacked=matchMedia('(max-width:700px)').matches;
+    connections.forEach(({svg,path,from,to,port})=>{
+      const a=from.getBoundingClientRect(),b=to.getBoundingClientRect();
+      svg.setAttribute('viewBox',`0 0 ${root.width} ${root.height}`);
+      let d;
+      if(stacked){
+        const x=a.left+a.width/2-root.left,y=a.bottom-root.top,endX=from.matches('.ram-stick')?b.left+b.width/2-root.left:x,endY=b.top-root.top,mid=(y+endY)/2;
+        d=`M ${x} ${y} V ${mid} H ${endX} V ${endY}`;
+      }else{
+        const x=a.right-root.left,y=a.top+a.height/2-root.top,endX=b.left-root.left,endY=b.top+b.height*port-root.top,mid=(x+endX)/2;
+        d=`M ${x} ${y} H ${mid} V ${endY} H ${endX}`;
+      }
+      path.setAttribute('d',d);
+    });
+  });}
+  const connectionResize=new ResizeObserver(placeConnections);
+  [map,...new Set(connections.flatMap(c=>[c.from,c.to]))].forEach(el=>connectionResize.observe(el));
 
   function renderAll(){
     renderSimulationFrame();
@@ -6112,6 +6184,8 @@ window.LabDesign = {
     state:()=>({
       machineState,
       systemBootPages:[...systemBootPages],
+      caches:Object.fromEntries(Object.entries(caches).map(([level,entries])=>[level,entries.map(entry=>({...entry}))])),
+      cpuActor,activeOwner,currentPageId,activeCacheLinks:[...activeCacheLinks],
       ramSlots:[...ramSlots],
       pagefileSlots:[...pagefileSlots],
       pages:[...pages.values()].map(page=>({...page})),

@@ -2312,6 +2312,42 @@ svg text[data-lab-value]{font-size:var(--lab-value-fit-size,var(--lab-value-font
 .computing-memory-management .app-glyph{width:28px;height:28px;margin-bottom:2px}
 .computing-assembly :is(.operation code,.reference code,.translation-table code,#sourceEditor){font-family:"Lab Index I",var(--mono,monospace)}
 
+/* Device connections: neutral, thin segments; colour/motion belong to live transfer state. */
+.lab-connection-layer{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+.lab-connection-path{fill:none;stroke:var(--lab-line-strong,#a7a7ad);stroke-width:3;stroke-linecap:butt;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.bus.active .lab-connection-path{stroke:var(--lab-accent,#5277b8);stroke-dasharray:6 4;animation:lab-connection-flow .7s linear infinite}
+.bus.active.page-bus .lab-connection-path{stroke:var(--lab-concept-violet,#7563a7)}
+.bus.active.to-left .lab-connection-path{animation-direction:reverse}
+@keyframes lab-connection-flow{to{stroke-dashoffset:-20}}
+@media(prefers-reduced-motion:reduce){.bus.active .lab-connection-path{animation:none}}
+.computing-memory-management .system-map{position:relative}
+.computing-memory-management .bus{position:static}
+.computing-memory-management .bus :is(.bus-line,.bus-arrow-left,.bus-arrow-right){display:none}
+.computing-memory-management .bus-label,.computing-memory-management .bus-value{position:relative;z-index:1;background:white;border:0;border-radius:4px}
+.computing-memory-management .cache-link::before{bottom:-7px;border-radius:0;box-shadow:none}
+.computing-memory-management .route-arrow::after{display:none}
+@media(max-width:700px){
+  .computing-memory-management .system-map{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:"storage pagefile" "bus-sr bus-pr" "ram ram" "bus-rc bus-rc" "cpu cpu";gap:12px}
+  .computing-memory-management :is(.device-card,.pagefile-card){align-self:end}
+  .computing-memory-management .pagefile-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .computing-memory-management .bus{min-height:60px;display:flex;align-items:center;justify-content:space-around;gap:12px}
+  .computing-memory-management .bus-label{padding:2px 4px;max-width:70px}
+  .computing-memory-management .bus-track{height:auto;margin:0;max-width:70px}
+  .computing-memory-management .bus-value{top:0;white-space:normal}
+}
+
+/* A referenced page uses the same identity tile as its source and cached copies. */
+.lab-core-page{display:flex;align-items:center;justify-content:center;gap:8px;padding:7px;margin:8px 0 5px;border:0;border-radius:6px;background:var(--lab-surface-muted,#f7f8fa);font:400 12px/1.35 var(--lab-font-sans,sans-serif)}
+.lab-core-page[hidden]{display:none}
+.lab-core-page .mem-cell{flex:0 0 32px;min-height:28px}
+.lab-core-page[data-state="reading"]{background:var(--lab-accent-soft,#eef2fa)}
+.lab-core-page[data-state="waiting"]{background:var(--lab-needed-surface,#fffdf4)}
+.lab-model-note{margin-top:10px;font:400 12px/1.45 var(--lab-font-sans,sans-serif)}
+.lab-model-note summary{cursor:pointer;color:var(--lab-accent-ink,#315b91)}
+.lab-model-note p{margin:7px 0 0}
+.computing-memory-management .cpu-core>strong{font:400 14px/1.4 var(--lab-font-sans)}
+.lab-core-page>span{font:400 12px/1.35 var(--lab-font-sans,sans-serif);color:var(--lab-ink,#1d1d1f)}
+
 </style>
 </head>
 <body>
@@ -3288,6 +3324,7 @@ data-lab-intro-copy="Drag the point sideways to give this leg more or less time.
 </section>
 
 <section class="guide-section lab-adopt-v3" id="revealed-menus"><h2>Revealed menus and installed items</h2><p>Open menus echo the homepage: a white surface, rounded rows, a thin border and soft shadow. Selected options use a light blue tint and a check with regular-weight labels. Native keyboard, disabled options and selection remain intact; browsers without customisable native selects keep their system menu.</p><label style="display:grid;gap:8px;max-width:280px">Example program<select aria-label="Example program"><option>Add and store</option><option>Indexed addressing</option><option>ASCII output</option><option disabled>Unavailable example</option></select></label><p>Installed rules carry stronger concept colour than unused parts. Keep failed-result red on the result, with neutral feedback explaining the cause and the next useful comparison.</p><div class="computing-process-states-scheduling" style="max-width:360px"><div id="selectSlot" class="rule-slot" style="--slot-tone:#c9782c"><span class="rule-slot-label">Ready rule</span><strong class="rule-slot-value"><span class="rule-icon">FIFO</span><span>Oldest in Ready</span></strong></div></div><p>Related application icons share one first-use cue, dismissed when any application is opened. Keep a clear gap between icons and windows. White queue cards can have a subtle shadow against a tinted parent.</p><p>Index identifiers use a serif capital <span class="lab-index-text">I</span> so <span class="lab-index-text">I1</span> and <span class="lab-index-text">IX</span> remain distinguishable. Only that glyph changes; surrounding labels keep their normal font.</p></section>
+<section class="guide-section" id="device-paths"><h2>Connections and transfer evidence</h2><svg viewBox="0 0 360 92" style="max-width:360px;width:100%" role="img" aria-label="Arrow-free connection between a memory page and CPU core"><rect x="2" y="8" width="110" height="48" rx="8" fill="#f7f8fa" stroke="#d2d2d7"/><path class="lab-connection-path" d="M112 32 H176 V60 H230"/><rect x="230" y="36" width="128" height="48" rx="8" fill="#eef2fa" stroke="#d2d2d7"/><text x="57" y="38" text-anchor="middle" font-size="14">RAM</text><text x="294" y="66" text-anchor="middle" font-size="14">CPU core</text></svg><p>Use thin, straight segments anchored to the actual device edges, without arrowheads. Active colour and directional dashes signal transfer; reduced motion keeps the line static. Preserve the relationship when the layout stacks.</p><p>Pair the page identity with its source near the core. Distinguish fetching or reading from an OS-managed transfer and a page-fault wait. A compact model disclosure can explain omitted instruction fetches and page-level proxies.</p></section>
 </main>
 <footer class="guide-footer">Examplicity living lab design language · reviewed v3 · updated 6 September 2026</footer>
 
