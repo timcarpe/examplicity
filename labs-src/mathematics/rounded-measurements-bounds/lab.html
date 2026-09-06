@@ -610,7 +610,7 @@ function renderIntervalDock(){
   const found=discovered(variable==='d'?'distance':'time'),bad=f.bad.includes(lo)||f.bad.includes(hi);
   return `<section class="lab-work-card" data-work-state="${bad?'bad':f.success?'good':'needed'}"><strong>${label} interval</strong><p>${found?'Both boundaries explored.':'Drag across both rounding boundaries.'}</p><p class="lab-math-surface">lower bound ≤ ${variable} &lt; upper bound (${unit})</p><div class="bound-entry-grid">${workField('interval.'+lo,'Lower bound',value(lo),unit,owned(lo),f.bad.includes(lo),f.success)}${workField('interval.'+hi,'Upper bound',value(hi),unit,owned(hi),f.bad.includes(hi),f.success)}</div></section>`;
  }).join('');
- $('proofDock').innerHTML=`<div class="proof-head"><strong>Complete the measurement intervals</strong></div><div class="proof-body">${cards}<button class="lab-action" data-priority="primary" data-check="intervals">Check intervals</button><p>${f.message}</p></div>`;
+ $('proofDock').innerHTML=`<div class="proof-head"><strong>Complete the measurement intervals</strong></div><div class="proof-body">${cards}<button class="lab-action" data-priority="primary" data-check="intervals">Check intervals</button><p data-interval-message>${f.message}</p></div>`;
 }
 function checkIntervals(){
  const f=state.interval,expected=intervalExpected();f.checked=true;f.bad=[];f.success=false;
@@ -658,7 +658,11 @@ function checkFineProof(){
   renderAll();
 }
 
-const dock=$('proofDock');dock.addEventListener('input',evt=>{const path=evt.target.dataset.field;if(path){setByPath(path,evt.target.value);const field=evt.target.closest('.num-field');field?.classList.remove('good','bad');const mark=field?.querySelector('.field-status');if(mark)mark.textContent='';const prediction=dock.querySelector('.lab-prediction');if(prediction){prediction.dataset.workState='needed';prediction.querySelector('p').textContent='';}}});dock.addEventListener('click',evt=>{const verdict=evt.target.closest?.('[data-verdict]');if(verdict){const obj=verdict.dataset.prefix==='fine'?state.fine:state.proof;obj.verdict=verdict.dataset.verdict;obj.success=false;obj.message='';state.complete[state.step]=false;renderCompletion();obj.checked=false;obj.bad=[];renderProofDock();return}const check=evt.target.closest?.('[data-check]')?.dataset.check;if(check==='intervals')checkIntervals();if(check==='proof')checkProof();if(check==='fine-bounds')checkFineBounds();if(check==='fine-proof')checkFineProof()});
+const dock=$('proofDock');dock.addEventListener('input',evt=>{const path=evt.target.dataset.field;if(path){setByPath(path,evt.target.value);if(path.startsWith('interval.')){
+ dock.querySelectorAll('.lab-work-card').forEach(card=>{card.dataset.workState='needed'});
+ dock.querySelectorAll('.num-field').forEach(field=>{field.classList.remove('good','bad');field.classList.add('action');field.querySelector('.field-status').textContent=''});
+ dock.querySelector('[data-interval-message]').textContent='';renderSteps();
+ }const field=evt.target.closest('.num-field');field?.classList.remove('good','bad');const mark=field?.querySelector('.field-status');if(mark)mark.textContent='';const prediction=dock.querySelector('.lab-prediction');if(prediction){prediction.dataset.workState='needed';prediction.querySelector('p').textContent='';}}});dock.addEventListener('click',evt=>{const verdict=evt.target.closest?.('[data-verdict]');if(verdict){const obj=verdict.dataset.prefix==='fine'?state.fine:state.proof;obj.verdict=verdict.dataset.verdict;obj.success=false;obj.message='';state.complete[state.step]=false;renderCompletion();obj.checked=false;obj.bad=[];renderProofDock();return}const check=evt.target.closest?.('[data-check]')?.dataset.check;if(check==='intervals')checkIntervals();if(check==='proof')checkProof();if(check==='fine-bounds')checkFineBounds();if(check==='fine-proof')checkFineProof()});
 
 const stage=$('stage');
 LabDesign.bindSvgDrag(stage,{
