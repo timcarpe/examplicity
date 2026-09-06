@@ -106,8 +106,36 @@ window.LabDesign = {
     const distance = ([x, y]) => anchor ? Math.hypot(x + w / 2 - (anchor.left + anchor.right) / 2, y + h / 2 - (anchor.top + anchor.bottom) / 2) : 0;
     return candidates.map(([x, y]) => [Math.max(left, Math.min(right, x)), Math.max(top, Math.min(bottom, y))]).sort((a, b) => score(a) - score(b) || distance(a) - distance(b))[0];
   }
+  function normalizeSettingHeaders() {
+    document.body.classList.add("lab-settings-adopt");
+      // Flatten only setting wrappers for visual ordering; preserve nodes and event owners.
+      document.querySelectorAll('.lab-activity-bar').forEach(bar => {
+        const groups = [
+          ['working', '.lab-working-toggle,.lab-toggle[data-kind="working"]'],
+          ['exam', '.lab-toggle[data-kind="exam"],.lab-toggle[data-kind="curriculum"],.pill-toggle.level-toggle'],
+          ['checkpoints', '.lab-checkpoints,.lab-stage-progress']
+        ];
+        let lead = true;
+        for (const [kind, selector] of groups) bar.querySelectorAll(selector).forEach(control => {
+          control.dataset.labSetting = kind;
+          control.toggleAttribute('data-lab-setting-lead', lead); lead = false;
+          if (kind === 'working' || kind === 'exam') {
+            const parent = control.parentElement;
+            parent.querySelectorAll('span,strong,label').forEach(label => {
+              if (!control.contains(label) && (kind === 'working' ? /^Working:?$/i : /^\d{4}:$/).test(label.textContent.trim())) label.classList.add('lab-setting-old-label');
+            });
+          }
+          for (let parent = control.parentElement; parent && parent !== bar; parent = parent.parentElement) parent.classList.add('lab-settings-path');
+        });
+      });
+  }
   function init() {
-    if (!document.body.classList.contains('lab-adopt-v3')) return;
+    normalizeSettingHeaders();
+    if (!document.body.classList.contains('lab-adopt-v3')) {
+      let pending=false;
+      new MutationObserver(()=>{if(!pending){pending=true;requestAnimationFrame(()=>{pending=false;normalizeSettingHeaders()})}}).observe(document.querySelector('main')||document.body,{childList:true,subtree:true});
+      return;
+    }
     // SVG units change with the viewBox; keep opted-in chart labels at their display size.
     document.querySelectorAll('svg[data-lab-readable-chart]').forEach(stage => {
       const fitText = () => {
@@ -191,6 +219,7 @@ window.LabDesign = {
     const key = card => card.id || [...card.querySelectorAll('input')].map(input => input.id || input.name || [...input.attributes].filter(a => a.name.startsWith('data-')).map(a => a.name + a.value).join(':')).join('|') || card.querySelector('.step-head,.derive-step-head,.work-step-head,.eyebrow,strong')?.textContent;
     function refresh() {
       queued = false;
+      normalizeSettingHeaders();
       document.querySelectorAll('[data-lab-actions] button').forEach(button => {
         if (!button.classList.contains('lab-action')) button.classList.add('lab-action');
         if (button.classList.contains('primary') && button.dataset.priority !== 'primary') button.dataset.priority = 'primary';

@@ -206,20 +206,21 @@ with redundant labels, helper paragraphs and numeric counters removed.
 
 - Use one full-width activity top bar above the model and working columns.
   Place the current learner task on the left, with Reset beside it where needed;
-  place **Working:** and its toggle on the right, immediately followed by any
-  real stage/checkpoint markers. Keep the label, toggle and markers together.
+  place Working, exam level and real stage/checkpoint markers together on the
+  right, in that left-to-right order. Keep the label, toggle and markers together.
   They belong to the activity, not to the calculation column. Do not duplicate
   them inside the working area or add a “Checkpoint” heading.
-- Label the control simply **Working:** followed by **None / Some / All**.
+- Place **Working** in a minimal centered label above the pill, above
+  **None / Some / All**. Use regular 11px text and no colon or helper paragraph.
   None means the learner supplies no written calculations; the working remains
   visible and operating the model is still required. Preserve each lab's
   existing meaning of Some and All. Do not add artificial levels to a lab.
-- Use the opt-in `.lab-working-toggle` from `public/labs/lab-frame.css`: a
-  `#f7f8fa` group, `#e7e8eb` boundary, dark grey `#424245` selected segment with white text and no visible
+- Use the shared `.lab-working-toggle` from `packages/lab-kit/src/lab-design.css`: a
+  `#f7f8fa` group, `#d2d2d7` boundary, near-black `#1d1d1f` selected segment with white text and no visible
   border, regular 12px labels and an overall 42px control height. Use regular-weight labels without a bold microtitle or explanatory line.
   Buttons expose `aria-pressed` and retain a visible keyboard focus outline.
-- Place optional `.lab-stage-progress` before the right-aligned toggle group in
-  the right side of the activity top bar. Small empty circles denote upcoming stages,
+- Place optional `.lab-stage-progress` at the far right, after the exam and
+  Working controls in the activity top bar. Small empty circles denote upcoming stages,
   a blue inset dot marks the current stage, and a green check marks completion.
   The visible marker is 12px within a 24×40px target. Text in its accessible
   name distinguishes current, complete and upcoming independently of colour.
@@ -362,11 +363,11 @@ they do not require another visible paragraph.
    is incomplete before interaction, cannot advance immediately, and completes
    only after the level-appropriate learner action.
 
-Working and exam settings share the living guide’s smooth pill toggle: fully rounded track and selected segment, neutral grey background, white selected text and no visible segment border; Working uses dark grey `#424245`, while exam uses blue `#4569aa`, 42px height with 3px inset, and 12px regular-weight text. Preserve existing options and earned availability.
+Working and exam settings share the living guide’s smooth pill toggle: fully rounded track and selected segment, neutral grey background, white selected text and no visible segment border; Working and exam both use near-black `#1d1d1f`, 42px height with 3px inset, and 12px regular-weight text. Preserve existing options and earned availability.
 
-Toggle containers use a subtle outer shadow: `0 1px 3px rgba(29,29,31,.08)`. Apply it to the shared rounded track, not to individual segments. Working remains grey and exam blue.
+Toggle containers use a subtle outer shadow: `0 1px 3px rgba(29,29,31,.08)`. Apply it to the shared rounded track, not to individual segments. Working and exam use neutral near-black selection.
 
-Activity top panels sit above the model and working area. Put task/actions at left and settings together at right. Order toggles left to right: additional toggles, Working, exam. Exam is always farthest right; omit unavailable controls. Genuine stage markers sit before the toggle group so they do not displace this priority. Do not invent settings or stages. Toggle tracks have a 1px `#d2d2d7` border. Top-panel action buttons keep standard 8px control corners, a thin darker border and the subtle container shadow. Prefer blue #4569aa with white text for primary actions (including New question); use white with blue #315b91 text for secondary actions such as Reset. Grey actions are rare differentiation only. Disabled actions use #eef1f3 background, #6e6e73 text, #d2d2d7 border and no shadow. Disabled rules override primary and hover styling; white/blue is an enabled secondary action only. Preserve native disabled semantics and readable labels instead of relying on opacity. Labels stay regular 12px. Algorithm modes can use the rounded blue segmented toggle with the same track border and shadow; preserve existing action semantics. Keep minimum 40px height and 8px 14px padding. Retain active, disabled and keyboard-focus states.
+Activity top panels sit above the model and working area. Put task/actions at left and settings together at right. Order settings left to right: additional choices, Working, exam, checkpoints. Checkpoints are farthest right; omit unavailable controls. Working has a minimal centered label above the pill, regular 11px text, with no label border or background; exam pills use the same label treatment. Do not invent settings or stages. Toggle tracks have a 1px `#d2d2d7` border. Top-panel action buttons keep standard 8px control corners, a thin darker border and the subtle container shadow. Prefer blue #4569aa with white text for primary actions (including New question); use white with blue #315b91 text for secondary actions such as Reset. Grey actions are rare differentiation only. Disabled actions use #eef1f3 background, #6e6e73 text, #d2d2d7 border and no shadow. Disabled rules override primary and hover styling; white/blue is an enabled secondary action only. Preserve native disabled semantics and readable labels instead of relying on opacity. Labels stay regular 12px. Algorithm modes can use the rounded blue segmented toggle with the same track border and shadow; preserve existing action semantics. Keep minimum 40px height and 8px 14px padding. Retain active, disabled and keyboard-focus states.
 
 An algorithm mode toggle starts with a real selected mode and matching model state (Graph Search defaults to Dijkstra on load/reset), not an unselected pair or a merely cosmetic selection.
 
@@ -396,7 +397,7 @@ Shared appearance must support the model's causal relationships. Fit the existin
 - Canvas surfaces are white or transparent, without a grey enclosing box.
   A model should fill its allotted area with modest padding; chart text uses
   the approved sans family and regular weight, sized for the rendered chart.
-- Working: is a sentence-case, 12px regular label beside the grey toggle.
+- Working is a sentence-case, 11px regular label in a minimal label centered above the toggle.
   Keep one main goal in the top bar; put local method explanations in working.
 - A prediction belongs in a lightweight card: yellow before assessment, green
   when correct, red after an incorrect attempt. Choices use selection blue,
@@ -611,7 +612,7 @@ retains those states without travel or impact animation.
 
 The goal bar is not an overflow shelf for model actions. Put scenario selection,
 Next/Play, construction tools, Undo/Reset/Test and optional packet processing
-with the model controls below it. Exam remains farthest right, then Working,
+with the model controls below it. Checkpoints remain farthest right, then exam, then Working,
 then any additional mode controls. A parts shelf may be beside the canvas when
 that makes the drag source and destination clearer.
 
@@ -797,3 +798,7 @@ Label the allocation divider with a horizontal shift symbol. Give the mantissa
 its own shift affordance and explain the compensating exponent and lost-bit
 effect. Precision/range can use paired flat concept cards; goal success needs
 clear green contrast and a check, not only a subtle background change.
+
+Header setting adapters mark existing controls with `data-lab-setting="working|exam|checkpoints"`. Existing control wrappers retain their event ownership; shared layout aligns the controls without changing learning state. Additional question-range choices can use `lab-menu-select`, as in Binary. Helper place values use padded, flat concept material while retaining their column alignment. Do not turn an existing optional hint into new Working levels.
+New header markup should follow the same DOM order as the visual order: Working, exam, checkpoints. The compatibility adapter preserves existing event-owner wrappers.
+Binary helper roles: violet flat material for place values; light blue for the help explanation. Keep the given starting number’s original neutral surface and border. Helper styling does not retint the given model.

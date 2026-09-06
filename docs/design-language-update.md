@@ -1296,3 +1296,23 @@ Implemented:
   delta here is six shared typography CSS lines. Unrelated site work is excluded.
 - Canonical shared commit: `7ea033f`.
 - Site implementation: `aa44d9e`; the six maps pin that reviewed revision.
+
+### Centered setting labels and header settings
+
+- Shared CSS adds minimal centered Working and Exam labels above the pills and near-black selection for
+  Working/exam pills. Shared JS recognizes existing setting wrappers and orders
+  them right: Working, exam, checkpoints. Extra choices stay to the left.
+- Binary replaces its question-range radios with the shared dropdown; pools and
+  help behavior remain unchanged. Helper place values gain padded flat violet
+  material and the help explanation uses light blue. Starting-number cards retain
+  their original neutral surface and border. Text uses regular weight.
+- Astra Light added semantic classes only to Flip-Flop, Recursion, Relative
+  Frequency and Replacement checkpoint containers, and corrected Transformation’s
+  Core/Extended selector from mode to curriculum. No learning logic changed.
+- Both canonical guides and the authoring bundle describe/show the new control;
+  published developer resources and all standalone lab outputs include it.
+- Binary curriculum tests pass. Browser scan: 57 labs, 37 detected header setting
+  groups, no order failures or page errors. Binary/Sequence/Bounds fit at 390px.
+  The requested curriculum task was informed of the new shared design.
+- Review correction: use plain centered labels above both Working and Exam pills,
+  without a projecting tab, label border or background. Binary displays Exam.

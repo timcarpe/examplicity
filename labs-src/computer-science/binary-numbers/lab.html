@@ -695,11 +695,11 @@ body[data-lab-layout="compact"]{align-content:start;min-height:auto;padding:18px
 </style>
 <style data-lab-layout>
 .card .topbar.lab-activity-bar{display:flex;align-items:center;flex-wrap:wrap;gap:12px;margin:0 0 20px;padding:0 0 20px;border-bottom:1px solid var(--lab-line-subtle,#e7e8eb)}
-.topbar.lab-activity-bar>button{order:-2}.topbar.lab-activity-bar .range-toggle{order:-1;margin-left:auto}.topbar.lab-activity-bar .level-toggle{margin-left:0}
+
 </style>
 <!-- LAB_DESIGN_COMPONENTS -->
 </head>
-<body data-lab-layout="compact">
+<body class="lab-binary" data-lab-layout="compact">
 <main class="shell">
 <!-- LAB_MANIFEST_HEADER_START -->
 <header class="lab-manifest-header">
@@ -736,10 +736,7 @@ body[data-lab-layout="compact"]{align-content:start;min-height:auto;padding:18px
 
     <button id="newButton" type="button">New question</button>
 
-    <div class="pill-toggle range-toggle" role="radiogroup" aria-label="Question range">
-      <button type="button" role="radio" data-range="binary" aria-checked="true">Binary</button>
-      <button type="button" role="radio" data-range="hex" aria-checked="false">Binary and hex</button>
-    </div>
+    <select id="rangeSelect" class="lab-menu-select range-select" aria-label="Question range"><option value="binary">Binary</option><option value="hex">Binary and hex</option></select>
   </div>
     <div class="prompt-row">
       <p id="prompt"></p>
@@ -1748,9 +1745,7 @@ body[data-lab-layout="compact"]{align-content:start;min-height:auto;padding:18px
     state.range=range;
     state.lastTemplate=null;
     state.recent=[];
-    document.querySelectorAll("[data-range]").forEach(button=>{
-      button.setAttribute("aria-checked",String(button.dataset.range===range));
-    });
+    $("rangeSelect").value=range;
     renderQuestion();
   }
 
@@ -1764,9 +1759,7 @@ body[data-lab-layout="compact"]{align-content:start;min-height:auto;padding:18px
   document.querySelectorAll("[data-curriculum-profile]").forEach(button=>{
     button.addEventListener("click",()=>setProfile(button.dataset.curriculumProfile));
   });
-  document.querySelectorAll("[data-range]").forEach(button=>{
-    button.addEventListener("click",()=>setRange(button.dataset.range));
-  });
+  $("rangeSelect").addEventListener("change",event=>setRange(event.target.value));
 
   const helpButton=$("helpButton");
   helpButton.addEventListener("pointerenter",()=>{state.helpPreview=true;syncHelp();});
