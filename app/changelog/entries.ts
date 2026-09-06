@@ -10,6 +10,7 @@ export const changelogEntries: readonly ChangelogEntry[] = [
     date: '2026-09-06',
     displayDate: '6 September 2026',
     publicChanges: [
+      'Added Core and Extended choices to Rounded Measurements and Bounds: practise measurement intervals in Core or continue through the full speed-bound investigation in Extended, with working support controlled separately.',
       'Refined Floating Point, Flip-Flops, Recursive Call Stacks, Artificial Neurons, Python Practice and the Pseudocode/Python Translator with shared controls, clearer evidence, readable code and targeted interaction cues while preserving their learning sequences and workbench layouts.',
       'Refined Bitmap Compression, Huffman Rover, Database Normalisation, Combinational Logic and Automated Systems with shared controls, targeted interaction cues and more readable evidence while preserving their intended layouts and models. Fixed continuous bitmap drag painting and made colour conversion feedback inline. Unified compact chips and consolidated Automated Systems goals and live working into a padded inline area, while preserving the item configuration popup.',
       'Unified CPU value sizing and padding; clarified index labels, memory loading and desktop interaction cues; improved scheduler rule contrast and explanations, matched supported lab dropdown menus to the homepage, and clarified memory paths. Memory Management now shows other ready work executing during page transfers, with separate CPU references and running/ready/waiting states.',

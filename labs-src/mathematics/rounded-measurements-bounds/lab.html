@@ -367,7 +367,7 @@ input{font:inherit;color:var(--lab-ink)}
 <header class="lab-manifest-header">
   <div class="lab-manifest-heading">
     <h1 data-lab-manifest="title">Rounded Measurements and Bounds</h1>
-  <p class="lab-manifest-subtitle" data-lab-manifest="subtitle">Build the possible measurement intervals, then test the claim with the slowest possible speed.</p>
+  <p class="lab-manifest-subtitle" data-lab-manifest="subtitle">Explore measurement intervals in Core, or continue to speed bounds and a guarantee proof in Extended.</p>
   </div>
   <!-- LAB_SYLLABUS_CHIPS_START -->
 <nav class="lab-syllabus-chips" aria-label="Syllabus alignment">
@@ -385,6 +385,7 @@ input{font:inherit;color:var(--lab-ink)}
   <span data-lab-authored-subtitle-slot hidden></span>
 
   <section class="panel mission lab-activity-bar" aria-live="polite">
+    <div class="ownership"><span>0580:</span><div id="curriculum" class="lab-toggle" data-kind="curriculum" aria-label="Cambridge IGCSE Mathematics curriculum"><button type="button" data-curriculum-profile="cambridge-0580-core" aria-pressed="false">Core</button><button type="button" data-curriculum-profile="cambridge-0580-extended" aria-pressed="true">Extended</button></div></div>
     <div class="mission-copy"><span class="goal-kicker" id="goalKicker"></span><strong class="goal-text" id="goalText"></strong></div>
     <div class="mission-tools"><div id="steps" class="lab-checkpoints" aria-label="Learning stages"></div><div class="ownership"><span>Working:</span><div class="complexity lab-toggle" data-kind="working" id="complexity" aria-label="How much working you complete"><button type="button" data-level="0" aria-pressed="true">None</button><button type="button" data-level="1" aria-pressed="false">Some</button><button type="button" data-level="2" aria-pressed="false">All</button></div></div><button type="button" class="reset lab-action" id="reset">Reset</button></div>
   </section>
@@ -401,10 +402,13 @@ input{font:inherit;color:var(--lab-ink)}
 'use strict';
 const $=id=>document.getElementById(id), NS='http://www.w3.org/2000/svg';
 const BASE={distance:{report:100,step:1,unit:'m',digits:1},time:{report:12.4,step:.1,unit:'s',digits:2},threshold:8.05};
+const profiles=JSON.parse(document.querySelector('[data-examplicity-lab-contract]').textContent).curriculum.profiles;
+const initialProfile='cambridge-0580-extended';
 const FINE={distance:{report:100,step:.1,unit:'m',digits:2},time:{report:12.4,step:.01,unit:'s',digits:3},threshold:8.05};
 const blankProof=()=>({distance:'',time:'',speed:'',verdict:'',checked:false,success:false,message:'',bad:[]});
 const blankFine=()=>({dLow:'',dHigh:'',tLow:'',tHigh:'',boundsChecked:false,boundsSuccess:false,speed:'',verdict:'',checked:false,success:false,message:'',bad:[]});
-const state={workingLevel:0,step:0,complete:[false,false,false,false],d:100,t:12.4,drag:null,
+const blankInterval=()=>({dLow:'',dHigh:'',tLow:'',tHigh:'',checked:false,success:false,message:'',bad:[]});
+const state={curriculumProfile:initialProfile,interval:blankInterval(),workingLevel:0,step:0,complete:[false,false,false,false],d:100,t:12.4,drag:null,
   discover:{dLow:false,dHigh:false,tLow:false,tHigh:false},upperSpeed:false,lowerSpeed:false,observedFail:false,
   proof:blankProof(),fine:blankFine()};
 const svg=(tag,attrs={},text=null)=>{const e=document.createElementNS(NS,tag);Object.entries(attrs).forEach(([k,v])=>{if(v!==undefined&&v!==null)e.setAttribute(k,String(v))});if(text!==null)e.textContent=text;return e};
@@ -419,6 +423,10 @@ const speedBounds=(c=cfg())=>[low(c.distance)/high(c.time),high(c.distance)/low(
 const fmt=(v,n=3)=>Number(v).toFixed(n).replace(/\.0+$/,'').replace(/(\.\d*?)0+$/,'$1');
 const num=v=>{const n=parseFloat(v);return Number.isFinite(n)?n:null};
 const close=(a,b,t)=>a!==null&&Math.abs(a-b)<=t;
+const intervalOnly=()=>!profiles[state.curriculumProfile].enabledFeatures.includes('calculated-bounds');
+const intervalExpected=()=>({dLow:low(BASE.distance),dHigh:high(BASE.distance),tLow:low(BASE.time),tHigh:high(BASE.time)});
+const intervalOwned=key=>state.workingLevel===2||(state.workingLevel===1&&key.endsWith('High'));
+const intervalDisplay=(key,value)=>intervalOnly()&&intervalOwned(key)&&!state.interval.success?'?':fmt(value,4);
 
 const steps=[
   {name:'1 · Find the range',tag:'Core',goal:()=>{const dDone=state.discover.dLow&&state.discover.dHigh,tDone=state.discover.tLow&&state.discover.tHigh;if(!dDone)return 'Find the interval of true distances hidden by the rounded 100 m display.';if(!tDone)return 'Now find the interval of true times hidden by the rounded 12.4 s display.';return 'You now know every distance and time a valid certificate must allow for.'}},
@@ -426,23 +434,37 @@ const steps=[
   {name:'3 · Prove the decision',tag:'Extended',goal:()=>state.proof.success?'Proof complete: the rounded readings do not guarantee 8.05 m/s.':'Prove or disprove the certificate: lower distance bound ÷ upper time bound. Is the result still at least 8.05 m/s?'},
   {name:'4 · Test better evidence',tag:'Extended',goal:()=>state.fine.success?'Proof complete: the finer readings now guarantee 8.05 m/s.':!state.fine.boundsSuccess?'Can better precision change the decision? Build the tighter distance and time intervals first.':'Repeat the same worst-case proof: lower distance bound ÷ upper time bound, then compare with 8.05 m/s.'}
 ];
+const activeSteps=()=>intervalOnly()?steps.slice(0,1):steps;
+function setProfile(id){
+ if(!Object.hasOwn(profiles,id))throw new Error('Unknown curriculum profile: '+id);
+ state.curriculumProfile=id;state.step=0;state.complete.fill(false);state.upperSpeed=false;state.lowerSpeed=false;state.observedFail=false;state.proof=blankProof();state.fine=blankFine();resetStep();
+}
 
 function resetStep(){
   const c=cfg();state.d=c.distance.report;state.t=c.time.report;state.drag=null;
-  if(state.step===0){state.discover={dLow:false,dHigh:false,tLow:false,tHigh:false};state.complete[0]=false}
+  if(state.step===0){state.discover={dLow:false,dHigh:false,tLow:false,tHigh:false};state.interval=blankInterval();state.complete[0]=false}
   if(state.step===1){state.upperSpeed=false;state.lowerSpeed=false;state.complete[1]=false}
   if(state.step===2){state.d=low(BASE.distance);state.t=safeHigh(BASE.time);state.observedFail=false;state.proof=blankProof();state.complete[2]=false}
   if(state.step===3){state.fine=blankFine();state.complete[3]=false}
   renderAll();
 }
-function selectStep(i){if(i>0&&!state.complete[i-1])return;state.step=i;const c=cfg();if(i===2){state.d=low(BASE.distance);state.t=safeHigh(BASE.time)}else{state.d=c.distance.report;state.t=c.time.report}state.drag=null;renderAll()}
+function selectStep(i){if(i>=activeSteps().length||i>0&&!state.complete[i-1])return;state.step=i;const c=cfg();if(i===2){state.d=low(BASE.distance);state.t=safeHigh(BASE.time)}else{state.d=c.distance.report;state.t=c.time.report}state.drag=null;renderAll()}
 function renderSteps(){
  const host=$('steps');host.replaceChildren();
  const evidence=[`Distance: 99.5 ≤ d < 100.5 m. Time: 12.35 ≤ t < 12.45 s.`, `Fastest: upper distance ÷ lower time. Slowest: lower distance ÷ upper time.`, `99.5 ÷ 12.45 ≈ 7.992 m/s: cannot certify.`, `99.95 ÷ 12.405 ≈ 8.057 m/s: certify.`];
- steps.forEach((s,i)=>{const b=document.createElement('button');b.type='button';b.className='lab-checkpoint';b.dataset.complete=String(state.complete[i]);b.setAttribute('aria-current',String(i===state.step));b.setAttribute('aria-label',s.name);b.title=s.name.replace(/^\d · /,'')+(state.complete[i]?'\n'+evidence[i]:'');b.disabled=i>0&&!state.complete[i-1];b.addEventListener('click',()=>selectStep(i));host.append(b)});
+ activeSteps().forEach((s,i)=>{const b=document.createElement('button');b.type='button';b.className='lab-checkpoint';b.dataset.complete=String(state.complete[i]);b.setAttribute('aria-current',String(i===state.step));b.setAttribute('aria-label',s.name);b.title=s.name.replace(/^\d · /,'')+(state.complete[i]?'\n'+evidence[i]:'');b.disabled=i>0&&!state.complete[i-1];b.addEventListener('click',()=>selectStep(i));host.append(b)});
  document.querySelectorAll('[data-level]').forEach(b=>b.setAttribute('aria-pressed',String(Number(b.dataset.level)===state.workingLevel)));
 }
-function renderMission(){$('claimContextTitle').textContent=state.step===3?'Same claim, finer readings':'Claim under test';$('claimContextCriterion').textContent=(state.step===3?'Use the finer distance and time intervals. ':'')+'Do the rounded readings guarantee this for every allowed run? One allowed speed below 8.05 m/s disproves the guarantee.';$('goalKicker').textContent=`Step ${state.step+1} of ${steps.length} · ${steps[state.step].tag}`;$('goalText').textContent=steps[state.step].goal();renderSteps()}
+function renderMission(){
+ const core=intervalOnly();
+ $('claimContextTitle').textContent=core?'Rounded measurements':state.step===3?'Same claim, finer readings':'Claim under test';
+ $('claimContextStatement').textContent=core?'Distance d rounds to 100 m to the nearest metre. Time t rounds to 12.4 s to the nearest 0.1 s.':'The car’s average speed is at least 8.05 m/s.';
+ $('claimContextCriterion').textContent=core?'Find the lower and upper bound of each measurement. The lower endpoint is included; the upper endpoint is excluded.':(state.step===3?'Use the finer distance and time intervals. ':'')+'Do the rounded readings guarantee this for every allowed run? One allowed speed below 8.05 m/s disproves the guarantee.';
+ $('goalKicker').textContent=core?'Core · Measurement intervals':`Step ${state.step+1} of ${steps.length} · ${steps[state.step].tag}`;
+ $('goalText').textContent=core?'Explore both rounding boundaries, then complete the intervals.':steps[state.step].goal();
+ $('stage').setAttribute('data-lab-feature',core||state.step===0?'rounded-data-intervals':'calculated-bounds');
+ document.querySelectorAll('[data-curriculum-profile]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.curriculumProfile===state.curriculumProfile)));renderSteps();
+}
 
 const geom={distance:{x:260,y:165,w:440},time:{x:260,y:345,w:440}};
 function scanDomain(kind){return kind==='distance'?[99.2,100.8]:[12.30,12.50]}
@@ -479,9 +501,9 @@ function renderBounds(root,kind,y){
   const c=cfg()[kind],g=geom[kind],a=low(c),b=high(c),isD=kind==='distance';
   if(state.step===0){
     const lowSeen=isD?state.discover.dLow:state.discover.tLow,highSeen=isD?state.discover.dHigh:state.discover.tHigh;
-    if(lowSeen){const x=valueToX(kind,a);add(root,'line',{x1:x,x2:x,y1:y-35,y2:y+35,class:'bound'});add(root,'text',{x,y:y+56,'text-anchor':'middle',class:'bound-label'},'lower bound');add(root,'text',{x,y:y+69,'text-anchor':'middle',class:'bound-value'},fmt(a,isD?1:2))}
-    if(highSeen){const x=valueToX(kind,b);add(root,'line',{x1:x,x2:x,y1:y-35,y2:y+35,class:'bound upper'});add(root,'text',{x,y:y+56,'text-anchor':'middle',class:'bound-label'},'upper bound');add(root,'text',{x,y:y+69,'text-anchor':'middle',class:'bound-value'},fmt(b,isD?1:2))}
-    if(discovered(kind)){const x1=valueToX(kind,a),x2=valueToX(kind,b);add(root,'rect',{x:x1,y:y-12,width:x2-x1,height:24,rx:8,class:isD?'allowed-d':'allowed-t'});add(root,'text',{x:(x1+x2)/2,y:y-42,'text-anchor':'middle',class:'mono'},isD?`${fmt(a,1)} ≤ d < ${fmt(b,1)} m`:`${fmt(a,2)} ≤ t < ${fmt(b,2)} s`)}
+    if(lowSeen){const x=valueToX(kind,a);add(root,'line',{x1:x,x2:x,y1:y-35,y2:y+35,class:'bound'});add(root,'text',{x,y:y+56,'text-anchor':'middle',class:'bound-label'},'lower bound');add(root,'text',{x,y:y+69,'text-anchor':'middle',class:'bound-value'},intervalDisplay(isD?'dLow':'tLow',a))}
+    if(highSeen){const x=valueToX(kind,b);add(root,'line',{x1:x,x2:x,y1:y-35,y2:y+35,class:'bound upper'});add(root,'text',{x,y:y+56,'text-anchor':'middle',class:'bound-label'},'upper bound');add(root,'text',{x,y:y+69,'text-anchor':'middle',class:'bound-value'},intervalDisplay(isD?'dHigh':'tHigh',b))}
+    if(discovered(kind)){const x1=valueToX(kind,a),x2=valueToX(kind,b);add(root,'rect',{x:x1,y:y-12,width:x2-x1,height:24,rx:8,class:isD?'allowed-d':'allowed-t'});add(root,'text',{x:(x1+x2)/2,y:y-42,'text-anchor':'middle',class:'mono'},`${intervalDisplay(isD?'dLow':'tLow',a)} ≤ ${isD?'d':'t'} < ${intervalDisplay(isD?'dHigh':'tHigh',b)} ${c.unit}`)}
     return;
   }
   const provisional=provisionalPair(kind);
@@ -551,8 +573,8 @@ function renderProofSelection(root){
 }
 function renderStage(){
  const root=$('stage');root.replaceChildren();root.classList.add('lab-bounds-chart','lab-bounds-restored');root.setAttribute('viewBox',`0 0 760 ${state.step===0||(state.step===3&&!state.fine.boundsSuccess)?435:650}`);
- add(root,'title',{id:'stageTitle'},'Discover rounded measurement intervals and speed bounds');
- add(root,'desc',{id:'stageDesc'},'Drag the true distance and time across rounding boundaries. Then use the allowed intervals to find the fastest and slowest speeds.');
+ add(root,'title',{id:'stageTitle'},intervalOnly()?'Discover rounded measurement intervals':'Discover rounded measurement intervals and speed bounds');
+ add(root,'desc',{id:'stageDesc'},intervalOnly()?'Drag the true distance and time across rounding boundaries, then complete both measurement intervals.':'Drag the true distance and time across rounding boundaries. Then use the allowed intervals to find the fastest and slowest speeds.');
  renderDistance(root);renderTime(root);renderSpeed(root);renderProofSelection(root);
  const introduce=(target,key,title,copy)=>{if(!target)return;target.dataset.labIntro=key;target.dataset.labIntroTitle=title;target.dataset.labIntroCopy=copy;};
  if(state.step<2){
@@ -563,7 +585,7 @@ function renderStage(){
  root.querySelectorAll('[data-drag][tabindex]').forEach(handle=>{const kind=handle.dataset.drag;handle.setAttribute('aria-label',`True ${kind}`);handle.setAttribute('aria-valuenow',kind==='distance'?state.d:state.t);handle.setAttribute('aria-valuemin',state.step===0?domain(kind)[0]:low(cfg()[kind]));handle.setAttribute('aria-valuemax',state.step===0?domain(kind)[1]:safeHigh(cfg()[kind]));});
 }
 function observe(kind){
-  if(state.step===0){const c=BASE[kind],v=kind==='distance'?state.d:state.t,a=low(c),b=high(c);if(v<a-1e-9)state.discover[kind==='distance'?'dLow':'tLow']=true;if(v>=b-1e-9)state.discover[kind==='distance'?'dHigh':'tHigh']=true;state.complete[0]=state.discover.dLow&&state.discover.dHigh&&state.discover.tLow&&state.discover.tHigh}
+  if(state.step===0){const c=BASE[kind],v=kind==='distance'?state.d:state.t,a=low(c),b=high(c);if(v<a-1e-9)state.discover[kind==='distance'?'dLow':'tLow']=true;if(v>=b-1e-9)state.discover[kind==='distance'?'dHigh':'tHigh']=true;state.complete[0]=Object.values(state.discover).every(Boolean)&&(!intervalOnly()||state.interval.success)}
   else if(state.step===1){const c=BASE,[da,db]=[low(c.distance),high(c.distance)],[ta,tb]=[low(c.time),high(c.time)],dq=(state.d-da)/(db-da),tq=(state.t-ta)/(tb-ta);if(dq>.975&&tq<.025)state.upperSpeed=true;if(dq<.025&&tq>.975)state.lowerSpeed=true;state.complete[1]=state.upperSpeed&&state.lowerSpeed}
   else if(state.step===2){if(speed(state.d,state.t)<BASE.threshold)state.observedFail=true}
 }
@@ -574,15 +596,33 @@ function renderAll(){renderVisuals();renderProofDock()}
 function verdictHtml(current,prefix){return `<div class="verdict-group"><button type="button" class="verdict lab-action" data-verdict="yes" data-prefix="${prefix}" aria-pressed="${current==='yes'}">Certify</button><button type="button" class="verdict lab-action" data-verdict="no" data-prefix="${prefix}" aria-pressed="${current==='no'}">Cannot certify</button></div>`}
 function workField(path,label,value,unit,owned,bad=false,good=false){
  if(!owned)return `<div class="locked-field"><span>${label}</span><div class="locked-value">${value} ${unit}</div></div>`;
- return `<label class="num-field ${bad?'bad':good?'good':'action'}"><span>${label}</span><input data-lab-intro="bounds-${path}" data-lab-intro-title="${label}" data-lab-intro-copy="${path.endsWith('.speed')?'Divide the lower distance by the upper time to find the slowest possible speed.':'Use half the rounding unit on either side of the displayed reading to find this boundary.'} Your entry updates the diagram." data-field="${path}" inputmode="decimal" value="${value}" placeholder="${unit}"><span class="field-status" aria-hidden="true">${bad?'×':good?'✓':''}</span></label>`;
+ return `<label class="num-field ${bad?'bad':good?'good':'action'}"><span>${label}</span><input data-lab-intro="bounds-${path}" data-lab-intro-title="${label}" data-lab-intro-copy="${path.endsWith('.speed')?'Divide the lower distance by the upper time to find the slowest possible speed.':'Use half the rounding unit on either side of the displayed reading to find this boundary.'}${path.startsWith('interval.')?'':' Your entry updates the diagram.'}" data-field="${path}" inputmode="decimal" value="${value}" placeholder="${unit}"><span class="field-status" aria-hidden="true">${bad?'×':good?'✓':''}</span></label>`;
 }
 function supplyWorking(){
  const c=cfg(),f=state.step===3?state.fine:state.proof;
  if(state.workingLevel<2){if(state.step===3){Object.assign(f,{dLow:String(low(c.distance)),dHigh:String(high(c.distance)),tLow:String(low(c.time)),tHigh:String(high(c.time)),boundsSuccess:true});state.d=low(c.distance);state.t=safeHigh(c.time)}else{f.distance=String(low(c.distance));f.time=String(high(c.time));}}
  if(state.workingLevel===0)f.speed=String(speedBounds(c)[0]);
 }
+function renderIntervalDock(){
+ const f=state.interval,expected=intervalExpected();
+ const cards=[['Distance','d','dLow','dHigh','m'],['Time','t','tLow','tHigh','s']].map(([label,variable,lo,hi,unit])=>{
+  const owned=key=>intervalOwned(key),value=key=>owned(key)?f[key]:fmt(expected[key],4);
+  const found=discovered(variable==='d'?'distance':'time'),bad=f.bad.includes(lo)||f.bad.includes(hi);
+  return `<section class="lab-work-card" data-work-state="${bad?'bad':f.success?'good':'needed'}"><strong>${label} interval</strong><p>${found?'Both boundaries explored.':'Drag across both rounding boundaries.'}</p><p class="lab-math-surface">lower bound ≤ ${variable} &lt; upper bound (${unit})</p><div class="bound-entry-grid">${workField('interval.'+lo,'Lower bound',value(lo),unit,owned(lo),f.bad.includes(lo),f.success)}${workField('interval.'+hi,'Upper bound',value(hi),unit,owned(hi),f.bad.includes(hi),f.success)}</div></section>`;
+ }).join('');
+ $('proofDock').innerHTML=`<div class="proof-head"><strong>Complete the measurement intervals</strong></div><div class="proof-body">${cards}<button class="lab-action" data-priority="primary" data-check="intervals">Check intervals</button><p>${f.message}</p></div>`;
+}
+function checkIntervals(){
+ const f=state.interval,expected=intervalExpected();f.checked=true;f.bad=[];f.success=false;
+ for(const key of Object.keys(expected))if(intervalOwned(key)&&(!f[key].trim()||!Number.isFinite(Number(f[key]))||Math.abs(Number(f[key])-expected[key])>1e-7))f.bad.push(key);
+ if(!Object.values(state.discover).every(Boolean))f.message='Explore both boundaries of each rounded reading first.';
+ else if(f.bad.length)f.message='Use half the rounding unit on each side of the recorded value. Check the lower and upper positions.';
+ else{f.success=true;f.message='Both intervals agree with the stated rounding accuracy.';}
+ state.complete[0]=f.success;renderAll();
+}
 function renderProofDock(){
  const dock=$('proofDock');dock.hidden=false;
+ if(intervalOnly()){renderIntervalDock();return;}
  if(state.step<2){const items=state.step===0?[['Distance lower boundary',state.discover.dLow,'99.5 m'],['Distance upper boundary',state.discover.dHigh,'100.5 m'],['Time lower boundary',state.discover.tLow,'12.35 s'],['Time upper boundary',state.discover.tHigh,'12.45 s']]:[['Fastest possible run',state.upperSpeed,`${fmt(speedBounds()[1],3)} m/s`],['Slowest possible run',state.lowerSpeed,`${fmt(speedBounds()[0],3)} m/s`]];
  dock.innerHTML='<div class="proof-head"><strong>'+ (state.step===0?'Discover the intervals':'Explore the speed extremes')+'</strong></div><div class="proof-body">'+items.map(([label,done,result])=>`<section class="lab-work-card" data-work-state="${done?'good':'needed'}" data-interacted="${state.drag!==null}"><strong>${label}</strong><p>${done?result:'—'}</p></section>`).join('')+'<p>'+(state.step===0?'A rounded reading represents an interval. Crossing its edges changes the display.':'Greater distance and less time increase speed; reverse both to find the lower bound.')+'</p></div>';return;}
  supplyWorking();const fine=state.step===3,f=fine?state.fine:state.proof,c=cfg(),prefix=fine?'fine':'proof';
@@ -591,7 +631,7 @@ function renderProofDock(){
  dock.innerHTML=`<div class="proof-head"><strong>${fine?'Same proof, finer readings':'Worst-case proof'}</strong></div><div class="proof-body"><p>${fine?'The tighter intervals must pass the same test.':'Use the intervals you found as evidence.'} Use the included lower distance and excluded upper time limit to calculate the lower speed bound.</p><div class="proof-rule"><code>lower speed bound = lower distance ÷ upper time</code></div><div class="equation-work">${workField('proof.distance','Lower distance bound',fine?fmt(low(c.distance),4):f.distance,'m',!fine&&state.workingLevel===2,f.bad.includes('distance'),f.checked&&!f.bad.includes('distance'))}<div class="eq-label">÷</div>${workField('proof.time','Upper time bound',fine?fmt(high(c.time),4):f.time,'s',!fine&&state.workingLevel===2,f.bad.includes('time'),f.checked&&!f.bad.includes('time'))}<div class="eq-label">=</div>${workField(prefix+'.speed','Lower speed',state.workingLevel===0?fmt(Number(f.speed),3):f.speed,'m/s',state.workingLevel>0,f.bad.includes('speed'),f.checked&&!f.bad.includes('speed'))}</div><section class="lab-work-card lab-prediction" data-work-state="${predictionState}" data-interacted="${Boolean(f.verdict)}"><strong>Does every allowed run reach 8.05 m/s?</strong><div class="lab-prediction-options" data-lab-intro="bounds-prediction" data-lab-intro-title="Test every allowed run" data-lab-intro-copy="Choose whether the lowest possible speed meets 8.05 m/s, then check your prediction.">${verdictHtml(f.verdict,prefix)}</div><button class="lab-action" data-priority="primary" data-check="${fine?'fine-proof':'proof'}" ${f.verdict?'':'disabled'}>Check prediction</button><p>${f.message}</p></section></div>`;
 }
 
-function setByPath(path,value){const [a,b]=path.split('.');state[a][b]=value;state[a].success=false;state[a].message='';state.complete[state.step]=false;renderCompletion();state[a].checked=false;if(a==='proof')state[a].bad=[];if(a==='fine'){state[a].bad=[];if(['dLow','dHigh','tLow','tHigh'].includes(b))state.fine.boundsChecked=false}renderStage()}
+function setByPath(path,value){const [a,b]=path.split('.');state[a][b]=value;state[a].success=false;state[a].message='';state.complete[state.step]=false;renderCompletion();state[a].checked=false;if(a==='proof'||a==='interval')state[a].bad=[];if(a==='fine'){state[a].bad=[];if(['dLow','dHigh','tLow','tHigh'].includes(b))state.fine.boundsChecked=false}renderStage()}
 function checkProof(){
   const p=state.proof,d=num(p.distance),t=num(p.time),s=num(p.speed),expected=low(BASE.distance)/high(BASE.time);p.checked=true;p.bad=[];
   if(!close(d,low(BASE.distance),.006))p.bad.push('distance');if(!close(t,high(BASE.time),.0006))p.bad.push('time');if(!close(s,expected,.004))p.bad.push('speed');
@@ -618,7 +658,7 @@ function checkFineProof(){
   renderAll();
 }
 
-const dock=$('proofDock');dock.addEventListener('input',evt=>{const path=evt.target.dataset.field;if(path){setByPath(path,evt.target.value);const field=evt.target.closest('.num-field');field?.classList.remove('good','bad');const mark=field?.querySelector('.field-status');if(mark)mark.textContent='';const prediction=dock.querySelector('.lab-prediction');if(prediction){prediction.dataset.workState='needed';prediction.querySelector('p').textContent='';}}});dock.addEventListener('click',evt=>{const verdict=evt.target.closest?.('[data-verdict]');if(verdict){const obj=verdict.dataset.prefix==='fine'?state.fine:state.proof;obj.verdict=verdict.dataset.verdict;obj.success=false;obj.message='';state.complete[state.step]=false;renderCompletion();obj.checked=false;obj.bad=[];renderProofDock();return}const check=evt.target.closest?.('[data-check]')?.dataset.check;if(check==='proof')checkProof();if(check==='fine-bounds')checkFineBounds();if(check==='fine-proof')checkFineProof()});
+const dock=$('proofDock');dock.addEventListener('input',evt=>{const path=evt.target.dataset.field;if(path){setByPath(path,evt.target.value);const field=evt.target.closest('.num-field');field?.classList.remove('good','bad');const mark=field?.querySelector('.field-status');if(mark)mark.textContent='';const prediction=dock.querySelector('.lab-prediction');if(prediction){prediction.dataset.workState='needed';prediction.querySelector('p').textContent='';}}});dock.addEventListener('click',evt=>{const verdict=evt.target.closest?.('[data-verdict]');if(verdict){const obj=verdict.dataset.prefix==='fine'?state.fine:state.proof;obj.verdict=verdict.dataset.verdict;obj.success=false;obj.message='';state.complete[state.step]=false;renderCompletion();obj.checked=false;obj.bad=[];renderProofDock();return}const check=evt.target.closest?.('[data-check]')?.dataset.check;if(check==='intervals')checkIntervals();if(check==='proof')checkProof();if(check==='fine-bounds')checkFineBounds();if(check==='fine-proof')checkFineProof()});
 
 const stage=$('stage');
 LabDesign.bindSvgDrag(stage,{
@@ -638,17 +678,19 @@ stage.addEventListener('keydown',evt=>{const handle=evt.target.closest?.('[data-
 
 function renderCompletion(){
  const card=$('nextCard');card.hidden=Boolean(state.drag)||!state.complete[state.step];if(card.hidden)return;
- const content=[['Rounding intervals found','Each displayed reading represents a range of true values. Combine values from these intervals to explore the possible speeds.','Explore speeds'],['Speed extremes found','Lower distance with upper time gives the slowest run. Use that worst case to test the certificate claim.','Prove the claim'],['The claim is not guaranteed','99.5 ÷ 12.45 ≈ 7.992 m/s falls below 8.05 m/s. Can finer measurements change the decision?','Test finer readings'],['Finer readings guarantee the claim','99.95 ÷ 12.405 ≈ 8.057 m/s. The same worst-case test now meets the required speed.','Start again']][state.step];
- if(card.dataset.step===String(state.step))return;card.dataset.step=state.step;
+ const content=intervalOnly()?['Measurement intervals complete','Both rounding ranges and their endpoint values agree. The lower endpoints are included; the upper endpoints are excluded.','Start again']:[['Rounding intervals found','Each displayed reading represents a range of true values. Combine values from these intervals to explore the possible speeds.','Explore speeds'],['Speed extremes found','Lower distance with upper time gives the slowest run. Use that worst case to test the certificate claim.','Prove the claim'],['The claim is not guaranteed','99.5 ÷ 12.45 ≈ 7.992 m/s falls below 8.05 m/s. Can finer measurements change the decision?','Test finer readings'],['Finer readings guarantee the claim','99.95 ÷ 12.405 ≈ 8.057 m/s. The same worst-case test now meets the required speed.','Start again']][state.step];
+ const cardKey=state.curriculumProfile+':'+state.step;if(card.dataset.step===cardKey)return;card.dataset.step=cardKey;
  card.innerHTML=`<strong>${content[0]}</strong><span>${content[1]}</span><div class="next-actions"><button class="lab-action" data-priority="primary" data-continue>${content[2]}</button></div>`;
 }
-$('nextCard').addEventListener('click',e=>{if(!e.target.closest('[data-continue]'))return;if(state.step<3)selectStep(state.step+1);else{state.step=0;state.complete.fill(false);state.upperSpeed=false;state.lowerSpeed=false;state.proof=blankProof();state.fine=blankFine();resetStep();}});
+$('nextCard').addEventListener('click',e=>{if(!e.target.closest('[data-continue]'))return;if(state.step<activeSteps().length-1)selectStep(state.step+1);else{state.step=0;state.complete.fill(false);state.upperSpeed=false;state.lowerSpeed=false;state.proof=blankProof();state.fine=blankFine();resetStep();}});
 $('reset').addEventListener('click',resetStep);
-$('complexity').addEventListener('click',e=>{const b=e.target.closest('[data-level]');if(!b)return;state.workingLevel=Number(b.dataset.level);if(state.step===2){state.proof=blankProof();state.complete[2]=false;}if(state.step===3){state.fine=blankFine();state.complete[3]=false;}renderAll();});
+$('complexity').addEventListener('click',e=>{const b=e.target.closest('[data-level]');if(!b)return;state.workingLevel=Number(b.dataset.level);if(intervalOnly()){state.interval=blankInterval();state.complete[0]=false;}if(state.step===2){state.proof=blankProof();state.complete[2]=false;}if(state.step===3){state.fine=blankFine();state.complete[3]=false;}renderAll();});
+
+$('curriculum').addEventListener('click',e=>{const b=e.target.closest('[data-curriculum-profile]');if(b)setProfile(b.dataset.curriculumProfile)});
 
 window.__ROUNDED_BOUNDS_LAB__={
-  getState:()=>JSON.parse(JSON.stringify({workingLevel:state.workingLevel,step:state.step,complete:state.complete,d:state.d,t:state.t,discover:state.discover,upperSpeed:state.upperSpeed,lowerSpeed:state.lowerSpeed,observedFail:state.observedFail,proof:state.proof,fine:state.fine,speed:speed(state.d,state.t),bounds:speedBounds(cfg())})),
-  selectStep,reset:resetStep,setDistance:v=>setValue('distance',v),setTime:v=>setValue('time',v),
+  getState:()=>JSON.parse(JSON.stringify({curriculumProfile:state.curriculumProfile,interval:state.interval,workingLevel:state.workingLevel,step:state.step,complete:state.complete,d:state.d,t:state.t,discover:state.discover,upperSpeed:state.upperSpeed,lowerSpeed:state.lowerSpeed,observedFail:state.observedFail,proof:state.proof,fine:state.fine,speed:speed(state.d,state.t),bounds:speedBounds(cfg())})),
+  setProfile,checkIntervals,selectStep,reset:resetStep,setDistance:v=>setValue('distance',v),setTime:v=>setValue('time',v),
   proof:(d,t,s,verdict='no')=>{state.proof.distance=String(d);state.proof.time=String(t);state.proof.speed=String(s);state.proof.verdict=verdict;checkProof()},
   fineBounds:(dl,dh,tl,th)=>{Object.assign(state.fine,{dLow:String(dl),dHigh:String(dh),tLow:String(tl),tHigh:String(th)});checkFineBounds()},
   fineProof:(s,verdict='yes')=>{state.fine.speed=String(s);state.fine.verdict=verdict;checkFineProof()}

@@ -2,25 +2,26 @@
   "schemaVersion": 1,
   "relationship": "A rounded measurement represents an interval, and calculated bounds must use the extremal values that make the stated claim hardest to certify.",
   "learnerLoop": {
-    "action": "Scrub true readings to discover rounding boundaries, drag distance and time to find speed extremes, prove the claim, then test finer measurements.",
+    "action": "Choose Core or Extended. Scrub true readings to discover rounding boundaries and complete measurement intervals; Extended continues through speed extremes, a claim proof and finer precision.",
     "modelChange": "Rounded displays change as true values cross interval endpoints; dragging allowed distance and time updates the derived speed.",
     "evidence": "The interval model, extremal case and certification check reveal whether the claim follows.",
     "nextDecision": "Choose the upper or lower bound that tests the claim conservatively."
   },
   "invariants": [
     "A rounded value includes all values in its rounding interval.",
-    "A guarantee requires the extremal case that works against the claim."
+    "A guarantee requires the extremal case that works against the claim.",
+    "Core completes rounded-data intervals without entering calculated-result bounds. Working support does not change the selected curriculum."
   ],
   "safeAdaptations": [
     "Vary rounding units and positive measurement scenarios.",
-    "Adjust calculation support while retaining boundary discovery, direct speed exploration, the worst-case proof and the finer-precision comparison."
+    "Adjust calculation support within the selected curriculum. Retain boundary discovery in both profiles and direct speed exploration, worst-case proof and finer-precision comparison in Extended."
   ],
   "nonGoals": [
     "Certifying a claim from the rounded displayed values alone."
   ],
   "developerGuide": "https://www.examplicity.org/developer/lab-contract",
   "implementation": {
-    "reviewedRevision": "7eea855f1799f3e89fdb11f77c57717d2c5d3f47",
+    "reviewedRevision": "f41e835aaa61cb67c5039a4a38a4bf3a8abc17d8",
     "surfaces": {
       "task": {
         "selectors": [
@@ -80,7 +81,7 @@
         ],
         "kind": "evidence",
         "description": "Distinct diamonds show the learner-entered coarse distance/time proof values against fixed half-open intervals.",
-        "visibility": "Stage 3, Working All, when each entered quantity is numeric and inside the ruler domain."
+        "visibility": "Extended step 3 (state.step 2), Working All, when each entered quantity is numeric and inside the ruler domain."
       },
       "interval-check": {
         "selectors": [
@@ -88,7 +89,7 @@
         ],
         "kind": "control",
         "description": "Validate the four finer interval limits before the final speed proof.",
-        "visibility": "Stage 4, Working All, before fine.boundsSuccess."
+        "visibility": "Extended step 4 (state.step 3), Working All, before fine.boundsSuccess."
       },
       "test-context": {
         "selectors": [
@@ -97,8 +98,25 @@
           "#claimContextCriterion"
         ],
         "kind": "given",
-        "description": "Persistent speed guarantee and disproof criterion above the model; stage 4 identifies finer evidence without revealing the verdict.",
+        "description": "Core states two reported readings and rounding units with supplied endpoint-inclusion conventions. Extended states the speed guarantee and disproof criterion; its finer stage does not reveal the verdict.",
         "visibility": "Persistent above the model at every Working level; updates with the current problem or test phase."
+      },
+      "curriculum": {
+        "selectors": [
+          "#curriculum [data-curriculum-profile]"
+        ],
+        "kind": "control",
+        "description": "Core selects measurement intervals only; default Extended keeps the original four stages. Switching resets progress and responses while retaining Working level.",
+        "visibility": "Always available, separate from the Working toggle."
+      },
+      "core-intervals": {
+        "selectors": [
+          "#proofDock input[data-field^=\"interval.\"]",
+          "#proofDock [data-check=\"intervals\"]"
+        ],
+        "kind": "working",
+        "description": "Two inequality intervals with supplied inclusion signs. Core None supplies four endpoints, Some supplies the two lower endpoints, All requires all four. Every level still requires boundary discovery and Check intervals.",
+        "visibility": "Core only. Owned numeric endpoint labels on the model remain question marks until a successful check; rulers, true readings and boundary positions remain available as teaching evidence."
       }
     },
     "quantities": {
@@ -106,7 +124,7 @@
         "description": "Two underlying measurements with four interval endpoints. Endpoints are bounds of these measurements, not four unrelated physical quantities.",
         "domain": "Distance m; time s; intervals are lower-inclusive and upper-exclusive.",
         "source": "Reported values and rounding units are given; stage 0 discovers both edges with rulers.",
-        "output": "Rounded readings change at crossed boundaries. Included/excluded endpoint markers show half-open intervals. Stage 3 entries add proof markers; stage 4 proposed limits appear before checking. Once finer intervals are accepted or supplied, the model uses the lower distance and a time just below the excluded upper limit.",
+        "output": "Rounded readings change at crossed boundaries. Included/excluded endpoint markers show half-open intervals. Stage 3 entries add proof markers; stage 4 proposed limits appear before checking. Once finer intervals are accepted or supplied, the model uses the lower distance and a time just below the excluded upper limit. Core requires the two interval endpoints for each of the two measurements: four numeric slots at All, two at Some, none at None. This is two quantities, not four independent unknown measurements.",
         "inputSlots": [
           "#stage [data-drag=\"distance\"]",
           "#stage [data-drag=\"time\"]",
@@ -115,7 +133,11 @@
           "#proofDock input[data-field=\"fine.dLow\"]",
           "#proofDock input[data-field=\"fine.dHigh\"]",
           "#proofDock input[data-field=\"fine.tLow\"]",
-          "#proofDock input[data-field=\"fine.tHigh\"]"
+          "#proofDock input[data-field=\"fine.tHigh\"]",
+          "#proofDock input[data-field=\"interval.dLow\"]",
+          "#proofDock input[data-field=\"interval.dHigh\"]",
+          "#proofDock input[data-field=\"interval.tLow\"]",
+          "#proofDock input[data-field=\"interval.tHigh\"]"
         ]
       },
       "worst-case-speed": {
@@ -144,16 +166,86 @@
       "none": "Discover interval boundaries and speed extremes physically; proof arithmetic is supplied, but the certificate verdict still requires a learner choice/check.",
       "some": "Interval values are supplied; learner enters lower speed and verdict.",
       "all": "Learner supplies coarse lower distance/upper time/speed and verdict; the finer stage first requires all four new interval limits.",
-      "precision": "Base readings are 100 m to 1 m and 12.4 s to 0.1 s; the final stage tightens to 0.1 m and 0.01 s. The speed threshold remains 8.05 m/s."
+      "precision": "Base readings are 100 m to 1 m and 12.4 s to 0.1 s; the final stage tightens to 0.1 m and 0.01 s. The speed threshold remains 8.05 m/s.",
+      "core": "Only interval discovery is accessible. None supplies endpoints, Some asks for each upper endpoint, All asks for both endpoints of both measurements. This scaffolding is a teaching choice, not a claimed mandatory exam working sequence.",
+      "extended": "Default; retains original four-stage investigation and its None/Some/All behavior. Core/Extended selection is independent of assistance."
     },
     "dependencies": [
-      "Both distance and time boundaries must be crossed before interval discovery completes.",
-      "Both fastest and slowest endpoint combinations must be explored in stage 1.",
-      "Coarse proof precedes finer precision; All gates the final proof behind four correct finer interval limits."
+      "Both boundaries of each reading must be crossed. Extended then advances to speed exploration; Core also requires a correct interval check at the selected Working level.",
+      "Extended: both fastest and slowest endpoint combinations must be explored in state.step 1.",
+      "Extended: coarse proof precedes finer precision; All gates the final proof behind four correct finer interval limits."
     ],
-    "completion": "state.complete[0..3] records discovery, both extremes, successful coarse proof (no guarantee), and successful finer proof (guarantee). Completion is hidden during dragging.",
+    "completion": "Core: boundary discovery plus a correct interval check sets complete[0] and finishes; speed stages cannot be selected. Extended: complete[0..3] retains discovery, both extremes, coarse no-guarantee proof and finer guarantee proof. Completion stays hidden while dragging.",
     "limitations": [
-      "The fixed task is a certificate counterexample/proof, not a generated set of independent measurement questions. Numeric parsing uses the existing parseFloat/tolerance checks."
+      "The fixed task is a certificate counterexample/proof, not a generated set of independent measurement questions. Numeric parsing uses the existing parseFloat/tolerance checks.",
+      "Alignment grounding and exact profile deltas are recorded in docs/rounded-bounds-curriculum.md. No 9709 profile or whole-syllabus coverage is claimed."
     ]
+  },
+  "curriculum": {
+    "features": {
+      "rounded-data-intervals": {
+        "description": "Discover the lower-inclusive, upper-exclusive interval represented by each rounded reading.",
+        "alignment": [
+          {
+            "profile": "cambridge-0580-core",
+            "sections": [
+              "C1.10"
+            ]
+          },
+          {
+            "profile": "cambridge-0580-extended",
+            "sections": [
+              "E1.10"
+            ]
+          }
+        ]
+      },
+      "calculated-bounds": {
+        "description": "Explore speed extrema, test a guarantee with a quotient bound and compare finer measurement precision.",
+        "alignment": [
+          {
+            "profile": "cambridge-0580-extended",
+            "sections": [
+              "E1.10"
+            ]
+          }
+        ]
+      }
+    },
+    "profiles": {
+      "cambridge-0580-core": {
+        "label": "Cambridge IGCSE Mathematics 0580 Core (2025–2027)",
+        "alignment": [
+          {
+            "syllabus": "0580",
+            "qualification": "IGCSE",
+            "sections": [
+              "C1.10"
+            ]
+          }
+        ],
+        "enabledFeatures": [
+          "rounded-data-intervals"
+        ],
+        "parameters": {}
+      },
+      "cambridge-0580-extended": {
+        "label": "Cambridge IGCSE Mathematics 0580 Extended (2025–2027)",
+        "alignment": [
+          {
+            "syllabus": "0580",
+            "qualification": "IGCSE",
+            "sections": [
+              "E1.10"
+            ]
+          }
+        ],
+        "enabledFeatures": [
+          "rounded-data-intervals",
+          "calculated-bounds"
+        ],
+        "parameters": {}
+      }
+    }
   }
 }
