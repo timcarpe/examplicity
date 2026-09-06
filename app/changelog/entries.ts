@@ -10,6 +10,7 @@ export const changelogEntries: readonly ChangelogEntry[] = [
     date: '2026-09-06',
     displayDate: '6 September 2026',
     publicChanges: [
+      'Kept Histogram bar values clear of drag handles and density labels, with compact counts where bars have less room.',
       'Refreshed Lens Imaging, Critical Angle, Diffraction, Gas Compression and Selection Pressure with clearer predictions, readable evidence and consistent checkpoints while preserving their scientific models. Required steps now pulse without automatic guidance popups. Refined direct grips, measurement cards and Selection’s taller, higher-contrast frequency plot; Gas has a clearer piston grip and inline results.',
       'Unified right-aligned Working, exam and checkpoint controls with compact rounded settings, centered labels and charcoal selection; simplified Binary’s range menu and value hints. Made neuron boundaries directly draggable with reliable parameter controls when the line leaves view, clarified floating-point normalisation goals and lost-bit feedback, corrected flip-flop wiring, and improved recursive frame labels and programming consoles in light and dark themes.',
       'Added Core and Extended choices to Rounded Measurements and Bounds: practise measurement intervals in Core or continue through the full speed-bound investigation in Extended, with working support controlled separately. Editing a Core endpoint clears the previous check feedback without interrupting typing.',
@@ -23,6 +24,7 @@ export const changelogEntries: readonly ChangelogEntry[] = [
       'Unified Time Zones under Working: None / Some / All, made its calendars and date controls easier to read, restored its full calendar-and-working width, and preserved the complete-meeting availability checks. Recurring Decimals now explains repeating digits with aligned long-division evidence, clearer field feedback and consistent completion actions; resets sit beside their models.',
     ],
     internalChanges: [
+      'Completed a catalogue desktop visual spot check and recorded selective CSS packaging feasibility; download behaviour remains unchanged.',
       'Consolidated the styling reference and rollout record; added five science implementation maps and shared science adapters, packaged into standalone labs and developer resources.',
       'Added six observational behaviour maps and shared computing/programming adapters; synchronized the living guides, authoring bundle and standalone resources. Retained offline interpreters and scoped package allowances for their embedded resources.',
       'Added revision-pinned behaviour maps for five construction and representation labs, a shared builder adapter and matching guide examples; synchronized the authoring bundle and standalone resources. Updated Bitmap and Automated Systems review revisions after the inline working and shared chip refinement, including the restored flowchart item chooser.',

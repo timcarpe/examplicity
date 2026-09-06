@@ -46,3 +46,11 @@ These are targeted checks, not an exhaustive scientific-model audit. Current beh
 ## Earlier accepted work
 
 The previous 52 labs were adapted in reviewed batches across mathematics and computer science. Their sidecars and commits retain the individual changes. Important layout exceptions include packet/TCP three-column flows, paired DNS servers, code/stack/output, and direct manipulation of percentage bars, chart handles and bounds instruments. Shared changes should continue to respect these structures.
+
+## Catalogue visual spot check — 6 September 2026
+
+- Inspected all 57 opening desktop views at 1422×1030, using paginated contact sheets and full-size suspects. Luna reviewed CS/sciences; main agent reviewed mathematics. Sampled first actions in 26 CS labs and Working/reset transitions in Histogram, Sequences, Recurring Decimals, Scatter and Ratio. Two CS action-selector timeouts were audit-script limitations, not observed app failures.
+- Fixed Histogram's overlapping bar value/density text and drag handle. `barGraphic` now reserves handle clearance, uses one compact count in shallow/narrow bars, and shows the extra density line only when it fits. The bridge and working retain density information; arithmetic and interaction are unchanged.
+- No other confirmed opening-view column breakage, off-canvas reset placement, horizontal page overflow or browser errors in the sampled states. Floating Point and Huffman secondary resets belong to lower sections and were retained.
+- Approved follow-up: Transmission Methods' Add device starts C over A/B. Place new devices in free space and grow the canvas only when needed, preserving existing device positions. No layout or device positions changed here.
+- Evidence is local at `D:/Cambridge Labs/visual-audit14/`. This was a quick desktop pass, not a complete later-state or responsive audit. CSS packaging feasibility is recorded separately in `docs/css-packaging-feasibility.md`; production packaging is unchanged.
