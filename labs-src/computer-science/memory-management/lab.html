@@ -1146,8 +1146,8 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
     <div class="metrics">
       <div class="metric"><span>10-cycle advances</span><strong id="tickMetric">0</strong></div>
       <div class="metric"><span>Total cycles</span><strong id="cyclesMetric">0</strong></div>
-      <div class="metric"><span>Action progress</span><strong id="latencyMetric">0</strong></div>
-      <div class="metric path"><span>Last access path</span><strong id="pathMetric">Ready</strong></div>
+      <div class="metric"><span>Transfer progress</span><strong id="latencyMetric">0</strong></div>
+      <div class="metric path"><span>Transfer path</span><strong id="pathMetric">Ready</strong></div>
       <div class="metric"><span>Cache hit rate</span><strong id="hitMetric">—</strong></div>
       <div class="metric"><span>Page faults</span><strong id="faultMetric">0</strong></div>
       <div id="pressureMetricBox" class="metric"><span>Memory pressure</span><strong id="pressureMetric">Low</strong></div>
@@ -1191,15 +1191,16 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
         </div>
       </div>
 
-      <section class="work-monitor" aria-label="Current cycle-gated work">
+      <section class="work-monitor" aria-label="Storage transfer queue">
         <div class="work-monitor-head">
           <div>
-            <strong>Current work queue</strong>
+            <strong>Storage transfers</strong>
 
           </div>
           <span id="gateStatus" class="gate-status">clock paused</span>
         </div>
         <div id="workCards" class="work-cards"></div>
+        <div id="threadStates" class="lab-thread-states" aria-label="CPU scheduling state"></div>
       </section>
 
       <div class="latency-strip" aria-label="Relative teaching latency">
@@ -1315,15 +1316,15 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
       </div>
 
       <div class="arch-note">
-        Cache cells represent accesses to pages, not whole pages stored inside the CPU. Each action remains active for its stated teaching cycle cost.
-        <details class="lab-model-note"><summary>About this cache model</summary><p>Application accesses can replace OS references in cache; the OS pages remain in RAM. Paging operations are summarised without simulating the OS instruction fetches that perform them. Real CPU caches hold small cache lines, not the large page blocks shown here.</p></details>
+        CPU execution and storage transfers share one elapsed clock. A thread waiting for a page yields to other ready work.
+        <details class="lab-model-note"><summary>About this execution model</summary><p>One CPU core uses a simple round-robin schedule. Application work, periodic OS work and page-fault/completion handlers generate sampled memory references. Storage transfers progress alongside CPU execution. Ordinary cache/RAM misses wait within the running thread; storage-backed faults block that thread. Cache cells identify referenced pages, not whole physical pages. Work bursts, scheduling and latencies are teaching abstractions, not an instruction-accurate processor trace.</p></details>
       </div>
     </section>
   <section class="panel log-panel" aria-label="OS decision log">
     <div class="log-head">
       <div>
         <strong>OS decision log</strong>
-        <span>Each record shows the start and end of the path, cycle cost and simulated time.</span>
+        <span>Page transfers and thread blocking/resumption; the CPU reference is shown at the core.</span>
       </div>
       <button id="clearLogButton" class="lab-action">Clear log</button>
     </div>
@@ -1627,31 +1628,17 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
     const lower=String(action.title||"").toLowerCase();
     if(lower.includes("cache hit")) return {actor:ownerName,title:`Reading ${pageLabel} from ${action.path} cache`,detail:"The CPU is using a nearby cached copy."};
     if(lower.includes("cache miss")) return {actor:"CPU + cache controller",title:`Retrieving ${pageLabel} from RAM`,detail:"The page is moving through cache toward the CPU core."};
-    if(lower.includes("page fault resolved")) return {actor:"Operating system",title:`Restoring ${pageLabel} from the ${drive.label} page file`,detail:"The OS is bringing a non-resident page back into RAM."};
-    if(lower.includes("boot page loaded")) return {actor:"Operating system",title:`Loading ${pageLabel} into RAM`,detail:"This required Orbit OS page is moving from secondary storage into memory before the desktop can start."};
-    if(lower.includes("program page loaded")) return {actor:"Operating system",title:`Retrieving ${pageLabel} from ${drive.label}`,detail:"The program page is travelling from secondary storage into RAM."};
+    if(lower.includes("page fault resolved")) return {actor:"Storage I/O",title:`Restoring ${pageLabel} from the ${drive.label} page file`,detail:"The OS is bringing a non-resident page back into RAM."};
+    if(lower.includes("boot page loaded")) return {actor:"Storage I/O",title:`Loading ${pageLabel} into RAM`,detail:"This required Orbit OS page is moving from secondary storage into memory before the desktop can start."};
+    if(lower.includes("program page loaded")) return {actor:"Storage I/O",title:`Retrieving ${pageLabel} from ${drive.label}`,detail:"The program page is travelling from secondary storage into RAM."};
     if(lower.includes("firmware begins")) return {actor:"Firmware / bootloader",title:"Locating and starting Orbit OS",detail:"The machine is beginning its boot sequence."};
     if(lower.includes("desktop services ready")) return {actor:"Operating system",title:"Starting the interactive desktop",detail:"All required OS pages are resident in RAM."};
-    if(lower.includes("paged out")) return {actor:"Operating system",title:`Writing ${pageLabel} to the ${drive.label} page file`,detail:"A colder page is leaving RAM to make room for higher-priority data."};
+    if(lower.includes("paged out")) return {actor:"Storage I/O",title:`Writing ${pageLabel} to the ${drive.label} page file`,detail:"A colder page is leaving RAM to make room for higher-priority data."};
     if(lower.includes("discarded")) return {actor:"Operating system",title:`Releasing ${pageLabel} from RAM`,detail:"The clean code page can be loaded from storage again later."};
     if(lower.includes("raised a page fault")) return {actor:"CPU",title:`Requesting OS help for ${pageLabel}`,detail:"Execution waits until the missing page becomes resident."};
     if(lower.includes("prefetch")) return {actor:"Operating system",title:`Scheduling ${pageLabel} for RAM`,detail:"The foreground process is being prioritised."};
     if(lower.includes("out of memory") || lower.includes("blocked")) return {actor:"Operating system",title:"Searching for reclaimable memory",detail:"RAM and page-file capacity are being checked."};
-    return {actor:cpuActor || "Operating system",title:action.title,detail:action.detail};
-  }
-
-  function peekAccessPage(owner,specificId=null){
-    if(specificId) return pages.get(specificId);
-    const process=processes.get(owner) || processes.get("system");
-    if(!process) return null;
-    if(owner==="scan"){
-      const candidates=[...pages.values()].filter(page=>page.state!=="storage" || page.owner!=="scan");
-      return candidates.length ? candidates[process.accessCursor%candidates.length] : null;
-    }
-    const candidates=process.pages.map(id=>pages.get(id)).filter(Boolean);
-    if(!candidates.length) return null;
-    const working=candidates.slice(0,Math.min(candidates.length,7));
-    return working[process.accessCursor%working.length];
+    return {actor:/SSD|HDD/.test(action.path)?"Storage I/O":"Operating system",title:action.title,detail:action.detail};
   }
 
   function enrichPreview(action){
@@ -1668,20 +1655,8 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
     return action;
   }
 
-  function previewAccess(owner,pageId=null){
-    const page=peekAccessPage(owner,pageId);
-    if(!page) return null;
-    const cacheHit=findCache(page.id);
-    let title,path,cycles,route;
-    if(cacheHit){title=`${cacheHit} cache hit for ${page.label}`;path=cacheHit;cycles=LATENCY[cacheHit];route={start:cacheHit,finish:"CPU core"};}
-    else if(page.state==="ram"){title=`Fetch ${page.label} from RAM`;path="RAM";cycles=LATENCY.RAM;route={start:"RAM",finish:"CPU cache"};}
-    else{title=`Page fault for ${page.label}`;path="Page fault";cycles=LATENCY.FAULT;route={start:"CPU",finish:"OS memory manager"};}
-    return enrichPreview({title,detail:`${ownerDef(owner).name} is expected to request this page next.`,path,cycles,owner,pageId:page.id,route});
-  }
-
   function previewEvent(event){
     if(!event) return null;
-    if(event.type==="access") return previewAccess(event.owner,event.pageId);
     if(event.type==="boot"){
       if(event.stage==="start"){
         return enrichPreview({title:"Firmware begins Orbit OS boot",detail:"The bootloader will locate the operating-system files on secondary storage.",path:"Boot",cycles:event.cycles||24,owner:"system",route:{start:"Firmware / bootloader",finish:`Orbit OS files (${drive.label})`}});
@@ -1707,12 +1682,8 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
         route:{start:"Firmware / bootloader",finish:`Orbit OS files (${drive.label})`}
       });
     }
-    if(currentAction && String(currentAction.title).toLowerCase().includes("raised a page fault") && currentAction.pageId){
-      const page=pages.get(currentAction.pageId);
-      if(page) return enrichPreview({title:page.state==="pagefile"?`Restore ${page.label}`:`Load ${page.label}`,detail:"This retrieval will be queued as soon as the page-fault interrupt completes.",path:page.state==="pagefile"?`${drive.label} page file`:drive.label,cycles:page.state==="pagefile"?drive.pageIn:drive.load,owner:page.owner,pageId:page.id,route:{start:page.state==="pagefile"?`Page file (${drive.label})`:drive.label,finish:"RAM"}});
-    }
     if(eventQueue.length) return previewEvent(eventQueue[0]);
-    return previewAccess(bestAccessOwner());
+    return null;
   }
 
   function workCardMarkup(action,slot){
@@ -1732,16 +1703,16 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
   function updateTimeComparison(){
     const action=currentAction || previewUpcomingAction();
     if(!action){
-      $("comparisonState").textContent="No current action";
+      $("comparisonState").textContent=machineState==="ready"?"No storage transfer":"No current action";
       $("simulationTimeCompare").textContent="—";
       $("realTimeCompare").textContent="—";
-      $("slowdownCompare").textContent="Start the clock to compare times.";
+      $("slowdownCompare").textContent=machineState==="ready"?"CPU work can continue independently.":"Start the clock to compare times.";
       return;
     }
     const simMs=simulationTimeMs(action.cycles,Number($("cycleSpeed").value));
     const realSeconds=Number.isFinite(action.realSeconds)?action.realSeconds:estimateRealSeconds(action);
     const ratio=Number.isFinite(realSeconds)&&realSeconds>0?(simMs/1000)/realSeconds:NaN;
-    $("comparisonState").textContent=currentAction?"Current action":"Next queued action";
+    $("comparisonState").textContent=currentAction?"Current transfer":"Next transfer";
     $("simulationTimeCompare").textContent=formatSimulationTime(simMs);
     $("realTimeCompare").textContent=formatRealTime(realSeconds);
     $("slowdownCompare").textContent=formatSlowdown(ratio);
@@ -1751,7 +1722,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
     const root=$("workCards");
     if(!root) return;
     const upcoming=previewUpcomingAction();
-    const currentMarkup=currentAction?workCardMarkup(currentAction,"current"):'<div class="work-card idle"><div><span class="work-slot-label">Current</span><br>Clock paused; no action is executing.</div></div>';
+    const currentMarkup=currentAction?workCardMarkup(currentAction,"current"):'<div class="work-card idle"><div><span class="work-slot-label">Current</span><br>No storage transfer in progress.</div></div>';
     const nextMarkup=upcoming?workCardMarkup(upcoming,"queued"):'<div class="work-card idle"><div><span class="work-slot-label">Next</span><br>The work queue is empty.</div></div>';
     root.innerHTML=currentMarkup+nextMarkup;
     const gateStatus=$("gateStatus");
@@ -1777,7 +1748,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
       state:"storage",
       ramSlot:null,
       pageSlot:null,
-      lastUsed:tick,
+      lastUsed:totalCycles,
       dirty:kind!=="code"
     };
     pages.set(id,page);
@@ -2027,6 +1998,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
       caches[level]=caches[level].filter(entry=>entry.pageId!==pageId);
     });
     pages.delete(pageId);
+    if(cpuRun?.pageId===pageId)cpuRun=null;
   }
 
   function closeProcess(owner){
@@ -2036,6 +2008,10 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
     const pageBefore=processPages(owner).filter(page=>page.state==="pagefile").length;
     process.pages.forEach(removePageEverywhere);
     processes.delete(owner);
+    blockedThreads.delete(owner);
+    retryReferences.delete(owner);
+    if(cpuRun?.owner===owner)cpuRun=null;
+    if(cpuThread===owner)cpuThread=null;
     eventQueue=eventQueue.filter(event=>pages.has(event.pageId));
     if(activeOwner===owner) activeOwner="system";
     if(desktopState.window===owner) desktopState.window="taskmgr";
@@ -2108,7 +2084,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
     let candidates=[...pages.values()].filter(page=>
       page.state==="ram" &&
       !page.pinned &&
-      page.owner!=="system"
+      page.owner!=="system" && page.id!==cpuRun?.pageId && ![...blockedThreads.values()].some(wait=>wait.pageId===page.id)
     );
 
     if(!candidates.length) return null;
@@ -2271,7 +2247,6 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
       if(source==="pagefile" && sourcePageSlot!==null && pagefileSlots[sourcePageSlot]===event.pageId){
         pagefileSlots[sourcePageSlot]=null;
         live.pageSlot=null;
-        pageFaults++;
       }
 
       if(ramSlots[slot]!==null){
@@ -2282,7 +2257,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 
       live.state="ram";
       live.ramSlot=slot;
-      live.lastUsed=tick;
+      live.lastUsed=totalCycles;
       ramSlots[slot]=live.id;
 
       const process=processes.get(live.owner);
@@ -2290,9 +2265,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
         process.status=(live.owner==="system" && machineState==="booting")?"starting":"running";
       }
 
-      if(event.activateAfter){
-        eventQueue.unshift({type:"access",owner:live.owner,pageId:live.id});
-      }
+      wakePageWaiters(live.id);
     };
   }
 
@@ -2308,15 +2281,9 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 
   function putCache(level,pageId){
     const list=caches[level].filter(entry=>entry.pageId!==pageId);
-    list.push({pageId,lastUsed:tick});
+    list.push({pageId,lastUsed:totalCycles});
     while(list.length>cacheCapacity(level)) list.shift();
     caches[level]=list;
-  }
-
-  function touchCache(level,pageId){
-    const entry=caches[level].find(item=>item.pageId===pageId);
-    if(entry) entry.lastUsed=tick;
-    putCache(level,pageId);
   }
 
   function promoteToCache(pageId,from){
@@ -2362,149 +2329,146 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
     return page;
   }
 
-  function handleAccess(owner,pageId=null){
-    const page=chooseAccessPage(owner,pageId);
-    cpuActor=ownerDef(owner).name;
-    if(!page) return;
-
-    // A fallback CPU access must not change the learner-selected foreground app.
-    currentPageId=page.id;
-
-    const cacheHit=findCache(page.id);
-
-    if(cacheHit){
-      activeCache={level:cacheHit,pageId:page.id};
-      activeCacheLinks=cacheHit==="L1"
-        ? ["linkL1Core"]
-        : cacheHit==="L2"
-          ? ["linkL2L1","linkL1Core"]
-          : ["linkL3L2","linkL2L1","linkL1Core"];
-
-      pendingCommit=()=>{
-        const live=pages.get(page.id);
-        if(!live) return;
-        memoryAccesses++;
-        cacheHits++;
-        live.lastUsed=tick;
-        touchCache(cacheHit,page.id);
-        promoteToCache(page.id,cacheHit);
-      };
-
-      setEvent(
-        `${cacheHit} cache hit`,
-        `${ownerDef(owner).name} reused ${page.label} without waiting for RAM.`,
-        cacheHit,
-        LATENCY[cacheHit]
-      );
-      return;
-    }
-
-    if(page.state==="ram"){
-      activeRamSlot=page.ramSlot;
-      busState.ramcpu={direction:"to-right",label:`${ownerDef(page.owner).short} → cache`};
-      activeCache={level:"L1",pageId:page.id};
-      activeCacheLinks=["linkL3L2","linkL2L1","linkL1Core"];
-
-      pendingCommit=()=>{
-        const live=pages.get(page.id);
-        if(!live || live.state!=="ram") return;
-        memoryAccesses++;
-        live.lastUsed=tick;
-        promoteToCache(page.id,"RAM");
-      };
-
-      setEvent(
-        "Cache miss: fetched from RAM",
-        `${page.label} was not cached. RAM supplied it to the CPU cache hierarchy.`,
-        "RAM",
-        LATENCY.RAM
-      );
-      return;
-    }
-
-    pendingCommit=()=>{
-      const live=pages.get(page.id);
-      if(!live || live.state==="ram") return;
-      memoryAccesses++;
-      pageFaults++;
-      live.lastUsed=tick;
-      eventQueue.unshift({
-        type:"load",
-        pageId:live.id,
-        plannedSlot:null,
-        reason:"CPU page fault",
-        isFault:true,
-        activateAfter:true
-      });
-    };
-
-    setEvent(
-      "CPU raised a page fault",
-      `${page.label} is not resident in RAM. The OS must retrieve it from ${page.state==="pagefile"?"the page file":"storage"}.`,
-      "Page fault",
-      LATENCY.FAULT
-    );
-    showToast(
-      "Page fault",
-      `${ownerDef(owner).name} requested ${page.label}; CPU execution must wait for the OS.`,
-      "warn"
-    );
-  }
-
   function memoryPressure(){
     const used=ramSlots.filter(Boolean).length;
     return used/ramSlots.length;
   }
 
-  function maintenanceDecision(){
-    const activePages=processPages(activeOwner).filter(page=>page.state==="pagefile");
-    if(activePages.length){
-      const page=activePages.sort((a,b)=>b.lastUsed-a.lastUsed)[0];
-      cpuActor="Operating system";
-      currentPageId=page.id;
-      pendingCommit=()=>{
-        const live=pages.get(page.id);
-        if(!live || live.state!=="pagefile") return;
-        eventQueue.push({
-          type:"load",
-          pageId:live.id,
-          plannedSlot:null,
-          reason:"Prefetch active process",
-          isFault:false
-        });
-      };
-      setEvent(
-        "OS prefetch queued",
-        `${page.label} belongs to the foreground application, so the OS is bringing it back toward RAM.`,
-        "Scheduler",
-        3
-      );
-      return true;
-    }
+  // One sampled CPU reference stream runs alongside the serial storage lane.
+  // Cache misses stall that thread; only storage-backed faults block it for scheduling.
+  let cpuRun=null,cpuThread=null,cpuQuantum=0,cpuCursor=-1,nextOsAt=0;
+  let cpuBusyCycles=0,cpuIdleCycles=0,blockedThreads=new Map(),retryReferences=new Map(),osJobs=[];
+  const CPU_QUANTUM=24,CPU_WORK=6;
 
-    if(memoryPressure()>.86){
-      const victim=chooseVictim(activeOwner);
-      if(victim){
-        evictPage(victim.id,activeOwner);
-        return true;
+  function resetCpuExecution(){
+    cpuRun=null;cpuThread=null;cpuQuantum=0;cpuCursor=-1;nextOsAt=0;
+    cpuBusyCycles=0;cpuIdleCycles=0;blockedThreads.clear();retryReferences.clear();osJobs=[];
+  }
+
+  function requestFaultLoad(owner,pageId){
+    const page=pages.get(pageId);
+    if(!page || !processes.has(owner)){blockedThreads.delete(owner);return;}
+    const evicting=currentAction?.pageId===pageId && /discarded|paged out/.test(currentAction.title);
+    if(page.state==="ram"&&!evicting){blockedThreads.delete(owner);return;}
+    blockedThreads.set(owner,{pageId,phase:"I/O"});
+    if(currentAction?.pageId===pageId && currentAction.title!=="OS discarded a clean code page" && currentAction.title!=="OS paged out inactive data")return;
+    const index=eventQueue.findIndex(event=>event.type==="load"&&event.pageId===pageId);
+    const event=index>=0?eventQueue.splice(index,1)[0]:{type:"load",pageId,plannedSlot:null};
+    event.isFault=true;event.reason="Blocked CPU request";
+    // Demand requests precede speculative launch loads, but remain FIFO with each other.
+    const firstBackground=eventQueue.findIndex(queued=>!queued.isFault);
+    eventQueue.splice(firstBackground<0?eventQueue.length:firstBackground,0,event);
+  }
+
+  function wakePageWaiters(pageId){
+    blockedThreads.forEach((wait,owner)=>{
+      if(wait.pageId!==pageId || wait.phase==="completion")return;
+      wait.phase="completion";
+      osJobs.push({kind:"completion",owner,pageId});
+    });
+  }
+
+  function readyThreadIds(){
+    return [...processes.keys()].filter(owner=>!blockedThreads.has(owner)&&processPages(owner).length&&(owner!=="system"||osJobs.length||totalCycles>=nextOsAt||cpuThread==="system"&&cpuQuantum>0));
+  }
+
+  function startCpuReference(){
+    if(cpuRun || machineState!=="ready")return;
+    osJobs=osJobs.filter(job=>processes.has(job.owner)&&pages.has(job.pageId));
+    let owner,job=null;
+    if(osJobs.length){
+      job=osJobs.shift();owner="system";cpuThread=null;
+    }else if(cpuThread && cpuQuantum>0 && processes.has(cpuThread) && !blockedThreads.has(cpuThread)){
+      owner=cpuThread;
+    }else{
+      const roster=[...processes.keys()];
+      for(let i=1;i<=roster.length;i++){
+        const index=(cpuCursor+i)%roster.length,candidate=roster[index];
+        if(blockedThreads.has(candidate)||!processPages(candidate).length)continue;
+        if(candidate==="system"&&totalCycles<nextOsAt)continue;
+        owner=candidate;cpuCursor=index;break;
+      }
+      if(!owner)return;
+      cpuThread=owner;cpuQuantum=CPU_QUANTUM;
+      if(owner==="system")nextOsAt=totalCycles+120;
+    }
+    const page=job?pages.get(systemBootPages[job.kind==="fault"?5:2]||systemBootPages[0]):pages.get(retryReferences.get(owner))||chooseAccessPage(owner);
+    if(!page)return;
+    const evicting=currentAction?.pageId===page.id && /discarded|paged out/.test(currentAction.title);
+    if(page.state!=="ram"||evicting){
+      blockedThreads.set(owner,{pageId:page.id,phase:"handler"});
+      retryReferences.set(owner,page.id);
+      pageFaults++;
+      osJobs.unshift({kind:"fault",owner,pageId:page.id});
+      appendLog("Thread blocked on a page fault",`${ownerDef(owner).name} needs ${page.label}. Other ready threads can run while it waits.`,"warn",{owner,route:{start:ownerDef(owner).name,finish:"Waiting for page"},cycles:0});
+      cpuThread=null;cpuQuantum=0;
+      startCpuReference();return;
+    }
+    if(!job)retryReferences.delete(owner);
+    const source=findCache(page.id)||"RAM",cycles=LATENCY[source];
+    cpuRun={owner,pageId:page.id,source,phase:"read",remaining:cycles,cycles,progress:0,job};
+  }
+
+  function advanceCpuCycle(){
+    if(cpuRun && (!processes.has(cpuRun.owner)||!pages.has(cpuRun.pageId)))cpuRun=null;
+    for(const [owner,wait] of blockedThreads)if(!processes.has(owner)||!pages.has(wait.pageId))blockedThreads.delete(owner);
+    for(const [owner,pageId] of retryReferences)if(!processes.has(owner)||!pages.has(pageId))retryReferences.delete(owner);
+    startCpuReference();
+    if(!cpuRun){cpuIdleCycles++;return;}
+    cpuBusyCycles++;cpuQuantum--;cpuRun.remaining--;cpuRun.progress++;
+    if(cpuRun.remaining>0)return;
+    const action=cpuRun,page=pages.get(action.pageId);
+    if(action.phase==="read"){
+      memoryAccesses++;
+      if(action.source!=="RAM")cacheHits++;
+      if(page){page.lastUsed=totalCycles;promoteToCache(page.id,action.source);}
+      action.phase="execute";action.progress=0;
+      action.cycles=action.job?LATENCY.FAULT:CPU_WORK;action.remaining=action.cycles;
+      return;
+    }
+    if(action.job){
+      const job=action.job;
+      if(job.kind==="fault")requestFaultLoad(job.owner,job.pageId);
+      else{
+        const wait=blockedThreads.get(job.owner);
+        if(wait?.pageId===job.pageId){
+          if(pages.get(job.pageId)?.state==="ram"){
+            blockedThreads.delete(job.owner);
+            appendLog("Thread ready after I/O",`${ownerDef(job.owner).name} can resume after the OS completed its page transfer.`,"good",{owner:job.owner,route:{start:"I/O completion",finish:"Ready"},cycles:0});
+          }else requestFaultLoad(job.owner,job.pageId);
+        }
       }
     }
-
-    return false;
+    // Save the next reference for the same thread until its quantum is consumed.
+    cpuRun=null;
   }
 
-  function ownerHasResidentPage(owner){
-    return processPages(owner).some(page=>page.state==="ram");
+  function updateThreadStates(){
+    if(machineState!=="ready")return;
+    processes.forEach(process=>{
+      process.status=blockedThreads.has(process.id)?"waiting for page":cpuRun?.owner===process.id?"running":"ready";
+      if(process.id==="system"&&!cpuRun?.job&&cpuRun?.owner!=="system"&&totalCycles<nextOsAt)process.status="waiting for work";
+    });
   }
 
-  function bestAccessOwner(){
-    if(ownerHasResidentPage(activeOwner)) return activeOwner;
-    const running=[...processes.keys()].find(owner=>owner!=="system" && ownerHasResidentPage(owner));
-    return running || "system";
+  function advanceModelCycles(count,elapsedPerCycle=0){
+    for(let i=0;i<count;i++){
+      if(!currentAction)prepareNextAction();
+      totalCycles++;
+      if(machineState==="ready")advanceCpuCycle();
+      if(currentAction){
+        currentAction.elapsedMs+=elapsedPerCycle;
+        currentAction.progress++;
+        if(currentAction.progress>=currentAction.cycles)completeCurrentAction();
+      }
+    }
+    updateThreadStates();
   }
+
 
   function prepareNextAction(){
-    if(currentAction || gateAnimating) return currentAction;
+    if(currentAction) return currentAction;
+    if(machineState==="ready"&&!eventQueue.length){clearFlow();return null;}
 
     clearFlow();
     tick++;
@@ -2517,19 +2481,12 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
     pendingCommit=null;
     collectingActionNotices=true;
     try{
-      const nextEvent=eventQueue[0];
-      const urgent=nextEvent && (nextEvent.isFault || nextEvent.isBoot || nextEvent.type==="access" || machineState==="booting");
-
-      if(eventQueue.length && (urgent || tick%2===1)){
-        const event=eventQueue.shift();
-        if(event.type==="load") handleLoad(event);
-        else if(event.type==="access") handleAccess(event.owner,event.pageId);
-        else if(event.type==="boot") handleBootEvent(event);
-      }else if(tick%4===0 && maintenanceDecision()){
-        // maintenanceDecision records the selected action.
-      }else{
-        handleAccess(bestAccessOwner());
-      }
+      // This lane owns boot and storage only. CPU/cache references run independently.
+      const event=eventQueue.shift();
+      if(event?.type==="load")handleLoad(event);
+      else if(event?.type==="boot")handleBootEvent(event);
+      else return null;
+      if(!pendingCommit && lastEventTitle==="Scheduler check")return null;
     }finally{
       collectingActionNotices=false;
     }
@@ -2606,11 +2563,10 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
     if(gateAnimating) return;
     if(machineState==="off") ensureBootSequence();
     if(!currentAction) prepareNextAction();
-    if(!currentAction) return;
+    if(!currentAction && machineState!=="ready") return;
 
     const action=currentAction;
-    const remaining=action.cycles-action.progress;
-    const delta=Math.min(GATE_CYCLES,remaining);
+    const delta=machineState==="ready"?GATE_CYCLES:Math.min(GATE_CYCLES,action.cycles-action.progress);
     const baseDuration=Number($("cycleSpeed").value);
     const duration=Math.max(running?1:100,Math.round(baseDuration*(delta/GATE_CYCLES)));
 
@@ -2620,20 +2576,15 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 
     await animateWorkClocks(action,delta,duration);
 
-    if(currentAction!==action){
+    if(loopToken!==runLoopToken){
       gateAnimating=false;
       requestSimulationRender(true);
       return;
     }
 
-    action.progress+=delta;
-    action.elapsedMs=(action.elapsedMs||0)+duration;
-    totalCycles+=delta;
+    advanceModelCycles(delta,duration/delta);
     gateCount++;
-
-    if(action.progress>=action.cycles){
-      completeCurrentAction();
-    }
+    requestSimulationRender(true);
 
     gateAnimating=false;
     requestSimulationRender(!running);
@@ -2974,7 +2925,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
   function renderRam(){
     $("ramGrid").innerHTML=ramSlots.map((pageId,index)=>{
       const page=pageId?pages.get(pageId):null;
-      return cellMarkup({page,index,kind:"ram",active:activeRamSlot===index});
+      return cellMarkup({page,index,kind:"ram",active:activeRamSlot===index || (cpuRun?.phase==="read"&&cpuRun.source==="RAM"&&cpuRun.pageId===pageId)});
     }).join("");
 
     const used=ramSlots.filter(Boolean).length;
@@ -3005,21 +2956,23 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
   }
 
   function renderCpu(){
-    renderCacheLevel("L3","l3Grid","l3Usage");
-    renderCacheLevel("L2","l2Grid","l2Usage");
-    renderCacheLevel("L1","l1Grid","l1Usage");
-
-    ["linkL3L2","linkL2L1","linkL1Core"].forEach(id=>{
-      $(id).classList.toggle("active",activeCacheLinks.includes(id));
-    });
-
-    $("cpuProcess").textContent=cpuActor;
-    const page=currentPageId?pages.get(currentPageId):null;
-    const reading=activeCacheLinks.includes("linkL1Core"),fault=lastPath==="Page fault";
-    $("corePage").innerHTML=page ? cellMarkup({page,kind:"core",active:false})+'<span>'+escapeHtml(page.label)+'</span>' : "";
+    if(machineState==="ready"){
+      const reading=cpuRun?.phase==="read",source=cpuRun?.source;
+      activeCache=cpuRun?{level:reading&&source!=="RAM"?source:"L1",pageId:cpuRun.pageId}:null;
+      activeCacheLinks=!reading?[]:source==="L1"?["linkL1Core"]:source==="L2"?["linkL2L1","linkL1Core"]:["linkL3L2","linkL2L1","linkL1Core"];
+    }
+    renderCacheLevel("L3","l3Grid","l3Usage");renderCacheLevel("L2","l2Grid","l2Usage");renderCacheLevel("L1","l1Grid","l1Usage");
+    ["linkL3L2","linkL2L1","linkL1Core"].forEach(id=>$(id).classList.toggle("active",activeCacheLinks.includes(id)));
+    const page=pages.get(machineState==="ready"?cpuRun?.pageId:currentPageId);
+    $("cpuProcess").textContent=machineState==="ready"?(cpuRun?ownerDef(cpuRun.owner).name:readyThreadIds().length?"Dispatching":"Idle"):cpuActor;
+    $("corePage").innerHTML=page?cellMarkup({page,kind:"core"})+'<span>'+escapeHtml(page.label)+'</span>':"";
     $("corePage").hidden=!page;
-    $("corePage").dataset.state=reading?"reading":fault?"waiting":"managing";
-    $("cpuRequest").textContent=!page?"No page requested":reading?(currentAction?(lastPath==="RAM"?"Fetching from RAM":("Reading from "+lastPath+" cache")):("Last read from "+lastPath)):fault?"Waiting for page in RAM":(currentAction?"OS managing this page":"Last page managed by OS");
+    $("corePage").dataset.state=cpuRun?.phase==="read"?"reading":"executing";
+    $("cpuRequest").textContent=machineState==="off"?"Start the clock":machineState!=="ready"?"Booting the machine":!cpuRun?(readyThreadIds().length?"Ready to dispatch":"No runnable thread"):cpuRun.phase==="read"?"Fetching from "+cpuRun.source:cpuRun.job?(cpuRun.job.kind==="fault"?"Handling page fault":"Handling I/O completion"):"Executing";
+    const ready=readyThreadIds().filter(owner=>owner!==cpuRun?.owner),waiting=[...blockedThreads];
+    const tags=owners=>owners.map(owner=>'<span title="'+escapeHtml(ownerDef(owner).name)+'">'+ownerDef(owner).short+'</span>').join(' ')||'—';
+    $("threadStates").hidden=machineState!=="ready";
+    $("threadStates").innerHTML='<div><span>Running</span><strong>'+escapeHtml(cpuRun?ownerDef(cpuRun.owner).name:readyThreadIds().length?"Dispatching":"Idle")+'</strong></div><div><span>Ready</span><div class="lab-thread-tags">'+tags(ready)+'</div></div><div><span>Waiting for a page</span><div class="lab-thread-tags">'+(waiting.map(([owner,wait])=>'<span title="'+escapeHtml(ownerDef(owner).name+' · '+(pages.get(wait.pageId)?.label||'page')+' · '+wait.phase)+'">'+ownerDef(owner).short+'</span>').join(' ')||'—')+'</div></div>';
   }
 
   function renderBus(id,state,pageBus=false){
@@ -3036,7 +2989,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 
   function renderBuses(){
     renderBus("storageBus",busState.storage,false);
-    renderBus("ramCpuBus",busState.ramcpu,false);
+    renderBus("ramCpuBus",machineState==="ready"?(cpuRun?.phase==="read"&&cpuRun.source==="RAM"?{direction:"to-right",label:ownerDef(cpuRun.owner).short+" read"}:null):busState.ramcpu);
     renderBus("pageBus",busState.page,true);
   }
 
@@ -3050,7 +3003,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 
   function renderLatency(){
     document.querySelectorAll(".latency-step").forEach(step=>{
-      step.classList.toggle("active",step.dataset.path===lastPath);
+      step.classList.toggle("active",step.dataset.path===currentAction?.path?.split(" ")[0] || cpuRun?.phase==="read"&&step.dataset.path===cpuRun.source);
     });
   }
 
@@ -3067,8 +3020,8 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
     $("cyclesMetric").textContent=totalCycles.toLocaleString();
     $("latencyMetric").textContent=currentAction
       ? `${currentAction.progress}/${currentAction.cycles} cyc`
-      : `${lastLatency.toLocaleString()} cyc`;
-    $("pathMetric").textContent=currentAction?.path || lastPath;
+      : "—";
+    $("pathMetric").textContent=currentAction?.path || "No transfer";
     $("hitMetric").textContent=memoryAccesses?`${Math.round(cacheHits/memoryAccesses*100)}%`:"—";
     $("faultMetric").textContent=pageFaults.toLocaleString();
     $("pressureMetric").textContent=pressureText;
@@ -3083,6 +3036,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
   }
 
   function renderSimulationFrame(){
+    updateThreadStates();
     renderDrive();
     renderStorage();
     renderRam();
@@ -3177,6 +3131,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
     pages=new Map();
     processes=new Map();
     caches={L1:[],L2:[],L3:[]};
+    resetCpuExecution();
     eventQueue=[];
 
     currentAction=null;
@@ -3392,6 +3347,9 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
       systemBootPages:[...systemBootPages],
       caches:Object.fromEntries(Object.entries(caches).map(([level,entries])=>[level,entries.map(entry=>({...entry}))])),
       cpuActor,activeOwner,currentPageId,activeCacheLinks:[...activeCacheLinks],
+      cpuRun:cpuRun?{...cpuRun}:null,cpuBusyCycles,cpuIdleCycles,
+      blockedThreads:[...blockedThreads].map(([owner,wait])=>({owner,...wait})),osJobs:osJobs.map(job=>({...job})),
+      threads:[...processes.values()].map(process=>({id:process.id,status:process.status})),
       ramSlots:[...ramSlots],
       pagefileSlots:[...pagefileSlots],
       pages:[...pages.values()].map(page=>({...page})),

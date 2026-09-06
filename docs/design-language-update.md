@@ -1128,3 +1128,23 @@ Review-refinement implementation: `ab1bced0b32d86b998a2d004935a38044bf7fde4`; ca
   handleAccess/handleLoad/evictPage, renderCpu. Read-only debug state now includes
   cache entries and the actor/current page. Canonical guides document presentation.
 - Verification: real action handlers over 180 actions displaced OS entries from L1/L2 while all six OS pages remained in RAM. Browser checks covered live reads/management, edge connections at 1422/900/390 widths and standalone packaging.
+
+### OS Memory concurrent execution — 6 September 2026
+
+- Supersedes the previous single-action engine and its omitted-OS-fetch limitation.
+  CPU references and storage now advance on the same elapsed clock. Cache/RAM
+  misses stall a thread; storage-backed faults block it and permit other work.
+- Added round-robin application/periodic OS work, sampled fault/completion handlers,
+  exact-reference retry after page-in, FIFO demand loads ahead of launch loads,
+  and cleanup on close/reset. Removed the unused serialized access/maintenance engine.
+- Core shows its actual reference; current/next cards show storage transfers.
+  Shared running/ready/waiting material groups expose concurrency. Cache updates
+  follow completed CPU references, not the duration of the storage operation.
+- Model assumptions live in the lab disclosure and observational contract map.
+  Both canonical style guides document the presentation; shared CSS is compiled
+  into offline HTML and the authoring bundle.
+- Focused engine tests cover overlap, retry/wakeup, cache miss vs fault, 12,000
+  heavy-load cycles with page/cache ownership, idle overlap, close and reset.
+- Browser: boot/run/pause/10-cycle step and independent core/transfer readouts
+  pass at 1422, 900 and 390px without horizontal overflow. All 57 lab publication,
+  standalone download and contract checks pass, as do developer/bundle checks.

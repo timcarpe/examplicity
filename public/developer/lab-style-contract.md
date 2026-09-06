@@ -696,3 +696,11 @@ A core readout should pair the referenced page identity tile with its source
 (cache or RAM). Distinguish fetching/reading from OS management and a page-fault
 wait. Explain model simplifications in a compact disclosure, rather than implying
 that a page being moved by the OS is the OS instruction being executed.
+
+For concurrent models, separate the transfer queue from the processor readout.
+Use `lab-thread-states` for compact Running, Ready and Waiting for a page groups;
+use `lab-thread-tags` for wrapped identity labels. Running has a light violet
+surface; ready/waiting stay neutral with explicit labels. Show the CPU-referenced
+page at the core, and the transferred page on its storage path. Do not depict a
+waiting requester as occupying the CPU throughout an I/O operation. A brief
+model disclosure should identify sampled work and simplified timing.
