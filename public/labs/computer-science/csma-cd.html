@@ -230,67 +230,6 @@ button.active{background:var(--lab-accent-soft);border-color:var(--lab-accent);c
   text-transform:uppercase;
 }
 
-.signal{
-  position:absolute;
-  top:289px;
-  height:22px;
-  min-width:2px;
-  border:2px solid rgba(255,255,255,.76);
-  border-radius:999px;
-  background:var(--signal);
-  box-shadow:0 0 13px color-mix(in srgb,var(--signal) 74%,transparent);
-  opacity:1;
-  transition:left .62s cubic-bezier(.2,.78,.2,1),width .62s cubic-bezier(.2,.78,.2,1),opacity .22s;
-}
-.signal::before,.signal::after{
-  content:"";
-  position:absolute;
-  top:50%;
-  width:8px;
-  height:8px;
-  border:2px solid #fff;
-  border-radius:50%;
-  background:var(--signal);
-  transform:translateY(-50%);
-}
-.signal::before{left:-5px}.signal::after{right:-5px}
-.signal-label{
-  position:absolute;
-  left:50%;
-  bottom:27px;
-  transform:translateX(-50%);
-  max-width:190px;
-  padding:3px 6px;
-  border-radius:5px;
-  border:1px solid var(--lab-line);
-  background:rgba(255,255,255,.94);
-  color:var(--lab-ink);
-  font:800 8px/1.25 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-.signal.collision-band{
-  top:286px;
-  height:28px;
-  border-radius:5px;
-  border-color:#ffd6d2;
-  background:repeating-linear-gradient(135deg,#ee6256 0 6px,#7b2923 6px 12px);
-  box-shadow:0 0 17px rgba(238,98,86,.82);
-  z-index:8;
-}
-.signal.collision-band::before,.signal.collision-band::after{display:none}
-.signal.jam-band{
-  top:286px;
-  height:28px;
-  border-radius:5px;
-  border-color:#ffe0b6;
-  background:repeating-linear-gradient(135deg,#f29a3d 0 6px,#8c4216 6px 12px);
-  box-shadow:0 0 15px rgba(242,154,61,.78);
-  z-index:9;
-}
-.signal.jam-band::before,.signal.jam-band::after{display:none}
-
 .narration{
   position:absolute;
   left:7%;
@@ -347,7 +286,6 @@ button.active{background:var(--lab-accent-soft);border-color:var(--lab-accent);c
   .run-buttons{justify-content:flex-start}
 }
 @media(prefers-reduced-motion:reduce){
-  .signal{transition-duration:.08s}
 }
 </style>
 <!-- LAB_FRAME_STYLES_START -->
@@ -1769,7 +1707,7 @@ input.lab-intro-target{outline:none;animation:none}
 .sim-dns-web-page-retrieval :is(.browser-toolbar,.bookmarks,.engine-grid){min-width:0;flex-wrap:wrap}
 .sim-encryption-in-data-transmission .lab-grid,.sim-ipv4-subnetting .lab-grid{grid-template-columns:minmax(0,1fr) 320px;gap:24px;padding:20px 24px;border:1px solid var(--lab-line,#d2d2d7);border-top:0}
 .sim-encryption-in-data-transmission .workspace,.sim-ipv4-subnetting .network-panel{border:0;background:none;box-shadow:none;padding:0;overflow:visible}
-.sim-encryption-in-data-transmission .goal-lights{display:flex!important;align-items:start;flex-direction:column;gap:8px}
+.sim-encryption-in-data-transmission .goal-lights{display:flex!important;align-items:center;flex-direction:row;gap:8px;justify-content:start}
 .sim-ipv4-subnetting .lab-evidence-card :is(.metrics,.takeaway){display:grid;grid-template-columns:1fr;gap:8px}
 .sim-ipv4-subnetting .metric{padding:8px 0;border:0;border-radius:0;background:none}
 .sim-ipv4-subnetting :is(#stepKicker,.takeaway-stat){display:none}
@@ -1785,11 +1723,11 @@ input.lab-intro-target{outline:none;animation:none}
 .sim-network-topology .palette-head>span{display:none}
 .sim-network-topology #testPanel{grid-template-columns:1fr;gap:8px}
 .sim-network-topology #journeyText{font-size:14px}
-.sim-packet-switching .lab-grid{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:24px;padding:20px 24px;border:1px solid var(--lab-line,#d2d2d7);border-top:0}
-.sim-packet-switching .network-panel{grid-column:1;grid-row:1/span 2;border:0;box-shadow:none;background:none}
-.sim-packet-switching .device-a{grid-column:2;grid-row:1}
-.sim-packet-switching .device-b{grid-column:2;grid-row:2}
-.sim-packet-switching .device-visual{display:none}
+.sim-packet-switching .lab-grid{display:grid;grid-template-columns:minmax(235px,.8fr) minmax(390px,1.4fr) minmax(260px,.9fr);gap:16px;padding:20px 24px;border:1px solid var(--lab-line,#d2d2d7);border-top:0}
+.sim-packet-switching .network-panel{grid-column:2;grid-row:1;border:0;box-shadow:none;background:none}
+.sim-packet-switching .device-a{grid-column:1;grid-row:1}
+.sim-packet-switching .device-b{grid-column:3;grid-row:1}
+.sim-packet-switching .device-visual{display:block;height:100px;margin:12px auto}
 .sim-packet-switching .panel-head>span{font-size:12px}
 .sim-packet-switching .network-panel .panel-head>span{display:none}
 .sim-packet-switching .network-toolbar{padding:8px 0 12px}
@@ -1805,10 +1743,10 @@ input.lab-intro-target{outline:none;animation:none}
 .sim-parity-arq .rail-result{border:1px solid var(--lab-line-subtle,#e7e8eb);padding:12px;border-radius:12px;background:var(--lab-surface-muted,#f7f8fa)}
 .sim-parity-arq :is(.blocks,.block,.stage){min-width:0;max-width:100%;overflow:visible}
 .sim-tcp-ip-encapsulation .lab-board{margin:0;padding:20px 24px;border-top:0;background:white;background-image:none;box-shadow:none;overflow:visible}
-.sim-tcp-ip-encapsulation .board-stage{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:16px 24px;padding:16px 0;min-height:0}
-.sim-tcp-ip-encapsulation .board-stage>.station{grid-column:1;border:0;background:none;box-shadow:none}
-.sim-tcp-ip-encapsulation .board-stage>.receiver-station{grid-column:2;grid-row:1/span 3}
-.sim-tcp-ip-encapsulation .rack{display:flex;flex-wrap:wrap;padding:0;gap:8px}
+.sim-tcp-ip-encapsulation .board-stage{display:grid;grid-template-columns:174px minmax(330px,1fr) 100px minmax(300px,.9fr);gap:12px;padding:16px 0;min-height:640px}
+.sim-tcp-ip-encapsulation .board-stage>.station{grid-column:auto;border:0;background:none;box-shadow:none}
+.sim-tcp-ip-encapsulation .board-stage>.receiver-station{grid-column:4;grid-row:1}
+.sim-tcp-ip-encapsulation .rack{display:grid;padding:10px 0;gap:12px}
 .sim-tcp-ip-encapsulation .wrapper-tool{flex:1 1 150px;min-width:0;background:white;box-shadow:none}
 .sim-tcp-ip-encapsulation .wrapper-tool strong{font-size:14px;font-weight:400}
 .sim-tcp-ip-encapsulation .wrapper-tool small{font-size:12px;font-weight:400}
@@ -1821,11 +1759,11 @@ input.lab-intro-target{outline:none;animation:none}
 .sim-tcp-ip-encapsulation :is(.header-field span,.shell-name span,.gate-copy span,.gate-read){font-size:11px;font-weight:400;white-space:normal;overflow:visible}
 .sim-tcp-ip-encapsulation .station-title>span{display:none}
 .sim-tcp-ip-encapsulation .receiver-map{min-height:0;overflow:visible;margin:0}
-.sim-tcp-ip-encapsulation .gate{position:relative;inset:auto!important;margin:0 0 12px;min-height:115px}
+.sim-tcp-ip-encapsulation .gate{position:relative;inset:auto!important;margin:0 0 12px;min-height:120px;height:auto}
 .sim-tcp-ip-encapsulation .receiver-packet{position:relative;left:auto;bottom:auto!important;width:100%;transform:none;display:none;opacity:1;margin-top:16px}
 .sim-tcp-ip-encapsulation .receiver-packet.visible{display:block}
-.sim-tcp-ip-encapsulation .wire-station{display:flex;gap:12px;align-items:center;justify-content:center}
-.sim-tcp-ip-encapsulation .wire-track{height:55px;flex:1}
+.sim-tcp-ip-encapsulation .wire-station{display:grid;gap:12px;align-content:center;justify-content:stretch}
+.sim-tcp-ip-encapsulation .wire-track{height:330px}
 .sim-tcp-ip-encapsulation .compare-grid>span{font-size:12px;white-space:normal;overflow-wrap:anywhere}
 .sim-sound-sampling .wave-head{display:block;margin-bottom:12px}
 .sim-sound-sampling .zoom-tools{display:flex;flex-wrap:wrap;margin-top:12px}
@@ -1887,7 +1825,7 @@ input.lab-intro-target{outline:none;animation:none}
 .sim-data-transmission-methods .bit-cell{height:24px}
 .sim-data-transmission-methods .callout{font:400 12px/1.35 var(--lab-font-sans,sans-serif)}
 .sim-dns-web-page-retrieval .arch-panel{display:block}
-.sim-dns-web-page-retrieval .architecture{grid-template-columns:minmax(0,1.1fr) 120px minmax(0,1fr);grid-template-rows:auto auto;grid-template-areas:'browser dnsbus dns' 'browser webbus servers';gap:18px}
+.sim-dns-web-page-retrieval .architecture{grid-template-columns:minmax(300px,.85fr) 96px minmax(480px,1.25fr);grid-template-rows:auto auto;grid-template-areas:'browser dnsbus dns' 'browser webbus servers';gap:18px}
 .sim-dns-web-page-retrieval .browser>.lab-sidebar{border:0;padding:16px 0 0;display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .sim-dns-web-page-retrieval .bus-cluster{display:flex;flex-direction:column;justify-content:center;gap:16px}
 .sim-dns-web-page-retrieval .browser-frame{border-radius:12px;overflow:hidden}
@@ -1897,7 +1835,7 @@ input.lab-intro-target{outline:none;animation:none}
 .sim-dns-web-page-retrieval :is(.dns-top span,.dns-top small,.engine-block small,.mini-label,.cache-title,.dns-table-title,.server-copy small,.server-copy span,.blank-page p){font:400 11px/1.4 var(--lab-font-sans,sans-serif);letter-spacing:normal;text-transform:none}
 .sim-dns-web-page-retrieval .engine-grid{grid-template-columns:1fr 1fr;gap:10px}
 .sim-dns-web-page-retrieval .engine-arrow{display:none}
-.sim-dns-web-page-retrieval .dns-chain{grid-template-columns:1fr;gap:12px}
+.sim-dns-web-page-retrieval .dns-chain{grid-template-columns:minmax(0,1fr) 66px minmax(0,1fr);gap:8px}
 .sim-dns-web-page-retrieval .dns1-dns2{display:flex;justify-content:center;gap:12px}
 .sim-dns-web-page-retrieval .dns-node{min-height:0;background:var(--lab-surface-muted,#f7f8fa)}
 .sim-dns-web-page-retrieval .dns-chain-shell{min-height:0;padding:0;background:none;border:0}
@@ -1914,9 +1852,9 @@ input.lab-intro-target{outline:none;animation:none}
 .sim-ipv4-subnetting .locked-planner :is(strong,span){font:400 12px/1.45 var(--lab-font-sans,sans-serif);margin:0}
 .sim-ipv4-subnetting .lab-evidence-card .story-card>strong{font-size:15px}
 .sim-ipv4-subnetting .lab-evidence-card .story-card>span{font-size:14px}
-.sim-packet-switching .network-panel{grid-row:1/span 2}
+
 .sim-packet-switching .queue-section{margin-top:20px}
-.sim-packet-switching .queue-section .packet-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.sim-packet-switching .queue-section .packet-list{display:grid;grid-template-columns:1fr;gap:8px}
 .sim-packet-switching :is(.packet-card strong,.toggle-copy strong,.options-head strong,.nic-head strong){font:400 12px/1.4 var(--lab-font-sans,sans-serif)}
 .sim-packet-switching :is(.packet-card,.packet-card small,.toggle-copy small,.queue-section,.nic-head span,.options-head span){font:400 11px/1.4 var(--lab-font-sans,sans-serif)}
 .sim-packet-switching .toggle-grid{grid-template-columns:1fr}
@@ -1984,6 +1922,267 @@ input.lab-intro-target{outline:none;animation:none}
 .sim-ipv4-subnetting :is(.summary-zone,.subnet-card){border-left-width:1px;border-color:color-mix(in srgb,var(--subnet-colour) 45%,white);background:color-mix(in srgb,var(--subnet-colour) 12%,white);padding:12px;border-radius:12px}
 .sim-ipv4-subnetting :is(.summary-zone strong,.summary-zone span,.subnet-title strong,.subnet-title span,.department-card,.drop-action){font:400 12px/1.4 var(--lab-font-sans,sans-serif)}
 .sim-ipv4-subnetting .subnet-drop{border:0;background:none;padding:8px 0 0}
+
+/* Model tools and comparisons: shared presentation never prescribes a sidebar. */
+.lab-tool-bar{display:flex;align-items:center;flex-wrap:wrap;gap:12px;padding:12px 0 18px;background:none;border:0}
+.lab-tool-bar>*,.lab-menu-field{min-width:0;max-width:100%}
+.lab-menu-field{display:flex;align-items:center;gap:8px;font:400 12px/1.4 var(--lab-font-sans,sans-serif)}
+.lab-tool-buttons{display:flex;gap:8px;flex-wrap:wrap}
+.lab-tool-buttons .active-tool{background:var(--lab-accent,#5277b8);color:#fff;border-color:var(--lab-accent,#5277b8)}
+.lab-evidence-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;align-items:start;padding:12px 0}
+.lab-evidence-strip>*{min-width:0;margin:0!important}
+.lab-device-glyph{width:36px;height:32px;flex:none;fill:color-mix(in srgb,var(--lab-accent,#5277b8) 12%,white);stroke:var(--lab-accent,#5277b8);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.lab-simulation:is(.sim-dns-web-page-retrieval,.sim-packet-switching,.sim-tcp-ip-encapsulation,.sim-encryption-in-data-transmission) main{width:min(1380px,calc(100% - 40px));max-width:1380px}
+.sim-csma-cd .station{border-color:var(--lab-line);border-radius:12px;overflow:visible}
+.sim-csma-cd .station-head{border-radius:12px 12px 0 0;background:color-mix(in srgb,var(--station) 12%,white)}
+.sim-csma-cd .station-state{margin-left:0}
+.sim-csma-cd .station-head .lab-device-glyph{width:26px;height:24px}
+.sim-csma-cd .cable{height:8px;background:var(--lab-line-strong,#a7a7ad);box-shadow:none}
+.sim-data-transmission-methods :is(.device,.device-head,.transceiver,.byte-screen,.count-lcd,.protocol-screen){background:var(--lab-surface-muted,#f7f8fa);color:var(--lab-ink);border-color:var(--lab-line);box-shadow:none}
+.sim-data-transmission-methods .device{border-radius:14px;background:color-mix(in srgb,var(--lab-accent) 12%,white);min-height:250px}
+.sim-data-transmission-methods .device-head{background:transparent;touch-action:none;cursor:grab;border-bottom:1px solid color-mix(in srgb,var(--lab-accent) 22%,white);padding:10px}
+.sim-data-transmission-methods .device-head::before{content:'⠿';font:400 20px/1 var(--lab-font-sans);color:var(--lab-ink-secondary)}
+.sim-data-transmission-methods .device-head:active{cursor:grabbing}
+.sim-data-transmission-methods :is(.bit-cell,.count-lcd){background:white;border:1px solid var(--lab-line);border-radius:5px;box-shadow:none;color:var(--lab-ink)}
+.sim-data-transmission-methods .protocol-screen{min-height:42px;color:var(--lab-ink-secondary)}
+.sim-data-transmission-methods .transceiver{padding:6px;border:0;background:white}
+.sim-data-transmission-methods .byte-screen{padding:4px;border:0;background:none}
+.sim-data-transmission-methods .device-status{background:none;color:var(--lab-ink-secondary);text-shadow:none}
+.sim-data-transmission-methods .count-lcd{font:400 15px/1.4 var(--lab-font-sans)}
+.sim-data-transmission-methods .device::before,.sim-data-transmission-methods .device::after{display:none}
+.sim-dns-web-page-retrieval .architecture{position:relative}
+.lab-transfer-connections{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+.lab-transfer-connections path{fill:none;stroke:var(--lab-line-strong);stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.lab-transfer-connections path.active{stroke:var(--lab-accent)}
+.sim-dns-web-page-retrieval .architecture>section{position:relative}
+.sim-dns-web-page-retrieval .dns-node{padding:12px;border-radius:12px;background:color-mix(in srgb,var(--lab-accent) 10%,white);box-shadow:none;border:1px solid var(--lab-line)}
+.sim-dns-web-page-retrieval .dns-node-head{grid-template-columns:40px 1fr auto;gap:8px;align-items:start}
+.sim-dns-web-page-retrieval .dns-badge{width:40px;height:auto;background:none;display:grid;gap:3px}
+.sim-dns-web-page-retrieval .dns-badge span{font-size:12px;color:var(--lab-ink)}
+.sim-dns-web-page-retrieval :is(.dns-console,.cache-row,.directory-row){grid-template-columns:1fr}
+.sim-dns-web-page-retrieval :is(.console-cell,.cache-row,.directory-row){box-shadow:none;background:#ffffffb3;padding:7px}
+.sim-dns-web-page-retrieval :is(.console-cell strong,.cache-row strong,.directory-row strong,.cache-row span){white-space:normal;overflow-wrap:anywhere;overflow:visible}
+.sim-dns-web-page-retrieval .dns-edit{height:32px;min-height:32px;font-size:12px}
+.sim-dns-web-page-retrieval .mini-track{margin-left:-8px;margin-right:-8px}
+.sim-dns-web-page-retrieval .mini-value{white-space:normal;overflow-wrap:anywhere;font-size:11px}
+.sim-dns-web-page-retrieval .server-card{background:color-mix(in srgb,var(--lab-concept-violet,#7563a7) 12%,white);box-shadow:none;border:1px solid var(--lab-line);border-radius:12px}
+.sim-dns-web-page-retrieval .server-card.active{background:var(--lab-accent-soft);border-color:var(--lab-accent)}
+.sim-dns-web-page-retrieval .server-card.good{background:var(--lab-good-soft);border-color:var(--lab-good)}
+.sim-dns-web-page-retrieval .server-card.warn{background:var(--lab-warn-soft);border-color:var(--lab-warn)}
+.sim-dns-web-page-retrieval .server-face{background:white;border:1px solid var(--lab-concept-violet,#7563a7);box-shadow:none;border-radius:7px}
+.sim-dns-web-page-retrieval .drive-bays i{background:color-mix(in srgb,var(--lab-concept-violet,#7563a7) 20%,white);border:1px solid var(--lab-concept-violet,#7563a7)}
+.sim-encryption-in-data-transmission .board-shell.is-fitted{overflow:visible}
+.sim-encryption-in-data-transmission .board{overflow:visible}
+.sim-encryption-in-data-transmission .lab-claim-context{margin:0 0 14px;padding:12px 16px;border-radius:12px;background:var(--lab-accent-soft,#eef2fa)}
+.sim-encryption-in-data-transmission .lab-claim-context-title{font:400 15px/1.4 var(--lab-font-sans)}
+.sim-encryption-in-data-transmission .lab-claim-context p{margin:4px 0 10px;font:400 14px/1.4 var(--lab-font-sans)}
+.sim-encryption-in-data-transmission .device{background:color-mix(in srgb,var(--lab-accent) 15%,white);border:1px solid var(--lab-line-strong);border-radius:14px;box-shadow:0 2px 5px #1d1d1f0d}
+.sim-encryption-in-data-transmission .device.eve{top:590px;background:color-mix(in srgb,var(--lab-concept-violet,#7563a7) 16%,white);border-color:var(--lab-concept-violet,#7563a7)}
+.sim-encryption-in-data-transmission .monitor{border:1px solid var(--lab-line);padding:6px;background:white;box-shadow:none;border-radius:10px}
+.sim-encryption-in-data-transmission :is(.screen,.device.bob .screen,.device.eve .screen){background:white;color:var(--lab-ink);padding:8px;overflow:visible}
+.sim-encryption-in-data-transmission :is(.screen-title,.screen-badge,.source-preview span,.source-preview code,.flow-label,.flow-value,.decode-step span,.decode-step code,.decode-action,.capture-row small,.capture-row code,.capture-state){color:var(--lab-ink);font:400 13px/1.4 var(--lab-font-sans);letter-spacing:normal;text-transform:none}
+.sim-encryption-in-data-transmission .screen-title{flex-wrap:wrap}
+.sim-encryption-in-data-transmission :is(.source-preview,.flow-box,.decode-step,.capture-row){background:var(--lab-surface-muted,#f7f8fa);border:0;border-radius:6px}
+.sim-encryption-in-data-transmission :is(.source-preview code,.flow-value,.decode-step code,.capture-row code){white-space:normal;overflow-wrap:anywhere;overflow:visible}
+.sim-encryption-in-data-transmission .composer textarea{background:white;color:var(--lab-ink);border:1px solid var(--lab-line);font:400 15px/1.4 var(--lab-font-sans);height:70px}
+.sim-encryption-in-data-transmission .decode-trace{grid-template-columns:minmax(0,1fr) 52px minmax(0,1fr)}
+.sim-encryption-in-data-transmission .decode-action i{background:var(--lab-accent-soft);color:var(--lab-accent);border-color:var(--lab-line)}
+.sim-encryption-in-data-transmission .key-bay{grid-template-columns:1fr;padding:8px;gap:8px;border-radius:8px;background:#ffffffb3}
+.sim-encryption-in-data-transmission .key-bay .key-token{width:100%;max-width:100%}
+.sim-encryption-in-data-transmission .key-bay .key-token strong{font-size:13px}
+.sim-encryption-in-data-transmission .bay-empty{white-space:normal;padding:4px;font-size:13px}
+.sim-encryption-in-data-transmission :is(.crypto-gate,.relay){background:var(--lab-accent-soft);border-color:var(--lab-line-strong);box-shadow:none;border-radius:10px}
+.sim-encryption-in-data-transmission .crypto-gate{width:112px;left:308px;height:auto;min-height:148px;top:196px}
+.sim-encryption-in-data-transmission :is(.gate-title strong,.relay strong){font:400 12px/1.3 var(--lab-font-sans);letter-spacing:normal;text-transform:none}
+.sim-encryption-in-data-transmission .gate-window{background:white;color:var(--lab-ink);border-color:var(--lab-line);font-size:14px;box-shadow:none}
+.sim-encryption-in-data-transmission .gate-window :is(.out,.out.plain){color:var(--lab-accent)}
+.sim-encryption-in-data-transmission .wire-readout{background:var(--lab-surface-muted,#f7f8fa);border:1px solid var(--lab-line);box-shadow:none;top:374px}
+.sim-encryption-in-data-transmission :is(.wire-readout-head,.wire-readout-head strong,.wire-data,.wire-data.plain,.wire-data.cipher){color:var(--lab-ink);font:400 13px/1.4 var(--lab-font-sans);letter-spacing:normal;text-transform:none}
+.sim-encryption-in-data-transmission .key-tray .key-token{position:relative;padding:10px 28px 10px 10px;background:color-mix(in srgb,var(--lab-accent) 15%,white);border-color:var(--lab-accent);border-radius:10px}
+.sim-encryption-in-data-transmission .key-tray .key-token::after{content:'⠿';position:absolute;right:8px;top:50%;transform:translateY(-50%);font:400 20px/1 var(--lab-font-sans);color:var(--lab-accent)}
+.sim-encryption-in-data-transmission .goal-light{font:400 12px/1.4 var(--lab-font-sans)}
+.sim-ipv4-subnetting .ip-workbench{margin:18px 0 0;border-radius:12px}
+.sim-ipv4-subnetting .ip-workbench-grid{grid-template-columns:1fr 1fr;gap:16px}
+.sim-ipv4-subnetting .ip-read-grid{grid-template-columns:1fr 1fr}
+.sim-ipv4-subnetting .ip-workbench :is(strong,p,span,code){font-size:12px;font-weight:400;letter-spacing:normal;text-transform:none;line-height:1.45}
+.sim-ipv4-subnetting .ip-workbench :is(h2,h3,.ip-stage-title){font-size:15px;font-weight:400}
+.sim-ipv4-subnetting .planner .lab-evidence-card{padding:12px;margin-bottom:12px}
+.sim-ipv4-subnetting .planner .metrics{grid-template-columns:1fr 1fr}
+.sim-ipv4-subnetting .planner .metric{padding:0}
+.sim-ipv4-subnetting .planner .metric span{font-size:12px}
+.sim-ipv4-subnetting .planner .takeaway{font-size:12px}
+.sim-network-topology #partList{width:100%;display:flex;gap:10px;flex-wrap:wrap}
+.sim-network-topology .part-card{flex:1 1 145px;max-width:230px;position:relative;padding:10px 22px 10px 10px;border:1px solid var(--lab-line);background:var(--lab-accent-soft);border-radius:12px;cursor:grab}
+.sim-network-topology .part-card::after{content:'⠿';position:absolute;right:7px;top:50%;transform:translateY(-50%);font-size:20px;color:var(--lab-accent)}
+.sim-network-topology :is(.part-copy strong,.part-copy span,.part-count){font:400 12px/1.4 var(--lab-font-sans)}
+.sim-network-topology :is(.part-icon,.device-icon,.node-body){background:var(--lab-accent-soft);box-shadow:none;border-color:var(--lab-line)}
+.sim-network-topology .part-icon svg{stroke:var(--lab-accent);stroke-width:1.5}
+.sim-network-topology .tool-group{padding:0;box-shadow:none;border:0;background:none}
+.sim-network-topology .tool-group button{border-radius:8px}
+.sim-packet-switching .device-panel{padding:12px;border:0;border-radius:12px;background:var(--lab-surface-muted,#f7f8fa);box-shadow:none}
+.sim-packet-switching .device-b{border-left:0;padding-left:12px}
+.sim-packet-switching .network-panel{min-width:0}
+.sim-packet-switching .device-screen{background:var(--lab-accent-soft);border-color:var(--lab-accent);box-shadow:none}
+.sim-packet-switching .nic-card{background:white;box-shadow:none;border-color:var(--lab-line);margin:12px 0}
+.sim-packet-switching .lab-grid .network-toolbar{padding:8px 0;gap:6px}
+.sim-packet-switching :is(.message-controls,.message-actions){gap:8px;flex-wrap:wrap}
+.sim-packet-switching .queue-section{margin-top:14px}
+.sim-parity-arq .transmission-rail{display:grid;grid-template-columns:1fr 1fr 1.15fr;gap:12px;border:0;padding:12px 0 0}
+.sim-parity-arq .transmission-rail>section:last-child{grid-column:1/-1}
+.sim-parity-arq .transmission-rail>section:last-child h2,.sim-parity-arq .arq-explainer>strong{display:none}
+.sim-parity-arq .arq-explainer{display:block;font:400 12px/1.45 var(--lab-font-sans);padding:0;border:0;background:none}
+.sim-parity-arq .arq-explainer span{font-size:12px}
+.sim-parity-arq .transmission-rail :is(.result-title,#phaseLabel){font:400 14px/1.4 var(--lab-font-sans)}
+.sim-parity-arq .stage{width:100%;margin:0}
+.sim-parity-arq .stage-head{min-height:76px;margin:0;padding:0 0 12px}
+.sim-parity-arq .stage-title{font-size:15px}
+.sim-parity-arq .blocks{display:grid;gap:12px;margin:0;max-width:none}
+.sim-parity-arq .bit-block{--cell:26px;grid-template-columns:40px repeat(8,minmax(0,1fr)) 18px;gap:2px}
+.sim-parity-arq .bit{width:100%;height:26px;min-height:26px;padding:0;box-shadow:none}
+.sim-parity-arq .block-card{padding:8px}
+.sim-parity-arq .row-label{width:40px;white-space:normal;font-size:11px}
+.sim-tcp-ip-encapsulation .station-title{min-height:64px;padding:10px 0}
+.sim-tcp-ip-encapsulation .wrapper-tool{display:grid;grid-template-columns:38px 1fr;padding:10px 6px;min-height:100px}
+.sim-tcp-ip-encapsulation .tool-shell{width:36px;height:40px;border-width:2px;box-shadow:none;font-weight:400}
+.sim-tcp-ip-encapsulation .wrapper-tool strong{font-size:13px}
+.sim-tcp-ip-encapsulation .wrapper-tool small{font-size:11px}
+.sim-tcp-ip-encapsulation .packing-mat{min-height:520px;align-items:center}
+.sim-tcp-ip-encapsulation .receiver-spine{display:none}
+.sim-tcp-ip-encapsulation .wire-line{background:var(--lab-line-strong);box-shadow:none}
+.sim-tcp-ip-encapsulation .wire-line::after{display:none}
+.sim-tcp-ip-encapsulation :is(.http-core,.packet-shell){box-shadow:none;border-width:2px}
+.sim-tcp-ip-encapsulation .http-code{font:400 12px/1.4 var(--lab-font-sans);white-space:pre-wrap;overflow-wrap:anywhere}
+.sim-tcp-ip-encapsulation .device-icon{background:var(--lab-accent-soft);border-color:var(--lab-accent);color:var(--lab-accent);box-shadow:none}
+.sim-tcp-ip-encapsulation .endpoint span{font:400 11px/1.4 var(--lab-font-sans);white-space:normal}
+.sim-tcp-ip-encapsulation .wire-label{font:400 12px/1.4 var(--lab-font-sans);text-transform:none;letter-spacing:normal}
+.sim-sound-sampling .controls .play{display:flex;flex-wrap:wrap;gap:8px;margin:0;align-items:center}
+.sim-sound-sampling .controls .examples{flex-basis:100%;justify-content:start;width:fit-content;max-width:100%}
+.sim-sound-sampling .sample-readout{min-height:190px;display:grid!important;align-content:start;gap:14px}
+.sim-sound-sampling .bits{padding:12px;border-radius:8px;background:color-mix(in srgb,var(--lab-concept-violet,#7563a7) 16%,white);font:400 14px/1.8 var(--lab-font-sans)!important}
+@media(max-width:1100px){
+ .sim-packet-switching .lab-grid{grid-template-columns:minmax(210px,1fr) minmax(0,1.7fr)}
+ .sim-packet-switching .device-a{grid-column:1;grid-row:1}.sim-packet-switching .network-panel{grid-column:2;grid-row:1}.sim-packet-switching .device-b{grid-column:1/-1;grid-row:2}
+ .sim-tcp-ip-encapsulation .board-stage{grid-template-columns:160px minmax(0,1fr) 100px}.sim-tcp-ip-encapsulation .board-stage>.receiver-station{grid-column:1/-1;grid-row:2}
+ .sim-tcp-ip-encapsulation .receiver-map{display:grid;grid-template-columns:1fr 1fr;gap:12px}.sim-tcp-ip-encapsulation .receiver-packet{grid-column:1/-1}
+ .sim-dns-web-page-retrieval .architecture{grid-template-columns:1fr;grid-template-areas:'browser' 'dnsbus' 'dns' 'webbus' 'servers'}
+ .sim-dns-web-page-retrieval .dns-chain{display:grid;grid-template-columns:minmax(0,1fr) 80px minmax(0,1fr)}
+ .sim-dns-web-page-retrieval .lab-transfer-connections{display:none}
+}
+@media(max-width:650px){
+ .lab-simulation:is(.sim-dns-web-page-retrieval,.sim-packet-switching,.sim-tcp-ip-encapsulation,.sim-encryption-in-data-transmission) main{width:calc(100% - 24px)}
+ .sim-dns-web-page-retrieval .dns-chain{display:grid;grid-template-columns:minmax(0,1fr) 42px minmax(0,1fr);gap:4px}
+ .sim-dns-web-page-retrieval .dns-node{padding:8px}.sim-dns-web-page-retrieval .dns-node-head{grid-template-columns:1fr}.sim-dns-web-page-retrieval .mini-lane-head{font-size:11px;overflow-wrap:anywhere}
+ .sim-dns-web-page-retrieval .mini-track{margin-left:-4px;margin-right:-4px}
+ .sim-packet-switching .lab-grid,.sim-tcp-ip-encapsulation .board-stage,.sim-parity-arq .transmission-rail{grid-template-columns:1fr}
+ .sim-packet-switching :is(.device-a,.network-panel,.device-b),.sim-tcp-ip-encapsulation .board-stage>.receiver-station{grid-column:1;grid-row:auto}
+ .sim-tcp-ip-encapsulation .rack{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+ .sim-tcp-ip-encapsulation .wrapper-tool{grid-template-columns:1fr;justify-items:center}
+ .sim-tcp-ip-encapsulation .packing-mat{min-height:250px}.sim-tcp-ip-encapsulation .receiver-map{grid-template-columns:1fr}
+ .sim-tcp-ip-encapsulation .wire-track{height:78px}
+ .sim-ipv4-subnetting :is(.ip-workbench-grid,.ip-read-grid){grid-template-columns:1fr}
+}
+
+/* Directional models can use the wider shared rail without offsetting the page. */
+.lab-simulation:is(.sim-dns-web-page-retrieval,.sim-packet-switching,.sim-tcp-ip-encapsulation,.sim-encryption-in-data-transmission) main{margin-inline:auto}
+.sim-data-transmission-methods .protocol-screen :is(strong,span){color:var(--lab-ink-secondary);font:400 12px/1.4 var(--lab-font-sans)}
+.sim-data-transmission-methods .device-status strong{font:400 11px/1.4 var(--lab-font-sans);color:var(--lab-ink-secondary)}
+.sim-data-transmission-methods .noise-source{background:var(--lab-accent-soft);color:var(--lab-accent);border-color:var(--lab-accent);box-shadow:0 1px 3px #1d1d1f14}
+.sim-encryption-in-data-transmission .workspace-actions{align-items:center}
+.sim-encryption-in-data-transmission :is(.device.eve .monitor,.device.eve .device-icon){border-color:var(--lab-line)}
+.sim-encryption-in-data-transmission :is(.capture-state.open,.capture-state.locked,.decode-step code.cipher,.flow-value.cipher,.flow-value.blocked){color:var(--lab-ink)}
+.sim-encryption-in-data-transmission .screen-badge.good{color:var(--lab-good);background:var(--lab-good-soft)}
+.sim-encryption-in-data-transmission .screen-badge.cipher{color:var(--lab-accent);background:var(--lab-accent-soft)}
+.sim-encryption-in-data-transmission .screen-badge.bad{color:var(--lab-bad);background:var(--lab-bad-soft)}
+.sim-network-topology :is(.node-shell,.bus-node .node-shell){background:color-mix(in srgb,var(--lab-accent) 12%,white);box-shadow:none;border:1px solid var(--lab-line-strong)}
+.sim-network-topology .station-screen{background:white;border:2px solid var(--lab-accent);border-radius:6px}
+.sim-network-topology .station-screen::after{background:var(--lab-accent);border-radius:3px;height:3px}
+.sim-network-topology .port-strip{background:white;border-color:var(--lab-line);box-shadow:none}
+.sim-network-topology .port-strip i{background:var(--lab-accent);box-shadow:none}
+.sim-network-topology :is(.bridge-segment,.bus-terminator){background:var(--lab-accent-soft);border-color:var(--lab-accent);box-shadow:none}
+.sim-network-topology .bus-core{background:var(--lab-accent);border:0;box-shadow:none}
+.sim-network-topology :is(.hardware-top strong,.station-copy strong,.bus-heading strong){font:400 12px/1.4 var(--lab-font-sans)}
+.sim-network-topology :is(.station-copy small,.bus-heading small,.node-status){font:400 11px/1.3 var(--lab-font-sans)}
+.sim-parity-arq .transmission-layout{min-height:0}
+.sim-parity-arq .transmission-head{min-height:0}
+.sim-parity-arq :is(.stream-preview,.track-label,.block-head,.block-head span,.result-detail,.decoded-note){font:400 12px/1.4 var(--lab-font-sans)}
+.sim-parity-arq .transmission-rail .decoded{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px;padding:12px}
+.sim-parity-arq .transmission-rail .decoded-note{grid-column:1/-1}
+.sim-parity-arq .bit-block{width:100%;max-width:320px;margin:auto}
+.sim-parity-arq .editable-stage{box-shadow:none;background:var(--lab-accent-soft);border-radius:12px}
+.sim-tcp-ip-encapsulation .board-stage{grid-template-columns:160px minmax(320px,1fr) 110px minmax(390px,1.1fr)}
+.sim-tcp-ip-encapsulation .receiver-map{display:block;position:relative;padding-left:104px}
+.sim-tcp-ip-encapsulation .receiver-packet{position:absolute;left:0;bottom:auto!important;top:0;width:92px;margin:0;transform:none;transition:top .38s ease,opacity .2s}
+.sim-tcp-ip-encapsulation .receiver-object-label{display:block;margin-bottom:6px;font:400 11px/1.3 var(--lab-font-sans);color:var(--lab-ink-secondary)}
+.sim-tcp-ip-encapsulation .receiver-layer{display:block;margin-top:4px;padding:5px;border-radius:6px;background:var(--lab-accent-soft);font:400 12px/1.4 var(--lab-font-sans);text-align:center;border:1px solid var(--eth)}
+.sim-tcp-ip-encapsulation .receiver-layer.tcp{background:var(--tcp-soft);border-color:var(--tcp)}
+.sim-tcp-ip-encapsulation .receiver-layer.ip{background:var(--ip-soft);border-color:var(--ip)}
+.sim-tcp-ip-encapsulation .receiver-layer.app{background:var(--app-soft);border-color:var(--app)}
+.sim-tcp-ip-encapsulation :is(.receiver-station .gate-read,.http-core::before,.gate-icon,.endpoint strong){font:400 12px/1.4 var(--lab-font-sans);letter-spacing:normal;text-transform:none}
+.sim-tcp-ip-encapsulation .status-light{display:none}
+.sim-packet-switching .device-panel :is(.field label,.nic-buffer-guide,.reconstruction-note,.packet-label,.packet-card strong,.packet-card small,.packet-payload,.packet-header,.packet-state,.packet-seq,.nic-detail,.nic-stage,.nic-attempt-line,.message-meta,#messageInput){font:400 12px/1.4 var(--lab-font-sans);letter-spacing:normal;text-transform:none}
+.sim-packet-switching .device-visual{background:var(--lab-accent-soft);border:0}
+.sim-packet-switching .device-label{display:none}
+.sim-packet-switching .device-panel .panel-head{padding:0 0 12px}
+.sim-packet-switching .network-panel .panel-head{padding:0 0 12px;min-height:33px}
+.sim-packet-switching .device-panel .lab-evidence-card{margin-top:12px}
+@media(max-width:1100px){.sim-tcp-ip-encapsulation .board-stage{grid-template-columns:160px minmax(0,1fr) 100px}.sim-tcp-ip-encapsulation .board-stage>.receiver-station{grid-column:1/-1}}
+@media(max-width:650px){.sim-tcp-ip-encapsulation .board-stage{grid-template-columns:1fr}.sim-tcp-ip-encapsulation .board-stage>.receiver-station{grid-column:1}.sim-tcp-ip-encapsulation .receiver-map{padding-left:80px}.sim-tcp-ip-encapsulation .receiver-packet{width:70px}}
+
+.sim-sound-sampling .lab-evidence-card .sample-readout{height:auto;min-height:180px;overflow:visible;align-items:start;grid-template-columns:1fr}
+.sim-sound-sampling .lab-evidence-card .bits{display:block;white-space:normal;overflow:visible;max-height:none;color:var(--lab-ink);overflow-wrap:anywhere}
+.sim-ipv4-subnetting #ipToggle :is(span,strong){font:400 12px/1.4 var(--lab-font-sans)}
+.sim-ipv4-subnetting .ip-workbench :is(small,b){font:400 12px/1.45 var(--lab-font-sans)}
+.sim-ipv4-subnetting .ip-workbench-head{grid-template-columns:1fr;gap:10px}
+.sim-ipv4-subnetting .ip-workbench-grid{grid-template-columns:minmax(0,1.25fr) minmax(0,1fr)}
+.sim-ipv4-subnetting .ip-read-panel{grid-row:span 2}
+.sim-ipv4-subnetting .ip-workbench{background:var(--lab-surface-muted,#f7f8fa);border:0}
+.sim-ipv4-subnetting :is(.ip-workbench.local,.ip-workbench.warn){background:var(--lab-surface-muted,#f7f8fa)}
+.sim-ipv4-subnetting :is(.ip-decision-panel,.ip-envelope-panel){border-radius:8px;background:white;padding:12px}
+.sim-ipv4-subnetting .ip-insight{font:400 14px/1.45 var(--lab-font-sans);padding:12px 0 0;border:0}
+@media(max-width:650px){.sim-ipv4-subnetting .ip-workbench-grid{grid-template-columns:1fr}.sim-ipv4-subnetting .ip-read-panel{grid-row:auto}}
+
+.lab-simulation .lab-sidebar{max-height:none}
+.sim-ipv4-subnetting .department-node{width:160px}
+.sim-ipv4-subnetting .dept-copy strong{font:400 15px/1.3 var(--lab-font-sans);white-space:normal}
+.sim-ipv4-subnetting .dept-copy span{font:400 14px/1.3 var(--lab-font-sans)}
+.sim-ipv4-subnetting :is(.switch-top strong,.router-title){font:400 14px/1.3 var(--lab-font-sans)}
+.sim-ipv4-subnetting .node-status{font:400 12px/1.3 var(--lab-font-sans);letter-spacing:normal;text-transform:none}
+.sim-ipv4-subnetting .department-card strong{font:400 12px/1.4 var(--lab-font-sans);white-space:normal}
+.sim-ipv4-subnetting .department-card span{font:400 11px/1.4 var(--lab-font-sans)}
+.sim-ipv4-subnetting .ip-envelope-empty{font:400 12px/1.4 var(--lab-font-sans)}
+.sim-tcp-ip-encapsulation .payload-mark{display:none}
+@media(prefers-reduced-motion:reduce){.sim-tcp-ip-encapsulation .receiver-packet{transition:none}}
+.sim-csma-cd{--station-a:var(--lab-concept-blue,#4779b7);--station-b:var(--lab-concept-teal,#2d8792);--station-c:var(--lab-concept-violet,#7563a7)}
+.sim-csma-cd .station-head .lab-device-glyph{stroke:var(--station);fill:color-mix(in srgb,var(--station) 12%,white)}
+.sim-csma-cd .tap::after{box-shadow:none}
+.sim-csma-cd .cable-label{font:400 11px/1.4 var(--lab-font-sans);letter-spacing:normal;text-transform:none}
+.sim-encryption-in-data-transmission{--secret:var(--lab-concept-blue,#4779b7);--public:var(--lab-concept-teal,#2d8792);--private:var(--lab-concept-amber,#c9782c);--eve:var(--lab-concept-violet,#7563a7)}
+.sim-ipv4-subnetting{--ip:var(--lab-concept-violet,#7563a7)}
+
+/* Packet travel and collision evidence share a compact marker vocabulary. */
+.csma-wave{position:absolute;inset:0;pointer-events:none}
+.csma-wave .csma-trail{position:absolute;top:293px;height:5px;border-radius:999px;background:color-mix(in srgb,var(--signal) 26%,transparent);transition:left .6s linear,width .6s linear}
+.csma-packet{position:absolute;top:296px;display:flex;align-items:center;gap:3px;min-width:34px;height:26px;padding:3px 5px;border:1px solid var(--signal);border-radius:7px;background:var(--signal);color:white;box-shadow:0 1px 3px #1d1d1f1a;transform:translate(-50%,-50%);transition:left .6s linear,margin-left .6s linear,background-color .12s,border-color .12s;z-index:3}
+.csma-packet svg{width:13px;height:15px;fill:none;stroke:currentColor;stroke-width:1.3;stroke-linecap:round}
+.csma-owner{font:400 12px/1 var(--lab-font-sans,sans-serif)}
+.csma-colliding-frame .csma-packet{margin-left:var(--collision-offset)}
+.csma-packet.is-damaged{background:var(--lab-bad-surface,#fff8f7);border-color:var(--lab-bad,#b42318);color:var(--lab-bad,#b42318)}
+.csma-packet.is-damaged svg{opacity:.45}
+.csma-collision{z-index:5;--signal:var(--lab-bad,#b42318)}
+.csma-collision .csma-trail{top:291px;height:9px;background:color-mix(in srgb,var(--lab-bad,#b42318) 24%,transparent)}
+.csma-impact{position:absolute;left:50%;top:296px;width:26px;height:26px;display:grid;place-items:center;transform:translate(-50%,-50%);border:1px solid var(--lab-bad,#b42318);border-radius:50%;background:white;color:var(--lab-bad,#b42318);font:400 24px/1 var(--lab-font-sans,sans-serif);z-index:6}
+.csma-impact::after{content:'';position:absolute;inset:-3px;border:1px solid var(--lab-bad,#b42318);border-radius:50%;animation:lab-collision-impact .8s ease-out 2}
+.csma-impact-label{position:absolute;left:50%;top:317px;transform:translateX(-50%);font:400 12px/1.4 var(--lab-font-sans,sans-serif);color:var(--lab-bad,#b42318);white-space:nowrap}
+.csma-damage-front{position:absolute;top:296px;transform:translate(-50%,-50%);color:var(--lab-bad,#b42318);font:400 25px/1 var(--lab-font-sans,sans-serif);transition:left .6s linear}
+.csma-collision.is-arriving :is(.csma-impact,.csma-impact-label,.csma-damage-front,.csma-trail){visibility:hidden}
+.csma-collision.is-arriving .csma-impact::after{animation:none}
+.csma-jam .csma-packet{height:24px;border-radius:5px;background:var(--lab-concept-amber,#c9782c);border-color:var(--lab-concept-amber,#c9782c)}
+.csma-jam .csma-packet svg{display:none}
+.sim-csma-cd #canvas{min-height:350px}
+.sim-csma-cd .cable-label{display:none}
+.sim-csma-cd #signalLayer{z-index:6}
+@keyframes lab-collision-impact{from{transform:scale(.8);opacity:.8}to{transform:scale(2);opacity:0}}
+@media(prefers-reduced-motion:reduce){.csma-wave *{transition:none!important;animation:none!important}}
 
 </style>
 <script data-lab-design-runtime>
@@ -2269,10 +2468,10 @@ window.LabDesign = {
       "task": {
         "selectors": [
           "#scenarioTitle",
-          ".scenario-buttons"
+          "#scenarioSelect"
         ],
         "kind": "given",
-        "description": "Scenario choice and the current medium-access situation.",
+        "description": "Scenario menu and current medium-access situation.",
         "visibility": "Present throughout; content follows the current simulation state."
       },
       "medium": {
@@ -2280,7 +2479,7 @@ window.LabDesign = {
           "#canvas"
         ],
         "kind": "model",
-        "description": "Three station states, shared cable, travelling frame, collision and jam signals.",
+        "description": "Three station states and a shared cable: packet markers, faint reached-signal trails, damaged opposing frames, outward collision cues and distinct jam markers.",
         "visibility": "Present throughout; content follows the current simulation state."
       },
       "evidence": {
@@ -2357,15 +2556,11 @@ window.LabDesign = {
 <!-- LAB_MANIFEST_HEADER_END -->
 <span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span>
   <span data-lab-authored-subtitle-slot hidden></span>
-<section class="lab-activity-bar sim-top"><div class="lab-activity-task"><strong id="scenarioTitle">Two stations both hear silence</strong></div><div class="sim-top-tools"><div class="run-buttons">
+<section class="lab-activity-bar sim-top"><div class="lab-activity-task"><strong id="scenarioTitle">Two stations both hear silence</strong></div><div class="sim-top-tools"><label class="lab-menu-field" for="scenarioSelect"><span>Scenario</span><select id="scenarioSelect"><option value="singleA">A sends to C</option><option value="singleB">B sends to C</option><option value="collision">A and C contend</option></select></label><div class="run-buttons">
         <button id="nextButton" data-lab-intro="csma-next" data-lab-intro-title="Follow a station’s decision" data-lab-intro-copy="Use Next for one event or Play for the full exchange. Compare what each station hears locally." class="lab-action" data-priority="primary">Next</button>
         <button id="playButton" class="lab-action primary">Play</button>
         <button id="resetButton" data-lab-action="reset" class="lab-action">Reset</button>
-      </div><div class="lab-toggle scenario-buttons" role="group" aria-label="Choose a transmission situation" data-kind="mode" data-active-class="active">
-      <button data-scenario="singleA">A sends to C</button>
-      <button data-scenario="singleB">B sends to C</button>
-      <button class="active" data-scenario="collision">A and C collide</button>
-    </div><div id="labProgress" class="lab-checkpoints"></div></div></section>
+      </div><div id="labProgress" class="lab-checkpoints"></div></div></section>
 
   <section class="sim-legacy panel challenge">
     <div>
@@ -2405,7 +2600,7 @@ window.LabDesign = {
           <div class="narration-copy">
             <strong id="narrationTitle">A and C both have a frame to send.</strong>
             <p id="narrationText">Each station will make its own decision from the signal it can hear at its connection.</p>
-            <div class="visual-key"><span>Station colour: frame</span><span>Red: collision</span><span>Orange: jam</span></div>
+            <div class="visual-key"><span>Packet + trail: signal reached</span><span>Red ×: damaged frames</span><span>Amber: jam signal</span></div>
           </div>
         </div></section><section class="lab-evidence-card"><h2>Shared-medium rule</h2><div class="rule">
       <strong>CSMA/CD:</strong> Listen first → send while still listening → if a collision is heard, stop, wait a random time, then retry.
@@ -2828,9 +3023,9 @@ window.LabDesign = {
   const STEP_DELAY=reduceMotion?120:1050;
 
   const STATIONS={
-    A:{name:"Station A",position:10,colour:"#4ba7e3"},
-    B:{name:"Station B",position:50,colour:"#59b979"},
-    C:{name:"Station C",position:90,colour:"#d5a340"}
+    A:{name:"Station A",position:10,colour:"var(--station-a)"},
+    B:{name:"Station B",position:50,colour:"var(--station-b)"},
+    C:{name:"Station C",position:90,colour:"var(--station-c)"}
   };
 
   const SCENARIO_COPY={
@@ -2858,8 +3053,6 @@ window.LabDesign = {
     const start=source.position;
     const nearLeft=Math.max(0,start-18);
     const nearRight=Math.min(100,start+18);
-    const midLeft=Math.max(0,start-48);
-    const midRight=Math.min(100,start+48);
 
     return [
       {
@@ -2900,7 +3093,7 @@ window.LabDesign = {
           A:sender==="A"?{state:"Sending",thought:"Still sending. No collision heard.",tone:"focus",tap:"send",frame}:{state:"Busy",thought:"I hear a signal, so I wait.",tone:"idle",tap:"busy",frame:""},
           B:sender==="B"?{state:"Sending",thought:"Still sending. No collision heard.",tone:"focus",tap:"send",frame}:{state:"Busy",thought:"I hear a signal, so I wait.",tone:"idle",tap:"busy",frame:""},
           C:sender==="C"?{state:"Sending",thought:"Still sending. No collision heard.",tone:"focus",tap:"send",frame}:{state:"Busy",thought:"I hear a signal, so I wait.",tone:"idle",tap:"busy",frame:""}
-        },signals:[signal("frame",midLeft,midRight,source.colour,frame)]
+        },signals:[signal("frame",0,100,source.colour,frame)]
       },
       {
         phase:"Receive",tone:"#55bd7b",
@@ -2994,8 +3187,8 @@ window.LabDesign = {
           B:{state:"Jam heard",thought:"The attempt failed. I keep waiting.",tone:"collision",tap:"collision",frame:""},
           C:{state:"Jam",thought:"Collision heard. Stop the frame and mark the failure.",tone:"collision",tap:"collision",frame:"C → A · failed"}
         },signals:[
-          signal("A-jam",0,38,"#f29a3d","jam from A","jam"),
-          signal("C-jam",62,100,"#f29a3d","jam from C","jam")
+          signal("A-jam",0,60,"#f29a3d","jam from A","jam"),
+          signal("C-jam",40,100,"#f29a3d","jam from C","jam")
         ]
       },
       {
@@ -3058,9 +3251,8 @@ window.LabDesign = {
         ?singleScenario("B","C","PING")
         :collisionScenario();
     stepIndex=0;
-    document.querySelectorAll("[data-scenario]").forEach(button=>{
-      button.classList.toggle("active",button.dataset.scenario===key);
-    });
+
+    $("scenarioSelect").value=key;
     $("scenarioTitle").textContent=SCENARIO_COPY[key].title;
     $("scenarioHint").textContent=SCENARIO_COPY[key].hint;
     render();
@@ -3086,7 +3278,7 @@ window.LabDesign = {
       station.style.setProperty("--station",meta.colour);
       station.innerHTML=`
         <div class="station-head">
-          <span class="station-dot"></span>
+          <svg class="lab-device-glyph" viewBox="0 0 40 32" aria-hidden="true"><rect x="4" y="3" width="32" height="22" rx="4"/><path d="M20 25v4M12 29h16M9 8h22"/></svg><span class="station-dot"></span>
           <span class="station-name">${meta.name}</span>
           <span class="station-state">${state.state}</span>
         </div>
@@ -3104,45 +3296,74 @@ window.LabDesign = {
     });
   }
 
-  function applySignalPosition(element,item){
-    const left=canvasPercent(item.start);
-    const right=canvasPercent(item.end);
-    element.style.left=left+"%";
-    element.style.width=Math.max(.2,right-left)+"%";
-    element.style.opacity="1";
-  }
-
+  let signalRender=0;
+  let lastSignalPhase="";
   function renderSignals(step){
-    const layer=$("signalLayer");
+    const generation=++signalRender,layer=$("signalLayer");
+    const collision=step.signals.find(item=>item.type==="collision");
+    const enteringCollision=!!collision&&lastSignalPhase!=="Collision";
+    lastSignalPhase=step.phase;
     const wanted=new Set(step.signals.map(item=>item.id));
-
-    [...layer.children].forEach(element=>{
-      if(!wanted.has(element.dataset.id)){
-        element.style.opacity="0";
-        setTimeout(()=>{if(element.parentNode&&element.style.opacity==="0") element.remove();},240);
-      }
-    });
+    [...layer.children].forEach(element=>{if(!wanted.has(element.dataset.id))element.remove()});
 
     step.signals.forEach(item=>{
-      let element=layer.querySelector(`[data-id="${item.id}"]`);
-      if(!element){
-        element=document.createElement("div");
-        element.dataset.id=item.id;
-        element.className="signal";
-        element.style.setProperty("--signal",item.colour);
-        const origin=(item.start+item.end)/2;
-        element.style.left=canvasPercent(origin)+"%";
-        element.style.width="0.2%";
-        element.style.opacity="0";
-        element.innerHTML=`<span class="signal-label"></span>`;
-        layer.appendChild(element);
-        requestAnimationFrame(()=>requestAnimationFrame(()=>applySignalPosition(element,item)));
-      }else{
-        applySignalPosition(element,item);
+      const isCollision=item.type==="collision",isJam=item.type==="jam";
+      const source=(item.label.match(/^([ABC])\s*→/)||item.id.match(/^([ABC])-/))?.[1]||"A";
+      const destination=(item.label.match(/→\s*([ABC])/)||[])[1];
+      const origin=isCollision?50:STATIONS[source].position;
+      let element=layer.querySelector(`[data-id="${item.id}"]`),created=!element;
+      if(created){
+        element=document.createElement("div");element.dataset.id=item.id;
+        element.className=isCollision?"csma-wave csma-collision":"csma-wave";
+        element.innerHTML=isCollision
+          ? '<span class="csma-trail"></span><span class="csma-damage-front left">‹</span><span class="csma-damage-front right">›</span><span class="csma-impact" role="img" aria-label="Collision: both frames damaged"><span>×</span></span><span class="csma-impact-label">Both frames damaged</span>'
+          : '<span class="csma-trail"></span><span class="csma-packet"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2.5" y="2" width="11" height="12" rx="2"/><path d="M5 5h6M5 8h6M5 11h3"/></svg><span class="csma-owner"></span></span>';
+        layer.append(element);
+        const trail=element.querySelector(".csma-trail");trail.style.left=canvasPercent(origin)+"%";trail.style.width="0%";
+        element.querySelectorAll(".csma-packet,.csma-damage-front").forEach(marker=>marker.style.left=canvasPercent(origin)+"%");
       }
-      element.className=`signal ${item.type==="collision"?"collision-band":item.type==="jam"?"jam-band":""}`;
-      element.style.setProperty("--signal",item.colour);
-      element.querySelector(".signal-label").textContent=item.label;
+      element.classList.toggle("csma-jam",isJam);
+      element.classList.toggle("csma-colliding-frame",!!collision&&!isCollision);
+      element.style.setProperty("--signal",isCollision?"var(--lab-bad)":isJam?"var(--lab-concept-amber,#c9782c)":item.colour);
+      const packet=element.querySelector(".csma-packet");
+      if(packet){
+        packet.title=isJam?`Jam signal from ${source}`:item.label;
+        packet.setAttribute("aria-label",packet.title);
+        element.querySelector(".csma-owner").textContent=isJam?"Jam":source;
+        packet.classList.toggle("is-damaged",!!collision&&!enteringCollision);
+        packet.style.setProperty("--collision-offset",source==="A"?"-22px":"22px");
+      }
+      element.classList.toggle("is-arriving",enteringCollision);
+      let collisionReleased=!enteringCollision||reduceMotion;
+      const paint=()=>{
+        if(generation!==signalRender||!element.isConnected)return;
+        if(isCollision&&!collisionReleased)return;
+        const trail=element.querySelector(".csma-trail");
+        trail.style.left=canvasPercent(item.start)+"%";trail.style.width=(item.end-item.start)*.9+"%";
+        if(isCollision){
+          element.querySelector(".left").style.left=canvasPercent(item.start)+"%";
+          element.querySelector(".right").style.left=canvasPercent(item.end)+"%";
+        }else{
+          const goesRight=!destination?source!=="C":STATIONS[destination].position>origin;
+          const front=goesRight?item.end:item.start;
+          const end=destination?(goesRight?Math.min(front,STATIONS[destination].position):Math.max(front,STATIONS[destination].position)):front;
+          const position=canvasPercent(collision?50:end)+"%";
+          const approaching=step.phase==="Send"&&step.signals.length===2;
+          // Keep the packet glyphs separate before collision on narrow canvases.
+          packet.style.left=approaching
+            ? `${goesRight?"min":"max"}(${position}, calc(50% ${goesRight?"-":"+"} 24px))`
+            : position;
+          packet.dataset.direction=goesRight?"right":"left";
+        }
+      };
+      if(created&&!reduceMotion)requestAnimationFrame(()=>requestAnimationFrame(paint));else paint();
+      if(enteringCollision)setTimeout(()=>{
+        if(generation!==signalRender)return;
+        collisionReleased=true;
+        element.classList.remove("is-arriving");
+        if(packet)packet.classList.add("is-damaged");
+        if(isCollision)requestAnimationFrame(paint);
+      },reduceMotion?0:620);
     });
   }
 
@@ -3185,7 +3406,7 @@ window.LabDesign = {
     const token=++playToken;
     render();
     while(playing&&stepIndex<steps.length-1){
-      const current=await wait(STEP_DELAY,token);
+      const current=await wait(reduceMotion?STEP_DELAY:["Collision","Detect"].includes(steps[stepIndex].phase)?1800:STEP_DELAY,token);
       if(!current||!playing) return;
       stepIndex++;
       render();
@@ -3193,10 +3414,7 @@ window.LabDesign = {
     playing=false;
     render();
   }
-
-  document.querySelectorAll("[data-scenario]").forEach(button=>{
-    button.addEventListener("click",()=>loadScenario(button.dataset.scenario,true));
-  });
+  $("scenarioSelect").addEventListener("change",event=>loadScenario(event.target.value,true));
   $("nextButton").addEventListener("click",()=>{
     if(stepIndex<steps.length-1){stepIndex++;render();}
   });

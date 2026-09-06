@@ -706,20 +706,7 @@ button.danger{color:var(--bad)}
 <!-- LAB_MANIFEST_HEADER_END -->
 <span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span>
   <span data-lab-authored-subtitle-slot hidden></span>
-<section class="lab-activity-bar sim-top"><div class="lab-activity-task"><strong id="lessonTitle">Start with one large broadcast domain.</strong></div><div class="sim-top-tools"><div class="story-actions">
-          <button id="resetStory" data-lab-action="reset" class="lab-action">Reset</button>
-          <button id="autoStory" class="lab-action">Play slowly</button>
-          <button id="nextStory" class="lab-action primary" data-lab-intro="ip-next" data-lab-intro-title="Follow the broadcast" data-lab-intro-copy="Advance the story to see which devices inspect the message. Completing it unlocks the subnet planner." data-priority="primary">Start story</button>
-        </div><div class="lab-toggle tab-set" aria-label="Network view" data-kind="mode" data-active-class="active">
-        <button id="flatTab" class="lab-action active">Before subnetting</button>
-        <button id="designTab" disabled class="lab-action">Your design</button>
-      </div><div id="scenarioControls" class="lab-toggle scenario-set" aria-label="Traffic story" style="margin-top:5px" data-kind="mode" data-active-class="active">
-        <button id="noiseScenario" class="lab-action active">Noisy sensor</button>
-        <button id="requestScenario" class="lab-action">Find the server</button>
-      </div><button id="ipToggle" class="ip-toggle" type="button" aria-pressed="false" aria-controls="ipStage" data-lab-intro="ip-detail" data-lab-intro-title="Inspect the next-hop decision" data-lab-intro-copy="Turn on the IP walkthrough to follow the mask comparison and the selected local or gateway address.">
-          <span class="ip-switch" aria-hidden="true"></span>
-          <span><strong>IP walkthrough</strong><small>follow one packet decision by decision</small></span>
-        </button><div id="progressDots" class="lab-checkpoints progress-dots" aria-label="Story progress"></div></div></section>
+<section class="lab-activity-bar sim-top"><div class="lab-activity-task"><strong id="lessonTitle">Start with one large broadcast domain.</strong></div><div class="sim-top-tools"><div id="progressDots" class="lab-checkpoints progress-dots" aria-label="Story progress"></div></div></section>
 
   <section class="sim-legacy panel lesson-bar">
     <div class="lesson-copy">
@@ -737,10 +724,41 @@ button.danger{color:var(--bad)}
   </section>
 
   <div class="lab-grid">
-    <section class="panel network-panel">
+    <section class="panel network-panel"><div class="lab-tool-bar"><div class="story-actions">
+          <button id="resetStory" data-lab-action="reset" class="lab-action">Reset</button>
+          <button id="autoStory" class="lab-action">Play slowly</button>
+          <button id="nextStory" class="lab-action primary" data-lab-intro="ip-next" data-lab-intro-title="Follow the broadcast" data-lab-intro-copy="Advance the story to see which devices inspect the message. Completing it unlocks the subnet planner." data-priority="primary">Start story</button>
+        </div><div class="lab-toggle tab-set" aria-label="Network view" data-kind="mode" data-active-class="active">
+        <button id="flatTab" class="lab-action active">Before subnetting</button>
+        <button id="designTab" disabled class="lab-action">Your design</button>
+      </div><div id="scenarioControls" class="lab-toggle scenario-set" aria-label="Traffic story" style="margin-top:5px" data-kind="mode" data-active-class="active">
+        <button id="noiseScenario" class="lab-action active">Noisy sensor</button>
+        <button id="requestScenario" class="lab-action">Find the server</button>
+      </div><button id="ipToggle" class="ip-toggle" type="button" aria-pressed="false" aria-controls="ipStage" data-lab-intro="ip-detail" data-lab-intro-title="Inspect the next-hop decision" data-lab-intro-copy="Turn on the IP walkthrough to follow the mask comparison and the selected local or gateway address.">
+          <span class="ip-switch" aria-hidden="true"></span>
+          <span><strong>IP walkthrough</strong><small>follow one packet decision by decision</small></span>
+        </button></div>
 
 
-      <section id="ipStage" class="ip-workbench" hidden aria-live="polite">
+
+
+      <div class="canvas-shell">
+        <div class="network-stage">
+          <div id="networkCanvas" class="network-canvas lab-kit-canvas" data-grid="square" role="img" aria-label="Animated logical campus network" data-lab-role="model">
+            <div id="zoneLayer" class="zone-layer"></div>
+            <svg id="networkSvg" class="network-svg" aria-hidden="true"></svg>
+            <div id="nodeLayer" class="node-layer"></div>
+            <div id="packetLayer" class="packet-layer"></div>
+            <div id="overlayLayer" class="overlay-layer" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="canvasCaption" class="sim-legacy canvas-caption">
+        <strong id="captionTitle">What to notice</strong>
+        <span id="captionText">The dashed line is one broadcast boundary. The router is not used when both devices are inside it.</span>
+      </div>
+    <section id="ipStage" class="ip-workbench" hidden aria-live="polite">
         <div class="ip-workbench-head">
           <div>
             <span class="ip-workbench-kicker">Who is processing the packet?</span>
@@ -766,27 +784,9 @@ button.danger{color:var(--bad)}
           </section>
         </div>
         <div id="ipInsight" class="ip-insight"></div>
-      </section>
+      </section></section>
 
-      <div class="canvas-shell">
-        <div class="network-stage">
-          <div id="networkCanvas" class="network-canvas lab-kit-canvas" data-grid="square" role="img" aria-label="Animated logical campus network" data-lab-role="model">
-            <div id="zoneLayer" class="zone-layer"></div>
-            <svg id="networkSvg" class="network-svg" aria-hidden="true"></svg>
-            <div id="nodeLayer" class="node-layer"></div>
-            <div id="packetLayer" class="packet-layer"></div>
-            <div id="overlayLayer" class="overlay-layer" aria-live="polite"></div>
-          </div>
-        </div>
-      </div>
-
-      <div id="canvasCaption" class="sim-legacy canvas-caption">
-        <strong id="captionTitle">What to notice</strong>
-        <span id="captionText">The dashed line is one broadcast boundary. The router is not used when both devices are inside it.</span>
-      </div>
-    </section>
-
-    <aside class="lab-sidebar panel planner"><section class="lab-evidence-card"><h2>Current network decision</h2><div id="storyCard" class="story-card" data-lab-role="evidence">
+    <aside class="lab-sidebar panel planner"><section class="lab-evidence-card"><div id="storyCard" class="story-card" data-lab-role="evidence">
         <div>
           <div id="stepKicker" class="step-kicker">Ready</div>
           <strong id="storyTitle">One IoT sensor starts searching for a service.</strong>
@@ -801,7 +801,7 @@ button.danger{color:var(--bad)}
     </div></section>
       <div class="planner-head">
         <strong id="plannerTitle">Redraw the boundary</strong>
-        <span id="plannerDetail">Group departments into smaller local networks. Address details stay hidden unless opened.</span>
+        <span id="plannerDetail">Group departments into smaller local networks.</span>
       </div>
 
       <div id="lockedPlanner" class="locked-planner">
@@ -809,8 +809,8 @@ button.danger{color:var(--bad)}
           <div class="locked-icon">
             <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
           </div>
-          <strong>First, see the problem.</strong>
-          <span>Finish either traffic story on the large network. The planner will then unlock.</span>
+          <strong>Subnet design locked.</strong>
+          <span>Finish a traffic story to unlock the planner.</span>
         </div>
       </div>
 
@@ -848,7 +848,7 @@ button.danger{color:var(--bad)}
           </div>
         </details>
       </div>
-    <section class="lab-evidence-card"><h2>What the evidence establishes</h2><section class="panel takeaway">
+    <section class="lab-evidence-card"><section class="panel takeaway">
     <div>
       <strong id="takeawayTitle">A broadcast is local, not private.</strong>
       <span id="takeawayText">A switch copies a broadcast to every device inside the same broadcast domain. A router marks the boundary.</span>
@@ -2111,7 +2111,7 @@ result: ${d.local?"same subnet → send directly":"different subnet → use gate
     }
     $("ipStage").hidden=true;document.querySelector("main").classList.remove("ip-mode");
     const title=state.scenario==="request"?"A classroom laptop needs the learning server.":"One IoT sensor starts searching for a service.";
-    const text="Start the story. The network pauses after every decision.";
+    const text="Track how far one broadcast travels.";
     $("storyCard").className="story-card";$("stepKicker").textContent="Ready";$("storyTitle").textContent=title;$("storyText").textContent=text;
     setCaption("What to notice",state.mode==="flat"?"The dashed line is one large broadcast boundary. Local traffic does not pass through the router.":"Each dashed line is a separate broadcast boundary. The router joins them without forwarding broadcasts.");
     renderProgress(storySteps().length,-1);updateMetrics(0,0,state.mode==="flat"?"Whole campus":"One subnet");
@@ -2177,7 +2177,7 @@ result: ${d.local?"same subnet → send directly":"different subnet → use gate
       $("lessonTitle").textContent=state.mode==="flat"?"Start with one large broadcast domain.":"Your smaller local networks.";
       $("lessonDetail").textContent=state.mode==="flat"?"Watch one noisy sensor force every device to inspect the same local message.":"Replay the same traffic and compare where broadcasts stop.";
       $("plannerTitle").textContent="Redraw the boundary";
-      $("plannerDetail").textContent="Group departments into smaller local networks. Address details stay hidden unless opened.";
+      $("plannerDetail").textContent="Group departments into smaller local networks.";
     }
   }
   function setIpView(next){

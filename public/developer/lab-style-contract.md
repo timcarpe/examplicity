@@ -556,11 +556,46 @@ nested borders. Selects retain the shared native keyboard/touch behaviour.
 For older mode controls, explicit `data-active-class` on `lab-toggle` mirrors
 that class into `aria-pressed`; the lab still owns selection and availability.
 
-Preserve a comparison's spatial relationship. DNS keeps browser, transfer paths
-and servers together, placing navigation evidence beneath the browser. Parity
-keeps sender/channel/receiver matrices aligned, with receiver results in its
-right column. TCP/IP keeps the remaining packet inline beneath receiver gates
-so header removal can be examined without an overlay. Packet identity colours
-remain separate from validation colours. Fit model regions without internal
-scrollbars; long evidence can extend down the page. Dense instrument and device
-annotations may need explicit size exceptions when fitting a phone viewport.
+Preserve a comparison's spatial relationship: function determines composition.
+The shared language does not prescribe a right sidebar. Packet Switching keeps
+sender, router network and receiver in three columns at desktop widths. TCP/IP
+keeps the shell rack, packing mat, link and receiver together; a compact moving
+list of remaining layers has its own lane beside the detailed gate reads. DNS 1
+and DNS 2 remain side by side. Parity aligns all three matrices and places
+transmission evidence in a horizontal strip above them.
+
+The goal bar contains the mission, generic actions and cross-lab controls.
+Lab-specific construction, playback, conductor, sample and inspection controls
+belong in `lab-tool-bar` / `sim-tool-row` immediately below it and above the
+model. Checkpoint-like topology choices may stay in the goal bar. Move, Cable
+and Delete are distinct tool buttons (`lab-tool-buttons`), not a segmented mode
+toggle. Discrete settings with named choices can use a labelled native select
+(`lab-menu-field`), including an explicit Off choice where appropriate.
+
+Use `lab-evidence-strip` for parallel observations. A claim or confidentiality
+test sits above its canvas, keeping the question and current outcomes together.
+An optional detailed walkthrough can sit below the model it explains. Preserve
+useful causal explanation; remove duplicate procedural commands once an
+interaction hint owns them.
+
+Simple device illustrations use flat approved concept tints, white readable
+screens, thin strokes and rounded corners. Physical parts retain their distinct
+silhouettes and connector identities. A draggable token combines a grip, grab
+cursor and the shared first-interaction hint; that hint belongs to the token,
+not its reset/return action. Transfer paths meet actual device/track endpoints
+and distinguish direction and signal state without competing glow or gradients.
+Space for captures and variable content grows with that content; do not crop
+device shadows or overlay a second device on the first.
+
+Packet identity colours remain separate from validation colours. Fit model
+regions without internal scrollbars; evidence can extend down the page. At
+narrow widths retain the logical order and essential comparisons. Device
+annotations need readable rendered sizes, accounting for any model scaling.
+These are presentation patterns, not a task-scope or approval policy.
+
+Packet collision presentation: use small travelling frame markers with faint
+reached-signal trails. At a clash, both frames stop and become visibly damaged;
+a red impact and outward corruption cues precede distinct amber Jam markers.
+Do not let intact packet markers pass through a collision. Pause long enough
+to distinguish clash, detection, jam, random wait and retry. Reduced motion
+retains those states without travel or impact animation.

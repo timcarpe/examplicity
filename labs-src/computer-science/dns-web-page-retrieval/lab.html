@@ -420,7 +420,7 @@ button,input{font:inherit}button{min-height:34px;border:1px solid var(--line);bo
   </section>
 
   <section class="sim-composition panel arch-panel">
-    <div class="architecture">
+    <div class="architecture"><svg id="transferConnections" class="lab-transfer-connections" aria-hidden="true"></svg>
       <section id="browser" class="component browser" aria-label="Web browser" data-lab-role="model">
         <div class="sim-component-head component-head"><div><strong>Web browser</strong><span>The URL, returned IP, page request and rendered result stay visible in one place.</span></div><span id="browserState" class="state-chip">ready</span></div>
         <div class="browser-frame">
@@ -472,7 +472,7 @@ button,input{font:inherit}button{min-height:34px;border:1px solid var(--line);bo
         <div class="dns-chain-shell">
           <div class="dns-chain">
             <section id="dns1" class="dns-node" aria-label="DNS 1 resolver">
-              <div class="dns-node-head"><div class="dns-badge">DNS 1</div><div><strong>Resolver</strong><span>Closest DNS service to the browser.</span></div><div class="dns-leds"><i class="dns-led power"></i><i class="dns-led activity"></i></div></div>
+              <div class="dns-node-head"><div class="dns-badge"><svg class="lab-device-glyph" viewBox="0 0 40 36" aria-hidden="true"><rect x="5" y="3" width="30" height="29" rx="5"/><path d="M10 11h20M10 19h20M10 26h12"/><circle cx="29" cy="26" r="1"/></svg><span>DNS 1</span></div><div><strong>Resolver</strong><span>Closest DNS service to the browser.</span></div><div class="dns-leds"><i class="dns-led power"></i><i class="dns-led activity"></i></div></div>
               <div class="dns-console"><div id="dns1QueryCell" class="console-cell"><small>Query</small><strong id="dns1QueryValue">waiting</strong></div><div id="dns1ResultCell" class="console-cell"><small>Result</small><strong id="dns1ResultValue">—</strong></div></div>
               <div class="dns-section-title">DNS 1 local cache</div>
               <div id="dns1Cache" class="cache-list"></div>
@@ -488,7 +488,7 @@ button,input{font:inherit}button{min-height:34px;border:1px solid var(--line);bo
             </div>
 
             <section id="dns2" class="dns-node" aria-label="DNS 2 directory server">
-              <div class="dns-node-head"><div class="dns-badge">DNS 2</div><div><strong>Directory server</strong><span>Holds mappings DNS 1 may need to ask for.</span></div><div class="dns-leds"><i class="dns-led power"></i><i class="dns-led activity"></i></div></div>
+              <div class="dns-node-head"><div class="dns-badge"><svg class="lab-device-glyph" viewBox="0 0 40 36" aria-hidden="true"><rect x="5" y="3" width="30" height="29" rx="5"/><path d="M10 11h20M10 19h20M10 26h12"/><circle cx="29" cy="26" r="1"/></svg><span>DNS 2</span></div><div><strong>Directory server</strong><span>Holds mappings DNS 1 may need to ask for.</span></div><div class="dns-leds"><i class="dns-led power"></i><i class="dns-led activity"></i></div></div>
               <div class="dns-console"><div id="dns2QueryCell" class="console-cell"><small>Query</small><strong id="dns2QueryValue">waiting</strong></div><div id="dns2ResultCell" class="console-cell"><small>Result</small><strong id="dns2ResultValue">—</strong></div></div>
               <div class="dns-section-title">DNS 2 directory · editable</div>
               <div id="dns2Directory" class="directory-list"></div>
@@ -691,6 +691,29 @@ button,input{font:inherit}button{min-height:34px;border:1px solid var(--line);bo
   $("resetBtn").addEventListener("click",()=>{dns1Cache={...DNS1_DEFAULT};learnedDomains=new Set();dns2Records={...DNS2_DEFAULT};$("urlInput").value=BOOKMARKS[0].url;renderURLParts();renderDNS1Cache();renderDNS2();renderServers();renderBookmarks();resetNavigationVisuals(false);blankPage();setMicro("Ready.","Choose one of the three browser bookmarks, then click Go.");setOperation("URL waiting in browser");setProgress();});
 
   renderURLParts();renderDNS1Cache();renderDNS2();renderServers();renderBookmarks();resetNavigationVisuals(false);blankPage();setProgress();
+  let connectionFrame=0;
+  function queueConnections(){cancelAnimationFrame(connectionFrame);connectionFrame=requestAnimationFrame(drawConnections);}
+  function drawConnections(){
+    const root=document.querySelector(".architecture"),svg=$("transferConnections"),base=root.getBoundingClientRect();
+    svg.setAttribute("viewBox",`0 0 ${base.width} ${base.height}`);svg.replaceChildren();
+    if(base.width<850)return;
+    const server=document.querySelector(".server-card.active,.server-card.good,.server-card.warn")||document.querySelector(".server-card");
+    [["queryBus",$("browser"),$("dns1")],["ipBus",$("browser"),$("dns1")],["requestBus",$("browser"),server],["htmlBus",$("browser"),server]].forEach(([id,from,to])=>{
+      const route=$(id),track=route?.querySelector(".bus-track");if(!track||!to)return;
+      const t=track.getBoundingClientRect(),a=from.getBoundingClientRect(),b=to.getBoundingClientRect(),y=t.top+t.height/2-base.top;
+      const ay=Math.max(a.top+16,Math.min(a.bottom-16,t.top+t.height/2))-base.top;
+      const by=Math.max(b.top+16,Math.min(b.bottom-16,t.top+t.height/2))-base.top;
+      const x1=a.right-base.left,x2=t.left-base.left,x3=t.right-base.left,x4=b.left-base.left;
+      const path=document.createElementNS("http://www.w3.org/2000/svg","path");
+      path.setAttribute("d",`M${x1} ${ay} H${(x1+x2)/2} V${y} H${x2} M${x3} ${y} H${(x3+x4)/2} V${by} H${x4}`);
+      path.dataset.route=id;path.classList.toggle("active",route.classList.contains("active"));svg.append(path);
+    });
+  }
+  new ResizeObserver(queueConnections).observe(document.querySelector(".architecture"));
+  new MutationObserver(queueConnections).observe($("servers"),{subtree:true,attributes:true,attributeFilter:["class"]});
+  ["queryBus","ipBus","requestBus","htmlBus"].forEach(id=>new MutationObserver(queueConnections).observe($(id),{attributes:true,attributeFilter:["class"]}));
+  queueConnections();
+
 })();
 </script>
 </body>

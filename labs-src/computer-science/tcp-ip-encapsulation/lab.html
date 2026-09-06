@@ -522,10 +522,10 @@ h1{margin:0;font-size:28px;font-weight:640;letter-spacing:-.03em;line-height:1.1
           <div class="wire-line"></div>
           <div id="flightPacket" class="flight-packet"><i class="mini-shell link"></i><i class="mini-shell ip"></i><i class="mini-shell tcp"></i><i class="mini-core"></i></div>
         </div>
-        <button id="sendButton" class="lab-action primary send-button" type="button" data-lab-intro="tcp-send" data-lab-intro-title="Test the outermost header" data-lab-intro-copy="Choose shells to wrap the current object, then send it. The receiver rejects an outer format it cannot interpret." data-priority="primary">Send what I built</button>
+        <button id="sendButton" class="lab-action primary send-button" type="button" data-lab-intro="tcp-send" data-lab-intro-title="Test the outermost header" data-lab-intro-copy="Choose shells to wrap the current object, then send it. The receiver rejects an outer format it cannot interpret." data-priority="primary">Send packet</button>
       </section>
 
-      <section class="lab-sidebar station receiver-station lab-kit-panel">
+      <section class="station receiver-station lab-kit-panel">
         <div class="station-title"><strong>Receiver unpacking tunnel</strong><span>The outside is inspected first. A successful layer removes only its own header and exposes the payload.</span></div>
         <div id="receiverMap" class="receiver-map">
           <div class="receiver-spine"></div>
@@ -680,10 +680,11 @@ h1{margin:0;font-size:28px;font-weight:640;letter-spacing:-.03em;line-height:1.1
   }
   function showReceiverPacket(wrappers,step=0){
     const host=$('receiverPacket');
-    host.innerHTML=packetMarkup(wrappers,{interactive:false});
+    host.innerHTML='<span class="receiver-object-label">Outside first</span>'+[...wrappers].reverse().map(type=>`<span class="receiver-layer ${type}">${defs[type].protocol}</span>`).join('')+`<span class="receiver-layer app">${currentService().protocol}</span>`;
     host.classList.add('visible');
-    const bottoms=[18,80,145,210];
-    host.style.bottom=`${bottoms[Math.min(step,bottoms.length-1)]}px`;
+    const layers=['link','internet','transport','application'];
+    const gate=document.querySelector(`.gate[data-gate="${layers[Math.min(step,3)]}"]`);
+    host.style.top=gate.offsetTop+'px';host.style.bottom='auto';
   }
   function structuralFailure(expected,actual){
     const expectedName=defs[expected].protocol,actualName=actual?defs[actual].protocol:currentService().protocol;

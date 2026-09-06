@@ -674,7 +674,9 @@ h1{margin:0;font-size:27px;letter-spacing:-.025em}
 <!-- LAB_MANIFEST_HEADER_END -->
 <span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span>
   <span data-lab-authored-subtitle-slot hidden></span>
-<section class="lab-activity-bar sim-top"><div class="lab-activity-task"><strong id="labTaskTitle">Compare how the same byte survives different connections.</strong></div><div class="sim-top-tools"><div class="lab-toggle wire-picker" aria-label="Wire type" data-kind="mode" data-active-class="active">
+<section class="lab-activity-bar sim-top"><div class="lab-activity-task"><strong id="labTaskTitle">Compare how the same byte survives different connections.</strong></div><div class="sim-top-tools"><button id="resetLab" data-lab-action="reset" class="lab-action">Reset</button></div></section>
+
+  <section class="sim-tool-row panel toolbar"><label class="lab-menu-field" for="wireType"><span>Conductor</span><select id="wireType"><option value="basic">Basic copper</option><option value="braided">Braided copper</option></select></label><label class="lab-menu-field" for="checkingMethod"><span>Checking</span><select id="checkingMethod" data-lab-intro="wire-protocol" data-lab-intro-title="Test a return path" data-lab-intro-copy="Echo compares a returned copy; parity uses ACK or NACK. Both need a reverse TX to RX connection."><option value="none">Off</option><option value="echo">Echo comparison</option><option value="parity">Even parity</option></select></label><div class="sim-legacy lab-toggle wire-picker" aria-label="Wire type" data-kind="mode" data-active-class="active">
       <button class="wire-choice active" data-wire="basic" title="Plain copper weakens at long path lengths and is vulnerable near interference or tightly packed parallel traces.">
         <svg viewBox="0 0 42 22" aria-hidden="true">
           <path d="M2 11H40" stroke="#402719" stroke-width="8" stroke-linecap="round"/>
@@ -691,12 +693,10 @@ h1{margin:0;font-size:27px;letter-spacing:-.025em}
         </svg>
         <span><strong>Braided copper</strong><span>one paired cable</span></span>
       </button>
-    </div><div class="lab-toggle protocol-picker" aria-label="Error checking" data-kind="mode" data-active-class="active">
+    </div><div class="sim-legacy lab-toggle protocol-picker" aria-label="Error checking" data-kind="mode" data-active-class="active">
       <button id="echoToggle" class="protocol-toggle" title="Echo checking needs a complete return path. The receiver sends the received byte back and the sender compares it with the original." data-lab-intro="wire-protocol" data-lab-intro-title="Test a return path" data-lab-intro-copy="Echo and parity need a complete return connection. Select the active method again to turn checking off.">ECHO<small>compare return</small></button>
       <button id="parityToggle" class="protocol-toggle" title="Even parity needs a complete return path. The receiver sends ACK if parity passes or NACK if parity fails.">PARITY<small>ACK / NACK</small></button>
-    </div><button id="resetLab" data-lab-action="reset" class="lab-action">Reset</button></div></section>
-
-  <section class="sim-tool-row panel toolbar">
+    </div>
 
 
 
@@ -852,7 +852,7 @@ h1{margin:0;font-size:27px;letter-spacing:-.025em}
     draft=null;
     looseDrag=null;
     groupCycles=new Map();
-    protocolMode="none";
+    protocolMode="none";$("wireType").value="basic";
     protocolWarningKey="";
     eventThrottle=new Map();
     noise={...DEFAULT_NOISE};
@@ -995,29 +995,14 @@ h1{margin:0;font-size:27px;letter-spacing:-.025em}
 
     $("nodeLayer").querySelectorAll("[data-drag-node]").forEach(handle=>{
       handle.addEventListener("pointerdown",event=>{
-        if(event.target.closest("button,select")) return;
+        if(event.button!==0||event.target.closest("button,select")) return;
         suspendSimulationForManipulation();
-        movingNode={nodeId:handle.dataset.dragNode,pointerId:event.pointerId};
-        handle.setPointerCapture(event.pointerId);
+        const rect=$("canvas").getBoundingClientRect(),node=nodes.get(handle.dataset.dragNode);
+        movingNode={nodeId:node.id,pointerId:event.pointerId,
+          offsetX:event.clientX-rect.left-node.x*rect.width/100,
+          offsetY:event.clientY-rect.top-node.y*rect.height/100};
+        $("canvas").setPointerCapture(event.pointerId);
         event.preventDefault();
-      });
-      handle.addEventListener("pointermove",event=>{
-        if(!movingNode||movingNode.pointerId!==event.pointerId) return;
-        const rect=$("canvas").getBoundingClientRect();
-        const node=nodes.get(movingNode.nodeId);
-        node.x=clamp((event.clientX-rect.left)/rect.width*100,11,89);
-        node.y=clamp((event.clientY-rect.top)/rect.height*100,22,79);
-        const device=$("nodeLayer").querySelector(`[data-node-id="${node.id}"]`);
-        device.style.left=`${node.x}%`;
-        device.style.top=`${node.y}%`;
-        renderWires();
-        updateMode();
-      });
-      handle.addEventListener("pointerup",event=>{
-        if(!movingNode||movingNode.pointerId!==event.pointerId) return;
-        movingNode=null;
-        renderAll();
-        restartSimulation();
       });
       handle.addEventListener("keydown",event=>{
         if(!["ArrowLeft","ArrowRight","ArrowUp","ArrowDown"].includes(event.key)) return;
@@ -1095,6 +1080,30 @@ h1{margin:0;font-size:27px;letter-spacing:-.025em}
       });
     });
   }
+
+
+  // Capture on the stable canvas: device headers may be replaced by a render.
+  window.addEventListener("pointermove",event=>{
+    if(!movingNode||movingNode.pointerId!==event.pointerId)return;
+    if(event.buttons===0){finishDeviceDrag(event);return;}
+    const rect=$("canvas").getBoundingClientRect(),node=nodes.get(movingNode.nodeId);
+    const device=$("nodeLayer").querySelector(`[data-node-id="${node.id}"]`);
+    const halfW=device.offsetWidth/2+12,halfH=device.offsetHeight/2+12;
+    node.x=clamp(event.clientX-rect.left-movingNode.offsetX,halfW,Math.max(halfW,rect.width-halfW))/rect.width*100;
+    node.y=clamp(event.clientY-rect.top-movingNode.offsetY,halfH,Math.max(halfH,rect.height-halfH))/rect.height*100;
+    device.style.left=`${node.x}%`;device.style.top=`${node.y}%`;
+    renderWires();updateMode();
+  });
+  function finishDeviceDrag(event){
+    if(!movingNode||(event?.pointerId!=null&&event.pointerId!==movingNode.pointerId))return;
+    const pointer=movingNode.pointerId;movingNode=null;
+    if($("canvas").hasPointerCapture(pointer))$("canvas").releasePointerCapture(pointer);
+    renderAll();restartSimulation();
+  }
+  window.addEventListener("pointerup",finishDeviceDrag);
+  window.addEventListener("pointercancel",finishDeviceDrag);
+  $("canvas").addEventListener("lostpointercapture",finishDeviceDrag);
+  window.addEventListener("blur",()=>finishDeviceDrag());
 
   function changeCount(nodeId,type,delta){
     const node=nodes.get(nodeId);
@@ -1884,6 +1893,7 @@ h1{margin:0;font-size:27px;letter-spacing:-.025em}
   }
 
   function applyWireType(type){
+    $("wireType").value=type;
     selectedWire=type;
     document.querySelectorAll(".wire-choice").forEach(button=>button.classList.toggle("active",button.dataset.wire===type));
     if(!selectedConnections.size) return;
@@ -2317,6 +2327,7 @@ h1{margin:0;font-size:27px;letter-spacing:-.025em}
   }
 
   function updateProtocolButtons(){
+    $("checkingMethod").value=protocolMode;
     $("echoToggle").classList.toggle("active",protocolMode==="echo");
     $("parityToggle").classList.toggle("active",protocolMode==="parity");
   }
@@ -2391,6 +2402,8 @@ h1{margin:0;font-size:27px;letter-spacing:-.025em}
   });
 
   document.querySelectorAll(".wire-choice").forEach(button=>button.addEventListener("click",()=>applyWireType(button.dataset.wire)));
+  $("wireType").addEventListener("change",e=>applyWireType(e.target.value));
+  $("checkingMethod").addEventListener("change",e=>setProtocol(e.target.value));
   $("echoToggle").addEventListener("click",()=>setProtocol("echo"));
   $("parityToggle").addEventListener("click",()=>setProtocol("parity"));
   $("addDevice").addEventListener("click",addDevice);

@@ -597,7 +597,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 <!-- LAB_MANIFEST_HEADER_END -->
 <span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span>
 <span data-lab-authored-subtitle-slot hidden></span>
-<section class="lab-activity-bar sim-top"><div class="lab-activity-task"><strong id="labTaskTitle">Test which transmission errors parity detects and how ARQ responds.</strong></div><div class="sim-top-tools"><button id="resetAll" data-lab-action="reset" class="lab-action">Reset transmission</button><button id="deliver" class="lab-action primary" data-lab-intro="parity-send" data-lab-intro-title="Compare the received frame" data-lab-intro-copy="Transmit unchanged or altered data. Inspect the parity checks and reply, then use ARQ resend when offered." data-priority="primary">Transmit DATA frame</button><button id="arqButton" hidden data-lab-intro="parity-resend" data-lab-intro-title="Retry from the sender" data-lab-intro-copy="Resend the original frame after a NAK or timeout. The received result updates from this new transmission." class="lab-action" data-priority="primary">ARQ resend</button></div></section>
+<section class="lab-activity-bar sim-top"><div class="lab-activity-task"><strong id="labTaskTitle">Test which transmission errors parity detects and how ARQ responds.</strong></div><div class="sim-top-tools"><button id="resetAll" data-lab-action="reset" class="lab-action">Reset transmission</button></div></section>
 
 <section class="panel">
   <div class="sim-tool-row controls">
@@ -621,7 +621,11 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
     </div>
     <label class="switch-line"><input id="dropReply" type="checkbox"> Lose the next ACK or NAK</label>
 
-  </div>
+  <div class="channel-tools stage-tools">
+        <button id="randomOne" data-lab-intro="parity-flip" data-lab-intro-title="Introduce a transmission error" data-lab-intro-copy="Flip a random channel bit or select one in the blue copy. The sender stays unchanged. Transmit to test detection." class="lab-action">Flip 1 random bit</button>
+        <button id="undoNoise" class="lab-action">Undo</button>
+        <button id="clearNoise" class="lab-action">Clear errors</button>
+      </div><button id="deliver" class="lab-action primary" data-lab-intro="parity-send" data-lab-intro-title="Compare the received frame" data-lab-intro-copy="Transmit unchanged or altered data. Inspect the parity checks and reply, then use ARQ resend when offered." data-priority="primary">Transmit DATA frame</button><button id="arqButton" hidden data-lab-intro="parity-resend" data-lab-intro-title="Retry from the sender" data-lab-intro-copy="Resend the original frame after a NAK or timeout. The received result updates from this new transmission." class="lab-action" data-priority="primary">ARQ resend</button></div>
   <div class="meta">
     <span id="messageMeta"></span>
     <div id="protocol" class="protocol"></div>
@@ -653,7 +657,24 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
     </div>
 
   </div>
-</section>
+<aside class="lab-evidence-strip transmission-rail" aria-label="Transmit and inspect received data"><section class="lab-evidence-card"><h2>Current transmission</h2><div id="phaseLabel">Frame encoded. Edit the blue channel copy or transmit it unchanged.</div></section>
+
+      <div id="resultPanel" class="rail-result" data-lab-role="evidence">
+        <div id="resultTitle" class="result-title">Ready to transmit</div>
+        <div id="resultDetail" class="result-detail">Change a blue in-transit bit, or send the unaltered frame.</div>
+      </div>
+
+      <div class="decoded">
+        <span class="decoded-label">Decoded text</span>
+        <span id="decodedText" class="decoded-value">—</span>
+        <span class="decoded-label">Original</span>
+        <span id="originalText" class="decoded-original">NETWORK TEST</span>
+        <span id="decodedNote" class="decoded-note">Transmit the frame to decode the received 7-bit characters.</span>
+      </div>
+    <section class="lab-evidence-card"><h2>Reply and retry</h2><div class="arq-explainer">
+  <strong>How ARQ responds</strong>
+  <span>ACK accepts the frame; NAK reports a detected error; no reply causes a timeout. A NAK or timeout triggers a resend. Undetected corruption cannot trigger ARQ.</span>
+</div></section></aside></section>
 
 <section class="panel stage-panel">
   <div class="sim-parity-grid stage-grid">
@@ -672,11 +693,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
         <div class="stage-title-line"><div class="stage-title">In transit</div><span class="access-chip editable">Editable</span></div>
         <div class="stage-note">only this blue copy<br>can be changed</div>
       </div>
-      <div class="channel-tools stage-tools">
-        <button id="randomOne" data-lab-intro="parity-flip" data-lab-intro-title="Introduce a transmission error" data-lab-intro-copy="Flip a random channel bit or select one in the blue copy. The sender stays unchanged. Transmit to test detection." class="lab-action">Flip 1 random bit</button>
-        <button id="undoNoise" class="lab-action">Undo</button>
-        <button id="clearNoise" class="lab-action">Clear errors</button>
-      </div>
+
       <div id="channelBlocks" class="blocks"></div>
     </div>
 
@@ -688,24 +705,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
         <div class="stage-note" id="receiverNote">row + column<br>parity checks</div>
       </div>
       <div id="receiverBlocks" class="blocks"></div>
-    <aside class="lab-sidebar transmission-rail" aria-label="Transmit and inspect received data"><section class="lab-evidence-card"><h2>Current transmission</h2><div id="phaseLabel">Frame encoded. Edit the blue channel copy or transmit it unchanged.</div></section>
-
-      <div id="resultPanel" class="rail-result" data-lab-role="evidence">
-        <div id="resultTitle" class="result-title">Ready to transmit</div>
-        <div id="resultDetail" class="result-detail">Change a blue in-transit bit, or send the unaltered frame.</div>
-      </div>
-
-      <div class="decoded">
-        <span class="decoded-label">Decoded text</span>
-        <span id="decodedText" class="decoded-value">—</span>
-        <span class="decoded-label">Original</span>
-        <span id="originalText" class="decoded-original">NETWORK TEST</span>
-        <span id="decodedNote" class="decoded-note">Transmit the frame to decode the received 7-bit characters.</span>
-      </div>
-    <section class="lab-evidence-card"><h2>Reply and retry</h2><div class="arq-explainer">
-  <strong>How ARQ responds</strong>
-  <span>ACK accepts the frame; NAK reports a detected error; no reply causes a timeout. A NAK or timeout triggers a resend. Undetected corruption cannot trigger ARQ.</span>
-</div></section></aside></div>
+    </div>
   </div>
 </section>
 

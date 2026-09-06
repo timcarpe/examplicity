@@ -986,3 +986,53 @@ Batch 5 implementation notes:
 
 Batch 5 implementation: `49f3853`; canonical shared resource/guide: `b1b85e7`.
 Ten implementation maps are pinned to that source revision.
+
+
+## Batch 5 correction — preserve the model's spatial intent
+
+Review supersedes the initial Batch 5 layout choices above. Change list:
+- Restore Packet Switching's sender / network / receiver columns and TCP/IP's
+  protocol rack / packing / link / unpacking arrangement.
+- Keep generic controls in the goal bar; move construction, playback, wire and
+  inspection tools into a shared secondary tool row. Tools are not mode toggles.
+- CSMA: scenario dropdown, packet-style propagation and collision cues, lighter station imagery.
+- Transmission: flatter device illustration and stable, offset-preserving drag
+  handling with release/cancel cleanup.
+- DNS: resolver and directory side by side, connected transfer paths, flat devices.
+- Encryption: confidentiality context above model, draggable key cues, readable
+  plaintext/key states, room for Eve and capture evidence without clipping.
+- IPv4: IP walkthrough below model; compact causal evidence and planner at right.
+- Topology: draggable parts above model, separate tool buttons and clearer devices.
+- Parity: aligned comparison matrices and horizontal transmission evidence.
+- Sound: playback below goal bar, clearer settings and taller stored-sample area.
+
+SVG/device changes listed here were expressly requested. Teaching behavior,
+addressing rules, packet/error identity and embedded audio remain intact. Record
+actual outcomes and checks below; implementation maps remain observational.
+
+
+CSMA animation review: replaced solid signal bands with compact, station-coloured
+packet markers and faint reached-signal trails. Opposing frames stop at the clash,
+turn into damaged frames with a red impact marker, then yield to distinct amber
+Jam markers. Red outward cues show corruption spreading before sender detection;
+random backoff and sequential retries remain. Playback holds collision/detection
+longer, and reduced motion shows the same evidence immediately. Busy now reaches
+all listening stations; jam extents reach B, matching the existing narration.
+
+Correction outcomes: restored the intentional Packet Switching and TCP/IP layouts;
+kept the DNS pair side by side; moved lab-specific tools and transmission evidence
+to secondary rows; retained IPv4's planner with its walkthrough below the model.
+Shared CSS owns the reusable toolbar, menus, evidence strips, device treatment and
+layout adapters. Local edits connect controls to existing state and repair dragging,
+endpoint geometry, encryption capture space and CSMA animation. Sound's audio and
+the simulations' assessment rules remain unchanged. The canonical guide and authoring
+bundle are synchronized into `/developer` and embedded lab downloads.
+
+Checks: ten interaction smoke tests passed. All ten initial views were checked at
+1422, 900 and 390 px with no page overflow, internal canvas scrolling or script
+errors. Targeted checks covered drag release/cancel outside the canvas, four full
+encryption captures, parity matrix alignment, IPv4 subnet assignment, and CSMA
+collision/jam/backoff, rapid stepping and narrow/reduced-motion presentation.
+Compiler, embedded style/content, download and contract checks passed for all 57
+labs; developer resources and authoring bundle checks passed. Implementation maps
+describe the revised controls and layouts without changing exam alignment.

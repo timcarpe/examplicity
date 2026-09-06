@@ -413,7 +413,11 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
   </section>
 
   <div class="lab-grid">
-    <section class="panel workspace">
+    <section class="panel workspace"><div class="lab-claim-context"><div class="lab-claim-context-title">Confidentiality test</div><p>Can Bob read Alice’s message while Eve cannot?</p><div class="goal-lights" aria-label="Current result">
+      <span id="wireGoal" class="goal-light"><i></i>wire protected</span>
+      <span id="bobGoal" class="goal-light"><i></i>Bob reads</span>
+      <span id="eveGoal" class="goal-light"><i></i>Eve blocked</span>
+    </div></div>
       <div class="sim-legacy workspace-head">
         <div><strong>Shared line</strong><span>The text on the line is what Bob and Eve both receive.</span></div>
 
@@ -424,7 +428,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
         <div id="board" class="board lab-kit-canvas" data-grid="square" aria-label="Interactive encryption transmission line" data-lab-role="model">
           <svg class="links" viewBox="0 0 1020 650" aria-hidden="true">
             <path class="link-base" d="M276 270 H748"/><path class="link-core" d="M276 270 H748"/>
-            <path class="branch-base" d="M608 270 V432"/><path class="branch-core" d="M608 270 V432"/>
+            <path class="branch-base" d="M608 270 V590"/><path class="branch-core" d="M608 270 V590"/>
           </svg>
           <div class="path-label">shared line</div>
           <div class="line-caption"><span>sender output</span><span>same stream on the wire</span><span>receiver input</span></div>
@@ -435,16 +439,16 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
               <div><strong>Alice</strong><span>plain-text sender</span></div>
             </div>
             <div class="monitor"><div class="screen">
-              <div class="screen-title"><span>message before transmission</span><span id="aliceState" class="screen-badge">plain text</span></div>
+              <div class="screen-title"><span>Alice’s message</span><span id="aliceState" class="screen-badge">plain text</span></div>
               <div class="composer"><textarea id="messageInput" maxlength="28" spellcheck="false" aria-label="Message to transmit" data-lab-manipulative="message">ACCESS CODE 47-B</textarea></div>
-              <div class="source-preview"><span>plain text</span><code id="sourcePreview">ACCESS CODE 47-B</code></div>
-              <div class="source-preview"><span>cipher text</span><code id="cipherPreview">same as plain text</code></div>
+              <div class="source-preview sim-legacy"><span>Message</span><code id="sourcePreview">ACCESS CODE 47-B</code></div>
+              <div class="source-preview"><span>Output to line</span><code id="cipherPreview">same as plain text</code></div>
               <button id="sendPacket" class="lab-action send-card" type="button" aria-label="Transmit the current message" data-lab-intro="crypto-send" data-lab-intro-title="Compare what each person can read" data-lab-intro-copy="Send once without keys, then place keys and send again. Keep Bob readable while preventing Eve from recovering the message." data-priority="primary">
                 <span class="envelope" aria-hidden="true"></span><span class="send-copy"><strong id="sendTitle">Send plain text</strong><span id="sendSub">No key at sender</span></span><span class="send-arrow" aria-hidden="true">→</span>
               </button>
             </div></div>
             <div id="aliceBay" class="key-bay" data-bay="alice" tabindex="0" role="button" aria-label="Alice encryption key bay">
-              <div class="bay-copy"><strong>Encryption key</strong><span id="aliceBayHint">optional</span></div><div class="bay-empty">drop encryption key</div>
+              <div class="bay-copy"><strong>Encryption key</strong><span id="aliceBayHint">optional</span></div><div class="bay-empty">No key</div>
             </div>
           </section>
 
@@ -483,7 +487,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
               <div id="bobNote" class="source-preview"><span>status</span><code>—</code></div>
             </div></div>
             <div id="bobBay" class="key-bay" data-bay="bob" tabindex="0" role="button" aria-label="Bob decryption key bay">
-              <div class="bay-copy"><strong>Decryption key</strong><span id="bobBayHint">needed for cipher text</span></div><div class="bay-empty">drop decryption key</div>
+              <div class="bay-copy"><strong>Decryption key</strong><span id="bobBayHint">needed for cipher text</span></div><div class="bay-empty">No key</div>
             </div>
           </section>
 
@@ -503,7 +507,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
                 <div id="captureHistory" class="capture-history"><div class="capture-row"><small>—</small><code>No stored captures</code><span class="capture-state locked">○</span></div></div>
               </div></div>
               <div id="eveBay" class="key-bay" data-bay="eve" tabindex="0" role="button" aria-label="Eve decryption key bay" style="margin-top:7px;grid-template-columns:1fr;align-content:start">
-                <div class="bay-copy"><strong>Decryption key</strong><span id="eveBayHint">optional</span></div><div class="bay-empty">drop decryption key</div>
+                <div class="bay-copy"><strong>Decryption key</strong><span id="eveBayHint">optional</span></div><div class="bay-empty">No key</div>
               </div>
             </div>
           </section>
@@ -516,12 +520,8 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 
     </section>
 
-    <aside class="lab-sidebar panel key-dock" aria-label="Key rack"><section class="lab-evidence-card"><h2>Confidentiality test</h2><div class="goal-lights" aria-label="Current result">
-      <span id="wireGoal" class="goal-light"><i></i>wire protected</span>
-      <span id="bobGoal" class="goal-light"><i></i>Bob reads</span>
-      <span id="eveGoal" class="goal-light"><i></i>Eve blocked</span>
-    </div></section>
-      <div class="dock-head"><div><strong id="dockTitle">Keys</strong><span id="dockSub">All K7 tokens are the same secret key.</span></div><button id="returnKeys" type="button" data-lab-intro="crypto-keys" data-lab-intro-title="Move a key" data-lab-intro-copy="Drag a key to a device bay, or select a key and then select the bay. Return keys clears every bay." class="lab-action">Return keys</button></div>
+    <aside class="lab-sidebar panel key-dock" aria-label="Key rack">
+      <div class="dock-head"><div><strong id="dockTitle">Keys</strong><span id="dockSub">All K7 tokens are the same secret key.</span></div><button id="returnKeys" type="button" class="lab-action">Return keys</button></div>
       <div id="secretGroup" class="key-group"><div class="key-group-title"><strong>Shared key</strong><span>same secret</span></div><div id="secretTray" class="key-tray" data-bay="tray"></div></div>
       <div id="publicGroup" class="key-group" hidden><div class="key-group-title"><strong>Public key</strong><span>safe to share</span></div><div id="publicTray" class="key-tray" data-bay="tray"></div></div>
       <div id="privateGroup" class="key-group" hidden><div class="key-group-title"><strong>Private key</strong><span>Bob should keep this</span></div><div id="privateTray" class="key-tray" data-bay="tray"></div></div>
@@ -572,9 +572,10 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
   function targetContainer(where,id){if(where==="alice")return $("aliceBay");if(where==="bob")return $("bobBay");if(where==="eve")return $("eveBay");if(state.mode==="sym")return $("secretTray");return metas[id].kind==="private"?$("privateTray"):$("publicTray")}
   function renderKeys(){
     ["secretTray","publicTray","privateTray"].forEach(id=>$(id).replaceChildren());
-    allBays.forEach(bay=>{const root=$(bay+"Bay"),copy=root.querySelector(".bay-copy");root.replaceChildren(copy);const empty=document.createElement("div");empty.className="bay-empty";empty.textContent=bay==="alice"?"drop encryption key":"drop decryption key";root.append(empty)});
+    allBays.forEach(bay=>{const root=$(bay+"Bay"),copy=root.querySelector(".bay-copy");root.replaceChildren(copy);const empty=document.createElement("div");empty.className="bay-empty";empty.textContent=bay==="alice"?"No key":"No key";root.append(empty)});
     activeKeys().forEach(id=>{if(!state.locations.has(id))state.locations.set(id,"tray");const container=targetContainer(state.locations.get(id),id);container.querySelector(":scope > .bay-empty")?.remove();container.append(makeKey(id))});
     ["secretTray","publicTray","privateTray"].forEach(id=>{const root=$(id);if(!root.hidden&&!root.children.length){const empty=document.createElement("div");empty.className="tray-empty";empty.textContent="No keys here";root.append(empty)}});applySelection();updateGate();
+    LabDesign.introduce(document.querySelector(".key-dock"),[...document.querySelectorAll(".key-tray .key-token")],"crypto-keys","Place a key","Drag a key to a device bay, or select it and then select the bay. Compare what Bob and Eve can read after sending.");
   }
   function selectKey(id){state.selectedKey=state.selectedKey===id?null:id;applySelection();setFeedback("","Key selected.",state.selectedKey?`Choose Alice, Bob, Eve or a tray to move ${metas[id].label}.`:"Selection cleared.")}
   function clearSelection(){state.selectedKey=null;applySelection()}
@@ -614,7 +615,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
     await move(token,608,270,230);
     const clone=createStreamToken(raw,packet.encrypted?"cipher":"plain");setPos(clone,608,270);clone.classList.add("visible");
     const toBob=move(token,748,270,290).then(()=>{state.bobUnits[index]=raw;renderLiveBuffers(packet);token.classList.add("arrive");setTimeout(()=>token.remove(),120)});
-    const toEve=move(clone,608,432,320).then(()=>{state.eveUnits[index]=raw;renderLiveBuffers(packet);clone.classList.add("arrive");setTimeout(()=>clone.remove(),120)});
+    const toEve=move(clone,608,590,320).then(()=>{state.eveUnits[index]=raw;renderLiveBuffers(packet);clone.classList.add("arrive");setTimeout(()=>clone.remove(),120)});
     await Promise.all([toBob,toEve]);
   }
   function renderLiveBuffers(packet){
@@ -657,9 +658,9 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
   function explainOutcome(packet){const bob=displayed(packet,"bob").read,eve=displayed(state.captures[0],"eve").read;if(!packet.encrypted){setFeedback("bad","Bob and Eve both read the line.","The shared line carried plain text.",packet);return}if(bob&&!eve){setFeedback("good","The line carried cipher text.","Bob restored plain text. Eve could not.",packet);return}if(eve){setFeedback("bad","Eve can now read it too.","The stored cipher text did not change. Key possession changed who could read it.",packet);return}if(!bob)setFeedback("warn","Cipher text is protected, but Bob is locked out.",state.mode==="sym"?"Bob needs the same K7 key.":"Bob needs his private key.",packet)}
   function setFeedback(kind,title,detail,packet=null){$("feedback").className="feedback"+(kind?` ${kind}`:"");$("feedbackTitle").textContent=title;$("feedbackDetail").textContent=detail;$("feedback").parentElement.dataset.workState=kind==="good"?"good":kind==="bad"?"bad":"needed";$("feedbackCode").textContent=packet?`transmission #${String(packet.number).padStart(2,"0")} · ${packet.encrypted?"cipher text":"plain text"}`:"transmission —"}
 
-  function resetTraffic(){if(state.busy)return;state.animationToken++;state.transmissionNo=0;state.captures=[];state.latest=null;state.wireUnits=[];state.bobUnits=[];state.eveUnits=[];$("streamLayer").replaceChildren();$("wireKind").textContent="no data";$("wireData").textContent="—";$("wireData").className="wire-data";evaluateEndpoints();updateGoals();setFeedback("","Line cleared.","Send again with the current key setup.")}
+  function resetTraffic(){if(state.busy)return;state.animationToken++;state.transmissionNo=0;state.captures=[];state.latest=null;state.wireUnits=[];state.bobUnits=[];state.eveUnits=[];$("streamLayer").replaceChildren();$("wireKind").textContent="no data";$("gateIn").textContent="—";$("gateOut").textContent="—";$("gateOut").className="out plain";$("wireData").textContent="—";$("wireData").className="wire-data";evaluateEndpoints();updateGoals();setFeedback("","Line cleared.","Send again with the current key setup.")}
   function returnKeys(){if(state.busy)return;activeKeys().forEach(id=>state.locations.set(id,"tray"));clearSelection();renderKeys();updateAlicePreview();evaluateEndpoints(true);updateGoals();setFeedback("","Keys returned.","Stored cipher text stays in Eve's capture list.")}
-  function resetAll(){if(state.busy)return;state.locations.clear();activeKeys().forEach(id=>state.locations.set(id,"tray"));clearSelection();renderKeys();resetTraffic();$("messageInput").value="ACCESS CODE 47-B";updateAlicePreview();$("gateIn").textContent="A";$("gateOut").textContent="A";$("gateOut").className="out plain";setFeedback("","Lab reset.","Send once with no key, then add keys.")}
+  function resetAll(){if(state.busy)return;state.locations.clear();activeKeys().forEach(id=>state.locations.set(id,"tray"));clearSelection();renderKeys();resetTraffic();$("messageInput").value="ACCESS CODE 47-B";updateAlicePreview();$("gateIn").textContent="—";$("gateOut").textContent="—";$("gateOut").className="out plain";setFeedback("","Lab reset.","Send once with no key, then add keys.")}
   function setMode(mode){if(state.busy||state.mode===mode)return;state.mode=mode;state.animationToken++;state.locations.clear();state.selectedKey=null;state.captures=[];state.latest=null;state.transmissionNo=0;const asym=mode==="asym";$("secretGroup").hidden=asym;$("publicGroup").hidden=!asym;$("privateGroup").hidden=!asym;$("secretLegend").hidden=asym;$("publicLegend").hidden=!asym;$("privateLegend").hidden=!asym;$("missionTitle").textContent=asym?"Make Bob readable and Eve unreadable using Bob's public/private keys.":"Make Bob readable and Eve unreadable using one shared secret.";$("missionHint").textContent=asym?"Alice may use Bob's public key openly. Discover which different key restores the captured cipher text.":"Alice and Bob need copies of the same secret. Give Eve a copy later and watch an old capture become readable.";$("dockTitle").textContent="Keys";$("dockSub").textContent=asym?"Public can be shared. Private should stay with Bob.":"All K7 tokens are the same secret key.";$("aliceBayHint").textContent=asym?"Bob public key":"optional";$("bobBayHint").textContent=asym?"Bob private key":"same K7 used by Alice";$("eveBayHint").textContent=asym?"optional":"optional";renderModeTabs();renderKeys();resetTraffic();updateAlicePreview();setFeedback("",asym?"Public/private mode.":"Shared-key mode.",asym?"Use Bob's public key at Alice and Bob's private key at Bob.":"Use matching K7 keys at Alice and Bob.")}
 
   ["alice","bob","eve"].forEach(bay=>{$(bay+"Bay").addEventListener("click",()=>bayClick(bay));$(bay+"Bay").addEventListener("keydown",e=>{if((e.key==="Enter"||e.key===" ")&&state.selectedKey){e.preventDefault();bayClick(bay)}})});
@@ -672,11 +673,15 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
     const shouldFit=true,scale=shouldFit?Math.min(1,shell.clientWidth/1020):1;
     shell.classList.toggle("is-fitted",shouldFit);
     stage.style.width=(shouldFit?shell.clientWidth:1020)+"px";
-    stage.style.height=Math.ceil(650*scale)+"px";
+    const eve=board.querySelector(".eve"),height=Math.max(840,eve.offsetTop+eve.offsetHeight+24);
+    board.style.height=height+"px";
+    board.querySelector(".links").setAttribute("viewBox",`0 0 1020 ${height}`);
+    stage.style.height=Math.ceil(height*scale)+"px";
     board.style.transform=`scale(${scale})`;
     if(shouldFit)shell.scrollLeft=0;
   };
   new ResizeObserver(fitBoard).observe(document.querySelector(".board-shell"));
+  new ResizeObserver(fitBoard).observe(document.querySelector(".device.eve"));
   fitBoard();
   renderModeTabs();renderKeys();updateAlicePreview();evaluateEndpoints();updateGoals();
 })();

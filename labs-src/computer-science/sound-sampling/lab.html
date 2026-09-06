@@ -386,26 +386,12 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 <!-- LAB_MANIFEST_HEADER_END -->
 <span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span>
   <span data-lab-authored-subtitle-slot hidden></span>
-<section class="lab-activity-bar sim-top"><div class="lab-activity-task"><strong id="labTaskTitle">Compare sound detail with the storage cost of sampling.</strong></div><div class="sim-top-tools"><div class="play">
-        <button id="playRef" class="lab-action audio-button" aria-label="Play reference audio">
-          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6 4.7v10.6L15 10 6 4.7Z"/></svg>
-          <span>Reference</span>
-        </button>
-        <button id="playDigital" class="lab-action audio-button primary" aria-label="Play digital audio" data-priority="primary">
-          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6 4.7v10.6L15 10 6 4.7Z"/></svg>
-          <span>Digital</span>
-        </button>
-        <button id="stop" class="lab-action">Stop</button>
-      </div><div class="lab-toggle examples" data-kind="mode" data-active-class="active">
-    <button class="example active" data-sound="ocean"><strong>Ocean wave</strong><span>broadband crash and surf</span></button>
-    <button class="example" data-sound="bird"><strong>Bird chirp</strong><span>short high-frequency detail</span></button>
-    <button class="example" data-sound="speech"><strong>Human speech</strong><span>natural recorded voice</span></button>
-  </div></div></section>
+<section class="lab-activity-bar sim-top"><div class="lab-activity-task"><strong id="labTaskTitle">Compare sound detail with the storage cost of sampling.</strong></div><div class="sim-top-tools"></div></section>
 
 
 
   <section class="panel">
-    <div class="sim-tool-row controls">
+    <div class="sim-tool-row controls"><label class="lab-menu-field" for="soundExample"><span>Sound</span><select id="soundExample"><option value="ocean">Ocean wave</option><option value="bird">Bird chirp</option><option value="speech">Human speech</option></select></label>
       <div class="field">
         <label for="rate">Sample rate</label>
         <select id="rate" data-lab-intro="sound-rate" data-lab-intro-title="Compare sampling choices" data-lab-intro-copy="Change sample rate and resolution. Compare the reconstructed waveform and storage calculation, then listen to both versions.">
@@ -426,7 +412,21 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
         <label class="toggle"><input id="lowpass" type="checkbox"> Low-pass smoothing</label>
       </div>
 
-    </div>
+    <div class="play">
+        <button id="playRef" class="lab-action audio-button" aria-label="Play reference audio">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6 4.7v10.6L15 10 6 4.7Z"/></svg>
+          <span>Reference</span>
+        </button>
+        <button id="playDigital" class="lab-action audio-button primary" aria-label="Play digital audio" data-priority="primary">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6 4.7v10.6L15 10 6 4.7Z"/></svg>
+          <span>Digital</span>
+        </button>
+        <button id="stop" class="lab-action">Stop</button>
+      </div><div class="sim-legacy lab-toggle examples" data-kind="mode" data-active-class="active">
+    <button class="example active" data-sound="ocean"><strong>Ocean wave</strong><span>broadband crash and surf</span></button>
+    <button class="example" data-sound="bird"><strong>Bird chirp</strong><span>short high-frequency detail</span></button>
+    <button class="example" data-sound="speech"><strong>Human speech</strong><span>natural recorded voice</span></button>
+  </div></div>
 
   </section>
 
@@ -788,7 +788,9 @@ amplitude ${amp.toFixed(4)}`
     src.onended=()=>{if(playing===src)playing=null};playing=src;
   }
 
+  $("soundExample").addEventListener("change",e=>document.querySelector(`[data-sound="${e.target.value}"]`).click());
   document.querySelectorAll(".example").forEach(btn=>btn.addEventListener("click",()=>{
+    $("soundExample").value=btn.dataset.sound;
     current=btn.dataset.sound;
     document.querySelectorAll(".example").forEach(b=>b.classList.toggle("active",b===btn));
     stopAudio();update(true);

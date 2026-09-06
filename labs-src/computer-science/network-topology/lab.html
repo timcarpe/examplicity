@@ -616,12 +616,12 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
   </section>
 
   <div class="lab-grid">
-    <aside class="lab-sidebar panel palette">
-      <div class="palette-head">
+    <aside class="lab-sidebar panel palette" aria-label="Construction evidence">
+      <div class="sim-legacy palette-head">
         <strong>Parts</strong>
         <span>Drag a part onto the workspace, or tap it to add.</span>
       </div>
-      <div id="partList" class="part-list"></div>
+
       <div id="paletteNote" class="sim-legacy palette-note">Choose Cable, then drag between two parts. You can also select one part and then another.</div>
     <section class="lab-evidence-card"><h2>Construction evidence</h2><div id="feedback" class="feedback" role="status" aria-live="polite">
         <strong>Start with the parts.</strong>
@@ -635,14 +635,14 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
         <div id="journeyText"><strong>Network ready.</strong> Choose two stations and send a packet.</div>
       </div></section><section class="lab-evidence-card"><h2>Network behaviour</h2><div class="teaching-note">Stations send and receive. Switches, bridges and shared buses can carry packets onward. In Hybrid, add direct mesh links over an existing bus or star and compare which route the packet chooses.</div></section></aside>
 
-    <section class="panel workspace">
-      <div class="toolbar">
-        <div class="lab-toggle tool-group" aria-label="Workspace tools" data-kind="mode" data-active-class="active-tool">
+    <section class="panel workspace"><div class="lab-tool-bar"><div class="lab-tool-buttons tool-group" aria-label="Workspace tools" data-active-class="active-tool">
           <button id="moveTool" class="lab-action active-tool">Move</button>
           <button id="cableTool" data-lab-intro="topology-cable" data-lab-intro-title="Connect two parts" data-lab-intro-copy="Choose Cable, then select two parts or drag between them. Check the topology before sending a packet." class="lab-action">Cable</button>
           <button id="deleteTool" class="lab-action danger">Delete</button>
           <button id="meshLayerTool" hidden title="Use the stations already here and add every direct link between them." class="lab-action">Mesh layer</button>
-        </div>
+        </div><div id="partList" class="part-list"></div></div>
+      <div class="toolbar">
+
 
       </div>
 
@@ -892,6 +892,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
       button.addEventListener("click",()=>taskSwitch(index));
       root.appendChild(button);
     });
+    LabDesign.introduce(root,[...root.querySelectorAll(".part-card:not(:disabled)")],"topology-part","Place network parts","Drag a part onto the canvas, or select it to place one. Cable then joins two parts.");
   }
 
   function renderPalette(){
@@ -903,6 +904,8 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
         ? "Use Cable between any two parts. Mesh layer highlights the existing stations and tracks the direct links still needed."
         : "Choose Cable, then drag between two parts. You can also select one part and then another.";
     }
+    $("cableTool").toggleAttribute("data-lab-intro",nodes.size>1);
+    if(nodes.size>1)$("cableTool").dataset.labIntro="topology-cable";
     Object.keys(currentTask().parts).forEach(type=>{
       const meta=PARTS[type];
       const remaining=availableCount(type);
