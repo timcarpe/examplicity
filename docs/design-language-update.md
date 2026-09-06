@@ -899,3 +899,25 @@ models, learning gates and Working levels. Refresh their observational maps.
   3D perspective update the context. Phase checks used existing source hooks;
   this was not a replay of every learning interaction. No page script errors.
   Publication, standalone packaging and sidecar checks passed for all 57 labs.
+
+
+### Relative Frequency spinner identity — 6 September 2026
+
+- Change list: distinguish reference/booth geometry; remove redundant mechanism
+  captions; replace rotating text with outcome symbols and a stationary key.
+- Local SVG now uses a circular blue reference and octagonal violet booth with
+  a stand and rim studs. Approved shared concept tokens supply the colour;
+  one amber prize sector and three other sectors stay equal in size on both.
+- Star/circle symbols rotate with outcomes. Prize/Other key, device name and
+  sector description stay fixed below the wheel with separated text baselines.
+- Removed the mechanism box and duplicate context badge. Hidden-probability
+  explanations and the 0.40 reveal remain in the actual audit context/actions.
+  Updated the transition copy so it no longer claims identical appearances.
+- Canonical guide documents identity versus evidence and stationary keys;
+  implementation map records the changed model surface. Trial generation,
+  sector landing angles, judgment gates and forecast arithmetic are unchanged.
+
+- Browser checks passed through fair trials, booth trials and the bias reveal,
+  with no script errors. Fixed labels remain separated at 900px and 390px;
+  narrow layouts reserve additional space above the graph. Standalone downloads,
+  published sidecars and canonical developer resources passed their checks.
