@@ -1318,3 +1318,14 @@ Implemented:
   without a projecting tab, label border or background. Binary displays Exam.
 - Site implementation: `5feb6e4`; Binary map pins this revision. Final canonical
   guide/style correction: `11ec323`.
+
+
+### Six-lab review follow-up: storage, wiring and readouts
+
+- Floating Point: explicit mantissa shift goal, persistent starting/current stored values and success/loss feedback; removed teaching-dataset footer.
+- Flip-Flops: input endpoints meet NOR gates, backgrounds no longer cover wires, crossing gaps distinguish feedback paths and JK ports remain separate.
+- Neuron: removed phantom offscreen/proof grips, stabilised weight drag maths and made existing parameter readouts draggable/keyboard-adjustable; proof locks manipulation until Explore.
+- Shared CSS: compact F-number identifiers in Recursive Call Stacks; padded, themed programming consoles; reusable parameter-value grip. Python Practice and Translator inherit console styling.
+- Updated canonical style contract, living HTML guide and Floating Point/Neuron behaviour maps. Shared resources remain compiled into standalone downloads.
+- Review checks: six existing learner flows; direct threshold/weight dragging and release; recursion success/mistake colours; zero-weight/offscreen recovery and XOR proof lock; visual inspection of affected layouts.
+- Visual follow-up: removed the duplicate neuron proof caption over point C; corrected Python challenge grid after its number badge was hidden, restoring full-width instructions.

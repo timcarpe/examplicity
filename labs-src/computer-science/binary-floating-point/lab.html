@@ -428,10 +428,9 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
           <div class="sep" aria-hidden="true"></div>
           <div class="storage-part"><span class="storage-label">Exponent</span><div id="exponentBits" class="exponent-bits"></div></div>
         </div>
-        <div id="repSide" class="rep-side"></div>
+        <div id="repSide" class="rep-side" role="status" aria-live="polite"></div>
       </div>
     </section>
-    <div class="source-note">Teaching datasets are scaled to expose the 8-bit trade-off. Contexts are authentic; the weather challenge follows the coursebook example of repeated floating-point calculations accumulating rounding error.</div>
   </section>
 </main>
 <script src="./lab-kit.js" data-lab-resource="lab-kit.js"></script>
@@ -447,7 +446,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
       {label:"2g",value:2,tol:{kind:"pct",value:.10}},{label:"20g",value:20,tol:{kind:"pct",value:.10}},{label:"200g",value:200,tol:{kind:"pct",value:.10}},{label:"1200g",value:1200,tol:{kind:"pct",value:.10}}
     ]}
   ];
-  const state={experimentIndex:0,mBits:4,selectedIndex:0,visited:new Map(),manualRep:null,manualOriginal:null,dividerDrag:null,mantissaDrag:null,markerHits:[],best:new Map(),completed:new Set()};
+  const state={experimentIndex:0,mBits:4,selectedIndex:0,visited:new Map(),manualRep:null,manualOriginal:null,manualMoves:0,manualBound:false,dividerDrag:null,mantissaDrag:null,markerHits:[],best:new Map(),completed:new Set()};
   experiments.forEach(e=>state.visited.set(e.id,new Set([state.mBits])));
 
   const signedFromRaw=(raw,bits)=>raw>=(1<<(bits-1))?raw-(1<<bits):raw;
@@ -532,6 +531,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
   }
 
   function resetManual(){
+    state.manualMoves=0;state.manualBound=false;
     const sys=system(),sample=storageSample(currentExperiment(),sys),result=sample.result;
     if(!result?.rep){state.manualRep=null;state.manualOriginal=null;return}
     if(!sample.interactive){state.manualRep={...result.rep};state.manualOriginal={...result.rep};return}
@@ -714,14 +714,14 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
     }
   }
 
-  function shiftManual(direction){const sys=system(),rep=state.manualRep;if(!rep)return {changed:false};const before=repValue(rep.M,rep.E,sys.m),mask=(1<<sys.m)-1;if(direction<0){if(rep.E<=sys.eb.min)return {changed:false,bound:true};rep.M=signedFromRaw((rawFromSigned(rep.M,sys.m)<<1)&mask,sys.m);rep.E-=1}else{if(rep.E>=sys.eb.max)return {changed:false,bound:true};rep.M=rep.M>>1;rep.E+=1}rep.value=repValue(rep.M,rep.E,sys.m);rep.normalized=isNormalized(rep.M,sys.m);return {changed:!almostEqual(before,rep.value),before,after:rep.value}}
+  function shiftManual(direction){const sys=system(),rep=state.manualRep;if(!rep)return {changed:false};state.manualBound=false;const before=repValue(rep.M,rep.E,sys.m),mask=(1<<sys.m)-1;if(direction<0){if(rep.E<=sys.eb.min){state.manualBound=true;return {changed:false,bound:true}};rep.M=signedFromRaw((rawFromSigned(rep.M,sys.m)<<1)&mask,sys.m);rep.E-=1}else{if(rep.E>=sys.eb.max){state.manualBound=true;return {changed:false,bound:true}};rep.M=rep.M>>1;rep.E+=1}state.manualMoves++;rep.value=repValue(rep.M,rep.E,sys.m);rep.normalized=isNormalized(rep.M,sys.m);return {changed:!almostEqual(before,rep.value),before,after:rep.value}}
   function renderNormalizer(){
     const exp=currentExperiment(),root=$("normalizer"),sys=system(),sample=storageSample(exp,sys),result=sample.result,row=$("mantissaDrag"),expBits=$("exponentBits"),side=$("repSide"),source=$("storageSource"),hint=$("storageHint"),reset=$("resetForm");
     row.replaceChildren();expBits.replaceChildren();root.style.display="block";
     row.classList.toggle("locked",!sample.interactive);reset.hidden=!sample.interactive;
     if(exp.kind==="dataset"){
       source.innerHTML=`<span>${sample.label}</span><strong>${unitText(sample.source,exp.unit)}</strong>`;
-      hint.textContent="Selected real value → stored floating-point word. Shift the mantissa until its first two bits differ (01 or 10). The exponent compensates to preserve the stored value; a lost bit changes it.";
+      hint.textContent="Task: swipe the mantissa (or use ← / → keys) to reach leading bits 01 or 10 while preserving the starting stored value. Left shift: exponent −1; right shift: exponent +1. Compare the values below.";
     }else{
       source.innerHTML=`<span>${sample.label}</span><strong>${sample.source===null?"—":unitText(sample.source,exp.unit)}</strong>`;
       hint.textContent=sample.overflowAt?`The model overflows at cycle ${sample.overflowAt}. This shows the last binary word that could still be stored.`:"The final stored forecast is shown as its mantissa and exponent binary word.";
@@ -734,10 +734,18 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
     if(!state.manualRep)resetManual();const rep=state.manualRep||result.rep,bits=bitsFor(rep.M,sys.m),eBits=bitsFor(rep.E,sys.e);
     bits.split("").forEach((b,i)=>{const d=document.createElement("div");d.className="bit";d.textContent=b;row.append(d);if(i===0){const point=document.createElement("div");point.className="point";point.textContent=".";row.append(point)}});
     eBits.split("").forEach(b=>{const d=document.createElement("div");d.className="bit exp";d.textContent=b;expBits.append(d)});
-    const value=repValue(rep.M,rep.E,sys.m);side.className="rep-side";
-    if(rep.M===0){side.classList.add("warn");side.innerHTML=`<strong>stored 0</strong><span>Zero is stored directly. Non-zero floating-point values should be normalised.</span>`}
-    else if(rep.normalized){side.classList.add("good");side.innerHTML=`<strong>${bits.slice(0,2)} · normalised</strong><span>${formatNumber(mantissaValue(rep.M,sys.m))} × 2^${rep.E} = ${formatNumber(value)} ${exp.unit}</span>`}
-    else{side.classList.add("warn");side.innerHTML=`<strong>${bits.slice(0,2)} · not normalised</strong><span>${formatNumber(mantissaValue(rep.M,sys.m))} × 2^${rep.E} = ${formatNumber(value)} ${exp.unit}. Shift while compensating with the exponent.</span>`}
+    const value=repValue(rep.M,rep.E,sys.m),original=state.manualOriginal||rep,startValue=repValue(original.M,original.E,sys.m),preserved=almostEqual(value,startValue);
+    side.className="rep-side";
+    let title,detail;
+    if(!sample.interactive){title=rep.normalized?"Normalised word":"Stored word";detail="Final calculation result."}
+    else if(!preserved){side.classList.add("bad");title="Value changed";detail="A bit was lost or the sign changed. Reset form to retry."}
+    else if(state.manualBound){side.classList.add("warn");title="Exponent limit";detail="The exponent cannot compensate further. Try the other direction."}
+    else if(rep.M===0){title="Stored zero";detail="Select a non-zero measurement to practise normalisation."}
+    else if(rep.normalized&&state.manualMoves>0){side.classList.add("good");title=bits.slice(0,2)+" · goal reached";detail="Normalised and the starting stored value is preserved."}
+    else if(rep.normalized){title=bits.slice(0,2)+" · already normalised";detail="Test a shift and compare values. Reset if information is lost."}
+    else{side.classList.add("warn");title=bits.slice(0,2)+" · keep shifting";detail="Aim for first bits 01 or 10 without changing the value."}
+    side.innerHTML=`<strong>${title}</strong><span>${detail}</span><span class="storage-comparison">Starting stored: ${unitText(startValue,exp.unit)}<br>Now: ${unitText(value,exp.unit)}</span><span>${formatNumber(mantissaValue(rep.M,sys.m))} × 2^${rep.E} = ${formatNumber(value)}</span>`;
+
   }
 
   function renderSolutionState(){
@@ -760,10 +768,10 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 
   $("mantissaDrag").addEventListener("pointerdown",e=>{if(e.button>0||currentExperiment().kind!=="dataset"||!state.manualRep)return;e.preventDefault();state.mantissaDrag={id:e.pointerId,startX:e.clientX};e.currentTarget.setPointerCapture?.(e.pointerId)});
   $("mantissaDrag").addEventListener("pointermove",e=>{if(!state.mantissaDrag||state.mantissaDrag.id!==e.pointerId)return;const dx=Math.max(-110,Math.min(110,e.clientX-state.mantissaDrag.startX));e.currentTarget.style.transform=`translateX(${dx}px)`});
-  function finishMantissa(e){if(!state.mantissaDrag||state.mantissaDrag.id!==e.pointerId)return;const dx=e.clientX-state.mantissaDrag.startX;$("mantissaDrag").style.transform="";state.mantissaDrag=null;const steps=Math.min(3,Math.max(0,Math.round(Math.abs(dx)/34)));if(!steps)return;const direction=dx<0?-1:1;let changed=false,bound=false;for(let i=0;i<steps;i++){const outcome=shiftManual(direction);changed||=outcome.changed;bound||=outcome.bound;if(outcome.bound)break}renderNormalizer();if(changed){const side=$("repSide");side.className="rep-side bad";side.innerHTML="<strong>information lost</strong><span>the shift changed the represented value</span>"}else if(bound){const side=$("repSide");side.className="rep-side bad";side.innerHTML="<strong>exponent limit</strong><span>the compensating exponent cannot move further</span>"}}
+  function finishMantissa(e){if(!state.mantissaDrag||state.mantissaDrag.id!==e.pointerId)return;const dx=e.clientX-state.mantissaDrag.startX;$("mantissaDrag").style.transform="";state.mantissaDrag=null;const steps=Math.min(3,Math.max(0,Math.round(Math.abs(dx)/34)));if(!steps)return;const direction=dx<0?-1:1;for(let i=0;i<steps;i++){if(shiftManual(direction).bound)break}renderNormalizer()}
   $("mantissaDrag").addEventListener("pointerup",finishMantissa);$("mantissaDrag").addEventListener("pointercancel",()=>{state.mantissaDrag=null;$("mantissaDrag").style.transform=""});$("resetForm").addEventListener("click",()=>{if(currentExperiment().kind!=="dataset")return;resetManual();renderNormalizer()});window.addEventListener("resize",renderWord);
 
-  $("mantissaDrag").addEventListener("keydown",e=>{if(!["ArrowLeft","ArrowRight"].includes(e.key)||currentExperiment().kind!=="dataset")return;e.preventDefault();const result=shiftManual(e.key==="ArrowLeft"?-1:1);renderNormalizer();if(result.changed||result.bound){$("repSide").className="rep-side bad";$("repSide").innerHTML=result.bound?"<strong>Exponent limit</strong><span>The compensating exponent cannot move further.</span>":"<strong>Information lost</strong><span>The shift changed the represented value.</span>"}});
+  $("mantissaDrag").addEventListener("keydown",e=>{if(!["ArrowLeft","ArrowRight"].includes(e.key)||currentExperiment().kind!=="dataset")return;e.preventDefault();shiftManual(e.key==="ArrowLeft"?-1:1);renderNormalizer()});
   resetManual();renderAll();
 })();
 </script>

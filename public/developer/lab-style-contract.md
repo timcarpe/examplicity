@@ -802,3 +802,14 @@ clear green contrast and a check, not only a subtle background change.
 Header setting adapters mark existing controls with `data-lab-setting="working|exam|checkpoints"`. Existing control wrappers retain their event ownership; shared layout aligns the controls without changing learning state. Additional question-range choices can use `lab-menu-select`, as in Binary. Helper place values use padded, flat concept material while retaining their column alignment. Do not turn an existing optional hint into new Working levels.
 New header markup should follow the same DOM order as the visual order: Working, exam, checkpoints. The compatibility adapter preserves existing event-owner wrappers.
 Binary helper roles: violet flat material for place values; light blue for the help explanation. Keep the given starting number’s original neutral surface and border. Helper styling does not retint the given model.
+
+
+### Storage tasks, geometric controls and compact identifiers
+
+For a stored-number manipulation, distinguish the original measurement from its starting stored approximation. Show starting and current stored values together. A normalisation success requires a learner shift, normalised leading bits and preservation of the starting stored value; a lost bit remains visible as a failed comparison.
+
+Connect circuit wires to the actual gate ports. Use explicit junction dots for branches and small crossing gaps where wires do not join; place opaque device backgrounds behind their connections.
+
+Frame identifiers such as F4 and F5 are compact, regular-weight 12px concept chips, not full-height status strips. Keep assessment colour on the working card. Programming consoles use shared surface/ink tokens, 14px text and padded output/input regions, including dark mode.
+
+Only place geometric grips on geometry that exists. For an offscreen or degenerate boundary, keep stable parameter-value controls available. The shared lab-value-grip combines a padded value, horizontal drag cue and arrow-key access. Disabled values are visually quiet. Parameter-specific geometry remains lab-owned: avoid division by a moving near-zero pointer coordinate. Freeze manipulation during a proof, then restore it in Explore.

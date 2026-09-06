@@ -2910,6 +2910,36 @@ html[data-theme="dark"] .lab-programming select::picker(select){border-color:var
 
 .lab-binary .card.help-active .place-values{opacity:1;transition:none}
 
+/* Compact frame identities are labels, not tall state indicators. */
+.cs-recursive-call-stack .stack-frame .frame-id,.cs-recursive-call-stack :is(.working-row,.working-row.current,.working-row.correct,.working-row.wrong) .working-frame{position:static;transform:none;align-self:start;justify-self:start;display:grid;place-items:center;width:32px;height:28px;min-height:28px;min-width:0;padding:4px;border:0;border-radius:6px;background:color-mix(in srgb,var(--lab-concept-violet) 16%,white);color:var(--lab-ink);font:400 12px/1.4 var(--lab-font-sans);box-shadow:none}
+/* Consoles follow the workbench theme, with padded output and input surfaces. */
+.lab-programming .console-pane{background:var(--lab-surface);color:var(--lab-ink);border-color:var(--lab-line)}
+.lab-programming .console-head{background:var(--lab-surface-muted);color:var(--lab-ink);border-color:var(--lab-line-subtle);font-weight:400}
+.lab-programming .console-head button{min-height:36px;height:auto;padding:7px 12px;border:1px solid var(--lab-accent-line);background:var(--lab-surface);color:var(--lab-accent-ink);font:400 12px/1.4 var(--lab-font-sans)}
+.lab-programming .console-body{padding:14px 16px;color:var(--lab-ink)}
+.lab-programming .console-message{color:var(--lab-muted);font-weight:400}
+.lab-programming .console-message.good{color:var(--lab-good-ink)}
+.lab-programming .console-message.bad{color:var(--lab-bad-ink)}
+.lab-programming .console-message.info{color:var(--lab-accent-ink)}
+.lab-programming .console-input-row{padding:12px 14px;gap:8px;border-color:var(--lab-line-subtle);background:var(--lab-accent-soft)}
+.lab-programming .console-input-row label{color:var(--lab-ink-secondary);font:400 12px/1.4 var(--lab-font-sans);white-space:normal;overflow:visible}
+.lab-programming .console-input-row input{min-height:38px;height:auto;padding:8px 10px;background:var(--lab-surface);color:var(--lab-ink);border:1px solid var(--lab-accent-line);font:400 14px/1.4 var(--lab-font-mono,monospace)}
+.lab-programming .console-input-row input:focus-visible{outline:none;box-shadow:none;border-color:var(--lab-accent-ink)}
+.lab-programming .console-input-row button{height:auto;min-height:38px;padding:8px 12px;font:400 12px/1.4 var(--lab-font-sans)}
+/* Readouts remain usable when a geometric parameter has no visible handle. */
+.lab-value-grip{display:inline-flex;align-items:center;gap:6px;min-width:66px;min-height:32px;padding:4px 7px;border:1px solid transparent;border-radius:6px;touch-action:none;user-select:none;cursor:ew-resize}
+.lab-value-grip[aria-disabled="false"]{background:var(--lab-surface);border-color:var(--lab-accent-line);color:var(--lab-accent-ink)}
+.lab-value-grip[aria-disabled="false"]::after{content:'↔';font:400 14px/1 var(--lab-font-sans)}
+.lab-value-grip[aria-disabled="true"]{cursor:default;color:var(--lab-muted)}
+.lab-value-grip:focus-visible{outline:none;border-color:var(--lab-accent-ink)}
+.cs-binary-floating-point .storage-comparison{display:block;padding:6px 0;font-size:12px}
+.cs-binary-floating-point .normalizer-head span{max-width:760px;font-size:12px;line-height:1.45}
+
+/* Hidden challenge numbers must not leave an empty fixed grid column. */
+.cs-python-programming-practice .challenge-brief{grid-template-columns:minmax(0,1fr) auto;align-items:start;background:var(--lab-accent-soft)}
+.cs-python-programming-practice .challenge-brief-actions{position:static;align-self:start}
+.cs-python-programming-practice .challenge-prompt .semantic-call{font-weight:400}
+
 </style>
 <script data-lab-design-runtime>
 /* Shared model dragging: retain the point grabbed while the model rerenders. */
@@ -3269,10 +3299,13 @@ window.LabDesign = {
           "#boundaryGrip-w2",
           "#boundaryGrip-theta",
           "#modeSwitch",
-          "#progressRail"
+          "#progressRail",
+          "#w1Output",
+          "#w2Output",
+          "#thetaOutput"
         ],
-        "description": "Predict, shift the boundary with its threshold grip or tilt it with a weight grip; keyboard arrows/Home/End adjust the same quantities. Parameter readouts remain above the plot.",
-        "visibility": "The threshold grip appears in the threshold task, w1 in weight influence, and all three in XOR/Explore; prediction unlocks the current task controls."
+        "description": "Predict, shift or tilt the visible boundary, or adjust the stable parameter values with horizontal dragging and arrow keys.",
+        "visibility": "Task locks and prediction gate parameter changes. Grips require a visible boundary and meaningful leverage. Readout controls remain available offscreen or at zero weights; all manipulation freezes during the guided XOR proof and returns in Explore."
       },
       "model": {
         "kind": "model",
@@ -3298,12 +3331,15 @@ window.LabDesign = {
       "parameters": {
         "description": "Weights and threshold.",
         "domain": "w1/w2 from -2 to 3; theta from -1 to 3; 0.1 steps.",
-        "source": "Unlocked direct SVG boundary grips, with keyboard alternatives.",
+        "source": "Unlocked SVG boundary grips and stable value controls, both with keyboard alternatives.",
         "output": "z=w1*x1+w2*x2, output 1 when z≥theta and the boundary.",
         "inputSlots": [
           "#boundaryGrip-w1",
           "#boundaryGrip-w2",
-          "#boundaryGrip-theta"
+          "#boundaryGrip-theta",
+          "#w1Output",
+          "#w2Output",
+          "#thetaOutput"
         ]
       },
       "inputs": {
@@ -3322,7 +3358,7 @@ window.LabDesign = {
       "XOR target B/C=1 and A/D=0 cannot be separated by one straight line. Evidence counts distinct output patterns, not all distinct parameter settings.",
       "After enough output patterns, the crossing-diagonal explanation establishes the limit and unlocks Explore.",
       "The shared SVG drag helper retains pickup offset and releases capture. Threshold dragging preserves weights; each weight grip holds the other weight and threshold fixed. Existing ranges and 0.1 steps still apply.",
-      "Next-task and XOR proof actions appear in the relationship working card; no duplicate bottom phase dock. Offscreen boundaries retain grips and keyboard access."
+      "Next-task and XOR proof actions appear in the relationship working card. Offscreen/degenerate boundaries have no floating grips; stable value controls preserve access. Proof disables manipulation until Explore."
     ],
     "completion": "Threshold and weight targets achieved, then XOR geometric proof inspected.",
     "limitations": [
@@ -3913,8 +3949,9 @@ window.LabDesign = {
     const xTitleY=mobile?BOX.y+BOX.h+36:BOX.y+BOX.h+53,yTitleX=mobile?50:22;add(root,"text",{x:BOX.x+BOX.w/2,y:xTitleY,class:"axis-title","text-anchor":"middle"},"input x₁");add(root,"text",{x:yTitleX,y:BOX.y+BOX.h/2,class:"axis-title","text-anchor":"middle",transform:`rotate(-90 ${yTitleX} ${BOX.y+BOX.h/2})`},"input x₂");
     const eq=`${fmt(s.w1)}x₁ ${s.w2<0?"−":"+"} ${fmt(Math.abs(s.w2))}x₂ = ${fmt(s.theta)}`;addTextBox(root,82,8,220,40,[eq,"shaded side outputs 1"]);const ints=boundaryIntersections(s);
     if(ints.length>=2){add(root,"line",{x1:sx(ints[0].x),y1:sy(ints[0].y),x2:sx(ints[1].x),y2:sy(ints[1].y),class:"boundary",id:"boundaryLine"});const mx=(ints[0].x+ints[1].x)/2,my=(ints[0].y+ints[1].y)/2,norm=Math.hypot(s.w1,s.w2)||1,len=.13,ex=mx+s.w1/norm*len,ey=my+s.w2/norm*len;add(root,"line",{x1:sx(mx),y1:sy(my),x2:sx(ex),y2:sy(ey),class:"normal-arrow"});add(root,"text",{x:sx(ex)+5,y:sy(ey)-6,class:"output-side-label"},"output 1")}
-    else if(Math.abs(s.w1)>EPS||Math.abs(s.w2)>EPS){const y=133;add(root,"line",{x1:330,y1:y,x2:559,y2:y,class:"boundary offscreen"});add(root,"text",{x:445,y:y-8,class:"boundary-sub","text-anchor":"middle"},"boundary is outside this input window")}
-    if(t.id==="xor"&&s.proof&&state.mode==="guided"){add(root,"line",{x1:sx(0),y1:sy(0),x2:sx(1),y2:sy(1),class:"proof-line zero"});add(root,"line",{x1:sx(0),y1:sy(1),x2:sx(1),y2:sy(0),class:"proof-line one"});add(root,"circle",{cx:sx(.5),cy:sy(.5),r:10,class:"proof-cross",id:"xorProofCross"});if(mobile){add(root,"rect",{x:sx(.5)-120,y:sy(.5)-48,width:240,height:27,rx:8,class:"proof-label-bg"});add(root,"text",{x:sx(.5),y:sy(.5)-30,class:"proof-label","text-anchor":"middle"},"same-class segments cross")}else addTextBox(root,327,449,224,48,["same-class segments cross","one separating line cannot exist"],"proof")}
+    else if(!s.proof&&(Math.abs(s.w1)>EPS||Math.abs(s.w2)>EPS)){add(root,"text",{x:BOX.x+BOX.w/2,y:78,class:"boundary-sub","text-anchor":"middle"},"Boundary outside view · adjust a value above")}
+    if(Math.abs(s.w1)<EPS&&Math.abs(s.w2)<EPS&&!s.proof)add(root,"text",{x:BOX.x+BOX.w/2,y:78,class:"boundary-sub","text-anchor":"middle"},"Both weights are zero · no dividing line");
+    if(t.id==="xor"&&s.proof&&state.mode==="guided"){add(root,"line",{x1:sx(0),y1:sy(0),x2:sx(1),y2:sy(1),class:"proof-line zero"});add(root,"line",{x1:sx(0),y1:sy(1),x2:sx(1),y2:sy(0),class:"proof-line one"});add(root,"circle",{cx:sx(.5),cy:sy(.5),r:10,class:"proof-cross",id:"xorProofCross"});}
     for(const p of ev){const x=sx(p.x),y=sy(p.y),off=pointLabelOffset(p.id),g=add(root,"g",{class:`point target-${p.target?"one":"zero"} actual-${p.out?"one":"zero"}${p.match?"":" mismatch"}${s.selected===p.id?" selected":""}${insights.includes(p.id)?" insight":""}`,transform:`translate(${x} ${y})`,id:`plotPoint-${p.id}`,tabindex:"0",role:"button","data-point":p.id,"aria-label":`Point ${p.id}, inputs ${p.x}, ${p.y}, target ${p.target}, current output ${p.out}${p.match?", match":", mismatch"}`});add(g,"circle",{r:37,class:"insight-halo"});add(g,"circle",{r:34,class:"select-halo"});add(g,"circle",{r:29,class:"mismatch-ring"});add(g,"circle",{r:22,class:"actual"});add(g,"text",{x:0,y:1,class:"actual-text"},String(p.out));add(g,"rect",{x:-28,y:-48,width:56,height:18,rx:9,class:"target-badge"});add(g,"text",{x:0,y:-36,class:"target-text"},`target ${p.target}`);add(g,"text",{x:off.dx,y:off.dy-4,class:"point-name"},p.id);add(g,"text",{x:off.dx,y:off.dy+10,class:"point-coordinate"},`(${p.x}, ${p.y})`)}
     renderBoundaryGrips(root, ints);
     $("plotDesc").textContent=`${t.stage}. Decision boundary ${eq}. ${matchCount()} of 4 points match their targets.`;
@@ -3973,8 +4010,8 @@ window.LabDesign = {
     const action=t.id!=="xor"&&s.completed?["next",t.id==="threshold"?"Next: weight influence":"Next: XOR limit"]:t.id==="xor"&&s.proof?["explore","Explore"]:t.id==="xor"&&s.observationSeen?["proof","Show why XOR cannot be separated"]:null;
     if(action){const b=document.createElement("button");b.type="button";b.className="lab-action";b.dataset.priority="primary";b.dataset.modalAction=action[0];b.textContent=action[1];b.addEventListener("click",()=>modalAction(action[0]));host.append(b)}
   }
-  function canManipulate(key){const s=session();if(state.mode==="explore")return true;return !s.settling&&!locks()[key]}
-  function renderAll(){const s=session();s.best=Math.max(s.best,matchCount());renderHeader();renderPlot();renderCalculation();renderControls();renderEvidence();renderWorking();renderModal();const keys=Object.keys(RANGES).filter(k=>canManipulate(k));LabDesign.introduce($("plot"),state.mode==="guided"&&s.prediction&&!s.completed?keys.map(k=>$("boundaryGrip-"+k)):[],"neuron-line-"+task().id,task().id==="threshold"?"Shift the boundary":task().id==="weights"?"Tilt the boundary":"Test another boundary",task().id==="threshold"?"Drag the centre grip to move the line parallel to itself, or use arrow keys. The weights stay fixed.":task().id==="weights"?"Drag the w₁ rotation grip to tilt the line, or use arrow keys. Watch C’s weighted sum while B stays unchanged.":"Drag the centre grip to shift the line; use the w₁ and w₂ grips to tilt it. Arrow keys also adjust each grip.");LabDesign.introduce($("predictionWork"),!s.prediction&&state.mode==="guided"?[$("predictionChoices")]:[],"neuron-predict-"+task().id,"Predict before changing the model",task().prediction.question)}
+  function canManipulate(key){const s=session();if(state.mode==="explore")return true;return !s.proof&&!s.settling&&!locks()[key]}
+  function renderAll(){const s=session();s.best=Math.max(s.best,matchCount());renderHeader();renderPlot();renderCalculation();renderControls();renderValueGrips();renderEvidence();renderWorking();renderModal();const keys=Object.keys(RANGES).filter(k=>canManipulate(k));LabDesign.introduce($("plot"),state.mode==="guided"&&s.prediction&&!s.completed?keys.map(k=>$("boundaryGrip-"+k)||$(k+"Output")):[],"neuron-line-"+task().id,task().id==="threshold"?"Shift the boundary":task().id==="weights"?"Tilt the boundary":"Test another boundary",task().id==="threshold"?"Drag the centre grip to move the line parallel to itself, or use arrow keys. The weights stay fixed.":task().id==="weights"?"Drag the w₁ rotation grip to tilt the line, or use arrow keys. Watch C’s weighted sum while B stays unchanged.":"Shift or tilt the line with its grips. The values above also drag left/right or accept arrow keys, even when the boundary is outside view.");LabDesign.introduce($("predictionWork"),!s.prediction&&state.mode==="guided"?[$("predictionChoices")]:[],"neuron-predict-"+task().id,"Predict before changing the model",task().prediction.question)}
   function setPrediction(id){const t=task(),s=session();if(state.mode!=="guided"||s.moved||s.completed||!t.prediction.options.some(o=>o.id===id))return;s.prediction=id;s.modalKind=null;renderAll()}
   function completeCurrent(){const t=task(),s=session();if(s.completed)return;s.completed=true;state.completed.add(t.id);s.modalKind=t.id==="threshold"?"threshold-insight":t.id==="weights"?"weights-insight":null;renderAll()}
   function evaluateProgress(key=null){const t=task(),s=session();s.best=Math.max(s.best,matchCount());if(state.mode==="explore")return renderAll();if((t.id==="threshold"||t.id==="weights")&&currentSuccess()&&!s.completed)return completeCurrent();if(t.id==="xor"&&!s.proof&&s.patterns.size>=3){s.observationSeen=true}renderAll()}
@@ -4000,14 +4037,31 @@ window.LabDesign = {
   window.addEventListener("resize",()=>{renderPlot()});
   window.labTest={getState:()=>{const t=task(),s=session();return{taskId:t.id,mode:state.mode,exploreUnlocked:state.exploreUnlocked,params:{w1:s.w1,w2:s.w2,theta:s.theta},selected:s.selected,prediction:s.prediction,moved:s.moved,patterns:[...s.patterns],proof:s.proof,modalKind:s.modalKind,matches:matchCount(),best:s.best,success:t.id==="xor"?s.proof:currentSuccess(),completed:[...state.completed],evidence:evidence()}},setTask:chooseTask,setMode,reset:resetTask,restart:restartLab,setPrediction,setParam:(k,v,commit=true)=>{setParamValue(k,v);if(commit)commitParam(k)},selectPoint,revealProof,modalAction,positionModal,render:renderAll};
 
+  function renderValueGrips(){
+    for(const key of Object.keys(RANGES)){
+      const value=$(key+"Output"),enabled=canManipulate(key),r=RANGES[key];
+      value.classList.add("lab-value-grip");value.dataset.valueKey=key;value.setAttribute("role","slider");value.tabIndex=enabled?0:-1;
+      value.setAttribute("aria-disabled",String(!enabled));value.setAttribute("aria-valuenow",session()[key]);value.setAttribute("aria-valuemin",r.min);value.setAttribute("aria-valuemax",r.max);
+      value.setAttribute("aria-label",(key==="theta"?"Threshold theta":"Weight "+key)+"; drag left or right, or use arrow keys");value.title=enabled?"Drag left/right or use arrow keys":"Fixed for this step";
+    }
+  }
+  let valueDrag=null;
+  const valueHost=$("controlsSection");
+  valueHost.addEventListener("pointerdown",event=>{const value=event.target.closest("[data-value-key]");if(event.button!==0||!event.isPrimary||!value||!canManipulate(value.dataset.valueKey))return;valueDrag={key:value.dataset.valueKey,id:event.pointerId,x:event.clientX,value:session()[value.dataset.valueKey]};valueHost.setPointerCapture(event.pointerId);event.preventDefault()});
+  valueHost.addEventListener("pointermove",event=>{if(!valueDrag||valueDrag.id!==event.pointerId)return;setParamValue(valueDrag.key,valueDrag.value+(event.clientX-valueDrag.x)/80);event.preventDefault()});
+  const finishValue=event=>{if(!valueDrag||valueDrag.id!==event.pointerId)return;const key=valueDrag.key;valueDrag=null;if(valueHost.hasPointerCapture(event.pointerId))valueHost.releasePointerCapture(event.pointerId);commitParam(key)};
+  for(const name of ["pointerup","pointercancel","lostpointercapture"])valueHost.addEventListener(name,finishValue);
+  valueHost.addEventListener("keydown",event=>{const value=event.target.closest("[data-value-key]");if(!value||!canManipulate(value.dataset.valueKey))return;const key=value.dataset.valueKey,r=RANGES[key],direction={ArrowLeft:-1,ArrowDown:-1,ArrowRight:1,ArrowUp:1}[event.key];if(!direction&&event.key!=="Home"&&event.key!=="End")return;event.preventDefault();setParamValue(key,event.key==="Home"?r.min:event.key==="End"?r.max:session()[key]+direction*(event.shiftKey?.5:r.step));commitParam(key)});
   let boundaryDrag=null;
   function plotPoint(point){return {x:DOMAIN.xmin+(point.x-BOX.x)/BOX.w*(DOMAIN.xmax-DOMAIN.xmin),y:DOMAIN.ymin+(BOX.y+BOX.h-point.y)/BOX.h*(DOMAIN.ymax-DOMAIN.ymin)}}
   function renderBoundaryGrips(root,ints){
     const s=session();
-    const endpoints=ints.length>=2?ints:[{x:.2,y:.6},{x:.9,y:.6}];
+    if(ints.length<2 || (state.mode==="guided" && s.proof))return;
+    const endpoints=ints;
     for(const [key,fraction] of [["w2",.23],["theta",.5],["w1",.77]]){
       if(state.mode==="guided"&&task().lock[key])continue;
       const x=endpoints[0].x+(endpoints[1].x-endpoints[0].x)*fraction,y=endpoints[0].y+(endpoints[1].y-endpoints[0].y)*fraction,enabled=canManipulate(key),r=RANGES[key];
+      if((key==="w1"&&Math.abs(x)<.08)||(key==="w2"&&Math.abs(y)<.08))continue;
       const g=add(root,"g",{id:"boundaryGrip-"+key,class:"lab-boundary-grip"+(enabled?"":" is-locked"),transform:`translate(${sx(x)} ${sy(y)})`,"data-boundary-key":key,"data-model-x":x,"data-model-y":y,role:"slider",tabindex:enabled?"0":"-1","aria-disabled":String(!enabled),"aria-label":key==="theta"?"Shift boundary: threshold theta":"Tilt boundary: weight "+key,"aria-valuemin":r.min,"aria-valuemax":r.max,"aria-valuenow":s[key]});
       add(g,"circle",{r:20,class:"lab-boundary-hit"});add(g,"circle",{r:14,class:"lab-boundary-knob"});
       add(g,"text",{x:0,y:1,class:"lab-boundary-icon"},key==="theta"?"↔":"↻");
@@ -4019,8 +4073,7 @@ window.LabDesign = {
     start(event,point){const grip=event.target.closest("[data-boundary-key]");if(!grip||!canManipulate(grip.dataset.boundaryKey))return null;const x=Number(grip.dataset.modelX),y=Number(grip.dataset.modelY);boundaryDrag={key:grip.dataset.boundaryKey,x,y,params:{w1:session().w1,w2:session().w2,theta:session().theta}};return {x:sx(x),y:sy(y)}},
     move(point){if(!boundaryDrag)return;const d=boundaryDrag,p=d.params,q=plotPoint(point);let value;
       if(d.key==="theta")value=p.theta+p.w1*(q.x-d.x)+p.w2*(q.y-d.y);
-      else if(d.key==="w1"){const denom=Math.abs(q.x)<.06?(q.x<0?-.06:.06):q.x;value=p.w1+(p.theta-p.w2*q.y)/denom-(p.theta-p.w2*d.y)/(Math.abs(d.x)<.06?(d.x<0?-.06:.06):d.x)}
-      else{const denom=Math.abs(q.y)<.06?(q.y<0?-.06:.06):q.y;value=p.w2+(p.theta-p.w1*q.x)/denom-(p.theta-p.w1*d.x)/(Math.abs(d.y)<.06?(d.y<0?-.06:.06):d.y)}
+      else {const leverage=d.key==="w1"?d.x:d.y;value=p[d.key]-(p.w1*(q.x-d.x)+p.w2*(q.y-d.y))/leverage;}
       setParamValue(d.key,value);
     },
     end(){if(!boundaryDrag)return;const key=boundaryDrag.key;boundaryDrag=null;commitParam(key)}

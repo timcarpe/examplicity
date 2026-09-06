@@ -570,12 +570,12 @@ button:disabled{opacity:.45;cursor:not-allowed}
 .gate-bubble{fill:#fff;stroke:#647782;stroke-width:2}
 .gate-label{fill:#334650;font-size:11px;font-weight:900;letter-spacing:.06em;text-anchor:middle}
 .gate-formula{fill:#70808a;font:700 8px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;text-anchor:middle}
-.wire{fill:none;stroke:var(--signal-off);stroke-width:4;stroke-linecap:round;stroke-linejoin:round;transition:stroke .18s ease,opacity .18s ease,filter .18s ease}
-.wire.secondary{stroke-width:3.2}
+.wire{fill:none;stroke:var(--signal-off);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;transition:stroke .18s ease,opacity .18s ease,filter .18s ease}
+.wire.secondary{stroke-width:2}
 .wire.high{stroke:var(--signal-on)}
 .wire.invalid{stroke:var(--lab-bad)}
 .wire.unknown{stroke:var(--unknown);stroke-dasharray:7 7}
-.wire.pulse{stroke-width:6;stroke-dasharray:12 9;animation:wireFlow .55s linear infinite;filter:url(#wireGlow)}
+.wire.pulse{stroke-width:3;stroke-dasharray:12 9;animation:wireFlow .55s linear infinite;filter:url(#wireGlow)}
 .wire.pulse.set-path{stroke:var(--set)}
 .wire.pulse.reset-path{stroke:var(--reset)}
 .wire.pulse.clock-path{stroke:var(--clock)}
@@ -3174,6 +3174,36 @@ html[data-theme="dark"] .lab-programming select::picker(select){border-color:var
 
 .lab-binary .card.help-active .place-values{opacity:1;transition:none}
 
+/* Compact frame identities are labels, not tall state indicators. */
+.cs-recursive-call-stack .stack-frame .frame-id,.cs-recursive-call-stack :is(.working-row,.working-row.current,.working-row.correct,.working-row.wrong) .working-frame{position:static;transform:none;align-self:start;justify-self:start;display:grid;place-items:center;width:32px;height:28px;min-height:28px;min-width:0;padding:4px;border:0;border-radius:6px;background:color-mix(in srgb,var(--lab-concept-violet) 16%,white);color:var(--lab-ink);font:400 12px/1.4 var(--lab-font-sans);box-shadow:none}
+/* Consoles follow the workbench theme, with padded output and input surfaces. */
+.lab-programming .console-pane{background:var(--lab-surface);color:var(--lab-ink);border-color:var(--lab-line)}
+.lab-programming .console-head{background:var(--lab-surface-muted);color:var(--lab-ink);border-color:var(--lab-line-subtle);font-weight:400}
+.lab-programming .console-head button{min-height:36px;height:auto;padding:7px 12px;border:1px solid var(--lab-accent-line);background:var(--lab-surface);color:var(--lab-accent-ink);font:400 12px/1.4 var(--lab-font-sans)}
+.lab-programming .console-body{padding:14px 16px;color:var(--lab-ink)}
+.lab-programming .console-message{color:var(--lab-muted);font-weight:400}
+.lab-programming .console-message.good{color:var(--lab-good-ink)}
+.lab-programming .console-message.bad{color:var(--lab-bad-ink)}
+.lab-programming .console-message.info{color:var(--lab-accent-ink)}
+.lab-programming .console-input-row{padding:12px 14px;gap:8px;border-color:var(--lab-line-subtle);background:var(--lab-accent-soft)}
+.lab-programming .console-input-row label{color:var(--lab-ink-secondary);font:400 12px/1.4 var(--lab-font-sans);white-space:normal;overflow:visible}
+.lab-programming .console-input-row input{min-height:38px;height:auto;padding:8px 10px;background:var(--lab-surface);color:var(--lab-ink);border:1px solid var(--lab-accent-line);font:400 14px/1.4 var(--lab-font-mono,monospace)}
+.lab-programming .console-input-row input:focus-visible{outline:none;box-shadow:none;border-color:var(--lab-accent-ink)}
+.lab-programming .console-input-row button{height:auto;min-height:38px;padding:8px 12px;font:400 12px/1.4 var(--lab-font-sans)}
+/* Readouts remain usable when a geometric parameter has no visible handle. */
+.lab-value-grip{display:inline-flex;align-items:center;gap:6px;min-width:66px;min-height:32px;padding:4px 7px;border:1px solid transparent;border-radius:6px;touch-action:none;user-select:none;cursor:ew-resize}
+.lab-value-grip[aria-disabled="false"]{background:var(--lab-surface);border-color:var(--lab-accent-line);color:var(--lab-accent-ink)}
+.lab-value-grip[aria-disabled="false"]::after{content:'↔';font:400 14px/1 var(--lab-font-sans)}
+.lab-value-grip[aria-disabled="true"]{cursor:default;color:var(--lab-muted)}
+.lab-value-grip:focus-visible{outline:none;border-color:var(--lab-accent-ink)}
+.cs-binary-floating-point .storage-comparison{display:block;padding:6px 0;font-size:12px}
+.cs-binary-floating-point .normalizer-head span{max-width:760px;font-size:12px;line-height:1.45}
+
+/* Hidden challenge numbers must not leave an empty fixed grid column. */
+.cs-python-programming-practice .challenge-brief{grid-template-columns:minmax(0,1fr) auto;align-items:start;background:var(--lab-accent-soft)}
+.cs-python-programming-practice .challenge-brief-actions{position:static;align-self:start}
+.cs-python-programming-practice .challenge-prompt .semantic-call{font-weight:400}
+
 </style>
 <script data-lab-design-runtime>
 /* Shared model dragging: retain the point grabbed while the model rerenders. */
@@ -3670,19 +3700,21 @@ window.LabDesign = {
           <rect width="900" height="520" fill="#f8fafb"/>
           <rect width="900" height="520" fill="url(#stageGrid)" opacity=".82"/>
 
+            <rect class="cell-boundary" x="382" y="58" width="350" height="390" rx="16"/>
+
           <g id="sr-input-layer">
             <rect id="svg-r-block" class="input-block visual-input-target" x="34" y="114" width="84" height="62" rx="10" tabindex="0" role="button" aria-label="Reset input R, currently 0"/>
             <text class="input-label" x="76" y="139">R</text>
             <text class="input-role" x="76" y="156">RESET INPUT</text>
             <circle id="svg-r-node" class="node" cx="128" cy="145" r="7"/>
-            <path id="wire-r-in" class="wire" d="M128 145H417"/>
+            <path id="wire-r-in" class="wire" d="M118 145H432"/>
             <g transform="translate(252 132)"><rect id="pill-r" class="value-pill" width="32" height="22" rx="7"/><text id="value-r" class="value-text" x="16" y="15">0</text></g>
 
             <rect id="svg-s-block" class="input-block visual-input-target" x="34" y="344" width="84" height="62" rx="10" tabindex="0" role="button" aria-label="Set input S, currently 0"/>
             <text class="input-label" x="76" y="369">S</text>
             <text class="input-role" x="76" y="386">SET INPUT</text>
             <circle id="svg-s-node" class="node" cx="128" cy="375" r="7"/>
-            <path id="wire-s-in" class="wire" d="M128 375H417"/>
+            <path id="wire-s-in" class="wire" d="M118 375H432"/>
             <g transform="translate(252 362)"><rect id="pill-s" class="value-pill" width="32" height="22" rx="7"/><text id="value-s" class="value-text" x="16" y="15">0</text></g>
           </g>
 
@@ -3691,13 +3723,13 @@ window.LabDesign = {
             <text class="input-label" x="60" y="85">J</text>
             <text class="input-role" x="60" y="101">SET</text>
             <circle id="svg-j-node" class="node" cx="105" cy="89" r="7"/>
-            <path id="wire-j-in" class="wire secondary" d="M105 89H128V140H148"/>
+            <path id="wire-j-in" class="wire secondary" d="M95 89H128V140H148"/>
 
             <rect id="svg-k-block" class="input-block visual-input-target" x="25" y="402" width="70" height="55" rx="9" tabindex="0" role="button" aria-label="Input K, currently 0"/>
             <text class="input-label" x="60" y="425">K</text>
             <text class="input-role" x="60" y="441">RESET</text>
             <circle id="svg-k-node" class="node" cx="105" cy="429" r="7"/>
-            <path id="wire-k-in" class="wire secondary" d="M105 429H128V360H148"/>
+            <path id="wire-k-in" class="wire secondary" d="M95 429H128V380H148"/>
 
             <rect id="svg-clock-block" class="input-block visual-input-target" x="25" y="233" width="88" height="54" rx="9" tabindex="0" role="button" aria-label="Rising clock edge"/>
             <text class="input-label" x="69" y="255">CLK</text>
@@ -3709,24 +3741,24 @@ window.LabDesign = {
             <text class="steering-title" x="232" y="143">SET STEERING</text>
             <text class="steering-formula" x="232" y="162">S = J · Q̅ · ↑CLK</text>
             <text id="set-steering-value" class="steering-formula" x="232" y="182">internal S = 0</text>
-            <path id="wire-jk-s" class="wire" d="M316 160H350V375H417"/>
+            <path id="wire-jk-s" class="wire" d="M316 160H350V375H432"/>
             <g transform="translate(352 362)"><rect id="pill-internal-s" class="value-pill" width="32" height="22" rx="7"/><text id="value-internal-s" class="value-text" x="16" y="15">0</text></g>
 
             <rect id="reset-steering" class="steering-block" x="148" y="315" width="168" height="90" rx="11"/>
             <text class="steering-title" x="232" y="343">RESET STEERING</text>
             <text class="steering-formula" x="232" y="362">R = K · Q · ↑CLK</text>
             <text id="reset-steering-value" class="steering-formula" x="232" y="382">internal R = 0</text>
-            <path id="wire-jk-r" class="wire" d="M316 360H336V145H417"/>
+            <path id="wire-jk-r" class="wire" d="M316 360H336V166M336 154V145H432"/>
             <g transform="translate(352 132)"><rect id="pill-internal-r" class="value-pill" width="32" height="22" rx="7"/><text id="value-internal-r" class="value-text" x="16" y="15">0</text></g>
 
-            <path id="wire-jk-qbar-feedback" class="wire secondary" d="M570 350H735V52H232V115" opacity=".72"/>
-            <path id="wire-jk-q-feedback" class="wire secondary" d="M570 170H718V462H232V405" opacity=".72"/>
+            <path id="wire-jk-qbar-feedback" class="wire secondary" d="M714 350H735V52H232V115" opacity=".72"/>
+            <path id="wire-jk-q-feedback" class="wire secondary" d="M714 170H724V344M724 356V462H232V405" opacity=".72"/>
             <text class="feedback-label" x="420" y="46">Q̅ feeds SET steering</text>
             <text class="feedback-label" x="515" y="456">Q feeds RESET steering</text>
           </g>
 
           <g id="storage-cell">
-            <rect class="cell-boundary" x="382" y="58" width="350" height="390" rx="16"/>
+
             <text class="cell-title" x="401" y="82">Cross-coupled NOR storage cell</text>
 
             <path id="upper-gate" class="gate-shape" d="M417 110C467 110 515 126 548 170C515 214 467 230 417 230C440 194 440 146 417 110Z"/>
@@ -3740,10 +3772,12 @@ window.LabDesign = {
             <text class="gate-formula" x="486" y="364">Q̅ = ¬(S ∨ Q)</text>
 
             <path id="wire-q-out" class="wire" d="M569 170H714"/>
-            <path id="wire-q-feedback" class="wire" d="M569 170H664V430H392V325H417"/>
+            <path id="wire-q-feedback" class="wire" d="M664 170V344M664 356V430H392V381M392 369V325H432"/>
             <path id="wire-qbar-out" class="wire" d="M569 350H714"/>
-            <path id="wire-qbar-feedback" class="wire" d="M569 350H692V103H392V195H417"/>
+            <path id="wire-qbar-feedback" class="wire" d="M692 350V176M692 164V103H392V139M392 151V195H432"/>
 
+            <circle class="wire-junction" cx="664" cy="170" r="3" fill="var(--signal-off)"/>
+            <circle class="wire-junction" cx="692" cy="350" r="3" fill="var(--signal-off)"/>
             <circle id="q-node" class="node" cx="714" cy="170" r="8"/>
             <circle id="qbar-node" class="node" cx="714" cy="350" r="8"/>
             <text class="output-label" x="688" y="153">Q</text>
@@ -4457,6 +4491,9 @@ window.LabDesign = {
     setWireState(wires.qFeedback, qSignal, "qFeedback");
     setWireState(wires.qbarOut, qbarSignal, "qbarOut");
     setWireState(wires.qbarFeedback, qbarSignal, "qbarFeedback");
+    document.querySelectorAll(".wire-junction").forEach((node, index) => {
+      node.style.fill = getComputedStyle(index === 0 ? wires.qOut : wires.qbarOut).stroke;
+    });
     setNodeState(elements.qNode, qSignal);
     setNodeState(elements.qbarNode, qbarSignal);
     setPill(elements.pillQFeedback, elements.valueQFeedback, qSignal);

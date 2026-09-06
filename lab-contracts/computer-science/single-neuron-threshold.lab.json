@@ -39,10 +39,13 @@
           "#boundaryGrip-w2",
           "#boundaryGrip-theta",
           "#modeSwitch",
-          "#progressRail"
+          "#progressRail",
+          "#w1Output",
+          "#w2Output",
+          "#thetaOutput"
         ],
-        "description": "Predict, shift the boundary with its threshold grip or tilt it with a weight grip; keyboard arrows/Home/End adjust the same quantities. Parameter readouts remain above the plot.",
-        "visibility": "The threshold grip appears in the threshold task, w1 in weight influence, and all three in XOR/Explore; prediction unlocks the current task controls."
+        "description": "Predict, shift or tilt the visible boundary, or adjust the stable parameter values with horizontal dragging and arrow keys.",
+        "visibility": "Task locks and prediction gate parameter changes. Grips require a visible boundary and meaningful leverage. Readout controls remain available offscreen or at zero weights; all manipulation freezes during the guided XOR proof and returns in Explore."
       },
       "model": {
         "kind": "model",
@@ -68,12 +71,15 @@
       "parameters": {
         "description": "Weights and threshold.",
         "domain": "w1/w2 from -2 to 3; theta from -1 to 3; 0.1 steps.",
-        "source": "Unlocked direct SVG boundary grips, with keyboard alternatives.",
+        "source": "Unlocked SVG boundary grips and stable value controls, both with keyboard alternatives.",
         "output": "z=w1*x1+w2*x2, output 1 when z≥theta and the boundary.",
         "inputSlots": [
           "#boundaryGrip-w1",
           "#boundaryGrip-w2",
-          "#boundaryGrip-theta"
+          "#boundaryGrip-theta",
+          "#w1Output",
+          "#w2Output",
+          "#thetaOutput"
         ]
       },
       "inputs": {
@@ -92,7 +98,7 @@
       "XOR target B/C=1 and A/D=0 cannot be separated by one straight line. Evidence counts distinct output patterns, not all distinct parameter settings.",
       "After enough output patterns, the crossing-diagonal explanation establishes the limit and unlocks Explore.",
       "The shared SVG drag helper retains pickup offset and releases capture. Threshold dragging preserves weights; each weight grip holds the other weight and threshold fixed. Existing ranges and 0.1 steps still apply.",
-      "Next-task and XOR proof actions appear in the relationship working card; no duplicate bottom phase dock. Offscreen boundaries retain grips and keyboard access."
+      "Next-task and XOR proof actions appear in the relationship working card. Offscreen/degenerate boundaries have no floating grips; stable value controls preserve access. Proof disables manipulation until Explore."
     ],
     "completion": "Threshold and weight targets achieved, then XOR geometric proof inspected.",
     "limitations": [
