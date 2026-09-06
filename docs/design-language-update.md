@@ -1252,9 +1252,13 @@ Implemented and reviewed locally:
   challenge/unlock; Observe/Some/All recursion (10/15/21) and overflow; all neuron
   relationships and XOR proof/Explore; bidirectional translation, run, views and
   editor swap. No browser page errors. 1422/900/390px fit without canvas scrolling.
-  All 57 standalone downloads and contract checks pass; developer mirrors match.
+  All 57 standalone downloads pass and developer mirrors match. Catalogue-wide
+  contracts passed before concurrent Bounds edits; final contract checks pass for
+  each of these six labs. Bounds remains owned by the alignment task.
 - Review choices: preserve programming/trace scrolling, original circuit art and
   intentional workbench layouts. Recursive examples are successive learning cases,
   not a new interpretation of the standard Working visibility toggle.
 - Concurrent alignment work owns Bounds source/sidecar/output; excluded from this
   batch's staging after the shared-resource refresh.
+- Commits: site implementation `83189fb`; canonical shared kit/guides
+  `579a324`. The six maps pin the site implementation revision.
