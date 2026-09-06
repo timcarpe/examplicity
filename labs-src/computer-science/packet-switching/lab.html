@@ -1249,8 +1249,9 @@ input[type="checkbox"]{margin:0}
 }
 </style>
 <link rel="stylesheet" href="./lab-kit.css" data-lab-resource="lab-kit.css">
+<!-- LAB_DESIGN_COMPONENTS -->
 </head>
-<body data-lab-layout="standard">
+<body class="lab-adopt-v3 lab-simulation sim-packet-switching" data-lab-layout="standard">
 <main>
 <!-- LAB_MANIFEST_HEADER_START -->
 <header class="lab-manifest-header">
@@ -1278,22 +1279,18 @@ input[type="checkbox"]{margin:0}
 <!-- LAB_MANIFEST_HEADER_END -->
 <span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span>
   <span data-lab-authored-subtitle-slot hidden></span>
+<section class="lab-activity-bar sim-top"><div class="lab-activity-task"><strong id="labTaskTitle">Deliver the complete message across multiple routes.</strong></div><div class="sim-top-tools"><button id="resetTopology" class="lab-action">Reset topology</button></div></section>
 
-  <section class="panel overview">
+  <section class="sim-legacy panel overview">
     <div class="overview-copy">
-      <strong id="overviewTitle">Build or use the network, then create packets at Device A.</strong>
+
       <span id="overviewDetail">Routers may queue packets and forward them along different available routes.</span>
     </div>
-    <div class="overview-metrics">
-      <div class="metric"><span>Packets</span><strong id="packetMetric">0</strong></div>
-      <div class="metric"><span>Routes available</span><strong id="routeMetric">0</strong></div>
-      <div class="metric"><span>Accepted</span><strong id="arrivalMetric">0</strong></div>
-      <div id="messageMetricBox" class="metric"><span>Message</span><strong id="messageMetric">Waiting</strong></div>
-    </div>
+
   </section>
 
   <div class="lab-grid">
-    <section class="panel device-panel device-a">
+    <section class="lab-sidebar panel device-panel device-a">
       <div class="panel-head">
         <strong>Device A</strong>
         <span>sender</span>
@@ -1342,8 +1339,8 @@ input[type="checkbox"]{margin:0}
         </div>
 
         <div class="message-actions">
-          <button id="packetiseButton">Create packets</button>
-          <button id="sendButton" class="primary" disabled>Send packets</button>
+          <button id="packetiseButton" data-lab-intro="packet-create" data-lab-intro-title="Prepare the message" data-lab-intro-copy="Choose a payload size and create packets. Send them to compare arrival order with the reconstructed message." class="lab-action">Create packets</button>
+          <button id="sendButton" class="lab-action primary" disabled data-lab-intro="packet-send" data-lab-intro-title="Send the packet set" data-lab-intro-copy="Watch router queues and the receiver’s ordered buffer. With Checksum enabled you can damage one packet to observe its resend." data-priority="primary">Send packets</button>
         </div>
       </div>
 
@@ -1391,28 +1388,25 @@ input[type="checkbox"]{margin:0}
         </div>
       </section>
 
-      <div class="queue-section">
-        <div class="section-label"><span>NIC send queue</span><span id="sendQueueCount">empty</span></div>
-        <div id="sendQueue" class="packet-list"></div>
-      </div>
+
     </section>
 
     <section class="panel network-panel">
       <div class="panel-head">
         <strong>Router network</strong>
-        <span>Drag routers in, move them, and snap links between nodes.</span>
+        <span>Add routers in, move them, and snap links between nodes.</span>
       </div>
 
-      <div class="network-toolbar">
-        <button id="moveTool" class="active-tool">Move</button>
-        <button id="connectTool">Connect</button>
-        <button id="removeTool" class="danger">Remove</button>
-        <div id="toolCopy" class="tool-copy">Move routers or drag a new router into the network.</div>
-        <div id="routerPalette" class="router-palette" draggable="true" title="Drag into the network">
+      <div class="sim-tool-row network-toolbar">
+        <button id="moveTool" class="lab-action active-tool">Move</button>
+        <button id="connectTool" class="lab-action">Connect</button>
+        <button id="removeTool" class="lab-action danger">Remove</button>
+        <div id="toolCopy" class="sim-legacy tool-copy">Move routers or drag a new router into the network.</div>
+        <div id="routerPalette" class="router-palette" draggable="true" title="Drag into the network" data-lab-intro="packet-router" data-lab-intro-title="Change the network" data-lab-intro-copy="Add a router by clicking or dragging it into the network. Use Connect to join nodes, then compare available routes.">
           <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="3" fill="#dfe7ec" stroke="#5f7280" stroke-width="1.7"/><path d="M6 11h3M11 11h3M16 11h2" stroke="#354650" stroke-width="1.7"/><circle cx="7" cy="15" r="1" fill="#49a968"/><circle cx="11" cy="15" r="1" fill="#d7a03d"/></svg>
-          Drag router
+          Add router
         </div>
-        <button id="resetTopology">Reset topology</button>
+
       </div>
 
       <div id="networkCanvas" class="network-canvas lab-kit-canvas" data-grid="square" data-lab-role="model">
@@ -1421,18 +1415,18 @@ input[type="checkbox"]{margin:0}
         <div id="packetLayer" class="packet-layer"></div>
       </div>
 
-      <div id="networkStatus" class="network-status" role="status" aria-live="polite" data-lab-role="evidence">
-        <strong>Topology ready</strong>
-        Use Move, Connect or Remove. Device A and Device B ports are fixed.
-      </div>
 
-      <div class="network-footer">
+
+      <div class="sim-legacy network-footer">
         <span>Dots are packets; cards remain inside the device NICs.</span>
         <span id="topologySummary">5 routers · 11 links</span>
       </div>
-    </section>
+    <div class="queue-section"><strong id="overviewTitle">Build or use the network, then create packets at Device A.</strong>
+        <div class="section-label"><span>NIC send queue</span><span id="sendQueueCount">empty</span></div>
+        <div id="sendQueue" class="packet-list"></div>
+      </div></section>
 
-    <section class="panel device-panel device-b">
+    <section class="lab-sidebar panel device-panel device-b">
       <div class="panel-head">
         <strong>Device B</strong>
         <span>receiver</span>
@@ -1469,7 +1463,15 @@ input[type="checkbox"]{margin:0}
         <div id="reconstructedMessage" class="reconstruction-output">Waiting for packets…</div>
         <div id="reconstructionNote" class="reconstruction-note">The NIC uses packet numbers to place payloads back into their original order.</div>
       </div>
-    </section>
+    <section class="lab-evidence-card"><h2>Delivery evidence</h2><div class="overview-metrics">
+      <div class="metric"><span>Packets</span><strong id="packetMetric">0</strong></div>
+      <div class="metric"><span>Routes available</span><strong id="routeMetric">0</strong></div>
+      <div class="metric"><span>Accepted</span><strong id="arrivalMetric">0</strong></div>
+      <div id="messageMetricBox" class="metric"><span>Message</span><strong id="messageMetric">Waiting</strong></div>
+    </div></section><section class="lab-evidence-card"><h2>Network state</h2><div id="networkStatus" class="network-status" role="status" aria-live="polite" data-lab-role="evidence">
+        <strong>Topology ready</strong>
+        Use Move, Connect or Remove. Device A and Device B ports are fixed.
+      </div></section></section>
   </div>
 </main>
 

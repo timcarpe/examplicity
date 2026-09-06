@@ -1,9 +1,91 @@
 {
   "schemaVersion": 1,
   "relationship": "Wrapping application data in protocol layers connects TCP/IP encapsulation to a packet's journey and receiver unpacking.",
-  "learnerLoop": { "action": "Select protocol wrappers, send the built packet and peel layers at the receiver.", "modelChange": "The packet gains or loses the selected protocol shells as it moves between hosts.", "evidence": "The packing mat, flight packet, receiver packet and status strip show each layer's role.", "nextDecision": "Add, remove or compare wrappers and explain what the receiver must unpack." },
-  "invariants": ["The packet shells shown in flight and at the receiver match the wrappers selected.", "Receiver peeling removes the outer visible shell in order."],
-  "safeAdaptations": ["Change application stories, endpoint labels or prompts while preserving layer construction and ordered unpacking."],
-  "nonGoals": ["Sending a real TCP/IP packet or emulating complete network protocols."],
-  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+  "learnerLoop": {
+    "action": "Select protocol wrappers, send the built packet and peel layers at the receiver.",
+    "modelChange": "The packet gains or loses the selected protocol shells as it moves between hosts.",
+    "evidence": "The packing mat, flight packet, receiver packet and status strip show each layer's role.",
+    "nextDecision": "Add, remove or compare wrappers and explain what the receiver must unpack."
+  },
+  "invariants": [
+    "The packet shells shown in flight and at the receiver match the wrappers selected.",
+    "Receiver peeling removes the outer visible shell in order."
+  ],
+  "safeAdaptations": [
+    "Change application stories, endpoint labels or prompts while preserving layer construction and ordered unpacking."
+  ],
+  "nonGoals": [
+    "Sending a real TCP/IP packet or emulating complete network protocols."
+  ],
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract",
+  "implementation": {
+    "reviewedRevision": "53e0d238e961f19f0539a906917566411842a63a",
+    "surfaces": {
+      "task": {
+        "selectors": [
+          "#challengeTitle",
+          "#compareProcess"
+        ],
+        "kind": "given",
+        "description": "Deliver the browser request to the web process, then compare delivery to mail.",
+        "visibility": "Present throughout; content follows the current simulation state."
+      },
+      "model": {
+        "selectors": [
+          "#packingMat",
+          "#receiverMap",
+          "#receiverPacket"
+        ],
+        "kind": "model",
+        "description": "Nested wrappers at the sender and reverse-order consumption at receiver gates.",
+        "visibility": "Present throughout; content follows the current simulation state."
+      },
+      "controls": {
+        "selectors": [
+          ".wrapper-tool",
+          "#sendButton",
+          "#resetPacket"
+        ],
+        "kind": "control",
+        "description": "Add a protocol shell, peel only the outer one, send any constructed order and reset.",
+        "visibility": "Present throughout; content follows the current simulation state."
+      },
+      "evidence": {
+        "selectors": [
+          "#statusStrip",
+          ".gate-read"
+        ],
+        "kind": "evidence",
+        "description": "Layer-specific acceptance/rejection and exact header reads. The current remaining packet is shown inline below receiver gates.",
+        "visibility": "Present throughout; content follows the current simulation state."
+      }
+    },
+    "quantities": {
+      "stack": {
+        "description": "Order of nested headers.",
+        "domain": "Expected inner-to-outer TCP, IP, Link; each wrapper used once.",
+        "source": "Wrapper buttons and outer peel.",
+        "output": "Nested packet and remaining receiver packet."
+      },
+      "addressing": {
+        "description": "Layer-specific endpoint identifiers.",
+        "domain": "Fixed IPv4/MAC addresses; source port 49152, HTTP destination 80 or SMTP 25.",
+        "source": "Selected Web/Mail service.",
+        "output": "Protocol headers and gate reads."
+      }
+    },
+    "modes": {
+      "process": "Web initially; Compare another process unlocks after Web success and switches to Mail.",
+      "support": "No Working or exam toggle; all wrappers remain learner actions."
+    },
+    "dependencies": [
+      "The receiver first expects Link, then IP, then TCP.",
+      "Any incorrect outer order stops at the corresponding receiver gate.",
+      "Web delivery must succeed before Mail comparison."
+    ],
+    "completion": "The correct original application payload reaches the chosen process after all three headers are consumed; success is recorded per service.",
+    "limitations": [
+      "One application message in one packet on one direct Ethernet link; excludes DNS, routing, handshakes, congestion and retransmission."
+    ]
+  }
 }

@@ -10,13 +10,14 @@ export const changelogEntries: readonly ChangelogEntry[] = [
     date: '2026-09-06',
     displayDate: '6 September 2026',
     publicChanges: [
-      'Reworked the developer reference with actionable AI remix instructions, lab contribution guidance and a plain-text companion; linked it directly from the Remix prompt.',
+      'Refocused the developer reference and its plain-text companion on adapting labs and creating new activities from examples, with a compact GitHub contribution card and direct links from the Remix prompt.',
       'Refreshed ten Mathematics labs covering ratio and flow, relative frequency, conditional probability, scatter diagrams, sets, similarity, solids, time zones, transformations and vectors with shared controls, clearer working and targeted interaction hints.',
+      'Refreshed nine networking simulations and Sound Sampling with shared task controls, readable evidence, targeted interaction hints and fitted model areas.',
       'Unified Time Zones under Working: None / Some / All, made its calendars and date controls easier to read, and preserved the complete-meeting availability checks.',
     ],
     internalChanges: [
       'Added managed developer-reference links to published and downloaded lab HTML heads.',
-      'Added implementation maps for all ten labs, preserving learning relationships and documenting support, inputs, evidence and completion dependencies.',
+      'Added implementation maps for the ten Mathematics labs and ten communication/representation labs, preserving learning relationships and documenting support, inputs, evidence and completion dependencies.',
       'Extended the canonical shared design resources with investigation sidebars, native date selects and accessible checkpoints; retained the same resources in standalone lab downloads and the developer guide.',
     ],
   },

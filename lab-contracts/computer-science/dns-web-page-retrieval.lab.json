@@ -1,9 +1,100 @@
 {
   "schemaVersion": 1,
   "relationship": "Requesting a URL connects its protocol, domain and path to DNS resolution, retrieval and page rendering.",
-  "learnerLoop": { "action": "Enter or choose a URL and send the request.", "modelChange": "The request progresses through resolve, retrieve and render phases.", "evidence": "Phase markers, progress, operation text and browser view show the current work.", "nextDecision": "Inspect which URL part or network service is needed next." },
-  "invariants": ["The displayed phases remain ordered from resolution through retrieval to rendering.", "URL parts shown in the model derive from the requested address."],
-  "safeAdaptations": ["Change URLs, site stories or pacing while retaining the DNS-to-rendering sequence."],
-  "nonGoals": ["Acting as a real browser or querying live DNS."],
-  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+  "learnerLoop": {
+    "action": "Enter or choose a URL and send the request.",
+    "modelChange": "The request progresses through resolve, retrieve and render phases.",
+    "evidence": "Phase markers, progress, operation text and browser view show the current work.",
+    "nextDecision": "Inspect which URL part or network service is needed next."
+  },
+  "invariants": [
+    "The displayed phases remain ordered from resolution through retrieval to rendering.",
+    "URL parts shown in the model derive from the requested address."
+  ],
+  "safeAdaptations": [
+    "Change URLs, site stories or pacing while retaining the DNS-to-rendering sequence."
+  ],
+  "nonGoals": [
+    "Acting as a real browser or querying live DNS."
+  ],
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract",
+  "implementation": {
+    "reviewedRevision": "53e0d238e961f19f0539a906917566411842a63a",
+    "surfaces": {
+      "task": {
+        "selectors": [
+          "#labTaskTitle",
+          "#labProgress"
+        ],
+        "kind": "given",
+        "description": "Resolve a name, retrieve a page, then repair the missing directory mapping.",
+        "visibility": "Present throughout; content follows the current simulation state."
+      },
+      "browser": {
+        "selectors": [
+          "#urlInput",
+          "#goBtn",
+          ".bookmarks",
+          ".browser-engine",
+          ".viewport"
+        ],
+        "kind": "model",
+        "description": "URL navigation, destination-IP/request/HTML state and rendered page.",
+        "visibility": "Present throughout; content follows the current simulation state."
+      },
+      "infrastructure": {
+        "selectors": [
+          ".dns-chain",
+          ".dns-buses",
+          ".web-buses",
+          ".server-list"
+        ],
+        "kind": "model",
+        "description": "Local DNS cache, editable directory, query/reply paths and web servers.",
+        "visibility": "Present throughout; content follows the current simulation state."
+      },
+      "evidence": {
+        "selectors": [
+          "#microStatus",
+          "#operationTitle"
+        ],
+        "kind": "evidence",
+        "description": "Current navigation outcome and transfer beside the browser internals.",
+        "visibility": "Present throughout; content follows the current simulation state."
+      }
+    },
+    "quantities": {
+      "address": {
+        "description": "Domain/path translated to a server IPv4 address.",
+        "domain": "Three fictional sites with fixed addresses.",
+        "source": "URL/bookmark, DNS cache and editable directory.",
+        "output": "Destination IP, transfer labels and requested server.",
+        "inputSlots": [
+          "#urlInput",
+          "input.dns-edit"
+        ]
+      },
+      "transfer": {
+        "description": "Navigation phase and queued transfer position.",
+        "domain": "Resolve, retrieve and render; cached lookups skip remote-directory transfers.",
+        "source": "Queue built from URL and cache state.",
+        "output": "#labProgress and transfer evidence."
+      }
+    },
+    "modes": {
+      "navigation": "Atlas initially requires remote lookup and is cached; Orbit starts cached; Field Notes lacks a mapping.",
+      "repair": "Field Notes becomes retrievable when its directory maps to 203.0.113.77 and a fresh navigation starts.",
+      "support": "No Working or exam controls. Go/Next advances one transfer; Render is the final action."
+    },
+    "dependencies": [
+      "DNS must return an address before any page request.",
+      "The server must match the address and requested path before returning HTML.",
+      "Changing a directory entry alone does not restart an already failed navigation."
+    ],
+    "completion": "Done appears only after the HTML is rendered; missing mapping, invalid URL, missing server or file produce distinct failures.",
+    "limitations": [
+      "Local simulation of three sites; no real DNS or web fetch.",
+      "Rendered site miniatures preserve their distinct page styling and purposeful viewport."
+    ]
+  }
 }

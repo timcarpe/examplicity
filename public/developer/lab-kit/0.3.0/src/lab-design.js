@@ -150,6 +150,15 @@ window.LabDesign = {
       const [x, y] = popupPosition(hint, document.querySelector('main') || document.body, introduction.getBoundingClientRect());
       hint.style.left = x + 'px'; hint.style.top = y + 'px';
     }
+    // Explicit adapter for legacy mode groups whose state lives in a CSS class.
+    document.querySelectorAll('.lab-toggle[data-active-class]').forEach(group => {
+      const sync = () => group.querySelectorAll('button').forEach(button => {
+        const value = String(button.classList.contains(group.dataset.activeClass));
+        if (button.getAttribute('aria-pressed') !== value) button.setAttribute('aria-pressed', value);
+      });
+      new MutationObserver(sync).observe(group, {childList:true,subtree:true,attributes:true,attributeFilter:['class']});
+      sync();
+    });
     const cardSelector = '.calc-step,.solve-card,.derive-step,.work-step,.working-step,.lab-work-card,.lab-investigation .work-section,.lab-investigation .evidence-section,.lab-investigation .work-block';
     let queued = false;
     const key = card => card.id || [...card.querySelectorAll('input')].map(input => input.id || input.name || [...input.attributes].filter(a => a.name.startsWith('data-')).map(a => a.name + a.value).join(':')).join('|') || card.querySelector('.step-head,.derive-step-head,.work-step-head,.eyebrow,strong')?.textContent;

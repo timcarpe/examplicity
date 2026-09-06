@@ -577,8 +577,9 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 </style>
 <!-- LAB_FRAME_STYLES_END -->
 <link rel="stylesheet" href="./lab-kit.css" data-lab-resource="lab-kit.css">
+<!-- LAB_DESIGN_COMPONENTS -->
 </head>
-<body data-lab-layout="standard">
+<body class="lab-adopt-v3 lab-simulation sim-network-topology" data-lab-layout="standard">
 <main>
 <!-- LAB_MANIFEST_HEADER_START -->
 <header class="lab-manifest-header">
@@ -600,38 +601,49 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 <!-- LAB_MANIFEST_HEADER_END -->
 <span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span>
   <span data-lab-authored-subtitle-slot hidden></span>
+<section class="lab-activity-bar sim-top"><div class="lab-activity-task"><strong id="missionTitle">Goal: Connect at least four stations to one shared backbone.</strong></div><div class="sim-top-tools"><div class="action-group">
+          <button id="undoButton" disabled class="lab-action">Undo</button>
+          <button id="resetButton" data-lab-action="reset" class="lab-action">Reset</button>
+          <button id="checkButton" class="lab-action primary" data-priority="primary">Check topology</button>
+        </div><div id="taskTabs" class="lab-toggle task-tabs" aria-label="Topology goals" data-kind="mode" data-active-class="active"></div></div></section>
 
-  <section class="panel mission">
+  <section class="sim-legacy panel mission">
     <div>
-      <strong id="missionTitle">Goal: Connect at least four stations to one shared backbone.</strong>
+
       <span id="missionHint">Connect each station once to the terminated backbone; do not link stations directly.</span>
     </div>
-    <div id="taskTabs" class="task-tabs" aria-label="Topology goals"></div>
+
   </section>
 
   <div class="lab-grid">
-    <aside class="panel palette">
+    <aside class="lab-sidebar panel palette">
       <div class="palette-head">
         <strong>Parts</strong>
         <span>Drag a part onto the workspace, or tap it to add.</span>
       </div>
       <div id="partList" class="part-list"></div>
-      <div id="paletteNote" class="palette-note">Choose Cable, then drag between two parts. You can also select one part and then another.</div>
-    </aside>
+      <div id="paletteNote" class="sim-legacy palette-note">Choose Cable, then drag between two parts. You can also select one part and then another.</div>
+    <section class="lab-evidence-card"><h2>Construction evidence</h2><div id="feedback" class="feedback" role="status" aria-live="polite">
+        <strong>Start with the parts.</strong>
+        <span>Add the required devices, connect them, then check your topology.</span>
+      </div></section><section class="lab-evidence-card"><h2>Test a packet route</h2><div id="testPanel" class="test-panel" hidden>
+        <label for="sourceSelect">From</label>
+        <select id="sourceSelect"></select>
+        <label for="destinationSelect">To</label>
+        <select id="destinationSelect"></select>
+        <button id="sendButton" class="lab-action primary" data-lab-intro="topology-send" data-lab-intro-title="Test your construction" data-lab-intro-copy="Choose different source and destination stations, send a packet, and observe the route." data-priority="primary">Send packet</button>
+        <div id="journeyText"><strong>Network ready.</strong> Choose two stations and send a packet.</div>
+      </div></section><section class="lab-evidence-card"><h2>Network behaviour</h2><div class="teaching-note">Stations send and receive. Switches, bridges and shared buses can carry packets onward. In Hybrid, add direct mesh links over an existing bus or star and compare which route the packet chooses.</div></section></aside>
 
     <section class="panel workspace">
       <div class="toolbar">
-        <div class="tool-group" aria-label="Workspace tools">
-          <button id="moveTool" class="active-tool">Move</button>
-          <button id="cableTool">Cable</button>
-          <button id="deleteTool" class="danger">Delete</button>
-          <button id="meshLayerTool" hidden title="Use the stations already here and add every direct link between them.">Mesh layer</button>
+        <div class="lab-toggle tool-group" aria-label="Workspace tools" data-kind="mode" data-active-class="active-tool">
+          <button id="moveTool" class="lab-action active-tool">Move</button>
+          <button id="cableTool" data-lab-intro="topology-cable" data-lab-intro-title="Connect two parts" data-lab-intro-copy="Choose Cable, then select two parts or drag between them. Check the topology before sending a packet." class="lab-action">Cable</button>
+          <button id="deleteTool" class="lab-action danger">Delete</button>
+          <button id="meshLayerTool" hidden title="Use the stations already here and add every direct link between them." class="lab-action">Mesh layer</button>
         </div>
-        <div class="action-group">
-          <button id="undoButton" disabled>Undo</button>
-          <button id="resetButton" data-lab-action="reset">Reset</button>
-          <button id="checkButton" class="primary">Check topology</button>
-        </div>
+
       </div>
 
       <div class="canvas-shell">
@@ -643,21 +655,11 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
         </div>
       </div>
 
-      <div id="feedback" class="feedback" role="status" aria-live="polite">
-        <strong>Start with the parts.</strong>
-        <span>Add the required devices, connect them, then check your topology.</span>
-      </div>
 
-      <div id="testPanel" class="test-panel" hidden>
-        <label for="sourceSelect">From</label>
-        <select id="sourceSelect"></select>
-        <label for="destinationSelect">To</label>
-        <select id="destinationSelect"></select>
-        <button id="sendButton" class="primary">Send packet</button>
-        <div id="journeyText"><strong>Network ready.</strong> Choose two stations and send a packet.</div>
-      </div>
 
-      <div class="teaching-note">Stations send and receive. Switches, bridges and shared buses can carry packets onward. In Hybrid, add direct mesh links over an existing bus or star and compare which route the packet chooses.</div>
+
+
+
     </section>
   </div>
 </main>
@@ -674,7 +676,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 
   const TASKS = [
     {
-      id:"bus", name:"Bus", title:"Goal: Connect at least four stations to one shared backbone.",
+      id:"bus", name:"Bus", title:"Connect at least four stations to one shared backbone.",
       hint:"Connect each station once to the terminated backbone; do not link stations directly.",
       open:false,
       parts:{station:{min:4,max:18},bus:{min:1,max:1}}
@@ -870,7 +872,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 
   function renderTaskHeader(){
     const task=currentTask();
-    $("missionTitle").textContent=task.title;
+    $("missionTitle").textContent=task.title.replace(/^Goal: /,"");
     $("missionHint").textContent=task.hint;
     $("checkButton").textContent=task.open?"Test network":"Check topology";
     updateMeshLayerButton();
@@ -878,7 +880,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
     root.innerHTML="";
     TASKS.forEach((item,index)=>{
       const button=document.createElement("button");
-      button.className="task-tab"+(index===taskIndex?" active":"")+(!item.open&&completed.has(item.id)?" complete":"");
+      button.setAttribute("aria-pressed",String(index===taskIndex));button.className="task-tab"+(index===taskIndex?" active":"")+(!item.open&&completed.has(item.id)?" complete":"");
       button.textContent=item.name;
       button.disabled=running;
       if(item.open && !task.open && nodes.size){
@@ -907,6 +909,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
       const rule=partRule(type);
       const button=document.createElement("button");
       button.className="part-card";
+      button.dataset.labIntro="topology-part";button.dataset.labIntroTitle="Place network parts";button.dataset.labIntroCopy="Select a part to place it, or drag it onto the canvas. Then choose Cable and select two devices to connect them.";
       button.type="button";
       button.disabled=remaining===0 || running;
       button.dataset.type=type;

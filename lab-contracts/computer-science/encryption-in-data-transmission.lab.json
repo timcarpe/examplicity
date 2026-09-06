@@ -1,9 +1,102 @@
 {
   "schemaVersion": 1,
   "relationship": "Sending a message in shared-key or public/private-key mode connects key roles to the readable and encrypted states of traffic.",
-  "learnerLoop": { "action": "Choose a mode, edit the message and transmit it.", "modelChange": "The message becomes packet traffic with keys assigned to the selected mode.", "evidence": "Source and cipher previews, key labels, stations and wire state show the transmission.", "nextDecision": "Compare who can use a key or read the message in the other mode." },
-  "invariants": ["The visible key roles match the selected encryption mode.", "The cipher preview and traffic represent the current message."],
-  "safeAdaptations": ["Change messages, scenarios or explanatory prompts while preserving the contrast between shared and public/private keys."],
-  "nonGoals": ["Implementing secure real-world cryptography."],
-  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+  "learnerLoop": {
+    "action": "Choose a mode, edit the message and transmit it.",
+    "modelChange": "The message becomes packet traffic with keys assigned to the selected mode.",
+    "evidence": "Source and cipher previews, key labels, stations and wire state show the transmission.",
+    "nextDecision": "Compare who can use a key or read the message in the other mode."
+  },
+  "invariants": [
+    "The visible key roles match the selected encryption mode.",
+    "The cipher preview and traffic represent the current message."
+  ],
+  "safeAdaptations": [
+    "Change messages, scenarios or explanatory prompts while preserving the contrast between shared and public/private keys."
+  ],
+  "nonGoals": [
+    "Implementing secure real-world cryptography."
+  ],
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract",
+  "implementation": {
+    "reviewedRevision": "53e0d238e961f19f0539a906917566411842a63a",
+    "surfaces": {
+      "task": {
+        "selectors": [
+          "#missionTitle",
+          ".mode-tabs",
+          ".goal-lights"
+        ],
+        "kind": "given",
+        "description": "Keep the shared line protected, Bob readable and Eve blocked using the chosen key method.",
+        "visibility": "Present throughout; content follows the current simulation state."
+      },
+      "model": {
+        "selectors": [
+          "#board",
+          "#messageInput",
+          "#aliceBay",
+          "#bobBay",
+          "#eveBay"
+        ],
+        "kind": "model",
+        "description": "Message, encryption gate, shared-line stream and endpoint decryption.",
+        "visibility": "Present throughout; content follows the current simulation state."
+      },
+      "keys": {
+        "selectors": [
+          "#secretTray",
+          "#publicTray",
+          "#privateTray"
+        ],
+        "kind": "control",
+        "description": "Select/place or drag key tokens to sender and recipient bays.",
+        "visibility": "Only the key trays for the active method are visible."
+      },
+      "evidence": {
+        "selectors": [
+          "#wireData",
+          "#bobReadable",
+          "#eveReadable",
+          "#captureHistory",
+          "#feedback"
+        ],
+        "kind": "evidence",
+        "description": "Wire contents, endpoint readability and Eve’s persistent captured transmissions.",
+        "visibility": "Present throughout; content follows the current simulation state."
+      }
+    },
+    "quantities": {
+      "message": {
+        "description": "Plain text and its transmitted representation.",
+        "domain": "Text converted by this lab’s illustrative cipher.",
+        "source": "Message input and sender key.",
+        "output": "Shared line, Bob output and Eve captures.",
+        "inputSlots": [
+          "#messageInput"
+        ]
+      },
+      "key-placement": {
+        "description": "Key ownership at sender, Bob and Eve.",
+        "domain": "Shared K7 copies or Bob public/private tokens.",
+        "source": "Key placement and return/reset actions.",
+        "output": "Bays, decrypt results and confidentiality indicators."
+      }
+    },
+    "modes": {
+      "shared": "All K7 tokens are copies of one secret; the same secret encrypts and decrypts.",
+      "asymmetric": "Bob’s public key encrypts; his private key decrypts.",
+      "support": "No Working or exam toggle. Changing method resets its transmission/key setup; successful method marks are retained."
+    },
+    "dependencies": [
+      "No sender key sends plain text; a private key at the asymmetric sender is rejected.",
+      "Eve may decrypt stored captures when later given a suitable key.",
+      "The three goal indicators derive from wire protection and endpoint readability."
+    ],
+    "completion": "A method is recorded successful when the line is protected, Bob reads and Eve cannot. Both methods remain replayable.",
+    "limitations": [
+      "Cipher is illustrative, not a secure cryptographic algorithm.",
+      "The fixed-geometry device board fits its available width; dense device annotations remain smaller on phones."
+    ]
+  }
 }

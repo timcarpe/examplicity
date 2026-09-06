@@ -1697,6 +1697,293 @@ input.lab-intro-target{outline:none;animation:none}
 @media(max-width:980px){.lab-blend .system,.lab-replacement-layout,.lab-set-layout,.lab-timetable .lab-layout{grid-template-columns:minmax(0,1fr)}.lab-investigation .lab-sidebar{border-left:0;border-top:1px solid var(--lab-line-subtle,#e7e8eb);padding:18px 0 0}.lab-blend #workingDock,.lab-blend .stage-wrap,.lab-blend .evidence,.lab-sets .inspection,.lab-sets .recipient-row{grid-column:1;grid-row:auto}.lab-blend #workingDock{order:2}}
 @media(prefers-reduced-motion:reduce){.lab-investigation .lab-sidebar *{animation:none!important}}
 
+/* Simulation adoption: task-driven evidence uses the same visual hierarchy as working. */
+.lab-simulation{--ink:var(--lab-ink,#1d1d1f);--muted:var(--lab-ink-secondary,#424245);--font:var(--lab-font-sans,sans-serif);font-family:var(--lab-font-sans,sans-serif)}
+.lab-simulation .sim-legacy{display:none!important}
+.lab-simulation .sim-top{display:flex;align-items:center;flex-wrap:wrap;gap:16px;margin:0;padding:20px 24px;border:1px solid var(--lab-line,#d2d2d7);border-radius:12px 12px 0 0;background:white;box-shadow:none}
+.lab-simulation .sim-top .lab-activity-task{flex:1 1 340px;min-width:0}
+.lab-simulation .sim-top .lab-activity-task>strong{display:block;font:400 16px/1.5 var(--lab-font-sans,sans-serif);color:var(--lab-accent-ink,#315b91)}
+.lab-simulation .sim-top-tools{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:10px;max-width:100%}
+.lab-simulation .sim-top-tools>:is(div,.play){height:auto;margin:0;min-width:0}
+.lab-simulation .lab-toggle{width:auto;flex:none;display:flex;flex-wrap:wrap;gap:3px;align-items:center;justify-content:center;padding:4px}
+.lab-simulation .lab-toggle button{min-width:0;flex:0 1 auto;min-height:34px;padding:7px 12px;font:400 12px/1.3 var(--lab-font-sans,sans-serif);border-radius:999px;white-space:normal}
+.lab-simulation .lab-toggle button :is(strong,small){font:inherit}
+.lab-simulation .lab-toggle button :is(small,strong+span){display:none}
+.lab-simulation .lab-toggle button.active-tool{background:var(--lab-accent,#5277b8);color:white;border-color:var(--lab-accent,#5277b8)}
+.lab-simulation .lab-toggle button:disabled{opacity:1;background:var(--lab-surface-strong,#eef1f3);color:var(--lab-muted,#6e6e73);border-color:transparent;box-shadow:none}
+.lab-simulation .lab-checkpoints{display:flex;align-items:center;gap:9px;margin:0;flex-wrap:wrap}
+.lab-simulation .sim-tool-row{display:flex;align-items:end;gap:12px;flex-wrap:wrap;margin:0;padding:16px 24px;background:white;border-top:0;border-radius:0;box-shadow:none;min-width:0}
+.lab-simulation .sim-tool-row>:is(.field,.toggles){flex:0 1 auto;min-width:0;max-width:100%}
+.lab-simulation .sim-tool-row :is(label,.field>label){font:400 12px/1.4 var(--lab-font-sans,sans-serif);color:var(--lab-ink-secondary,#424245)}
+.lab-simulation select{appearance:none;max-width:100%;height:auto;min-height:40px;padding:8px 34px 8px 14px;border:1px solid var(--lab-line,#d2d2d7);border-radius:999px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath d='m4 6 4 4 4-4' fill='none' stroke='%236e6e73' stroke-width='1.5'/%3E%3C/svg%3E") no-repeat right 10px center;color:var(--lab-ink,#1d1d1f);font:400 12px/1.4 var(--lab-font-sans,sans-serif);box-shadow:0 1px 3px #1d1d1f14}
+.lab-simulation select:hover{border-color:var(--lab-line-strong,#a7a7ad)}
+.lab-simulation :is(input:not([type=checkbox]),textarea,select):focus-visible{outline:none!important;box-shadow:none!important;border-color:var(--lab-accent-pressed,#3a5d99)!important}
+.lab-simulation :is(.sim-composition,.lab-grid){margin:0;border-top:0;border-radius:0 0 12px 12px;background:white}
+.lab-simulation .sim-composition{display:grid;grid-template-columns:minmax(0,1fr) 300px;column-gap:24px;row-gap:0;padding:20px 24px;align-items:start}
+.lab-simulation .sim-composition>*{grid-column:1;min-width:0}
+.lab-simulation .sim-composition>.lab-sidebar{grid-column:2;grid-row:1/span 10}
+.lab-simulation .lab-sidebar{position:static;min-width:0;max-width:100%;height:auto;padding:0 0 0 20px;border:0;border-left:1px solid var(--lab-line-subtle,#e7e8eb);border-radius:0;background:white;box-shadow:none;overflow:visible;font:400 14px/1.45 var(--lab-font-sans,sans-serif)}
+.lab-simulation .lab-evidence-card{margin:0 0 16px;padding:12px;border:1px solid var(--lab-line-subtle,#e7e8eb);border-radius:12px;background:var(--lab-surface-muted,#f7f8fa);box-shadow:none;min-width:0;overflow-wrap:anywhere}
+.lab-simulation .lab-evidence-card:has(>[hidden]){display:none}
+.lab-simulation .lab-evidence-card>h2{margin:0 0 8px;font:400 15px/1.4 var(--lab-font-sans,sans-serif)}
+.lab-simulation .lab-evidence-card :is(strong,p,span,code){font-family:inherit;font-size:14px;font-weight:400;line-height:1.45;letter-spacing:normal;text-transform:none}
+.lab-simulation .lab-evidence-card>:not(h2){position:static;display:block;margin:0;padding:0;border:0;background:none;box-shadow:none;min-height:0;max-width:100%}
+.lab-simulation .lab-evidence-card[data-work-state=needed]{border-color:var(--lab-needed-line,#d8c36a);background:var(--lab-needed-surface,#fffdf4)}
+.lab-simulation .lab-evidence-card[data-work-state=good]{border-color:var(--lab-good-line,#9cc7aa);background:var(--lab-good-surface,#f7fcf8)}
+.lab-simulation .lab-evidence-card[data-work-state=bad]{border-color:var(--lab-bad-line,#d8aaa4);background:var(--lab-bad-surface,#fff8f7)}
+.lab-simulation .lab-sidebar :is(.dock-head,.planner-head,.palette-head,.panel-head,.station-title){padding:0 0 12px;border:0;background:none}
+.lab-simulation :is(.panel-head,.station-title,.palette-head,.dock-head,.planner-head) strong{font:400 15px/1.4 var(--lab-font-sans,sans-serif)}
+.lab-simulation .lab-sidebar :is(.planner-label,.section-label,.field,.legend-row,.part-copy,.plan-feedback,.address-intro,.address-list,.summary-intro,.result-detail,.decoded,.reconstruction-note){font:400 12px/1.45 var(--lab-font-sans,sans-serif);letter-spacing:normal;text-transform:none}
+.lab-simulation .lab-sidebar :is(.key-top strong,.key-group-title strong,.result-title,.reconstruction>strong){font:400 15px/1.4 var(--lab-font-sans,sans-serif)}
+.lab-simulation .lab-sidebar :is(.key-top small,.key-group-title span){font:400 12px/1.4 var(--lab-font-sans,sans-serif)}
+.lab-simulation .lab-sidebar :is(.feedback,.plan-feedback,.story-card,.rail-result,.status-strip,.takeaway){border:0;padding:8px 0;background:none;box-shadow:none;grid-template-columns:1fr}
+.lab-simulation .lab-sidebar :is(.feedback strong,.story-card strong,.takeaway strong,.status-copy strong){font-size:15px;font-weight:400}
+.lab-simulation .lab-sidebar :is(.feedback span,.story-card span,.takeaway span,.status-copy span){font-size:14px;font-weight:400}
+.lab-simulation :is(.shell,.canvas-shell,.board-shell,.network-canvas,.canvas-wrap){min-width:0;max-width:100%;overflow:visible;background:transparent;border:0;border-radius:0}
+.lab-simulation :is(#canvas,#networkCanvas,#board){background-image:none!important;background-color:transparent;border:0;border-radius:0}
+.lab-simulation .footer{font:400 11px/1.45 var(--lab-font-sans,sans-serif);color:var(--lab-ink-secondary,#424245)}
+.lab-simulation :is(.stage-note,.component-head span,.panel-head>span,.station-title>span){font:400 12px/1.4 var(--lab-font-sans,sans-serif)}
+/* Preserve model-specific geometry; only the composition around it is shared. */
+.sim-csma-cd #canvas{min-width:0;min-height:325px}
+.sim-csma-cd .station{width:28%;min-height:155px;background:white;box-shadow:none}
+.sim-csma-cd .station-head{height:auto;min-height:40px;flex-wrap:wrap;background:white;padding:8px}
+.sim-csma-cd :is(.station-name,.station-state,.station-frame){font-size:12px;font-weight:400}
+.sim-csma-cd .station-thought{font-size:14px;min-height:70px}
+.sim-csma-cd #narration{inset:auto;display:block}
+.sim-csma-cd :is(#stepCount,.narration-phase,.visual-key>b){display:none}
+.sim-csma-cd .visual-key{font-size:12px;margin-top:12px}
+.sim-data-transmission-methods .stage-head{grid-column:1;margin:0;padding:0}
+.sim-data-transmission-methods .toolbar-actions{display:flex;flex-wrap:wrap;gap:8px}
+.sim-data-transmission-methods .lab-evidence-card .live-copy{display:block}
+.sim-data-transmission-methods .lab-evidence-card .live-dot{display:none}
+.sim-data-transmission-methods .lab-evidence-card .legend{display:grid;gap:12px}
+.sim-dns-web-page-retrieval .architecture{grid-template-columns:minmax(0,1fr);grid-template-rows:auto;grid-template-areas:'browser' 'dnsbus' 'dns' 'webbus' 'servers';gap:20px}
+.sim-dns-web-page-retrieval :is(.browser-frame,.browser-engine,.dns-chain-shell,.rack-shell){height:auto;min-height:0;overflow:visible}
+.sim-dns-web-page-retrieval .viewport{height:300px}
+.sim-dns-web-page-retrieval .component-head>div>span,.sim-dns-web-page-retrieval .server-note{display:none}
+.sim-dns-web-page-retrieval .bus-cluster{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.sim-dns-web-page-retrieval .bus-group-title{grid-column:1/-1;font-size:12px;font-weight:400}
+.sim-dns-web-page-retrieval :is(.dns-edit,.cache-row,.directory-row,.engine-block strong,.bus-header,.bus-value,.mini-value){font-size:12px;font-weight:400}
+.sim-dns-web-page-retrieval .state-chip{font-size:11px!important;font-weight:400!important}
+.sim-dns-web-page-retrieval :is(.browser-toolbar,.bookmarks,.engine-grid){min-width:0;flex-wrap:wrap}
+.sim-encryption-in-data-transmission .lab-grid,.sim-ipv4-subnetting .lab-grid{grid-template-columns:minmax(0,1fr) 320px;gap:24px;padding:20px 24px;border:1px solid var(--lab-line,#d2d2d7);border-top:0}
+.sim-encryption-in-data-transmission .workspace,.sim-ipv4-subnetting .network-panel{border:0;background:none;box-shadow:none;padding:0;overflow:visible}
+.sim-encryption-in-data-transmission .goal-lights{display:flex!important;align-items:start;flex-direction:column;gap:8px}
+.sim-ipv4-subnetting .lab-evidence-card :is(.metrics,.takeaway){display:grid;grid-template-columns:1fr;gap:8px}
+.sim-ipv4-subnetting .metric{padding:8px 0;border:0;border-radius:0;background:none}
+.sim-ipv4-subnetting :is(#stepKicker,.takeaway-stat){display:none}
+.sim-ipv4-subnetting #ipToggle small{display:none}
+.sim-ipv4-subnetting #ipToggle{font-size:12px;font-weight:400}
+.sim-ipv4-subnetting .ip-workbench{padding:12px;margin:0 0 16px;border:0;background:var(--lab-surface-muted,#f7f8fa)}
+.sim-ipv4-subnetting :is(.ip-read-grid,.ip-workbench-grid){grid-template-columns:1fr;gap:8px}
+.sim-ipv4-subnetting :is(.ip-decision-panel,.ip-read-panel,.ip-envelope-panel){border:0;background:none;padding:8px 0}
+.sim-network-topology .lab-grid{grid-template-columns:minmax(0,1fr) 300px;gap:24px;padding:20px 24px;border:1px solid var(--lab-line,#d2d2d7);border-top:0}
+.sim-network-topology .workspace{grid-column:1;grid-row:1;border:0;background:none;box-shadow:none}
+.sim-network-topology .palette{grid-column:2;grid-row:1}
+.sim-network-topology .toolbar{padding:0 0 12px;border:0;background:none;flex-wrap:wrap}
+.sim-network-topology .palette-head>span{display:none}
+.sim-network-topology #testPanel{grid-template-columns:1fr;gap:8px}
+.sim-network-topology #journeyText{font-size:14px}
+.sim-packet-switching .lab-grid{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:24px;padding:20px 24px;border:1px solid var(--lab-line,#d2d2d7);border-top:0}
+.sim-packet-switching .network-panel{grid-column:1;grid-row:1/span 2;border:0;box-shadow:none;background:none}
+.sim-packet-switching .device-a{grid-column:2;grid-row:1}
+.sim-packet-switching .device-b{grid-column:2;grid-row:2}
+.sim-packet-switching .device-visual{display:none}
+.sim-packet-switching .panel-head>span{font-size:12px}
+.sim-packet-switching .network-panel .panel-head>span{display:none}
+.sim-packet-switching .network-toolbar{padding:8px 0 12px}
+.sim-packet-switching #networkCanvas{min-height:570px}
+.sim-packet-switching .packet-list{max-height:none;overflow:visible}
+.sim-packet-switching .lab-evidence-card .overview-metrics{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sim-packet-switching .lab-evidence-card .metric{padding:8px 0;border:0;background:none}
+.sim-parity-arq .transmission-panel{padding:20px 24px;border-radius:0;border-top:0;box-shadow:none}
+.sim-parity-arq .transmission-layout{grid-template-columns:minmax(0,1fr) 300px;gap:24px}
+.sim-parity-arq .stage-panel{margin:0;padding:20px 24px;border-top:0;box-shadow:none}
+.sim-parity-arq .sim-parity-grid{grid-template-columns:minmax(0,1fr) 20px minmax(0,1fr) 20px minmax(0,1fr)}
+.sim-parity-arq :is(.stage-title,.stage-title-line,.access-chip){font-size:12px;font-weight:400}
+.sim-parity-arq .rail-result{border:1px solid var(--lab-line-subtle,#e7e8eb);padding:12px;border-radius:12px;background:var(--lab-surface-muted,#f7f8fa)}
+.sim-parity-arq :is(.blocks,.block,.stage){min-width:0;max-width:100%;overflow:visible}
+.sim-tcp-ip-encapsulation .lab-board{margin:0;padding:20px 24px;border-top:0;background:white;background-image:none;box-shadow:none;overflow:visible}
+.sim-tcp-ip-encapsulation .board-stage{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:16px 24px;padding:16px 0;min-height:0}
+.sim-tcp-ip-encapsulation .board-stage>.station{grid-column:1;border:0;background:none;box-shadow:none}
+.sim-tcp-ip-encapsulation .board-stage>.receiver-station{grid-column:2;grid-row:1/span 3}
+.sim-tcp-ip-encapsulation .rack{display:flex;flex-wrap:wrap;padding:0;gap:8px}
+.sim-tcp-ip-encapsulation .wrapper-tool{flex:1 1 150px;min-width:0;background:white;box-shadow:none}
+.sim-tcp-ip-encapsulation .wrapper-tool strong{font-size:14px;font-weight:400}
+.sim-tcp-ip-encapsulation .wrapper-tool small{font-size:12px;font-weight:400}
+.sim-tcp-ip-encapsulation .packing-mat{min-height:320px;overflow:visible;padding:12px 0;margin:0;border:0;background:none}
+.sim-tcp-ip-encapsulation .packet-host{width:100%;max-height:none;overflow:visible;padding:8px}
+.sim-tcp-ip-encapsulation .shell-header{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:6px}
+.sim-tcp-ip-encapsulation .shell-name{grid-column:1/-1;background:none;border:0;padding:4px 0}
+.sim-tcp-ip-encapsulation .header-field{border:0;padding:5px;background:#ffffffb3}
+.sim-tcp-ip-encapsulation :is(.header-field strong,.shell-name strong,.gate-copy strong){font-size:12px;font-weight:400;white-space:normal;overflow-wrap:anywhere}
+.sim-tcp-ip-encapsulation :is(.header-field span,.shell-name span,.gate-copy span,.gate-read){font-size:11px;font-weight:400;white-space:normal;overflow:visible}
+.sim-tcp-ip-encapsulation .station-title>span{display:none}
+.sim-tcp-ip-encapsulation .receiver-map{min-height:0;overflow:visible;margin:0}
+.sim-tcp-ip-encapsulation .gate{position:relative;inset:auto!important;margin:0 0 12px;min-height:115px}
+.sim-tcp-ip-encapsulation .receiver-packet{position:relative;left:auto;bottom:auto!important;width:100%;transform:none;display:none;opacity:1;margin-top:16px}
+.sim-tcp-ip-encapsulation .receiver-packet.visible{display:block}
+.sim-tcp-ip-encapsulation .wire-station{display:flex;gap:12px;align-items:center;justify-content:center}
+.sim-tcp-ip-encapsulation .wire-track{height:55px;flex:1}
+.sim-tcp-ip-encapsulation .compare-grid>span{font-size:12px;white-space:normal;overflow-wrap:anywhere}
+.sim-sound-sampling .wave-head{display:block;margin-bottom:12px}
+.sim-sound-sampling .zoom-tools{display:flex;flex-wrap:wrap;margin-top:12px}
+.sim-sound-sampling .toggles{height:auto;flex-wrap:wrap;white-space:normal}
+.sim-sound-sampling .lab-sidebar #status{display:grid;gap:12px}
+.sim-sound-sampling .lab-sidebar #status>strong{padding:7px;border:0;border-radius:6px;background:color-mix(in srgb,var(--lab-concept-violet,#7563a7) 20%,white)}
+.sim-sound-sampling #wave{height:420px}
+.sim-sound-sampling .bits{white-space:normal;overflow-wrap:anywhere}
+.sim-sound-sampling .window-label{min-width:0}
+@media(max-width:1000px){
+ .lab-simulation .sim-top{padding:16px}
+ .lab-simulation .sim-composition,.sim-encryption-in-data-transmission .lab-grid,.sim-ipv4-subnetting .lab-grid,.sim-network-topology .lab-grid,.sim-packet-switching .lab-grid,.sim-parity-arq .transmission-layout{grid-template-columns:minmax(0,1fr)}
+ .lab-simulation .sim-composition>.lab-sidebar,.sim-network-topology .palette,.sim-network-topology .workspace,.sim-packet-switching .device-a,.sim-packet-switching .device-b,.sim-packet-switching .network-panel{grid-column:1;grid-row:auto}
+ .sim-network-topology .palette{grid-row:2}.sim-packet-switching .network-panel{grid-row:1}
+ .lab-simulation .lab-sidebar{border-left:0;border-top:1px solid var(--lab-line-subtle,#e7e8eb);padding:16px 0 0}
+ .lab-simulation .sim-composition>.lab-sidebar{margin-top:16px}
+}
+@media(max-width:650px){
+ .lab-simulation .sim-top-tools{justify-content:flex-start;gap:8px}
+ .lab-simulation .sim-top .lab-activity-task{flex-basis:100%}
+ .lab-simulation .sim-composition,.lab-simulation .sim-tool-row,.sim-network-topology .lab-grid,.sim-packet-switching .lab-grid,.sim-encryption-in-data-transmission .lab-grid,.sim-ipv4-subnetting .lab-grid,.sim-parity-arq :is(.stage-panel,.transmission-panel),.sim-tcp-ip-encapsulation .lab-board{padding:16px}
+ .sim-csma-cd .station{width:30%;min-height:200px}
+ .sim-csma-cd :is(.station-name,.station-state,.station-frame){font-size:11px;white-space:normal}
+ .sim-csma-cd .station-thought{font-size:12px}
+ .sim-dns-web-page-retrieval :is(.dns-chain,.engine-grid){display:flex;flex-direction:column;gap:12px}
+ .sim-dns-web-page-retrieval .viewport{height:320px;overflow:auto}
+ .sim-dns-web-page-retrieval .browser-toolbar{display:flex;flex-wrap:wrap}
+ .sim-dns-web-page-retrieval .address-shell{flex:1 1 200px}
+ .sim-dns-web-page-retrieval .server-list{min-width:0}
+ .sim-parity-arq .sim-parity-grid{grid-template-columns:1fr;gap:16px}
+ .sim-parity-arq .flow-arrow{display:none}
+ .sim-tcp-ip-encapsulation .board-stage{grid-template-columns:1fr}
+ .sim-tcp-ip-encapsulation .board-stage>.receiver-station{grid-column:1;grid-row:auto}
+ .sim-tcp-ip-encapsulation .board-head{flex-direction:column;align-items:start;gap:12px}
+ .sim-tcp-ip-encapsulation .endpoint.right{text-align:left;flex-direction:row}
+ .sim-tcp-ip-encapsulation .endpoint span{font-size:11px;white-space:normal}
+ .sim-sound-sampling .example{min-width:0}
+}
+/* Simulation layout refinements: device internals keep their visual identities. */
+.lab-simulation .workspace{display:block}
+.lab-simulation .lab-evidence-card{font:400 14px/1.45 var(--lab-font-sans,sans-serif)}
+.lab-simulation .lab-evidence-card :is(.rule,.teaching-note,.phase-label,#phaseLabel,#microStatus,#operationTitle){font:inherit}
+.lab-simulation .lab-evidence-card .visual-key{display:flex;flex-wrap:wrap;gap:8px;justify-content:start}
+.lab-simulation .lab-evidence-card .visual-key>span{display:inline-flex;align-items:center;gap:5px;font-size:12px}
+.lab-simulation .lab-evidence-card .visual-key i{display:inline-block;flex:none}
+.lab-simulation .lab-toggle .lab-action{background:transparent;border-color:transparent;box-shadow:none}
+.lab-simulation :is(.lab-sidebar .part-copy strong,.lab-sidebar .part-copy span,.lab-sidebar .part-count,.planner-head>span,.dock-head>span){font:400 12px/1.4 var(--lab-font-sans,sans-serif)}
+.lab-simulation .lab-action :is(strong,span){font:inherit}
+.sim-data-transmission-methods #canvas{min-width:0}
+.sim-data-transmission-methods #canvas::before{display:none}
+.sim-data-transmission-methods .legend{justify-content:start!important}
+.sim-data-transmission-methods .legend-item{justify-content:start}
+.sim-data-transmission-methods :is(.ruler-x,.group-label){font:400 11px var(--lab-font-sans,sans-serif)}
+.sim-data-transmission-methods .device{width:240px;min-height:270px}
+.sim-data-transmission-methods :is(.device-name,.byte-row label,.bit-cell){font-size:12px;font-weight:400;letter-spacing:normal}
+.sim-data-transmission-methods :is(.protocol-screen,.device-status,.count-control>span){font:400 11px/1.3 var(--lab-font-sans,sans-serif)}
+.sim-data-transmission-methods .transceiver-title{display:none}
+.sim-data-transmission-methods .byte-row{grid-template-columns:20px 1fr}
+.sim-data-transmission-methods .bit-cell{height:24px}
+.sim-data-transmission-methods .callout{font:400 12px/1.35 var(--lab-font-sans,sans-serif)}
+.sim-dns-web-page-retrieval .arch-panel{display:block}
+.sim-dns-web-page-retrieval .architecture{grid-template-columns:minmax(0,1.1fr) 120px minmax(0,1fr);grid-template-rows:auto auto;grid-template-areas:'browser dnsbus dns' 'browser webbus servers';gap:18px}
+.sim-dns-web-page-retrieval .browser>.lab-sidebar{border:0;padding:16px 0 0;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.sim-dns-web-page-retrieval .bus-cluster{display:flex;flex-direction:column;justify-content:center;gap:16px}
+.sim-dns-web-page-retrieval .browser-frame{border-radius:12px;overflow:hidden}
+.sim-dns-web-page-retrieval :is(.bus-header .dir,.engine-head>span,.bookmark-label,.browser-dots,.url-parts,.rack-head){display:none}
+.sim-dns-web-page-retrieval :is(.component-head strong,.engine-head strong,.blank-page h2){font:400 15px/1.4 var(--lab-font-sans,sans-serif)}
+.sim-dns-web-page-retrieval :is(.bookmark-copy strong,.cache-row,.directory-row,.dns-top strong,.mini-value,.bus-value,.server-copy strong){font:400 12px/1.4 var(--lab-font-sans,sans-serif)}
+.sim-dns-web-page-retrieval :is(.dns-top span,.dns-top small,.engine-block small,.mini-label,.cache-title,.dns-table-title,.server-copy small,.server-copy span,.blank-page p){font:400 11px/1.4 var(--lab-font-sans,sans-serif);letter-spacing:normal;text-transform:none}
+.sim-dns-web-page-retrieval .engine-grid{grid-template-columns:1fr 1fr;gap:10px}
+.sim-dns-web-page-retrieval .engine-arrow{display:none}
+.sim-dns-web-page-retrieval .dns-chain{grid-template-columns:1fr;gap:12px}
+.sim-dns-web-page-retrieval .dns1-dns2{display:flex;justify-content:center;gap:12px}
+.sim-dns-web-page-retrieval .dns-node{min-height:0;background:var(--lab-surface-muted,#f7f8fa)}
+.sim-dns-web-page-retrieval .dns-chain-shell{min-height:0;padding:0;background:none;border:0}
+.sim-dns-web-page-retrieval .server-list{gap:10px}
+.sim-dns-web-page-retrieval .server-card{min-height:70px}
+.sim-encryption-in-data-transmission :is(.device-head strong,.screen-title,.send-copy strong,.bay-copy strong,.bay-empty){font:400 14px/1.3 var(--lab-font-sans,sans-serif);letter-spacing:normal;text-transform:none}
+.sim-encryption-in-data-transmission :is(.device-head span,.send-copy span,.bay-copy span,.gate-key,.gate-key strong){font:400 12px/1.3 var(--lab-font-sans,sans-serif);letter-spacing:normal;text-transform:none}
+.sim-encryption-in-data-transmission .screen-title{font-size:12px}
+.sim-encryption-in-data-transmission .key-token{border-left-width:1px;box-shadow:none}
+.sim-encryption-in-data-transmission .key-group{background:var(--lab-surface-muted,#f7f8fa);border:0;border-radius:12px;padding:12px}
+.sim-ipv4-subnetting #canvasCaption{display:none}
+.sim-ipv4-subnetting .locked-planner{min-height:0;padding:12px;border:0;background:var(--lab-surface-muted,#f7f8fa);text-align:left}
+.sim-ipv4-subnetting .locked-icon{display:none}
+.sim-ipv4-subnetting .locked-planner :is(strong,span){font:400 12px/1.45 var(--lab-font-sans,sans-serif);margin:0}
+.sim-ipv4-subnetting .lab-evidence-card .story-card>strong{font-size:15px}
+.sim-ipv4-subnetting .lab-evidence-card .story-card>span{font-size:14px}
+.sim-packet-switching .network-panel{grid-row:1/span 2}
+.sim-packet-switching .queue-section{margin-top:20px}
+.sim-packet-switching .queue-section .packet-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.sim-packet-switching :is(.packet-card strong,.toggle-copy strong,.options-head strong,.nic-head strong){font:400 12px/1.4 var(--lab-font-sans,sans-serif)}
+.sim-packet-switching :is(.packet-card,.packet-card small,.toggle-copy small,.queue-section,.nic-head span,.options-head span){font:400 11px/1.4 var(--lab-font-sans,sans-serif)}
+.sim-packet-switching .toggle-grid{grid-template-columns:1fr}
+.sim-packet-switching .packet-options{padding:12px;border:0;background:var(--lab-surface-muted,#f7f8fa)}
+.sim-packet-switching .processing-toggle{border:0;padding:7px 0;background:none}
+.sim-parity-arq .transmission-layout{display:block}
+.sim-parity-arq .transmission-main{min-height:0}
+.sim-parity-arq #receiverStage>.lab-sidebar{margin-top:16px;padding:16px 0 0;border-left:0;border-top:1px solid var(--lab-line,#d2d2d7)}
+.sim-parity-arq :is(.block-head,.bit,.cell,.row-label,.col-label,.decoded-value,.decoded-original,.decoded-label,.decoded-note){font-family:var(--lab-font-sans,sans-serif);font-size:12px;font-weight:400}
+.sim-parity-arq .stage-note{font-size:11px}
+.sim-parity-arq .stage-panel{border-radius:0 0 12px 12px}
+.sim-parity-arq .rail-result[data-work-state=bad]{background:var(--lab-bad-surface,#fff8f7);border-color:var(--lab-bad-line,#d8aaa4)}
+.sim-parity-arq .rail-result[data-work-state=good]{background:var(--lab-good-surface,#f7fcf8);border-color:var(--lab-good-line,#9cc7aa)}
+.sim-tcp-ip-encapsulation .board-stage{align-items:start;align-content:start}
+.sim-tcp-ip-encapsulation .packing-mat{min-height:180px;display:flex;align-items:center}
+.sim-tcp-ip-encapsulation .wire-station{min-height:65px}
+.sim-tcp-ip-encapsulation :is(.mat-label,.status-pip){display:none}
+.sim-tcp-ip-encapsulation .payload{box-shadow:none}
+.sim-tcp-ip-encapsulation :is(.payload-label,.payload pre){font:400 12px/1.5 var(--lab-font-sans,sans-serif)}
+.sim-tcp-ip-encapsulation .gate{border-left-width:1px;border-color:var(--tone);background:color-mix(in srgb,var(--tone) 12%,white)}
+.sim-tcp-ip-encapsulation .gate.good{background:var(--lab-good-surface,#f7fcf8);border-color:var(--lab-good-line,#9cc7aa)}
+.sim-tcp-ip-encapsulation .gate.bad{background:var(--lab-bad-surface,#fff8f7);border-color:var(--lab-bad-line,#d8aaa4)}
+@media(max-width:1000px){
+ .sim-dns-web-page-retrieval .architecture{grid-template-columns:1fr;grid-template-areas:'browser' 'dnsbus' 'dns' 'webbus' 'servers'}
+ .sim-dns-web-page-retrieval .bus-cluster{display:grid;grid-template-columns:1fr 1fr}
+ .sim-dns-web-page-retrieval .dns-chain{grid-template-columns:1fr 60px 1fr}
+ .sim-packet-switching .network-panel{grid-row:1}
+}
+@media(max-width:650px){
+ .sim-data-transmission-methods #canvas{min-height:680px}
+ .sim-data-transmission-methods .device{width:142px;min-height:305px}
+ .sim-data-transmission-methods .device-body{grid-template-columns:23px 1fr 23px;gap:2px;padding:6px 2px}
+ .sim-data-transmission-methods .count-button{width:22px}
+ .sim-data-transmission-methods .byte-row{grid-template-columns:1fr}
+ .sim-data-transmission-methods .bit-register{grid-template-columns:repeat(4,1fr)}
+ .sim-data-transmission-methods .device-head{padding:4px}
+ .sim-data-transmission-methods .device-delete{width:16px}
+ .sim-data-transmission-methods .device-status{display:none}
+ .sim-dns-web-page-retrieval .browser>.lab-sidebar,.sim-dns-web-page-retrieval .dns-chain{display:flex;flex-direction:column}
+ .sim-packet-switching .queue-section .packet-list{grid-template-columns:1fr 1fr}
+}
+.lab-simulation .lab-toggle button :is(strong,span){font:inherit}
+.sim-dns-web-page-retrieval .browser-toolbar{display:grid;grid-template-columns:minmax(0,1fr) auto;height:auto}
+.sim-dns-web-page-retrieval #goBtn{width:auto;min-width:100px;flex:none;font-weight:400}
+.sim-dns-web-page-retrieval #urlInput{font:400 12px var(--lab-font-sans,sans-serif)}
+.sim-dns-web-page-retrieval :is(.dns-node-head strong,.console-cell strong,.cache-row strong,.directory-row strong,.cache-row span,.directory-row span){font:400 12px/1.4 var(--lab-font-sans,sans-serif)}
+.sim-dns-web-page-retrieval :is(.dns-node-head span,.console-cell small,.dns-section-title,.server-meta i,.server-state,.mini-lane-head){font:400 11px/1.4 var(--lab-font-sans,sans-serif);text-transform:none;letter-spacing:normal}
+.sim-dns-web-page-retrieval .dns-hop{min-height:0;gap:8px;padding:8px 0}
+.sim-data-transmission-methods .protocol-screen strong{font:inherit}
+.sim-packet-switching #overviewTitle{display:block;margin:0 0 10px;font:400 15px/1.4 var(--lab-font-sans,sans-serif)}
+.sim-packet-switching .queue-section>.section-label{display:none}
+.sim-parity-arq .transmission-track{height:80px}
+.sim-parity-arq .transmission-main{padding:0}
+.sim-parity-arq .transmission-panel{padding-top:12px;padding-bottom:12px}
+.sim-parity-arq .rail-result{display:block!important}
+
+@media(max-width:650px){
+ .sim-csma-cd .station{width:28%}
+ .sim-data-transmission-methods .device{width:124px;min-height:325px}
+ .sim-data-transmission-methods .protocol-screen{padding:4px 2px}
+}
+
+.lab-simulation{--accent:var(--lab-accent,#5277b8)}
+.lab-simulation .lab-activity-bar .lab-toggle button{font-weight:400}
+.sim-ipv4-subnetting :is(.summary-zone,.subnet-card){border-left-width:1px;border-color:color-mix(in srgb,var(--subnet-colour) 45%,white);background:color-mix(in srgb,var(--subnet-colour) 12%,white);padding:12px;border-radius:12px}
+.sim-ipv4-subnetting :is(.summary-zone strong,.summary-zone span,.subnet-title strong,.subnet-title span,.department-card,.drop-action){font:400 12px/1.4 var(--lab-font-sans,sans-serif)}
+.sim-ipv4-subnetting .subnet-drop{border:0;background:none;padding:8px 0 0}
+
 </style>
 <script data-lab-design-runtime>
 /* Shared model dragging: retain the point grabbed while the model rerenders. */
@@ -1851,6 +2138,15 @@ window.LabDesign = {
       const [x, y] = popupPosition(hint, document.querySelector('main') || document.body, introduction.getBoundingClientRect());
       hint.style.left = x + 'px'; hint.style.top = y + 'px';
     }
+    // Explicit adapter for legacy mode groups whose state lives in a CSS class.
+    document.querySelectorAll('.lab-toggle[data-active-class]').forEach(group => {
+      const sync = () => group.querySelectorAll('button').forEach(button => {
+        const value = String(button.classList.contains(group.dataset.activeClass));
+        if (button.getAttribute('aria-pressed') !== value) button.setAttribute('aria-pressed', value);
+      });
+      new MutationObserver(sync).observe(group, {childList:true,subtree:true,attributes:true,attributeFilter:['class']});
+      sync();
+    });
     const cardSelector = '.calc-step,.solve-card,.derive-step,.work-step,.working-step,.lab-work-card,.lab-investigation .work-section,.lab-investigation .evidence-section,.lab-investigation .work-block';
     let queued = false;
     const key = card => card.id || [...card.querySelectorAll('input')].map(input => input.id || input.name || [...input.attributes].filter(a => a.name.startsWith('data-')).map(a => a.name + a.value).join(':')).join('|') || card.querySelector('.step-head,.derive-step-head,.work-step-head,.eyebrow,strong')?.textContent;

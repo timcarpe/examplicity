@@ -921,3 +921,65 @@ models, learning gates and Working levels. Refresh their observational maps.
   with no script errors. Fixed labels remain separated at 900px and 390px;
   narrow layouts reserve additional space above the graph. Standalone downloads,
   published sidecars and canonical developer resources passed their checks.
+
+
+## Batch 5 — ten communication and representation labs
+
+Batch 4 accepted by the user at `53e0d23`; canonical guide at `6d292a0`.
+Change list: shared rounded settings/actions, task bar, readable explanatory
+cards, fitted non-scrolling model regions, targeted introductions and current
+implementation maps. Preserve underlying simulation rules and device imagery.
+
+- CSMA/CD: step/checkpoint control above cable; decision evidence to the right.
+- Transmission Methods: existing continuous TX/RX model; controls above and
+  mode/conductor evidence at right, retaining wire selection and repair tools.
+- DNS: one navigation goal; checkpoint path and explanation beside architecture.
+- Encryption: rounded method control, key rack and live confidentiality evidence
+  together at right; preserve keys, device monitors and capture replay.
+- IPv4: consistent view/story toggles, checkpoints and right-side story/planner;
+  preserve gated planning and optional address/IP walkthrough details.
+- Topology: rounded goal/tool choices, retained construction and packet tests;
+  place construction feedback beside canvas without changing routing rules.
+- Packet Switching: model owns central/left space, sender and receiver evidence
+  stack in a right column; keep header/checksum options and reassembly details.
+- Parity/ARQ: editable matrices retain sender/channel/receiver relationship;
+  actions and received evidence at right; retain NAK, timeout and resend paths.
+- TCP/IP: shell palette above packing model, receiver to right; retain nested
+  headers, rejected orders, process comparison and peel/send controls.
+- Sound: rounded audio/select controls, live size/rate/precision working at right;
+  retain audio, sample inspection and keyboard timeline navigation.
+
+These labs have task-driven simulation controls, not None/Some/All arithmetic
+ownership. No new Working or exam choices are invented. Maps describe current
+behaviour only. New imagery redesign proposals require user approval.
+
+
+Batch 5 implementation notes:
+- Styling is in canonical `packages/lab-kit/src/lab-design.css`; the ten lab
+  sources adopt shared classes, move existing surfaces and attach introductions.
+  `lab-design.js` adds an opt-in class-to-aria-pressed adapter for older toggles.
+- Existing device artwork, packet identities and simulation rules retained.
+  Ordinary labels, controls and register readability are included in the pass.
+  Encryption/IPv4 fit their logical boards at every width; Transmission Methods
+  uses responsive device/register sizing without changing drag coordinate space.
+- DNS preserves browser-to-infrastructure layout with evidence under its browser.
+  Parity keeps three matrices aligned and receiver evidence at right; main
+  transmit/resend actions are in the task bar. TCP/IP shows remaining headers
+  inline below receiver gates. These are deliberate comparison-layout variations.
+- Sidecars under `lab-contracts/computer-science/` map current surfaces, quantities,
+  modes, gates and limitations for all ten. No new curriculum or Working modes.
+- Focused Edge checks: CSMA final/restart, transmission settings/add/reset,
+  DNS missing-mapping repair through render, encryption key placement, IPv4
+  baseline unlock and five-department design acceptance, valid bus construction,
+  checksum rejection/retry/reassembly, parity NAK/ARQ recovery, bare rejection and
+  correct TCP/IP delivery, sound rate/depth calculation and timeline/play controls.
+- Initial layouts checked at 1422, 900 and 390px: no runtime errors, horizontal
+  page overflow or scrolling model regions. This is not exhaustive network-case
+  coverage; dense fixed-geometry device annotations remain a phone limitation.
+  Audio controls were exercised programmatically, not assessed by listening.
+- Source audio payloads are byte-identical. The existing Sound Sampling standalone
+  size allowance increases from 1.40 to 1.45 MB to include the shared resources
+  and map; all audio/CSS/JS still package into one offline HTML file.
+- Guide, style contract, generated authoring bundle, /developer copies and compiled
+  lab HTML are refreshed together. Previous batches also recompile to receive the
+  shared resource; the new adapters are scoped to this simulation adoption class.

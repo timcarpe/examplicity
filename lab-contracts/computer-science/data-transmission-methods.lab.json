@@ -1,9 +1,108 @@
 {
   "schemaVersion": 1,
   "relationship": "Wiring devices and choosing checks connects transmission media, topology and error-control choices to received data.",
-  "learnerLoop": { "action": "Add devices, connect ports, choose wire and toggle echo or parity.", "modelChange": "The network layout, wire paths and protocol settings change.", "evidence": "The live status, signal effects and controls reveal connection and transmission consequences.", "nextDecision": "Rewire or change checking to improve the outcome." },
-  "invariants": ["Transmission evidence is based on the devices, ports and protocol options currently selected.", "A wire connection remains visible as a path between its endpoints."],
-  "safeAdaptations": ["Change device scenarios, interference conditions or guidance while preserving the editable network and observable consequences."],
-  "nonGoals": ["Providing a full network design or cabling tool."],
-  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+  "learnerLoop": {
+    "action": "Add devices, connect ports, choose wire and toggle echo or parity.",
+    "modelChange": "The network layout, wire paths and protocol settings change.",
+    "evidence": "The live status, signal effects and controls reveal connection and transmission consequences.",
+    "nextDecision": "Rewire or change checking to improve the outcome."
+  },
+  "invariants": [
+    "Transmission evidence is based on the devices, ports and protocol options currently selected.",
+    "A wire connection remains visible as a path between its endpoints."
+  ],
+  "safeAdaptations": [
+    "Change device scenarios, interference conditions or guidance while preserving the editable network and observable consequences."
+  ],
+  "nonGoals": [
+    "Providing a full network design or cabling tool."
+  ],
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract",
+  "implementation": {
+    "reviewedRevision": "53e0d238e961f19f0539a906917566411842a63a",
+    "surfaces": {
+      "task": {
+        "selectors": [
+          "#labTaskTitle",
+          ".wire-picker",
+          ".protocol-picker"
+        ],
+        "kind": "given",
+        "description": "Compare basic/braided conductors and optional Echo/Parity checks.",
+        "visibility": "Present throughout; content follows the current simulation state."
+      },
+      "model": {
+        "selectors": [
+          "#canvas",
+          "#nodeLayer",
+          "#wireSvg",
+          "#noiseSource"
+        ],
+        "kind": "model",
+        "description": "Editable device bytes and port counts, TX/RX links and bends, interference source and travelling bits.",
+        "visibility": "Present throughout; content follows the current simulation state."
+      },
+      "evidence": {
+        "selectors": [
+          "#labEvidence",
+          ".protocol-screen",
+          ".byte-screen"
+        ],
+        "kind": "evidence",
+        "description": "Transmission mode, received bytes and checking/interference results.",
+        "visibility": "Present throughout; content follows the current simulation state."
+      },
+      "controls": {
+        "selectors": [
+          "#addDevice",
+          "#resetLab",
+          ".toolbar-actions"
+        ],
+        "kind": "control",
+        "description": "Add a device, straighten or match selected wiring, remove a wire, reset.",
+        "visibility": "Present throughout; content follows the current simulation state."
+      }
+    },
+    "quantities": {
+      "byte": {
+        "description": "Transmitted and received register values.",
+        "domain": "Eight binary digits per register.",
+        "source": "Editable generated TX bit cells and simulation arrivals.",
+        "output": "Generated .byte-screen TX/RX rows.",
+        "inputSlots": [
+          ".bit-cell.tx"
+        ]
+      },
+      "ports": {
+        "description": "RX/TX connections per device.",
+        "domain": "Zero to nine ports; at most five devices.",
+        "source": "Generated port-count controls.",
+        "output": "Device port bank and mode label.",
+        "inputSlots": [
+          ".count-button"
+        ]
+      },
+      "distance": {
+        "description": "Conductor path lengths and relative interference proximity.",
+        "domain": "Canvas-derived distance; displayed metres and relative positions.",
+        "source": "Device positions, wire bends and noise-source position.",
+        "output": "Wire group labels and weak/lost/skew/crosstalk effects."
+      }
+    },
+    "modes": {
+      "wire": "Basic or braided copper; setting applies when constructing/changing selected wiring.",
+      "checking": "Off, Echo or Parity. Selecting the active check turns it off; checks need a return path.",
+      "support": "Continuous simulation; no Working or exam selection."
+    },
+    "dependencies": [
+      "TX must connect to RX; complete paths stream automatically.",
+      "Port counts and paths determine serial/parallel and simplex/duplex behaviour.",
+      "Noise and path properties influence received bit evidence."
+    ],
+    "completion": "Open exploration with no scored completion gate; compare received data, repair paths and reset.",
+    "limitations": [
+      "A teaching simulation with stylised conductor and interference effects.",
+      "Device status and register elements are generated; some selectors appear only after rendering."
+    ]
+  }
 }

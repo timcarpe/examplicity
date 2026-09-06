@@ -537,3 +537,30 @@ retain causal explanations, live errors and the requirements for completion.
 Use `claimContextTitle` as the accessible heading hook, with `claimContextStatement` and `claimContextCriterion` for the proposition and its evidence test. These IDs identify content; `.lab-context` owns the shared appearance. Bounds, Similarity and 3D Trigonometry demonstrate guarantee, scaling and certification/perspective uses. State the test without supplying its unearned result. Remove captions that only narrate a visible solid or its unwrapped surface.
 
 Distinguish reference and tested devices with both shape and approved concept colour, while preserving equivalent outcome markings. Device identity must not reveal an unknown probability or imply correctness. On rotating wheels, use compact outcome symbols and a stationary labelled key outside the moving face so labels never collide or rotate out of readability. Relative Frequency uses a blue circular reference and a violet octagonal booth, each with four equal sectors.
+
+
+### Simulation evidence and comparison layouts
+
+Simulation task bars use the same regular blue mission title, rounded mode
+controls and action hierarchy as calculation labs. A simulation without
+working-ownership levels can use evidence cards without introducing an empty
+Working toggle. Keep current observations, the underlying rule and the next
+consequential choice distinguishable. Neutral cards contain reference material;
+yellow/green/red states reflect actual pending, successful or failed evidence.
+A supplied fact is not a correct learner attempt.
+
+`lab-simulation`, `sim-top`, `sim-composition`, `lab-sidebar` and
+`lab-evidence-card` provide the shared adapters. Cards use 12px padding, 12px
+corners, 15px regular headings and 14px explanation. Their contents do not add
+nested borders. Selects retain the shared native keyboard/touch behaviour.
+For older mode controls, explicit `data-active-class` on `lab-toggle` mirrors
+that class into `aria-pressed`; the lab still owns selection and availability.
+
+Preserve a comparison's spatial relationship. DNS keeps browser, transfer paths
+and servers together, placing navigation evidence beneath the browser. Parity
+keeps sender/channel/receiver matrices aligned, with receiver results in its
+right column. TCP/IP keeps the remaining packet inline beneath receiver gates
+so header removal can be examined without an overlay. Packet identity colours
+remain separate from validation colours. Fit model regions without internal
+scrollbars; long evidence can extend down the page. Dense instrument and device
+annotations may need explicit size exceptions when fitting a phone viewport.

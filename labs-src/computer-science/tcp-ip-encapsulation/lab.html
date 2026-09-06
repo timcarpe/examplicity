@@ -446,8 +446,9 @@ h1{margin:0;font-size:28px;font-weight:640;letter-spacing:-.03em;line-height:1.1
 @media(max-width:480px){main{width:min(100% - 10px,1380px)}.rack{grid-template-columns:1fr}.shell-header{grid-template-columns:1fr 1fr}.shell-name{grid-column:1/-1}.peel-tab{position:absolute;right:7px;top:7px;width:31px;height:31px;min-height:31px}.header-field{padding-right:5px}.packing-mat{margin:7px;padding:8px}.packet-host{width:100%;padding:4px}.gate{left:10px;grid-template-columns:37px 1fr}.server-window{left:73px}.receiver-packet{width:205px}}
 @media(prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;transition-duration:.001ms!important;scroll-behavior:auto!important}}
 </style>
+<!-- LAB_DESIGN_COMPONENTS -->
 </head>
-<body data-lab-layout="standard">
+<body class="lab-adopt-v3 lab-simulation sim-tcp-ip-encapsulation" data-lab-layout="standard">
 <main>
 <!-- LAB_MANIFEST_HEADER_START -->
 <header class="lab-manifest-header">
@@ -469,16 +470,17 @@ h1{margin:0;font-size:28px;font-weight:640;letter-spacing:-.03em;line-height:1.1
 <!-- LAB_MANIFEST_HEADER_END -->
 <span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span>
   <span data-lab-authored-subtitle-slot hidden></span>
+<section class="lab-activity-bar sim-top"><div class="lab-activity-task"><strong id="challengeTitle">Get the browser request to the web-server process</strong></div><div class="sim-top-tools"><div class="challenge-actions">
+      <button id="compareProcess" type="button" hidden data-lab-intro="tcp-process" data-lab-intro-title="Compare another process" data-lab-intro-copy="Build for the mail process on the same server, then compare which destination information changes." class="lab-action">Compare another process</button>
+      <button id="resetPacket" type="button" data-lab-action="reset" class="lab-action">Restart lab</button>
+    </div></div></section>
 
-  <section class="panel challenge-bar">
+  <section class="sim-legacy panel challenge-bar">
     <div class="challenge-copy">
-      <strong id="challengeTitle">Get the browser request to the web-server process</strong>
+
       <span id="challengeHint">Click a protocol shell to wrap the complete object on the mat. Send at any point; the receiver will show what it can interpret.</span>
     </div>
-    <div class="challenge-actions">
-      <button id="compareProcess" type="button" hidden>Compare another process</button>
-      <button id="resetPacket" type="button" data-lab-action="reset">Restart lab</button>
-    </div>
+
   </section>
 
   <section class="panel lab-board lab-kit-canvas" data-grid="square" aria-label="Interactive TCP IP encapsulation workshop">
@@ -487,7 +489,7 @@ h1{margin:0;font-size:28px;font-weight:640;letter-spacing:-.03em;line-height:1.1
         <div class="device-icon" aria-hidden="true"><svg viewBox="0 0 40 30"><rect x="4" y="3" width="32" height="21" rx="3"/><path d="M20 24v4M13 28h14"/></svg></div>
         <div><strong>Client browser</strong><span>IP 192.0.2.10 · MAC A0:B1:C2:10:00:10 · source port 49152</span></div>
       </div>
-      <div class="board-centre-note">one direct Ethernet link · no routing</div>
+      <div class="sim-legacy board-centre-note">one direct Ethernet link · no routing</div>
       <div class="endpoint right">
         <div class="device-icon" aria-hidden="true"><svg viewBox="0 0 40 30"><rect x="6" y="3" width="28" height="24" rx="4"/><path d="M11 9h18M11 15h18M11 21h18"/><circle cx="29" cy="9" r="1"/><circle cx="29" cy="15" r="1"/></svg></div>
         <div><strong>Server computer</strong><span id="targetEndpointMeta">IP 192.0.2.20 · MAC D4:3A:2F:20:00:20 · Web process TCP 80</span></div>
@@ -497,11 +499,11 @@ h1{margin:0;font-size:28px;font-weight:640;letter-spacing:-.03em;line-height:1.1
     <div class="board-stage">
       <section class="station lab-kit-panel">
         <div class="station-title"><strong>Protocol shells</strong><span>Click a shell to wrap the whole current object. The rack is deliberately not ordered.</span></div>
-        <div id="rack" class="rack">
+        <div id="rack" class="rack" data-lab-intro="tcp-wrap" data-lab-intro-title="Wrap the entire object" data-lab-intro-copy="Choose a protocol shell to add its header. The remove button peels only the outer shell; send at any point to test the order.">
           <button class="wrapper-tool ip" data-wrapper="ip" type="button"><span class="tool-shell">IP</span><span><strong>Internet layer</strong><small>host → host<br>adds IP addresses</small></span></button>
           <button class="wrapper-tool tcp" data-wrapper="tcp" type="button"><span class="tool-shell">TCP</span><span><strong>Transport layer</strong><small>process → process<br>adds port numbers</small></span></button>
           <button class="wrapper-tool link" data-wrapper="link" type="button"><span class="tool-shell">ETH</span><span><strong>Link layer</strong><small>NIC → NIC<br>adds MAC addresses</small></span></button>
-          <div class="rack-note">A shell always goes around everything already on the mat. You can peel only the outside shell.</div>
+          <div class="sim-legacy rack-note">A shell always goes around everything already on the mat. You can peel only the outside shell.</div>
         </div>
       </section>
 
@@ -510,7 +512,7 @@ h1{margin:0;font-size:28px;font-weight:640;letter-spacing:-.03em;line-height:1.1
         <div id="packingMat" class="packing-mat lab-kit-canvas" data-lab-role="model" data-lab-manipulative="packet-wrappers">
           <span class="mat-label">current transmitted object</span>
           <div id="packetHost" class="packet-host"></div>
-          <div id="matHint" class="empty-hint">When a shell is added, watch its empty header fields fill. The entire previous object becomes payload.</div>
+          <div id="matHint" class="sim-legacy empty-hint">When a shell is added, watch its empty header fields fill. The entire previous object becomes payload.</div>
         </div>
       </section>
 
@@ -520,10 +522,10 @@ h1{margin:0;font-size:28px;font-weight:640;letter-spacing:-.03em;line-height:1.1
           <div class="wire-line"></div>
           <div id="flightPacket" class="flight-packet"><i class="mini-shell link"></i><i class="mini-shell ip"></i><i class="mini-shell tcp"></i><i class="mini-core"></i></div>
         </div>
-        <button id="sendButton" class="primary send-button" type="button">Send what I built</button>
+        <button id="sendButton" class="lab-action primary send-button" type="button" data-lab-intro="tcp-send" data-lab-intro-title="Test the outermost header" data-lab-intro-copy="Choose shells to wrap the current object, then send it. The receiver rejects an outer format it cannot interpret." data-priority="primary">Send what I built</button>
       </section>
 
-      <section class="station receiver-station lab-kit-panel">
+      <section class="lab-sidebar station receiver-station lab-kit-panel">
         <div class="station-title"><strong>Receiver unpacking tunnel</strong><span>The outside is inspected first. A successful layer removes only its own header and exposes the payload.</span></div>
         <div id="receiverMap" class="receiver-map">
           <div class="receiver-spine"></div>
@@ -533,7 +535,11 @@ h1{margin:0;font-size:28px;font-weight:640;letter-spacing:-.03em;line-height:1.1
           <div class="gate link" data-gate="link"><div class="gate-icon">ETH</div><div class="gate-copy"><strong>Link</strong><span>destination MAC identifies this network interface</span><div class="gate-read">waiting</div></div></div>
           <div id="receiverPacket" class="receiver-packet"></div>
         </div>
-      </section>
+      <section class="lab-evidence-card"><h2>Transmission evidence</h2><div id="statusStrip" class="status-strip">
+      <span class="status-light"></span>
+      <div class="status-copy"><strong id="statusTitle">Bare HTTP request</strong><span id="statusDetail">The browser has produced application data. Add shells around it and watch what each layer contributes.</span></div>
+      <span id="statusKey" class="status-key">HTTP message only</span>
+    </div></section></section>
     </div>
 
     <section id="comparisonPanel" class="compare-panel" hidden aria-live="polite">
@@ -548,11 +554,7 @@ h1{margin:0;font-size:28px;font-weight:640;letter-spacing:-.03em;line-height:1.1
       <div class="compare-summary"><strong>Discovery:</strong> changing the receiving process changed the Application message and Transport destination, while the host and NIC addresses stayed the same. Each layer adds information for a different scope.</div>
     </section>
 
-    <div id="statusStrip" class="status-strip">
-      <span class="status-light"></span>
-      <div class="status-copy"><strong id="statusTitle">Bare HTTP request</strong><span id="statusDetail">The browser has produced application data. Add shells around it and watch what each layer contributes.</span></div>
-      <span id="statusKey" class="status-key">HTTP message only</span>
-    </div>
+
   </section>
 
   <div class="footer">Teaching model: one application message that fits in one TCP packet and crosses one direct Ethernet link. DNS, routing, TCP handshakes, segmentation, checksums and retransmission are intentionally excluded so encapsulation, decapsulation and layer-specific addressing remain visible.</div>

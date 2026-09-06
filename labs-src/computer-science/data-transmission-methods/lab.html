@@ -650,8 +650,9 @@ h1{margin:0;font-size:27px;letter-spacing:-.025em}
 }
 </style>
 <link rel="stylesheet" href="./lab-kit.css" data-lab-resource="lab-kit.css">
+<!-- LAB_DESIGN_COMPONENTS -->
 </head>
-<body data-lab-layout="standard">
+<body class="lab-adopt-v3 lab-simulation sim-data-transmission-methods" data-lab-layout="standard">
 <main>
 <!-- LAB_MANIFEST_HEADER_START -->
 <header class="lab-manifest-header">
@@ -673,17 +674,7 @@ h1{margin:0;font-size:27px;letter-spacing:-.025em}
 <!-- LAB_MANIFEST_HEADER_END -->
 <span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span>
   <span data-lab-authored-subtitle-slot hidden></span>
-
-  <section class="panel toolbar">
-    <div class="live-copy">
-      <i id="liveDot" class="live-dot"></i>
-      <div class="live-text">
-        <strong id="modeText">Waiting for a connection</strong>
-        <span id="modeDetail">Connect a blue TX output to a green RX input.</span>
-      </div>
-    </div>
-
-    <div class="wire-picker" aria-label="Wire type">
+<section class="lab-activity-bar sim-top"><div class="lab-activity-task"><strong id="labTaskTitle">Compare how the same byte survives different connections.</strong></div><div class="sim-top-tools"><div class="lab-toggle wire-picker" aria-label="Wire type" data-kind="mode" data-active-class="active">
       <button class="wire-choice active" data-wire="basic" title="Plain copper weakens at long path lengths and is vulnerable near interference or tightly packed parallel traces.">
         <svg viewBox="0 0 42 22" aria-hidden="true">
           <path d="M2 11H40" stroke="#402719" stroke-width="8" stroke-linecap="round"/>
@@ -700,44 +691,43 @@ h1{margin:0;font-size:27px;letter-spacing:-.025em}
         </svg>
         <span><strong>Braided copper</strong><span>one paired cable</span></span>
       </button>
-    </div>
-
-    <div class="protocol-picker" aria-label="Error checking">
-      <button id="echoToggle" class="protocol-toggle" title="Echo checking needs a complete return path. The receiver sends the received byte back and the sender compares it with the original.">ECHO<small>compare return</small></button>
+    </div><div class="lab-toggle protocol-picker" aria-label="Error checking" data-kind="mode" data-active-class="active">
+      <button id="echoToggle" class="protocol-toggle" title="Echo checking needs a complete return path. The receiver sends the received byte back and the sender compares it with the original." data-lab-intro="wire-protocol" data-lab-intro-title="Test a return path" data-lab-intro-copy="Echo and parity need a complete return connection. Select the active method again to turn checking off.">ECHO<small>compare return</small></button>
       <button id="parityToggle" class="protocol-toggle" title="Even parity needs a complete return path. The receiver sends ACK if parity passes or NACK if parity fails.">PARITY<small>ACK / NACK</small></button>
-    </div>
+    </div><button id="resetLab" data-lab-action="reset" class="lab-action">Reset</button></div></section>
+
+  <section class="sim-tool-row panel toolbar">
+
+
+
+
+
 
     <div class="toolbar-actions">
-      <button id="addDevice" class="primary">Add device</button>
-      <button id="straighten" disabled>Straighten</button>
-      <button id="matchLengths" disabled>Match lengths</button>
-      <button id="removeWire" class="danger" disabled>Remove wire</button>
-      <button id="resetLab" data-lab-action="reset">Reset</button>
+      <button id="addDevice" class="lab-action primary" data-lab-intro="wire-add" data-lab-intro-title="Build another path" data-lab-intro-copy="Add a device, then connect a TX output to an RX input. Use a return path to test duplex or error checking.">Add device</button>
+      <button id="straighten" disabled class="lab-action">Straighten</button>
+      <button id="matchLengths" disabled class="lab-action">Match lengths</button>
+      <button id="removeWire" class="lab-action danger" disabled>Remove wire</button>
+
     </div>
   </section>
 
-  <section class="panel stage-panel">
+  <section class="sim-composition panel stage-panel">
     <div class="stage-head">
-      <div class="stage-copy">
+      <div class="sim-legacy stage-copy">
         <strong>Live physical transmission</strong>
         <span>Nearby facing connectors route directly. Return paths organise around the devices. Select a trace to add bends, drag blue diamonds to reshape it, or Ctrl-click to restore its equal-length automatic route.</span>
       </div>
-      <div class="legend" aria-label="Transmission event legend">
-        <span class="legend-item"><i class="legend-icon"><svg viewBox="0 0 24 24"><circle cx="7" cy="12" r="4"/><circle cx="17" cy="12" r="2" opacity=".5"/><path d="M11 12h3"/></svg></i>weak signal</span>
-        <span class="legend-item"><i class="legend-icon"><svg viewBox="0 0 24 24"><path d="M5 12h5M14 12h5"/><path d="M10 8l4 8"/></svg></i>data lost</span>
-        <span class="legend-item"><i class="legend-icon"><svg viewBox="0 0 24 24"><path d="M5 7h13M5 12h10M5 17h7"/><path d="M19 5v14"/></svg></i>skew</span>
-        <span class="legend-item"><i class="legend-icon"><svg viewBox="0 0 24 24"><path d="M4 8h16M4 16h16"/><path d="M8 8l3 8 3-8 3 8"/></svg></i>crosstalk</span>
-        <span class="legend-item"><i class="legend-icon"><svg viewBox="0 0 24 24"><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/><circle cx="12" cy="12" r="4"/></svg></i>interference</span>
-      </div>
+
     </div>
 
     <div class="canvas-shell">
       <div id="canvas" class="canvas lab-kit-canvas" data-lab-role="model" data-lab-manipulative="network-layout">
         <div class="ruler-x"><span>0 m</span><span>10 m</span><span>20 m</span><span>30 m</span><span>40 m</span><span>50 m</span></div>
-        <div id="noiseSource" class="noise-source" tabindex="0" role="button" aria-keyshortcuts="ArrowLeft ArrowRight ArrowUp ArrowDown" aria-label="Move the interference source. Drag it or use the arrow keys; hold Shift for a larger step." title="Drag this interference source. Basic copper crossing its field can suffer interference.">
+        <div id="noiseSource" class="noise-source" tabindex="0" role="button" aria-keyshortcuts="ArrowLeft ArrowRight ArrowUp ArrowDown" aria-label="Move the interference source. Drag it or use the arrow keys; hold Shift for a larger step." title="Drag this interference source. Basic copper crossing its field can suffer interference." data-lab-intro="wire-noise" data-lab-intro-title="Test interference" data-lab-intro-copy="Move the source toward a conductor, then compare transmitted and received bytes. Arrow keys also move it.">
           <div class="noise-field"></div>
           <div class="noise-machine"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="6"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M6 6l2 2M16 16l2 2"/></svg></div>
-          <div class="noise-label">drag interference field</div>
+          <div class="sim-legacy noise-label">drag interference field</div>
         </div>
         <svg id="wireSvg" class="wire-svg lab-kit-svg" aria-label="Transmission wires"></svg>
         <svg id="effectSvg" class="effect-svg lab-kit-svg" aria-hidden="true"></svg>
@@ -750,11 +740,23 @@ h1{margin:0;font-size:27px;letter-spacing:-.025em}
       </div>
     </div>
 
-    <div class="stage-foot">
+    <div class="sim-legacy stage-foot">
       <span><strong>Automatic:</strong> completed TX → RX paths continuously stream bytes. Facing ports form a clean direct path; a reverse connection creates an organised loopback for full duplex, ECHO or PARITY.</span>
       <span><strong>Trace tools:</strong> select a trace and click + to add bends; Shift-click or box-select several; Ctrl-click restores automatic routing; Match lengths models motherboard trace-length matching.</span>
     </div>
-  </section>
+  <aside id="labEvidence" class="lab-sidebar" aria-label="Evidence and method"><section class="lab-evidence-card"><h2>Transmission mode</h2><div class="live-copy">
+      <i id="liveDot" class="live-dot"></i>
+      <div class="live-text">
+        <strong id="modeText">Waiting for a connection</strong>
+        <span id="modeDetail">Connect a blue TX output to a green RX input.</span>
+      </div>
+    </div></section><section class="lab-evidence-card"><h2>Signal evidence</h2><div class="legend" aria-label="Transmission event legend">
+        <span class="legend-item"><i class="legend-icon"><svg viewBox="0 0 24 24"><circle cx="7" cy="12" r="4"/><circle cx="17" cy="12" r="2" opacity=".5"/><path d="M11 12h3"/></svg></i>weak signal</span>
+        <span class="legend-item"><i class="legend-icon"><svg viewBox="0 0 24 24"><path d="M5 12h5M14 12h5"/><path d="M10 8l4 8"/></svg></i>data lost</span>
+        <span class="legend-item"><i class="legend-icon"><svg viewBox="0 0 24 24"><path d="M5 7h13M5 12h10M5 17h7"/><path d="M19 5v14"/></svg></i>skew</span>
+        <span class="legend-item"><i class="legend-icon"><svg viewBox="0 0 24 24"><path d="M4 8h16M4 16h16"/><path d="M8 8l3 8 3-8 3 8"/></svg></i>crosstalk</span>
+        <span class="legend-item"><i class="legend-icon"><svg viewBox="0 0 24 24"><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/><circle cx="12" cy="12" r="4"/></svg></i>interference</span>
+      </div></section></aside></section>
 </main>
 
 <script src="./lab-kit.js" data-lab-resource="lab-kit.js"></script>
@@ -831,7 +833,7 @@ h1{margin:0;font-size:27px;letter-spacing:-.025em}
       rxBits:Array(8).fill(null),
       rxStates:Array(8).fill("wait"),
       status:"idle",statusTitle:"automatic transfer",statusDetail:"waiting for the next byte",
-      protocolTitle:"no error checking",protocolDetail:"add a return path for ECHO or PARITY",
+      protocolTitle:"no error checking",protocolDetail:"TX data streams without a return check",
       lastSource:null
     };
   }
@@ -965,6 +967,7 @@ h1{margin:0;font-size:27px;letter-spacing:-.025em}
   function renderNodes(){
     $("nodeLayer").innerHTML=[...nodes.values()].map(nodeMarkup).join("");
     bindNodeEvents();
+    LabDesign.introduce($("canvas"),[...$("nodeLayer").querySelectorAll(".port.tx")],"wire-connect","Connect transmit to receive","Drag a TX connector to an RX connector, or select the two ports. A completed path starts streaming automatically.");
   }
 
   function bindNodeEvents(){
@@ -2322,7 +2325,7 @@ h1{margin:0;font-size:27px;letter-spacing:-.025em}
     protocolMode=protocolMode===mode?"none":mode;updateProtocolButtons();
     nodes.forEach(node=>{
       node.protocolTitle=protocolMode==="echo"?"ECHO selected":protocolMode==="parity"?"even PARITY selected":"no error checking";
-      node.protocolDetail=protocolMode==="none"?"add a return path for ECHO or PARITY":"a reverse TX → RX path is required";
+      node.protocolDetail=protocolMode==="none"?"TX data streams without a return check":"a reverse TX → RX path is required";
     });
     renderAll();restartSimulation();
   }

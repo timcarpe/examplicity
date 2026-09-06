@@ -966,6 +966,1323 @@ button.danger{color:var(--bad)}
 
 </style>
 <!-- LAB_RESOURCE_END id="lab-kit.css" type="stylesheet" -->
+<style data-lab-design>
+/* Canonical Examplicity shared design components.
+   Edit this file, then sync the guide, authoring bundle and published labs.
+   Compatibility selectors retain the reviewed labs; use the public API for new labs. */
+
+/* working-progression */
+#answerForm{padding:12px;border:1px solid var(--lab-needed-line,#d8c36a);border-radius:8px;background:var(--lab-needed-surface,#fffdf4)}
+#answerForm[data-work-state="good"]{border-color:var(--lab-good-line,#9cc7aa);background:var(--lab-good-surface,#f7fcf8)}
+#answerForm[data-work-state="bad"]{border-color:var(--lab-bad-line,#d8aaa4);background:var(--lab-bad-surface,#fff8f7)}
+#answerForm .answer-label::before{content:"●";margin-right:8px;color:var(--lab-needed-ink,#735100)}
+#answerForm[data-work-state="good"] .answer-label::before{content:"✓";color:var(--lab-good-ink,#225f43)}
+#answerForm[data-work-state="bad"] .answer-label::before{content:"✕";color:var(--lab-bad-ink,#853b34)}
+#answerForm .feedback{padding:8px 0 0;border:0;background:transparent}
+.inspector .decision-card,.inspector .frontier-section,.inspector .relaxation,.inspector .settled-section{margin:10px 0 0;padding:12px;border:1px solid var(--lab-line-subtle,#e7e8eb);border-radius:8px;background:var(--lab-surface-muted,#f7f8fa);box-shadow:none}
+.inspector .decision-card.needed{border-color:var(--lab-needed-line,#d8c36a);background:var(--lab-needed-surface,#fffdf4)}
+.inspector .decision-card.good,.inspector .settled-section[data-complete="true"]{border-color:var(--lab-good-line,#9cc7aa);background:var(--lab-good-surface,#f7fcf8)}
+.inspector .decision-card.bad{border-color:var(--lab-bad-line,#d8aaa4);background:var(--lab-bad-surface,#fff8f7)}
+.inspector .relax-card{padding:0;border:0;background:transparent;box-shadow:none}
+.work-progress{display:flex;align-items:center;gap:8px;margin:10px 0;padding:12px;border:1px solid var(--lab-needed-line,#d8c36a);border-radius:8px;background:var(--lab-needed-surface,#fffdf4);color:var(--lab-ink,#242428);font-size:14px;line-height:1.45;box-shadow:none}
+.work-progress[data-complete="true"]{border-color:var(--lab-good-line,#9cc7aa);background:var(--lab-good-surface,#f7fcf8)}
+.work-progress .progress-mark{color:var(--lab-needed-ink,#735100);font-size:12px}
+.work-progress[data-complete="true"] .progress-mark{color:var(--lab-good-ink,#225f43)}
+.evidence .working-chain{display:grid;gap:10px}
+.evidence .readout-line,.evidence .readout-line.owned{margin:0;padding:12px;border:1px solid var(--lab-line-subtle,#e7e8eb);border-radius:8px;background:var(--lab-surface-muted,#f7f8fa)}
+.evidence .readout-line.owned{border-color:var(--lab-needed-line,#d8c36a);background:var(--lab-needed-surface,#fffdf4)}
+.evidence .readout-line.owned.correct{border-color:var(--lab-good-line,#9cc7aa);background:var(--lab-good-surface,#f7fcf8)}
+.evidence .readout-line.owned.incorrect{border-color:var(--lab-bad-line,#d8aaa4);background:var(--lab-bad-surface,#fff8f7)}
+.work-progress{display:flex;align-items:center;gap:8px;margin:10px 0;padding:12px;border:1px solid var(--lab-needed-line,#d8c36a);border-radius:8px;background:var(--lab-needed-surface,#fffdf4);color:var(--lab-ink,#242428);font-size:14px;line-height:1.45;box-shadow:none}
+.work-progress[data-complete="true"]{border-color:var(--lab-good-line,#9cc7aa);background:var(--lab-good-surface,#f7fcf8)}
+.work-progress .progress-mark{color:var(--lab-needed-ink,#735100);font-size:12px}
+.work-progress[data-complete="true"] .progress-mark{color:var(--lab-good-ink,#225f43)}
+.evidence .working-chain{gap:10px}
+.evidence .output-card,.evidence .output-card.complete,.evidence .output-card.working-required{margin:0;padding:12px;border:1px solid var(--lab-line-subtle,#e7e8eb);border-radius:8px;background:var(--lab-surface-muted,#f7f8fa);box-shadow:none}
+.evidence .output-card.working-required.in-progress{border-color:var(--lab-needed-line,#d8c36a);background:var(--lab-needed-surface,#fffdf4)}
+.evidence .output-card.working-required.correct{border-color:var(--lab-good-line,#9cc7aa);background:var(--lab-good-surface,#f7fcf8)}
+.evidence .output-card.working-required.incorrect{border-color:var(--lab-bad-line,#d8aaa4);background:var(--lab-bad-surface,#fff8f7)}
+.evidence .output-card.working-required.in-progress::after{content:"●";font-size:12px}
+.evidence .output-head{padding-right:18px}
+.work-progress{display:flex;align-items:center;gap:8px;margin:10px 0;padding:12px;border:1px solid var(--lab-needed-line,#d8c36a);border-radius:8px;background:var(--lab-needed-surface,#fffdf4);color:var(--lab-ink,#242428);font-size:14px;line-height:1.45;box-shadow:none}
+.work-progress[data-complete="true"]{border-color:var(--lab-good-line,#9cc7aa);background:var(--lab-good-surface,#f7fcf8)}
+.work-progress .progress-mark{color:var(--lab-needed-ink,#735100);font-size:12px}
+.work-progress[data-complete="true"] .progress-mark{color:var(--lab-good-ink,#225f43)}
+.calc-panel .calc-flow{gap:10px}
+.calc-panel .calc-step{position:relative;padding:12px;border:1px solid var(--lab-line-subtle,#e7e8eb);border-radius:8px;background:var(--lab-surface-muted,#f7f8fa);box-shadow:none}
+.calc-panel .calc-step.pending{border-color:var(--lab-needed-line,#d8c36a);background:var(--lab-needed-surface,#fffdf4)}
+.calc-panel .calc-step.good{border-color:var(--lab-good-line,#9cc7aa);background:var(--lab-good-surface,#f7fcf8)}
+.calc-panel .calc-step.bad{border-color:var(--lab-bad-line,#d8aaa4);background:var(--lab-bad-surface,#fff8f7)}
+.calc-panel .calc-step.locked{opacity:1}
+.calc-panel .calc-step .step-head{padding-right:20px}
+.calc-panel .calc-step::after{content:attr(data-progress-mark);position:absolute;top:12px;right:12px;font-size:12px;color:var(--lab-needed-ink,#735100)}
+.calc-panel .calc-step.good::after{color:var(--lab-good-ink,#225f43)}
+.calc-panel .calc-step.bad::after{color:var(--lab-bad-ink,#853b34)}
+.calc-panel .calc-step.locked::after{color:var(--lab-muted,#666670)}
+
+/* rounded-settings */
+/* Working and exam settings share one softly rounded segmented control. */
+.lab-working-toggle,.lab-activity-bar .lab-working-toggle,.pill-toggle{display:inline-flex;align-items:center;gap:2px;height:42px;padding:3px;border:1px solid var(--lab-line-subtle,#e7e8eb);border-radius:999px;background:var(--lab-surface-muted,#f7f8fa);box-shadow:0 1px 3px rgba(29,29,31,.08)}
+.lab-working-toggle button,.lab-activity-bar .lab-working-toggle button,.pill-toggle button{width:auto;min-width:40px;min-height:34px;padding:0 12px;border:1px solid transparent;border-radius:999px;background:transparent;color:var(--lab-ink-secondary,#424245);font-size:12px;font-weight:400;line-height:1.2;box-shadow:none}
+.lab-working-toggle button[aria-pressed="true"],.pill-toggle button[aria-checked="true"]{border-color:transparent;border-radius:999px;background:var(--lab-ink-secondary,#424245);color:#fff;font-weight:400;box-shadow:none}
+.pill-toggle.level-toggle button[aria-checked="true"]{background:var(--lab-accent-hover,#4569aa);color:var(--lab-on-accent,#fff)}
+
+/* top-panel-controls */
+/* Activity controls share a light boundary and restrained elevation. */
+.lab-working-toggle,.lab-activity-bar .lab-working-toggle,.pill-toggle{border-color:var(--lab-line,#d2d2d7)}
+.lab-activity-bar .lab-activity-task>button,.lab-activity-bar .run-actions>button,.lab-activity-bar>button{display:inline-flex;align-items:center;justify-content:center;gap:4px;min-height:40px;padding:8px 14px;border:1px solid var(--lab-ink-secondary,#424245);border-radius:var(--lab-control-radius,8px);background:var(--lab-muted,#6e6e73);color:#fff;font-size:12px;font-weight:400;line-height:1.3;box-shadow:0 1px 3px rgba(29,29,31,.08)}
+.lab-activity-bar .lab-activity-task>button:hover,.lab-activity-bar .run-actions>button:hover,.lab-activity-bar>button:hover{background:var(--lab-ink-secondary,#424245)}
+.lab-activity-bar .run-actions>button.active{background:var(--lab-accent-hover,#4569aa);border-color:var(--lab-accent-hover,#4569aa);color:#fff}
+.lab-activity-bar .run-actions>button.algorithm-button{border-color:var(--lab-accent-pressed,#3a5d99);background:var(--lab-accent-hover,#4569aa);color:#fff}
+.lab-activity-bar .run-actions>button.algorithm-button:hover{background:var(--lab-accent-pressed,#3a5d99)}
+.lab-activity-bar .algorithm-button span,.lab-activity-bar .algorithm-button small{color:inherit}
+.lab-activity-bar button:disabled{cursor:default}
+/* Activity controls share a light boundary and restrained elevation. */
+.lab-working-toggle,.lab-activity-bar .lab-working-toggle,.pill-toggle{border-color:var(--lab-line,#d2d2d7)}
+.lab-activity-bar .lab-activity-task>button,.lab-activity-bar .run-actions>button,.lab-activity-bar>button{display:inline-flex;align-items:center;justify-content:center;gap:4px;min-height:40px;padding:8px 14px;border:1px solid var(--lab-ink-secondary,#424245);border-radius:var(--lab-control-radius,8px);background:var(--lab-muted,#6e6e73);color:#fff;font-size:12px;font-weight:400;line-height:1.3;box-shadow:0 1px 3px rgba(29,29,31,.08)}
+.lab-activity-bar .lab-activity-task>button:hover,.lab-activity-bar .run-actions>button:hover,.lab-activity-bar>button:hover{background:var(--lab-ink-secondary,#424245)}
+.lab-activity-bar .run-actions>button.active{background:var(--lab-accent-hover,#4569aa);border-color:var(--lab-accent-hover,#4569aa);color:#fff}
+.lab-activity-bar .run-actions>button.algorithm-button{border-color:var(--lab-accent-pressed,#3a5d99);background:var(--lab-accent-hover,#4569aa);color:#fff}
+.lab-activity-bar .run-actions>button.algorithm-button:hover{background:var(--lab-accent-pressed,#3a5d99)}
+.lab-activity-bar .algorithm-button span,.lab-activity-bar .algorithm-button small{color:inherit}
+.lab-activity-bar button:disabled{cursor:default}
+.lab-activity-bar .run-actions>button.algorithm-button{flex-direction:column}.lab-activity-bar .algorithm-button span{font-size:12px;font-weight:400}.lab-activity-bar .algorithm-button small{font-size:11px;font-weight:400}
+
+/* action-hierarchy */
+/* Action hierarchy: blue primary, white/blue secondary, muted disabled. */
+.lab-activity-bar .lab-activity-task>button,.lab-activity-bar .run-actions>button,.lab-activity-bar .activity-actions>button,.lab-activity-bar>button{min-height:40px;padding:8px 14px;border:1px solid var(--lab-accent-line,#9fb4d6);border-radius:var(--lab-control-radius,8px);background:#fff;color:var(--lab-accent-ink,#315b91);font-size:12px;font-weight:400;box-shadow:0 1px 3px rgba(29,29,31,.08)}
+.lab-activity-bar .lab-activity-task>button:hover,.lab-activity-bar .run-actions>button:hover,.lab-activity-bar .activity-actions>button:hover,.lab-activity-bar>button:hover{background:var(--lab-accent-soft,#eef2fa)}
+.lab-activity-bar #newButton,.lab-activity-bar #newProblemBtn{border-color:var(--lab-accent-pressed,#3a5d99);background:var(--lab-accent-hover,#4569aa);color:#fff}
+.lab-activity-bar #newButton:hover,.lab-activity-bar #newProblemBtn:hover{background:var(--lab-accent-pressed,#3a5d99)}
+.lab-activity-bar button:disabled:not([aria-pressed]):not([aria-checked]){border-color:var(--lab-line,#d2d2d7);background:var(--lab-surface-strong,#eef1f3);color:var(--lab-muted,#6e6e73);box-shadow:none;opacity:1;cursor:not-allowed}
+.lab-mode-toggle{display:inline-flex;align-items:center;gap:2px;padding:3px;border:1px solid var(--lab-line,#d2d2d7);border-radius:999px;background:var(--lab-surface-muted,#f7f8fa);box-shadow:0 1px 3px rgba(29,29,31,.08)}
+.lab-activity-bar .lab-mode-toggle>button.algorithm-button{display:inline-flex;align-items:center;justify-content:center;min-width:80px;min-height:34px;padding:0 12px;border:1px solid transparent;border-radius:999px;background:transparent;color:var(--lab-accent-ink,#315b91);font-size:12px;font-weight:400;box-shadow:none}
+.lab-activity-bar .lab-mode-toggle>button.algorithm-button[aria-pressed="true"]{background:var(--lab-accent-hover,#4569aa);color:#fff}
+.lab-activity-bar .lab-mode-toggle>button:disabled{opacity:.55;cursor:not-allowed}
+
+/* disabled-actions */
+/* Disabled actions override primary colours and hover without resembling an active secondary action. */
+.lab-activity-bar button:disabled:not([aria-pressed]):not([aria-checked]),
+.lab-activity-bar #newButton:disabled,.lab-activity-bar #newProblemBtn:disabled,
+.lab-activity-bar .lab-mode-toggle>button.algorithm-button:disabled{
+  border-color:var(--lab-line,#d2d2d7);background:var(--lab-surface-strong,#eef1f3);color:var(--lab-muted,#6e6e73);box-shadow:none;opacity:1;cursor:not-allowed;transform:none;
+}
+
+/* task-heading */
+/* Task headings are quiet, readable anchors above the model. */
+.lab-activity-bar .lab-activity-task>strong,.lab-activity-bar .lab-activity-task h2,.lab-activity-bar .lab-activity-task h3,.lab-activity-bar .mission-copy>strong,.lab-activity-bar #goalTitle{margin:0;color:var(--lab-accent-ink,#315b91);font-family:var(--lab-font-sans,inherit);font-size:16px;font-weight:400;line-height:1.5;letter-spacing:normal;text-transform:none;text-wrap:balance}
+
+/* flat-mathematics */
+/* Compact concept-tinted backing distinguishes displayed mathematics. */
+.calc-panel .term-chip,.calc-panel .worked-value,.calc-panel .flat-expression{padding:3px 7px;border:0;border-radius:4px;background:color-mix(in srgb,var(--lab-concept-violet,#7563a7) 20%,white);color:var(--lab-ink,#1d1d1f);box-shadow:none}
+.calc-panel .flat-expression{width:fit-content}
+.calc-panel .flat-expression .worked-value{padding:0;background:transparent}
+
+/* working-attention */
+/* Unattempted working draws attention through its border, never moving the content. */
+.calc-panel .calc-step.pending:not([data-interacted="true"]),.calc-panel .work-progress:not([data-complete="true"]):not([data-interacted="true"]){animation:workingBorderPulse 2s ease-in-out infinite}
+@keyframes workingBorderPulse{0%,100%{border-color:var(--lab-needed-line,#d8c36a);box-shadow:0 0 0 0 rgba(216,195,106,0)}50%{border-color:var(--lab-needed,#946200);box-shadow:0 0 0 3px rgba(216,195,106,.18)}}
+@media(prefers-reduced-motion:reduce){.calc-panel .calc-step,.calc-panel .work-progress{animation:none!important}}
+
+/* working-refinements */
+#answerForm[data-work-state="current"]:not([data-attention-used="true"]){animation:workingAttention 2s ease-in-out infinite}
+@keyframes workingAttention{0%,100%{border-color:var(--lab-needed-line,#d8c36a);box-shadow:none}50%{border-color:var(--lab-needed,#946200);box-shadow:0 0 0 3px rgba(216,195,106,.18)}}
+@media(prefers-reduced-motion:reduce){#answerForm[data-work-state="current"]{animation:none!important}}
+.decision-card.needed:not([data-attention-used="true"]){animation:workingAttention 2s ease-in-out infinite}
+@keyframes workingAttention{0%,100%{border-color:var(--lab-needed-line,#d8c36a);box-shadow:none}50%{border-color:var(--lab-needed,#946200);box-shadow:0 0 0 3px rgba(216,195,106,.18)}}
+@media(prefers-reduced-motion:reduce){.decision-card.needed{animation:none!important}}
+#relax-equation{padding:3px 7px;border:0;border-radius:4px;background:color-mix(in srgb,var(--lab-concept-violet,#7563a7) 20%,white);box-shadow:none}
+.readout-line.owned:not(.correct):not(.incorrect):not([data-attention-used="true"]),.work-progress:not([data-complete="true"]):not([data-attention-used="true"]){animation:workingAttention 2s ease-in-out infinite}
+@keyframes workingAttention{0%,100%{border-color:var(--lab-needed-line,#d8c36a);box-shadow:none}50%{border-color:var(--lab-needed,#946200);box-shadow:0 0 0 3px rgba(216,195,106,.18)}}
+@media(prefers-reduced-motion:reduce){.readout-line.owned:not(.correct):not(.incorrect),.work-progress:not([data-complete="true"]){animation:none!important}}
+.auto-value{padding:3px 7px;border:0;border-radius:4px;background:color-mix(in srgb,var(--lab-concept-violet,#7563a7) 20%,white);box-shadow:none}
+.output-card.working-required.in-progress:not([data-attention-used="true"]),.work-progress:not([data-complete="true"]):not([data-attention-used="true"]){animation:workingAttention 2s ease-in-out infinite}
+@keyframes workingAttention{0%,100%{border-color:var(--lab-needed-line,#d8c36a);box-shadow:none}50%{border-color:var(--lab-needed,#946200);box-shadow:0 0 0 3px rgba(216,195,106,.18)}}
+@media(prefers-reduced-motion:reduce){.output-card.working-required.in-progress,.work-progress:not([data-complete="true"]){animation:none!important}}
+.product-line:not(:has(input)){padding:3px 7px;border:0;border-radius:4px;background:color-mix(in srgb,var(--lab-concept-violet,#7563a7) 20%,white);box-shadow:none}
+.working-panel .work-step.current:not([data-attention-used="true"]){animation:workingAttention 2s ease-in-out infinite}
+@keyframes workingAttention{0%,100%{border-color:var(--lab-needed-line,#d8c36a);box-shadow:none}50%{border-color:var(--lab-needed,#946200);box-shadow:0 0 0 3px rgba(216,195,106,.18)}}
+.working-panel .step-value{width:fit-content;padding:3px 7px;border:0;border-radius:4px;background:color-mix(in srgb,var(--lab-concept-violet,#7563a7) 20%,white);box-shadow:none}
+@media(prefers-reduced-motion:reduce){.working-panel .work-step{animation:none!important}}
+
+/* field-feedback-only */
+.evidence .output-card:has(.answer-entry)::after{content:none}
+.evidence .output-card:has(.answer-entry) .output-head{padding-right:0}
+.calc-panel .calc-step:has(.work-entry)::after{content:none}
+.calc-panel .calc-step:has(.work-entry) .step-head{padding-right:0}
+.working-panel .work-step:has(input) .step-head>.step-status{display:none}
+
+/* Public component API for new labs. */
+.lab-toggle{display:inline-flex;align-items:center;gap:2px;height:42px;padding:3px;border:1px solid var(--lab-line,#d2d2d7);border-radius:999px;background:var(--lab-surface-muted,#f7f8fa);box-shadow:0 1px 3px rgba(29,29,31,.08)}
+.lab-toggle>button{min-width:40px;min-height:34px;padding:0 12px;border:1px solid transparent;border-radius:999px;background:transparent;color:var(--lab-ink-secondary,#424245);font:400 12px/1.2 var(--lab-font-sans,sans-serif);box-shadow:none}
+.lab-toggle>button:is([aria-pressed="true"],[aria-checked="true"]){background:var(--lab-ink-secondary,#424245);color:#fff}
+.lab-toggle[data-kind="exam"]>button:is([aria-pressed="true"],[aria-checked="true"]),.lab-toggle[data-kind="mode"]>button:is([aria-pressed="true"],[aria-checked="true"]){background:var(--lab-accent-hover,#4569aa);color:#fff}
+.lab-action{min-height:40px;padding:8px 14px;border:1px solid var(--lab-accent-line,#9fb4d6);border-radius:8px;background:#fff;color:var(--lab-accent-ink,#315b91);font:400 12px/1.3 var(--lab-font-sans,sans-serif);box-shadow:0 1px 3px rgba(29,29,31,.08)}
+.lab-action:hover{background:var(--lab-accent-soft,#eef2fa)}
+.lab-action[data-priority="primary"]{background:var(--lab-accent-hover,#4569aa);border-color:var(--lab-accent-pressed,#3a5d99);color:#fff}
+.lab-action:disabled,.lab-action[data-priority="primary"]:disabled{background:var(--lab-surface-strong,#eef1f3);color:var(--lab-muted,#6e6e73);border-color:var(--lab-line,#d2d2d7);box-shadow:none;opacity:1;cursor:not-allowed}
+.lab-math-surface{display:inline-block;padding:3px 7px;border:0;border-radius:4px;background:color-mix(in srgb,var(--lab-concept-violet,#7563a7) 20%,white);color:var(--lab-ink,#1d1d1f);box-shadow:none}
+.lab-work-card{padding:12px;border:1px solid var(--lab-line-subtle,#e7e8eb);border-radius:8px;background:var(--lab-surface-muted,#f7f8fa);box-shadow:none}
+.lab-work-card[data-work-state="needed"]{border-color:var(--lab-needed-line,#d8c36a);background:var(--lab-needed-surface,#fffdf4)}
+.lab-work-card[data-work-state="good"]{border-color:var(--lab-good-line,#9cc7aa);background:var(--lab-good-surface,#f7fcf8)}
+.lab-work-card[data-work-state="bad"]{border-color:var(--lab-bad-line,#d8aaa4);background:var(--lab-bad-surface,#fff8f7)}
+.lab-work-card[data-work-state="needed"]:not([data-interacted="true"]){animation:workingAttention 2s ease-in-out infinite}
+.lab-work-card:has(input) .lab-card-status{display:none}
+.lab-stage-surface{border:1px solid var(--lab-line,#d2d2d7);border-radius:12px;background:var(--lab-surface-muted,#f7f8fa)}
+.lab-stage-heading{display:flex;flex-direction:column;gap:4px;padding:12px 12px 8px;font:400 12px/1.45 var(--lab-font-sans,sans-serif)}
+.lab-guide-target{border-radius:12px;outline:2px solid var(--lab-accent,#5277b8);outline-offset:3px;animation:labGuideAttention 2s ease-in-out infinite}
+@keyframes labGuideAttention{0%,100%{box-shadow:0 0 0 4px rgba(82,119,184,.10)}50%{box-shadow:0 0 0 9px rgba(82,119,184,.22)}}
+@media(prefers-reduced-motion:reduce){.lab-work-card,.lab-guide-target{animation:none!important}.lab-guide-target{box-shadow:0 0 0 5px rgba(82,119,184,.16)}}
+
+
+/* Field focus follows the existing border's colour family, without a second outline. */
+:is(input,textarea,select):focus{outline:none!important;box-shadow:none!important;border-color:var(--lab-field-focus,var(--lab-line-strong,#a7a7ad))!important}
+:is(.work-entry,.answer-entry,.working-input,.calc-input,.lab-work-card input){--lab-field-focus:var(--lab-needed,#946200)}
+:is(input.good,input.correct){--lab-field-focus:var(--lab-good-ink,#225f43)}
+:is(input.bad,input.incorrect,[aria-invalid="true"]){--lab-field-focus:var(--lab-bad-ink,#853b34)}
+
+/* Legacy adoption surface: opt in once; keep only model geometry in the lab. */
+.lab-adopt-v3{color:var(--lab-ink,#1d1d1f)}
+.lab-adopt-v3 .panel{border:1px solid var(--lab-line,#d2d2d7);border-radius:12px;background:var(--lab-surface,#fff);box-shadow:none}
+.lab-adopt-v3 :is(.mission,.goal-panel).lab-activity-bar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px 24px;padding:20px 24px;margin:0;border-bottom-color:var(--lab-line-subtle,#e7e8eb);border-radius:12px 12px 0 0;background:#fff}
+.lab-adopt-v3 .lab-activity-bar :is(.goal-top,.goal-meta){display:contents}
+.lab-adopt-v3 .lab-activity-bar :is(.mission-copy,.goal-copy){flex:1 1 300px;min-width:0}
+.lab-adopt-v3 .lab-activity-bar :is(.mission-copy,.goal-copy)>strong{display:block;font-size:16px;font-weight:400;line-height:1.5;color:var(--lab-accent-ink,#315b91);letter-spacing:normal;text-wrap:balance}
+.lab-adopt-v3 .lab-activity-bar :is(.mission-copy,.goal-copy)>span{font-size:12px;font-weight:400;line-height:1.45;color:var(--lab-ink-secondary,#424245)}
+.lab-adopt-v3 :is(.setup-meta,.goal-kicker,.step-label,.complexity-help,.calc-badge,.method-badge,.complexity-copy>span,.calc-head>p,.method-head>p){display:none}
+.lab-adopt-v3 :is(.mission-actions,.mission-tools,.case-actions){display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-left:auto}
+.lab-adopt-v3 :is(.complexity,.ownership){display:flex;align-items:center;gap:8px;background:transparent;border:0;padding:0;box-shadow:none}
+.lab-adopt-v3 :is(.complexity-copy strong,.ownership>span){color:var(--lab-ink,#1d1d1f);font-size:14px;font-weight:400;white-space:nowrap}
+.lab-adopt-v3 .lab-activity-bar .lab-toggle{display:inline-flex;flex:none;padding:3px;border:1px solid var(--lab-line,#d2d2d7);border-radius:999px;background:var(--lab-surface-muted,#f7f8fa);box-shadow:0 1px 3px rgba(29,29,31,.08);height:42px;gap:2px}
+.lab-adopt-v3 .lab-activity-bar .lab-toggle>button{width:auto;min-height:34px;min-width:40px;padding:0 12px;border:1px solid transparent;border-radius:999px;background:transparent;color:var(--lab-ink-secondary,#424245);font:400 12px/1.2 var(--lab-font-sans,sans-serif);box-shadow:none}
+.lab-adopt-v3 .lab-activity-bar .lab-toggle>button[aria-pressed="true"]{background:var(--lab-ink-secondary,#424245);color:#fff}
+.lab-adopt-v3 .lab-activity-bar .lab-toggle[data-kind="mode"]>button[aria-pressed="true"]{background:var(--lab-accent-hover,#4569aa);color:#fff}
+.lab-adopt-v3 .lab-activity-bar+:is(.lab,.workbench){margin-top:0;border-top:0;border-radius:0 0 12px 12px;padding:20px 24px;position:relative}
+.lab-adopt-v3 :is(.workspace,.recurring-workspace){display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,320px);gap:24px;align-items:start}
+.lab-adopt-v3 :is(.stage-wrap,.interaction-pane){min-width:0;position:relative}
+.lab-adopt-v3 :is(.calc-panel,.method-panel){padding:0 0 0 20px;min-width:0;border:0;border-left:1px solid var(--lab-line-subtle,#e7e8eb);background:transparent}
+.lab-adopt-v3 :is(.calc-head,.method-head){padding:0 0 12px;border:0;background:transparent}
+.lab-adopt-v3 :is(.calc-head,.method-head) strong{font-size:14px;font-weight:500;color:var(--lab-ink,#1d1d1f)}
+.lab-adopt-v3 :is(.calc-flow,.solve-chain){display:grid;gap:10px;margin-top:10px;padding:0}
+.lab-adopt-v3 .calc-flow::before,.lab-adopt-v3 .calc-step::before{display:none}
+.lab-adopt-v3 :is(.calc-step,.solve-card,.derive-step,.proof-rule,.compare-rule){padding:12px;border:1px solid var(--lab-line-subtle,#e7e8eb);border-radius:8px;background:var(--lab-surface-muted,#f7f8fa);box-shadow:none;opacity:1}
+.lab-adopt-v3 :is(.calc-step,.solve-card,.derive-step):has(input:not(:disabled)){border-color:var(--lab-needed-line,#d8c36a);background:var(--lab-needed-surface,#fffdf4)}
+.lab-adopt-v3 :is(.calc-step,.solve-card,.derive-step):has(input):is(.good,.complete,.correct),.lab-adopt-v3 :is(.calc-step,.solve-card,.derive-step):has(input.good):not(:has(input:not(.good))){border-color:var(--lab-good-line,#9cc7aa);background:var(--lab-good-surface,#f7fcf8)}
+.lab-adopt-v3 :is(.calc-step,.solve-card,.derive-step):has(input):is(.bad,.incorrect),.lab-adopt-v3 :is(.calc-step,.solve-card,.derive-step):has(input.bad,input.incorrect){border-color:var(--lab-bad-line,#d8aaa4);background:var(--lab-bad-surface,#fff8f7)}
+.lab-adopt-v3 :is(.calc-step,.solve-card,.derive-step):has(input:not(:disabled)):not(.good,.complete,.correct,.bad,.incorrect):not(:has(input.bad,input.incorrect)):not([data-interacted="true"]){animation:workingAttention 2s ease-in-out infinite}
+.lab-adopt-v3 :is(.calc-step,.solve-card,.derive-step):has(input)::after,.lab-adopt-v3 .step-head em{display:none}
+.lab-adopt-v3 :is(.step-head span,.solve-card>span,.derive-step-head strong,.calc-label,.reference-strip>span,.solve-label){font-size:12px;line-height:1.45;font-weight:400;text-transform:none;letter-spacing:normal;color:var(--lab-ink-secondary,#424245)}
+.lab-adopt-v3 :is(.step-note,.derive-note,.work-feedback,.working-row,.method-panel p,.reference-strip em,.calc-intro,.proof-body,.compare-rule,.gate-caption,.bridge-caption){font-size:14px;font-weight:400;line-height:1.45;color:var(--lab-ink-secondary,#424245)}
+.lab-adopt-v3 :is(.step-value,.solve-card>strong,.formula-band,.derive-equation,.calc-equation,.proof-rule code):not(:has(input)){width:fit-content;max-width:100%;padding:3px 7px;border:0;border-radius:4px;background:color-mix(in srgb,var(--lab-concept-violet,#7563a7) 20%,white);color:var(--lab-ink,#1d1d1f);font-size:14px;font-weight:400;line-height:1.45;box-shadow:none;overflow-wrap:anywhere}
+.lab-adopt-v3 :is(.reference-strip,.proof-head){padding:12px;border:0;border-radius:8px;background:var(--lab-surface-muted,#f7f8fa);font-size:12px;line-height:1.45}
+.lab-adopt-v3 input:not([type="range"]):not([type="checkbox"]):not([type="radio"]){min-height:40px;padding:6px 9px;border-width:1px;border-radius:8px;font-size:14px;font-weight:400;line-height:1.4}
+.lab-adopt-v3 :is(input.good,input.correct){border-color:var(--lab-good-line,#9cc7aa);background:var(--lab-good-surface,#f7fcf8)}
+.lab-adopt-v3 :is(input.bad,input.incorrect){border-color:var(--lab-bad-line,#d8aaa4);background:var(--lab-bad-surface,#fff8f7)}
+.lab-adopt-v3 :is(.solve-arrow,.derive-num){font-size:12px;font-weight:400;color:var(--lab-muted,#6e6e73)}
+.lab-adopt-v3 :is(.solve-arrow small,.projection-head span,.visual-copy span,.trace-note){font-size:12px;font-weight:400;line-height:1.45}
+.lab-adopt-v3 .lab-action{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:8px 14px;border:1px solid var(--lab-accent-line,#9fb4d6);border-radius:8px;background:#fff;color:var(--lab-accent-ink,#315b91);font-size:12px;font-weight:400;line-height:1.3;box-shadow:0 1px 3px rgba(29,29,31,.08)}
+.lab-adopt-v3 .lab-action[data-priority="primary"]{background:var(--lab-accent-hover,#4569aa);border-color:var(--lab-accent-pressed,#3a5d99);color:#fff}
+.lab-adopt-v3 .lab-action:disabled{background:var(--lab-surface-strong,#eef1f3);color:var(--lab-muted,#6e6e73);border-color:var(--lab-line,#d2d2d7);box-shadow:none;opacity:1}
+.lab-adopt-v3 .next-card{position:absolute;top:16px;right:16px;bottom:auto;left:auto;width:min(320px,calc(100% - 32px));max-width:none;padding:16px;border:1px solid var(--lab-good-line,#9cc7aa);border-radius:12px;background:var(--lab-good-surface,#f7fcf8);box-shadow:0 6px 18px rgba(29,29,31,.12);z-index:30;transform:none}
+.lab-adopt-v3 .next-card>strong{display:block;padding-right:30px;color:var(--lab-ink,#1d1d1f);font-size:14px;font-weight:500;line-height:1.4}
+.lab-adopt-v3 .next-card span{font-size:14px;line-height:1.45;font-weight:400}
+.lab-adopt-v3 .next-card .next-actions{display:flex;justify-content:center;gap:8px}
+.lab-adopt-v3 .next-card button:not(.lab-dialog-move){min-height:40px;padding:10px 18px;font-size:11px;font-weight:600;border-radius:8px}
+.lab-adopt-v3 .next-card .lab-dialog-move{position:absolute;top:6px;right:6px;width:32px;min-width:32px;height:32px;min-height:32px;margin:0;padding:0;border:0;border-radius:8px;background:transparent;color:var(--lab-muted,#6e6e73);cursor:grab;touch-action:none;font-size:16px;font-weight:400}
+.lab-adopt-v3 .next-card .lab-dialog-move:active{cursor:grabbing}
+.lab-adopt-v3 .goal-editor{flex-basis:100%;font-size:14px}
+@media(max-width:900px){.lab-adopt-v3 :is(.workspace,.recurring-workspace){grid-template-columns:minmax(0,1fr)}.lab-adopt-v3 :is(.calc-panel,.method-panel){padding:18px 0 0;border-left:0;border-top:1px solid var(--lab-line-subtle,#e7e8eb)}}
+@media(max-width:620px){.lab-adopt-v3 :is(.mission,.goal-panel).lab-activity-bar,.lab-adopt-v3 .lab-activity-bar+:is(.lab,.workbench){padding:16px}.lab-adopt-v3 :is(.mission-actions,.mission-tools,.case-actions){margin-left:0;justify-content:flex-end;width:100%}.lab-adopt-v3 .lab-activity-bar .lab-toggle>button{padding-inline:9px}}
+@media(prefers-reduced-motion:reduce){.lab-adopt-v3 :is(.calc-step,.solve-card,.derive-step){animation:none!important}}
+
+.lab-adopt-v3 :is(.mission-actions,.mission-tools,.case-actions)>button{order:-1}
+.lab-adopt-v3 .goal-meta>.reset{order:1}.lab-adopt-v3 .goal-meta>.complexity{order:2}
+.lab-adopt-v3 .lab-activity-bar>.complexity{margin-left:auto}
+.lab-adopt-v3 .method-panel .solve-card.final:not(:has(input)){border-color:var(--lab-line-subtle,#e7e8eb);background:var(--lab-surface-muted,#f7f8fa)}
+
+.lab-adopt-v3:not(.lab-geometry) .calc-panel .calc-step:not(:has(input)){border-color:var(--lab-line-subtle,#e7e8eb);background:var(--lab-surface-muted,#f7f8fa);box-shadow:none}
+.lab-adopt-v3 :is(.proof-head strong,.compare-rule strong,.gate-core strong,.projection-head strong,.verifier-head strong){font-size:14px;font-weight:500;line-height:1.45}
+.lab-adopt-v3 :is(.gate-top,.gate-period,.gate-rate,.percent-step-label,.method-head span){font-size:12px;font-weight:400;line-height:1.4}
+.lab-adopt-v3 .next-card.has-upgrade{display:block}
+.lab-adopt-v3 .next-card .next-upgrade{margin-top:12px;padding-top:12px;border:0;border-top:1px solid var(--lab-line-subtle,#e7e8eb);background:transparent}
+
+.lab-adopt-v3 .next-card[hidden]{display:none!important}
+
+/* Review refinements: the model fits its space; the page owns vertical flow. */
+:is(.stage-shell,.stageShell,.chain-scroll,.division-scroll){overflow:visible;height:auto;max-height:none;min-width:0}
+:is(.stage-shell,.stageShell)>svg{display:block;width:100%;min-width:0;max-width:100%;height:auto}
+.lab-adopt-v3 :is(.stage-wrap,.stage-shell,.stage,.board-scroll){background:transparent;border:0;border-radius:0}
+.lab-adopt-v3 .stage :is(.stage-bg,.bed){fill:#fff;stroke:none}
+.lab-adopt-v3 :is(.complexity-copy strong,.ownership>span){font:400 12px/1.4 var(--lab-font-sans,sans-serif);text-transform:none;letter-spacing:normal}
+.lab-adopt-v3 [hidden]{display:none!important}
+.lab-adopt-v3 :is(.working-row,.step-value,.solve-card,.solve-entry,.derive-equation,.calc-equation,.reference-strip strong,.proof-body,.locked-value,.calc-panel input,.method-panel input){font-family:var(--lab-font-sans,sans-serif);font-weight:400}
+.lab-adopt-v3 :is(.calc-panel,.method-panel,.proof-body,.compress,.target-strip,.alignment-board,.verifier) strong{font-weight:500}
+.lab-adopt-v3 :is(.solve-entry>span:not(.field-status),.num-field>span:not(.field-status),.locked-field>span,.proof-rule strong,.bound-pair strong,.goal-step-label strong,.goal-step-label span,.verifier-head span){font:400 12px/1.45 var(--lab-font-sans,sans-serif);text-transform:none;letter-spacing:normal}
+.lab-adopt-v3 :is(.digit-cell,.target-value,.row-label,.row-factor,.trace-digit,.decimal-prefix,.digit-out,.remainder-node strong,.equation-main,.equation-sub){font-family:var(--lab-font-sans,sans-serif);font-weight:400}
+.lab-adopt-v3 :is(.lab-work-card p,.proof-message,.method-reveal){font:400 14px/1.45 var(--lab-font-sans,sans-serif)}
+.lab-work-card>strong{font-size:14px;font-weight:500}
+.lab-work-card p{margin:8px 0 0}
+.lab-adopt-v3 .solve-label{display:none}
+.lab-adopt-v3 .next-card .lab-dialog-move{display:grid;place-items:center}
+.lab-dialog-move svg{width:20px;height:20px;pointer-events:none}
+
+/* Fit the causal sequence within its canvas; keep the model horizontal. */
+.lab-adopt-v3 .chain{display:grid;width:100%;min-width:0;padding:0;gap:16px;grid-auto-flow:row;grid-auto-columns:auto}
+
+/* Prediction choices use selection blue; assessed outcomes belong to the card. */
+.lab-prediction-options{display:grid;gap:8px;margin:12px 0}
+.lab-adopt-v3 .lab-prediction-options .lab-action,.lab-prediction-options .lab-action{display:block;width:100%;text-align:left;padding:10px 12px}
+.lab-prediction-options button span{display:block;margin-top:4px;font-size:12px;font-weight:400}
+.lab-adopt-v3 .lab-prediction-options [aria-pressed="true"],.lab-prediction-options [aria-pressed="true"]{background:var(--lab-accent-soft,#eef2fa);border-color:var(--lab-accent,#5277b8);color:var(--lab-accent-ink,#315b91)}
+.lab-adopt-v3 .lab-proof-sidebar{padding:0 0 0 20px;margin:0;border:0;border-left:1px solid var(--lab-line-subtle,#e7e8eb);background:transparent;overflow:visible}
+.lab-proof-sidebar .proof-head{padding:0 0 12px;background:transparent}
+.lab-proof-sidebar .proof-body{display:grid;gap:12px;padding:0}
+.lab-proof-sidebar :is(.bound-entry-grid,.equation-work){display:grid;grid-template-columns:minmax(0,1fr);gap:8px;align-items:start}
+.lab-proof-sidebar .equation-work{padding:12px;border-radius:8px;background:var(--lab-surface-muted,#f7f8fa)}
+.lab-proof-sidebar .eq-label{font-size:14px;text-align:center}
+.lab-proof-sidebar .num-field.speed{max-width:none}
+.lab-proof-sidebar .locked-value{height:auto;min-height:36px;border:0;border-radius:4px;font-size:14px;background:color-mix(in srgb,var(--lab-concept-violet,#7563a7) 20%,white)}
+.lab-proof-sidebar .proof-message:empty{display:none}
+.lab-bounds-chart .lab-chart-heading{font:500 20px var(--lab-font-sans,sans-serif);fill:var(--lab-ink,#1d1d1f)}
+.lab-bounds-chart .lab-chart-label{font:400 16px var(--lab-font-sans,sans-serif);fill:var(--lab-ink-secondary,#424245)}
+.lab-bounds-chart .lab-chart-value{font:400 20px var(--lab-font-sans,sans-serif);fill:var(--lab-ink,#1d1d1f)}
+.lab-motion-chart :is(.tick,.axis-label,.track-label,.gate-title,.gate-value,.handle-label,.limit-label,.endpoint-text,.triangle-text,.dwell-text){font-size:19px;font-weight:400;letter-spacing:normal}
+.lab-motion-chart .plot-title{font-size:20px;font-weight:500}
+.lab-motion-chart :is(.plot-sub,.relation-box,.relation-main,.relation-sub){display:none}
+.lab-adopt-v3 .visual-head{padding:0 0 12px;border:0;gap:12px}
+.lab-adopt-v3 .visual-copy strong{font-size:14px;font-weight:500}
+
+/* Remainder evidence wraps without shrinking the readable calculation text. */
+.lab-adopt-v3 .division-scroll{border:0;background:transparent}
+.lab-adopt-v3 .division-stage{width:100%;min-width:0;padding:16px 0}
+.lab-adopt-v3 .division-line{width:100%;display:flex;flex-wrap:wrap;gap:12px 8px;justify-content:center}
+.lab-adopt-v3 .division-step{width:116px;padding:8px;background:color-mix(in srgb,var(--lab-concept-violet,#7563a7) 20%,white);border:0}
+.lab-adopt-v3 .division-step .op{font:400 12px/1.45 var(--lab-font-sans,sans-serif)}
+.lab-adopt-v3 .remainder-node{width:76px;height:76px}
+.lab-adopt-v3 .remainder-node span{font-size:11px;font-weight:400}
+.lab-adopt-v3 .remainder-node strong{font-size:18px;font-weight:400}
+.lab-adopt-v3 .cycle-endpoint{border-color:var(--lab-concept-violet,#7563a7);box-shadow:0 0 0 3px color-mix(in srgb,var(--lab-concept-violet,#7563a7) 20%,white)}
+.lab-adopt-v3 .repeat-bracket{position:static;width:auto;height:auto;margin:16px 0 0;border:0;text-align:center}
+.lab-adopt-v3 .repeat-bracket span{position:static;transform:none;font:400 12px/1.45 var(--lab-font-sans,sans-serif);white-space:normal}
+.lab-adopt-v3 .decimal-build{flex-wrap:wrap;width:auto}
+.lab-adopt-v3 .decimal-build-label{font-size:12px;font-weight:400;text-transform:none}
+.lab-adopt-v3 .verifier-head{gap:16px;flex-wrap:wrap}
+.lab-adopt-v3 .factor-box{padding:12px;background:var(--lab-surface-muted,#f7f8fa);font:400 14px/1.45 var(--lab-font-sans,sans-serif)}
+.lab-adopt-v3 .factor-box :is(strong,code,span,p){font-family:var(--lab-font-sans,sans-serif);font-size:14px;font-weight:400;line-height:1.45}
+@media(max-width:900px){.lab-adopt-v3 .lab-proof-sidebar{padding:18px 0 0;border-left:0;border-top:1px solid var(--lab-line-subtle,#e7e8eb)}}
+
+/* Direct manipulation cues belong to the operated object, not a second control. */
+.lab-bar-action{cursor:grab;touch-action:none;user-select:none}
+.lab-bar-action:active{cursor:grabbing}
+.lab-bar-action .bar-fill{transition:none;background:var(--lab-concept-blue,#4779b7)}
+.lab-bar-action .bar-fill::after{content:"";position:absolute;left:-3px;right:-3px;top:-4px;height:8px;border:1px solid var(--lab-accent,#5277b8);border-radius:999px;background:#fff}
+.lab-bar-action:not([data-interacted="true"]) .bar-fill::after{animation:labGuideAttention 2s ease-in-out infinite}
+.lab-bar-target{position:absolute;left:0;right:0;border-top:2px dashed var(--lab-accent,#5277b8);pointer-events:none}
+.lab-checkpoints{display:flex;align-items:center;gap:10px}
+.lab-adopt-v3 .lab-checkpoint{width:12px;min-width:12px;height:12px;min-height:12px;padding:0;border:1px solid var(--lab-line-strong,#a7a7ad);border-radius:50%;background:#fff;opacity:1;box-shadow:none}
+.lab-adopt-v3 .lab-checkpoint[aria-current="true"]{border-color:var(--lab-accent,#5277b8);box-shadow:inset 0 0 0 3px #fff;background:var(--lab-accent,#5277b8)}
+.lab-adopt-v3 .lab-checkpoint[data-complete="true"]{border-color:var(--lab-good,#18794e);background:var(--lab-good,#18794e)}
+.lab-bounds-restored :is(.bound-label,.certificate,.phase-chip,.phase-text){display:none}
+.lab-bounds-restored :is(.bound-value,.smallmono,.mono){font:400 18px var(--lab-font-sans,sans-serif);letter-spacing:normal;text-transform:none}
+.lab-bounds-restored :is(.distance-handle,.time-drag-control){cursor:grab}
+.lab-proof-sidebar .verdict-group{display:grid;gap:8px}
+.lab-adopt-v3 .lab-proof-sidebar .proof-body>p{font:400 14px/1.45 var(--lab-font-sans,sans-serif)}
+.lab-motion-chart :is(.track-label,.gate-title,.gate-value,.readout-text,.speed-sign-text,.endpoint-text){font:400 18px var(--lab-font-sans,sans-serif);letter-spacing:normal}
+.lab-motion-chart .endpoint-text{text-anchor:start}
+.lab-motion-chart .plot-title{font-size:18px}
+.lab-adopt-v3 .visual-head:has(.visual-copy[hidden]){display:flex;justify-content:flex-end}
+.lab-recurring{--cycle-a:var(--lab-concept-blue,#4779b7);--cycle-b:var(--lab-concept-violet,#7563a7);--cycle-c:var(--lab-concept-amber,#c9782c);--cycle-a-soft:color-mix(in srgb,var(--cycle-a) 25%,white);--cycle-b-soft:color-mix(in srgb,var(--cycle-b) 25%,white);--cycle-c-soft:color-mix(in srgb,var(--cycle-c) 25%,white);--match:var(--lab-concept-teal,#2d8792);--match-soft:color-mix(in srgb,var(--match) 20%,white)}
+.lab-recurring :is(.target-label,.row-name strong,.row-name code,.subtract-operator-copy strong,.subtract-operator-copy span,.shift-tools button){font:400 12px/1.45 var(--lab-font-sans,sans-serif);letter-spacing:normal;text-transform:none}
+.lab-recurring :is(.digit-cell,.trace-digit).cycle-0{background:var(--cycle-a-soft);border-color:var(--cycle-a);color:var(--lab-ink,#1d1d1f)}
+.lab-recurring :is(.digit-cell,.trace-digit).cycle-1{background:var(--cycle-b-soft);border-color:var(--cycle-b);color:var(--lab-ink,#1d1d1f)}
+.lab-recurring :is(.digit-cell,.trace-digit).cycle-2{background:var(--cycle-c-soft);border-color:var(--cycle-c);color:var(--lab-ink,#1d1d1f)}
+.lab-recurring .row-note{display:none}
+.lab-recurring .row-panel.fixed .row-note{display:block;font-size:11px;font-weight:400}
+.lab-recurring .track-shell.cued .tape-track{border-radius:8px;outline:1px solid var(--lab-accent,#5277b8);outline-offset:3px;animation:labGuideAttention 2s ease-in-out infinite}
+.lab-recurring .subtract-track.ready:not(.dragging):not([data-interacted="true"]) .subtract-handle{border-color:var(--lab-accent,#5277b8);color:var(--lab-accent,#5277b8);background:#fff;animation:labGuideAttention 2s ease-in-out infinite}
+@media(prefers-reduced-motion:reduce){.lab-bar-action .bar-fill::after,.lab-recurring .track-shell.cued .tape-track,.lab-recurring .subtract-track.ready .subtract-handle{animation:none!important;box-shadow:0 0 0 3px var(--lab-accent-soft,#eef2fa)}}
+
+.lab-recurring .goal-mini-tail i{background:var(--cycle-a);border-left:18px solid var(--cycle-b);border-right:18px solid var(--cycle-c)}
+.lab-recurring .subtract-operator-copy span{display:none}
+
+/* Card headings: a modest size hierarchy, without bold or uppercase labels. */
+.lab-card-title,.lab-work-card>strong,
+.lab-adopt-v3 :is(.reference-strip>span,.step-head>span,.derive-step-head strong,.solve-card:not(.solve-entry)>span,.lab-work-card>strong,.bound-pair>strong),
+.calc-panel .step-head>span,.working-panel .step-head>strong,.decision-card>strong{
+  font:400 15px/1.4 var(--lab-font-sans,sans-serif);color:var(--lab-ink,#1d1d1f);letter-spacing:normal;text-transform:none;margin-block:0 6px;
+}
+
+/* Target-anchored introduction, shared by every newly required operation. */
+.lab-intro-card{position:fixed;z-index:100;width:min(260px,calc(100vw - 16px));padding:12px 14px;border:1px solid var(--lab-accent-line,#9fb4d6);border-radius:12px;background:var(--lab-accent-soft,#eef2fa);color:var(--lab-ink,#1d1d1f);box-shadow:0 4px 14px rgba(29,29,31,.12);pointer-events:none}
+.lab-intro-card[hidden]{display:none}
+.lab-intro-card strong{display:block;margin-bottom:6px;font:400 15px/1.4 var(--lab-font-sans,sans-serif);color:var(--lab-accent-ink,#315b91)}
+.lab-intro-card>span{display:block;font:400 14px/1.45 var(--lab-font-sans,sans-serif)}
+.lab-intro-target{outline:1px solid var(--lab-accent,#5277b8);outline-offset:3px;border-radius:8px;animation:labGuideAttention 2s ease-in-out infinite}
+svg .lab-intro-target{outline:none;animation:labSvgIntroAttention 2s ease-in-out infinite}
+@keyframes labSvgIntroAttention{0%,100%{filter:drop-shadow(0 0 3px rgba(82,119,184,.35))}50%{filter:drop-shadow(0 0 7px rgba(82,119,184,.8))}}
+.lab-is-dragging,.lab-is-dragging *{cursor:grabbing!important}
+.lab-motion-chart :is(.handle-hit,.vertex-hit){cursor:grab}
+@media(prefers-reduced-motion:reduce){.lab-intro-target{animation:none!important;box-shadow:0 0 0 3px var(--lab-accent-soft,#eef2fa)}svg .lab-intro-target{filter:drop-shadow(0 0 4px rgba(82,119,184,.6));box-shadow:none}}
+
+/* Preserve the percentage model's single horizontal sequence at the available width. */
+.lab-adopt-v3 .lab-percentage-chain{gap:8px;align-items:start;grid-auto-flow:row;min-width:0;padding:0}
+.lab-percentage-chain .gate-card{align-self:center}
+.lab-percentage-chain :is(.state-card,.gate-card){width:auto;min-width:0;padding:6px}
+.lab-percentage-chain .state-card{background:#fff}
+.lab-percentage-chain .state-head{display:grid;gap:4px}
+.lab-percentage-chain .state-head :is(span,strong){text-align:left;font:400 12px/1.4 var(--lab-font-sans,sans-serif);overflow-wrap:anywhere}
+.lab-percentage-chain .bar-stage{height:210px;padding:0}
+.lab-percentage-chain .bar-track{left:6px;right:6px;background:#fff}
+.lab-percentage-chain .bar-fill{background:var(--lab-concept-blue,#4779b7)}
+.lab-percentage-chain .add-slice{background:var(--lab-concept-amber,#c9782c)}
+.lab-percentage-chain .gate-core{width:100%;min-width:0;padding:8px;background:var(--lab-surface-muted,#f7f8fa);border:1px solid var(--lab-line,#d2d2d7);box-shadow:none}
+.lab-percentage-chain :is(.gate-top,.calc-equation){display:flex;flex-direction:column;align-items:stretch;gap:4px}
+.lab-percentage-chain :is(.calc-line,.gate-note,.lock-copy,.rate-readout,.state-foot){font:400 12px/1.4 var(--lab-font-sans,sans-serif);overflow-wrap:anywhere}
+.lab-percentage-chain .calc-line{padding:6px 0;border:0;background:transparent}
+.lab-percentage-chain :is(.calc-expression,.calc-result-label){white-space:normal;overflow:visible;text-overflow:clip;font-size:12px}
+.lab-percentage-chain .calc-equation input{width:100%;min-width:0}
+.lab-percentage-chain .state-foot{min-height:0}
+.lab-percentage-chain .state-foot:empty{display:none}
+.lab-percentage-chain .target-line span{position:static;display:block;font-size:11px;font-weight:400;white-space:normal;border:0;background:#fff}
+@media(max-width:620px){.lab-adopt-v3 .lab-percentage-chain{gap:3px}.lab-percentage-chain :is(.state-card,.gate-card,.gate-core){padding:3px}.lab-percentage-chain .bar-track{left:2px;right:2px}.lab-percentage-chain :is(.bar-fill,.removed-slice){left:2px;right:2px}.lab-percentage-chain .bar-stage{height:170px}.lab-percentage-chain .gate-period{overflow-wrap:anywhere}}
+
+/* Field introductions preserve the existing field-border focus language. */
+input.lab-intro-target{outline:none;animation:none}
+.lab-motion-chart :is(.handle,.vertex):not(.locked){cursor:grab}
+.lab-bounds-restored [data-drag]{cursor:grab}
+
+
+/* Geometry adoption: common working and presentation, with model layout kept local. */
+.lab-geometry :is(.mission-top){display:contents}
+.lab-geometry :is(.progress-meta,.mission-tools){display:flex;align-items:center;flex-wrap:wrap;gap:12px}
+.lab-geometry :is(.progress-count,.case-meta,.stage-kicker,.problem-kicker,.work-badge,.working-badge,.work-head>span,.strategy-strip,.ownership-note,.problem-family-note,.method-spine,.process-rail,.scope-chip,.scope-badge,.step-tag,.guide-kicker){display:none}
+.lab-geometry :is(#goalHint,#missionHint,.visual-copy,#visualHint,.diagram-title,.stage-head>div:first-child,.stage-note:not(svg .stage-note)){display:none}
+.lab-geometry :is(.stage-side,.diagram-shell,.rotor-side,.graph-side){min-width:0;padding:0;border:0;background:transparent}
+.lab-geometry :is(.stage-shell,.svg-wrap,.diagram-scroll,.diagram-frame){min-width:0;max-width:100%;overflow:visible;aspect-ratio:auto;background:transparent;border:0}
+.lab-geometry :is(svg.stage,#geometry,.diagram-frame svg){display:block;width:100%;min-width:0;height:auto;max-height:none;background:transparent}
+.lab-geometry .lab{overflow:visible}
+.lab-geometry :is(.work-panel,.working,.working-panel,.workspace>.evidence,.sidebar){min-width:0;padding:0 0 0 20px;border:0;border-left:1px solid var(--lab-line-subtle,#e7e8eb);background:transparent;font:400 14px/1.45 var(--lab-font-sans,sans-serif)}
+.lab-geometry .sidebar .calc-panel{border:0;padding:0}
+.lab-geometry :is(.work-head,.working-head,.calc-head){padding:0 0 10px;border:0;display:block}
+.lab-geometry :is(.work-head strong,.working-head strong,.calc-head strong){font:400 15px/1.4 var(--lab-font-sans,sans-serif)}
+.lab-geometry :is(.work-panel,.working,.working-panel,.sidebar,.workspace>.evidence) :is(p,.step-copy,.step-body,.step-note,.work-feedback,.reference-copy,.ratio-note,.transition-note,.progress-summary,.family-note,.work-description,.realisation){font:400 14px/1.45 var(--lab-font-sans,sans-serif);color:var(--lab-ink-secondary,#424245)}
+.lab-geometry :is(.work-panel,.working,.working-panel,.sidebar,.workspace>.evidence) :is(div,span,strong,b,label,output,code){font-family:var(--lab-font-sans,sans-serif);font-size:inherit;font-weight:400;line-height:1.45;letter-spacing:normal;text-transform:none}
+.lab-geometry :is(.ratio-evidence-card,.ratio-choice,.role-copy,.role-auto,.worked-result-row){font-size:14px}
+.lab-geometry :is(.ratio-evidence-card,.role-copy,.role-auto,.worked-result-row)>span{font-size:12px}
+.lab-geometry :is(.reference-choice,.scale-check){padding:0;border:0;background:transparent;font-size:14px}
+.lab-geometry .scale-check{display:grid;gap:8px}
+.lab-geometry .choice-action,.lab-geometry .step-head>:is(.work-status,.step-status),.lab-circle #status{display:none}
+.lab-geometry .role-buttons{display:flex;gap:4px;flex-wrap:wrap}
+.lab-geometry .role-buttons button{min-width:32px;padding:6px;font-size:12px}
+.lab-geometry .lab-action.correct{background:var(--lab-good-surface,#f7fcf8);border-color:var(--lab-good,#18794e);color:var(--lab-good,#18794e)}
+.lab-geometry .lab-action.wrong{background:var(--lab-bad-surface,#fff8f7);border-color:var(--lab-bad,#b42318);color:var(--lab-bad,#b42318)}
+.lab-geometry :is(.work-step,.working-step,.calc-step){margin:0 0 10px;padding:12px;border:1px solid var(--lab-line-subtle,#e7e8eb);border-radius:12px;background:var(--lab-surface-muted,#f7f8fa);box-shadow:none;opacity:1;min-width:0}
+.lab-geometry :is(.work-step,.working-step,.calc-step):is(.current,.pending,.needed,.needs-working,.work-pending){border-color:var(--lab-needed-line,#d8c36a);background:var(--lab-needed-surface,#fffdf4)}
+.lab-geometry :is(.work-step,.working-step,.calc-step):is(.good,.done,.work-good,.work-done){border-color:var(--lab-good-line,#9cc7aa);background:var(--lab-good-surface,#f7fcf8);box-shadow:none}
+.lab-geometry :is(.work-step,.working-step,.calc-step):is(.bad,.work-bad),.lab-geometry :is(.work-step,.working-step,.calc-step):has(.entry.bad,input.bad){border-color:var(--lab-bad-line,#d8aaa4);background:var(--lab-bad-surface,#fff8f7);box-shadow:none}
+.lab-geometry :is(.work-step,.working-step,.calc-step):is(.current,.pending,.needed,.needs-working,.work-pending):not([data-interacted="true"]):not(:has(.bad)){animation:workingAttention 2s ease-in-out infinite}
+.lab-geometry :is(.work-step,.working-step,.calc-step):has(input,textarea) :is(.step-status,.status-pill){display:none}
+.lab-geometry :is(.work-step,.working-step,.calc-step)::after{display:none}
+.lab-geometry .step-head{display:flex;align-items:baseline;gap:8px;margin-bottom:6px;padding:0;flex-wrap:wrap}
+.lab-geometry .step-head :is(strong,.step-title){font:400 15px/1.4 var(--lab-font-sans,sans-serif);letter-spacing:normal;text-transform:none;color:var(--lab-ink,#1d1d1f)}
+.lab-geometry :is(.step-num,.step-status,.status-pill){font:400 11px/1.4 var(--lab-font-sans,sans-serif);text-transform:none;letter-spacing:normal}
+.lab-geometry :is(.working-equation,.step-equation,.calc-line strong,.ratio-values strong,.evidence-cell strong,.auto-value-line strong,.work-box.auto>strong,.pair-box strong){font:400 14px/1.45 var(--lab-font-sans,sans-serif);background:color-mix(in srgb,var(--lab-concept-violet,#7563a7) 20%,white);border:0;border-radius:4px;padding:3px 7px;box-shadow:none;overflow-wrap:anywhere;max-width:100%}
+.lab-geometry :is(.step-equation,.working-equation):has(input,button){background:transparent;padding:0}
+.lab-geometry :is(.work-box,.entry-row,.evidence-cell,.pair-box,.ratio-evidence,.transition-note,.progress-summary){padding:8px;border:0;border-radius:8px;box-shadow:none;font-size:14px}
+.lab-geometry :is(.work-box>span,.entry-row label,.calc-line>span,.pair-box span,.evidence-cell>span,.candidate-row .head,.field-label,.field-shell .field-symbol,.given-chip,.legend,.evidence-row){font:400 12px/1.4 var(--lab-font-sans,sans-serif);letter-spacing:normal;text-transform:none}
+.lab-geometry :is(.work-box,.entry-row):focus-within{outline:none;box-shadow:none}
+.lab-geometry :is(input,textarea){font:400 14px/1.4 var(--lab-font-sans,sans-serif);max-width:100%}
+.lab-geometry textarea{min-height:64px;padding:8px;border-radius:8px;resize:vertical}
+.lab-geometry :is(.work-entry-line input,.mini-work input,.entry-wrap input){border:1px solid var(--lab-needed-line,#d8c36a);background:white;padding:6px 26px 6px 8px}
+.lab-geometry :is(.good input,input.good){border-color:var(--lab-good-line,#9cc7aa)}
+.lab-geometry :is(.bad input,input.bad){border-color:var(--lab-bad-line,#d8aaa4)}
+.lab-geometry :is(.work-status,.mini-status,.auto-mark){background:none!important;border:0!important;color:inherit!important;font:400 14px/1 var(--lab-font-sans,sans-serif)}
+.lab-geometry :is(.role-options,.role-choice,.ratio-choice,.ratio-choices){display:flex;gap:6px;flex-wrap:wrap}
+.lab-geometry :is(.role-options,.role-choice,.ratio-choice,.ratio-choices) button{flex:1 1 60px;font:400 12px/1.4 var(--lab-font-sans,sans-serif);padding:8px;min-height:40px}
+.lab-geometry :is(.ratio-choice,.ratio-choices) button span{font-size:11px;font-weight:400}
+.lab-geometry .lab-action:is(.selected,.active,[aria-pressed="true"]):not(.bad,.good){background:var(--lab-accent-soft,#eef2fa);border-color:var(--lab-accent,#5277b8);color:var(--lab-accent-ink,#315b91)}
+.lab-geometry .lab-action.good{background:var(--lab-good-surface,#f7fcf8);border-color:var(--lab-good,#18794e);color:var(--lab-good,#18794e)}
+.lab-geometry .lab-action.bad{background:var(--lab-bad-surface,#fff8f7);border-color:var(--lab-bad,#b42318);color:var(--lab-bad,#b42318)}
+.lab-geometry .working-body,.lab-geometry .calc-flow{display:grid;grid-template-columns:minmax(0,1fr);gap:0}
+.lab-geometry :is(.stage-head,.visual-head,.diagram-head){background:transparent;border:0;padding:0;margin:0 0 12px;min-height:0}
+.lab-geometry svg text{font-family:var(--lab-font-sans,sans-serif);font-weight:400}
+.lab-geometry :is(svg.stage,#geometry,.diagram-frame svg) text{font-size:20px}
+.lab-geometry :is(.probe-cue,.rotor-drag-label,#angleHandleLabel){display:none}
+.lab-geometry .interaction-guide,.lab-three #guideCard{display:none!important}
+.lab-geometry .angle-hit.lab-intro-target{stroke:var(--lab-accent,#5277b8);stroke-opacity:.22;stroke-width:16px}
+.lab-geometry .completion-layer{inset:0;background:transparent!important;pointer-events:none!important}
+.lab-geometry .completion-layer .next-card{pointer-events:auto;padding:16px!important;width:min(320px,calc(100% - 32px))!important;border:1px solid var(--lab-good-line,#9cc7aa)!important;background:var(--lab-good-surface,#f7fcf8)!important;box-shadow:0 6px 18px rgba(29,29,31,.12)!important;text-align:left!important}
+.lab-geometry .completion-layer .next-card :is(span,.next-realisation,.next-insight){font-size:14px;line-height:1.45;font-weight:400}
+.lab-geometry .phase-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.lab-geometry .phase-kicker{display:none}
+.lab-geometry .phase-modal :is(span,b,strong,label,output){font-family:var(--lab-font-sans,sans-serif);font-weight:400;font-size:14px}
+.lab-geometry .unfold-control{grid-template-columns:1fr;gap:8px;font-size:12px}
+.lab-geometry .unfold-control input{min-width:0}
+.lab-geometry .phase-modal.unfold{background:var(--lab-accent-soft,#eef2fa);border-color:var(--lab-accent-line,#9fb4d6)}
+.lab-trigonometric .workspace{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:20px;margin:0;padding:20px 24px;border-top:0;border-radius:0 0 12px 12px;overflow:visible}
+.lab-trigonometric .visual-system{grid-template-columns:minmax(220px,.65fr) minmax(0,1fr);align-items:start;gap:16px;min-width:0}
+.lab-trigonometric .working-panel{grid-column:2;grid-row:1/3}
+.lab-trigonometric .workspace>.evidence{grid-column:1;grid-row:2;border:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.lab-trigonometric .evidence-box:nth-child(2){display:none}
+.lab-trigonometric .visual-head :is(strong,span){font-size:12px;font-weight:400;line-height:1.4}
+.lab-trigonometric :is(#rotorSvg,#graphSvg){width:100%;min-width:0;height:310px;display:block;background:transparent}
+.lab-trigonometric svg text{font-size:12px}
+.lab-trigonometric .live-pill{background:transparent;border:0;font-size:12px}
+.lab-trigonometric .evidence-box{border:0;padding:12px;border-radius:12px;background:var(--lab-surface-muted,#f7f8fa);font-size:14px}
+.lab-trigonometric :is(.evidence-label,.sweep-status,.inverse-copy,.solution-chip){font-size:12px;font-weight:400;line-height:1.45}
+@media(max-width:980px){.lab-geometry .workspace{grid-template-columns:1fr}.lab-geometry :is(.work-panel,.working,.working-panel,.workspace>.evidence,.sidebar){border-left:0;padding:18px 0 0;border-top:1px solid var(--lab-line-subtle,#e7e8eb)}.lab-geometry .sidebar{grid-template-columns:1fr}.lab-trigonometric .working-panel,.lab-trigonometric .workspace>.evidence{grid-column:1;grid-row:auto}.lab-trigonometric .visual-system{grid-template-columns:minmax(240px,.7fr) minmax(0,1fr)}}
+@media(max-width:620px){.lab-trigonometric .visual-system{grid-template-columns:1fr}.lab-trigonometric .workspace>.evidence{grid-template-columns:1fr}.lab-geometry :is(.work-grid,.candidate-row){min-width:0}.lab-geometry :is(svg.stage,#geometry,.diagram-frame svg) text{font-size:24px}}
+@media(prefers-reduced-motion:reduce){.lab-geometry :is(.work-step,.working-step,.calc-step){animation:none!important}}
+.lab-geometry svg[data-lab-readable-chart] text{font:400 var(--lab-chart-text-size,14px) var(--lab-font-sans,sans-serif)!important}
+.lab-geometry .phase-modal :is(span,b,strong,label,output){text-transform:none;letter-spacing:normal}
+.lab-non :is(.working-description,#constructionStatus,#feedback,#rayLabel){display:none}
+.lab-geometry .work-control{display:flex;flex-direction:row;align-items:center;gap:8px}
+.lab-geometry .work-control>span{font:400 12px/1.4 var(--lab-font-sans,sans-serif);text-transform:none;letter-spacing:normal;color:var(--lab-ink-secondary,#424245)}
+.lab-geometry .live-pill :is(small,span){font:400 12px/1.4 var(--lab-font-sans,sans-serif)}
+.lab-geometry .calc-step .step-equation:has(.lock-copy){padding:0;background:transparent}
+.lab-trigonometric :is(.svg-title,.svg-sub,#graphSub,#workingStatus){display:none}
+.lab-trigonometric .sweep-key{background:var(--lab-concept-violet,#7563a7)}
+.lab-trigonometric .svg-range{fill:color-mix(in srgb,var(--lab-concept-blue,#4779b7) 8%,white)}
+.lab-geometry{--pair-a:var(--lab-concept-amber,#c9782c);--pair-b:var(--lab-concept-violet,#7563a7);--height:var(--lab-concept-teal,#2d8792);--principal:var(--lab-concept-blue,#4779b7);--supp:var(--lab-concept-amber,#c9782c);--probe:var(--lab-accent,#5277b8);--grid:var(--lab-line-subtle,#e7e8eb);--sweep:var(--lab-concept-violet,#7563a7)}
+.lab-geometry :is(.pair-box.a,.given-chip.a){background:color-mix(in srgb,var(--lab-concept-amber,#c9782c) 20%,white)}
+.lab-geometry :is(.pair-box.b,.given-chip.b){background:color-mix(in srgb,var(--lab-concept-violet,#7563a7) 20%,white)}
+.lab-geometry .measure-circle{stroke:var(--lab-concept-amber,#c9782c)}
+.lab-geometry :is(.side-label.a,.angle-label-a){fill:var(--lab-concept-amber,#c9782c)}
+.lab-geometry :is(.side-label.b,.point-label.c){fill:var(--lab-concept-violet,#7563a7)}
+.lab-geometry :is(.height-label,.foot-label){fill:var(--lab-concept-teal,#2d8792)}
+.lab-geometry svg[tabindex]:focus-visible{outline:1px solid var(--lab-accent,#5277b8);outline-offset:3px}
+.lab-geometry .next-card .lab-action[data-priority="primary"]:not(:disabled){background:var(--lab-accent-hover,#4569aa)!important;border-color:var(--lab-accent-pressed,#3a5d99)!important;color:#fff!important}
+.lab-geometry .next-card>strong{text-align:left;font:400 15px/1.4 var(--lab-font-sans,sans-serif)}
+.lab-geometry .next-card>span{text-align:left;font:400 14px/1.45 var(--lab-font-sans,sans-serif)}
+.lab-geometry .legend :is(span,b,i){font:400 12px/1.4 var(--lab-font-sans,sans-serif)}
+.lab-geometry .sidebar h2{font:400 15px/1.4 var(--lab-font-sans,sans-serif);margin:0 0 10px}
+.lab-geometry svg [tabindex]:focus-visible{outline:none;filter:drop-shadow(0 0 4px var(--lab-accent,#5277b8))}
+.lab-geometry svg text[data-ref]{cursor:pointer}
+.lab-geometry .next-card{animation:none}
+.lab-geometry .lab-checkpoints{order:3}
+.lab-checkpoint{position:relative}
+.lab-checkpoint-detail{display:none;position:absolute;z-index:45;right:-8px;top:24px;width:min(280px,calc(100vw - 32px));padding:12px 14px;border:1px solid var(--lab-line,#d2d2d7);border-radius:12px;background:#fff;color:var(--lab-ink,#1d1d1f);box-shadow:0 4px 14px rgba(29,29,31,.12);text-align:left;white-space:normal;font:400 14px/1.45 var(--lab-font-sans,sans-serif)}
+.lab-checkpoint-detail strong{display:block;margin-bottom:6px;font:400 15px/1.4 var(--lab-font-sans,sans-serif)}
+.lab-checkpoint-detail span{display:block;margin-top:6px}
+.lab-checkpoint:is(:hover,:focus-within)>.lab-checkpoint-detail{display:block}
+.lab-non #workingIntro{display:none}
+.lab-geometry .candidate-row{display:grid;grid-template-columns:minmax(58px,.8fr) minmax(38px,.7fr) minmax(80px,1.4fr) minmax(38px,.6fr);gap:6px;padding:8px 0}
+.lab-geometry .working .candidate-row>div{font-size:12px;min-width:0;white-space:normal;overflow-wrap:anywhere}
+
+.lab-circle #reason,.lab-geometry .next-card>span:empty,.lab-geometry .step-copy:empty{display:none}
+
+/* Flat calculation surfaces; feedback belongs to the complete field, never a side rail. */
+.lab-geometry :is(.work-box,.mini-work){border:0!important;box-shadow:none!important}
+/* Choose concept colours that remain distinct from green success feedback. */
+.lab-geometry.lab-three{--height:var(--lab-concept-amber,#c9782c);--laser:var(--lab-concept-blue,#4779b7);--projection:var(--lab-concept-blue,#4779b7);--cable:var(--lab-concept-violet,#7563a7);--plumb:var(--lab-good,#18794e)}
+.lab-three .laser-ghost{stroke:color-mix(in srgb,var(--laser) 28%,transparent)}
+.lab-three .beam-halo{fill:color-mix(in srgb,var(--laser) 12%,transparent);stroke:color-mix(in srgb,var(--laser) 28%,transparent)}
+.lab-three :is(.edge-label.height,.flat-label.height){fill:var(--height)}
+.lab-three :is(.edge-label.projection,.flat-label.shared){fill:var(--projection)}
+.lab-three :is(.edge-label.cable,.flat-label.cable){fill:var(--cable)}
+
+/* Instrument readouts preserve the displayed precision, including trailing zeros. */
+.lab-digital-display{color:var(--lab-concept-blue,#4779b7)}
+.lab-digital-display.time{color:var(--lab-concept-violet,#7563a7)}
+.lab-digital-face{fill:color-mix(in srgb,currentColor 12%,white);stroke:none}
+.lab-digital-segment{fill:currentColor;opacity:.1}
+.lab-digital-segment.is-on{opacity:1}
+.lab-digital-display text{font:400 12px var(--lab-font-sans,sans-serif);fill:var(--lab-ink-secondary,#424245)}
+.lab-digital-display .lab-digital-unit{font-size:14px;fill:currentColor}
+.lab-bounds-restored .lab-chart-heading{font-size:14px;font-weight:400}
+.lab-bounds-restored :is(.lab-chart-label,.bound-value,.smallmono,.mono){font-size:12px}
+
+.lab-proof-marker{fill:var(--lab-concept-blue,#4779b7);stroke:white;stroke-width:2}
+.lab-proof-marker.time{fill:var(--lab-concept-violet,#7563a7)}
+.lab-proof-sidebar :is(.num-field input,.proof-rule code){font:400 14px/1.45 var(--lab-font-sans,sans-serif)}
+.lab-proof-sidebar .lab-work-card>.num-field{margin-top:8px}
+
+.lab-interval-end{stroke:var(--lab-ink-secondary,#424245);stroke-width:1.5}
+.lab-interval-end.included{fill:var(--lab-ink-secondary,#424245)}
+.lab-interval-end.excluded{fill:white}
+.lab-interval-caption{font:400 11px var(--lab-font-sans,sans-serif);fill:var(--lab-ink-secondary,#424245)}
+/* Investigation adoption: shared shell, readable evidence and flat working surfaces. */
+.lab-context{margin:0 0 16px;padding:12px 16px;border:0;border-radius:10px;background:color-mix(in srgb,var(--lab-concept-blue,#4779b7) 10%,white);color:var(--lab-ink,#1d1d1f)}
+.lab-context-heading{display:flex;align-items:baseline;justify-content:space-between;gap:8px 16px;flex-wrap:wrap}
+.lab-context h2{margin:0;font:400 15px/1.4 var(--lab-font-sans,sans-serif);color:var(--lab-accent-ink,#315b91)}
+.lab-context p{margin:6px 0 0;font:400 14px/1.45 var(--lab-font-sans,sans-serif)}
+.lab-context .lab-context-detail{color:var(--lab-ink-secondary,#424245)}
+.lab-context .mechanism-chip{margin:0;padding:0;border:0;background:none;box-shadow:none;font:400 12px/1.4 var(--lab-font-sans,sans-serif);color:var(--lab-ink-secondary,#424245)}
+.lab-context .mechanism-chip i{display:none}
+.lab-adopt-v3 .lab-sidebar .relationship{padding:8px 0 0;border:0;background:transparent;box-shadow:none;border-radius:0}
+.lab-investigation .lab-sidebar .work-box:is(.auto,.fixed){padding:8px 10px}
+.lab-investigation .lab-activity-bar+:is(.workspace,.system,.board){margin-top:0;border-top:0;border-radius:0 0 12px 12px}
+.lab-investigation .lab-solid-layout{margin-top:0}
+.lab-adopt-v3 .lab-activity-bar #missionTitle{margin:0;font:400 16px/1.5 var(--lab-font-sans,sans-serif);color:var(--lab-accent-ink,#315b91)}
+.lab-adopt-v3 .op-index{display:inline-grid;place-items:center;align-self:center;flex:0 0 28px;width:28px;height:28px;margin:0;padding:0;text-align:center;font:400 12px/1 var(--lab-font-sans,sans-serif)}
+.lab-adopt-v3 .single-operation strong{font:400 15px/1.4 var(--lab-font-sans,sans-serif)}
+.lab-adopt-v3 :is(.single-operation>div>span,.op-drag-note){display:none}
+.lab-adopt-v3 .single-operation .op-live{font:400 12px/1.4 var(--lab-font-sans,sans-serif)}
+.lab-vectors #stage{aspect-ratio:auto}
+.lab-vectors .command-strip:empty{display:none}
+.lab-vectors .program:has(.command-strip:empty) .program-head{border-bottom:0}
+.lab-timetable .person-role{text-transform:none;letter-spacing:normal}
+.lab-sets #ruleCue,.lab-sets .drag-guide,.lab-replacement #actionCopy{display:none}
+.lab-investigation{--conc:var(--lab-concept-amber,#c9782c);--water:var(--lab-concept-blue,#4779b7)}
+.lab-investigation :is(button,input,select,textarea){font-family:var(--lab-font-sans,sans-serif);font-weight:400}
+.lab-investigation button:where(:not(.counter,.person-card,.lab-dialog-move)){min-height:40px;padding:8px 14px;border:1px solid var(--lab-accent-line,#9fb4d6);border-radius:8px;background:#fff;color:var(--lab-accent-ink,#315b91);font-size:12px;line-height:1.3;box-shadow:0 1px 3px #1d1d1f14}
+.lab-investigation button:is(.primary,.send):not(:disabled),.lab-investigation :is(#nextProblem,#nextDataset,#nextStageBtn,#nextRoute,#nextButton):not(:disabled){background:var(--lab-accent-hover,#4569aa);border-color:var(--lab-accent-pressed,#3a5d99);color:#fff}
+.lab-investigation button:is(.selected,.active,[aria-pressed="true"]):not(.counter){background:var(--lab-accent-soft,#eef2fa);color:var(--lab-accent-ink,#315b91)}
+.lab-investigation button:disabled:not(.counter){background:var(--lab-surface-strong,#eef1f3);color:var(--lab-muted,#6e6e73);border-color:var(--lab-line,#d2d2d7);box-shadow:none;opacity:1;cursor:not-allowed}
+.lab-investigation :is(.mission-kicker,.setup-meta,.problem-meta,.goal-kicker,.working-badge,.work-badge,.working-copy>span,.difficulty-copy>span,.work-scope,.work-head p,.work-head-top>span,.work-head>span,.modal-kicker,.action-kicker,.stage-footer,#canvasCue,#mapCue,.pump-cue,.work-intro,.working-intro){display:none}
+.lab-investigation :is(#missionHint,.visual-copy,.visual-title,#visualHint,.work-head>p,.stage-note,.stage-caption,.handle-instruction,.control-label,.explore-banner,.interaction-guide){display:none!important}
+.lab-investigation .lab-activity-bar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px 24px;padding:20px 24px;margin:0;border-radius:12px 12px 0 0;background:#fff}
+.lab-investigation .lab-activity-bar :is(.mission-copy,.request-copy,.problem-bar>div:first-child){flex:1 1 350px;min-width:0}
+.lab-investigation .lab-activity-bar :is(.request-copy>strong,#problemText){font:400 16px/1.5 var(--lab-font-sans,sans-serif);color:var(--lab-accent-ink,#315b91)}
+.lab-investigation .lab-activity-bar :is(.complexity,.difficulty-copy,.difficulty-bar,.mission-tools,.request-tools){display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.lab-investigation .lab-activity-bar :is(.complexity-copy>strong,.complexity>span,.difficulty-copy>strong){font:400 12px/1.4 var(--lab-font-sans,sans-serif);white-space:nowrap}
+.lab-investigation .lab-activity-bar .lab-toggle button.active{background:var(--lab-ink-secondary,#424245);color:#fff}
+.lab-investigation .lab-activity-bar .lab-toggle[data-kind="mode"] button.active{background:var(--lab-accent-hover,#4569aa);color:#fff}
+.lab-investigation :is(.stage-shell,.plot-shell,.canvas-wrap,.canvas-frame,.solid-shell,.skin-shell,.venn-scroll){min-width:0;max-width:100%;overflow:visible;border:0;background:transparent;aspect-ratio:auto}
+.lab-investigation :is(#stage,#plot,#stageSvg,#solidSvg,#skinSvg,#plant,#venn){display:block;width:100%;min-width:0;height:auto;max-height:none;overflow:visible;background:transparent}
+.lab-investigation svg[data-lab-readable-chart] text{font:400 var(--lab-chart-text-size,12px) var(--lab-font-sans,sans-serif)!important}
+.lab-investigation svg :is(.stage-bg,.plot-bg){fill:white}
+.lab-investigation svg :is([data-drag],.handle-hit,.control-hit){cursor:grab;touch-action:none}
+.lab-investigation :is(.stage-side,.stage-wrap,.visual-shell,.visual-panel){min-width:0;padding:0;border:0;background:transparent}
+.lab-investigation :is(.visual-head,.skin-head){padding:0 0 10px;border:0;background:none;gap:8px;min-height:0}
+.lab-investigation :is(.visual-head,.skin-head,.legend) :is(strong,span){font:400 12px/1.4 var(--lab-font-sans,sans-serif)}
+.lab-investigation .lab-sidebar{display:block;min-width:0;padding:0 0 0 20px;border:0;border-left:1px solid var(--lab-line-subtle,#e7e8eb);background:transparent;font:400 14px/1.45 var(--lab-font-sans,sans-serif)}
+.lab-investigation .lab-sidebar :is(div,p,span,b,strong,label,output,code,small){font-family:var(--lab-font-sans,sans-serif);font-size:inherit;font-weight:400;letter-spacing:normal;text-transform:none;line-height:1.45}
+.lab-investigation .lab-sidebar :is(.eyebrow,.side-head>strong,.working-head>strong,.work-step-head strong,.work-step-title strong,.step-head strong,.card-head strong,.work-head strong){font:400 15px/1.4 var(--lab-font-sans,sans-serif);color:var(--lab-ink,#1d1d1f)}
+.lab-investigation .lab-sidebar :is(.side-card,.work-section,.evidence-section,.working-head,.work-head,.side-head){padding:0;margin:0 0 12px;border:0;background:transparent;box-shadow:none}
+.lab-investigation .lab-sidebar :is(.work-step,.working-step,.calc-step,.work-section,.evidence-section,.work-block,.evidence-card){padding:12px;margin:0 0 10px;border:1px solid var(--lab-line-subtle,#e7e8eb);border-radius:12px;background:var(--lab-surface-muted,#f7f8fa);box-shadow:none;min-width:0;opacity:1}
+.lab-investigation .lab-sidebar :is(.work-step,.working-step,.calc-step,.work-section,.evidence-section,.work-block):is(.current,.pending,.needed,.work-pending,[data-state="needed"],[data-work-state="needed"]){border-color:var(--lab-needed-line,#d8c36a);background:var(--lab-needed-surface,#fffdf4)}
+.lab-investigation .lab-sidebar :is(.work-step,.working-step,.calc-step,.work-section,.evidence-section,.work-block):is(.good,.done,.work-done,[data-state="correct"],[data-work-state="good"]){border-color:var(--lab-good-line,#9cc7aa);background:var(--lab-good-surface,#f7fcf8)}
+.lab-investigation .lab-sidebar :is(.work-step,.working-step,.calc-step,.work-section,.evidence-section,.work-block):is(.bad,.work-bad,[data-state="mistake"],[data-work-state="bad"]){border-color:var(--lab-bad-line,#d8aaa4);background:var(--lab-bad-surface,#fff8f7)}
+.lab-investigation .lab-sidebar :is(.work-step,.working-step,.calc-step,.work-section,.evidence-section,.work-block):is(.current,.pending,.needed,.work-pending,[data-state="needed"],[data-work-state="needed"]):not([data-interacted="true"]){animation:workingAttention 2s ease-in-out infinite}
+.lab-investigation .lab-sidebar :is(.work-step,.working-step,.calc-step):has(input,select,textarea)>:is(.lab-kit-work-state,.work-step-head>.lab-kit-work-state){display:none}
+.lab-investigation .lab-sidebar :is(.work-step,.working-step,.calc-step):has(input,select,textarea)::after{display:none}
+.lab-investigation .lab-sidebar :is(.work-formula,.working-equation,.evidence-formula,.claim-equation>strong,.forecast-equation,.work-formula-line,.operand,.result-value,.expression){width:fit-content;max-width:100%;padding:3px 7px;border:0;border-radius:5px;background:color-mix(in srgb,var(--lab-concept-violet,#7563a7) 20%,white);font-size:14px;box-shadow:none;overflow-wrap:anywhere}
+.lab-investigation .lab-sidebar :is(.work-values,.working-fields,.work-chain,.resultant-grid,.work-grid,.working-grid){display:grid;grid-template-columns:minmax(0,1fr);gap:8px;min-width:0}
+.lab-investigation .lab-sidebar :is(.work-box,.calc-value,.formula-row,.work-entry,.result-box,.mag-box,.entry-row){border:0;box-shadow:none;border-radius:8px;min-width:0;padding:6px 0}
+.lab-investigation .lab-sidebar :is(.step-num,.work-step-num,.work-box>span,.working-field>span,.formula-label,.work-entry>label,.live-stat>span,.comparison-stat>span,.compare-row>span,.evidence-copy>span){font-size:12px}
+.lab-investigation .lab-sidebar :is(.work-entry input,.work-box input,.working-field input,.answer-row input,.result-box input,.mag-box input){min-width:0;max-width:100%;border:1px solid var(--lab-needed-line,#d8c36a);background:#fff;font:400 14px/1.4 var(--lab-font-sans,sans-serif)}
+.lab-investigation .lab-sidebar :is(input[data-state="correct"],.good input,.check-correct input,input.good){border-color:var(--lab-good-line,#9cc7aa);background:var(--lab-good-surface,#f7fcf8)}
+.lab-investigation .lab-sidebar :is(input[data-state="mistake"],.bad input,.check-wrong input,input.bad){border-color:var(--lab-bad-line,#d8aaa4);background:var(--lab-bad-surface,#fff8f7)}
+.lab-investigation :is(input,textarea,select):focus-visible{outline:none!important;box-shadow:none!important;border-color:var(--lab-needed,#946200)!important}
+.lab-investigation select{appearance:none;max-width:100%;min-height:40px;padding:8px 34px 8px 14px;border:1px solid var(--lab-line,#d2d2d7);border-radius:999px;background-color:#fff;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath d='m4 6 4 4 4-4' fill='none' stroke='%236e6e73' stroke-width='1.5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;color:var(--lab-ink,#1d1d1f);font:400 12px/1.4 var(--lab-font-sans,sans-serif);box-shadow:0 1px 3px #1d1d1f14}
+.lab-investigation select:hover{border-color:var(--lab-line-strong,#a7a7ad)}
+.lab-investigation select:disabled{background-color:var(--lab-surface-strong,#eef1f3);color:var(--lab-muted,#6e6e73);box-shadow:none}
+.lab-investigation .next-card :is(strong,span,button){font-weight:400}
+.lab-investigation .next-card :is(.next-actions,.completion-actions){display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+.lab-investigation .completion-layer{background:transparent;pointer-events:none}
+.lab-investigation .completion-layer .next-card{pointer-events:auto}
+.lab-investigation .lab-checkpoints{display:flex;gap:10px;align-items:center;order:3}
+.lab-investigation .lab-sidebar :is(.step-head,.work-step-head){display:flex;align-items:baseline;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.lab-investigation :is(.stepRail,.progress-rail){display:flex;gap:10px}
+.lab-investigation .progress-rail .progress-line{display:none}
+.lab-investigation .progress-step{position:relative;min-width:12px;width:12px;height:12px;padding:0;border:1px solid var(--lab-line-strong,#a7a7ad);border-radius:50%;background:white;font-size:0}
+.lab-investigation .progress-step :is(i,span){display:none}
+.lab-investigation .progress-step.current{background:var(--lab-accent,#5277b8);box-shadow:inset 0 0 0 3px white}
+.lab-investigation .progress-step.done{background:var(--lab-good,#18794e);border-color:var(--lab-good,#18794e)}
+/* Local composition classes describe relationships, while shared cards remain identical. */
+.lab-blend .system{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:20px;padding:20px 24px;border-top:0;border-radius:0 0 12px 12px;overflow:visible}
+.lab-blend .stage-wrap{grid-column:1;grid-row:1;aspect-ratio:1120/650}
+.lab-blend #workingDock{grid-column:2;grid-row:1/3}
+.lab-blend .evidence{grid-column:1;padding:8px 0;border:0;font:400 14px/1.45 var(--lab-font-sans,sans-serif)}
+.lab-blend .pump-control{border-radius:12px;padding:6px;box-shadow:none}
+.lab-blend .pump-top :is(strong,output){font:400 12px/1.4 var(--lab-font-sans,sans-serif)}
+.lab-blend .pump-scale{font-size:11px}
+.lab-frequency #phaseDock{position:static;padding:0;margin:0 0 12px}
+.lab-frequency #phaseModal{display:block;position:static;width:auto;padding:12px;border:1px solid var(--lab-needed-line,#d8c36a);border-radius:12px;background:var(--lab-needed-surface,#fffdf4);box-shadow:none}
+.lab-frequency #phaseModal[data-tone="good"]{background:var(--lab-good-surface,#f7fcf8);border-color:var(--lab-good-line,#9cc7aa)}
+.lab-frequency #phaseModal[data-tone="bad"]{background:var(--lab-bad-surface,#fff8f7);border-color:var(--lab-bad-line,#d8aaa4)}
+.lab-frequency #phaseModal :is(h2,.modal-copy p){font:400 14px/1.45 var(--lab-font-sans,sans-serif);margin:0 0 8px}
+.lab-frequency #phaseModal h2{font-size:15px}
+.lab-frequency :is(.modal-work,.modal-evidence,.modal-actions){display:flex;flex-direction:column;gap:8px;min-width:0}
+.lab-frequency .modal-evidence{padding:0;border:0;background:none}
+.lab-frequency .modal-actions button{flex:0 0 auto;min-height:40px}
+.lab-frequency .formula{display:flex;flex-wrap:wrap;gap:5px}
+.lab-frequency .formula input{width:80px}
+.lab-replacement-layout,.lab-set-layout{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:24px;align-items:start}
+.lab-replacement #nextAction{padding:0 0 14px;border:0;background:none;box-shadow:none}
+.lab-replacement #actionTitle,.lab-replacement #actionKicker{display:none}
+.lab-replacement #actionCopy,.lab-replacement #problemSub{font:400 14px/1.45 var(--lab-font-sans,sans-serif)}
+.lab-replacement .phenomenon{grid-template-columns:1fr 1fr;gap:14px}
+.lab-replacement :is(.bag-card,.draw-card){padding:12px;border:1px solid var(--lab-line-subtle,#e7e8eb);border-radius:12px;background:white}
+.lab-replacement :is(.draw-state,.card-head span,.bag-evidence){font:400 12px/1.4 var(--lab-font-sans,sans-serif)}
+.lab-replacement .action-drop{border-radius:12px;background:var(--lab-accent-soft,#eef2fa);border:1px dashed var(--lab-accent-line,#9fb4d6)}
+.lab-replacement .drop-icon,.lab-replacement .rule-coach{display:none!important}
+.lab-replacement #workArea{display:block;height:auto!important;min-height:0!important;max-height:none!important;margin:0!important;padding:0 0 0 20px!important;overflow:visible;animation:none;box-shadow:none;background:transparent;border-radius:0}
+.lab-replacement .work-shell{height:auto;grid-template-columns:minmax(0,1fr)!important;grid-template-rows:auto!important;gap:12px!important;align-items:start}
+.lab-replacement .work-shell>*{grid-column:auto!important;grid-row:auto!important;min-width:0}
+.lab-replacement .work-main{padding:12px;border:1px solid var(--lab-needed-line,#d8c36a);border-radius:12px;background:var(--lab-needed-surface,#fffdf4)}
+.lab-replacement .complete .work-main{border-color:var(--lab-good-line,#9cc7aa);background:var(--lab-good-surface,#f7fcf8)}
+.lab-replacement .work-main>strong{font-size:15px!important}
+.lab-replacement :is(.work-main>p,.work-status,#actionCopy){font:400 14px/1.45 var(--lab-font-sans,sans-serif)!important}
+.lab-replacement .work-evidence{grid-template-columns:1fr 1fr!important;grid-auto-rows:auto!important;gap:8px!important}
+.lab-replacement .work-chip{display:block!important;height:auto;min-height:0;padding:8px;border:0;border-radius:6px;background:var(--lab-surface-muted,#f7f8fa)}
+.lab-replacement .work-chip :is(span,strong){font:400 12px/1.4 var(--lab-font-sans,sans-serif)!important}
+.lab-replacement .live-prob{width:auto!important;min-width:0!important;height:auto!important;padding:12px!important;border:0;background:color-mix(in srgb,var(--lab-concept-violet,#7563a7) 20%,white)}
+.lab-replacement .live-prob .prob-frac{font-size:20px!important}
+.lab-replacement .live-prob :is(.prob-label,.prob-simplified){font:400 12px/1.4 var(--lab-font-sans,sans-serif)!important}
+.lab-replacement :is(.work-kicker,.action-drop>span){display:none}
+.lab-replacement .action-drop strong{font:400 14px/1.4 var(--lab-font-sans,sans-serif)!important}
+.lab-replacement .next-problem{min-height:40px!important;font-size:12px!important}
+.lab-replacement .work-area :is(.work-grid,.comparison-grid){display:grid;grid-template-columns:minmax(0,1fr)}
+.lab-replacement .step-rail{margin:0;display:flex;gap:10px;order:3}
+.lab-sets .board{padding:20px 24px;border-top:0;border-radius:0 0 12px 12px}
+.lab-sets .flow{margin-bottom:20px}
+.lab-sets .venn-stage{min-width:0;width:100%}
+.lab-sets .inspection{display:block;grid-column:2;grid-row:1/3}
+.lab-sets .recipient-row{grid-column:1;border:0;background:none;padding:12px 0}
+.lab-sets :is(.move-controls,.rule-controls){display:flex;gap:6px;flex-wrap:wrap}
+.lab-sets :is(.flow-kicker,.goal-target-label,.recipient-count-note,.trace-note){font:400 12px/1.4 var(--lab-font-sans,sans-serif)}
+.lab-sets :is(.trace-top,.trace-note,.rule-cue,.action-line){font-size:14px;font-weight:400}
+.lab-sets :is(.message-card,.rule-card,.recipient-card){padding:12px;border-radius:12px;border:1px solid var(--lab-line-subtle,#e7e8eb);background:var(--lab-surface-muted,#f7f8fa);box-shadow:none}
+.lab-sets .case-tabs{gap:6px}
+.lab-sets .case-tab{font-size:12px}
+.lab-solid-layout{padding:20px 24px;border:1px solid var(--lab-line,#d2d2d7);border-top:0;border-radius:0 0 12px 12px;background:white}
+.lab-solid-models{min-width:0;display:grid;gap:16px}
+.lab-solids #workingDock{margin:0;grid-template-columns:1fr}
+.lab-solids :is(.working-top,.working-intro,.work-intro,.work-heading){display:none}
+.lab-solids .work-flow{grid-template-columns:minmax(0,1fr);gap:0}
+.lab-solids .work-values{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+.lab-solids :is(.working-head,.working-summary,.work-explain,.work-note,.handle-label){display:none}
+.lab-solids :is(.work-box.auto,.work-box.fixed) .work-status{display:none}
+.lab-solids .work-formula{margin:6px 0}
+.lab-solids .lab-sidebar .work-step{height:auto}
+.lab-solids .evidence{font:400 14px/1.45 var(--lab-font-sans,sans-serif);padding:12px 0;border:0;background:none}
+.lab-timetable .workspace{display:block;margin:0;border-top:0;border-radius:0 0 12px 12px;padding:20px 24px;position:relative}
+.lab-timetable .lab-layout{display:grid;grid-template-columns:minmax(0,1fr) 350px;gap:24px}
+.lab-timetable .request-copy>span,.lab-timetable #workspaceHint,.lab-timetable .place-cue,.lab-timetable .method-completion{display:none}
+.lab-timetable .meeting-token{padding:8px 12px;border-radius:12px;background:var(--lab-accent-soft,#eef2fa);border:1px solid var(--lab-accent-line,#9fb4d6);box-shadow:none}
+.lab-timetable .meeting-token :is(span,small){font:400 11px/1.4 var(--lab-font-sans,sans-serif)}
+.lab-timetable .meeting-token strong{font:400 14px/1.4 var(--lab-font-sans,sans-serif)}
+.lab-timetable .meeting-token{order:-1}
+.lab-timetable .lab-sidebar .step-head{justify-content:flex-start}
+.lab-timetable .cal-grid{min-width:0;gap:12px;grid-template-columns:minmax(0,1fr)}
+.lab-timetable .calendar-card.organizer{grid-column:auto}
+.lab-timetable .calendar-card-head :is(span,strong),.lab-timetable :is(.axis-tick,.availability-label,.date-band,.person-state,.calendar-response,.calendar-response strong,.calendar-response span){font:400 12px/1.4 var(--lab-font-sans,sans-serif)}
+.lab-timetable .calendar-card-head .person-city{font-size:15px}
+.lab-timetable .availability{background:color-mix(in srgb,var(--lab-good,#18794e) 16%,white)}
+.lab-timetable .availability::before{font-weight:400;font-size:11px;text-transform:none;letter-spacing:normal}
+.lab-timetable .formula-operand{white-space:normal;overflow-wrap:anywhere;background:color-mix(in srgb,var(--lab-concept-violet,#7563a7) 16%,white)}
+.lab-timetable .calc-panel[data-working-level="0"] .calc-step:not(.work-good) .formula-list{display:none}
+.lab-timetable .calendar-side{background:transparent;align-self:start}
+.lab-solids :is(.solid-shell,.skin-shell){background:transparent}
+.lab-solids .work-box.auto{background:color-mix(in srgb,var(--lab-concept-blue,#4779b7) 16%,white);color:var(--lab-ink,#1d1d1f)}
+.lab-solids .work-box.auto strong{color:inherit}
+.lab-solids :is(.goal-band span,.goal-band strong){font:400 12px/1.4 var(--lab-font-sans,sans-serif)}
+.lab-solids #solidHeadNote{display:none}
+.lab-investigation .lab-sidebar .lab-reference{background:var(--lab-surface-muted,#f7f8fa);border-color:var(--lab-line-subtle,#e7e8eb)}
+.lab-timetable :is(.person-name,.city,.calendar-head strong,.summary strong){font:400 14px/1.4 var(--lab-font-sans,sans-serif)}
+.lab-timetable :is(.calendar-head span,.calendar-head small,.source-note,.proposal-readout,.timeline-label,.hour-label){font:400 12px/1.4 var(--lab-font-sans,sans-serif)}
+.lab-timetable .formula-row{display:flex;flex-wrap:wrap;gap:6px}
+.lab-timetable .formula-line{display:flex;flex-wrap:wrap;gap:5px}
+.lab-timetable .work-time{display:flex;flex-wrap:wrap;gap:6px}
+.lab-timetable .work-time select{width:100%}
+.lab-timetable .final-inequality{display:flex;flex-wrap:wrap;gap:6px}
+.lab-transformations .mission-top{display:contents}
+.lab-transformations .difficulty-bar{margin:0;padding:0;border:0}
+.lab-transformations .route-panel{order:4}
+.lab-transformations .difficulty-actions{order:-1}
+.lab-transformations .progress-line{display:none}
+.lab-transformations .completion-modal{min-width:0;max-width:320px}
+.lab-transformations :is(.command-card,.evidence-card){border:0;padding:0}
+.lab-transformations .support-band{display:grid;grid-template-columns:1fr;gap:8px;padding:12px 0;background:none;border:0}
+.lab-transformations .support-item strong{font:400 14px/1.45 var(--lab-font-sans,sans-serif)}
+.lab-vectors .program{border-radius:12px;background:var(--lab-surface-muted,#f7f8fa);border:1px solid var(--lab-line-subtle,#e7e8eb);padding:12px}
+.lab-vectors :is(.program-head,.command-strip){flex-wrap:wrap;min-width:0}
+.lab-vectors .status{padding:12px 0;background:none;border:0;font:400 14px/1.45 var(--lab-font-sans,sans-serif)}
+.lab-vectors .column-values{font-style:normal}
+.lab-scatter :is(.work-flow,.work-step)::before,.lab-similarity .evidence-card::before{display:none}
+.lab-similarity .workspace{height:auto;align-items:start}
+.lab-similarity .stage-side{display:block;height:auto}
+.lab-similarity :is(.evidence-side,.relationship-dock,.stage-record,.progress-dock,.record-list){height:auto;overflow:visible!important}
+.lab-similarity .stage-footer{display:grid!important;grid-template-columns:minmax(0,1fr);grid-template-rows:auto;grid-template-areas:none;height:auto;min-height:0;padding:12px 0;gap:12px;border:0;background:transparent;overflow:visible}
+.lab-similarity .stage-footer>*{grid-area:auto}
+.lab-similarity .prediction-options button{font-size:12px;min-height:36px}
+.lab-similarity .work-step:has([data-predict]) .work-step-head>.lab-kit-work-state{display:none}
+.lab-investigation .lab-sidebar button{font:400 12px/1.3 var(--lab-font-sans,sans-serif)}
+.lab-investigation input.good:focus-visible{border-color:var(--lab-good,#18794e)!important}
+.lab-investigation input.bad:focus-visible{border-color:var(--lab-bad,#b42318)!important}
+.lab-similarity :is(.relationship-dock,.stage-record,.progress-dock){padding:12px;border:1px solid var(--lab-line-subtle,#e7e8eb);border-radius:12px;background:var(--lab-surface-muted,#f7f8fa);height:auto;min-height:0;overflow:visible}
+.lab-similarity .progress-dock{margin-top:12px}
+.lab-similarity .progress-copy{display:none}
+.lab-similarity .stage-record{display:block}
+.lab-similarity .stage-record .record-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));grid-template-rows:auto;height:auto!important;max-height:none;overflow:visible;gap:8px;margin-top:8px!important}
+.lab-similarity .stage-record :is(.record-row,.record-empty){height:auto!important;min-height:0;min-width:0;width:auto;overflow:visible}
+.lab-similarity .stage-footer :is(strong,span,b,div){font:400 12px/1.45 var(--lab-font-sans,sans-serif)}
+.lab-similarity .stage-footer :is(.relationship-mini,.record-values){display:flex;flex-wrap:wrap;gap:6px}
+.lab-similarity .stage-footer .relationship-grid{grid-template-columns:minmax(0,1fr)}
+.lab-similarity .stage-footer .relationship-dock:empty{display:none}
+.lab-scatter .step-value{background:transparent;padding:0}
+.lab-scatter :is(.handle-label,.handle-label-bg){display:none}
+.lab-scatter .handle.tilt{fill:var(--lab-concept-violet,#7563a7)}
+.lab-investigation .lab-activity-bar .difficulty-copy strong{font:400 12px/1.4 var(--lab-font-sans,sans-serif);text-transform:none;letter-spacing:normal}
+.lab-investigation .lab-sidebar .work-good{border-color:var(--lab-good-line,#9cc7aa);background:var(--lab-good-surface,#f7fcf8)}
+.lab-transformations .ownership-note{display:none}
+.lab-timetable .method-value.example{background:var(--lab-surface-muted,#f7f8fa);border-color:transparent;color:var(--lab-ink-secondary,#424245)}
+.lab-replacement .work-fraction{flex-wrap:wrap}
+.lab-replacement .bag.rule-drop{background:var(--lab-accent-soft,#eef2fa)}
+.lab-scatter .work-step.active{border-color:var(--lab-needed-line,#d8c36a);background:var(--lab-needed-surface,#fffdf4)}
+.lab-investigation .lab-sidebar :is(.evidence-boundary,.work-note){border-left:0;box-shadow:none}
+.lab-investigation .lab-activity-bar :is(.difficulty-copy,.working-copy,.complexity-copy){text-transform:none;letter-spacing:normal}
+.lab-transformations :is(.visual-step,.side-head,.work-summary,#statusBar){display:none}
+.lab-transformations .support-item:first-child{display:none}
+.lab-transformations .support-item>span{font:400 12px/1.4 var(--lab-font-sans,sans-serif)}
+.lab-transformations .canvas-frame{border:0}
+.lab-transformations .route-panel{order:4}
+.lab-vectors :is(.source-move-label,.source-scale-label){display:none}
+.lab-vectors #status:not(.bad,.warn,.good){display:none}
+.lab-vectors #status :is(strong,span){font:400 14px/1.45 var(--lab-font-sans,sans-serif)}
+.lab-vectors .program-title strong{font:400 15px/1.4 var(--lab-font-sans,sans-serif)}
+.lab-vectors :is(.program-title span,.command-empty){font:400 12px/1.4 var(--lab-font-sans,sans-serif)}
+.lab-sets :is(.action-line,.flow-hint,.recipient-count-note,.trace-note){display:none}
+.lab-sets :is(.flow,.recipient-row) :is(strong,span,small){font-weight:400;letter-spacing:normal;text-transform:none}
+.lab-sets .flow :is(.flow-kicker,.flow-label){font-size:12px}
+@media(max-width:980px){.lab-blend .system,.lab-replacement-layout,.lab-set-layout,.lab-timetable .lab-layout{grid-template-columns:minmax(0,1fr)}.lab-investigation .lab-sidebar{border-left:0;border-top:1px solid var(--lab-line-subtle,#e7e8eb);padding:18px 0 0}.lab-blend #workingDock,.lab-blend .stage-wrap,.lab-blend .evidence,.lab-sets .inspection,.lab-sets .recipient-row{grid-column:1;grid-row:auto}.lab-blend #workingDock{order:2}}
+@media(prefers-reduced-motion:reduce){.lab-investigation .lab-sidebar *{animation:none!important}}
+
+/* Simulation adoption: task-driven evidence uses the same visual hierarchy as working. */
+.lab-simulation{--ink:var(--lab-ink,#1d1d1f);--muted:var(--lab-ink-secondary,#424245);--font:var(--lab-font-sans,sans-serif);font-family:var(--lab-font-sans,sans-serif)}
+.lab-simulation .sim-legacy{display:none!important}
+.lab-simulation .sim-top{display:flex;align-items:center;flex-wrap:wrap;gap:16px;margin:0;padding:20px 24px;border:1px solid var(--lab-line,#d2d2d7);border-radius:12px 12px 0 0;background:white;box-shadow:none}
+.lab-simulation .sim-top .lab-activity-task{flex:1 1 340px;min-width:0}
+.lab-simulation .sim-top .lab-activity-task>strong{display:block;font:400 16px/1.5 var(--lab-font-sans,sans-serif);color:var(--lab-accent-ink,#315b91)}
+.lab-simulation .sim-top-tools{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:10px;max-width:100%}
+.lab-simulation .sim-top-tools>:is(div,.play){height:auto;margin:0;min-width:0}
+.lab-simulation .lab-toggle{width:auto;flex:none;display:flex;flex-wrap:wrap;gap:3px;align-items:center;justify-content:center;padding:4px}
+.lab-simulation .lab-toggle button{min-width:0;flex:0 1 auto;min-height:34px;padding:7px 12px;font:400 12px/1.3 var(--lab-font-sans,sans-serif);border-radius:999px;white-space:normal}
+.lab-simulation .lab-toggle button :is(strong,small){font:inherit}
+.lab-simulation .lab-toggle button :is(small,strong+span){display:none}
+.lab-simulation .lab-toggle button.active-tool{background:var(--lab-accent,#5277b8);color:white;border-color:var(--lab-accent,#5277b8)}
+.lab-simulation .lab-toggle button:disabled{opacity:1;background:var(--lab-surface-strong,#eef1f3);color:var(--lab-muted,#6e6e73);border-color:transparent;box-shadow:none}
+.lab-simulation .lab-checkpoints{display:flex;align-items:center;gap:9px;margin:0;flex-wrap:wrap}
+.lab-simulation .sim-tool-row{display:flex;align-items:end;gap:12px;flex-wrap:wrap;margin:0;padding:16px 24px;background:white;border-top:0;border-radius:0;box-shadow:none;min-width:0}
+.lab-simulation .sim-tool-row>:is(.field,.toggles){flex:0 1 auto;min-width:0;max-width:100%}
+.lab-simulation .sim-tool-row :is(label,.field>label){font:400 12px/1.4 var(--lab-font-sans,sans-serif);color:var(--lab-ink-secondary,#424245)}
+.lab-simulation select{appearance:none;max-width:100%;height:auto;min-height:40px;padding:8px 34px 8px 14px;border:1px solid var(--lab-line,#d2d2d7);border-radius:999px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath d='m4 6 4 4 4-4' fill='none' stroke='%236e6e73' stroke-width='1.5'/%3E%3C/svg%3E") no-repeat right 10px center;color:var(--lab-ink,#1d1d1f);font:400 12px/1.4 var(--lab-font-sans,sans-serif);box-shadow:0 1px 3px #1d1d1f14}
+.lab-simulation select:hover{border-color:var(--lab-line-strong,#a7a7ad)}
+.lab-simulation :is(input:not([type=checkbox]),textarea,select):focus-visible{outline:none!important;box-shadow:none!important;border-color:var(--lab-accent-pressed,#3a5d99)!important}
+.lab-simulation :is(.sim-composition,.lab-grid){margin:0;border-top:0;border-radius:0 0 12px 12px;background:white}
+.lab-simulation .sim-composition{display:grid;grid-template-columns:minmax(0,1fr) 300px;column-gap:24px;row-gap:0;padding:20px 24px;align-items:start}
+.lab-simulation .sim-composition>*{grid-column:1;min-width:0}
+.lab-simulation .sim-composition>.lab-sidebar{grid-column:2;grid-row:1/span 10}
+.lab-simulation .lab-sidebar{position:static;min-width:0;max-width:100%;height:auto;padding:0 0 0 20px;border:0;border-left:1px solid var(--lab-line-subtle,#e7e8eb);border-radius:0;background:white;box-shadow:none;overflow:visible;font:400 14px/1.45 var(--lab-font-sans,sans-serif)}
+.lab-simulation .lab-evidence-card{margin:0 0 16px;padding:12px;border:1px solid var(--lab-line-subtle,#e7e8eb);border-radius:12px;background:var(--lab-surface-muted,#f7f8fa);box-shadow:none;min-width:0;overflow-wrap:anywhere}
+.lab-simulation .lab-evidence-card:has(>[hidden]){display:none}
+.lab-simulation .lab-evidence-card>h2{margin:0 0 8px;font:400 15px/1.4 var(--lab-font-sans,sans-serif)}
+.lab-simulation .lab-evidence-card :is(strong,p,span,code){font-family:inherit;font-size:14px;font-weight:400;line-height:1.45;letter-spacing:normal;text-transform:none}
+.lab-simulation .lab-evidence-card>:not(h2){position:static;display:block;margin:0;padding:0;border:0;background:none;box-shadow:none;min-height:0;max-width:100%}
+.lab-simulation .lab-evidence-card[data-work-state=needed]{border-color:var(--lab-needed-line,#d8c36a);background:var(--lab-needed-surface,#fffdf4)}
+.lab-simulation .lab-evidence-card[data-work-state=good]{border-color:var(--lab-good-line,#9cc7aa);background:var(--lab-good-surface,#f7fcf8)}
+.lab-simulation .lab-evidence-card[data-work-state=bad]{border-color:var(--lab-bad-line,#d8aaa4);background:var(--lab-bad-surface,#fff8f7)}
+.lab-simulation .lab-sidebar :is(.dock-head,.planner-head,.palette-head,.panel-head,.station-title){padding:0 0 12px;border:0;background:none}
+.lab-simulation :is(.panel-head,.station-title,.palette-head,.dock-head,.planner-head) strong{font:400 15px/1.4 var(--lab-font-sans,sans-serif)}
+.lab-simulation .lab-sidebar :is(.planner-label,.section-label,.field,.legend-row,.part-copy,.plan-feedback,.address-intro,.address-list,.summary-intro,.result-detail,.decoded,.reconstruction-note){font:400 12px/1.45 var(--lab-font-sans,sans-serif);letter-spacing:normal;text-transform:none}
+.lab-simulation .lab-sidebar :is(.key-top strong,.key-group-title strong,.result-title,.reconstruction>strong){font:400 15px/1.4 var(--lab-font-sans,sans-serif)}
+.lab-simulation .lab-sidebar :is(.key-top small,.key-group-title span){font:400 12px/1.4 var(--lab-font-sans,sans-serif)}
+.lab-simulation .lab-sidebar :is(.feedback,.plan-feedback,.story-card,.rail-result,.status-strip,.takeaway){border:0;padding:8px 0;background:none;box-shadow:none;grid-template-columns:1fr}
+.lab-simulation .lab-sidebar :is(.feedback strong,.story-card strong,.takeaway strong,.status-copy strong){font-size:15px;font-weight:400}
+.lab-simulation .lab-sidebar :is(.feedback span,.story-card span,.takeaway span,.status-copy span){font-size:14px;font-weight:400}
+.lab-simulation :is(.shell,.canvas-shell,.board-shell,.network-canvas,.canvas-wrap){min-width:0;max-width:100%;overflow:visible;background:transparent;border:0;border-radius:0}
+.lab-simulation :is(#canvas,#networkCanvas,#board){background-image:none!important;background-color:transparent;border:0;border-radius:0}
+.lab-simulation .footer{font:400 11px/1.45 var(--lab-font-sans,sans-serif);color:var(--lab-ink-secondary,#424245)}
+.lab-simulation :is(.stage-note,.component-head span,.panel-head>span,.station-title>span){font:400 12px/1.4 var(--lab-font-sans,sans-serif)}
+/* Preserve model-specific geometry; only the composition around it is shared. */
+.sim-csma-cd #canvas{min-width:0;min-height:325px}
+.sim-csma-cd .station{width:28%;min-height:155px;background:white;box-shadow:none}
+.sim-csma-cd .station-head{height:auto;min-height:40px;flex-wrap:wrap;background:white;padding:8px}
+.sim-csma-cd :is(.station-name,.station-state,.station-frame){font-size:12px;font-weight:400}
+.sim-csma-cd .station-thought{font-size:14px;min-height:70px}
+.sim-csma-cd #narration{inset:auto;display:block}
+.sim-csma-cd :is(#stepCount,.narration-phase,.visual-key>b){display:none}
+.sim-csma-cd .visual-key{font-size:12px;margin-top:12px}
+.sim-data-transmission-methods .stage-head{grid-column:1;margin:0;padding:0}
+.sim-data-transmission-methods .toolbar-actions{display:flex;flex-wrap:wrap;gap:8px}
+.sim-data-transmission-methods .lab-evidence-card .live-copy{display:block}
+.sim-data-transmission-methods .lab-evidence-card .live-dot{display:none}
+.sim-data-transmission-methods .lab-evidence-card .legend{display:grid;gap:12px}
+.sim-dns-web-page-retrieval .architecture{grid-template-columns:minmax(0,1fr);grid-template-rows:auto;grid-template-areas:'browser' 'dnsbus' 'dns' 'webbus' 'servers';gap:20px}
+.sim-dns-web-page-retrieval :is(.browser-frame,.browser-engine,.dns-chain-shell,.rack-shell){height:auto;min-height:0;overflow:visible}
+.sim-dns-web-page-retrieval .viewport{height:300px}
+.sim-dns-web-page-retrieval .component-head>div>span,.sim-dns-web-page-retrieval .server-note{display:none}
+.sim-dns-web-page-retrieval .bus-cluster{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.sim-dns-web-page-retrieval .bus-group-title{grid-column:1/-1;font-size:12px;font-weight:400}
+.sim-dns-web-page-retrieval :is(.dns-edit,.cache-row,.directory-row,.engine-block strong,.bus-header,.bus-value,.mini-value){font-size:12px;font-weight:400}
+.sim-dns-web-page-retrieval .state-chip{font-size:11px!important;font-weight:400!important}
+.sim-dns-web-page-retrieval :is(.browser-toolbar,.bookmarks,.engine-grid){min-width:0;flex-wrap:wrap}
+.sim-encryption-in-data-transmission .lab-grid,.sim-ipv4-subnetting .lab-grid{grid-template-columns:minmax(0,1fr) 320px;gap:24px;padding:20px 24px;border:1px solid var(--lab-line,#d2d2d7);border-top:0}
+.sim-encryption-in-data-transmission .workspace,.sim-ipv4-subnetting .network-panel{border:0;background:none;box-shadow:none;padding:0;overflow:visible}
+.sim-encryption-in-data-transmission .goal-lights{display:flex!important;align-items:start;flex-direction:column;gap:8px}
+.sim-ipv4-subnetting .lab-evidence-card :is(.metrics,.takeaway){display:grid;grid-template-columns:1fr;gap:8px}
+.sim-ipv4-subnetting .metric{padding:8px 0;border:0;border-radius:0;background:none}
+.sim-ipv4-subnetting :is(#stepKicker,.takeaway-stat){display:none}
+.sim-ipv4-subnetting #ipToggle small{display:none}
+.sim-ipv4-subnetting #ipToggle{font-size:12px;font-weight:400}
+.sim-ipv4-subnetting .ip-workbench{padding:12px;margin:0 0 16px;border:0;background:var(--lab-surface-muted,#f7f8fa)}
+.sim-ipv4-subnetting :is(.ip-read-grid,.ip-workbench-grid){grid-template-columns:1fr;gap:8px}
+.sim-ipv4-subnetting :is(.ip-decision-panel,.ip-read-panel,.ip-envelope-panel){border:0;background:none;padding:8px 0}
+.sim-network-topology .lab-grid{grid-template-columns:minmax(0,1fr) 300px;gap:24px;padding:20px 24px;border:1px solid var(--lab-line,#d2d2d7);border-top:0}
+.sim-network-topology .workspace{grid-column:1;grid-row:1;border:0;background:none;box-shadow:none}
+.sim-network-topology .palette{grid-column:2;grid-row:1}
+.sim-network-topology .toolbar{padding:0 0 12px;border:0;background:none;flex-wrap:wrap}
+.sim-network-topology .palette-head>span{display:none}
+.sim-network-topology #testPanel{grid-template-columns:1fr;gap:8px}
+.sim-network-topology #journeyText{font-size:14px}
+.sim-packet-switching .lab-grid{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:24px;padding:20px 24px;border:1px solid var(--lab-line,#d2d2d7);border-top:0}
+.sim-packet-switching .network-panel{grid-column:1;grid-row:1/span 2;border:0;box-shadow:none;background:none}
+.sim-packet-switching .device-a{grid-column:2;grid-row:1}
+.sim-packet-switching .device-b{grid-column:2;grid-row:2}
+.sim-packet-switching .device-visual{display:none}
+.sim-packet-switching .panel-head>span{font-size:12px}
+.sim-packet-switching .network-panel .panel-head>span{display:none}
+.sim-packet-switching .network-toolbar{padding:8px 0 12px}
+.sim-packet-switching #networkCanvas{min-height:570px}
+.sim-packet-switching .packet-list{max-height:none;overflow:visible}
+.sim-packet-switching .lab-evidence-card .overview-metrics{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sim-packet-switching .lab-evidence-card .metric{padding:8px 0;border:0;background:none}
+.sim-parity-arq .transmission-panel{padding:20px 24px;border-radius:0;border-top:0;box-shadow:none}
+.sim-parity-arq .transmission-layout{grid-template-columns:minmax(0,1fr) 300px;gap:24px}
+.sim-parity-arq .stage-panel{margin:0;padding:20px 24px;border-top:0;box-shadow:none}
+.sim-parity-arq .sim-parity-grid{grid-template-columns:minmax(0,1fr) 20px minmax(0,1fr) 20px minmax(0,1fr)}
+.sim-parity-arq :is(.stage-title,.stage-title-line,.access-chip){font-size:12px;font-weight:400}
+.sim-parity-arq .rail-result{border:1px solid var(--lab-line-subtle,#e7e8eb);padding:12px;border-radius:12px;background:var(--lab-surface-muted,#f7f8fa)}
+.sim-parity-arq :is(.blocks,.block,.stage){min-width:0;max-width:100%;overflow:visible}
+.sim-tcp-ip-encapsulation .lab-board{margin:0;padding:20px 24px;border-top:0;background:white;background-image:none;box-shadow:none;overflow:visible}
+.sim-tcp-ip-encapsulation .board-stage{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:16px 24px;padding:16px 0;min-height:0}
+.sim-tcp-ip-encapsulation .board-stage>.station{grid-column:1;border:0;background:none;box-shadow:none}
+.sim-tcp-ip-encapsulation .board-stage>.receiver-station{grid-column:2;grid-row:1/span 3}
+.sim-tcp-ip-encapsulation .rack{display:flex;flex-wrap:wrap;padding:0;gap:8px}
+.sim-tcp-ip-encapsulation .wrapper-tool{flex:1 1 150px;min-width:0;background:white;box-shadow:none}
+.sim-tcp-ip-encapsulation .wrapper-tool strong{font-size:14px;font-weight:400}
+.sim-tcp-ip-encapsulation .wrapper-tool small{font-size:12px;font-weight:400}
+.sim-tcp-ip-encapsulation .packing-mat{min-height:320px;overflow:visible;padding:12px 0;margin:0;border:0;background:none}
+.sim-tcp-ip-encapsulation .packet-host{width:100%;max-height:none;overflow:visible;padding:8px}
+.sim-tcp-ip-encapsulation .shell-header{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:6px}
+.sim-tcp-ip-encapsulation .shell-name{grid-column:1/-1;background:none;border:0;padding:4px 0}
+.sim-tcp-ip-encapsulation .header-field{border:0;padding:5px;background:#ffffffb3}
+.sim-tcp-ip-encapsulation :is(.header-field strong,.shell-name strong,.gate-copy strong){font-size:12px;font-weight:400;white-space:normal;overflow-wrap:anywhere}
+.sim-tcp-ip-encapsulation :is(.header-field span,.shell-name span,.gate-copy span,.gate-read){font-size:11px;font-weight:400;white-space:normal;overflow:visible}
+.sim-tcp-ip-encapsulation .station-title>span{display:none}
+.sim-tcp-ip-encapsulation .receiver-map{min-height:0;overflow:visible;margin:0}
+.sim-tcp-ip-encapsulation .gate{position:relative;inset:auto!important;margin:0 0 12px;min-height:115px}
+.sim-tcp-ip-encapsulation .receiver-packet{position:relative;left:auto;bottom:auto!important;width:100%;transform:none;display:none;opacity:1;margin-top:16px}
+.sim-tcp-ip-encapsulation .receiver-packet.visible{display:block}
+.sim-tcp-ip-encapsulation .wire-station{display:flex;gap:12px;align-items:center;justify-content:center}
+.sim-tcp-ip-encapsulation .wire-track{height:55px;flex:1}
+.sim-tcp-ip-encapsulation .compare-grid>span{font-size:12px;white-space:normal;overflow-wrap:anywhere}
+.sim-sound-sampling .wave-head{display:block;margin-bottom:12px}
+.sim-sound-sampling .zoom-tools{display:flex;flex-wrap:wrap;margin-top:12px}
+.sim-sound-sampling .toggles{height:auto;flex-wrap:wrap;white-space:normal}
+.sim-sound-sampling .lab-sidebar #status{display:grid;gap:12px}
+.sim-sound-sampling .lab-sidebar #status>strong{padding:7px;border:0;border-radius:6px;background:color-mix(in srgb,var(--lab-concept-violet,#7563a7) 20%,white)}
+.sim-sound-sampling #wave{height:420px}
+.sim-sound-sampling .bits{white-space:normal;overflow-wrap:anywhere}
+.sim-sound-sampling .window-label{min-width:0}
+@media(max-width:1000px){
+ .lab-simulation .sim-top{padding:16px}
+ .lab-simulation .sim-composition,.sim-encryption-in-data-transmission .lab-grid,.sim-ipv4-subnetting .lab-grid,.sim-network-topology .lab-grid,.sim-packet-switching .lab-grid,.sim-parity-arq .transmission-layout{grid-template-columns:minmax(0,1fr)}
+ .lab-simulation .sim-composition>.lab-sidebar,.sim-network-topology .palette,.sim-network-topology .workspace,.sim-packet-switching .device-a,.sim-packet-switching .device-b,.sim-packet-switching .network-panel{grid-column:1;grid-row:auto}
+ .sim-network-topology .palette{grid-row:2}.sim-packet-switching .network-panel{grid-row:1}
+ .lab-simulation .lab-sidebar{border-left:0;border-top:1px solid var(--lab-line-subtle,#e7e8eb);padding:16px 0 0}
+ .lab-simulation .sim-composition>.lab-sidebar{margin-top:16px}
+}
+@media(max-width:650px){
+ .lab-simulation .sim-top-tools{justify-content:flex-start;gap:8px}
+ .lab-simulation .sim-top .lab-activity-task{flex-basis:100%}
+ .lab-simulation .sim-composition,.lab-simulation .sim-tool-row,.sim-network-topology .lab-grid,.sim-packet-switching .lab-grid,.sim-encryption-in-data-transmission .lab-grid,.sim-ipv4-subnetting .lab-grid,.sim-parity-arq :is(.stage-panel,.transmission-panel),.sim-tcp-ip-encapsulation .lab-board{padding:16px}
+ .sim-csma-cd .station{width:30%;min-height:200px}
+ .sim-csma-cd :is(.station-name,.station-state,.station-frame){font-size:11px;white-space:normal}
+ .sim-csma-cd .station-thought{font-size:12px}
+ .sim-dns-web-page-retrieval :is(.dns-chain,.engine-grid){display:flex;flex-direction:column;gap:12px}
+ .sim-dns-web-page-retrieval .viewport{height:320px;overflow:auto}
+ .sim-dns-web-page-retrieval .browser-toolbar{display:flex;flex-wrap:wrap}
+ .sim-dns-web-page-retrieval .address-shell{flex:1 1 200px}
+ .sim-dns-web-page-retrieval .server-list{min-width:0}
+ .sim-parity-arq .sim-parity-grid{grid-template-columns:1fr;gap:16px}
+ .sim-parity-arq .flow-arrow{display:none}
+ .sim-tcp-ip-encapsulation .board-stage{grid-template-columns:1fr}
+ .sim-tcp-ip-encapsulation .board-stage>.receiver-station{grid-column:1;grid-row:auto}
+ .sim-tcp-ip-encapsulation .board-head{flex-direction:column;align-items:start;gap:12px}
+ .sim-tcp-ip-encapsulation .endpoint.right{text-align:left;flex-direction:row}
+ .sim-tcp-ip-encapsulation .endpoint span{font-size:11px;white-space:normal}
+ .sim-sound-sampling .example{min-width:0}
+}
+/* Simulation layout refinements: device internals keep their visual identities. */
+.lab-simulation .workspace{display:block}
+.lab-simulation .lab-evidence-card{font:400 14px/1.45 var(--lab-font-sans,sans-serif)}
+.lab-simulation .lab-evidence-card :is(.rule,.teaching-note,.phase-label,#phaseLabel,#microStatus,#operationTitle){font:inherit}
+.lab-simulation .lab-evidence-card .visual-key{display:flex;flex-wrap:wrap;gap:8px;justify-content:start}
+.lab-simulation .lab-evidence-card .visual-key>span{display:inline-flex;align-items:center;gap:5px;font-size:12px}
+.lab-simulation .lab-evidence-card .visual-key i{display:inline-block;flex:none}
+.lab-simulation .lab-toggle .lab-action{background:transparent;border-color:transparent;box-shadow:none}
+.lab-simulation :is(.lab-sidebar .part-copy strong,.lab-sidebar .part-copy span,.lab-sidebar .part-count,.planner-head>span,.dock-head>span){font:400 12px/1.4 var(--lab-font-sans,sans-serif)}
+.lab-simulation .lab-action :is(strong,span){font:inherit}
+.sim-data-transmission-methods #canvas{min-width:0}
+.sim-data-transmission-methods #canvas::before{display:none}
+.sim-data-transmission-methods .legend{justify-content:start!important}
+.sim-data-transmission-methods .legend-item{justify-content:start}
+.sim-data-transmission-methods :is(.ruler-x,.group-label){font:400 11px var(--lab-font-sans,sans-serif)}
+.sim-data-transmission-methods .device{width:240px;min-height:270px}
+.sim-data-transmission-methods :is(.device-name,.byte-row label,.bit-cell){font-size:12px;font-weight:400;letter-spacing:normal}
+.sim-data-transmission-methods :is(.protocol-screen,.device-status,.count-control>span){font:400 11px/1.3 var(--lab-font-sans,sans-serif)}
+.sim-data-transmission-methods .transceiver-title{display:none}
+.sim-data-transmission-methods .byte-row{grid-template-columns:20px 1fr}
+.sim-data-transmission-methods .bit-cell{height:24px}
+.sim-data-transmission-methods .callout{font:400 12px/1.35 var(--lab-font-sans,sans-serif)}
+.sim-dns-web-page-retrieval .arch-panel{display:block}
+.sim-dns-web-page-retrieval .architecture{grid-template-columns:minmax(0,1.1fr) 120px minmax(0,1fr);grid-template-rows:auto auto;grid-template-areas:'browser dnsbus dns' 'browser webbus servers';gap:18px}
+.sim-dns-web-page-retrieval .browser>.lab-sidebar{border:0;padding:16px 0 0;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.sim-dns-web-page-retrieval .bus-cluster{display:flex;flex-direction:column;justify-content:center;gap:16px}
+.sim-dns-web-page-retrieval .browser-frame{border-radius:12px;overflow:hidden}
+.sim-dns-web-page-retrieval :is(.bus-header .dir,.engine-head>span,.bookmark-label,.browser-dots,.url-parts,.rack-head){display:none}
+.sim-dns-web-page-retrieval :is(.component-head strong,.engine-head strong,.blank-page h2){font:400 15px/1.4 var(--lab-font-sans,sans-serif)}
+.sim-dns-web-page-retrieval :is(.bookmark-copy strong,.cache-row,.directory-row,.dns-top strong,.mini-value,.bus-value,.server-copy strong){font:400 12px/1.4 var(--lab-font-sans,sans-serif)}
+.sim-dns-web-page-retrieval :is(.dns-top span,.dns-top small,.engine-block small,.mini-label,.cache-title,.dns-table-title,.server-copy small,.server-copy span,.blank-page p){font:400 11px/1.4 var(--lab-font-sans,sans-serif);letter-spacing:normal;text-transform:none}
+.sim-dns-web-page-retrieval .engine-grid{grid-template-columns:1fr 1fr;gap:10px}
+.sim-dns-web-page-retrieval .engine-arrow{display:none}
+.sim-dns-web-page-retrieval .dns-chain{grid-template-columns:1fr;gap:12px}
+.sim-dns-web-page-retrieval .dns1-dns2{display:flex;justify-content:center;gap:12px}
+.sim-dns-web-page-retrieval .dns-node{min-height:0;background:var(--lab-surface-muted,#f7f8fa)}
+.sim-dns-web-page-retrieval .dns-chain-shell{min-height:0;padding:0;background:none;border:0}
+.sim-dns-web-page-retrieval .server-list{gap:10px}
+.sim-dns-web-page-retrieval .server-card{min-height:70px}
+.sim-encryption-in-data-transmission :is(.device-head strong,.screen-title,.send-copy strong,.bay-copy strong,.bay-empty){font:400 14px/1.3 var(--lab-font-sans,sans-serif);letter-spacing:normal;text-transform:none}
+.sim-encryption-in-data-transmission :is(.device-head span,.send-copy span,.bay-copy span,.gate-key,.gate-key strong){font:400 12px/1.3 var(--lab-font-sans,sans-serif);letter-spacing:normal;text-transform:none}
+.sim-encryption-in-data-transmission .screen-title{font-size:12px}
+.sim-encryption-in-data-transmission .key-token{border-left-width:1px;box-shadow:none}
+.sim-encryption-in-data-transmission .key-group{background:var(--lab-surface-muted,#f7f8fa);border:0;border-radius:12px;padding:12px}
+.sim-ipv4-subnetting #canvasCaption{display:none}
+.sim-ipv4-subnetting .locked-planner{min-height:0;padding:12px;border:0;background:var(--lab-surface-muted,#f7f8fa);text-align:left}
+.sim-ipv4-subnetting .locked-icon{display:none}
+.sim-ipv4-subnetting .locked-planner :is(strong,span){font:400 12px/1.45 var(--lab-font-sans,sans-serif);margin:0}
+.sim-ipv4-subnetting .lab-evidence-card .story-card>strong{font-size:15px}
+.sim-ipv4-subnetting .lab-evidence-card .story-card>span{font-size:14px}
+.sim-packet-switching .network-panel{grid-row:1/span 2}
+.sim-packet-switching .queue-section{margin-top:20px}
+.sim-packet-switching .queue-section .packet-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.sim-packet-switching :is(.packet-card strong,.toggle-copy strong,.options-head strong,.nic-head strong){font:400 12px/1.4 var(--lab-font-sans,sans-serif)}
+.sim-packet-switching :is(.packet-card,.packet-card small,.toggle-copy small,.queue-section,.nic-head span,.options-head span){font:400 11px/1.4 var(--lab-font-sans,sans-serif)}
+.sim-packet-switching .toggle-grid{grid-template-columns:1fr}
+.sim-packet-switching .packet-options{padding:12px;border:0;background:var(--lab-surface-muted,#f7f8fa)}
+.sim-packet-switching .processing-toggle{border:0;padding:7px 0;background:none}
+.sim-parity-arq .transmission-layout{display:block}
+.sim-parity-arq .transmission-main{min-height:0}
+.sim-parity-arq #receiverStage>.lab-sidebar{margin-top:16px;padding:16px 0 0;border-left:0;border-top:1px solid var(--lab-line,#d2d2d7)}
+.sim-parity-arq :is(.block-head,.bit,.cell,.row-label,.col-label,.decoded-value,.decoded-original,.decoded-label,.decoded-note){font-family:var(--lab-font-sans,sans-serif);font-size:12px;font-weight:400}
+.sim-parity-arq .stage-note{font-size:11px}
+.sim-parity-arq .stage-panel{border-radius:0 0 12px 12px}
+.sim-parity-arq .rail-result[data-work-state=bad]{background:var(--lab-bad-surface,#fff8f7);border-color:var(--lab-bad-line,#d8aaa4)}
+.sim-parity-arq .rail-result[data-work-state=good]{background:var(--lab-good-surface,#f7fcf8);border-color:var(--lab-good-line,#9cc7aa)}
+.sim-tcp-ip-encapsulation .board-stage{align-items:start;align-content:start}
+.sim-tcp-ip-encapsulation .packing-mat{min-height:180px;display:flex;align-items:center}
+.sim-tcp-ip-encapsulation .wire-station{min-height:65px}
+.sim-tcp-ip-encapsulation :is(.mat-label,.status-pip){display:none}
+.sim-tcp-ip-encapsulation .payload{box-shadow:none}
+.sim-tcp-ip-encapsulation :is(.payload-label,.payload pre){font:400 12px/1.5 var(--lab-font-sans,sans-serif)}
+.sim-tcp-ip-encapsulation .gate{border-left-width:1px;border-color:var(--tone);background:color-mix(in srgb,var(--tone) 12%,white)}
+.sim-tcp-ip-encapsulation .gate.good{background:var(--lab-good-surface,#f7fcf8);border-color:var(--lab-good-line,#9cc7aa)}
+.sim-tcp-ip-encapsulation .gate.bad{background:var(--lab-bad-surface,#fff8f7);border-color:var(--lab-bad-line,#d8aaa4)}
+@media(max-width:1000px){
+ .sim-dns-web-page-retrieval .architecture{grid-template-columns:1fr;grid-template-areas:'browser' 'dnsbus' 'dns' 'webbus' 'servers'}
+ .sim-dns-web-page-retrieval .bus-cluster{display:grid;grid-template-columns:1fr 1fr}
+ .sim-dns-web-page-retrieval .dns-chain{grid-template-columns:1fr 60px 1fr}
+ .sim-packet-switching .network-panel{grid-row:1}
+}
+@media(max-width:650px){
+ .sim-data-transmission-methods #canvas{min-height:680px}
+ .sim-data-transmission-methods .device{width:142px;min-height:305px}
+ .sim-data-transmission-methods .device-body{grid-template-columns:23px 1fr 23px;gap:2px;padding:6px 2px}
+ .sim-data-transmission-methods .count-button{width:22px}
+ .sim-data-transmission-methods .byte-row{grid-template-columns:1fr}
+ .sim-data-transmission-methods .bit-register{grid-template-columns:repeat(4,1fr)}
+ .sim-data-transmission-methods .device-head{padding:4px}
+ .sim-data-transmission-methods .device-delete{width:16px}
+ .sim-data-transmission-methods .device-status{display:none}
+ .sim-dns-web-page-retrieval .browser>.lab-sidebar,.sim-dns-web-page-retrieval .dns-chain{display:flex;flex-direction:column}
+ .sim-packet-switching .queue-section .packet-list{grid-template-columns:1fr 1fr}
+}
+.lab-simulation .lab-toggle button :is(strong,span){font:inherit}
+.sim-dns-web-page-retrieval .browser-toolbar{display:grid;grid-template-columns:minmax(0,1fr) auto;height:auto}
+.sim-dns-web-page-retrieval #goBtn{width:auto;min-width:100px;flex:none;font-weight:400}
+.sim-dns-web-page-retrieval #urlInput{font:400 12px var(--lab-font-sans,sans-serif)}
+.sim-dns-web-page-retrieval :is(.dns-node-head strong,.console-cell strong,.cache-row strong,.directory-row strong,.cache-row span,.directory-row span){font:400 12px/1.4 var(--lab-font-sans,sans-serif)}
+.sim-dns-web-page-retrieval :is(.dns-node-head span,.console-cell small,.dns-section-title,.server-meta i,.server-state,.mini-lane-head){font:400 11px/1.4 var(--lab-font-sans,sans-serif);text-transform:none;letter-spacing:normal}
+.sim-dns-web-page-retrieval .dns-hop{min-height:0;gap:8px;padding:8px 0}
+.sim-data-transmission-methods .protocol-screen strong{font:inherit}
+.sim-packet-switching #overviewTitle{display:block;margin:0 0 10px;font:400 15px/1.4 var(--lab-font-sans,sans-serif)}
+.sim-packet-switching .queue-section>.section-label{display:none}
+.sim-parity-arq .transmission-track{height:80px}
+.sim-parity-arq .transmission-main{padding:0}
+.sim-parity-arq .transmission-panel{padding-top:12px;padding-bottom:12px}
+.sim-parity-arq .rail-result{display:block!important}
+
+@media(max-width:650px){
+ .sim-csma-cd .station{width:28%}
+ .sim-data-transmission-methods .device{width:124px;min-height:325px}
+ .sim-data-transmission-methods .protocol-screen{padding:4px 2px}
+}
+
+.lab-simulation{--accent:var(--lab-accent,#5277b8)}
+.lab-simulation .lab-activity-bar .lab-toggle button{font-weight:400}
+.sim-ipv4-subnetting :is(.summary-zone,.subnet-card){border-left-width:1px;border-color:color-mix(in srgb,var(--subnet-colour) 45%,white);background:color-mix(in srgb,var(--subnet-colour) 12%,white);padding:12px;border-radius:12px}
+.sim-ipv4-subnetting :is(.summary-zone strong,.summary-zone span,.subnet-title strong,.subnet-title span,.department-card,.drop-action){font:400 12px/1.4 var(--lab-font-sans,sans-serif)}
+.sim-ipv4-subnetting .subnet-drop{border:0;background:none;padding:8px 0 0}
+
+</style>
+<script data-lab-design-runtime>
+/* Shared model dragging: retain the point grabbed while the model rerenders. */
+window.LabDesign = {
+  checkpoints(host, labels, current, completed = index => index < current, detail = '') {
+    host.classList.add('lab-checkpoints'); host.removeAttribute('aria-hidden');
+    host.replaceChildren(...labels.map((label, index) => {
+      const dot = document.createElement('span'); dot.className = 'lab-checkpoint'; dot.tabIndex = 0;
+      dot.dataset.complete = String(completed(index)); dot.setAttribute('aria-current', String(index === current));
+      const status = completed(index) ? 'Completed' : index === current ? 'In progress' : 'Upcoming';
+      dot.setAttribute('aria-label', label + ': ' + status);
+      const tooltip = document.createElement('span'); tooltip.className = 'lab-checkpoint-detail'; tooltip.setAttribute('role', 'tooltip');
+      const title = document.createElement('strong'); title.textContent = label;
+      const copy = document.createElement('span'); copy.textContent = status + (index === current && detail ? '. ' + detail : '');
+      tooltip.append(title, copy); dot.append(tooltip); return dot;
+    }));
+  },
+  digitalReadout(root, value, { x, y, label }) {
+    const ns = 'http://www.w3.org/2000/svg';
+    const append = (parent, tag, attributes) => {
+      const node = document.createElementNS(ns, tag);
+      Object.entries(attributes).forEach(([key, val]) => node.setAttribute(key, val));
+      parent.appendChild(node); return node;
+    };
+    const group = append(root, 'g', { class: 'lab-digital-readout', transform: `translate(${x} ${y})`, role: 'img', 'aria-label': label });
+    const segments = [[3,0,14,3],[17,3,3,12],[17,19,3,12],[3,31,14,3],[0,19,3,12],[0,3,3,12],[3,15,14,3]];
+    const digits = ['abcdef','bc','abdeg','abcdg','bcfg','acdfg','acdefg','abc','abcdefg','abcdfg'];
+    let offset = 0;
+    for (const digit of String(value)) {
+      if (digit === '.') {
+        append(group, 'circle', { cx: offset + 2, cy: 32, r: 2, class: 'lab-digital-segment is-on' }); offset += 8; continue;
+      }
+      segments.forEach(([sx, sy, width, height], index) => append(group, 'rect', {
+        x: offset + sx, y: sy, width, height, rx: 1,
+        class: `lab-digital-segment${digits[Number(digit)].includes('abcdefg'[index]) ? ' is-on' : ''}`,
+      }));
+      offset += 26;
+    }
+    return group;
+  },
+  introduce(scope, targets, key, title, copy) {
+    scope.querySelectorAll('[data-lab-intro]').forEach(target => {
+      delete target.dataset.labIntro; delete target.dataset.labIntroTitle; delete target.dataset.labIntroCopy;
+    });
+    targets.filter(Boolean).forEach(target => {
+      target.dataset.labIntro = key; target.dataset.labIntroTitle = title; target.dataset.labIntroCopy = copy;
+    });
+    document.dispatchEvent(new Event('lab-introduction-change'));
+  },
+  svgPoint(stage, event) {
+    const point = stage.createSVGPoint(); point.x = event.clientX; point.y = event.clientY;
+    return point.matrixTransform(stage.getScreenCTM().inverse());
+  },
+  bindSvgDrag(stage, { start, move, end }) {
+    let active = null;
+    stage.addEventListener('pointerdown', event => {
+      if (active || !event.isPrimary || event.button !== 0) return;
+      const point = LabDesign.svgPoint(stage, event), grip = start(event, point);
+      if (!grip) return;
+      active = { id: event.pointerId, x: point.x - grip.x, y: point.y - grip.y };
+      stage.setPointerCapture(event.pointerId); stage.classList.add('lab-is-dragging'); event.preventDefault();
+    });
+    stage.addEventListener('pointermove', event => {
+      if (!active || active.id !== event.pointerId) return;
+      const point = LabDesign.svgPoint(stage, event);
+      move({ x: point.x - active.x, y: point.y - active.y }, event); event.preventDefault();
+    });
+    const finish = event => {
+      if (!active || active.id !== event.pointerId) return;
+      active = null; stage.classList.remove('lab-is-dragging');
+      if (stage.hasPointerCapture(event.pointerId)) stage.releasePointerCapture(event.pointerId);
+      end(event);
+    };
+    ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(type => stage.addEventListener(type, finish));
+  }
+};
+
+/* Shared progressive-card attention and movable completion for opted-in labs. */
+(() => {
+  // Prefer unoccupied space inside the visible workspace, then the least overlap.
+  function popupPosition(popup, scope, anchor) {
+    const box = scope.getBoundingClientRect(), w = popup.offsetWidth, h = popup.offsetHeight;
+    const left = Math.max(8, box.left + 8), top = Math.max(8, box.top + 8);
+    const right = Math.max(left, Math.min(innerWidth - 8, box.right - 8) - w);
+    const bottom = Math.max(top, Math.min(innerHeight - 8, box.bottom - 8) - h);
+    const occupied = [];
+    const add = r => { if (r.width && r.height && r.bottom > top && r.top < bottom + h) occupied.push(r); };
+    const walker = document.createTreeWalker(scope, NodeFilter.SHOW_TEXT);
+    while (walker.nextNode()) {
+      const node = walker.currentNode, parent = node.parentElement;
+      if (!node.textContent.trim() || !parent || parent.closest('svg,script,style,.next-card,.lab-intro-card') || !parent.getClientRects().length) continue;
+      const range = document.createRange(); range.selectNodeContents(node);
+      for (const r of range.getClientRects()) add(r);
+    }
+    scope.querySelectorAll('input,button,select,textarea,canvas,svg text,svg path,svg line,svg circle,svg rect,[data-lab-popup-avoid]').forEach(element => {
+      if (element.closest('.next-card,.lab-intro-card') || !element.getClientRects().length) return;
+      const r = element.getBoundingClientRect(), css = getComputedStyle(element);
+      if (css.visibility === 'hidden' || css.opacity === '0') return;
+      // Large SVG backgrounds are workspace, not an operated object.
+      if (element.tagName === 'rect' && (r.width * r.height > box.width * box.height / 5 || css.fill === 'transparent' || css.fill === 'rgba(0, 0, 0, 0)')) return;
+      add(r);
+    });
+    if (anchor) occupied.push(anchor);
+    const candidates = [[right, top], [left, top], [right, bottom], [left, bottom]];
+    if (anchor) candidates.unshift([anchor.right + 16, anchor.top], [anchor.left - w - 16, anchor.top], [anchor.left, anchor.bottom + 16], [anchor.left, anchor.top - h - 16]);
+    for (let y = top; y <= bottom; y += 48) for (let x = left; x <= right; x += 48) candidates.push([x, y]);
+    const score = ([x, y]) => occupied.reduce((sum, r) => sum + Math.max(0, Math.min(x + w, r.right + 6) - Math.max(x, r.left - 6)) * Math.max(0, Math.min(y + h, r.bottom + 6) - Math.max(y, r.top - 6)), 0);
+    const distance = ([x, y]) => anchor ? Math.hypot(x + w / 2 - (anchor.left + anchor.right) / 2, y + h / 2 - (anchor.top + anchor.bottom) / 2) : 0;
+    return candidates.map(([x, y]) => [Math.max(left, Math.min(right, x)), Math.max(top, Math.min(bottom, y))]).sort((a, b) => score(a) - score(b) || distance(a) - distance(b))[0];
+  }
+  function init() {
+    if (!document.body.classList.contains('lab-adopt-v3')) return;
+    // SVG units change with the viewBox; keep opted-in chart labels at their display size.
+    document.querySelectorAll('svg[data-lab-readable-chart]').forEach(stage => {
+      const fitText = () => {
+        const width = stage.getBoundingClientRect().width;
+        if (width) stage.style.setProperty('--lab-chart-text-size', (Number(stage.dataset.labReadableChart) || 14) * stage.viewBox.baseVal.width / width + 'px');
+      };
+      new ResizeObserver(fitText).observe(stage);
+      new MutationObserver(fitText).observe(stage, { attributes: true, attributeFilter: ['viewBox'] });
+      fitText();
+    });
+    const touched = new Set();
+    const introduced = new Set();
+    const placed = new WeakMap(), moved = new WeakSet();
+    let introduction = null, interacting = false;
+    const hint = document.createElement('aside');
+    hint.id = 'lab-intro-hint'; hint.className = 'lab-intro-card'; hint.setAttribute('role', 'tooltip'); hint.hidden = true;
+    const hintTitle = document.createElement('strong'), hintCopy = document.createElement('span');
+    hint.append(hintTitle, hintCopy); document.body.append(hint);
+    function clearIntroduction() {
+      if (introduction) {
+        introduction.classList.remove('lab-intro-target');
+        const ids = (introduction.getAttribute('aria-describedby') || '').split(' ').filter(id => id && id !== hint.id);
+        if (ids.length) introduction.setAttribute('aria-describedby', ids.join(' ')); else introduction.removeAttribute('aria-describedby');
+      }
+      introduction = null; hint.hidden = true;
+    }
+    function refreshIntroduction() {
+      clearIntroduction();
+      if (interacting || [...document.querySelectorAll('.next-card')].some(card => !card.hidden && card.getClientRects().length)) return;
+      introduction = [...document.querySelectorAll('[data-lab-intro]')].find(target => {
+        if (introduced.has(target.dataset.labIntro) || target.disabled || !target.getClientRects().length) return false;
+        const r = target.getBoundingClientRect(); return r.bottom > 20 && r.top < innerHeight - 20 && r.right > 0 && r.left < innerWidth;
+      });
+      if (!introduction) return;
+      introduction.classList.add('lab-intro-target');
+      introduction.setAttribute('aria-describedby', ((introduction.getAttribute('aria-describedby') || '') + ' ' + hint.id).trim());
+      hintTitle.textContent = introduction.dataset.labIntroTitle;
+      hintCopy.textContent = introduction.dataset.labIntroCopy;
+      hint.hidden = false;
+      const [x, y] = popupPosition(hint, document.querySelector('main') || document.body, introduction.getBoundingClientRect());
+      hint.style.left = x + 'px'; hint.style.top = y + 'px';
+    }
+    // Explicit adapter for legacy mode groups whose state lives in a CSS class.
+    document.querySelectorAll('.lab-toggle[data-active-class]').forEach(group => {
+      const sync = () => group.querySelectorAll('button').forEach(button => {
+        const value = String(button.classList.contains(group.dataset.activeClass));
+        if (button.getAttribute('aria-pressed') !== value) button.setAttribute('aria-pressed', value);
+      });
+      new MutationObserver(sync).observe(group, {childList:true,subtree:true,attributes:true,attributeFilter:['class']});
+      sync();
+    });
+    const cardSelector = '.calc-step,.solve-card,.derive-step,.work-step,.working-step,.lab-work-card,.lab-investigation .work-section,.lab-investigation .evidence-section,.lab-investigation .work-block';
+    let queued = false;
+    const key = card => card.id || [...card.querySelectorAll('input')].map(input => input.id || input.name || [...input.attributes].filter(a => a.name.startsWith('data-')).map(a => a.name + a.value).join(':')).join('|') || card.querySelector('.step-head,.derive-step-head,.work-step-head,.eyebrow,strong')?.textContent;
+    function refresh() {
+      queued = false;
+      document.querySelectorAll(cardSelector).forEach(card => {
+        if (touched.has(key(card)) && card.dataset.interacted !== 'true') card.dataset.interacted = 'true';
+      });
+      document.querySelectorAll('.next-card').forEach(card => {
+        if (card.hidden || !card.getClientRects().length) { placed.delete(card); moved.delete(card); return; }
+        if (!moved.has(card) && placed.get(card) !== card.textContent) {
+          const scope = card.offsetParent, box = scope.getBoundingClientRect();
+          const [x, y] = popupPosition(card, scope);
+          card.style.right = 'auto'; card.style.bottom = 'auto';
+          card.style.left = x - box.left - scope.clientLeft + scope.scrollLeft + 'px';
+          card.style.top = y - box.top - scope.clientTop + scope.scrollTop + 'px';
+          placed.set(card, card.textContent);
+        }
+        if (card.querySelector('.lab-dialog-move')) return;
+        const handle = document.createElement('button');
+        handle.type = 'button'; handle.className = 'lab-dialog-move';
+        handle.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 3v18M3 12h18M8 7l4-4 4 4M8 17l4 4 4-4M7 8l-4 4 4 4M17 8l4 4-4 4"/></svg>';
+        handle.setAttribute('aria-label', 'Move completion card. Use arrow keys to reposition.');
+        card.prepend(handle);
+      });
+      refreshIntroduction();
+    }
+    const schedule = () => { if (!queued) { queued = true; requestAnimationFrame(refresh); } };
+    document.addEventListener('pointerdown', event => {
+      const target = event.target.closest('[data-lab-intro]');
+      if (!target) return;
+      introduced.add(target.dataset.labIntro); interacting = true; clearIntroduction();
+    }, true);
+    ['pointerup', 'pointercancel'].forEach(type => document.addEventListener(type, () => { interacting = false; schedule(); }));
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && introduction) { introduced.add(introduction.dataset.labIntro); clearIntroduction(); return; }
+      const target = event.target.closest('[data-lab-intro]') || event.target.closest('svg')?.querySelector('.lab-intro-target');
+      if (target && event.key !== 'Tab') { introduced.add(target.dataset.labIntro); clearIntroduction(); schedule(); }
+    }, true);
+    window.addEventListener('resize', () => {
+      // A viewport change invalidates automatic placement, while a card the
+      // learner has moved must retain its chosen position.
+      document.querySelectorAll('.next-card').forEach(card => {
+        if (!moved.has(card)) placed.delete(card);
+      });
+      schedule();
+    });
+    document.addEventListener('lab-introduction-change', schedule);
+    window.addEventListener('scroll', schedule, true);
+    document.addEventListener('focusin', event => {
+      if (!event.target.matches('input,textarea,select,button')) return;
+      const card = event.target.closest(cardSelector);
+      if (card) { touched.add(key(card)); card.dataset.interacted = 'true'; }
+    });
+    document.addEventListener('pointerdown', event => {
+      const input = event.target.closest('input,select,textarea,button,[data-lab-intro]');
+      const card = input?.closest(cardSelector);
+      if (card) { touched.add(key(card)); card.dataset.interacted = 'true'; }
+    });
+    document.addEventListener('click', event => {
+      if (event.target.closest('[data-work-level],[data-level],#reset,#resetCase,#resetChallenge,#resetGraph,#nextProblem,#nextStageButton,[data-next],#newJourney')) {
+        touched.clear(); document.querySelectorAll(cardSelector).forEach(card => delete card.dataset.interacted);
+      }
+    }, true);
+    const move = (card, left, top) => {
+      moved.add(card);
+      const bounds = card.offsetParent;
+      card.style.right = 'auto'; card.style.bottom = 'auto';
+      card.style.left = Math.max(0, Math.min(left, bounds.clientWidth - card.offsetWidth)) + 'px';
+      card.style.top = Math.max(0, Math.min(top, bounds.clientHeight - card.offsetHeight)) + 'px';
+    };
+    document.addEventListener('pointerdown', event => {
+      const handle = event.target.closest('.lab-dialog-move');
+      if (!handle || event.button !== 0) return;
+      const card = handle.closest('.next-card'), x = event.clientX, y = event.clientY, left = card.offsetLeft, top = card.offsetTop;
+      handle.setPointerCapture(event.pointerId); event.preventDefault();
+      const update = e => { if (e.pointerId === event.pointerId) move(card, left + e.clientX - x, top + e.clientY - y); };
+      const stop = () => { handle.removeEventListener('pointermove', update); handle.removeEventListener('pointerup', stop); handle.removeEventListener('pointercancel', stop); handle.removeEventListener('lostpointercapture', stop); };
+      handle.addEventListener('pointermove', update); handle.addEventListener('pointerup', stop); handle.addEventListener('pointercancel', stop); handle.addEventListener('lostpointercapture', stop);
+    });
+    document.addEventListener('keydown', event => {
+      const handle = event.target.closest('.lab-dialog-move');
+      const delta = {ArrowLeft:[-10,0],ArrowRight:[10,0],ArrowUp:[0,-10],ArrowDown:[0,10]}[event.key];
+      if (!handle || !delta) return;
+      event.preventDefault(); const card = handle.closest('.next-card'); move(card, card.offsetLeft + delta[0], card.offsetTop + delta[1]);
+    });
+    new MutationObserver(schedule).observe(document.querySelector('main') || document.body, {childList:true,subtree:true});
+    refresh();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, {once:true}); else init();
+})();
+
+</script>
 <!-- LAB_CONTRACT_START -->
 <script type="application/json" data-examplicity-lab-contract data-contract-version="1">
 {
@@ -987,12 +2304,92 @@ button.danger{color:var(--bad)}
   "nonGoals": [
     "Replacing an IP address-planning or router configuration tool."
   ],
-  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract",
+  "implementation": {
+    "reviewedRevision": "53e0d238e961f19f0539a906917566411842a63a",
+    "surfaces": {
+      "task": {
+        "selectors": [
+          "#lessonTitle",
+          "#progressDots",
+          "#scenarioControls"
+        ],
+        "kind": "given",
+        "description": "Compare a flat broadcast domain with a learner-grouped subnet design.",
+        "visibility": "Present throughout; content follows the current simulation state."
+      },
+      "model": {
+        "selectors": [
+          "#networkCanvas",
+          "#ipStage"
+        ],
+        "kind": "model",
+        "description": "Department nodes, broadcast boundaries, routing and optional IP packet decisions.",
+        "visibility": "Present throughout; content follows the current simulation state."
+      },
+      "planner": {
+        "selectors": [
+          "#lockedPlanner",
+          "#departmentBank",
+          ".builder"
+        ],
+        "kind": "control",
+        "description": "Gated placement of departments into subnet groups and optional address allocations.",
+        "visibility": "Locked until a baseline traffic story completes; builder is generated from draft groups."
+      },
+      "evidence": {
+        "selectors": [
+          "#storyCard",
+          ".metrics",
+          ".takeaway"
+        ],
+        "kind": "evidence",
+        "description": "Current packet decision, interrupted device counts, router forwarding and boundary explanation.",
+        "visibility": "Present throughout; content follows the current simulation state."
+      }
+    },
+    "quantities": {
+      "departments": {
+        "description": "Device demand assigned to subnet groups.",
+        "domain": "Admin 10, Classrooms 28, Media 12, IoT 18 and Servers 4.",
+        "source": "Fixed department model plus learner placements.",
+        "output": "Subnet zones and allocation summary."
+      },
+      "allocation": {
+        "description": "Address blocks for the selected groups.",
+        "domain": "Two to four nonempty groups; smallest fitting CIDR blocks, including gateway demand.",
+        "source": "Draft assignments and address-allocation functions.",
+        "output": "Optional address details and router interface reads."
+      },
+      "traffic": {
+        "description": "Devices interrupted and router forwards during a story.",
+        "domain": "Whole-number counts accumulated across the selected path.",
+        "source": "Noisy sensor or server request story.",
+        "output": ".metrics and network packet states."
+      }
+    },
+    "modes": {
+      "view": "Before subnetting and Your design; the design is gated by baseline completion.",
+      "story": "Noisy sensor or Find the server. Next/Play slowly share the same steps.",
+      "ip": "Optional IP walkthrough reveals mask/AND, local-versus-gateway and frame decisions.",
+      "support": "No None/Some/All or exam mapping toggle."
+    },
+    "dependencies": [
+      "Finish either baseline story to unlock planning.",
+      "All five departments must be assigned to two to four nonempty groups before applying.",
+      "The applied layout determines subsequent broadcast and routed request evidence."
+    ],
+    "completion": "Each traffic story finishes at its last decision; learners can revise an applied design and rerun the comparison.",
+    "limitations": [
+      "Fixed campus demands and simplified teaching traffic.",
+      "Address/IP details are optional views, not qualification mappings."
+    ]
+  }
 }
 </script>
 <!-- LAB_CONTRACT_END -->
 </head>
-<body data-lab-layout="standard">
+<body class="lab-adopt-v3 lab-simulation sim-ipv4-subnetting" data-lab-layout="standard">
 <main>
 <!-- LAB_MANIFEST_HEADER_START -->
 <header class="lab-manifest-header">
@@ -1014,50 +2411,39 @@ button.danger{color:var(--bad)}
 <!-- LAB_MANIFEST_HEADER_END -->
 <span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span>
   <span data-lab-authored-subtitle-slot hidden></span>
+<section class="lab-activity-bar sim-top"><div class="lab-activity-task"><strong id="lessonTitle">Start with one large broadcast domain.</strong></div><div class="sim-top-tools"><div class="story-actions">
+          <button id="resetStory" data-lab-action="reset" class="lab-action">Reset</button>
+          <button id="autoStory" class="lab-action">Play slowly</button>
+          <button id="nextStory" class="lab-action primary" data-lab-intro="ip-next" data-lab-intro-title="Follow the broadcast" data-lab-intro-copy="Advance the story to see which devices inspect the message. Completing it unlocks the subnet planner." data-priority="primary">Start story</button>
+        </div><div class="lab-toggle tab-set" aria-label="Network view" data-kind="mode" data-active-class="active">
+        <button id="flatTab" class="lab-action active">Before subnetting</button>
+        <button id="designTab" disabled class="lab-action">Your design</button>
+      </div><div id="scenarioControls" class="lab-toggle scenario-set" aria-label="Traffic story" style="margin-top:5px" data-kind="mode" data-active-class="active">
+        <button id="noiseScenario" class="lab-action active">Noisy sensor</button>
+        <button id="requestScenario" class="lab-action">Find the server</button>
+      </div><button id="ipToggle" class="ip-toggle" type="button" aria-pressed="false" aria-controls="ipStage" data-lab-intro="ip-detail" data-lab-intro-title="Inspect the next-hop decision" data-lab-intro-copy="Turn on the IP walkthrough to follow the mask comparison and the selected local or gateway address.">
+          <span class="ip-switch" aria-hidden="true"></span>
+          <span><strong>IP walkthrough</strong><small>follow one packet decision by decision</small></span>
+        </button><div id="progressDots" class="lab-checkpoints progress-dots" aria-label="Story progress"></div></div></section>
 
-  <section class="panel lesson-bar">
+  <section class="sim-legacy panel lesson-bar">
     <div class="lesson-copy">
-      <strong id="lessonTitle">Start with one large broadcast domain.</strong>
+
       <span id="lessonDetail">Watch one noisy sensor force every device to inspect the same local message.</span>
     </div>
     <div>
-      <div class="tab-set" aria-label="Network view">
-        <button id="flatTab" class="active">Before subnetting</button>
-        <button id="designTab" disabled>Your design</button>
-      </div>
-      <div id="scenarioControls" class="scenario-set" aria-label="Traffic story" style="margin-top:5px">
-        <button id="noiseScenario" class="active">Noisy sensor</button>
-        <button id="requestScenario">Find the server</button>
-      </div>
+
+
       <div class="view-tools">
-        <button id="ipToggle" class="ip-toggle" type="button" aria-pressed="false" aria-controls="ipStage">
-          <span class="ip-switch" aria-hidden="true"></span>
-          <span><strong>IP walkthrough</strong><small>follow one packet decision by decision</small></span>
-        </button>
+
       </div>
     </div>
-    <div class="metrics">
-      <div id="interruptMetricBox" class="metric"><span id="interruptMetricLabel">Devices interrupted</span><strong id="interruptMetric">0</strong></div>
-      <div id="routerMetricBox" class="metric"><span id="routerMetricLabel">Router forwards</span><strong id="routerMetric">0</strong></div>
-      <div id="areaMetricBox" class="metric"><span id="areaMetricLabel">Broadcast area</span><strong id="areaMetric">Whole campus</strong></div>
-    </div>
+
   </section>
 
   <div class="lab-grid">
     <section class="panel network-panel">
-      <div id="storyCard" class="story-card" data-lab-role="evidence">
-        <div>
-          <div id="stepKicker" class="step-kicker">Ready</div>
-          <strong id="storyTitle">One IoT sensor starts searching for a service.</strong>
-          <span id="storyText">Start the story. Watch one broadcast become everybody's problem.</span>
-          <div id="progressDots" class="progress-dots" aria-label="Story progress"></div>
-        </div>
-        <div class="story-actions">
-          <button id="resetStory" data-lab-action="reset">Reset</button>
-          <button id="autoStory">Play slowly</button>
-          <button id="nextStory" class="primary">Start story</button>
-        </div>
-      </div>
+
 
       <section id="ipStage" class="ip-workbench" hidden aria-live="polite">
         <div class="ip-workbench-head">
@@ -1099,13 +2485,25 @@ button.danger{color:var(--bad)}
         </div>
       </div>
 
-      <div id="canvasCaption" class="canvas-caption">
+      <div id="canvasCaption" class="sim-legacy canvas-caption">
         <strong id="captionTitle">What to notice</strong>
         <span id="captionText">The dashed line is one broadcast boundary. The router is not used when both devices are inside it.</span>
       </div>
     </section>
 
-    <aside class="panel planner">
+    <aside class="lab-sidebar panel planner"><section class="lab-evidence-card"><h2>Current network decision</h2><div id="storyCard" class="story-card" data-lab-role="evidence">
+        <div>
+          <div id="stepKicker" class="step-kicker">Ready</div>
+          <strong id="storyTitle">One IoT sensor starts searching for a service.</strong>
+          <span id="storyText">Start the story. Watch one broadcast become everybody's problem.</span>
+
+        </div>
+
+      </div></section><section class="lab-evidence-card"><h2>Traffic evidence</h2><div class="metrics">
+      <div id="interruptMetricBox" class="metric"><span id="interruptMetricLabel">Devices interrupted</span><strong id="interruptMetric">0</strong></div>
+      <div id="routerMetricBox" class="metric"><span id="routerMetricLabel">Router forwards</span><strong id="routerMetric">0</strong></div>
+      <div id="areaMetricBox" class="metric"><span id="areaMetricLabel">Broadcast area</span><strong id="areaMetric">Whole campus</strong></div>
+    </div></section>
       <div class="planner-head">
         <strong id="plannerTitle">Redraw the boundary</strong>
         <span id="plannerDetail">Group departments into smaller local networks. Address details stay hidden unless opened.</span>
@@ -1124,7 +2522,7 @@ button.danger{color:var(--bad)}
       <div id="builderSummary" class="builder-summary" hidden>
         <div class="summary-intro"><strong>Design applied.</strong> The network story now uses these subnet boundaries.</div>
         <div id="summaryZones" class="summary-zones"></div>
-        <div class="summary-actions"><button id="editPlan">Edit groups</button></div>
+        <div class="summary-actions"><button id="editPlan" class="lab-action">Edit groups</button></div>
       </div>
 
       <div id="builder" class="builder" hidden>
@@ -1135,9 +2533,9 @@ button.danger{color:var(--bad)}
         <div id="subnetList" class="subnet-list"></div>
 
         <div class="planner-actions">
-          <button id="addSubnet">Add local network</button>
-          <button id="resetPlan" data-lab-action="reset">Reset groups</button>
-          <button id="applyDesign" class="primary">Use this subnet design</button>
+          <button id="addSubnet" class="lab-action">Add local network</button>
+          <button id="resetPlan" data-lab-action="reset" class="lab-action">Reset groups</button>
+          <button id="applyDesign" class="lab-action primary">Use this subnet design</button>
         </div>
 
         <div id="planFeedback" class="plan-feedback">
@@ -1155,16 +2553,16 @@ button.danger{color:var(--bad)}
           </div>
         </details>
       </div>
-    </aside>
-  </div>
-
-  <section class="panel takeaway">
+    <section class="lab-evidence-card"><h2>What the evidence establishes</h2><section class="panel takeaway">
     <div>
       <strong id="takeawayTitle">A broadcast is local, not private.</strong>
       <span id="takeawayText">A switch copies a broadcast to every device inside the same broadcast domain. A router marks the boundary.</span>
     </div>
     <div id="takeawayStat" class="takeaway-stat">watch → divide → compare</div>
-  </section>
+  </section></section></aside>
+  </div>
+
+
 </main>
 
 <!-- LAB_RESOURCE_START id="lab-kit.js" type="script" -->
@@ -2807,7 +4205,7 @@ result: ${d.local?"same subnet → send directly":"different subnet → use gate
   }
 
   function renderProgress(total=storySteps().length,index=state.storyIndex){
-    $("progressDots").innerHTML=Array.from({length:total},(_,i)=>`<span class="progress-dot${i<index?" done":i===index?" active":""}"></span>`).join("");
+    LabDesign.checkpoints($("progressDots"),storySteps().map(s=>s.title),Math.max(0,index),i=>i<index,storySteps()[index]?.text||"Start the network story");
   }
 
   function initialStoryCopy(){
@@ -2927,6 +4325,7 @@ result: ${d.local?"same subnet → send directly":"different subnet → use gate
     $("builderSummary").hidden=!showSummary;
     $("builder").hidden=!state.baselineSeen||showSummary;
     if(!state.baselineSeen)return;
+    LabDesign.introduce(document.querySelector(".planner"),[$("departmentBank")],"ip-plan","Choose subnet boundaries","Select or drag each department into a local network, then apply the complete design and replay the same traffic.");
     if(showSummary){renderAppliedSummary();return;}
     const allocation=allocatePlan(state.draftSubnets);
     const assigned=new Set(state.draftSubnets.flatMap(item=>item.departments));
@@ -3049,7 +4448,7 @@ result: ${d.local?"same subnet → send directly":"different subnet → use gate
   const fitNetworkCanvas=()=>{
     const shell=document.querySelector(".canvas-shell"),stage=document.querySelector(".network-stage"),canvas=$("networkCanvas");
     if(!shell||!stage||!canvas)return;
-    const shouldFit=shell.clientWidth>=760,scale=shouldFit?Math.min(1,shell.clientWidth/980):1;
+    const shouldFit=true,scale=shouldFit?Math.min(1,shell.clientWidth/980):1;
     shell.classList.toggle("is-fitted",shouldFit);
     stage.style.width=(shouldFit?shell.clientWidth:980)+"px";
     stage.style.height=Math.ceil(560*scale)+"px";

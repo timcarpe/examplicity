@@ -634,8 +634,9 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 </style>
 <!-- LAB_FRAME_STYLES_END -->
 <link rel="stylesheet" href="./lab-kit.css" data-lab-resource="lab-kit.css">
+<!-- LAB_DESIGN_COMPONENTS -->
 </head>
-<body data-lab-layout="standard">
+<body class="lab-adopt-v3 lab-simulation sim-csma-cd" data-lab-layout="standard">
 <main>
 <!-- LAB_MANIFEST_HEADER_START -->
 <header class="lab-manifest-header">
@@ -657,31 +658,32 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 <!-- LAB_MANIFEST_HEADER_END -->
 <span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span>
   <span data-lab-authored-subtitle-slot hidden></span>
-
-  <section class="panel challenge">
-    <div>
-      <span class="eyebrow">Choose a situation</span>
-      <strong id="scenarioTitle">Two stations both hear silence</strong>
-      <span id="scenarioHint">A and C are far apart. Their signals need time to travel, so both may start before hearing the other.</span>
-    </div>
-    <div class="scenario-buttons" role="group" aria-label="Choose a transmission situation">
+<section class="lab-activity-bar sim-top"><div class="lab-activity-task"><strong id="scenarioTitle">Two stations both hear silence</strong></div><div class="sim-top-tools"><div class="run-buttons">
+        <button id="nextButton" data-lab-intro="csma-next" data-lab-intro-title="Follow a station’s decision" data-lab-intro-copy="Use Next for one event or Play for the full exchange. Compare what each station hears locally." class="lab-action" data-priority="primary">Next</button>
+        <button id="playButton" class="lab-action primary">Play</button>
+        <button id="resetButton" data-lab-action="reset" class="lab-action">Reset</button>
+      </div><div class="lab-toggle scenario-buttons" role="group" aria-label="Choose a transmission situation" data-kind="mode" data-active-class="active">
       <button data-scenario="singleA">A sends to C</button>
       <button data-scenario="singleB">B sends to C</button>
       <button class="active" data-scenario="collision">A and C collide</button>
+    </div><div id="labProgress" class="lab-checkpoints"></div></div></section>
+
+  <section class="sim-legacy panel challenge">
+    <div>
+      <span class="eyebrow">Choose a situation</span>
+
+      <span id="scenarioHint">A and C are far apart. Their signals need time to travel, so both may start before hearing the other.</span>
     </div>
+
   </section>
 
-  <section class="panel stage">
-    <div class="stage-head">
+  <section class="sim-composition panel stage">
+    <div class="sim-legacy stage-head">
       <div>
         <strong>Shared Ethernet cable</strong>
         <span>Watch the signal on the cable and the decision made at each station.</span>
       </div>
-      <div class="run-buttons">
-        <button id="nextButton">Next</button>
-        <button id="playButton" class="primary">Play</button>
-        <button id="resetButton" data-lab-action="reset">Reset</button>
-      </div>
+
     </div>
 
     <div class="shell">
@@ -691,24 +693,24 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
         <div id="signalLayer" class="signal-layer"></div>
         <div id="stationLayer" class="station-layer"></div>
 
-        <div id="narration" class="narration" aria-live="polite">
+
+      </div>
+    </div>
+
+
+  <aside id="labEvidence" class="lab-sidebar" aria-label="Evidence and method"><section class="lab-evidence-card"><div id="narration" class="narration" aria-live="polite">
           <div class="narration-phase">
             <span id="stepCount">Step 1 of 9</span>
             <strong id="phaseLabel">Ready</strong>
           </div>
           <div class="narration-copy">
             <strong id="narrationTitle">A and C both have a frame to send.</strong>
-            <p id="narrationText">Press Play or Next. Each station will make its own decision from the signal it can hear at its connection.</p>
-            <div class="visual-key"><b>Colour</b> = a frame signal · <b>red</b> = collision · <b>orange</b> = jam signal</div>
+            <p id="narrationText">Each station will make its own decision from the signal it can hear at its connection.</p>
+            <div class="visual-key"><span>Station colour: frame</span><span>Red: collision</span><span>Orange: jam</span></div>
           </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="rule">
+        </div></section><section class="lab-evidence-card"><h2>Shared-medium rule</h2><div class="rule">
       <strong>CSMA/CD:</strong> Listen first → send while still listening → if a collision is heard, stop, wait a random time, then retry.
-    </div>
-  </section>
+    </div></section></aside></section>
 </main>
 
 
@@ -759,7 +761,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
       {
         phase:"Ready",tone:"#6f8798",
         title:`${source.name} has a frame for Station ${destination}.`,
-        text:"The cable is quiet. Press Play or Next to follow the decision.",
+        text:"Each station decides from the signal at its own cable connection.",
         stations:{
           A:sender==="A"?{state:"Ready",thought:`I want to send “${payload}” to ${destination}.`,tone:"focus",frame}:idleStation(),
           B:sender==="B"?{state:"Ready",thought:`I want to send “${payload}” to ${destination}.`,tone:"focus",frame}:idleStation(),
@@ -1049,6 +1051,8 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
     $("phaseLabel").textContent=step.phase;
     $("narrationTitle").textContent=step.title;
     $("narrationText").textContent=step.text;
+    LabDesign.checkpoints($("labProgress"),steps.map(s=>s.phase),stepIndex,i=>i<stepIndex,step.title);
+    $("narration").parentElement.dataset.workState=stepIndex===steps.length-1?"good":"needed";
     $("narration").style.setProperty("--tone",step.tone);
     $("nextButton").disabled=stepIndex>=steps.length-1||playing;
     $("playButton").textContent=playing?"Pause":stepIndex>=steps.length-1?"Replay":"Play";

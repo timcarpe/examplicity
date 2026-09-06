@@ -369,8 +369,9 @@ button,input{font:inherit}button{min-height:34px;border:1px solid var(--line);bo
 @media(max-width:560px){main{width:min(100% - 12px,1240px)}.browser-toolbar{height:auto;grid-template-columns:auto 1fr}.browser-toolbar #goBtn{grid-column:1/-1;width:100%}.bookmarks{grid-template-columns:1fr}.bookmark-list{grid-template-columns:1fr}.bookmark-label,.bookmark-hint{display:none}.url-parts{display:grid;grid-template-columns:1fr}.url-map-label{display:none}.engine-grid{grid-template-columns:1fr 12px 1fr}.engine-block:nth-of-type(3),.engine-block:nth-of-type(4){margin-top:4px}.dns-chain{grid-template-columns:1fr}.dns-link-stack{grid-template-columns:1fr 1fr}.server-card{grid-template-columns:48px 1fr}.server-state{grid-column:2}.atlas-hero,.orbit-hero,.field-grid{grid-template-columns:1fr}.atlas-art{display:none}}
 @media(prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}}
 </style>
+<!-- LAB_DESIGN_COMPONENTS -->
 </head>
-<body data-lab-layout="standard">
+<body class="lab-adopt-v3 lab-simulation sim-dns-web-page-retrieval" data-lab-layout="standard">
 <main>
 <!-- LAB_MANIFEST_HEADER_START -->
 <header class="lab-manifest-header">
@@ -398,39 +399,40 @@ button,input{font:inherit}button{min-height:34px;border:1px solid var(--line);bo
 <!-- LAB_MANIFEST_HEADER_END -->
 <span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span>
   <span data-lab-authored-subtitle-slot hidden></span>
+<section class="lab-activity-bar sim-top"><div class="lab-activity-task"><strong id="labTaskTitle">Resolve a name, retrieve its page, then test a missing DNS record.</strong></div><div class="sim-top-tools"><button id="resetBtn" type="button" data-lab-action="reset" class="lab-action">Reset lab</button><div id="labProgress" class="lab-checkpoints"></div></div></section>
 
-  <section class="panel control-panel" aria-label="Navigation status">
+  <section class="sim-legacy panel control-panel" aria-label="Navigation status">
     <div class="control-row">
       <div class="phase-strip" aria-label="Navigation phases">
         <span id="phaseResolve" class="phase resolve active">Resolve name</span>
         <span id="phaseRetrieve" class="phase retrieve">Retrieve page</span>
         <span id="phaseRender" class="phase render">Render HTML</span>
       </div>
-      <div id="microStatus" class="micro" aria-live="polite"><strong>Ready.</strong> Choose one of the three browser bookmarks, then click Go.</div>
-      <button id="resetBtn" type="button" data-lab-action="reset">Reset lab</button>
+
+
     </div>
     <div class="progress-row">
       <span id="stepCount" class="step-count">STEP 0</span>
       <div class="progress-track" aria-hidden="true"><div id="progressFill"></div></div>
-      <span class="current-transfer"><b>Current</b> <strong id="operationTitle" data-lab-role="evidence">URL waiting in browser</strong></span>
+      <span class="current-transfer"><b>Current</b> </span>
       <div id="requiredAction" class="required"><span>Required next action</span><strong id="nextLabel">Choose a bookmark, then click Go</strong></div>
     </div>
   </section>
 
-  <section class="panel arch-panel">
+  <section class="sim-composition panel arch-panel">
     <div class="architecture">
       <section id="browser" class="component browser" aria-label="Web browser" data-lab-role="model">
-        <div class="component-head"><div><strong>Web browser</strong><span>The URL, returned IP, page request and rendered result stay visible in one place.</span></div><span id="browserState" class="state-chip">ready</span></div>
+        <div class="sim-component-head component-head"><div><strong>Web browser</strong><span>The URL, returned IP, page request and rendered result stay visible in one place.</span></div><span id="browserState" class="state-chip">ready</span></div>
         <div class="browser-frame">
           <div class="browser-toolbar">
             <div class="browser-dots" aria-hidden="true"><i></i><i></i><i></i></div>
             <div id="addressShell" class="address-shell"><span class="lock" aria-hidden="true"></span><input id="urlInput" type="text" spellcheck="false" autocomplete="off" value="https://atlas.school/study.html" aria-label="URL" data-lab-manipulative="url"></div>
-            <button id="goBtn" type="button">Go →</button>
+            <button id="goBtn" type="button" data-lab-intro="dns-go" data-lab-intro-title="Follow the lookup" data-lab-intro-copy="Choose a bookmark and use Go to advance each transfer. The rendered page appears only after DNS and retrieval succeed." class="lab-action" data-priority="primary">Go →</button>
           </div>
           <div class="bookmarks" aria-label="Browser bookmarks">
             <span class="bookmark-label">Bookmarks</span>
             <div id="bookmarkButtons" class="bookmark-list"></div>
-            <span id="bookmarkHint" class="bookmark-hint">choose → Go</span>
+            <span id="bookmarkHint" class="sim-legacy bookmark-hint">choose → Go</span>
           </div>
           <div class="url-parts" aria-label="URL parts">
             <span class="url-map-label">URL parts</span>
@@ -449,7 +451,7 @@ button,input{font:inherit}button{min-height:34px;border:1px solid var(--line);bo
             <div id="rendererBlock" class="engine-block"><small>Renderer</small><strong id="rendererValue">HTML → page</strong></div>
           </div>
         </div>
-      </section>
+      <aside id="labEvidence" class="lab-sidebar" aria-label="Evidence and method"><section class="lab-evidence-card"><h2>Navigation evidence</h2><div id="microStatus" class="micro" aria-live="polite"><strong>Ready.</strong> Choose one of the three browser bookmarks, then click Go.</div></section><section class="lab-evidence-card"><h2>Current transfer</h2><strong id="operationTitle" data-lab-role="evidence">URL waiting in browser</strong></section></aside></section>
 
       <section class="bus-cluster dns-buses" aria-label="Browser and DNS transfers">
         <div class="bus-group-title">Browser ↔ DNS 1</div>
@@ -560,7 +562,7 @@ button,input{font:inherit}button{min-height:34px;border:1px solid var(--line);bo
   function setMicro(title,detail){$("microStatus").innerHTML=`<strong>${title}</strong> ${detail}`;}
   function setOperation(text){$("operationTitle").textContent=text;}
   function setGoLabel(){
-    const btn=$("goBtn");btn.className="";
+    const btn=$("goBtn");btn.className="lab-action";
     if(state.busy){btn.textContent="Transferring…";btn.classList.add("busy");btn.disabled=true;return;}
     if(state.failed){btn.textContent="Choose another site";btn.disabled=true;return;}
     if(!state.queue.length){btn.textContent="Go →";btn.disabled=false;return;}
@@ -580,6 +582,9 @@ button,input{font:inherit}button{min-height:34px;border:1px solid var(--line);bo
     $("progressFill").style.width=total?`${done/total*100}%`:"0%";
     const req=$("requiredAction");req.className="required"+(state.busy?" busy":state.failed?" blocked":(total&&done>=total)?" done":"");
     $("nextLabel").textContent=nextActionText();setGoLabel();
+    const phase=state.failed?0:state.index>=total&&total?3:state.queue[state.index]?.phase==='render'?2:state.queue[state.index]?.phase==='retrieve'?1:0;
+    LabDesign.checkpoints($("labProgress"),['Resolve name','Retrieve HTML','Render page'],phase,i=>i<phase,nextActionText());
+    $("microStatus").parentElement.dataset.workState=state.failed?'bad':phase===3?'good':'needed';
   }
   function renderURLParts(){
     const p=parseURL($("urlInput").value);const values=p||{protocol:"?",domain:"invalid URL",path:"?"};
@@ -601,7 +606,7 @@ button,input{font:inherit}button{min-height:34px;border:1px solid var(--line);bo
   }
   function renderDNS2(){
     const root=$("dns2Directory");root.replaceChildren();
-    ["atlas.school","fieldnotes.test"].forEach(domain=>{const row=document.createElement("div");row.className="directory-row";const input=document.createElement("input");input.className="dns-edit"+(!dns2Records[domain]?" missing":"");input.value=dns2Records[domain]||"";input.placeholder="no IP mapping";input.setAttribute("aria-label",`${domain} IP mapping`);input.addEventListener("input",()=>{dns2Records[domain]=input.value.trim();delete dns1Cache[domain];learnedDomains.delete(domain);renderDNS1Cache();input.classList.toggle("missing",!dns2Records[domain]);resetNavigationVisuals(false);blankPage("DNS 2 changed. Click Go to test the current URL again.");setMicro("DNS 2 edited.","Start a new navigation to see whether the changed mapping can be learned by DNS 1.");setOperation("DNS directory changed");setProgress();});row.innerHTML=`<strong>${domain}</strong>`;row.appendChild(input);root.appendChild(row);});
+    ["atlas.school","fieldnotes.test"].forEach(domain=>{const row=document.createElement("div");row.className="directory-row";const input=document.createElement("input");input.setAttribute("data-lab-intro","dns-mapping");input.setAttribute("data-lab-intro-title","Change the directory");input.setAttribute("data-lab-intro-copy","Use the server address to repair a missing mapping, then navigate again. Changing a directory record clears its learned cache entry.");input.className="dns-edit"+(!dns2Records[domain]?" missing":"");input.value=dns2Records[domain]||"";input.placeholder="no IP mapping";input.setAttribute("aria-label",`${domain} IP mapping`);input.addEventListener("input",()=>{dns2Records[domain]=input.value.trim();delete dns1Cache[domain];learnedDomains.delete(domain);renderDNS1Cache();input.classList.toggle("missing",!dns2Records[domain]);resetNavigationVisuals(false);blankPage("DNS 2 changed. Click Go to test the current URL again.");setMicro("DNS 2 edited.","Start a new navigation to see whether the changed mapping can be learned by DNS 1.");setOperation("DNS directory changed");setProgress();});row.innerHTML=`<strong>${domain}</strong>`;row.appendChild(input);root.appendChild(row);});
   }
   function renderServers(){
     const root=$("serverList");root.replaceChildren();

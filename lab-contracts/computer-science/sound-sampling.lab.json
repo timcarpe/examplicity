@@ -1,9 +1,115 @@
 {
   "schemaVersion": 1,
   "relationship": "Selecting a source, sample rate and bit depth connects a waveform representation to digital sound quality and storage.",
-  "learnerLoop": { "action": "Choose a sound, adjust rate, depth and smoothing, then play or inspect it.", "modelChange": "The sampled representation and playback selection change.", "evidence": "The waveform, samples, bit count, status and reference/digital playback expose the effect.", "nextDecision": "Compare another sampling choice and explain the quality or data trade-off." },
-  "invariants": ["The displayed samples and storage figures follow the active sound and sampling settings.", "Reference and digital playback remain distinguishable for comparison."],
-  "safeAdaptations": ["Change sound examples, guidance or comparison prompts while retaining controllable sampling and evidence."],
-  "nonGoals": ["Acting as a full audio editor or exporting sound files."],
-  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+  "learnerLoop": {
+    "action": "Choose a sound, adjust rate, depth and smoothing, then play or inspect it.",
+    "modelChange": "The sampled representation and playback selection change.",
+    "evidence": "The waveform, samples, bit count, status and reference/digital playback expose the effect.",
+    "nextDecision": "Compare another sampling choice and explain the quality or data trade-off."
+  },
+  "invariants": [
+    "The displayed samples and storage figures follow the active sound and sampling settings.",
+    "Reference and digital playback remain distinguishable for comparison."
+  ],
+  "safeAdaptations": [
+    "Change sound examples, guidance or comparison prompts while retaining controllable sampling and evidence."
+  ],
+  "nonGoals": [
+    "Acting as a full audio editor or exporting sound files."
+  ],
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract",
+  "implementation": {
+    "reviewedRevision": "53e0d238e961f19f0539a906917566411842a63a",
+    "surfaces": {
+      "task": {
+        "selectors": [
+          "#labTaskTitle",
+          ".examples",
+          ".play"
+        ],
+        "kind": "given",
+        "description": "Compare source detail with sampled storage cost using three recordings.",
+        "visibility": "Present throughout; content follows the current simulation state."
+      },
+      "model": {
+        "selectors": [
+          "#wave",
+          "#overview"
+        ],
+        "kind": "model",
+        "description": "Reference waveform, quantised reconstruction and selected timeline window.",
+        "visibility": "Present throughout; content follows the current simulation state."
+      },
+      "settings": {
+        "selectors": [
+          "#rate",
+          "#depth",
+          "#linear",
+          "#lowpass",
+          ".zoom-tools"
+        ],
+        "kind": "control",
+        "description": "Sample rate, resolution, optional reconstruction smoothing and view zoom.",
+        "visibility": "Present throughout; content follows the current simulation state."
+      },
+      "evidence": {
+        "selectors": [
+          "#status",
+          "#visibleSamples",
+          "#bits",
+          "#waveTooltip"
+        ],
+        "kind": "evidence",
+        "description": "Rate/storage equation, quantisation levels, sampled values and hover details.",
+        "visibility": "Present throughout; content follows the current simulation state."
+      }
+    },
+    "quantities": {
+      "rate": {
+        "description": "Samples stored per second.",
+        "domain": "Discrete choices from 500 to 44100 Hz.",
+        "source": "Sample rate selector.",
+        "output": "Reconstructed waveform, Nyquist note and storage equation.",
+        "inputSlots": [
+          "#rate"
+        ]
+      },
+      "depth": {
+        "description": "Bits used to represent each sample.",
+        "domain": "Selectable resolution from 2 to 16 bits; 2^bits amplitude levels.",
+        "source": "Resolution selector.",
+        "output": "Levels, sample bits and storage.",
+        "inputSlots": [
+          "#depth"
+        ]
+      },
+      "storage": {
+        "description": "Raw mono PCM bit rate and data size.",
+        "domain": "rate × bits per second; sample count × bits / 8 bytes.",
+        "source": "Selected recording, sampling rate and resolution.",
+        "output": "#status."
+      },
+      "window": {
+        "description": "Visible source interval.",
+        "domain": "Clamped to the recording duration.",
+        "source": "Overview drag/arrow keys, earlier/later and zoom buttons.",
+        "output": "#windowLabel and waveform x-axis."
+      }
+    },
+    "modes": {
+      "recording": "Ocean, bird and human speech are embedded PCM recordings.",
+      "reconstruction": "Default held samples; optional linear interpolation and low-pass smoothing.",
+      "support": "Open comparison with no Working, exam or scored completion control."
+    },
+    "dependencies": [
+      "Changing recording or sampling settings regenerates quantised samples and storage calculations.",
+      "Playback chooses reference or reconstructed data; Stop ends playback.",
+      "Timeline and zoom change the view without altering sampling parameters."
+    ],
+    "completion": "No terminal gate; learners compare representations, values, cost and audio, then change settings.",
+    "limitations": [
+      "Raw mono PCM size excludes file headers and compression.",
+      "Playback requires browser audio support; source recordings remain embedded for offline use."
+    ]
+  }
 }

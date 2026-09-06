@@ -682,8 +682,9 @@ button.danger{color:var(--bad)}
 @media(max-width:390px){.department-bank{grid-template-columns:1fr}.tab-set,.scenario-set{display:grid;grid-template-columns:1fr 1fr}}
 </style>
 <link rel="stylesheet" href="./lab-kit.css" data-lab-resource="lab-kit.css">
+<!-- LAB_DESIGN_COMPONENTS -->
 </head>
-<body data-lab-layout="standard">
+<body class="lab-adopt-v3 lab-simulation sim-ipv4-subnetting" data-lab-layout="standard">
 <main>
 <!-- LAB_MANIFEST_HEADER_START -->
 <header class="lab-manifest-header">
@@ -705,50 +706,39 @@ button.danger{color:var(--bad)}
 <!-- LAB_MANIFEST_HEADER_END -->
 <span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span>
   <span data-lab-authored-subtitle-slot hidden></span>
+<section class="lab-activity-bar sim-top"><div class="lab-activity-task"><strong id="lessonTitle">Start with one large broadcast domain.</strong></div><div class="sim-top-tools"><div class="story-actions">
+          <button id="resetStory" data-lab-action="reset" class="lab-action">Reset</button>
+          <button id="autoStory" class="lab-action">Play slowly</button>
+          <button id="nextStory" class="lab-action primary" data-lab-intro="ip-next" data-lab-intro-title="Follow the broadcast" data-lab-intro-copy="Advance the story to see which devices inspect the message. Completing it unlocks the subnet planner." data-priority="primary">Start story</button>
+        </div><div class="lab-toggle tab-set" aria-label="Network view" data-kind="mode" data-active-class="active">
+        <button id="flatTab" class="lab-action active">Before subnetting</button>
+        <button id="designTab" disabled class="lab-action">Your design</button>
+      </div><div id="scenarioControls" class="lab-toggle scenario-set" aria-label="Traffic story" style="margin-top:5px" data-kind="mode" data-active-class="active">
+        <button id="noiseScenario" class="lab-action active">Noisy sensor</button>
+        <button id="requestScenario" class="lab-action">Find the server</button>
+      </div><button id="ipToggle" class="ip-toggle" type="button" aria-pressed="false" aria-controls="ipStage" data-lab-intro="ip-detail" data-lab-intro-title="Inspect the next-hop decision" data-lab-intro-copy="Turn on the IP walkthrough to follow the mask comparison and the selected local or gateway address.">
+          <span class="ip-switch" aria-hidden="true"></span>
+          <span><strong>IP walkthrough</strong><small>follow one packet decision by decision</small></span>
+        </button><div id="progressDots" class="lab-checkpoints progress-dots" aria-label="Story progress"></div></div></section>
 
-  <section class="panel lesson-bar">
+  <section class="sim-legacy panel lesson-bar">
     <div class="lesson-copy">
-      <strong id="lessonTitle">Start with one large broadcast domain.</strong>
+
       <span id="lessonDetail">Watch one noisy sensor force every device to inspect the same local message.</span>
     </div>
     <div>
-      <div class="tab-set" aria-label="Network view">
-        <button id="flatTab" class="active">Before subnetting</button>
-        <button id="designTab" disabled>Your design</button>
-      </div>
-      <div id="scenarioControls" class="scenario-set" aria-label="Traffic story" style="margin-top:5px">
-        <button id="noiseScenario" class="active">Noisy sensor</button>
-        <button id="requestScenario">Find the server</button>
-      </div>
+
+
       <div class="view-tools">
-        <button id="ipToggle" class="ip-toggle" type="button" aria-pressed="false" aria-controls="ipStage">
-          <span class="ip-switch" aria-hidden="true"></span>
-          <span><strong>IP walkthrough</strong><small>follow one packet decision by decision</small></span>
-        </button>
+
       </div>
     </div>
-    <div class="metrics">
-      <div id="interruptMetricBox" class="metric"><span id="interruptMetricLabel">Devices interrupted</span><strong id="interruptMetric">0</strong></div>
-      <div id="routerMetricBox" class="metric"><span id="routerMetricLabel">Router forwards</span><strong id="routerMetric">0</strong></div>
-      <div id="areaMetricBox" class="metric"><span id="areaMetricLabel">Broadcast area</span><strong id="areaMetric">Whole campus</strong></div>
-    </div>
+
   </section>
 
   <div class="lab-grid">
     <section class="panel network-panel">
-      <div id="storyCard" class="story-card" data-lab-role="evidence">
-        <div>
-          <div id="stepKicker" class="step-kicker">Ready</div>
-          <strong id="storyTitle">One IoT sensor starts searching for a service.</strong>
-          <span id="storyText">Start the story. Watch one broadcast become everybody's problem.</span>
-          <div id="progressDots" class="progress-dots" aria-label="Story progress"></div>
-        </div>
-        <div class="story-actions">
-          <button id="resetStory" data-lab-action="reset">Reset</button>
-          <button id="autoStory">Play slowly</button>
-          <button id="nextStory" class="primary">Start story</button>
-        </div>
-      </div>
+
 
       <section id="ipStage" class="ip-workbench" hidden aria-live="polite">
         <div class="ip-workbench-head">
@@ -790,13 +780,25 @@ button.danger{color:var(--bad)}
         </div>
       </div>
 
-      <div id="canvasCaption" class="canvas-caption">
+      <div id="canvasCaption" class="sim-legacy canvas-caption">
         <strong id="captionTitle">What to notice</strong>
         <span id="captionText">The dashed line is one broadcast boundary. The router is not used when both devices are inside it.</span>
       </div>
     </section>
 
-    <aside class="panel planner">
+    <aside class="lab-sidebar panel planner"><section class="lab-evidence-card"><h2>Current network decision</h2><div id="storyCard" class="story-card" data-lab-role="evidence">
+        <div>
+          <div id="stepKicker" class="step-kicker">Ready</div>
+          <strong id="storyTitle">One IoT sensor starts searching for a service.</strong>
+          <span id="storyText">Start the story. Watch one broadcast become everybody's problem.</span>
+
+        </div>
+
+      </div></section><section class="lab-evidence-card"><h2>Traffic evidence</h2><div class="metrics">
+      <div id="interruptMetricBox" class="metric"><span id="interruptMetricLabel">Devices interrupted</span><strong id="interruptMetric">0</strong></div>
+      <div id="routerMetricBox" class="metric"><span id="routerMetricLabel">Router forwards</span><strong id="routerMetric">0</strong></div>
+      <div id="areaMetricBox" class="metric"><span id="areaMetricLabel">Broadcast area</span><strong id="areaMetric">Whole campus</strong></div>
+    </div></section>
       <div class="planner-head">
         <strong id="plannerTitle">Redraw the boundary</strong>
         <span id="plannerDetail">Group departments into smaller local networks. Address details stay hidden unless opened.</span>
@@ -815,7 +817,7 @@ button.danger{color:var(--bad)}
       <div id="builderSummary" class="builder-summary" hidden>
         <div class="summary-intro"><strong>Design applied.</strong> The network story now uses these subnet boundaries.</div>
         <div id="summaryZones" class="summary-zones"></div>
-        <div class="summary-actions"><button id="editPlan">Edit groups</button></div>
+        <div class="summary-actions"><button id="editPlan" class="lab-action">Edit groups</button></div>
       </div>
 
       <div id="builder" class="builder" hidden>
@@ -826,9 +828,9 @@ button.danger{color:var(--bad)}
         <div id="subnetList" class="subnet-list"></div>
 
         <div class="planner-actions">
-          <button id="addSubnet">Add local network</button>
-          <button id="resetPlan" data-lab-action="reset">Reset groups</button>
-          <button id="applyDesign" class="primary">Use this subnet design</button>
+          <button id="addSubnet" class="lab-action">Add local network</button>
+          <button id="resetPlan" data-lab-action="reset" class="lab-action">Reset groups</button>
+          <button id="applyDesign" class="lab-action primary">Use this subnet design</button>
         </div>
 
         <div id="planFeedback" class="plan-feedback">
@@ -846,16 +848,16 @@ button.danger{color:var(--bad)}
           </div>
         </details>
       </div>
-    </aside>
-  </div>
-
-  <section class="panel takeaway">
+    <section class="lab-evidence-card"><h2>What the evidence establishes</h2><section class="panel takeaway">
     <div>
       <strong id="takeawayTitle">A broadcast is local, not private.</strong>
       <span id="takeawayText">A switch copies a broadcast to every device inside the same broadcast domain. A router marks the boundary.</span>
     </div>
     <div id="takeawayStat" class="takeaway-stat">watch → divide → compare</div>
-  </section>
+  </section></section></aside>
+  </div>
+
+
 </main>
 
 <script src="./lab-kit.js" data-lab-resource="lab-kit.js"></script>
@@ -2093,7 +2095,7 @@ result: ${d.local?"same subnet → send directly":"different subnet → use gate
   }
 
   function renderProgress(total=storySteps().length,index=state.storyIndex){
-    $("progressDots").innerHTML=Array.from({length:total},(_,i)=>`<span class="progress-dot${i<index?" done":i===index?" active":""}"></span>`).join("");
+    LabDesign.checkpoints($("progressDots"),storySteps().map(s=>s.title),Math.max(0,index),i=>i<index,storySteps()[index]?.text||"Start the network story");
   }
 
   function initialStoryCopy(){
@@ -2213,6 +2215,7 @@ result: ${d.local?"same subnet → send directly":"different subnet → use gate
     $("builderSummary").hidden=!showSummary;
     $("builder").hidden=!state.baselineSeen||showSummary;
     if(!state.baselineSeen)return;
+    LabDesign.introduce(document.querySelector(".planner"),[$("departmentBank")],"ip-plan","Choose subnet boundaries","Select or drag each department into a local network, then apply the complete design and replay the same traffic.");
     if(showSummary){renderAppliedSummary();return;}
     const allocation=allocatePlan(state.draftSubnets);
     const assigned=new Set(state.draftSubnets.flatMap(item=>item.departments));
@@ -2335,7 +2338,7 @@ result: ${d.local?"same subnet → send directly":"different subnet → use gate
   const fitNetworkCanvas=()=>{
     const shell=document.querySelector(".canvas-shell"),stage=document.querySelector(".network-stage"),canvas=$("networkCanvas");
     if(!shell||!stage||!canvas)return;
-    const shouldFit=shell.clientWidth>=760,scale=shouldFit?Math.min(1,shell.clientWidth/980):1;
+    const shouldFit=true,scale=shouldFit?Math.min(1,shell.clientWidth/980):1;
     shell.classList.toggle("is-fitted",shouldFit);
     stage.style.width=(shouldFit?shell.clientWidth:980)+"px";
     stage.style.height=Math.ceil(560*scale)+"px";

@@ -356,8 +356,9 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 </style>
 <!-- LAB_FRAME_STYLES_END -->
 <link rel="stylesheet" href="./lab-kit.css" data-lab-resource="lab-kit.css">
+<!-- LAB_DESIGN_COMPONENTS -->
 </head>
-<body data-lab-layout="standard">
+<body class="lab-adopt-v3 lab-simulation sim-sound-sampling" data-lab-layout="standard">
 <main>
 <!-- LAB_MANIFEST_HEADER_START -->
 <header class="lab-manifest-header">
@@ -385,18 +386,29 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 <!-- LAB_MANIFEST_HEADER_END -->
 <span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span>
   <span data-lab-authored-subtitle-slot hidden></span>
-
-  <div class="examples">
+<section class="lab-activity-bar sim-top"><div class="lab-activity-task"><strong id="labTaskTitle">Compare sound detail with the storage cost of sampling.</strong></div><div class="sim-top-tools"><div class="play">
+        <button id="playRef" class="lab-action audio-button" aria-label="Play reference audio">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6 4.7v10.6L15 10 6 4.7Z"/></svg>
+          <span>Reference</span>
+        </button>
+        <button id="playDigital" class="lab-action audio-button primary" aria-label="Play digital audio" data-priority="primary">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6 4.7v10.6L15 10 6 4.7Z"/></svg>
+          <span>Digital</span>
+        </button>
+        <button id="stop" class="lab-action">Stop</button>
+      </div><div class="lab-toggle examples" data-kind="mode" data-active-class="active">
     <button class="example active" data-sound="ocean"><strong>Ocean wave</strong><span>broadband crash and surf</span></button>
     <button class="example" data-sound="bird"><strong>Bird chirp</strong><span>short high-frequency detail</span></button>
     <button class="example" data-sound="speech"><strong>Human speech</strong><span>natural recorded voice</span></button>
-  </div>
+  </div></div></section>
+
+
 
   <section class="panel">
-    <div class="controls">
+    <div class="sim-tool-row controls">
       <div class="field">
         <label for="rate">Sample rate</label>
-        <select id="rate">
+        <select id="rate" data-lab-intro="sound-rate" data-lab-intro-title="Compare sampling choices" data-lab-intro-copy="Change sample rate and resolution. Compare the reconstructed waveform and storage calculation, then listen to both versions.">
           <option value="500">500 Hz</option><option value="1000">1,000 Hz</option><option value="2000">2,000 Hz</option>
           <option value="4000">4,000 Hz</option><option value="8000" selected>8,000 Hz</option><option value="11025">11,025 Hz</option>
           <option value="22050">22,050 Hz</option><option value="44100">44,100 Hz</option>
@@ -413,50 +425,40 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
         <label class="toggle"><input id="linear" type="checkbox"> Linear smoothing</label>
         <label class="toggle"><input id="lowpass" type="checkbox"> Low-pass smoothing</label>
       </div>
-      <div class="play">
-        <button id="playRef" class="audio-button" aria-label="Play reference audio">
-          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6 4.7v10.6L15 10 6 4.7Z"/></svg>
-          <span>Reference</span>
-        </button>
-        <button id="playDigital" class="audio-button primary" aria-label="Play digital audio">
-          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6 4.7v10.6L15 10 6 4.7Z"/></svg>
-          <span>Digital</span>
-        </button>
-        <button id="stop">Stop</button>
-      </div>
+
     </div>
-    <div class="status" id="status"></div>
+
   </section>
 
-  <section class="panel wave-panel">
+  <section class="sim-composition panel wave-panel">
     <div class="wave-head">
       <div class="legend"><span><i class="ref"></i>Reference</span><span><i class="dig"></i>Digital reconstruction</span><span>Dots show stored samples</span></div>
       <div class="zoom-tools">
-        <button id="zoomOut" title="Show a longer section">Zoom out</button>
+        <button id="zoomOut" title="Show a longer section" class="lab-action">Zoom out</button>
         <span class="window-label" id="windowLabel"></span>
-        <button id="zoomIn" title="Show a shorter section">Zoom in</button>
-        <button id="fullView">Full clip</button>
+        <button id="zoomIn" title="Show a shorter section" class="lab-action">Zoom in</button>
+        <button id="fullView" class="lab-action">Full clip</button>
       </div>
     </div>
 
     <div class="canvas-wrap">
       <canvas id="wave" width="1100" height="500" aria-label="Reference waveform and sampled digital reconstruction" data-lab-role="model"></canvas>
-      <span class="axis-hint">Quantised amplitude · Hover a label or dot to see its stored value.</span>
+      <span class="sim-legacy axis-hint">Quantised amplitude · Hover a label or dot to see its stored value.</span>
       <div id="waveTooltip" class="wave-tooltip" role="status" aria-live="polite"></div>
     </div>
 
     <div class="overview-wrap">
-      <button id="prev" class="navbtn">Earlier</button>
-      <canvas id="overview" width="1000" height="72" role="slider" tabindex="0" aria-label="Position of the selected section in the whole clip" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50"></canvas>
-      <button id="next" class="navbtn">Later</button>
+      <button id="prev" class="lab-action navbtn">Earlier</button>
+      <canvas id="overview" width="1000" height="72" role="slider" tabindex="0" aria-label="Position of the selected section in the whole clip" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50" data-lab-intro="sound-window" data-lab-intro-title="Inspect a section" data-lab-intro-copy="Drag the selected timeline section or use the arrow keys. Zoom in to inspect individual stored samples."></canvas>
+      <button id="next" class="lab-action navbtn">Later</button>
     </div>
 
-    <div class="sample-readout">
+
+    <div class="footer" id="sourceNote"></div>
+  <aside id="labEvidence" class="lab-sidebar" aria-label="Evidence and method"><section class="lab-evidence-card"><h2>Sampling and storage</h2><div class="status" id="status"></div></section><section class="lab-evidence-card"><h2>Stored sample values</h2><div class="sample-readout">
       <strong id="visibleSamples">0 samples visible</strong>
       <span class="bits" id="bits"></span>
-    </div>
-    <div class="footer" id="sourceNote"></div>
-  </section>
+    </div></section></aside></section>
 </main>
 
 <script src="./lab-kit.js" data-lab-resource="lab-kit.js"></script>
@@ -563,7 +565,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 
   function resizeCanvas(canvas,cssHeight){
     const dpr=window.devicePixelRatio||1;
-    const w=Math.max(320,canvas.clientWidth);
+    const w=Math.max(1,canvas.clientWidth);
     const h=cssHeight;
     if(canvas.width!==Math.round(w*dpr)||canvas.height!==Math.round(h*dpr)){
       canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);
@@ -624,7 +626,7 @@ amplitude ${amp.toFixed(4)}`;
 
     // Axis labels use actual binary quantization words.
     const reps=representativeLevels(p.levels,p.bits);
-    ctx.font="11px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace";
+    ctx.font="12px "+getComputedStyle(document.body).fontFamily;
     ctx.textAlign="right";ctx.textBaseline="middle";
     for(const q of reps){
       const amp=q/(p.levels-1)*2-1;
@@ -646,7 +648,7 @@ amplitude ${amp.toFixed(4)}`
     ctx.beginPath();ctx.moveTo(left,h-bottom);ctx.lineTo(w-right,h-bottom);ctx.stroke();
 
     // Time labels.
-    ctx.fillStyle="#77838c";ctx.textAlign="center";ctx.textBaseline="top";ctx.font="10px system-ui,sans-serif";
+    ctx.fillStyle="#77838c";ctx.textAlign="center";ctx.textBaseline="top";ctx.font="12px "+getComputedStyle(document.body).fontFamily;
     for(let i=0;i<=4;i++){
       const t=start+dur*i/4, x=left+pw*i/4;
       ctx.fillText(`${t.toFixed(dur<.1?3:2)} s`,x,h-bottom+7);
@@ -667,14 +669,14 @@ amplitude ${amp.toFixed(4)}`
     }
 
     drawSeries(p.src,"#7c8790",1.4,.75);
-    drawSeries(p.recon,"#2865d8",2.2,1);
+    drawSeries(p.recon,getComputedStyle(document.body).getPropertyValue("--lab-accent").trim() || "#5277b8",2.2,1);
 
     // Stored sample points in the current view. Limit dots only for legibility.
     const s0=Math.max(0,Math.ceil(start*p.rate));
     const s1=Math.min(p.values.length-1,Math.floor(end*p.rate));
     const n=s1-s0+1;
     const dotStep=Math.max(1,Math.ceil(n/260));
-    ctx.fillStyle="#2865d8";
+    ctx.fillStyle=getComputedStyle(document.body).getPropertyValue("--lab-accent").trim() || "#5277b8";
     for(let i=s0;i<=s1;i+=dotStep){
       const t=i/p.rate, x=xFromTime(t), y=yFromAmp(p.values[i]);
       ctx.beginPath();ctx.arc(x,y,3,0,Math.PI*2);ctx.fill();
@@ -719,8 +721,8 @@ amplitude ${amp.toFixed(4)}`
     ctx.stroke();
     const {start,end}=viewBounds();
     const x0=start/p.duration*w, x1=end/p.duration*w;
-    ctx.fillStyle="rgba(40,101,216,.12)";ctx.fillRect(x0,0,Math.max(2,x1-x0),h);
-    ctx.strokeStyle="#2865d8";ctx.lineWidth=2;ctx.strokeRect(x0+1,1,Math.max(1,x1-x0-2),h-2);
+    ctx.fillStyle="rgba(82,119,184,.12)";ctx.fillRect(x0,0,Math.max(2,x1-x0),h);
+    ctx.strokeStyle=getComputedStyle(document.body).getPropertyValue("--lab-accent").trim() || "#5277b8";ctx.lineWidth=2;ctx.strokeRect(x0+1,1,Math.max(1,x1-x0-2),h-2);
     canvas.setAttribute("aria-valuenow",String(Math.round(viewCenter/p.duration*100)));
     canvas.setAttribute("aria-valuetext",`${viewCenter.toFixed(2)} seconds into a ${p.duration.toFixed(2)} second clip`);
   }

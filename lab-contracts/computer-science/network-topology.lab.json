@@ -1,9 +1,96 @@
 {
   "schemaVersion": 1,
   "relationship": "Constructing a topology and sending a packet connects physical links to connectivity and packet journey outcomes.",
-  "learnerLoop": { "action": "Move nodes, add or remove cables, check the topology and send a packet.", "modelChange": "The network graph and selectable packet path change.", "evidence": "The canvas, feedback and journey text show whether the topology and transfer work.", "nextDecision": "Rewire the graph or choose another source and destination." },
-  "invariants": ["Topology checks and packet journeys use the current set of nodes and links.", "Each visible cable represents a connection in the graph."],
-  "safeAdaptations": ["Change topology challenges, node labels or prompts while retaining editable graph construction and packet testing."],
-  "nonGoals": ["Providing a production network simulator or configuration tool."],
-  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+  "learnerLoop": {
+    "action": "Move nodes, add or remove cables, check the topology and send a packet.",
+    "modelChange": "The network graph and selectable packet path change.",
+    "evidence": "The canvas, feedback and journey text show whether the topology and transfer work.",
+    "nextDecision": "Rewire the graph or choose another source and destination."
+  },
+  "invariants": [
+    "Topology checks and packet journeys use the current set of nodes and links.",
+    "Each visible cable represents a connection in the graph."
+  ],
+  "safeAdaptations": [
+    "Change topology challenges, node labels or prompts while retaining editable graph construction and packet testing."
+  ],
+  "nonGoals": [
+    "Providing a production network simulator or configuration tool."
+  ],
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract",
+  "implementation": {
+    "reviewedRevision": "53e0d238e961f19f0539a906917566411842a63a",
+    "surfaces": {
+      "task": {
+        "selectors": [
+          "#missionTitle",
+          "#taskTabs"
+        ],
+        "kind": "given",
+        "description": "Construct the selected Bus, Star, Mesh or Hybrid network.",
+        "visibility": "Present throughout; content follows the current simulation state."
+      },
+      "model": {
+        "selectors": [
+          "#canvas",
+          "#nodeLayer",
+          "#linkSvg"
+        ],
+        "kind": "model",
+        "description": "Placed parts, selected cables and travelling packet routes.",
+        "visibility": "Present throughout; content follows the current simulation state."
+      },
+      "construction": {
+        "selectors": [
+          "#partList",
+          "#moveTool",
+          "#cableTool",
+          "#deleteTool",
+          "#undoButton"
+        ],
+        "kind": "control",
+        "description": "Part palette and keyboard/pointer placement, movement, linking, deletion and undo.",
+        "visibility": "Present throughout; content follows the current simulation state."
+      },
+      "evidence": {
+        "selectors": [
+          "#feedback",
+          "#testPanel",
+          ".teaching-note"
+        ],
+        "kind": "evidence",
+        "description": "Topology validation, packet test and network forwarding explanation.",
+        "visibility": "Packet controls appear after a valid construction."
+      }
+    },
+    "quantities": {
+      "parts": {
+        "description": "Placed network parts and their connectivity.",
+        "domain": "Task-specific limits on stations, bus cables, switches and bridges.",
+        "source": "Part palette and graph-editing actions.",
+        "output": "Part counts, model and construction checks."
+      },
+      "route": {
+        "description": "Selected packet source/destination and path.",
+        "domain": "Reachable graph path under the current topology.",
+        "source": "Packet test after validation.",
+        "output": "Highlighted edges and journey description."
+      }
+    },
+    "modes": {
+      "tasks": "Bus and star require at least four stations; mesh checks direct pairwise links; Hybrid allows mixed existing structures and optional mesh layer.",
+      "tools": "Move, Cable and Delete; reset and undo alter the graph.",
+      "support": "No Working or exam toggle."
+    },
+    "dependencies": [
+      "Task-specific counts and connection rules must pass before the packet test is shown.",
+      "Changing the network invalidates the prior validation.",
+      "Routing uses the constructed graph rather than a canned decorative path."
+    ],
+    "completion": "Check topology records a valid task and enables packet testing; it can be edited and checked again.",
+    "limitations": [
+      "Simplified forwarding and part limits; not physical network provisioning.",
+      "Node IDs and palette cards are generated."
+    ]
+  }
 }

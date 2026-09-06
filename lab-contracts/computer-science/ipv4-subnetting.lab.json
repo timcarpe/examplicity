@@ -1,9 +1,101 @@
 {
   "schemaVersion": 1,
   "relationship": "Grouping departments into local networks connects subnet design to the broadcast and routing consequences in two scenarios.",
-  "learnerLoop": { "action": "Play the network story, edit department groups and apply a subnet design.", "modelChange": "The draft and applied subnet arrangement change.", "evidence": "Story steps, metrics and the network view show the design's effects.", "nextDecision": "Move a department or compare the before-subnetting and designed-network outcomes." },
-  "invariants": ["Applied metrics reflect the selected scenario and subnet arrangement.", "The learner can return from the draft grouping to revise it."],
-  "safeAdaptations": ["Change organisation stories, department names or guidance while preserving editable grouping and consequence comparison."],
-  "nonGoals": ["Replacing an IP address-planning or router configuration tool."],
-  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+  "learnerLoop": {
+    "action": "Play the network story, edit department groups and apply a subnet design.",
+    "modelChange": "The draft and applied subnet arrangement change.",
+    "evidence": "Story steps, metrics and the network view show the design's effects.",
+    "nextDecision": "Move a department or compare the before-subnetting and designed-network outcomes."
+  },
+  "invariants": [
+    "Applied metrics reflect the selected scenario and subnet arrangement.",
+    "The learner can return from the draft grouping to revise it."
+  ],
+  "safeAdaptations": [
+    "Change organisation stories, department names or guidance while preserving editable grouping and consequence comparison."
+  ],
+  "nonGoals": [
+    "Replacing an IP address-planning or router configuration tool."
+  ],
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract",
+  "implementation": {
+    "reviewedRevision": "53e0d238e961f19f0539a906917566411842a63a",
+    "surfaces": {
+      "task": {
+        "selectors": [
+          "#lessonTitle",
+          "#progressDots",
+          "#scenarioControls"
+        ],
+        "kind": "given",
+        "description": "Compare a flat broadcast domain with a learner-grouped subnet design.",
+        "visibility": "Present throughout; content follows the current simulation state."
+      },
+      "model": {
+        "selectors": [
+          "#networkCanvas",
+          "#ipStage"
+        ],
+        "kind": "model",
+        "description": "Department nodes, broadcast boundaries, routing and optional IP packet decisions.",
+        "visibility": "Present throughout; content follows the current simulation state."
+      },
+      "planner": {
+        "selectors": [
+          "#lockedPlanner",
+          "#departmentBank",
+          ".builder"
+        ],
+        "kind": "control",
+        "description": "Gated placement of departments into subnet groups and optional address allocations.",
+        "visibility": "Locked until a baseline traffic story completes; builder is generated from draft groups."
+      },
+      "evidence": {
+        "selectors": [
+          "#storyCard",
+          ".metrics",
+          ".takeaway"
+        ],
+        "kind": "evidence",
+        "description": "Current packet decision, interrupted device counts, router forwarding and boundary explanation.",
+        "visibility": "Present throughout; content follows the current simulation state."
+      }
+    },
+    "quantities": {
+      "departments": {
+        "description": "Device demand assigned to subnet groups.",
+        "domain": "Admin 10, Classrooms 28, Media 12, IoT 18 and Servers 4.",
+        "source": "Fixed department model plus learner placements.",
+        "output": "Subnet zones and allocation summary."
+      },
+      "allocation": {
+        "description": "Address blocks for the selected groups.",
+        "domain": "Two to four nonempty groups; smallest fitting CIDR blocks, including gateway demand.",
+        "source": "Draft assignments and address-allocation functions.",
+        "output": "Optional address details and router interface reads."
+      },
+      "traffic": {
+        "description": "Devices interrupted and router forwards during a story.",
+        "domain": "Whole-number counts accumulated across the selected path.",
+        "source": "Noisy sensor or server request story.",
+        "output": ".metrics and network packet states."
+      }
+    },
+    "modes": {
+      "view": "Before subnetting and Your design; the design is gated by baseline completion.",
+      "story": "Noisy sensor or Find the server. Next/Play slowly share the same steps.",
+      "ip": "Optional IP walkthrough reveals mask/AND, local-versus-gateway and frame decisions.",
+      "support": "No None/Some/All or exam mapping toggle."
+    },
+    "dependencies": [
+      "Finish either baseline story to unlock planning.",
+      "All five departments must be assigned to two to four nonempty groups before applying.",
+      "The applied layout determines subsequent broadcast and routed request evidence."
+    ],
+    "completion": "Each traffic story finishes at its last decision; learners can revise an applied design and rerun the comparison.",
+    "limitations": [
+      "Fixed campus demands and simplified teaching traffic.",
+      "Address/IP details are optional views, not qualification mappings."
+    ]
+  }
 }
