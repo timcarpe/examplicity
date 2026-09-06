@@ -738,3 +738,29 @@ popup when placing or selecting a flowchart item: it edits the item rather than
 narrating the simulation. Keep normal panel-body padding above the working card.
 This is a simulation-specific alternative, not a replacement for targeted tooltips
 elsewhere.
+
+### Guided computing and programming workbenches
+
+Use the shared lab-cs-review adapter for guided computing investigations and add
+lab-programming for code workspaces. Preserve meaningful compositions: paired
+languages, lesson/editor/console, code/stack/returns, or circuit/state trace.
+A growing stack needs readable frames and vertical page growth rather than
+shrinking its data. Code, lesson navigation, console and trace panes can retain
+useful scrolling; operated diagrams should fit without internal canvas scrolling.
+
+Code inputs, syntax overlays and line-number gutters use the same 14px monospace
+font and 24px line height. Their padding and scrolling must remain aligned.
+Header/footer rows size to their buttons instead of fixed heights that clip them.
+Keep ordinary code tokens regular weight. Keep prediction before dependent
+controls in the working area; retain equations, live evidence and necessary
+constraints, while moving repeated commands into first-use target hints.
+
+Use data-lab-actions on containers of regenerated action buttons to adopt shared
+button styling. Existing primary class marks the principal action; actual modes
+still use lab-toggle. This adapter changes presentation, not action or mode state.
+Shared resources are embedded by publication and standalone download compilation.
+
+Recursive Call Stacks retains its reviewed successive Observe Total(4), Some
+Total(5), and All Total(6) exercises, with Try some/all working invitations.
+This is an example of preserving an intentional learning sequence; it does not
+change the standard None / Some / All visibility toggle for a single case.

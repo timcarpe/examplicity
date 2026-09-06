@@ -1,9 +1,101 @@
 {
   "schemaVersion": 1,
   "relationship": "Exploring classified points connects threshold and weight choices to a neuron's decision boundary and its XOR limit.",
-  "learnerLoop": { "action": "Adjust the threshold θ and input weights for classified points.", "modelChange": "Weighted sums, threshold comparisons, binary outputs and the linear decision boundary update together.", "evidence": "The plot, formula and selected-point calculation show how each parameter change affects classification.", "nextDecision": "Adjust another parameter to test the classifications, or use the geometry to explain why one neuron cannot solve XOR." },
-  "invariants": ["The weighted sums, threshold comparisons, binary outputs and displayed decision boundary describe the same parameter state.", "The XOR conclusion remains grounded in the plotted classifications and the linear boundary available to a single neuron."],
-  "safeAdaptations": ["Change point stories, activity order, guidance or access to open exploration while preserving threshold and weight manipulation, visible calculation evidence and the single-neuron limitation."],
-  "nonGoals": ["Training a production neural network or covering multi-layer architectures."],
-  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+  "learnerLoop": {
+    "action": "Adjust the threshold θ and input weights for classified points.",
+    "modelChange": "Weighted sums, threshold comparisons, binary outputs and the linear decision boundary update together.",
+    "evidence": "The plot, formula and selected-point calculation show how each parameter change affects classification.",
+    "nextDecision": "Adjust another parameter to test the classifications, or use the geometry to explain why one neuron cannot solve XOR."
+  },
+  "invariants": [
+    "The weighted sums, threshold comparisons, binary outputs and displayed decision boundary describe the same parameter state.",
+    "The XOR conclusion remains grounded in the plotted classifications and the linear boundary available to a single neuron."
+  ],
+  "safeAdaptations": [
+    "Change point stories, activity order, guidance or access to open exploration while preserving threshold and weight manipulation, visible calculation evidence and the single-neuron limitation."
+  ],
+  "nonGoals": [
+    "Training a production neural network or covering multi-layer architectures."
+  ],
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract",
+  "implementation": {
+    "reviewedRevision": "f41e835aaa61cb67c5039a4a38a4bf3a8abc17d8",
+    "surfaces": {
+      "task": {
+        "kind": "given",
+        "selectors": [
+          "#plotHeading",
+          "#plotHint",
+          "#predictionQuestion"
+        ],
+        "description": "Current target pattern and prediction before parameter manipulation.",
+        "visibility": "Visible in the corresponding lesson, simulation or result state."
+      },
+      "controls": {
+        "kind": "control",
+        "selectors": [
+          "#predictionChoices",
+          "#w1Track",
+          "#w2Track",
+          "#thetaTrack",
+          "#modeSwitch",
+          "#progressRail"
+        ],
+        "description": "Predict, move unlocked parameter bars, select the guided relationship or unlock free exploration.",
+        "visibility": "Visible in the corresponding lesson, simulation or result state."
+      },
+      "model": {
+        "kind": "model",
+        "selectors": [
+          "#plot",
+          "#neuronFlow"
+        ],
+        "description": "Decision line, fixed binary points and selected weighted-sum/threshold calculation.",
+        "visibility": "Visible in the corresponding lesson, simulation or result state."
+      },
+      "evidence": {
+        "kind": "evidence",
+        "selectors": [
+          "#workingRegion",
+          "#evidenceBody",
+          "#phaseModal"
+        ],
+        "description": "Prediction evidence, all four outputs versus targets, relationship insights and geometric XOR proof.",
+        "visibility": "Visible in the corresponding lesson, simulation or result state."
+      }
+    },
+    "quantities": {
+      "parameters": {
+        "description": "Weights and threshold.",
+        "domain": "w1/w2 from -2 to 3; theta from -1 to 3; 0.1 steps.",
+        "source": "Unlocked draggable/keyboard parameter bars.",
+        "output": "z=w1*x1+w2*x2, output 1 when z≥theta and the boundary.",
+        "inputSlots": [
+          "#w1Track",
+          "#w2Track",
+          "#thetaTrack"
+        ]
+      },
+      "inputs": {
+        "description": "Fixed binary input coordinates.",
+        "domain": "A=(0,0), B=(0,1), C=(1,0), D=(1,1).",
+        "source": "Select a point or table row.",
+        "output": "Selected calculation; all four output comparisons remain visible."
+      }
+    },
+    "modes": {
+      "progression": "Threshold with fixed weights; weight influence with fixed w2/theta; XOR limit; then Explore unlocks all parameters and task navigation.",
+      "support": "Prediction precedes dependent controls; no invented Working levels."
+    },
+    "dependencies": [
+      "Threshold target is B/C/D=1 and A=0; weight target is C/D=1 and A/B=0.",
+      "XOR target B/C=1 and A/D=0 cannot be separated by one straight line. Evidence counts distinct output patterns, not all distinct parameter settings.",
+      "After enough output patterns, the crossing-diagonal explanation establishes the limit and unlocks Explore.",
+      "Dragging preserves pickup offset rather than jumping to a track-edge value."
+    ],
+    "completion": "Threshold and weight targets achieved, then XOR geometric proof inspected.",
+    "limitations": [
+      "One idealised threshold neuron with fixed binary points; no training algorithm or multilayer network."
+    ]
+  }
 }

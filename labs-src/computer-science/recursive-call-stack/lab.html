@@ -649,8 +649,9 @@ body>main{width:min(1200px,calc(100% - 24px))}
 
 </style>
 
+<!-- LAB_DESIGN_COMPONENTS -->
 </head>
-<body data-lab-layout="standard">
+<body data-lab-layout="standard" class="lab-adopt-v3 lab-computing lab-cs-review cs-recursive-call-stack">
 <main>
 <!-- LAB_MANIFEST_HEADER_START -->
 <header class="lab-manifest-header">
@@ -666,18 +667,23 @@ body>main{width:min(1200px,calc(100% - 24px))}
 <span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span>
 <span data-lab-authored-subtitle-slot hidden></span>
 
-<section class="mission panel" aria-labelledby="missionTitle">
-  <div class="mission-copy">
+<section class="mission panel lab-activity-bar" aria-labelledby="missionTitle" >
+  <div class="mission-copy lab-activity-task" >
     <div class="mission-meta"><span class="mode" id="modeLabel">Example 1 · Observe</span><span id="phaseLabel">Observe calls</span></div>
     <strong id="missionTitle">Trace <code>Total(4)</code> without losing any value of <code>n</code>.</strong>
     <span id="missionHint">No working yet. Start with Step and watch what stays in memory when a recursive call is made.</span>
-    <div id="progressRail" class="phase-rail" aria-label="Relationships observed">
+    <div id="progressRail" hidden class="phase-rail" aria-label="Relationships observed">
       <span data-evidence="call"><b></b> call → push frame</span>
       <span data-evidence="base"><b></b> base → return 0</span>
       <span data-evidence="return"><b></b> return → pop + transfer</span>
       <span data-evidence="termination"><b></b> reachability → termination</span>
     </div>
-    <div id="ruleControls" class="rule-controls" hidden>
+
+  </div>
+  <div id="checkpointDots"></div>
+</section>
+
+<div class="lab-computing-tools"><div id="ruleControls" class="rule-controls" hidden>
       <div class="rule-field start-field">
         <span>Starting argument</span>
         <div class="start-control">
@@ -688,31 +694,27 @@ body>main{width:min(1200px,calc(100% - 24px))}
       </div>
       <div class="rule-field">
         <span>Recursive call</span>
-        <div class="segmented" role="group" aria-label="Amount subtracted on each recursive call">
+        <div class="segmented lab-toggle" data-kind="mode" role="group" aria-label="Amount subtracted on each recursive call">
           <button type="button" data-decrement="1">n − 1</button>
           <button type="button" data-decrement="2">n − 2</button>
         </div>
       </div>
       <div class="rule-field">
         <span>Base test</span>
-        <div class="segmented" role="group" aria-label="Base case condition">
+        <div class="segmented lab-toggle" data-kind="mode" role="group" aria-label="Base case condition">
           <button type="button" data-base="eq">n = 0</button>
           <button type="button" data-base="le">n ≤ 0</button>
         </div>
       </div>
-    </div>
-  </div>
-  <div class="mission-actions">
-    <button id="stepButton" class="primary" type="button">Step</button>
-    <button id="runButton" class="play-button" type="button" disabled>
+    </div><div class="mission-actions">
+    <button id="stepButton" class="primary lab-action" type="button" data-priority="primary">Step</button>
+    <button id="runButton" class="play-button lab-action" type="button" disabled>
       <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.7v10.6L13 8z"></path></svg>
       <span>Run</span>
     </button>
-    <button id="experimentButton" type="button" hidden>Test a base-case rule</button>
-    <button id="resetButton" type="button" data-lab-action="reset">Reset</button>
-  </div>
-</section>
-
+    <button id="experimentButton" type="button" hidden class="lab-action">Test a base-case rule</button>
+    <button id="resetButton" type="button" data-lab-action="reset" class="lab-action">Reset</button>
+  </div></div>
 <section class="lab panel" aria-label="Recursive execution model">
   <div class="workspace">
     <section class="code-side" aria-labelledby="codeHeading">
@@ -786,10 +788,10 @@ body>main{width:min(1200px,calc(100% - 24px))}
             <span id="insightCopy" class="insight-copy"></span>
             <div id="insightFacts" class="insight-facts" hidden></div>
             <div id="insightFeedback" class="insight-feedback" hidden data-lab-role="evidence"></div>
-            <div id="insightActions" class="insight-actions" hidden></div>
+            <div id="insightActions" class="insight-actions" data-lab-actions hidden></div>
           </div>
           <div id="ledgerList"></div>
-          <button id="readyUnwindButton" class="working-ready primary" type="button" hidden disabled>Check return values</button>
+          <button id="readyUnwindButton" class="working-ready primary lab-action" type="button" hidden disabled data-priority="primary">Check return values</button>
         </aside>
       </div>
     </section>
@@ -824,7 +826,7 @@ body>main{width:min(1200px,calc(100% - 24px))}
     <div id="modalFacts" class="modal-facts" hidden></div>
     <div id="modalRealisation" class="modal-realisation" hidden></div>
     <div id="modalFeedback" class="modal-feedback" hidden></div>
-    <div id="modalActions" class="modal-actions"></div>
+    <div id="modalActions" class="modal-actions" data-lab-actions></div>
   </section>
 </div>
 
@@ -1273,6 +1275,7 @@ body>main{width:min(1200px,calc(100% - 24px))}
       return: ordinaryReturned || state.guideStage === "complete" || (state.mode === "explore" && snapshot?.output !== null),
       termination: state.mode === "explore" && (state.sawOverflow || state.repairedAfterOverflow)
     };
+    LabDesign.checkpoints(document.getElementById('checkpointDots'),['Call pushes a frame','Base case returns','Return pops the frame','Base-case reachability'],['call','base','return','termination'].findIndex(k=>!observed[k]),i=>observed[['call','base','return','termination'][i]]);
     let active = state.mode === "explore" ? "termination" : state.guideStage === "build" ? "call" : state.guideStage === "baseChoice" ? "base" : ["working", "unwind"].includes(state.guideStage) ? "return" : null;
     [...els.progressRail.querySelectorAll("[data-evidence]")].forEach((node) => {
       const key = node.dataset.evidence;
@@ -1449,7 +1452,7 @@ body>main{width:min(1200px,calc(100% - 24px))}
         const returns = snapshot.completed.map((item) => `F${item.id}`).join(" → ");
         if (observeOnly) {
           setInsight({ kind: "success", kicker: "Worked example complete", title: "You have seen the whole call-and-return relationship without doing any working.", copy: "Each caller kept its own n, the base returned 0, and the stack then unwound in reverse order. Take on a small part of the next example when ready.", facts: [`output ${snapshot.output}`, `return order ${returns}`], actions: [
-            { label: "Take on some working", primary: true, onClick: startSomeWorking }
+            { label: "Try some working", primary: true, onClick: startSomeWorking }
           ] });
         } else {
           const required = requiredPredictionCount();
@@ -1457,7 +1460,7 @@ body>main{width:min(1200px,calc(100% - 24px))}
           const success = workingSucceeded(snapshot);
           if (someWorking) {
             setInsight({ kind: success ? "success" : "attention", kicker: success ? "Some working complete" : "Use the checked evidence", title: success ? "Both return values matched the real unwind." : `${matched} of ${required} return values matched the real unwind.`, copy: success ? "You used the saved frame values successfully without taking on the whole calculation. The next example removes that support." : "The actual arithmetic remains beside your entries. Compare them, then try the same amount of working again.", facts: [`output ${snapshot.output}`, `${matched} of ${required} matched`], actions: success ? [
-              { label: "Take on all working", primary: true, onClick: startAllWorking }
+              { label: "Try all working", primary: true, onClick: startAllWorking }
             ] : [
               { label: "Try some working again", primary: true, onClick: startSomeWorking }
             ] });
@@ -1536,7 +1539,8 @@ body>main{width:min(1200px,calc(100% - 24px))}
     const snapshot = current();
     if (!snapshot) return;
     const frameCount = snapshot.frames.length;
-    const frameHeight = Math.min(88, Math.max(48, Math.floor((454 - Math.max(0, frameCount - 1) * 6) / Math.max(1, frameCount))));
+    const frameHeight = 106;
+    els.stackMemory.style.height = `${Math.max(500,frameCount*(frameHeight+6)+64)}px`;
     els.stackFrames.style.setProperty("--frame-height", `${frameHeight}px`);
     els.stackFrames.innerHTML = snapshot.frames.map((frame) => renderFrame(frame, frameCount)).join("");
     if (animatePush && !prefersReducedMotion) els.stackFrames.querySelector(".stack-frame.active:last-of-type")?.classList.add("call-pulse");
@@ -1864,15 +1868,16 @@ body>main{width:min(1200px,calc(100% - 24px))}
   function renderGuide() {
     document.querySelectorAll(".lab-guide-target").forEach((node) => node.classList.remove("lab-guide-target"));
     els.guide.hidden = true;
-    if (!state.guide) return;
+    if (!state.guide) { LabDesign.introduce(document.querySelector("main"),[],"","",""); return; }
     const nodes = guideNodes(state.guide.key).filter((node) => node && !node.hidden && !node.disabled && node.getClientRects().length);
     if (!nodes.length) return;
     if (state.guide.key === "predictions") {
+      LabDesign.introduce(document.querySelector("main"),[nodes.find(n=>!n.value?.trim())||nodes[0]],"recursion-predictions-"+state.workingLevel,"Predict the return values","Use each saved n and its child return. Enter the yellow fields before checking the unwind.");
       const firstMissing = nodes.find((node) => !node.value?.trim()) || nodes[0];
       firstMissing?.classList.add("lab-guide-target");
       return;
     }
-    nodes[0]?.classList.add("lab-guide-target");
+    LabDesign.introduce(document.querySelector('main'),[nodes[0]],'recursion-'+state.guide.key+'-'+state.workingLevel,state.guide.title||'Trace the next change',state.guide.copy);
   }
 
   function showIntroModal() {

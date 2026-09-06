@@ -506,8 +506,9 @@ button:disabled{opacity:.45;cursor:not-allowed}
 }
 </style>
 </style>
+<!-- LAB_DESIGN_COMPONENTS -->
 </head>
-<body data-lab-layout="standard">
+<body data-lab-layout="standard" class="lab-adopt-v3 lab-computing lab-cs-review cs-logic-circuit-flip-flop">
 <main>
 <!-- LAB_MANIFEST_HEADER_START -->
 <header class="lab-manifest-header">
@@ -530,21 +531,26 @@ button:disabled{opacity:.45;cursor:not-allowed}
 <span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span>
 <span data-lab-authored-subtitle-slot hidden></span>
 
-<section class="mission panel" aria-labelledby="mission-title">
-  <div class="mission-copy">
+<section class="mission panel lab-activity-bar" aria-labelledby="mission-title" >
+  <div class="mission-copy lab-activity-task" >
     <span id="mission-kicker" class="mission-kicker">Investigation</span>
     <strong id="mission-title">Find what feedback stores, where SR fails, and how JK changes the same 11 input.</strong>
     <span id="mission-hint">Work directly on the circuit. The next modal appears only when the state trace contains new evidence.</span>
   </div>
-  <div class="mission-tools" aria-label="Relationships established">
+  <div class="mode-switch lab-toggle" data-kind="mode" data-active-class="active" role="group" aria-label="Current circuit type">
+          <button id="mode-sr" class="mode-button active" type="button" aria-pressed="true" disabled>SR latch</button>
+          <button id="mode-jk" class="mode-button" type="button" aria-pressed="false" disabled>JK flip-flop</button>
+        </div>
+<div class="mission-tools" aria-label="Relationships established">
     <span id="evidence-one" class="evidence-chip">Feedback</span>
     <span id="evidence-zero" class="evidence-chip">Memory</span>
     <span id="evidence-invalid" class="evidence-chip">SR 11</span>
     <span id="evidence-jk" class="evidence-chip">JK toggle</span>
-    <button id="reset-lab" class="quiet-button" type="button" data-lab-action="reset">Reset lab</button>
+    </div><div id="milestoneDots"></div><div hidden>
   </div>
 </section>
 
+<div class="lab-computing-tools"><button id="reset-lab" class="quiet-button lab-action" type="button" data-lab-action="reset">Reset lab</button></div>
 <section class="lab panel" data-lab-workspace aria-label="Flip-flop investigation">
   <div class="workspace">
     <section class="stage-side" aria-labelledby="visual-title">
@@ -553,10 +559,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
           <strong id="visual-title">One storage cell, with every live signal visible</strong>
           <span id="visual-subtitle">The two NOR outputs feed back into each other. Current inputs alone do not determine the stored bit.</span>
         </div>
-        <div class="mode-switch" role="group" aria-label="Current circuit type">
-          <button id="mode-sr" class="mode-button active" type="button" aria-pressed="true" disabled>SR latch</button>
-          <button id="mode-jk" class="mode-button" type="button" aria-pressed="false" disabled>JK flip-flop</button>
-        </div>
+
         <div id="mobile-state-chip" class="mobile-state-chip"><span>Stored Q</span><strong id="mobile-state-bit">0</strong></div>
       </div>
 
@@ -673,12 +676,12 @@ button:disabled{opacity:.45;cursor:not-allowed}
             <text id="state-complement" class="state-caption" x="812" y="317">Q̅ = 1</text>
           </g>
         </svg>
-        <section id="phase-modal" class="phase-modal" data-placement="top-left" role="dialog" aria-labelledby="phase-title" aria-describedby="phase-body" aria-live="polite">
+        <section id="phase-modal" class="phase-modal next-card" data-placement="top-left" role="dialog" aria-labelledby="phase-title" aria-describedby="phase-body" aria-live="polite">
           <span id="phase-kicker" class="phase-kicker">Build the first evidence</span>
           <strong id="phase-title">Use S to create Q = 1, then return S to 0.</strong>
           <p id="phase-body">Do both actions on the circuit so you can see whether feedback keeps the 1 when neither external input is active.</p>
           <div id="phase-content"></div>
-          <div id="phase-actions" class="phase-actions"></div>
+          <div id="phase-actions" class="phase-actions" data-lab-actions></div>
         </section>
         <div id="stage-caption" class="stage-caption" role="status" aria-live="polite">Both inputs are 0. Q begins at 0 and the feedback loop is holding that state.</div>
       </div>
@@ -724,8 +727,8 @@ button:disabled{opacity:.45;cursor:not-allowed}
             <div class="condition-option" data-condition="11"><code>11</code><span>Invalid</span></div>
           </div>
           <div class="control-actions">
-            <button id="return-hold" class="action-button" type="button" disabled>Return to 00 · hold</button>
-            <button id="release-together" class="action-button warn" type="button" hidden>Release both together</button>
+            <button id="return-hold" class="action-button lab-action" type="button" disabled>Return to 00 · hold</button>
+            <button id="release-together" class="action-button warn lab-action" type="button" hidden>Release both together</button>
           </div>
         </div>
 
@@ -745,7 +748,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
             <div class="condition-option" data-condition="11"><code>11</code><span>Toggle</span></div>
           </div>
           <div class="control-actions">
-            <button id="pulse-clock" class="clock-button primary" type="button">
+            <button id="pulse-clock" class="clock-button primary lab-action" type="button" data-priority="primary">
               <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M2 13h4V7h4v6h4V7h4"/></svg>
               Pulse rising clock edge
             </button>
@@ -761,7 +764,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
           <button id="predict-stay" class="prediction-choice" type="button">Stay at 1</button>
           <button id="predict-return" class="prediction-choice" type="button">Return to 0</button>
         </div>
-        <button id="prediction-submit" class="prediction-submit" type="button" disabled>Release S and observe</button>
+        <button id="prediction-submit" class="prediction-submit lab-action" type="button" disabled data-priority="primary">Release S and observe</button>
         <div id="prediction-result" class="prediction-result" hidden></div>
       </section>
 
@@ -1188,7 +1191,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
     if (p === "sr_store_one") return {
       k:"First investigation",
       t:"Use S to set Q = 1, then release S so you can test whether feedback stores the bit at S R = 00.",
-      b:"The state trace will keep both the driven SET state and the later HOLD state. The next modal appears only when that stored-state evidence exists.",
+      b:"Compare the SET and HOLD rows in the trace. Does Q change when S returns to 0?",
       a:[["work","Test the feedback","primary"]]
     };
     if (p === "sr_store_zero") return {
@@ -1268,7 +1271,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
         return;
       }
       state.modalOpen = false;
-      setCaption("Work directly on the circuit. The next modal will appear when the trace contains new milestone evidence.");
+      setCaption("Operate the highlighted input and compare the resulting trace rows.");
       render();
       return;
     }
@@ -1286,7 +1289,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
     const visible = Boolean(cfg && state.modalOpen);
     elements.phaseModal.hidden = !visible;
     if (!visible) return;
-    elements.phaseModal.className = `phase-modal ${cfg.kind || ""}`.trim();
+    elements.phaseModal.className = `phase-modal next-card ${cfg.kind || ""}`.trim();
     const placements = {
       sr_store_one:"top-left",
       sr_store_zero:"bottom-left",
@@ -1332,6 +1335,8 @@ button:disabled{opacity:.45;cursor:not-allowed}
   }
 
   function renderProgress() {
+    const done=[!!state.holdAfterSet,!!(state.holdAfterSet&&state.holdAfterReset),!!state.invalidSeen,state.jkToggleCount>=2||state.phase==='complete'||state.phase==='free'];
+    LabDesign.checkpoints(document.getElementById('milestoneDots'),['Feedback holds a 1','Same inputs hold either bit','SR 11 is invalid','JK 11 toggles on clock edges'],done.findIndex(x=>!x),i=>done[i]);
     elements.evidenceOne.classList.toggle("done", Boolean(state.holdAfterSet));
     elements.evidenceZero.classList.toggle("done", Boolean(state.holdAfterSet && state.holdAfterReset));
     elements.evidenceInvalid.classList.toggle("done", Boolean(state.invalidSeen));
@@ -1355,6 +1360,8 @@ button:disabled{opacity:.45;cursor:not-allowed}
     renderTrace();
     renderCompletion();
     renderProgress();
+    const target=state.modalOpen?null:({s:elements.svgSBlock,r:elements.svgRBlock,j:elements.svgJBlock,k:elements.svgKBlock,clock:elements.svgClockBlock})[taskTargets()[0]];
+    LabDesign.introduce(document.querySelector('.stage-shell'),target?[target]:[],'flip-'+state.phase,'Operate the circuit',state.phase==='jk_toggle'?'Set J and K, then pulse the rising clock edge. Watch which feedback path changes Q.':'Select the highlighted input to change its bit. Compare Q before and after in the trace.');
     renderPhaseModal();
   }
 

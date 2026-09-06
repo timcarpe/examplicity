@@ -191,6 +191,10 @@ window.LabDesign = {
     const key = card => card.id || [...card.querySelectorAll('input')].map(input => input.id || input.name || [...input.attributes].filter(a => a.name.startsWith('data-')).map(a => a.name + a.value).join(':')).join('|') || card.querySelector('.step-head,.derive-step-head,.work-step-head,.eyebrow,strong')?.textContent;
     function refresh() {
       queued = false;
+      document.querySelectorAll('[data-lab-actions] button').forEach(button => {
+        if (!button.classList.contains('lab-action')) button.classList.add('lab-action');
+        if (button.classList.contains('primary') && button.dataset.priority !== 'primary') button.dataset.priority = 'primary';
+      });
       document.querySelectorAll(cardSelector).forEach(card => {
         if (touched.has(key(card)) && card.dataset.interacted !== 'true') card.dataset.interacted = 'true';
       });

@@ -1,9 +1,102 @@
 {
   "schemaVersion": 1,
   "relationship": "Stepping a recursive rule connects each call frame to the stack, base case and return-value unwinding.",
-  "learnerLoop": { "action": "Set the starting value and rule, then step or run the call sequence.", "modelChange": "Frames are pushed and later unwound with return values.", "evidence": "The stack, code highlight, timeline and working predictions show the current call state.", "nextDecision": "Choose a base case or predict the next frame's returned value." },
-  "invariants": ["The timeline and stack represent the same recursive execution.", "Return-value checks refer to the currently active frames."],
-  "safeAdaptations": ["Change starting values, decrement rules or guidance while preserving visible calls, base case and unwinding."],
-  "nonGoals": ["Executing arbitrary recursive source code."],
-  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+  "learnerLoop": {
+    "action": "Set the starting value and rule, then step or run the call sequence.",
+    "modelChange": "Frames are pushed and later unwound with return values.",
+    "evidence": "The stack, code highlight, timeline and working predictions show the current call state.",
+    "nextDecision": "Choose a base case or predict the next frame's returned value."
+  },
+  "invariants": [
+    "The timeline and stack represent the same recursive execution.",
+    "Return-value checks refer to the currently active frames."
+  ],
+  "safeAdaptations": [
+    "Change starting values, decrement rules or guidance while preserving visible calls, base case and unwinding."
+  ],
+  "nonGoals": [
+    "Executing arbitrary recursive source code."
+  ],
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract",
+  "implementation": {
+    "reviewedRevision": "f41e835aaa61cb67c5039a4a38a4bf3a8abc17d8",
+    "surfaces": {
+      "task": {
+        "kind": "given",
+        "selectors": [
+          "#missionTitle",
+          "#ruleControls"
+        ],
+        "description": "Current Total example or editable base-case experiment.",
+        "visibility": "Visible in the corresponding lesson, simulation or result state."
+      },
+      "controls": {
+        "kind": "control",
+        "selectors": [
+          "#stepButton",
+          "#runButton",
+          "#resetButton",
+          "#startInput",
+          "#readyUnwindButton",
+          "#timelineInput"
+        ],
+        "description": "Step/run the trace, enter return predictions, check the return chain, change experiment rules and inspect the timeline.",
+        "visibility": "Visible in the corresponding lesson, simulation or result state."
+      },
+      "model": {
+        "kind": "model",
+        "selectors": [
+          "#codeList",
+          "#stackMemory"
+        ],
+        "description": "Code highlight and bottom-up frames retain saved n, smallerTotal and next operation.",
+        "visibility": "Visible in the corresponding lesson, simulation or result state."
+      },
+      "evidence": {
+        "kind": "evidence",
+        "selectors": [
+          "#workingPanel",
+          "#inlineInsight",
+          "#checkpointDots"
+        ],
+        "description": "Return calculations and predictions, causal observations and observed-relationship checkpoints.",
+        "visibility": "Visible in the corresponding lesson, simulation or result state."
+      }
+    },
+    "quantities": {
+      "argument": {
+        "description": "Starting argument n.",
+        "domain": "Guided examples 4, 5 and 6; experiment slider 1–7.",
+        "source": "Current example or starting-argument control.",
+        "output": "Pushed call frames and final output.",
+        "inputSlots": [
+          "#startInput"
+        ]
+      },
+      "rule": {
+        "description": "Recursive decrement and base predicate.",
+        "domain": "Subtract 1 or 2; base n=0 or n≤0; fixed return n+smallerTotal.",
+        "source": "Experiment rule controls.",
+        "output": "Reachability, finite return chain or visible overflow.",
+        "inputSlots": [
+          "#ruleControls"
+        ]
+      }
+    },
+    "modes": {
+      "progression": "Approved successive Observe Total(4), Some Total(5), All Total(6) examples, then base-case experiment.",
+      "working": "Observe supplies returns; Some asks two linked return predictions; All asks the six caller returns. Invitations start a new exercise rather than toggling visibility.",
+      "experiment": "Predict whether 5,3,1,-1,… reaches n=0, observe overflow, then change the rule and compare termination."
+    },
+    "dependencies": [
+      "Every recursive call pushes a frame without overwriting its caller; only the top frame runs.",
+      "Return values transfer to the waiting caller. Required working is recorded before the actual unwind checks it.",
+      "Some/All success enables the next invitation; incorrect entries retain actual evidence for a retry.",
+      "Frames gain height as the stack grows; readable code and frame values are preserved."
+    ],
+    "completion": "Observe yields 10, successful Some yields 15 and All yields 21; experiment then demonstrates unreachable and repaired base cases.",
+    "limitations": [
+      "A fixed recursive Total function and visible eight-frame teaching limit, not arbitrary code execution or a physical machine stack limit."
+    ]
+  }
 }

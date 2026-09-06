@@ -1,9 +1,103 @@
 {
   "schemaVersion": 1,
   "relationship": "Editing and running Python lesson code connects a challenge prompt to console output and automated checking.",
-  "learnerLoop": { "action": "Choose a lesson, edit or load code, run it and check the challenge.", "modelChange": "The active program, runtime state and challenge progress change.", "evidence": "The editor, console, status and checker feedback show what the code did.", "nextDecision": "Debug the program or progress to the next challenge." },
-  "invariants": ["Challenge feedback evaluates the current challenge code.", "Console evidence belongs to the active program run."],
-  "safeAdaptations": ["Change lesson examples, prompts or starter code while retaining editable execution and challenge checking."],
-  "nonGoals": ["Serving as a general-purpose Python development environment."],
-  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+  "learnerLoop": {
+    "action": "Choose a lesson, edit or load code, run it and check the challenge.",
+    "modelChange": "The active program, runtime state and challenge progress change.",
+    "evidence": "The editor, console, status and checker feedback show what the code did.",
+    "nextDecision": "Debug the program or progress to the next challenge."
+  },
+  "invariants": [
+    "Challenge feedback evaluates the current challenge code.",
+    "Console evidence belongs to the active program run."
+  ],
+  "safeAdaptations": [
+    "Change lesson examples, prompts or starter code while retaining editable execution and challenge checking."
+  ],
+  "nonGoals": [
+    "Serving as a general-purpose Python development environment."
+  ],
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract",
+  "implementation": {
+    "reviewedRevision": "f41e835aaa61cb67c5039a4a38a4bf3a8abc17d8",
+    "surfaces": {
+      "task": {
+        "kind": "given",
+        "selectors": [
+          "#lessonTitle",
+          "#lessonQuestion",
+          "#challengePrompt"
+        ],
+        "description": "Selected lesson question and current editable challenge.",
+        "visibility": "Visible in the corresponding lesson, simulation or result state."
+      },
+      "controls": {
+        "kind": "control",
+        "selectors": [
+          "#lessonSearch",
+          "#viewTabs",
+          "#codeEditor",
+          "#runExampleButton",
+          "#runButton",
+          "#checkButton",
+          "#consoleInput"
+        ],
+        "description": "Navigate lessons/examples/challenges, edit, execute, check and supply runtime input.",
+        "visibility": "Visible in the corresponding lesson, simulation or result state."
+      },
+      "model": {
+        "kind": "model",
+        "selectors": [
+          "#examplePane",
+          "#challengePane"
+        ],
+        "description": "Read-only examples and editable syntax-highlighted Python.",
+        "visibility": "Visible in the corresponding lesson, simulation or result state."
+      },
+      "evidence": {
+        "kind": "evidence",
+        "selectors": [
+          "#consoleOutput",
+          "#challengeStatus",
+          "#suiteProgress"
+        ],
+        "description": "Runtime output, challenge status and retained completion count.",
+        "visibility": "Visible in the corresponding lesson, simulation or result state."
+      }
+    },
+    "quantities": {
+      "source": {
+        "description": "Python program for the current challenge.",
+        "domain": "33 lessons with three challenges each; embedded offline Skulpt runtime.",
+        "source": "Example or learner edits.",
+        "output": "Console and fixed challenge checks.",
+        "inputSlots": [
+          "#codeEditor"
+        ]
+      },
+      "input": {
+        "description": "Runtime input text.",
+        "domain": "Values requested by the current program.",
+        "source": "Console input.",
+        "output": "Program output and runtime state.",
+        "inputSlots": [
+          "#consoleInput"
+        ]
+      }
+    },
+    "modes": {
+      "views": "Example code and Challenge 1/2/3; later challenges unlock after an attempt, not only a passing solution.",
+      "persistence": "Local progress and source persist; Export and Import transfer the saved work. Light/dark scheme retained.",
+      "support": "No Working toggle; examples and progressive challenge prompts provide existing support."
+    },
+    "dependencies": [
+      "Code input, highlight overlay and gutter use aligned typography and scrolling.",
+      "Run uses the embedded interpreter. Check evaluates supplied cases and applicable structural requirements; an attempt unlocks the next challenge.",
+      "Each lesson retains its own source, attempts and completion."
+    ],
+    "completion": "Individual challenges are marked completed by their existing checks; suite tracks 99 challenge completions.",
+    "limitations": [
+      "Fixed checks are not proof of general program correctness. Embedded Skulpt is a teaching Python runtime, not unrestricted CPython."
+    ]
+  }
 }

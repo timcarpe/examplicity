@@ -1,9 +1,93 @@
 {
   "schemaVersion": 1,
   "relationship": "Toggling latch inputs and testing a prediction connects current signals and stored history to flip-flop state.",
-  "learnerLoop": { "action": "Set input switches, make a prediction and release or clock the circuit.", "modelChange": "The latch or flip-flop state and input signals change.", "evidence": "The circuit stage, state evidence and prediction feedback show the stored result.", "nextDecision": "Explain whether current inputs or previous state determined the output." },
-  "invariants": ["The displayed state follows the represented latch or flip-flop input sequence.", "Prediction feedback compares the learner's choice with the resulting state."],
-  "safeAdaptations": ["Change input sequences, scaffolding or examples while retaining visible state retention and prediction evidence."],
-  "nonGoals": ["Modelling all sequential logic devices or physical timing characteristics."],
-  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+  "learnerLoop": {
+    "action": "Set input switches, make a prediction and release or clock the circuit.",
+    "modelChange": "The latch or flip-flop state and input signals change.",
+    "evidence": "The circuit stage, state evidence and prediction feedback show the stored result.",
+    "nextDecision": "Explain whether current inputs or previous state determined the output."
+  },
+  "invariants": [
+    "The displayed state follows the represented latch or flip-flop input sequence.",
+    "Prediction feedback compares the learner's choice with the resulting state."
+  ],
+  "safeAdaptations": [
+    "Change input sequences, scaffolding or examples while retaining visible state retention and prediction evidence."
+  ],
+  "nonGoals": [
+    "Modelling all sequential logic devices or physical timing characteristics."
+  ],
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract",
+  "implementation": {
+    "reviewedRevision": "f41e835aaa61cb67c5039a4a38a4bf3a8abc17d8",
+    "surfaces": {
+      "task": {
+        "kind": "given",
+        "selectors": [
+          "#mission-title",
+          "#phase-title"
+        ],
+        "description": "Feedback investigation and current milestone.",
+        "visibility": "Visible in the corresponding lesson, simulation or result state."
+      },
+      "controls": {
+        "kind": "control",
+        "selectors": [
+          "#svg-s-block",
+          "#svg-r-block",
+          "#svg-j-block",
+          "#svg-k-block",
+          "#svg-clock-block",
+          "#reset-lab"
+        ],
+        "description": "Operate the circuit inputs and clock; reset the investigation. Mirrored side controls unlock in free exploration.",
+        "visibility": "Visible in the corresponding lesson, simulation or result state."
+      },
+      "model": {
+        "kind": "model",
+        "selectors": [
+          "#circuit-stage"
+        ],
+        "description": "Original feedback wiring, gates and stored output.",
+        "visibility": "Visible in the corresponding lesson, simulation or result state."
+      },
+      "evidence": {
+        "kind": "evidence",
+        "selectors": [
+          "#trace-list",
+          "#milestoneDots",
+          "#phase-modal"
+        ],
+        "description": "Input/output history, observed relationships and movable milestone cards.",
+        "visibility": "Visible in the corresponding lesson, simulation or result state."
+      }
+    },
+    "quantities": {
+      "inputs": {
+        "description": "Binary control signals.",
+        "domain": "S/R for the NOR latch; J/K and rising clock edges for the JK model.",
+        "source": "Clickable or keyboard-operated SVG input blocks.",
+        "output": "Gate signals, stored Q and trace."
+      },
+      "stored-bit": {
+        "description": "Stored Q and its complement.",
+        "domain": "Valid complementary states; S=R=1 forces both outputs to 0 in the NOR-latch model.",
+        "source": "Feedback and previous state.",
+        "output": "Circuit output and trace history."
+      }
+    },
+    "modes": {
+      "progression": "Store/release 1; store/release 0; inspect invalid SR 11; recover; test JK 11 on two clock edges; then free exploration.",
+      "support": "Mode toggle preserves SR/JK unlocks. Milestone dots reflect observed relationships; no Working levels."
+    },
+    "dependencies": [
+      "Releasing S or R to 00 retains the preceding valid output.",
+      "JK updates from prior Q on the clock edge; its 11 input toggles instead of creating the SR invalid pair.",
+      "Milestone prompts pause manipulation until the learner starts the next test; shared target cues then identify the actual circuit input."
+    ],
+    "completion": "Two JK toggle edges after observing both held states and invalid/recovered SR behaviour unlock free exploration.",
+    "limitations": [
+      "Idealised digital feedback and edge model; no analogue timing or metastability simulation."
+    ]
+  }
 }

@@ -1,9 +1,103 @@
 {
   "schemaVersion": 1,
   "relationship": "Editing, translating and running pseudocode or Python connects corresponding statements to execution state and diagnostics.",
-  "learnerLoop": { "action": "Load or edit code, choose a view, then step or run the selected language.", "modelChange": "The source, translated counterpart and runtime execution state change.", "evidence": "The paired editors, health indicators, console, variables and diagnostics show the result.", "nextDecision": "Correct the source or compare the equivalent statement in the other language." },
-  "invariants": ["Translation and runtime feedback refer to the currently displayed source.", "Stepping exposes execution one statement at a time."],
-  "safeAdaptations": ["Change example programs, terminology or guidance while retaining paired code representation and execution evidence."],
-  "nonGoals": ["Providing a general-purpose compiler or unrestricted Python runtime."],
-  "developerGuide": "https://www.examplicity.org/developer/lab-contract"
+  "learnerLoop": {
+    "action": "Load or edit code, choose a view, then step or run the selected language.",
+    "modelChange": "The source, translated counterpart and runtime execution state change.",
+    "evidence": "The paired editors, health indicators, console, variables and diagnostics show the result.",
+    "nextDecision": "Correct the source or compare the equivalent statement in the other language."
+  },
+  "invariants": [
+    "Translation and runtime feedback refer to the currently displayed source.",
+    "Stepping exposes execution one statement at a time."
+  ],
+  "safeAdaptations": [
+    "Change example programs, terminology or guidance while retaining paired code representation and execution evidence."
+  ],
+  "nonGoals": [
+    "Providing a general-purpose compiler or unrestricted Python runtime."
+  ],
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract",
+  "implementation": {
+    "reviewedRevision": "f41e835aaa61cb67c5039a4a38a4bf3a8abc17d8",
+    "surfaces": {
+      "task": {
+        "kind": "given",
+        "selectors": [
+          ".lab-activity-task"
+        ],
+        "description": "Compare the two program representations and their execution.",
+        "visibility": "Visible in the corresponding lesson, simulation or result state."
+      },
+      "controls": {
+        "kind": "control",
+        "selectors": [
+          "#pseudoPane textarea",
+          "#pythonPane textarea",
+          "#exampleSelect",
+          "#pythonStyleToggle",
+          "#runButton",
+          "#stepButton",
+          "#consoleInput"
+        ],
+        "description": "Edit either language, load examples, select structural matching, step/run and supply input.",
+        "visibility": "Visible in the corresponding lesson, simulation or result state."
+      },
+      "model": {
+        "kind": "model",
+        "selectors": [
+          "#pseudoPane",
+          "#pythonPane"
+        ],
+        "description": "Paired editable pseudocode and Python with syntax highlights and aligned line numbers.",
+        "visibility": "Visible in the corresponding lesson, simulation or result state."
+      },
+      "evidence": {
+        "kind": "evidence",
+        "selectors": [
+          "#workspaceState",
+          "#consoleLog",
+          "#variablesView",
+          "#executionStatus"
+        ],
+        "description": "Translation health, execution output, variables and current runtime state.",
+        "visibility": "Visible in the corresponding lesson, simulation or result state."
+      }
+    },
+    "quantities": {
+      "source": {
+        "description": "Current source text and its translated counterpart.",
+        "domain": "Supported pseudocode/Python subset disclosed in #scopeDialog.",
+        "source": "Either editor or example menu.",
+        "output": "Counterpart code, diagnostics and execution.",
+        "inputSlots": [
+          "#pseudoPane textarea",
+          "#pythonPane textarea"
+        ]
+      },
+      "runtime-input": {
+        "description": "Input requested by the active program.",
+        "domain": "Text accepted by the current INPUT/input operation.",
+        "source": "Console input.",
+        "output": "Execution resumes with supplied data.",
+        "inputSlots": [
+          "#consoleInput"
+        ]
+      }
+    },
+    "modes": {
+      "views": "Pseudocode, Both and Python; swapping editor positions and resizing panes remain available.",
+      "translation": "Match pseudocode structure retains the corresponding structural representation; switching it changes Python presentation.",
+      "execution": "Step, Run, Stop, Restart and speed selection operate on the active language; Console/Variables and light/dark scheme are retained."
+    },
+    "dependencies": [
+      "Editing one language updates the counterpart and its translation status.",
+      "Execution, line highlights and variable/console evidence refer to the active program.",
+      "Editor input, highlighting and gutter share 14px/24px metrics. Model-specific splitters and interpreter remain intact."
+    ],
+    "completion": "Open programming workbench; no completion gate or Working levels.",
+    "limitations": [
+      "Custom supported translation/interpreter subset, not a general-purpose compiler or unrestricted Python environment."
+    ]
+  }
 }

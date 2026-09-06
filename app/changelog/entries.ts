@@ -10,6 +10,7 @@ export const changelogEntries: readonly ChangelogEntry[] = [
     date: '2026-09-06',
     displayDate: '6 September 2026',
     publicChanges: [
+      'Refined Floating Point, Flip-Flops, Recursive Call Stacks, Artificial Neurons, Python Practice and the Pseudocode/Python Translator with shared controls, clearer evidence, readable code and targeted interaction cues while preserving their learning sequences and workbench layouts.',
       'Refined Bitmap Compression, Huffman Rover, Database Normalisation, Combinational Logic and Automated Systems with shared controls, targeted interaction cues and more readable evidence while preserving their intended layouts and models. Fixed continuous bitmap drag painting and made colour conversion feedback inline. Unified compact chips and consolidated Automated Systems goals and live working into a padded inline area, while preserving the item configuration popup.',
       'Unified CPU value sizing and padding; clarified index labels, memory loading and desktop interaction cues; improved scheduler rule contrast and explanations, matched supported lab dropdown menus to the homepage, and clarified memory paths. Memory Management now shows other ready work executing during page transfers, with separate CPU references and running/ready/waiting states.',
       'Refined Assembly, Fetch–Decode–Execute, Memory Management, Process Scheduling and Software Stack with shared controls, targeted hints, less repeated text and rebalanced workspaces while retaining their hardware, queues and construction models.',
@@ -19,6 +20,7 @@ export const changelogEntries: readonly ChangelogEntry[] = [
       'Unified Time Zones under Working: None / Some / All, made its calendars and date controls easier to read, and preserved the complete-meeting availability checks.',
     ],
     internalChanges: [
+      'Added six observational behaviour maps and shared computing/programming adapters; synchronized the living guides, authoring bundle and standalone resources. Retained offline interpreters and scoped package allowances for their embedded resources.',
       'Added revision-pinned behaviour maps for five construction and representation labs, a shared builder adapter and matching guide examples; synchronized the authoring bundle and standalone resources. Updated Bitmap and Automated Systems review revisions after the inline working and shared chip refinement, including the restored flowchart item chooser.',
       'Added five current-behaviour implementation maps and a shared computing-workspace adapter; documented space balancing and preserved the standalone resource packaging. Added focused concurrency and page-ownership checks for the memory simulation.',
       'Added managed developer-reference links to published and downloaded lab HTML heads.',

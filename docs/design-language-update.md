@@ -1,6 +1,6 @@
 # Examplicity design update — lean plan
 
-Target: `codex/llm-first-v0.1`. Shared rollout across 57 manifest labs. Batches 1–6 are accepted; Batch 7 contains five construction/representation labs for review. Historical notes below preserve earlier decisions and corrections.
+Target: `codex/llm-first-v0.1`. Shared rollout across 57 manifest labs. Batches 1–7 are accepted; Batch 8 covers the remaining six Computer Science labs. Historical notes below preserve earlier decisions and corrections.
 
 ## Current adaptation approach
 
@@ -1211,3 +1211,50 @@ Batch 6, including the concurrent OS Memory revision, is accepted.
 - Removed the zero-top-padding override: the working card now has the same
   14px panel inset above it as at its sides. Updated both guides and the map
   to distinguish item editing from explanatory popups.
+
+### Batch 8 — six remaining Computer Science labs
+
+Change list before implementation:
+- Floating Point: shared goal/mode bar, readable linked instruments and storage
+  representation, compact feedback, first-use divider/normalisation cues.
+- Flip-Flops: preserve feedback circuit and trace; shared milestone dots, mode
+  toggle, movable milestone cards and clear target cues; remove repeated commands.
+- Python Practice: preserve lesson navigation, editor/console and offline runtime;
+  shared lesson controls and readable code/copy; move resource links below work.
+- Recursive Call Stacks: preserve code/stack/working composition and the approved
+  successive Observe/Some/All examples. Readable frames grow with the stack;
+  shared controls, checkpoints and target hints.
+- Neuron: shared full-width goal/control bar; readable calculation/evidence;
+  replace duplicate action narration with target cues, retain insight progression.
+- Translator: preserve paired editable languages, splitters and interpreter;
+  separate view/goal from execution controls, polish menus and code typography.
+- No complex SVG artwork redraws or changes to curriculum alignment.
+
+Implemented and reviewed locally:
+- Shared kit CSS owns computing/workbench typography, adaptive rows, flat return
+  equations, prediction cards and controls. Shared JS styles regenerated actions.
+  Six source HTML files adopt these classes and retain their intended compositions.
+- Floating Point adds keyboard normalisation, pickup-offset divider dragging and
+  cancellation cleanup. Neuron keeps drag pickup position and puts prediction
+  above dependent controls. Its counter now accurately says output patterns.
+- Recursion keeps the explicitly approved successive examples and Try some/all
+  working invitations. Stack frames stay readable; return cards retain the
+  arithmetic and observed result while omitting repeated dependency narration.
+- Six sidecars document current surfaces, quantities, input slots, progression,
+  evidence and limitations. They are observational, with no curriculum remapping.
+- Both canonical guides, authoring bundle, developer resources and offline HTML
+  carry the shared update. Python/Translator interpreters and embedded payloads
+  are unchanged. Specific package allowances include shared resources: Python
+  1.45 MB (actual ~1.443 MB), Translator 610 KB (~603 KB), Sound 1.53 MB (~1.525 MB).
+  General 512 KiB limit is unchanged.
+- Validation: all five bit splits/four contexts and normaliser reset; complete
+  SR-to-JK guided investigation; Python example input and a passing edited
+  challenge/unlock; Observe/Some/All recursion (10/15/21) and overflow; all neuron
+  relationships and XOR proof/Explore; bidirectional translation, run, views and
+  editor swap. No browser page errors. 1422/900/390px fit without canvas scrolling.
+  All 57 standalone downloads and contract checks pass; developer mirrors match.
+- Review choices: preserve programming/trace scrolling, original circuit art and
+  intentional workbench layouts. Recursive examples are successive learning cases,
+  not a new interpretation of the standard Working visibility toggle.
+- Concurrent alignment work owns Bounds source/sidecar/output; excluded from this
+  batch's staging after the shared-resource refresh.

@@ -379,9 +379,6 @@ button.quiet{background:#fff}
 /* v9 patch: persistent work/evidence, bottom-docked guided progression, open experiment */
 .visual-actions{position:relative}
 .mode-switch{display:inline-flex;padding:2px;border:1px solid var(--line);border-radius:999px;background:#f6f8f9}
-.mode-button{min-height:25px!important;padding:0 7px!important;border:0!important;border-radius:999px!important;background:transparent!important;color:#6d7880!important;font-size:7px!important;font-weight:850!important}
-.mode-button.active{background:#fff!important;color:var(--accent)!important;box-shadow:0 1px 3px rgba(29,29,31,.12)}
-.mode-button:disabled{opacity:.38}
 button.progress-step{min-height:25px;padding:4px 7px;border:1px solid var(--line);border-radius:999px;background:#f7f8f9;color:#7a848b;font-size:7px;font-weight:850}
 button.progress-step:disabled{opacity:1;cursor:default}
 button.progress-step:not(:disabled){cursor:pointer}
@@ -417,8 +414,9 @@ body[data-mode="explore"] .modal-focus{box-shadow:none!important;filter:none!imp
 .side-section{padding:8px 10px}.neuron-flow{gap:4px}.term{padding:6px 7px}.flow-arrow{height:7px}.flow-node{padding:6px 7px}.output-node{padding:6px 8px}.param-intro{margin-bottom:6px}.param-stack{gap:5px}.param-control{padding:6px 7px 7px}.param-track{height:40px;margin-top:5px}.track-line{top:18px}.vector-span{top:17px}.param-control[data-key="theta"] .vector-span{top:18px}.param-handle{top:6px;height:24px}.param-control[data-key="theta"] .param-handle{top:5px;height:27px}.track-zero{top:7px;bottom:7px}.param-note{margin-top:5px;padding:5px 7px}.evidence-table td{padding:5px 6px}
 @container lab-canvas (max-width:700px){.stage{width:100%;min-width:560px;margin:0}.stage-shell{min-height:509px}.side-section{padding:9px 10px}.param-track{height:44px}.track-line{top:20px}.vector-span{top:19px}.param-control[data-key="theta"] .vector-span{top:20px}.param-handle{top:8px;height:25px}.param-control[data-key="theta"] .param-handle{top:6px;height:29px}.track-zero{top:9px;bottom:9px}}
 
-</style></head>
-<body data-lab-layout="standard">
+</style><!-- LAB_DESIGN_COMPONENTS -->
+</head>
+<body data-lab-layout="standard" class="lab-adopt-v3 lab-computing lab-cs-review cs-single-neuron-threshold">
 <main>
 <!-- LAB_MANIFEST_HEADER_START -->
 <header class="lab-manifest-header">
@@ -439,28 +437,30 @@ body[data-mode="explore"] .modal-focus{box-shadow:none!important;filter:none!imp
 <span class="lab-authored-title-slot" data-lab-authored-title-slot aria-hidden="true"></span><span data-lab-authored-subtitle-slot hidden></span>
 
 <div data-lab-workspace>
-  <section class="panel lab" aria-label="Single neuron experiment">
-    <div id="workspace" class="workspace">
-      <section class="stage-side" aria-labelledby="plotHeading">
-        <div class="visual-head">
-          <div class="visual-copy">
+<div class="visual-head lab-activity-bar">
+          <div class="visual-copy lab-activity-task">
             <div class="relationship-meta"><span id="relationshipStage">Relationship 1 of 3</span><span aria-hidden="true">·</span><span id="relationshipName">threshold</span></div>
             <strong id="plotHeading">Threshold shifts a fixed rule</strong>
             <span id="plotHint">Use θ to lower the activation threshold so B, C and D output 1 while A stays 0. Watch what changes — and what does not.</span>
           </div>
           <div class="visual-actions">
-            <div id="modeSwitch" class="mode-switch" role="group" aria-label="Lab mode">
+            <div id="modeSwitch" class="mode-switch lab-toggle" data-kind="mode" data-active-class="active" role="group" aria-label="Lab mode">
               <button id="guidedMode" type="button" class="mode-button active" aria-pressed="true">Guided</button>
               <button id="exploreMode" type="button" class="mode-button" aria-pressed="false" disabled title="Complete all three relationships to unlock open experiment mode">Explore</button>
             </div>
-            <div id="progressRail" class="progress-rail" aria-label="Relationship set">
+            <div id="progressRail" class="progress-rail lab-toggle" data-kind="mode" data-active-class="current" aria-label="Relationship set">
               <button type="button" class="progress-step current" data-progress="threshold" disabled><b>1</b><span>Threshold</span></button>
               <button type="button" class="progress-step" data-progress="weights" disabled><b>2</b><span>Weight</span></button>
               <button type="button" class="progress-step" data-progress="xor" disabled><b>3</b><span>XOR limit</span></button>
             </div>
-            <button id="resetTask" type="button" data-lab-action="reset">Reset relationship</button>
+
           </div>
         </div>
+<div class="lab-computing-tools"><button id="resetTask" type="button" data-lab-action="reset" class="lab-action">Reset relationship</button></div>
+  <section class="panel lab" aria-label="Single neuron experiment">
+    <div id="workspace" class="workspace">
+      <section class="stage-side" aria-labelledby="plotHeading">
+
         <div id="stageShell" class="stage-shell">
           <div class="stage-scroll">
             <svg id="plot" class="stage" viewBox="0 0 650 590" role="img" aria-labelledby="plotTitle plotDesc" data-lab-role="model">
@@ -477,6 +477,27 @@ body[data-mode="explore"] .modal-focus{box-shadow:none!important;filter:none!imp
       </section>
 
       <aside class="side-panel" aria-label="Neuron calculation and direct controls">
+<section class="side-section prediction-section" aria-label="Working">          <div id="workingRegion" class="lab-kit-work working-region" aria-label="Prediction and retained evidence">
+            <div id="predictionWork" class="lab-kit-work-item prediction-work" data-state="needed">
+              <div class="work-head">
+                <div><strong id="predictionWorkTitle">Prediction</strong><span id="predictionQuestion"></span></div>
+                <span id="predictionState" class="lab-kit-work-state" role="status"><span class="lab-kit-work-mark" aria-hidden="true"></span><span id="predictionStateText">Prediction needed</span></span>
+              </div>
+              <div id="predictionChoices" class="prediction-choices" data-lab-actions></div>
+              <p id="predictionFeedback" class="work-feedback"></p>
+            </div>
+            <div id="relationshipWork" class="lab-kit-work-item relationship-work" hidden>
+              <div class="work-head">
+                <div><strong id="relationshipWorkTitle">Observed relationship</strong><span id="relationshipWorkText"></span></div>
+                <span id="relationshipState" class="lab-kit-work-state" role="status"><span class="lab-kit-work-mark" aria-hidden="true"></span><span id="relationshipStateText"></span></span>
+              </div>
+              <div id="relationshipWorkAction" class="work-action" data-lab-actions></div>
+            </div>
+            <div id="exploreWork" class="lab-kit-work-item explore-work" hidden>
+              <div class="work-head"><div><strong>Open experiment</strong><span id="exploreWorkText">All three parameters are live. Change any bar and inspect the boundary, calculation and outputs.</span></div></div>
+            </div>
+          </div>
+</section>
         <section id="calculationSection" class="side-section calculation-section" aria-labelledby="calcHeading">
           <div class="side-heading"><div><strong id="calcHeading">Selected point through the neuron</strong><span>Click a point or table row to follow its calculation.</span></div><div id="selectedChip" class="point-chip"><b>B</b><span>(0, 1)</span></div></div>
           <div id="neuronFlow" class="neuron-flow">
@@ -512,27 +533,7 @@ body[data-mode="explore"] .modal-focus{box-shadow:none!important;filter:none!imp
         </section>
 
         <section id="evidenceSection" class="side-section evidence-section" aria-labelledby="evidenceHeading">
-          <div class="side-heading"><div><strong id="evidenceHeading">Working and evidence</strong><span>Your prediction, the live outputs and the relationship stay together here.</span></div><span id="matchSummary" class="evidence-head-summary">2 of 4 match</span></div>
-          <div id="workingRegion" class="lab-kit-work working-region" aria-label="Prediction and retained evidence">
-            <div id="predictionWork" class="lab-kit-work-item prediction-work" data-state="needed">
-              <div class="work-head">
-                <div><strong id="predictionWorkTitle">Prediction</strong><span id="predictionQuestion"></span></div>
-                <span id="predictionState" class="lab-kit-work-state" role="status"><span class="lab-kit-work-mark" aria-hidden="true"></span><span id="predictionStateText">Prediction needed</span></span>
-              </div>
-              <div id="predictionChoices" class="prediction-choices"></div>
-              <p id="predictionFeedback" class="work-feedback"></p>
-            </div>
-            <div id="relationshipWork" class="lab-kit-work-item relationship-work" hidden>
-              <div class="work-head">
-                <div><strong id="relationshipWorkTitle">Observed relationship</strong><span id="relationshipWorkText"></span></div>
-                <span id="relationshipState" class="lab-kit-work-state" role="status"><span class="lab-kit-work-mark" aria-hidden="true"></span><span id="relationshipStateText"></span></span>
-              </div>
-              <div id="relationshipWorkAction" class="work-action"></div>
-            </div>
-            <div id="exploreWork" class="lab-kit-work-item explore-work" hidden>
-              <div class="work-head"><div><strong>Open experiment</strong><span id="exploreWorkText">All three parameters are live. Change any bar and inspect the boundary, calculation and outputs.</span></div></div>
-            </div>
-          </div>
+          <div class="side-heading"><div><strong id="evidenceHeading">Live outputs</strong><span>Your prediction, the live outputs and the relationship stay together here.</span></div><span id="matchSummary" class="evidence-head-summary">2 of 4 match</span></div>
           <div class="evidence-table-wrap"><table class="evidence-table"><thead><tr><th style="width:28%">point</th><th style="width:16%">z</th><th style="width:16%">output</th><th style="width:16%">target</th><th style="width:24%">evidence</th></tr></thead><tbody id="evidenceBody"></tbody></table></div>
         </section>
       </aside>
@@ -608,7 +609,7 @@ body[data-mode="explore"] .modal-focus{box-shadow:none!important;filter:none!imp
   function renderEvidence(){const body=$("evidenceBody"),s=session(),ev=evidence(),insights=insightIds(),emphasis=s.completed||s.observationSeen||s.proof;body.replaceChildren();ev.forEach(e=>{const tr=document.createElement("tr");tr.id=`evidenceRow-${e.id}`;tr.dataset.point=e.id;tr.className=`${s.selected===e.id?"selected ":""}${e.match?"":"mismatch "}${insights.includes(e.id)?"insight":""}`.trim();tr.innerHTML=`<td><button type="button" class="point-button" data-select-point="${e.id}">${e.id} <span class="mono">(${e.x},${e.y})</span></button></td><td class="mono">${fmt(e.z)}</td><td><span class="output-pill ${e.out?"one":""}">${e.out}</span></td><td><span class="target-pill ${e.target?"one":"zero"}">${e.target}</span></td><td><span class="match-pill ${e.match?"good":"bad"}">${e.match?"match":"mismatch"}</span></td>`;body.appendChild(tr)});$("matchSummary").textContent=`${ev.filter(e=>e.match).length} of 4 match`;$("evidenceSection").classList.toggle("working-emphasis",emphasis)}
   function percent(key,value){const r=RANGES[key];return (value-r.min)/(r.max-r.min)*100}
   function renderParam(key){const s=session(),t=task(),locked=!canManipulate(key),baseFixed=state.mode==="guided"&&!!t.lock[key],control=$(key+"Control"),track=$(key+"Track"),out=$(key+"Output"),stateEl=$(key+"State"),r=RANGES[key],p=clamp(percent(key,s[key]),0,100),z=clamp(percent(key,0),0,100),span=control.querySelector(".vector-span"),handle=control.querySelector(".param-handle"),zero=control.querySelector(".track-zero"),zeroLabel=control.querySelector(".track-label.zero");out.textContent=Number(s[key]).toFixed(1);track.setAttribute("aria-valuenow",String(Number(s[key]).toFixed(1)));track.setAttribute("aria-disabled",String(locked));track.tabIndex=locked?-1:0;control.classList.toggle("locked",locked);control.classList.toggle("active",!locked&&!baseFixed);control.classList.toggle("settling",false);control.classList.toggle("compact",baseFixed&&t.id!=="xor");const actionKey=t.id==="threshold"?"theta":t.id==="weights"?"w1":null;control.classList.toggle("action-pulse",state.mode==="guided"&&!!s.prediction&&!s.moved&&!s.completed&&actionKey===key);stateEl.textContent=state.mode==="explore"?"free":baseFixed?"fixed":!s.prediction?"predict":!locked?"drag":"fixed";zero.style.left=`${z}%`;zeroLabel.style.left=`${z}%`;handle.style.left=`${p}%`;if(key==="theta"){span.style.left="0%";span.style.width=`${p}%`}else{span.style.left=`${Math.min(p,z)}%`;span.style.width=`${Math.abs(p-z)}%`}}
-  function renderControls(){const t=task(),s=session();for(const key of["w1","w2","theta"])renderParam(key);$("controlsSection").classList.toggle("action-pulse-group",state.mode==="guided"&&t.id==="xor"&&!!s.prediction&&!s.moved&&!s.completed);if(state.mode==="explore"){$("controlHint").textContent="Open experiment: every parameter is live.";$("paramIntro").textContent="Change any bar directly. The boundary, weighted sum, comparison and outputs update together."}else if(!s.prediction){$("controlHint").textContent="Commit the prediction below to unlock the live control.";$("paramIntro").textContent="Keep the model visible while you predict what its next change should do."}else if(t.id==="threshold"){$("controlHint").textContent="Use θ to lower the barrier until B and C switch together.";$("paramIntro").textContent="The weighted sums stay fixed while the comparison z ≥ θ changes."}else if(t.id==="weights"){$("controlHint").textContent="Use w₁ to increase x₁ influence until C crosses while B does not.";$("paramIntro").textContent="Compare x₁ = 1 with x₁ = 0 as you drag."}else{$("controlHint").textContent="Use any bar to test several straight separators.";$("paramIntro").textContent=`Distinct separators tested: ${s.patterns.size}. Keep comparing which mismatch moves.`}$("paramNote").innerHTML=state.mode==="explore"?"<strong>Experiment:</strong> all parameters can move; the four input coordinates and current target badges remain fixed.":t.id==="threshold"?"<strong>What stays constant:</strong> w₁ = w₂ = 1.0, so the line can only shift parallel.":t.id==="weights"?"<strong>What stays constant:</strong> w₂ = 1.0 and θ = 1.2; only x₁ influence changes.":"<strong>What stays constant:</strong> every parameter setting still creates one straight boundary; the XOR target badges never move."}
+  function renderControls(){const t=task(),s=session();for(const key of["w1","w2","theta"])renderParam(key);$("controlsSection").classList.toggle("action-pulse-group",state.mode==="guided"&&t.id==="xor"&&!!s.prediction&&!s.moved&&!s.completed);if(state.mode==="explore"){$("controlHint").textContent="Open experiment: every parameter is live.";$("paramIntro").textContent="Change any bar directly. The boundary, weighted sum, comparison and outputs update together."}else if(!s.prediction){$("controlHint").textContent="Commit the prediction above to unlock the live control.";$("paramIntro").textContent="Keep the model visible while you predict what its next change should do."}else if(t.id==="threshold"){$("controlHint").textContent="Use θ to lower the barrier until B and C switch together.";$("paramIntro").textContent="The weighted sums stay fixed while the comparison z ≥ θ changes."}else if(t.id==="weights"){$("controlHint").textContent="Use w₁ to increase x₁ influence until C crosses while B does not.";$("paramIntro").textContent="Compare x₁ = 1 with x₁ = 0 as you drag."}else{$("controlHint").textContent="Use any bar to test several straight separators.";$("paramIntro").textContent=`Distinct output patterns tested: ${s.patterns.size}. Keep comparing which mismatch moves.`}$("paramNote").innerHTML=state.mode==="explore"?"<strong>Experiment:</strong> all parameters can move; the four input coordinates and current target badges remain fixed.":t.id==="threshold"?"<strong>What stays constant:</strong> w₁ = w₂ = 1.0, so the line can only shift parallel.":t.id==="weights"?"<strong>What stays constant:</strong> w₂ = 1.0 and θ = 1.2; only x₁ influence changes.":"<strong>What stays constant:</strong> every parameter setting still creates one straight boundary; the XOR target badges never move."}
   function predictionResultText(t,s){
     const supported=s.prediction===t.prediction.correct;
     if(t.id==="threshold")return supported?"B and C both kept z = 1.0, so they crossed the same threshold together.":"The evidence shows B and C share z = 1.0, so they switch together as θ passes 1.0.";
@@ -633,9 +634,9 @@ body[data-mode="explore"] .modal-focus{box-shadow:none!important;filter:none!imp
     }else if(s.proof){
       rw.dataset.state="correct";$("relationshipStateText").textContent="Limit established";$("relationshipWorkTitle").textContent="Single-neuron limit";$("relationshipWorkText").textContent="The same-class diagonals cross. One straight line cannot put A and D on one side while B and C lie on the other, so XOR is not linearly separable by one threshold neuron.";
     }else if(s.observationSeen){
-      rw.dataset.state="needed";$("relationshipStateText").textContent="Decision needed";$("relationshipWorkTitle").textContent="Retained evidence";$("relationshipWorkText").textContent=`You tested ${s.patterns.size} distinct straight separators. Best match so far: ${s.best} of 4; at least one mismatch remains. Use the guided dock below the perceptron to inspect the geometric reason.`;
+      rw.dataset.state="needed";$("relationshipStateText").textContent="Decision needed";$("relationshipWorkTitle").textContent="Retained evidence";$("relationshipWorkText").textContent=`You tested ${s.patterns.size} distinct output patterns. Best match so far: ${s.best} of 4; at least one mismatch remains. Use the guided dock below the perceptron to inspect the geometric reason.`;
     }else{
-      rw.dataset.state="needed";$("relationshipStateText").textContent="Evidence building";$("relationshipWorkTitle").textContent="Test several separators";$("relationshipWorkText").textContent=`Distinct separators tested: ${s.patterns.size}. Best match so far: ${s.best} of 4. Keep changing a weight or θ and watch which mismatch moves.`;
+      rw.dataset.state="needed";$("relationshipStateText").textContent="Evidence building";$("relationshipWorkTitle").textContent="Test several separators";$("relationshipWorkText").textContent=`Distinct output patterns tested: ${s.patterns.size}. Best match so far: ${s.best} of 4. Keep changing a weight or θ and watch which mismatch moves.`;
     }
   }
   function guidanceKind(){
@@ -646,30 +647,30 @@ body[data-mode="explore"] .modal-focus{box-shadow:none!important;filter:none!imp
     if(t.id==="xor")return s.proof?"xor-proof":s.observationSeen?"xor-evidence":"xor-action";
     return null;
   }
-  function modalShell(kicker,title,copy,side="",actions=""){return `<div class="modal-main"><span class="modal-kicker">${kicker}</span><strong>${title}</strong>${copy?`<p class="modal-copy">${copy}</p>`:""}</div><div class="modal-side">${side}${actions?`<div class="modal-actions">${actions}</div>`:""}</div>`}
+  function modalShell(kicker,title,copy,side="",actions=""){return `<div class="modal-main"><span class="modal-kicker">${kicker}</span><strong>${title}</strong>${copy?`<p class="modal-copy">${copy}</p>`:""}</div><div class="modal-side">${side}${actions?`<div class="modal-actions" data-lab-actions>${actions}</div>`:""}</div>`}
   function modalMarkup(kind){const t=task(),s=session();
     if(kind==="threshold-action")return modalShell("Predict → manipulate","Use θ to change the cutoff.",s.prediction?"Now lower the threshold until B and C switch to output 1 together.":"Choose your prediction in Working and evidence, then lower θ so B and C switch together.",'<div class="modal-equation">Use θ → change z ≥ θ; keep w₁ = w₂ = 1</div>');
     if(kind==="threshold-insight")return modalShell("Key relationship","Threshold moved the boundary without rotating it.",`B and C kept z = 1.0. Lowering θ to ${fmt(s.theta)} changed only the comparison, so both outputs switched together.`, '<div class="modal-equation good">same z · lower θ → parallel boundary shift</div>','<button class="primary" type="button" data-modal-action="next">Continue to weight influence</button>');
     if(kind==="weights-action")return modalShell("Predict → manipulate","Use w₁ to change x₁ influence.",s.prediction?"Increase w₁ until C crosses the threshold while B stays at output 0.":"Choose your prediction, then increase w₁ so C crosses while B does not.",'<div class="modal-equation">Use w₁ → change terms where x₁ = 1</div>');
     if(kind==="weights-insight")return modalShell("Key relationship","A weight changed influence and tilted the boundary.",`C and D gained more weighted input because x₁ = 1. B did not, because 0 × w₁ stays 0.`, '<div class="modal-equation good">larger w₁ → larger x₁ contribution → boundary tilt</div>','<button class="primary" type="button" data-modal-action="next">Continue to the single-neuron limit</button>');
-    if(kind==="xor-action")return modalShell("Test a limit","Use the same one separator to test XOR.",s.prediction?"Change θ or either weight and test several straight boundaries. Watch which mismatch moves.":"Predict whether one straight boundary can work, then test several settings.",`<div class="modal-equation">${s.patterns.size} separator${s.patterns.size===1?'':'s'} tested · best ${s.best} of 4</div>`);
-    if(kind==="xor-evidence")return modalShell("Evidence → explanation","Every tested separator still leaves a mismatch.",`You have tested ${s.patterns.size} distinct straight boundaries; the best matches ${s.best} of 4. Check whether the failure comes from the geometry, not from a missed setting.`, '<div class="modal-equation warn">one straight boundary · XOR targets on opposite diagonals</div>','<button class="primary" type="button" data-modal-action="proof">Reveal geometric reason</button>');
+    if(kind==="xor-action")return modalShell("Test a limit","Use the same one separator to test XOR.",s.prediction?"Change θ or either weight and test several straight boundaries. Watch which mismatch moves.":"Predict whether one straight boundary can work, then test several settings.",`<div class="modal-equation">${s.patterns.size} output pattern${s.patterns.size===1?'':'s'} tested · best ${s.best} of 4</div>`);
+    if(kind==="xor-evidence")return modalShell("Evidence → explanation","Every tested separator still leaves a mismatch.",`You have tested ${s.patterns.size} distinct output patterns; the best matches ${s.best} of 4. Check whether the failure comes from the geometry, not from a missed setting.`, '<div class="modal-equation warn">one straight boundary · XOR targets on opposite diagonals</div>','<button class="primary" type="button" data-modal-action="proof">Reveal geometric reason</button>');
     if(kind==="xor-proof")return modalShell("Single-neuron limit","XOR is not linearly separable by one threshold neuron.","The two same-class diagonals cross, so no single straight line can place A and D on one side while B and C are on the other.",'<div class="modal-equation good">one perceptron = one linear separator</div>','<button class="primary" type="button" data-modal-action="explore">Open unguided experiment</button>');
     return "";
   }
   function clearModalFocusTargets(){document.querySelectorAll('.modal-focus').forEach(el=>el.classList.remove('modal-focus'))}
   function positionModal(){}
-  function renderModal(){const dock=$("phaseDock"),layer=$("modalLayer"),card=$("phaseModal"),kind=guidanceKind();clearModalFocusTargets();dock.hidden=!kind;layer.hidden=!kind;if(!kind){card.innerHTML="";return}card.className=`phase-modal ${kind.includes("proof")?"proof":kind.includes("insight")?"success":kind.includes("evidence")?"limit":"instruction"}`;card.innerHTML=modalMarkup(kind);card.querySelectorAll('[data-modal-action]').forEach(b=>b.addEventListener('click',()=>modalAction(b.dataset.modalAction,b.dataset.value)))}
+  function renderModal(){const dock=$("phaseDock"),layer=$("modalLayer"),card=$("phaseModal"),kind=guidanceKind();clearModalFocusTargets();dock.hidden=!kind||kind.endsWith("-action");layer.hidden=dock.hidden;if(dock.hidden){card.innerHTML="";return}card.className=`phase-modal ${kind.includes("proof")?"proof":kind.includes("insight")?"success":kind.includes("evidence")?"limit":"instruction"}`;card.innerHTML=modalMarkup(kind);card.querySelectorAll('[data-modal-action]').forEach(b=>b.addEventListener('click',()=>modalAction(b.dataset.modalAction,b.dataset.value)))}
   function canManipulate(key){const s=session();if(state.mode==="explore")return true;return !s.settling&&!locks()[key]}
-  function renderAll(){const s=session();s.best=Math.max(s.best,matchCount());renderHeader();renderPlot();renderCalculation();renderControls();renderEvidence();renderWorking();renderModal()}
+  function renderAll(){const s=session();s.best=Math.max(s.best,matchCount());renderHeader();renderPlot();renderCalculation();renderControls();renderEvidence();renderWorking();renderModal();const keys=Object.keys(RANGES).filter(k=>canManipulate(k));LabDesign.introduce($("controlsSection"),state.mode==="guided"&&s.prediction&&!s.completed?keys.map(k=>$(k+"Track")):[],"neuron-"+task().id,task().guide.title,task().guide.copy);LabDesign.introduce($("predictionWork"),!s.prediction&&state.mode==="guided"?[$("predictionChoices")]:[],"neuron-predict-"+task().id,"Predict before changing the model",task().prediction.question)}
   function setPrediction(id){const t=task(),s=session();if(state.mode!=="guided"||s.moved||s.completed||!t.prediction.options.some(o=>o.id===id))return;s.prediction=id;s.modalKind=null;renderAll()}
   function completeCurrent(){const t=task(),s=session();if(s.completed)return;s.completed=true;state.completed.add(t.id);s.modalKind=t.id==="threshold"?"threshold-insight":t.id==="weights"?"weights-insight":null;renderAll()}
   function evaluateProgress(key=null){const t=task(),s=session();s.best=Math.max(s.best,matchCount());if(state.mode==="explore")return renderAll();if((t.id==="threshold"||t.id==="weights")&&currentSuccess()&&!s.completed)return completeCurrent();if(t.id==="xor"&&!s.proof&&s.patterns.size>=3){s.observationSeen=true}renderAll()}
   function setParamValue(key,value){const s=session(),r=RANGES[key];if(!canManipulate(key))return;const v=Math.round(clamp(value,r.min,r.max)/r.step)*r.step;s[key]=Math.round(v*10)/10;s.lastKey=key;s.moved=true;s.changedKeys.add(key);s.patterns.add(patternFor(s));renderAll()}
   function commitParam(key=null){if(state.mode==="guided"&&!session().prediction)return;evaluateProgress(key||session().lastKey)}
   function valueFromClient(key,clientX){const track=$(key+"Track"),r=RANGES[key],rect=track.getBoundingClientRect(),f=clamp((clientX-rect.left)/Math.max(1,rect.width),0,1);return r.min+f*(r.max-r.min)}
-  function pointerDown(e){const track=e.target.closest?.('.param-track[data-param]');if(!track)return;const key=track.dataset.param;if(!canManipulate(key))return;e.preventDefault();state.drag={key,id:e.pointerId};track.classList.add('dragging');track.setPointerCapture?.(e.pointerId);setParamValue(key,valueFromClient(key,e.clientX))}
-  function pointerMove(e){if(!state.drag||state.drag.id!==e.pointerId)return;e.preventDefault();setParamValue(state.drag.key,valueFromClient(state.drag.key,e.clientX))}
+  function pointerDown(e){const track=e.target.closest?.('.param-track[data-param]');if(!track)return;const key=track.dataset.param;if(!canManipulate(key))return;e.preventDefault();state.drag={key,id:e.pointerId,offset:session()[key]-valueFromClient(key,e.clientX)};track.classList.add('dragging');track.setPointerCapture?.(e.pointerId)}
+  function pointerMove(e){if(!state.drag||state.drag.id!==e.pointerId)return;e.preventDefault();setParamValue(state.drag.key,valueFromClient(state.drag.key,e.clientX)+state.drag.offset)}
   function pointerUp(e){if(!state.drag)return;const {key,id}=state.drag,track=$(key+'Track');try{track.releasePointerCapture?.(id)}catch{}track.classList.remove('dragging');state.drag=null;commitParam(key)}
   function keyAdjust(e){const track=e.target.closest?.('.param-track[data-param]');if(!track)return;const key=track.dataset.param,r=RANGES[key];if(!canManipulate(key))return;let next=session()[key],handled=true;if(e.key==='ArrowLeft'||e.key==='ArrowDown')next-=e.shiftKey?.5:r.step;else if(e.key==='ArrowRight'||e.key==='ArrowUp')next+=e.shiftKey?.5:r.step;else if(e.key==='Home')next=r.min;else if(e.key==='End')next=r.max;else handled=false;if(!handled)return;e.preventDefault();setParamValue(key,next);commitParam(key);requestAnimationFrame(()=>$(key+'Track')?.focus())}
   function selectPoint(id){if(!POINTS[id])return;session().selected=id;renderAll()}
