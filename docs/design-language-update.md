@@ -1201,3 +1201,5 @@ Batch 6, including the concurrent OS Memory revision, is accepted.
 - All 57 publication, download and contract checks pass. Sound Sampling's
   specific allowance is now 1.51 MB to include the shared components (actual
   package about 1.501 MB); the general download limit is unchanged.
+- Site implementation: `c33510e`; canonical kit and guides: `747c5ff`.
+  Bitmap and Automated Systems maps pin the reviewed site revision.
