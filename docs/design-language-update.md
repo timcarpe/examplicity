@@ -1316,3 +1316,5 @@ Implemented:
   The requested curriculum task was informed of the new shared design.
 - Review correction: use plain centered labels above both Working and Exam pills,
   without a projecting tab, label border or background. Binary displays Exam.
+- Site implementation: `5feb6e4`; Binary map pins this revision. Final canonical
+  guide/style correction: `11ec323`.
