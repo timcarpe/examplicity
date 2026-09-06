@@ -17,7 +17,7 @@ This record describes implementation and review. It does not add styling rules o
 
 Review refinements: named, wider Lens grips with single-line focal labels; four readable Critical Angle measurement cards; Diffraction uses its canvas grips with live wavelength labels; Gas cue aligned to piston; Selection has larger beak examples, stronger bar contrast, a taller frequency plot and compact comparison values. Removed the redundant orange-control explainer and mission gap. All five first-decision cards now pulse via shared styling until their first interaction.
 
-Focused check: first-action pulse starts/stops on all five, Lens grip pickup, four measurement fills, Diffraction keyboard grips through both discoveries, Gas cue coordinates, and Selection chart/evidence geometry. No browser errors on these paths.
+Focused check: first-action pulse starts/stops on all five, Lens grip pickup, four measurement fills, Diffraction keyboard grips through both discoveries, Gas cue coordinates, and Selection chart/evidence geometry. No browser errors on these paths. User approved a 530 KB allowance for Recursive Call Stacks after shared CSS brought its standalone output to about 527 KB; all 57 download checks pass.
 
 | Lab source slug | What changed |
 | --- | --- |
