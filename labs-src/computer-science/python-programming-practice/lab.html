@@ -620,7 +620,7 @@ html[data-theme="dark"] .challenge-prompt .semantic-literal{color:var(--syntax-s
           </div>
           <footer class="editor-actions">
             <div class="editor-actions-left">
-              <button data-lab-intro="python-example" data-lab-intro-title="Run the example" data-lab-intro-copy="Follow the output in the console. When the program asks for input, type a value and send it." id="runExampleButton" class="primary lab-action" type="button" data-priority="primary">Run example</button>
+              <button data-lab-run-cue id="runExampleButton" class="primary lab-action" type="button" data-priority="primary">Run example</button>
               <button id="stopExampleButton" type="button" disabled class="lab-action">Stop</button>
             </div>
             <div class="editor-actions-right"><span class="save-state">Use Challenge 1 to load this code</span></div>
@@ -635,12 +635,12 @@ html[data-theme="dark"] .challenge-prompt .semantic-literal{color:var(--syntax-s
             <pre id="editorLines" class="editor-lines" aria-hidden="true">1</pre>
             <div class="editor-code-wrap">
               <pre id="codeHighlight" class="code-highlight" aria-hidden="true"></pre>
-              <textarea data-lab-intro="python-editor" data-lab-intro-title="Edit and test the program" data-lab-intro-copy="Change the example to meet the challenge. Run accepts your own input; Check challenge tests the required outcomes." id="codeEditor" class="code-editor" autocomplete="off" autocapitalize="off" spellcheck="false" wrap="off" aria-label="Edit Python challenge code" data-lab-manipulative="python-source" data-lab-role="working"></textarea>
+              <textarea id="codeEditor" class="code-editor" autocomplete="off" autocapitalize="off" spellcheck="false" wrap="off" aria-label="Edit Python challenge code" data-lab-manipulative="python-source" data-lab-role="working"></textarea>
             </div>
           </div>
           <footer class="editor-actions">
             <div class="editor-actions-left">
-              <button id="runButton" class="primary lab-action" type="button" data-priority="primary">Run</button>
+              <button data-lab-run-cue id="runButton" class="primary lab-action" type="button" data-priority="primary">Run</button>
               <button id="stopButton" type="button" disabled class="lab-action">Stop</button>
               <button id="clearCodeButton" type="button" class="lab-action">Clear code</button>
             </div>
@@ -2215,6 +2215,7 @@ Sk.builtinFiles={"files":{"src/builtin/sys.js":"var $builtinmodule=function(){va
   }
 
   async function runCurrentCode() {
+    document.body.dataset.labHasRun = "true";
     const code = elements.codeEditor.value;
     if (!code.trim()) {
       showToast("Add some Python code first.", "bad");
@@ -2234,6 +2235,7 @@ Sk.builtinFiles={"files":{"src/builtin/sys.js":"var $builtinmodule=function(){va
   }
 
   async function runExampleCode() {
+    document.body.dataset.labHasRun = "true";
     const code = activeLesson().example;
     clearConsole();
     setRunning(true, "example");

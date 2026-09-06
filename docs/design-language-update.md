@@ -1262,3 +1262,36 @@ Implemented and reviewed locally:
   batch's staging after the shared-resource refresh.
 - Commits: site implementation `83189fb`; canonical shared kit/guides
   `579a324`. The six maps pin the site implementation revision.
+
+### Batch 8 review — controls and evidence
+
+Change list: regular Floating Point visual text, precision/range cards, stronger
+goal contrast and explicit shift cues; compact inline Flip-Flop context; light
+recursive code and semantic working colours with controls beside the stack;
+neuron boundary manipulation and inline progression; Run-only attention for both
+programming labs, repaired Translator dark theme and icon/console controls.
+
+Implemented:
+- Canonical shared CSS owns the review styling: flat precision/range cards, green
+  goals, shift affordances, compact circuit context, execution/assessment colours,
+  readable stack values, boundary grips, Run attention and dark workbench controls.
+- Six source HTML files adopt the styles. Flip-Flop context moves above its circuit;
+  Recursion controls move beside Call stack; Neuron uses direct boundary grips and
+  puts next-task/proof actions in retained working. Learning cases and parameter
+  limits are preserved. Weight grips hold the other weight and threshold fixed.
+- Python/Translator lose first-use modal guides and filename labels (Translator).
+  First execution dismisses Run attention, including example runs and shortcuts.
+- Six observational maps describe the revised controls and evidence. Canonical
+  Markdown/HTML guides and the authoring bundle document these reusable patterns.
+  Shared resources are embedded across existing lab outputs and offline downloads.
+- Checked: all six learning flows; neuron drag pickup/release and fixed quantities;
+  recursion correct/mistake colours; Run attention and Translator menus/console;
+  1422/900/390px geometry without canvas scrolling. No browser page errors.
+  All 57 contracts, compiled sources, manifest content, embedded styles and
+  standalone download checks pass; developer mirrors and authoring bundle match.
+- Offline resource size allowances remain scoped: Sound 1.55 MB (~1.540 MB),
+  Python 1.47 MB (~1.457 MB), Translator 630 KB (~617 KB). Runtime payloads are
+  unchanged; the extra bytes are embedded shared styles.
+- Bounds source/contract belongs to the alignment task. Its only final generated
+  delta here is six shared typography CSS lines. Unrelated site work is excluded.
+- Canonical shared commit: `7ea033f`.

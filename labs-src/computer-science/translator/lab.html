@@ -933,7 +933,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5v14l10-7z"/><path d="M19 5v14"/></svg>
         <span>Step</span>
       </button>
-      <button id="runButton" class="primary lab-action" type="button" title="Run the selected language (Ctrl/Command + Enter)" data-priority="primary">
+      <button data-lab-run-cue id="runButton" class="primary lab-action" type="button" title="Run the selected language (Ctrl/Command + Enter)" data-priority="primary">
         <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6 4.7v10.6L15 10 6 4.7Z"/></svg>
         <span>Run</span>
       </button>
@@ -956,10 +956,10 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
     </div>
   </section>
 
-  <section data-lab-intro="translator-edit" data-lab-intro-title="Edit either language" data-lab-intro-copy="The other editor updates from your changes. Step traces the active language; Run sends output and input requests to the console. Editors and console can be resized." id="workspace" class="panel workspace view-both" data-lab-role="model">
+  <section id="workspace" class="panel workspace view-both" data-lab-role="model">
     <article id="pseudoPane" class="editor-pane pseudo" aria-label="Cambridge pseudocode editor">
       <header class="editor-head" draggable="true" data-editor-language="pseudo" title="Drag onto the other editor to swap positions">
-        <div class="editor-title"><strong>Cambridge pseudocode</strong><span class="file-label">main.pseudo</span></div>
+        <div class="editor-title"><strong>Cambridge pseudocode</strong></div>
         <div class="editor-meta"><span id="pseudoSyncBadge" class="sync-badge source">Source</span><span id="pseudoHealth" class="editor-health"><i></i><span>Checking</span></span></div>
       </header>
       <div class="editor-body">
@@ -981,7 +981,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
 
     <article id="pythonPane" class="editor-pane python" aria-label="Python editor">
       <header class="editor-head" draggable="true" data-editor-language="python" title="Drag onto the other editor to swap positions">
-        <div class="editor-title"><strong>Python</strong><span class="file-label">main.py</span></div>
+        <div class="editor-title"><strong>Python</strong></div>
         <div class="editor-meta"><span id="pythonSyncBadge" class="sync-badge synced">Synced</span><span id="pythonHealth" class="editor-health"><i></i><span>Checking</span></span></div>
       </header>
       <div class="editor-body">
@@ -5650,6 +5650,7 @@ OUTPUT "Global: ", Counter`
   }
 
   async function runAll() {
+    document.body.dataset.labHasRun = "true";
     if (running) return;
     if (!execution || execution.version !== sourceVersion || execution.language !== runTarget || execution.done) {
       if (!prepareExecution()) return;

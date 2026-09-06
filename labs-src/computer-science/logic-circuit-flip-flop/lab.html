@@ -563,6 +563,13 @@ button:disabled{opacity:.45;cursor:not-allowed}
         <div id="mobile-state-chip" class="mobile-state-chip"><span>Stored Q</span><strong id="mobile-state-bit">0</strong></div>
       </div>
 
+        <section id="phase-modal" class="phase-modal lab-working-context" data-placement="top-left" role="region" aria-labelledby="phase-title" aria-describedby="phase-body" aria-live="polite">
+          <span id="phase-kicker" class="phase-kicker">Build the first evidence</span>
+          <strong id="phase-title">Use S to create Q = 1, then return S to 0.</strong>
+          <p id="phase-body">Do both actions on the circuit so you can see whether feedback keeps the 1 when neither external input is active.</p>
+          <div id="phase-content"></div>
+          <div id="phase-actions" class="phase-actions" data-lab-actions></div>
+        </section>
       <div class="stage-shell">
         <svg id="circuit-stage" class="stage" viewBox="0 0 900 520" role="img" aria-labelledby="stage-title stage-desc" data-lab-role="model">
           <title id="stage-title">Cross-coupled NOR flip-flop circuit</title>
@@ -676,13 +683,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
             <text id="state-complement" class="state-caption" x="812" y="317">Q̅ = 1</text>
           </g>
         </svg>
-        <section id="phase-modal" class="phase-modal next-card" data-placement="top-left" role="dialog" aria-labelledby="phase-title" aria-describedby="phase-body" aria-live="polite">
-          <span id="phase-kicker" class="phase-kicker">Build the first evidence</span>
-          <strong id="phase-title">Use S to create Q = 1, then return S to 0.</strong>
-          <p id="phase-body">Do both actions on the circuit so you can see whether feedback keeps the 1 when neither external input is active.</p>
-          <div id="phase-content"></div>
-          <div id="phase-actions" class="phase-actions" data-lab-actions></div>
-        </section>
+
         <div id="stage-caption" class="stage-caption" role="status" aria-live="polite">Both inputs are 0. Q begins at 0 and the feedback loop is holding that state.</div>
       </div>
 
@@ -1190,15 +1191,15 @@ button:disabled{opacity:.45;cursor:not-allowed}
     const p = state.phase;
     if (p === "sr_store_one") return {
       k:"First investigation",
-      t:"Use S to set Q = 1, then release S so you can test whether feedback stores the bit at S R = 00.",
-      b:"Compare the SET and HOLD rows in the trace. Does Q change when S returns to 0?",
+      t:"Can the circuit hold a 1 after S is released?",
+      b:"Set S to 1, then return it to 0. Compare Q in the SET and HOLD trace rows.",
       a:[["work","Test the feedback","primary"]]
     };
     if (p === "sr_store_zero") return {
       kind:"success",
       k:"Milestone evidence",
       t:"Q = 1 survived after S returned to 0.",
-      b:"Feedback is preserving the bit with no active input. Use R to create Q = 0, then release R so you can compare two HOLD states with the same current inputs.",
+      b:"Now set and release R. Compare the stored output under the same S R = 00 inputs.",
       c:phaseEvidence([["after SET","S R = 00 → Q = 1"],["external drive","S = R = 0"]])+
         phaseRelation("The stored bit survives after the input that created it has been removed."),
       a:[["work","Build the comparison","primary"]]
@@ -1206,8 +1207,8 @@ button:disabled{opacity:.45;cursor:not-allowed}
     if (p === "sr_invalid") return {
       kind:"success",
       k:"Relationship observed",
-      t:"The same S R = 00 inputs have now held Q = 1 and Q = 0.",
-      b:"The circuit therefore depends on previous state as well as current inputs. Make S = R = 1 so you can test where the SR latch stops representing one valid bit.",
+      t:"The same inputs can hold either bit.",
+      b:"Q depends on previous state. Test S R = 11 to find the invalid input combination.",
       c:phaseEvidence([["after SET","00 → Q = 1"],["after RESET","00 → Q = 0"]])+
         phaseRelation("Current inputs alone are not enough to determine Q; the feedback loop carries history."),
       a:[["work","Test S R = 11","primary"]]
@@ -1216,7 +1217,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
       kind:"bad",
       k:"Limit found",
       t:"S R = 11 forced Q = Q̅ = 0.",
-      b:"The outputs are no longer complements. Release one input and then the other so you can see how a valid stored state is recovered. The release order decides which side wins.",
+      b:"The outputs are no longer complements. Release the inputs one at a time; their release order determines the recovered bit.",
       c:phaseEvidence([["upper output","Q = 0"],["lower output","Q̅ = 0"]])+
         phaseRelation("SR = 11 does not encode one stored bit. Sequential release gives one side priority and restores a valid state."),
       a:[["work","Recover the latch","primary"]]
@@ -1225,7 +1226,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
       kind:"success",
       k:"Recovery complete",
       t:`The SR latch is valid again at Q = ${bitText(state.q)}.`,
-      b:"Set J = K = 1 and pulse the rising clock edge twice so you can compare controlled toggling with the invalid SR = 11 case.",
+      b:"Set J K = 11 and apply two rising clock edges. Compare its toggling with the invalid SR case.",
       c:phaseEvidence([["recovered hold",`S R = 00 → Q = ${bitText(state.q)}`],["comparison target","J K = 11 + two clock edges"]])+
         phaseRelation("In JK, J and K prepare the change; the rising edge and previous Q decide which internal path acts."),
       a:[["work","Test J K = 11","primary"]]
@@ -1234,7 +1235,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
       kind:"complete",
       k:"Relationship established",
       t:"The same external 11 has a different consequence in SR and JK.",
-      b:"The working trace now contains the causal evidence from both circuits.",
+      b:"SR 11 gives an invalid output pair; JK 11 toggles Q on each rising edge.",
       c:phaseEvidence([["SR = 11","Q = Q̅ = 0 · invalid"],["JK = 11 + edges","Q toggles each edge"]])+
         phaseRelation("JK uses the clock and previous Q to activate only one internal path at a time, turning the unsafe SR 11 case into a controlled toggle."),
       a:[["explore","Explore freely","good"]]
@@ -1286,10 +1287,10 @@ button:disabled{opacity:.45;cursor:not-allowed}
 
   function renderPhaseModal() {
     const cfg = phaseConfig();
-    const visible = Boolean(cfg && state.modalOpen);
+    const visible = Boolean(cfg);
     elements.phaseModal.hidden = !visible;
     if (!visible) return;
-    elements.phaseModal.className = `phase-modal next-card ${cfg.kind || ""}`.trim();
+    elements.phaseModal.className = `phase-modal lab-working-context ${cfg.kind || ""}`.trim();
     const placements = {
       sr_store_one:"top-left",
       sr_store_zero:"bottom-left",
@@ -1302,7 +1303,8 @@ button:disabled{opacity:.45;cursor:not-allowed}
     elements.phaseKicker.textContent = cfg.k;
     elements.phaseTitle.textContent = cfg.t;
     elements.phaseBody.textContent = cfg.b;
-    elements.phaseContent.innerHTML = cfg.c || "";
+    elements.phaseContent.replaceChildren();
+    elements.phaseActions.hidden = !state.modalOpen;
     elements.phaseActions.innerHTML = (cfg.a || []).map(([action,label,kind]) => `<button type="button" class="${kind || ""}" data-phase-action="${action}">${label}</button>`).join("");
     elements.phaseModal.querySelectorAll("[data-phase-action]").forEach((button) => button.addEventListener("click", () => handlePhaseAction(button.dataset.phaseAction)));
   }

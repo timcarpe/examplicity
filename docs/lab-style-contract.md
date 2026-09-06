@@ -764,3 +764,36 @@ Recursive Call Stacks retains its reviewed successive Observe Total(4), Some
 Total(5), and All Total(6) exercises, with Try some/all working invitations.
 This is an example of preserving an intentional learning sequence; it does not
 change the standard None / Some / All visibility toggle for a single case.
+
+For a programming workspace whose first action is Run, use `data-lab-run-cue`
+on its Run buttons instead of introductory popups. Set `data-lab-has-run="true"`
+on the `lab-programming` host when either the button or keyboard shortcut runs
+code. The subtle blue pulse stops for that visit; reduced motion uses a static
+outline. Console tabs and Clear remain separate, padded controls. Dark mode maps
+the same surface, text, action, disabled and dropdown-picker roles to dark tokens;
+it must not mix white menus with light text or clip icon buttons.
+
+Execution and assessment have different meanings. Use blue for the currently
+executing recursive frame, yellow for unanswered working, green for checked
+answers and red for mistakes. Waiting frames remain neutral. Return values sit
+in flat concept-tinted material. Keep these states intact during execution
+animations, and retain readable 11px labels / 14px values as the stack grows.
+
+Use a compact `lab-working-context` above a circuit when each step needs a short
+question and instruction. Its next action appears when the step is complete;
+the circuit stays visible instead of acquiring repeated explanatory popups.
+
+Where parameters describe a visible line, place the manipulation on that line.
+`lab-boundary-grip` provides a white circular grip, blue edge and shift or rotate
+symbol, with a larger transparent hit area and a parameter label. Preserve
+parameter readouts and first-use target hints. Use `LabDesign.bindSvgDrag` to
+retain pickup offset and release capture; the lab owns the parameter maths,
+limits and keyboard alternatives. A threshold grip shifts a neuron boundary
+with fixed weights; a weight grip tilts it while holding the other quantities.
+Do not imply that tilting is a free geometric rotation independent of weights.
+
+Floating-point bit allocation and storage normalisation are distinct actions.
+Label the allocation divider with a horizontal shift symbol. Give the mantissa
+its own shift affordance and explain the compensating exponent and lost-bit
+effect. Precision/range can use paired flat concept cards; goal success needs
+clear green contrast and a check, not only a subtle background change.

@@ -35,14 +35,14 @@
         "kind": "control",
         "selectors": [
           "#predictionChoices",
-          "#w1Track",
-          "#w2Track",
-          "#thetaTrack",
+          "#boundaryGrip-w1",
+          "#boundaryGrip-w2",
+          "#boundaryGrip-theta",
           "#modeSwitch",
           "#progressRail"
         ],
-        "description": "Predict, move unlocked parameter bars, select the guided relationship or unlock free exploration.",
-        "visibility": "Visible in the corresponding lesson, simulation or result state."
+        "description": "Predict, shift the boundary with its threshold grip or tilt it with a weight grip; keyboard arrows/Home/End adjust the same quantities. Parameter readouts remain above the plot.",
+        "visibility": "The threshold grip appears in the threshold task, w1 in weight influence, and all three in XOR/Explore; prediction unlocks the current task controls."
       },
       "model": {
         "kind": "model",
@@ -58,7 +58,7 @@
         "selectors": [
           "#workingRegion",
           "#evidenceBody",
-          "#phaseModal"
+          "#relationshipWorkAction"
         ],
         "description": "Prediction evidence, all four outputs versus targets, relationship insights and geometric XOR proof.",
         "visibility": "Visible in the corresponding lesson, simulation or result state."
@@ -68,12 +68,12 @@
       "parameters": {
         "description": "Weights and threshold.",
         "domain": "w1/w2 from -2 to 3; theta from -1 to 3; 0.1 steps.",
-        "source": "Unlocked draggable/keyboard parameter bars.",
+        "source": "Unlocked direct SVG boundary grips, with keyboard alternatives.",
         "output": "z=w1*x1+w2*x2, output 1 when z≥theta and the boundary.",
         "inputSlots": [
-          "#w1Track",
-          "#w2Track",
-          "#thetaTrack"
+          "#boundaryGrip-w1",
+          "#boundaryGrip-w2",
+          "#boundaryGrip-theta"
         ]
       },
       "inputs": {
@@ -91,7 +91,8 @@
       "Threshold target is B/C/D=1 and A=0; weight target is C/D=1 and A/B=0.",
       "XOR target B/C=1 and A/D=0 cannot be separated by one straight line. Evidence counts distinct output patterns, not all distinct parameter settings.",
       "After enough output patterns, the crossing-diagonal explanation establishes the limit and unlocks Explore.",
-      "Dragging preserves pickup offset rather than jumping to a track-edge value."
+      "The shared SVG drag helper retains pickup offset and releases capture. Threshold dragging preserves weights; each weight grip holds the other weight and threshold fixed. Existing ranges and 0.1 steps still apply.",
+      "Next-task and XOR proof actions appear in the relationship working card; no duplicate bottom phase dock. Offscreen boundaries retain grips and keyboard access."
     ],
     "completion": "Threshold and weight targets achieved, then XOR geometric proof inspected.",
     "limitations": [
