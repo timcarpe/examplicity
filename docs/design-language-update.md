@@ -983,3 +983,6 @@ Batch 5 implementation notes:
 - Guide, style contract, generated authoring bundle, /developer copies and compiled
   lab HTML are refreshed together. Previous batches also recompile to receive the
   shared resource; the new adapters are scoped to this simulation adoption class.
+
+Batch 5 implementation: `49f3853`; canonical shared resource/guide: `b1b85e7`.
+Ten implementation maps are pinned to that source revision.
