@@ -10,6 +10,7 @@ export const changelogEntries: readonly ChangelogEntry[] = [
     date: '2026-09-06',
     displayDate: '6 September 2026',
     publicChanges: [
+      'Clarified computing-lab live values, clock labels and memory readouts; restored compact memory loading bars, moved the OS log below the desktop and added clearer scheduler drop targets and state colours.',
       'Refined Assembly, Fetch–Decode–Execute, Memory Management, Process Scheduling and Software Stack with shared controls, targeted hints, less repeated text and rebalanced workspaces while retaining their hardware, queues and construction models.',
       'Refocused the developer reference and its plain-text companion on adapting labs and creating new activities from examples, with a compact GitHub contribution card, reasoning-model recommendations and direct links from the Remix prompt. Matched the site header and footer and added section tracking to the page navigation.',
       'Refreshed ten Mathematics labs covering ratio and flow, relative frequency, conditional probability, scatter diagrams, sets, similarity, solids, time zones, transformations and vectors with shared controls, clearer working and targeted interaction hints.',

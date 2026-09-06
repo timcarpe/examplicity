@@ -118,6 +118,21 @@ window.LabDesign = {
       new MutationObserver(fitText).observe(stage, { attributes: true, attributeFilter: ['viewBox'] });
       fitText();
     });
+    // Small flat surfaces follow each opted-in SVG value, including changing instructions.
+    document.querySelectorAll('svg text[data-lab-value]').forEach(value => {
+      const surface = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      surface.setAttribute('class', 'lab-svg-value-surface'); surface.setAttribute('rx', '5');
+      surface.setAttribute('aria-hidden', 'true'); value.before(surface);
+      let frame;
+      const fit = () => { cancelAnimationFrame(frame); frame = requestAnimationFrame(() => {
+        if (!value.isConnected) return;
+        const b = value.getBBox();
+        Object.entries({x:b.x-7,y:b.y-3,width:b.width+14,height:b.height+6}).forEach(([k,v])=>surface.setAttribute(k,v));
+      }); };
+      new MutationObserver(fit).observe(value, {childList:true,characterData:true,subtree:true});
+      new ResizeObserver(fit).observe(value.ownerSVGElement);
+      document.fonts?.ready.then(fit); fit();
+    });
     const touched = new Set();
     const introduced = new Set();
     const placed = new WeakMap(), moved = new WeakSet();

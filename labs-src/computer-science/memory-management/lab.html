@@ -1317,8 +1317,6 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
         This simulation compares relative latency: cache shows recently used pages, the page file sits on secondary storage, and each action remains active for its stated cycle cost.
       </div>
     </section>
-  </div>
-
   <section class="panel log-panel" aria-label="OS decision log">
     <div class="log-head">
       <div>
@@ -1329,6 +1327,9 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
     </div>
     <div id="activityLog" class="activity-log" aria-live="polite"></div>
   </section>
+</div>
+
+
 
 </main>
 
@@ -1719,9 +1720,9 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
     const visualDuration=Math.max(120,Number($("cycleSpeed").value));
     const route=action.route || actionRoute(action);
     const cycleCopy=queued?`${action.cycles.toLocaleString()} cycles waiting`:`${progress.toLocaleString()} / ${action.cycles.toLocaleString()} cycles`;
-    return `<article class="work-card ${slot} ${action.tone||""}" style="--clock-visual-duration:${visualDuration}ms">
+    return `<article title="${escapeHtml(item.detail)}" class="work-card ${slot} ${action.tone||""}" style="--clock-visual-duration:${visualDuration}ms">
       <div class="cycle-clock" aria-hidden="true"><span class="clock-arm"></span><span class="clock-hub"></span></div>
-      <div class="work-copy"><span class="work-slot-label">${queued?"Next":"Current"}</span><span class="work-actor">${escapeHtml(item.actor)}</span><strong>${escapeHtml(item.title)}</strong><p>${escapeHtml(item.detail)}</p><span class="work-route">${escapeHtml(route.start)} → ${escapeHtml(route.finish)}</span><div class="work-progress"><span style="width:${percentage}%"></span></div><span class="work-cycle-copy">${cycleCopy}</span></div>
+      <div class="work-copy"><span class="work-slot-label">${queued?"Next":"Current"}</span><span class="work-actor">${escapeHtml(item.actor)}</span><strong>${escapeHtml(item.title)}</strong><span class="work-route">${escapeHtml(route.start)} → ${escapeHtml(route.finish)}</span><div class="lab-cycle-progress" role="progressbar" aria-label="${queued?"Queued action":"Current action"}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(percentage)}"><span style="width:${percentage}%"></span></div><span class="work-cycle-copy">${cycleCopy}</span></div>
     </article>`;
   }
 

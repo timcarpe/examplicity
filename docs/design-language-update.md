@@ -1086,3 +1086,13 @@ Review note: Software Stack retains its existing deterministic utility-failure t
 Batch 6 validation: six Assembly examples halt with expected values/output; both FDE models complete all three programs; Memory boots and processes work/stress events; all three Scheduler targets pass with the expected rule pairs, rule drag and arrival keyboard controls work; valid Software Stack boots and opens Image Editor. Reviewed desktop and 900/390px layouts; no horizontal page overflow or operated-canvas scroll remains. Source-editor scrolling is retained. All 57 published/downloaded labs, contract sidecars, developer resources and the canonical authoring bundle pass their focused checks. Sound Sampling's unchanged embedded audio plus the shared CSS is 1,466,264 bytes; its existing scoped download allowance increases from 1,450,000 to 1,475,000 bytes. No audio assets changed.
 
 Batch 6 implementation: `dd9d94ed84014c88004b994586577a523df8e342`; canonical kit and guide: `76e2c9f`. Maps are pinned to that implementation. Assembly's two-pass table spans beneath the editor/CPU workspace to give resolved instructions room without shrinking their type.
+
+
+## Batch 6 review refinements
+
+- FDE and Assembly: passive, automatically fitted SVG value surfaces use a shared helper and violet material tint. FDE clock wave begins after its HIGH/LOW labels; the operation readout occupies the space beneath RAM.
+- Memory Management: separated cycle bars from the colliding working-card class, restored their visible fill and reduced queue height. Log moved beneath the desktop with compact route/timing rows. Padded drive/page-file regions and cells; simplified and extended connection tracks to their device edges.
+- Scheduling: matching amber/violet rule grips and dashed pulsing drop targets, differentiated state-lane surfaces, next-dispatch summary and fewer repeated process/state descriptions. Existing identities, algorithms, targets and history are preserved.
+- Software Stack accepted; no local source change. Presentation patterns documented in both canonical guides. Removed exact duplicate shared working-card/action declarations while retaining their final cascade position.
+
+Validation: both FDE models still complete all three supplied programs; memory boots, progresses workloads and shows a nonzero 6px bar; all three Scheduler targets, rule drag and arrival keyboard control pass. SVG backgrounds refit around changing values; readout/log placement checked in the browser. No horizontal page overflow or canvas scrolling at 900/390px in those flows.

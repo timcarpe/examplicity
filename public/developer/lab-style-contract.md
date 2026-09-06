@@ -639,3 +639,28 @@ Keep meaningful process identities, state hatching and transfer paths. Editor,
 memory-table, log and parts-menu scrolling can be useful; the operated hardware
 diagram fits the available canvas. A narrow timeline can retain every tick while
 reducing printed tick numbers and exposing full state descriptions on cells.
+
+
+### Live values, cycle bars and rule drop targets
+
+Use a small flat material surface for a value inside a diagram component, as for
+a formula in working. Opt SVG text into `data-lab-value`; the shared runtime
+fits a `lab-svg-value-surface` rectangle to the value with 7 SVG units of
+horizontal padding and 3 vertical, 5-unit corners, no border and a 16% approved
+violet tint. It refits after text, font or viewport changes. The surface is
+passive; it does not imply an input or a validation result.
+
+Cycle progress is `lab-cycle-progress`: a 6px rounded track with no padding,
+border or card animation. Its fill follows actual progress and it exposes a
+progressbar value. Do not reuse the working-card `work-progress` class for a
+loading track. Current/next cards can show actor, action, bar and cycle count;
+the detailed causal history belongs in the log. Keep log routes and timing
+readable when the log sits beneath the operated desktop.
+
+Scheduling illustrates restrained semantic contrast: amber Ready-selection and
+violet interruption rules have matching tray grips and target tones. An empty
+slot uses a dashed, gently pulsing boundary; installing the rule makes it solid.
+Ready uses a pale amber surface, Running violet and Blocked neutral, always with
+state labels. Keep process identity colours separate from the state surface and
+reserve correct/incorrect colours for assessed outcomes. Avoid restating the
+same process list or repeating eligibility descriptions beneath state names.
