@@ -533,3 +533,5 @@ Inside an evidence card, relationship explanations are padding-driven, without
 a second border or surface. Auto/fixed value surfaces need 8px × 10px padding.
 Remove persistent drag commands once a targeted introduction covers them;
 retain causal explanations, live errors and the requirements for completion.
+
+Use `claimContextTitle` as the accessible heading hook, with `claimContextStatement` and `claimContextCriterion` for the proposition and its evidence test. These IDs identify content; `.lab-context` owns the shared appearance. Bounds, Similarity and 3D Trigonometry demonstrate guarantee, scaling and certification/perspective uses. State the test without supplying its unearned result. Remove captions that only narrate a visible solid or its unwrapped surface.

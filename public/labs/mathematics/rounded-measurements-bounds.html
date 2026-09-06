@@ -1172,9 +1172,6 @@ input.lab-intro-target{outline:none;animation:none}
 .lab-digital-display .lab-digital-unit{font-size:14px;fill:currentColor}
 .lab-bounds-restored .lab-chart-heading{font-size:14px;font-weight:400}
 .lab-bounds-restored :is(.lab-chart-label,.bound-value,.smallmono,.mono){font-size:12px}
-.lab-task-context{padding:16px 20px 0;color:var(--lab-ink-secondary,#424245);font:400 14px/1.5 var(--lab-font-sans,sans-serif)}
-.lab-task-context p{margin:0}
-.lab-task-context strong{font-weight:400;color:var(--lab-ink,#1d1d1f)}
 
 .lab-proof-marker{fill:var(--lab-concept-blue,#4779b7);stroke:white;stroke-width:2}
 .lab-proof-marker.time{fill:var(--lab-concept-violet,#7563a7)}
@@ -1764,6 +1761,16 @@ window.LabDesign = {
         "kind": "control",
         "description": "Validate the four finer interval limits before the final speed proof.",
         "visibility": "Stage 4, Working All, before fine.boundsSuccess."
+      },
+      "test-context": {
+        "selectors": [
+          "#claimContextTitle",
+          "#claimContextStatement",
+          "#claimContextCriterion"
+        ],
+        "kind": "given",
+        "description": "Persistent speed guarantee and disproof criterion above the model; stage 4 identifies finer evidence without revealing the verdict.",
+        "visibility": "Persistent above the model at every Working level; updates with the current problem or test phase."
       }
     },
     "quantities": {
@@ -1854,9 +1861,8 @@ window.LabDesign = {
   </section>
 
   <section class="panel lab">
-    <div id="certificateClaim" class="lab-task-context"><p><strong>Claim: the car’s average speed is at least 8.05 m/s.</strong> Do the rounded distance and time readings guarantee this for every possible run? One slower allowed run is enough to disprove the guarantee.</p></div>
     <section class="next-card" id="nextCard" hidden aria-live="polite" data-lab-role="evidence"></section>
-    <div class="workspace"><div class="stage-shell"><svg id="stage" class="stage" viewBox="0 0 1120 665" role="img" aria-labelledby="stageTitle stageDesc" data-lab-role="model" data-lab-manipulative="bounds-interval"></svg></div><aside id="proofDock" class="proof-dock lab-proof-sidebar" aria-live="polite" data-lab-role="working"></aside></div>
+    <div class="workspace"><div class="stage-shell"><section id="certificateClaim" class="lab-context" aria-labelledby="claimContextTitle"><div class="lab-context-heading"><h2 id="claimContextTitle">Claim under test</h2></div><p id="claimContextStatement">The car’s average speed is at least 8.05 m/s.</p><p id="claimContextCriterion" class="lab-context-detail">Do the rounded readings guarantee this for every allowed run? One allowed speed below 8.05 m/s disproves the guarantee.</p></section><svg id="stage" class="stage" viewBox="0 0 1120 665" role="img" aria-labelledby="stageTitle stageDesc" data-lab-role="model" data-lab-manipulative="bounds-interval"></svg></div><aside id="proofDock" class="proof-dock lab-proof-sidebar" aria-live="polite" data-lab-role="working"></aside></div>
   </section>
 
 </main>
@@ -2312,7 +2318,7 @@ function renderSteps(){
  steps.forEach((s,i)=>{const b=document.createElement('button');b.type='button';b.className='lab-checkpoint';b.dataset.complete=String(state.complete[i]);b.setAttribute('aria-current',String(i===state.step));b.setAttribute('aria-label',s.name);b.title=s.name.replace(/^\d · /,'')+(state.complete[i]?'\n'+evidence[i]:'');b.disabled=i>0&&!state.complete[i-1];b.addEventListener('click',()=>selectStep(i));host.append(b)});
  document.querySelectorAll('[data-level]').forEach(b=>b.setAttribute('aria-pressed',String(Number(b.dataset.level)===state.workingLevel)));
 }
-function renderMission(){$('goalKicker').textContent=`Step ${state.step+1} of ${steps.length} · ${steps[state.step].tag}`;$('goalText').textContent=steps[state.step].goal();renderSteps()}
+function renderMission(){$('claimContextTitle').textContent=state.step===3?'Same claim, finer readings':'Claim under test';$('claimContextCriterion').textContent=(state.step===3?'Use the finer distance and time intervals. ':'')+'Do the rounded readings guarantee this for every allowed run? One allowed speed below 8.05 m/s disproves the guarantee.';$('goalKicker').textContent=`Step ${state.step+1} of ${steps.length} · ${steps[state.step].tag}`;$('goalText').textContent=steps[state.step].goal();renderSteps()}
 
 const geom={distance:{x:260,y:165,w:440},time:{x:260,y:345,w:440}};
 function scanDomain(kind){return kind==='distance'?[99.2,100.8]:[12.30,12.50]}

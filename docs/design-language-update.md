@@ -866,3 +866,36 @@ user review. No new curriculum alignment is part of this batch.
   live sample-size changes), preserved proposal feedback, vector completion,
   centred indices, auto-value padding and the closed panel seam. Checked updated
   pages at desktop and 390px widths; shared headings also checked on Sequences.
+
+
+### Retrospective context pass — 6 September 2026
+
+Change list: remove Surface Area’s solid/unwrapped-surface narration; reuse
+the shared context strip for Bounds, Similarity and 3D certification. Preserve
+models, learning gates and Working levels. Refresh their observational maps.
+
+- Bounds: move the existing guarantee into the model column with separate
+  claim/criterion; identify finer evidence in stage 4 without supplying a verdict.
+- Similarity: keep the scale question visible during predictions, resizing and
+  working; switch to common length ratios for the one-dimension rule test.
+- 3D: move scenario givens and the angle definition into context; shorten the
+  immediate task and switch context for the perspective test.
+- Surface Area: remove both requested captions and the matching skin narration;
+  retain the control-ownership note and accessible SVG descriptions.
+- Reviewed the 26 adopted labs for this pattern. Relative Frequency already
+  uses it. Existing concrete goals suffice for Binary, Graph Search, Coordinate,
+  Prime Factors, Sequence, Histogram, Percentage, Motion, Straight Lines,
+  Recurring, Circle, Right/Non-right Triangle, Trig Functions, Ratio/Flow,
+  Replacement, Scatter, Sets, Solids, Time Zones, Transformations and Vectors.
+  Their calculation/prediction cards and explicit constraints remain; no
+  additional repeated goal strip was added to those labs.
+- Shared `.lab-context` supplies all presentation. Removed unused Bounds-only
+  `.lab-task-context` rules; canonical HTML guide and style contract document
+  content hooks and these uses. Published resources/downloads regenerate.
+
+- Focused Edge/Playwright checks passed: desktop context sits above each model,
+  heading is shared 15px regular with no border, four changed labs have no
+  document overflow at 390px, and Bounds finer precision/Similarity rule test/
+  3D perspective update the context. Phase checks used existing source hooks;
+  this was not a replay of every learning interaction. No page script errors.
+  Publication, standalone packaging and sidecar checks passed for all 57 labs.
