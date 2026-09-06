@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import styles from './developer.module.css';
+import ContentsNav from './contents-nav';
+import { BugReportDialog } from '../bug-report-dialog';
 
 export const metadata: Metadata = {
   title: 'Adapt or create a lab | Examplicity',
@@ -11,8 +13,10 @@ export const metadata: Metadata = {
 export default function DeveloperPage() {
   return (
     <main className={styles.page}>
-      <header className={styles.siteHeader}>
-        <Link className={styles.brand} href="/">Examplicity</Link>
+      <header className={`site-header ${styles.sharedHeader}`}>
+        <Link className="brand" href="/" aria-label="Examplicity home">
+          <span className="tone-one">e</span><span className="tone-two">x</span><span className="tone-three">a</span><span className="tone-four">m</span>plicity
+        </Link>
         <nav className={styles.topNav} aria-label="Developer reference">
           <Link href="/developer" aria-current="page">Adapt or create</Link>
           <a href="/developer/design-language.html">Design guide</a>
@@ -21,15 +25,7 @@ export default function DeveloperPage() {
         </nav>
       </header>
       <div className={styles.layout}>
-        <aside className={styles.contents} aria-label="On this page">
-          <p>On this page</p>
-          <a href="#start">Start with a lab</a>
-          <a href="#reasoning">Choose reasoning depth</a>
-          <a href="#remix">Adapt an existing lab</a>
-          <a href="#create">Create a new lab</a>
-          <a href="#design">Design references</a>
-          <a href="#check">Check and deliver</a>
-        </aside>
+        <ContentsNav />
         <article className={styles.document}>
           <div className={styles.introduction}>
             <aside id="contribute" className={styles.contribution} aria-labelledby="contribute-title">
@@ -149,6 +145,14 @@ export default function DeveloperPage() {
           </section>
         </article>
       </div>
+      <footer>
+        <div className="footer-left">
+          <a href="https://github.com/timcarpe/examplicity">Examplicity™</a>
+          <Link href="/changelog">Changelog</Link>
+          <BugReportDialog />
+        </div>
+        <span>Make complex ideas click. · <a href="https://opensource.org/license/mit">MIT License</a></span>
+      </footer>
     </main>
   );
 }

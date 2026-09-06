@@ -403,3 +403,41 @@
 }
 
 .reasoningCaption { text-align: left; color: var(--docs-muted); font-size: 13px; padding-bottom: 12px; }
+
+.sharedHeader { flex-wrap: wrap; height: auto; min-height: 66px; gap: 12px; padding-block: 12px; }
+.contents { top: 100px; }
+.contents a {
+  display: grid;
+  position: relative;
+  padding: 4px 0 4px 10px;
+  transition: color 180ms ease, transform 220ms ease;
+}
+.contents a span, .contents a strong { grid-area: 1 / 1; transition: opacity 180ms ease; }
+.contents a strong { font-weight: 650; opacity: 0; }
+.contents a::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 3px;
+  bottom: 3px;
+  width: 2px;
+  border-radius: 2px;
+  background: #315b91;
+  opacity: 0;
+  transform: scaleY(.4);
+  transition: opacity 180ms ease, transform 220ms ease;
+}
+.contents a[aria-current='location'] { color: var(--docs-ink); transform: translateX(3px); }
+.contents a[aria-current='location'] span { opacity: 0; }
+.contents a[aria-current='location'] strong { opacity: 1; }
+.contents a[aria-current='location']::before { opacity: 1; transform: scaleY(1); }
+.document :is(section, header)[id] { scroll-margin-top: 120px; }
+@media (max-width: 760px) {
+  .sharedHeader { min-height: 60px; }
+  .contents { position: static; }
+  .document :is(section, header)[id] { scroll-margin-top: 140px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .contents a, .contents a span, .contents a strong, .contents a::before { transition: none; }
+  :global(html) { scroll-behavior: auto; }
+}

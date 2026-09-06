@@ -10,7 +10,7 @@ export const changelogEntries: readonly ChangelogEntry[] = [
     date: '2026-09-06',
     displayDate: '6 September 2026',
     publicChanges: [
-      'Refocused the developer reference and its plain-text companion on adapting labs and creating new activities from examples, with a compact GitHub contribution card, reasoning-model recommendations and direct links from the Remix prompt.',
+      'Refocused the developer reference and its plain-text companion on adapting labs and creating new activities from examples, with a compact GitHub contribution card, reasoning-model recommendations and direct links from the Remix prompt. Matched the site header and footer and added section tracking to the page navigation.',
       'Refreshed ten Mathematics labs covering ratio and flow, relative frequency, conditional probability, scatter diagrams, sets, similarity, solids, time zones, transformations and vectors with shared controls, clearer working and targeted interaction hints.',
       'Refreshed nine networking simulations and Sound Sampling with shared task controls, readable evidence, targeted interaction hints and fitted model areas.',
       'Unified Time Zones under Working: None / Some / All, made its calendars and date controls easier to read, and preserved the complete-meeting availability checks.',
