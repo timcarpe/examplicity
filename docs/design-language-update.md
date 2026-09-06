@@ -1061,3 +1061,6 @@ through Topology and key dragging/placement. Four full encryption captures fit
 with 27px clearance above Eve and no clipped screen/key content. All 57 compiled,
 style, content, standalone-download and contract checks passed; developer and
 authoring bundle resources are current.
+
+Restoration implementation: `dd106a0`; canonical shared guide/kit: `749893e`.
+Seven affected implementation maps are pinned to this source revision.
