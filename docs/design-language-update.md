@@ -1203,3 +1203,11 @@ Batch 6, including the concurrent OS Memory revision, is accepted.
   package about 1.501 MB); the general download limit is unchanged.
 - Site implementation: `c33510e`; canonical kit and guides: `747c5ff`.
   Bitmap and Automated Systems maps pin the reviewed site revision.
+
+### Automated Systems — restore item configuration popup
+
+- Restored the statement chooser over the chart on placement/selection.
+  Execution explanations remain in the inline working area.
+- Removed the zero-top-padding override: the working card now has the same
+  14px panel inset above it as at its sides. Updated both guides and the map
+  to distinguish item editing from explanatory popups.

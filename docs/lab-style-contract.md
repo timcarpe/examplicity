@@ -733,6 +733,8 @@ retains the outcome. Use data-state="working|correct|mistake|ready" for the
 existing yellow/green/red/neutral states. Reserve enough readout height to
 avoid moving the model during ordinary updates; let unusually long text flow.
 Keep the physical model beside its controller, not below it. Automated Systems
-uses inline build guidance and configuration instead of first-use popups; this
-is a simulation-specific alternative, not a replacement for targeted tooltips
+uses inline build guidance and execution feedback. Keep the statement chooser
+popup when placing or selecting a flowchart item: it edits the item rather than
+narrating the simulation. Keep normal panel-body padding above the working card.
+This is a simulation-specific alternative, not a replacement for targeted tooltips
 elsewhere.

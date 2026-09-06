@@ -2481,8 +2481,6 @@ svg text[data-lab-value]{font-size:var(--lab-value-fit-size,var(--lab-value-font
 .lab-working-readout[data-state="mistake"]{border-color:var(--lab-bad-line);background:var(--lab-bad-soft)}
 .lab-builder-instructions{margin:6px 0 12px;font:400 12px/1.45 var(--lab-font-sans);color:var(--lab-muted)}
 .computing-automated-system-control-flowcharts .challenge{min-height:0}
-.computing-automated-system-control-flowcharts .config{position:relative;inset:auto;max-width:100%;width:100%;margin:0 0 12px;box-shadow:none}
-.computing-automated-system-control-flowcharts .factory-body{padding-top:0}
 .computing-automated-system-control-flowcharts .batch{padding:0;border:0;background:none}
 .lab-builder .batch-item.lab-chip{display:flex;flex-direction:column;gap:2px}
 .lab-builder .batch-item.lab-chip small{font:400 11px/1.4 var(--lab-font-sans)}
@@ -2865,7 +2863,7 @@ window.LabDesign = {
     "dependencies": [
       "Each stage checks symbol type, statement and connections before running its physical cases.",
       "Decision YES and NO branches remain distinct; repeat branches reconnect to the pressure-sensor input.",
-      "Editing and physical test controls stay below the goal. Placement/wiring guidance and symbol configuration are inline; one working readout replaces chart/device popups.",
+      "Editing and physical test controls stay below the goal. Placement/wiring guidance stays inline. Placing or selecting a symbol opens its statement chooser over the chart; one working readout replaces explanatory chart/device popups.",
       "The chart expands down the page; the factory and its SVG device artwork remain paired with it."
     ],
     "completion": "All four challenge tests pass, including correct repeat routing.",
@@ -2927,12 +2925,6 @@ window.LabDesign = {
           <div class="tool-help"><strong>Connect:</strong> drag from an output circle to an input circle, or click one output then one input. Decision outputs are fixed as YES left and NO right. The chart expands downward as your controller grows.</div>
           <div class="tool-actions"><button id="auto-layout" type="button" class="lab-action">Arrange chart</button></div>
         </div>
-          <div id="config" class="config" hidden>
-            <div class="config-head"><div><strong id="config-title"></strong><span id="config-sub"></span></div><button id="config-close" class="config-close" type="button" aria-label="Close configuration">×</button></div>
-            <div class="config-field"><label for="config-operation">Statement</label><select id="config-operation" class="lab-menu-select"></select></div>
-            <div id="config-note" class="config-note"></div>
-            <div class="config-actions"><button id="config-delete" type="button" class="lab-action danger">Delete symbol</button></div>
-          </div>
         <div id="chart-shell" class="chart-shell">
           <svg id="flowchart" viewBox="0 0 820 560" role="img" aria-labelledby="flow-title flow-desc" data-lab-role="model" data-lab-manipulative="flowchart">
             <title id="flow-title">Interactive automated system flowchart</title>
@@ -2948,6 +2940,12 @@ window.LabDesign = {
             <g id="port-layer"></g>
             <circle id="flow-token" r="6" fill="var(--active)" stroke="#fff" stroke-width="2" visibility="hidden"/>
           </svg>
+          <div id="config" class="config" hidden>
+            <div class="config-head"><div><strong id="config-title"></strong><span id="config-sub"></span></div><button id="config-close" class="config-close" type="button" aria-label="Close configuration">×</button></div>
+            <div class="config-field"><label for="config-operation">Statement</label><select id="config-operation" class="lab-menu-select"></select></div>
+            <div id="config-note" class="config-note"></div>
+            <div class="config-actions"><button id="config-delete" type="button" class="lab-action danger">Delete symbol</button></div>
+          </div>
           <div id="drop-hint" class="drop-hint" hidden>Drop symbol</div>
         </div>
 
