@@ -1295,3 +1295,4 @@ Implemented:
 - Bounds source/contract belongs to the alignment task. Its only final generated
   delta here is six shared typography CSS lines. Unrelated site work is excluded.
 - Canonical shared commit: `7ea033f`.
+- Site implementation: `aa44d9e`; the six maps pin that reviewed revision.
