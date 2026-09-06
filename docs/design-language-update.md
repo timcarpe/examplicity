@@ -1181,3 +1181,5 @@ Batch 6, including the concurrent OS Memory revision, is accepted.
   Desktop 1422px, tablet 900px and phone 390px have no page or canvas overflow.
   No browser page errors. Publication, standalone packaging and observational
   contract checks pass for all 57 labs; developer mirrors and authoring bundle match.
+- Commits: site implementation `44805d3`; canonical shared kit and guides `97ab2ba`.
+  The five maps pin their reviewed revision to the site implementation commit.
