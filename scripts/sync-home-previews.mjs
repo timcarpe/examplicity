@@ -13,7 +13,12 @@ const definitions = [
   ['patterns', 'mathematics/sequence-patterns-differences', '<div class="canvas" id="canvas"', 'div'],
   ['graph', 'computer-science/dijkstra-a-star-graph-search', '<div class="graph-shell"', 'div'],
   ['circle', 'mathematics/circle-theorem-constraint-network', '<div class="svg-wrap">', 'div'],
+  ['packet', 'computer-science/packet-switching', '<div id="networkCanvas"', 'div'],
+  ['diffraction', 'physics/diffraction-through-a-gap', '<div class="stage-frame"', 'div'],
+  ['gas', 'physics/gas-compression-at-constant-temperature', '<svg id="stage"', 'svg'],
+  ['trig', 'mathematics/trigonometric-function-periodicity-solutions', '<section class="graph-side"', 'section'],
 ];
+const selected = process.argv.slice(2);
 
 function component(source, start, tag) {
   const offset = source.indexOf(start);
@@ -44,6 +49,7 @@ function functions(source) {
 }
 
 for (const [name, slug, start, tag] of definitions) {
+  if (selected.length && !selected.includes(name)) continue;
   const source = await readFile(`labs-src/${slug}/lab.html`, 'utf8');
   // Published output contains the source's shared stylesheet dependencies in cascade order.
   const published = await readFile(`public/labs/${slug}.html`, 'utf8');
@@ -68,6 +74,10 @@ for (const [name, slug, start, tag] of definitions) {
   // Classes created by the source renderers rather than literal source markup.
   for (const c of 'lab-svg-value-surface active changed good show equal a b unlocked axis axis-label grid-minor tick-label sample ref-grid ref-tile last-growth grid-cell build-ghost placed-tile previous-pattern-label loose-tile used drag-valid'.split(' ')) classNames.add(c);
   if (name === 'circle') for (const c of 'grid-line circle-main centre-dot label small muted diameter chord-a radius construction wedge angle-value right-angle fixed-point drag-point b c a ghost-point gold stage-note trace low high good'.split(' ')) classNames.add(c);
+  if (name === 'packet') for (const c of 'link link-hit network-node router-node endpoint-node router-top router-name router-queue router-body router-ports router-port router-leds router-led power activity queue on router-status processing forwarding waiting packet-dot lab-packet-marker'.split(' ')) classNames.add(c);
+  if (name === 'gas') for (const c of 'gauge-tick major graph-grid graph-axis impact-pulse on particle force-arrow-soft force-arrow collision-flash live'.split(' ')) classNames.add(c);
+  if (name === 'diffraction') classNames.add('barrier-stripe');
+  if (name === 'trig') for (const c of 'svg-grid svg-axis svg-tick svg-axis-label svg-title svg-sub svg-target svg-target-label svg-range svg-range-edge svg-asymptote svg-asymptote-label svg-trace-under svg-trace svg-cursor svg-live-dot svg-solution-dot svg-solution-label'.split(' ')) classNames.add(c);
   const css = postcss.parse([...published.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/g)].map(m => m[1]).join('\n'));
   css.walkComments(n => n.remove());
   css.walkAtRules(n => {
@@ -80,7 +90,7 @@ for (const [name, slug, start, tag] of definitions) {
       const classes = [...selector.matchAll(/\.([a-zA-Z_][\w-]*)/g)].map(m => m[1]);
       const selectorIds = [...selector.matchAll(/#([a-zA-Z_][\w-]*)/g)].map(m => m[1]);
       return (classes.length ? classes.some(c => classNames.has(c)) : selectorIds.every(id => ids.includes(id)))
-        && !/\.computing-(?!fetch-decode-execute)[\w-]+/.test(selector)
+        && ![...selector.matchAll(/\.(computing-[\w-]+)/g)].some(m => !wrapperClasses.includes(m[1]))
         && !/(?:^|[ >])(?:main|header|footer|h1|h2|a)(?:$|[ .:#>])/.test(selector);
     });
     if (!selectors.length) return rule.remove();
@@ -199,6 +209,133 @@ let iterator,nextAt,last=0;
 function reset(){search=createSearch('astar');inspected=null;activeEdge=null;activeNeighbour=null;scannedEdges=new Set();iterator=steps();nextAt=1000;renderGraph();}
 reset();return time=>{if(time<last)reset();last=time;while(time>=nextAt){const step=iterator.next();renderGraph();if(step.done){nextAt=Infinity;break;}nextAt+=step.value;}};
 `;
+  } else if (name === 'packet') {
+    const constants=source.slice(source.indexOf('const defaultNodes='),source.indexOf('function speed()'));
+    const edges=fn('renderEdges').replace(/hit\.addEventListener\("click",event=>\{[\s\S]*?\}\);/, '');
+    const nodes=fn('renderNodes');
+    const renderNodes=nodes.slice(0,nodes.indexOf('const activateNode='))+'layer.appendChild(element);\n});\n}';
+    const helpers=['edgeKey','edgeNodes','nodePosition','routerRuntimeFor','routerArtwork','updateRouterVisual','setEdgeVisual','packetColour'].map(fn).join('\n');
+    body=`${common}
+${constants}
+const nodes=new Map(defaultNodes.map(n=>[n.id,{...n}])),edges=new Set(defaultEdges.map(([a,b])=>edgeKey(a,b)));
+const routerRuntime=new Map(),edgeTraffic=new Map(),tool='move',connectSource=null;
+${helpers}
+${edges}
+${renderNodes.replace('element.tabIndex=0','element.tabIndex=-1')}
+renderEdges();renderNodes();
+// Valid routes on the source topology. Source link, queue, processing, and forwarding
+// durations are scheduled here on the shared clock instead of independent async loops.
+const routes=[['A','R1','R2','B'],['A','R1','R3','R5','B'],['A','R1','R4','R5','B']];
+const packets=Array.from({length:6},(_,index)=>({id:'P'+(index+1),index,colour:packetColour(index,6),route:routes[index%3],links:[],stops:[]}));
+const pending=packets.map(packet=>({time:packet.index*220,packet,hop:0})),available=new Map();
+while(pending.length){
+  pending.sort((a,b)=>a.time-b.time);const {time,packet,hop}=pending.shift();
+  const from=packet.route[hop],to=packet.route[hop+1],end=time+820+((packet.index*43+hop*31)%3)*130;
+  packet.links.push({from,to,start:time,end});
+  if(nodes.get(to).type==='router'){
+    const start=Math.max(end,available.get(to)||0),numeric=Number(to.replace(/\\D/g,''))||1;
+    const processed=start+500+((packet.index*37+numeric*29)%3)*110,forwarded=processed+210;
+    packet.stops.push({id:to,arrival:end,start,processed,end:forwarded});available.set(to,forwarded);
+    pending.push({time:forwarded,packet,hop:hop+1});
+  }
+}
+for(const packet of packets){const dot=document.createElement('div');dot.className='packet-dot lab-packet-marker';dot.style.setProperty('--packet',packet.colour);dot.innerHTML='<span>'+packet.id+'</span>';$('packetLayer').append(dot);packet.dot=dot;}
+return time=>{
+  const now=time+1500; // Enter during transmission, with packets already reaching R1.
+  for(const key of edges)setEdgeVisual(key,false);
+  for(const id of nodes.keys())if(nodes.get(id).type==='router'){
+    const runtime=routerRuntimeFor(id);runtime.current=null;runtime.phase='idle';runtime.queue=0;
+    for(const packet of packets)for(const stop of packet.stops)if(stop.id===id){
+      if(now>=stop.arrival&&now<stop.start)runtime.queue++;
+      if(now>=stop.start&&now<stop.end){runtime.current=packet;runtime.colour=packet.colour;runtime.phase=now<stop.processed?'processing':'forwarding';}
+    }
+    updateRouterVisual(id);
+  }
+  for(const packet of packets){
+    const link=packet.links.find(l=>now>=l.start&&now<l.end);
+    const stop=packet.stops.find(s=>now>=s.arrival&&now<s.end);
+    packet.dot.hidden=!link&&!stop;
+    if(link){
+      const from=nodePosition(link.from),to=nodePosition(link.to),t=(now-link.start)/(link.end-link.start);
+      const eased=t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+      packet.dot.style.transform='translate('+(from.x+(to.x-from.x)*eased)+'px,'+(from.y+(to.y-from.y)*eased)+'px)';
+      setEdgeVisual(edgeKey(link.from,link.to),true,packet.colour);
+    }else if(stop){const p=nodePosition(stop.id);packet.dot.style.transform='translate('+p.x+'px,'+p.y+'px)';}
+  }
+};
+`;
+  } else if (name === 'diffraction') {
+    const constants=source.slice(source.indexOf('const STAGE_W ='),source.indexOf('const MIN_GAP'));
+    const canvas=source.slice(source.indexOf('const canvas = $("waveCanvas")'),source.indexOf('function ratio('));
+    const helpers=['spreadAngle','smoothstep','computeField','renderWaveField','fanGeometry','updateFan','updateBarrier','updateWavelengthMeasure'].map(fn).join('\n');
+    body=`${common}
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v)),fmt=(v,d=1)=>Number(v).toFixed(d);
+${constants}
+const state={phase:'gap',gap:3.6,lambda:1.6,fieldDirty:true,animationPhase:0};
+${canvas}
+${helpers}
+$('overlay').style.setProperty('--lab-chart-text-size','11px');
+updateBarrier();updateFan();updateWavelengthMeasure();
+$('lambdaGripValue').textContent='λ = '+fmt(state.lambda)+' cm';
+$('gapGuide').hidden=true;$('waveGuide').hidden=true;
+// Preserve the original ripple-tank renderer and its propagation speed.
+return time=>{
+  const gap=Math.round((3.6-2.4*clamp((time-500)/6500,0,1))*10)/10;
+  if(gap!==state.gap){state.gap=gap;state.fieldDirty=true;updateBarrier();updateFan();}
+  state.animationPhase=time*.0042;renderWaveField();
+};
+`;
+  } else if (name === 'gas') {
+    const constants=source.slice(source.indexOf("const NS="),source.indexOf('function practiceRandom()'))
+      .replace(/^\s*const (?:close|PRACTICE_VOLUMES|recommendedWorkingLevel)=.*;\r?\n/gm,'');
+    const helpers=source.slice(source.indexOf('const pressure=v=>'),source.indexOf('function initStatic()'))
+      .replace(/^\s*const xToVolume=.*;\r?\n/gm,'');
+    const init=fn('initStatic').replace('renderCaseRail();','').replaceAll('Math.random()', 'random()');
+    const reset=fn('resetParticles').replaceAll('Math.random()', 'random()');
+    const rendering=['renderForces','renderGraph','renderGauge','renderImpactPanel'].map(fn).join('\n');
+    const all=fn('renderAll');
+    const stage=all.slice(0,all.indexOf("$('volumeReadout')")).replace('renderTargets();','').replace('rebuildPhase=true','').replace('const cfg=c(),p=','const p=')+'}';
+    const animation=fn('animation').replace('requestAnimationFrame(animation)','');
+    body=`${common}
+${constants.replace('lastTime:performance.now()', 'lastTime:0')}
+${helpers}
+let seed=42;function random(){seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;}
+${init}
+${reset}
+${rendering.replaceAll('url(#forceHead)','url(#home-gas-forceHead)')}
+${stage}
+${animation}
+$('stage').style.setProperty('--lab-chart-text-size','11px');
+initStatic();let simulated=0;
+function resetPreview(){state.volume=6;state.trace=[6];state.flashes=[];state.lastTime=0;state.pulsePhase=0;seed=42;resetParticles();simulated=0;renderAll();animation(0);}
+resetPreview();
+// Replay the lab's 6 L to 3 L compression with its original particle collisions,
+// pressure law, forces, gauge, and graph. Fixed steps make pause/seek deterministic.
+return time=>{
+  if(time<simulated)resetPreview();
+  while(simulated+1000/60<=time){simulated+=1000/60;state.volume=Math.round((6-3*clamp((simulated-500)/6000,0,1))*100)/100;
+    if(state.trace.at(-1)!==state.volume){state.trace.push(state.volume);if(state.trace.length>180)state.trace.shift();}
+    renderAll();animation(simulated);
+  }
+};
+`;
+  } else if (name === 'trig') {
+    const sineCase=source.match(/const cases=\[\s*(\{[^\n]*\})/)[1];
+    const helpers=['mod','normAngle','trig','fmt','fmtValue','currentCase','dedupeSolutions','solutions','isVisitedNear','updateDiscoveries','markUnwrappedSegment','svgEl','graphYRange','graphMap','tracePaths','renderGraph'].map(fn).join('\n');
+    body=`${common}
+const DEG=Math.PI/180,cases=[${sineCase}];
+const state={caseIndex:0,angle:0,visited:new Uint8Array(360),discovered:new Set(),complete:false,fullTurns:0};
+let graphSize={w:479,h:310},lastAngle=0;
+${helpers}
+$('graphSvg').style.setProperty('--lab-chart-text-size','12px');
+function draw(){renderGraph();$('valuePill').textContent=fmtValue(trig(currentCase().fn,state.angle));}
+draw();
+// Replay a full native sine trace, revealing both target crossings as they are visited.
+return time=>{const angle=359.5*Math.max(0,Math.min(1,(time-500)/7000));
+  if(angle<lastAngle){state.visited.fill(0);state.discovered.clear();state.complete=false;state.fullTurns=0;lastAngle=0;}
+  if(angle>lastAngle)markUnwrappedSegment(lastAngle,angle);
+  state.angle=angle;lastAngle=angle;draw();};
+`;
   } else {
     const constants=source.slice(source.indexOf('const TAU='),source.indexOf('function lineDiff'))
       .replace('SNAP_DEG=.65, ', '')
@@ -213,14 +350,19 @@ const svg=$('geometry');
 ${constants}
 ${helpers}
 const r=rng(1),p={};${scenario}
-const s={B:p.targetB,C:p.C,testTravel:0,alignedOnce:true},current=()=>p,session=()=>s;
+const travel=96*RAD,startC=norm(p.D+travel);
+const s={B:p.targetB,C:startC,testTravel:0,alignedOnce:true},current=()=>p,session=()=>s;
 ${draw}
 svg.style.setProperty('--lab-chart-text-size','14px');
 semicircleGeometry();
-return time=>{const motion=Math.max(0,time-1000)/1100;s.C=norm(p.C+Math.sin(motion)*22*RAD);s.testTravel=Math.min(50*RAD,Math.max(0,time-1000)/100*RAD);semicircleGeometry();};
+// Replay a single drag along the circumference, then release C exactly at D.
+// Keep the native geometry intact when the two points coincide.
+return time=>{const progress=clamp((time-1700)/4800,0,1),eased=progress*progress*(3-2*progress);
+  s.C=progress===1?p.D:norm(startC-travel*eased);s.testTravel=travel*eased;semicircleGeometry();};
 `;
   }
+  body = body.replace(/[ \t]+$/gm, '');
   const header = `${name === 'geometry' ? '/* eslint-disable @typescript-eslint/no-unused-vars */\n' : ''}// Generated by scripts/sync-home-previews.mjs from ${asset.source}.\n// Source rendering functions are preserved; only UI orchestration outside the excerpt is omitted.\n`;
   await writeFile(`${output}/${name}.js`, `${header}export function mount(root) {\nconst update=(()=>{\n${body}\n})();\nlet lastTime;\nreturn time=>{if(time===lastTime)return;lastTime=time;root.host.style.setProperty('--preview-animation-time',String(time));update(time);};\n}\n`);
 }
-console.log('Generated five faithful homepage component ports.');
+console.log('Generated faithful homepage component ports.');

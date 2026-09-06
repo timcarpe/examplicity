@@ -176,7 +176,7 @@ export const createStandaloneLabHtml = ({
 
   const footer = `
 <footer class="examplicity-download-footer">
-  <a class="examplicity-download-footer-brand" href="${homeHref}">Examplicity™</a>
+  <a class="examplicity-download-footer-brand" href="${homeHref}">© Examplicity™</a>
   <span class="examplicity-download-footer-tagline">Make complex ideas click.</span>
   <span class="examplicity-download-footer-links">
     <a href="${labHref}" target="_blank" rel="noreferrer">Open ${labTitle} online ↗</a>

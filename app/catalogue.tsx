@@ -288,7 +288,7 @@ export default function Catalogue({ initialExam, initialLabSlug, initialSubjectI
         />
         <footer className="lab-shell-footer">
           <div className="footer-left">
-            <a href="https://github.com/timcarpe/examplicity">Examplicity™</a>
+            <a href="https://github.com/timcarpe/examplicity">© Examplicity™</a>
             <Link href="/changelog">Changelog</Link>
             <Link href="/developer">Developers</Link>
             <BugReportDialog frameRef={labFrameRef} lab={activeLab} />
@@ -303,7 +303,7 @@ export default function Catalogue({ initialExam, initialLabSlug, initialSubjectI
   }
 
   return (
-    <main className={homepageHero ? 'homepage' : undefined}>
+    <main className={homepageHero ? 'homepage' : 'subject-catalogue'}>
       {showMobileNotice && (
         <aside className="mobile-notice" aria-label="Viewing recommendation">
           <p>
@@ -333,10 +333,7 @@ export default function Catalogue({ initialExam, initialLabSlug, initialSubjectI
 
       <section className="hero" id="top">
         {homepageHero ?? <div className="hero-copy">
-          <h1>
-            <span className="hero-line">Make complex</span>
-            <span className="hero-line">ideas click.</span>
-          </h1>
+          <h1>{subject.name}.</h1>
           <p className="intro">
             {view.intro}
           </p>
@@ -479,7 +476,7 @@ export default function Catalogue({ initialExam, initialLabSlug, initialSubjectI
 
       <footer>
         <div className="footer-left">
-          <a href="https://github.com/timcarpe/examplicity">Examplicity™</a>
+          <a href="https://github.com/timcarpe/examplicity">© Examplicity™</a>
           <Link href="/changelog">Changelog</Link>
           <Link href="/developer">Developers</Link>
           <BugReportDialog />

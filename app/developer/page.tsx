@@ -147,7 +147,7 @@ export default function DeveloperPage() {
       </div>
       <footer>
         <div className="footer-left">
-          <a href="https://github.com/timcarpe/examplicity">Examplicity™</a>
+          <a href="https://github.com/timcarpe/examplicity">© Examplicity™</a>
           <Link href="/changelog">Changelog</Link>
           <Link href="/developer">Developers</Link>
           <BugReportDialog />

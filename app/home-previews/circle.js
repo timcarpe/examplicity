@@ -39,14 +39,18 @@ const r=rng(1),p={};
      let C=norm(targetB+pick(r,[72,86,102,118])*RAD);if(Math.abs(sdiff(C,D))<18*RAD)C=norm(C+34*RAD);
      Object.assign(p,{alpha,answer:90-alpha,A,targetB,D,C,startB:norm(targetB+offset),reason:'angle in a semicircle = 90°',reasonRule:'semicircle',prompt:`Repair AB so it is a diameter. In the repaired diagram, ∠DAB = ${alpha}°. Find x = ∠ABD.`,visualTitle:'Right-angle trigger · diameter',visualHint:'B changes the structure. C is the stress-test point; D is the fixed calculation point.',realisation:'The diameter supplies the 90°. The subtraction is ordinary triangle angle sum.'});
    
-const s={B:p.targetB,C:p.C,testTravel:0,alignedOnce:true},current=()=>p,session=()=>s;
+const travel=96*RAD,startC=norm(p.D+travel);
+const s={B:p.targetB,C:startC,testTravel:0,alignedOnce:true},current=()=>p,session=()=>s;
 function semicircleGeometry(){const p=current(),s=session(),A=pt(p.A),B=pt(s.B),C=pt(s.C),D=pt(p.D),ang=angleAt(C,A,B),diamErr=Math.abs(Math.abs(sdiff(s.B,p.A))-Math.PI)*DEG,aligned=diamErr<=EXACT_DEG;if(!aligned)s.testTravel=0;else if(!s.alignedOnce){s.alignedOnce=true;s.testTravel=0}const tested=s.testTravel>38*RAD;s.geometryReady=aligned&&tested;
  let g=renderBase()+trace90(p.A,s.B)+svgLine(A,B,aligned?'diameter':'chord-a')+svgLine(O,A,'radius')+svgLine(O,B,'radius')+svgLine(C,A,'construction')+svgLine(C,B,'construction');g+=wedge(C,A,B,42,Math.abs(ang-90)<1.5?'good':'a',`${fmt(ang,1)}°`);if(Math.abs(ang-90)<1.5)g+=rightMark(C,A,B,13);g+=svgCircle(A,8,'fixed-point')+pointLabel(A,'A',10,-12,'label a')+svgCircle(B,10,'drag-point b','data-drag="p0b"')+pointLabel(B,'B',10,-12,'label b')+svgCircle(C,10,'drag-point c','data-drag="p0c"')+pointLabel(C,'C',10,-12,'label c');
  if(aligned){g+=svgLine(D,A,'construction')+svgLine(D,B,'construction')+svgCircle(D,7,'ghost-point')+pointLabel(D,'D',9,-10,'label gold')+rightMark(D,A,B,12)+wedge(A,D,B,31,'gold',`${p.alpha}°`)+wedge(B,A,D,31,'a','x')+svgText({x:O.x,y:O.y+R+34},`calculation triangle: ∠DAB = ${p.alpha}°`,'stage-note')}
  g+=svgText({x:O.x,y:O.y-R-32},'outer sweep: ∠ACB as C moves','stage-note');svg.innerHTML=g;}
 svg.style.setProperty('--lab-chart-text-size','14px');
 semicircleGeometry();
-return time=>{const motion=Math.max(0,time-1000)/1100;s.C=norm(p.C+Math.sin(motion)*22*RAD);s.testTravel=Math.min(50*RAD,Math.max(0,time-1000)/100*RAD);semicircleGeometry();};
+// Replay a single drag along the circumference, then release C exactly at D.
+// Keep the native geometry intact when the two points coincide.
+return time=>{const progress=clamp((time-1700)/4800,0,1),eased=progress*progress*(3-2*progress);
+  s.C=progress===1?p.D:norm(startC-travel*eased);s.testTravel=travel*eased;semicircleGeometry();};
 
 })();
 let lastTime;
