@@ -180,6 +180,7 @@ export const createStandaloneLabHtml = ({
   <span class="examplicity-download-footer-tagline">Make complex ideas click.</span>
   <span class="examplicity-download-footer-links">
     <a href="${labHref}" target="_blank" rel="noreferrer">Open ${labTitle} online ↗</a>
+    <a href="${new URL('/developer', homeHref).href}" target="_blank" rel="noreferrer">Developers</a>
     <a href="https://github.com/timcarpe/examplicity" target="_blank" rel="noreferrer">GitHub</a>
     <a href="https://opensource.org/license/mit" target="_blank" rel="noreferrer">MIT License</a>
   </span>

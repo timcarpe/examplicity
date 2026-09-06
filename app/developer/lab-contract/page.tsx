@@ -194,7 +194,7 @@ contract preserved in standalone HTML`}</code></pre>
           </section>
 
           <footer className={styles.pageFooter}>
-            <Link href="/developer">← Lab system reference</Link>
+            <Link href="/developer">Developers</Link>
             <Link href="/developer/lab-contract.schema.json">JSON Schema</Link>
           </footer>
         </article>

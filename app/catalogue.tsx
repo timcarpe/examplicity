@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
+import { useEffect, useRef, useState, type ReactNode, type PointerEvent as ReactPointerEvent } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
@@ -53,12 +53,13 @@ const viewIncludesExam = (
 ) => (view.alignedExams ?? [view.exam]).includes(exam);
 
 type CatalogueProps = {
+  homepageHero?: ReactNode;
   initialExam: ExamCode;
   initialLabSlug?: string;
   initialSubjectId: SubjectId;
 };
 
-export default function Catalogue({ initialExam, initialLabSlug, initialSubjectId }: CatalogueProps) {
+export default function Catalogue({ initialExam, initialLabSlug, initialSubjectId, homepageHero }: CatalogueProps) {
   const router = useRouter();
   const [subjectId, setSubjectId] = useState<SubjectId>(initialSubjectId);
   const [level, setLevel] = useState<QualificationLevel>(() => {
@@ -169,7 +170,7 @@ export default function Catalogue({ initialExam, initialLabSlug, initialSubjectI
     if (!nextView) return;
     setLevel(nextLevel);
     writePreference(levelStorageKey(subject.id), nextLevel);
-    if (nextView.exam !== exam) router.push(subject.views[nextView.exam]!.href, { scroll: false });
+    if (homepageHero || nextView.exam !== exam) router.push(subject.views[nextView.exam]!.href, { scroll: false });
   };
 
   const chooseSubject = (nextSubjectId: SubjectId) => {
@@ -227,7 +228,7 @@ export default function Catalogue({ initialExam, initialLabSlug, initialSubjectI
     return (
       <main className="lab-view">
         <header className="lab-shell-header">
-          <Link className="brand" href={examView.href} aria-label="Examplicity home" onClick={closeLab}>
+          <Link className="brand" href="/" aria-label="Examplicity home" onClick={closeLab}>
             <span className="tone-one">e</span>
             <span className="tone-two">x</span>
             <span className="tone-three">a</span>
@@ -289,6 +290,7 @@ export default function Catalogue({ initialExam, initialLabSlug, initialSubjectI
           <div className="footer-left">
             <a href="https://github.com/timcarpe/examplicity">Examplicity™</a>
             <Link href="/changelog">Changelog</Link>
+            <Link href="/developer">Developers</Link>
             <BugReportDialog frameRef={labFrameRef} lab={activeLab} />
           </div>
           <span>
@@ -301,7 +303,7 @@ export default function Catalogue({ initialExam, initialLabSlug, initialSubjectI
   }
 
   return (
-    <main>
+    <main className={homepageHero ? 'homepage' : undefined}>
       {showMobileNotice && (
         <aside className="mobile-notice" aria-label="Viewing recommendation">
           <p>
@@ -317,20 +319,20 @@ export default function Catalogue({ initialExam, initialLabSlug, initialSubjectI
         </aside>
       )}
       <header className="site-header">
-        <a className="brand" href="#top" aria-label="Examplicity home">
+        <Link className="brand" href="/" aria-label="Examplicity home">
           <span className="tone-one">e</span>
           <span className="tone-two">x</span>
           <span className="tone-three">a</span>
           <span className="tone-four">m</span>
           plicity
-        </a>
+        </Link>
         <div className="header-actions">
-          <span className="header-note">{view.headerLabel}</span>
+          <span className="header-note">{homepageHero ? 'Interactive learning labs' : view.headerLabel}</span>
         </div>
       </header>
 
       <section className="hero" id="top">
-        <div className="hero-copy">
+        {homepageHero ?? <div className="hero-copy">
           <h1>
             <span className="hero-line">Make complex</span>
             <span className="hero-line">ideas click.</span>
@@ -338,7 +340,7 @@ export default function Catalogue({ initialExam, initialLabSlug, initialSubjectI
           <p className="intro">
             {view.intro}
           </p>
-        </div>
+        </div>}
 
         <div className="learning-picker">
           <div className="subject-picker">
@@ -395,7 +397,7 @@ export default function Catalogue({ initialExam, initialLabSlug, initialSubjectI
                         key={item.id}
                         onClick={() => {
                           setIsSubjectMenuOpen(false);
-                          if (!isSelected) chooseSubject(item.id);
+                          if (homepageHero || !isSelected) chooseSubject(item.id);
                           subjectTriggerRef.current?.focus();
                         }}
                         role="option"
@@ -462,7 +464,9 @@ export default function Catalogue({ initialExam, initialLabSlug, initialSubjectI
                         <p className="card-kicker">{lab.format}</p>
                         <h3>{lab.title}</h3>
                       </div>
-                      <span className="arrow" aria-hidden="true">↗</span>
+                      <span className="arrow" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none"><path d="M6 18 18 6M6 6h12v12" /></svg>
+                      </span>
                       <p className="description">{lab.description}</p>
                     </div>
                   </Link>
@@ -477,6 +481,7 @@ export default function Catalogue({ initialExam, initialLabSlug, initialSubjectI
         <div className="footer-left">
           <a href="https://github.com/timcarpe/examplicity">Examplicity™</a>
           <Link href="/changelog">Changelog</Link>
+          <Link href="/developer">Developers</Link>
           <BugReportDialog />
         </div>
         <span>

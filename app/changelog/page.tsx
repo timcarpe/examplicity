@@ -17,7 +17,7 @@ export default function ChangelogPage() {
   return (
     <main className="changelog-page">
       <header className="site-header changelog-header">
-        <Link className="brand" href={homeHref} aria-label="Examplicity home">
+        <Link className="brand" href="/" aria-label="Examplicity home">
           <span className="tone-one">e</span>
           <span className="tone-two">x</span>
           <span className="tone-three">a</span>
@@ -46,6 +46,8 @@ export default function ChangelogPage() {
         <div className="footer-left">
           <a href="https://github.com/timcarpe/examplicity">Examplicity™</a>
           <Link href="/changelog">Changelog</Link>
+
+          <Link href="/developer">Developers</Link>
           <BugReportDialog />
         </div>
         <span>

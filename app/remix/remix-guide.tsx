@@ -69,7 +69,7 @@ const ChatIcon = () => (
   </svg>
 );
 
-export default function RemixGuide({ lab, returnHref }: RemixGuideProps) {
+export default function RemixGuide({ lab }: RemixGuideProps) {
   const originalPrompt = createPrompt(lab);
   const [prompt, setPrompt] = useState(originalPrompt);
   const [selectedIdea, setSelectedIdea] = useState<string | null>(null);
@@ -123,7 +123,7 @@ export default function RemixGuide({ lab, returnHref }: RemixGuideProps) {
   return (
     <main className="remix-page">
       <header className="site-header remix-site-header">
-        <Link className="brand" href={returnHref} aria-label="Examplicity home">
+        <Link className="brand" href="/" aria-label="Examplicity home">
           <span className="tone-one">e</span>
           <span className="tone-two">x</span>
           <span className="tone-three">a</span>

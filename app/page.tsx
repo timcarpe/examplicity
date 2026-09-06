@@ -1,6 +1,11 @@
-import { permanentRedirect } from 'next/navigation';
+import type { Metadata } from 'next';
+import Catalogue from './catalogue';
+import HomeHero from './home-hero';
 import { subjects } from './labs.ts';
 
+export const metadata: Metadata = { alternates: { canonical: '/' } };
+
 export default function Home() {
-  permanentRedirect(subjects[0].views[subjects[0].exams[0]]!.href);
+  return <Catalogue initialExam={subjects[0].exams[0]} initialSubjectId={subjects[0].id}
+    homepageHero={<HomeHero />} />;
 }

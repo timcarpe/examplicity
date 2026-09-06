@@ -49,6 +49,7 @@ test('embed documents are noindex and canonical lab pages are in the sitemap', a
   )));
 
   const urls = sitemap().map((entry) => entry.url);
+  assert.ok(urls.includes(`${siteUrl}/`));
   assert.ok(urls.includes(`${siteUrl}${labPageHref(sampleLab)}`));
   assert.ok(!urls.includes(`${siteUrl}${sampleLab.href}`));
 

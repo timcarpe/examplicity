@@ -149,6 +149,7 @@ export default function DeveloperPage() {
         <div className="footer-left">
           <a href="https://github.com/timcarpe/examplicity">Examplicity™</a>
           <Link href="/changelog">Changelog</Link>
+          <Link href="/developer">Developers</Link>
           <BugReportDialog />
         </div>
         <span>Make complex ideas click. · <a href="https://opensource.org/license/mit">MIT License</a></span>

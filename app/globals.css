@@ -67,6 +67,7 @@ button { border: 0; }
   padding: 104px 28px 90px;
 }
 .hero-copy { max-width: 960px; }
+.picker-label { padding-inline-start: 18px; }
 .picker-label, .card-kicker {
   color: var(--muted);
   font-size: 11px;
@@ -91,7 +92,7 @@ h1 {
   margin: 0;
   max-width: 620px;
 }
-.learning-picker { --picker-control-height: 48px; align-items: flex-end; display: flex; gap: 12px; }
+.learning-picker { --picker-control-height: 48px; align-items: flex-end; display: flex; gap: 12px; position: relative; z-index: 10; }
 .subject-picker,
 .exam-picker { align-items: flex-start; display: flex; flex-direction: column; gap: 12px; }
 .subject-select-shell { min-width: 218px; position: relative; }
@@ -261,14 +262,22 @@ h1 {
 .card-copy h3 { font-size: 21px; font-weight: 630; letter-spacing: -.035em; margin: 7px 0 0; }
 .arrow {
   align-items: center;
-  border: 1px solid var(--ink);
+  align-self: center;
+  background: transparent;
+  border: 1.5px solid #000;
   border-radius: 50%;
+  color: #000;
   display: flex;
-  font-size: 15px;
-  height: 34px;
+  height: 40px;
   justify-content: center;
-  transition: background .2s ease, color .2s ease, transform .2s ease;
-  width: 34px;
+  transition: background .2s ease, color .2s ease, border-color .2s ease;
+  width: 40px;
+}
+.arrow svg { display: block; flex: none; height: 19px; width: 19px; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; transition: transform .2s ease; }
+.lab-card > a:focus-visible .arrow { background: #000; color: #fff; }
+.lab-card > a:focus-visible .arrow svg { transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .arrow, .arrow svg { transition: none; }
 }
 .description {
   color: var(--muted);
@@ -289,9 +298,11 @@ footer {
   padding: 34px 28px 48px;
 }
 footer .footer-left > a:first-child { color: var(--ink); font-weight: 650; letter-spacing: -.03em; }
-footer a { text-decoration-color: transparent; text-underline-offset: 3px; transition: text-decoration-color .2s ease; }
-footer a:hover { text-decoration-color: currentColor; }
-.footer-left { align-items: center; display: flex; gap: 16px; }
+footer a { text-decoration: none; }
+footer :is(a, .bug-report-trigger) { border-radius: 8px; padding: 8px 10px; transition: background .2s ease, color .2s ease; }
+footer :is(a, .bug-report-trigger):hover, footer :is(a, .bug-report-trigger):focus-visible { background: var(--lab-accent-soft); color: var(--lab-accent-ink); }
+footer .footer-left > :is(a:not(:first-child), button) { font-weight: 400; }
+.footer-left { align-items: center; display: flex; flex-wrap: wrap; gap: 7px; }
 .bug-report-trigger {
   align-items: center;
   background: none;
@@ -302,19 +313,8 @@ footer a:hover { text-decoration-color: currentColor; }
   font: inherit;
   gap: 5px;
   padding: 0;
-  text-decoration: underline;
-  text-decoration-color: transparent;
-  text-underline-offset: 3px;
-  transition: text-decoration-color .2s ease;
+  text-decoration: none;
 }
-.bug-report-icons { display: inline-block; height: 14px; position: relative; width: 14px; }
-.bug-report-trigger svg { fill: none; inset: 0; position: absolute; stroke: #86868b; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.8; width: 14px; }
-.bug-report-icon-info { opacity: 0; }
-.bug-report-trigger:hover { text-decoration-color: currentColor; }
-.bug-report-trigger:hover .bug-report-icon-bug { animation: bug-icon-cycle 1.4s infinite; stroke: #d92d20; }
-.bug-report-trigger:hover .bug-report-icon-info { animation: info-icon-cycle 1.4s infinite; stroke: #2474d2; }
-@keyframes bug-icon-cycle { 0%, 35% { opacity: 1; } 50%, 85% { opacity: 0; } 100% { opacity: 1; } }
-@keyframes info-icon-cycle { 0%, 35% { opacity: 0; } 50%, 85% { opacity: 1; } 100% { opacity: 0; } }
 .bug-report-trigger:focus-visible {
   border-radius: 2px;
   outline: 3px solid var(--ink);
@@ -473,10 +473,7 @@ footer a:hover { text-decoration-color: currentColor; }
 .bug-report-success strong { color: var(--ink); overflow-wrap: anywhere; }
 .bug-report-success .bug-report-primary { margin-top: 12px; }
 
-@media (prefers-reduced-motion: reduce) {
-  .bug-report-trigger:hover .bug-report-icon-bug { animation: none; opacity: 1; }
-  .bug-report-trigger:hover .bug-report-icon-info { animation: none; opacity: 0; }
-}
+
 
 .lab-view {
   background: var(--paper);
@@ -560,8 +557,7 @@ footer a:hover { text-decoration-color: currentColor; }
   padding: 0 max(28px, calc((100vw - 1200px) / 2));
 }
 .lab-shell-footer .footer-left > a:first-child { color: var(--ink); font-weight: 650; letter-spacing: -.03em; }
-.lab-shell-footer a { text-decoration-color: transparent; text-underline-offset: 3px; transition: text-decoration-color .2s ease; }
-.lab-shell-footer a:hover { text-decoration-color: currentColor; }
+
 .loading-screen {
   align-items: center;
   background: var(--paper);
@@ -731,7 +727,8 @@ footer a:hover { text-decoration-color: currentColor; }
 @media (hover: hover) and (pointer: fine) {
   .lab-card > a:hover .preview { background: var(--paper-hover); color: var(--ink); transform: translateY(-4px); }
   .lab-card > a:hover .icon-drawing { transform: translate(var(--art-x), var(--art-y)) scale(1.025); }
-  .lab-card > a:hover .arrow { background: var(--ink); color: var(--paper); transform: translate(2px, -2px); }
+  .lab-card > a:hover .arrow { background: #000; color: #fff; }
+  .lab-card > a:hover .arrow svg { transform: none; }
 }
 
 @media (max-width: 620px) {
@@ -785,7 +782,7 @@ footer a:hover { text-decoration-color: currentColor; }
   .lab-grid { column-gap: 0; grid-template-columns: 1fr; row-gap: 44px; }
   .preview { border-radius: 22px; }
   footer { flex-direction: column; gap: 8px; padding: 28px 20px 36px; }
-  .footer-left { gap: 12px; }
+  .footer-left { gap: 4px; }
   .bug-report-dialog { border-radius: 18px; padding: 28px 20px 22px; }
   .bug-report-dialog h2 { font-size: 23px; }
   .bug-report-type { grid-template-columns: 1fr; }
