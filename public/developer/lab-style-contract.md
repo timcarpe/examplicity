@@ -510,7 +510,11 @@ replace duplicate dragging instructions with the shared target introduction.
 Use the shared rounded select control for dates and discrete choices: regular
 12px labels, a thin neutral border, small chevron and subtle shadow. Focus
 darkens the field border without an extra black outline. Retain native keyboard
-and touch selection; the operating system owns the open option menu.
+and touch selection. In browsers supporting `appearance: base-select`, the revealed
+menu uses the homepage treatment: white surface, 18px corners, 7px inset, soft
+shadow and 12px rounded option rows. Selected rows use a light blue tint and check;
+labels remain regular weight. Other browsers retain their native option menu.
+Multiple/size listboxes keep their list presentation.
 
 `LabDesign.checkpoints` renders compact hover/focus progress details from lab
 state. `lab-investigation` provides shared action, sidebar, evidence and select
@@ -664,3 +668,18 @@ Ready uses a pale amber surface, Running violet and Blocked neutral, always with
 state labels. Keep process identity colours separate from the state surface and
 reserve correct/incorrect colours for assessed outcomes. Avoid restating the
 same process list or repeating eligibility descriptions beneath state names.
+
+### Installed items, desktop cues and index labels
+
+- Installed rules need stronger material identity than unused palette items: a
+  22% approved concept tint, readable 16px name and matching icon on white.
+- Keep failed-result red local to the result. Follow with neutral, concise causal
+  feedback and one useful comparison; do not repeat the installed rules.
+- Related desktop icons share one first-use introduction. Cue the group until an
+  application is opened; preserve dismissal through redraws. Separate the icon
+  column from application windows and keep every icon above the taskbar.
+- Queue cards can use white surfaces and a subtle shadow against their tinted
+  parent. Keep cycle loading tracks visible.
+- Use a serif capital I for index identifiers such as I1 and IX. `Lab Index I`
+  selects the local Georgia glyph for U+0049 only; other characters retain the
+  surrounding sans or monospace font. No font download is required.

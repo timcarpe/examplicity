@@ -2384,6 +2384,51 @@ input.lab-intro-target{outline:none;animation:none}
 .computing-memory-management .bus-arrow-left{left:-8px}.computing-memory-management .bus-arrow-right{right:-8px}
 @media(max-width:700px){.computing-memory-management .bus-line{left:10%;right:10%}.computing-memory-management .bus-arrow-left{left:10%}.computing-memory-management .bus-arrow-right{right:10%}}
 
+/* Revealed menus share the homepage surface; native selection stays intact. */
+@supports (appearance:base-select){
+  .lab-adopt-v3 select:not([multiple]):not([size]),.lab-adopt-v3 select:not([multiple]):not([size])::picker(select){appearance:base-select}
+  .lab-adopt-v3 select:not([multiple]):not([size]){background-image:none;padding:8px 12px;gap:12px;align-items:center;border:1px solid var(--lab-line);border-radius:999px;background-color:white;color:var(--lab-ink);font:400 12px/1.4 var(--lab-font-sans);min-height:40px;box-shadow:0 1px 3px #1d1d1f14}
+  .lab-adopt-v3 select::picker(select){border:1px solid #1d1d1f1f;border-radius:18px;box-shadow:0 18px 50px #1d1d1f1f,0 3px 12px #1d1d1f14;background:white;padding:7px;margin-block:9px;max-height:min(360px,70vh);overflow:auto;color:var(--lab-ink);font:400 14px/1.4 var(--lab-font-sans)}
+  .lab-adopt-v3 select::picker-icon{content:"";width:7px;height:7px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;color:var(--lab-muted);rotate:45deg;margin-inline:6px 2px;transition:rotate .15s}
+  .lab-adopt-v3 select:open::picker-icon{rotate:225deg}
+  .lab-adopt-v3 select option{border:0;border-radius:12px;min-height:42px;padding:9px 11px;background:white;color:var(--lab-ink);font:400 14px/1.4 var(--lab-font-sans);cursor:pointer;gap:16px}
+  .lab-adopt-v3 select option:is(:hover,:focus){background:var(--lab-surface-muted);outline:none}
+  .lab-adopt-v3 select option:checked{background:var(--lab-accent-soft);color:var(--lab-accent-ink)}
+  .lab-adopt-v3 select option::checkmark{order:2;margin-left:auto;color:var(--lab-accent)}
+  .lab-adopt-v3 select :is(option,optgroup):disabled,.lab-adopt-v3 select:disabled{color:var(--lab-muted);background:var(--lab-surface-muted);cursor:default;box-shadow:none}
+}
+/* Distinguishable index I without changing surrounding glyphs. */
+@font-face{font-family:Lab Index I;src:local('Georgia');unicode-range:U+0049;font-weight:100 900}
+.lab-index-text,.computing-fetch-decode-execute :is(.cpu-svg text,.ram-address,.ram-word,.operation,.step-note,.bus-value),.computing-assembly :is(.cpu-diagram text,.operation p,.ram-word,.internal-value,.bus-value){font-family:'Lab Index I',var(--lab-font-sans,sans-serif)}
+/* Installed rules are the current configuration, with stronger material identity. */
+.computing-process-states-scheduling .rule-slot:has(.rule-icon){background:color-mix(in srgb,var(--slot-tone) 22%,white);border-color:color-mix(in srgb,var(--slot-tone) 55%,white);box-shadow:0 2px 5px #1d1d1f12}
+.computing-process-states-scheduling .compact-scheduler .rule-slot-value{font-size:16px;line-height:1.35;gap:10px;color:var(--lab-ink)}
+.computing-process-states-scheduling .rule-slot .rule-icon{width:42px;height:42px;background:white;color:var(--slot-tone);font-size:14px}
+.computing-process-states-scheduling .rule-ghost{box-shadow:0 10px 24px #1d1d1f30;border:1px solid var(--lab-line-strong);background:white}
+.computing-process-states-scheduling .failure-insight{background:var(--lab-surface-muted);gap:14px}
+.computing-process-states-scheduling .failure-point+.failure-point{border:0;padding-left:0}
+.computing-process-states-scheduling .failure-point b{color:var(--lab-ink);font:400 14px/1.4 var(--lab-font-sans);text-transform:none;letter-spacing:normal}
+.computing-process-states-scheduling .failure-point span{color:var(--lab-ink-secondary);font:400 12px/1.45 var(--lab-font-sans)}
+.computing-process-states-scheduling .target-chip.bad{background:color-mix(in srgb,var(--lab-bad) 7%,white);border-color:color-mix(in srgb,var(--lab-bad) 25%,white)}
+.computing-memory-management .desktop{height:480px}
+.computing-memory-management .desktop-icons{left:12px;top:16px;grid-template-columns:68px;gap:7px}
+.computing-memory-management .desktop-icon{min-height:64px;padding:4px;border:1px solid transparent;border-radius:10px;font:400 11px/1.25 var(--lab-font-sans);text-shadow:none;color:var(--lab-ink)}
+.computing-memory-management .desktop-window{left:100px;right:12px;top:24px;bottom:44px}
+.computing-memory-management .app-glyph{background:color-mix(in srgb,var(--icon-tone,var(--lab-accent)) 22%,white);color:var(--icon-tone,var(--lab-accent));box-shadow:0 2px 5px #1d1d1f20}
+.computing-memory-management [data-owner="image"]{--icon-tone:var(--lab-concept-violet,#7563a7)}
+.computing-memory-management [data-owner="sheet"]{--icon-tone:var(--lab-concept-teal,#2d8792)}
+.computing-memory-management [data-owner="media"]{--icon-tone:var(--lab-concept-amber,#c9782c)}
+.computing-memory-management [data-owner="scan"]{--icon-tone:var(--lab-concept-violet,#7563a7)}
+.computing-memory-management [data-owner="taskmgr"]{--icon-tone:var(--lab-concept-teal,#2d8792)}
+.computing-memory-management .desktop-icons[data-awaiting-interaction="true"] .desktop-icon{animation:lab-desktop-attention 2s ease-in-out infinite;background:#ffffff70}
+.computing-memory-management .work-card{background:white;box-shadow:0 2px 7px #1d1d1f18}
+@keyframes lab-desktop-attention{50%{border-color:var(--lab-accent);background:#ffffffd9}}
+@media(prefers-reduced-motion:reduce){.computing-memory-management .desktop-icons[data-awaiting-interaction="true"] .desktop-icon{animation:none;border-color:var(--lab-accent)}}
+
+.computing-memory-management .desktop-icon{padding:2px}
+.computing-memory-management .app-glyph{width:28px;height:28px;margin-bottom:2px}
+.computing-assembly :is(.operation code,.reference code,.translation-table code,#sourceEditor){font-family:"Lab Index I",var(--mono,monospace)}
+
 </style>
 <script data-lab-design-runtime>
 /* Shared model dragging: retain the point grabbed while the model rerenders. */
@@ -2755,7 +2800,8 @@ window.LabDesign = {
     "dependencies": [
       "Both rules are required to run.",
       "Changing a rule during an unfinished run requires reset; previous completed evidence can be compared.",
-      "I/O blocking removes eligibility until completion, then returns the process to Ready."
+      "I/O blocking removes eligibility until completion, then returns the process to Ready.",
+      "Installed rules retain matching icons with stronger concept tints; missed-target feedback gives a concise cause and next comparison."
     ],
     "completion": "A finite workload completes when every process finishes; actual target metrics determine pass/fail and challenge checks.",
     "limitations": [
@@ -3246,7 +3292,7 @@ window.LabDesign = {
   const CHALLENGES=[
     {id:"convoy",tab:"1 · Convoy",title:"Clear the batch queue without making short work wait behind the long compile.",brief:"All four processes are Ready at t=0.",targets:[{id:"avgWait",label:"average Ready wait ≤ 2.25",max:2.25}],processes:[
       {id:"build",name:"Build",role:"long CPU-bound compile",arrival:0,color:"#5277b8",bursts:[{k:"cpu",n:8}]},{id:"index",name:"Index",role:"small search index",arrival:0,color:"#7a61b8",bursts:[{k:"cpu",n:1}]},{id:"export",name:"Export",role:"short export",arrival:0,color:"#3d8b67",bursts:[{k:"cpu",n:2}]},{id:"thumb",name:"Thumbnail",role:"short image task",arrival:0,color:"#b7782d",bursts:[{k:"cpu",n:2}]}]},
-    {id:"arrival",tab:"2 · Late arrival",title:"Make the Editor respond in the same tick it becomes Ready.",brief:"Build has already started when a tiny interactive process appears. Reordering Ready cannot change a process that is already Running.",targets:[{id:"editorResponse",label:"Editor response = 0 ticks",max:0}],processes:[
+    {id:"arrival",tab:"2 · Late arrival",title:"Make the Editor respond in the same tick it becomes Ready.",brief:"Editor arrives at t=1 while Build is running.",targets:[{id:"editorResponse",label:"Editor response = 0 ticks",max:0}],processes:[
       {id:"build",name:"Build",role:"long CPU-bound compile",arrival:0,color:"#5277b8",bursts:[{k:"cpu",n:8}]},{id:"editor",name:"Editor",role:"one interactive keystroke",arrival:1,color:"#7a61b8",bursts:[{k:"cpu",n:1}]},{id:"export",name:"Export",role:"short export arrives later",arrival:3,color:"#3d8b67",bursts:[{k:"cpu",n:2}]}]},
     {id:"interactive",tab:"3 · Interactive",title:"Give every process an early first turn while Print blocks for I/O.",brief:"Print alternates CPU work with a four-tick I/O wait.",targets:[{id:"maxResponse",label:"maximum response ≤ 5 ticks",max:5}],processes:[
       {id:"print",name:"Print",role:"brief CPU, printer I/O, brief CPU",arrival:0,color:"#b7782d",bursts:[{k:"cpu",n:1},{k:"io",n:4},{k:"cpu",n:1}]},{id:"editor",name:"Editor",role:"interactive editing work",arrival:0,color:"#7a61b8",bursts:[{k:"cpu",n:6}]},{id:"build",name:"Build",role:"CPU-bound compile",arrival:0,color:"#5277b8",bursts:[{k:"cpu",n:6}]},{id:"export",name:"Export",role:"CPU-bound export",arrival:0,color:"#3d8b67",bursts:[{k:"cpu",n:6}]}]},
@@ -3255,7 +3301,7 @@ window.LabDesign = {
   ];
   const SELECTORS=[{id:"oldest",icon:"FIFO",name:"Oldest in Ready",note:"Dispatch the process that entered Ready first."},{id:"shortestJob",icon:"JOB",name:"Shortest estimated job",note:"Compare each process's original total CPU work."},{id:"shortestRemaining",icon:"LEFT",name:"Least CPU work remaining",note:"Compare how much CPU work each process still needs."}];
   const INTERRUPTS=[{id:"none",icon:"→",name:"Do not interrupt",note:"Keep Running until it blocks or finishes."},{id:"shorter",icon:"<",name:"Interrupt for less remaining work",note:"If a Ready process has less CPU work left, pre-empt Running."},{id:"slice2",icon:"2",name:"Interrupt every 2 ticks",note:"Return Running to the back of the FIFO Ready queue after two ticks."}];
-  const routineInfo={fcfs:{name:"First come first served (FCFS)",note:"FIFO Ready queue, non-pre-emptive. Simple, but a long first process can make shorter work wait."},sjf:{name:"Shortest job first (SJF)",note:"Shortest estimated job is dispatched first and then runs until it blocks or finishes."},srtf:{name:"Shortest remaining time (SRTF)",note:"Remaining work is re-evaluated and a shorter Ready process can pre-empt the current process."},rr:{name:"Round robin",note:"FIFO Ready queue plus a fixed time slice. Processes get early turns because Running returns to Ready before finishing."},custom:{name:"Custom scheduler",note:"This combination is not one of the four named routines required here. Run it anyway and judge the evidence."},incomplete:{name:"Incomplete scheduler",note:"Install both rules. Standard syllabus routines are recognised from their behaviour."}};
+  const routineInfo={fcfs:{name:"First come first served (FCFS)",note:"Runs in Ready arrival order without pre-emption."},sjf:{name:"Shortest job first (SJF)",note:"Runs the shortest estimated job without pre-emption."},srtf:{name:"Shortest remaining time (SRTF)",note:"Pre-empts when a Ready process has less CPU work remaining."},rr:{name:"Round robin",note:"Shares CPU time in Ready order, with a two-tick slice."},custom:{name:"Custom scheduler",note:"A different rule combination. Compare its results with the named routines."},incomplete:{name:"Incomplete scheduler",note:"Choose a Ready rule and an interrupt rule."}};
 
   let challengeIndex=0,completed=new Set(),selector=null,interrupt=null,processes=[],currentId=null,time=0,sliceUsed=0,readySeq=0,running=false,playTimer=null,history=[],lastCompleted=null,comparisonRun=null,transitionActive=null,dragRule=null,arrivalDrag=null,runStarted=false;
   let lastEvent={kind:"",title:"Build a scheduler.",detail:"Install one Ready-selection rule and one Running rule, then run the workload."};
@@ -3273,27 +3319,23 @@ window.LabDesign = {
   const targetPass=(t,m)=>m[t.id]!=null&&m[t.id]<=t.max+1e-9;
   function selectedRuleNames(){return{ready:SELECTORS.find(r=>r.id===selector)?.name||"no Ready rule",interrupt:INTERRUPTS.find(r=>r.id===interrupt)?.name||"no interrupt rule"}}
   function failureInsight(c,m){
-    const rules=selectedRuleNames(),ruleText=`${rules.ready} + ${rules.interrupt}`;
     if(c.id==="convoy"){
-      if(selector==="oldest"&&interrupt==="none")return{why:`FCFS let Build take the CPU first and keep it for 8 ticks while jobs of 1, 2 and 2 ticks accumulated Ready wait.`,opportunity:`Suitability cue: the target is average Ready waiting and every job is already available. Compare the visible job estimates before the first dispatch; short jobs should leave Ready first.`,rules:ruleText};
-      if(interrupt==="slice2")return{why:`Time slicing improved turn-taking, but this is a batch waiting-time problem. Repeatedly returning unfinished work to Ready kept several processes waiting at once.`,opportunity:`Suitability cue: when all jobs are known now and the goal is low average wait, finishing the shortest visible jobs first is more useful than sharing the CPU fairly.`,rules:ruleText};
-      if(selector==="oldest")return{why:`The first dispatch still followed queue age, so the 8-tick Build began before much shorter work. Later pre-emption could not recover all of that avoidable Ready waiting.`,opportunity:`Missed opportunity: use the 1, 2, 2 and 8 job estimates at t=0. For this target, the strongest decision happens before any process starts Running.`,rules:ruleText};
-      return{why:`Your rules created more Ready waiting than necessary. The timeline shows pale Ready cells remaining while longer work received CPU time.`,opportunity:`Suitability cue: this scenario rewards short completion order, not fairness or late-arrival responsiveness. Let the visible job-size metric drive the dispatch decision.`,rules:ruleText};
+      if(interrupt==="slice2")return{why:"Time slicing left several jobs waiting between turns.",opportunity:"Compare shortest-job-first: all four jobs are available at t=0."};
+      return{why:"Longer work ran while short jobs waited in Ready.",opportunity:"Compare the 1, 2, 2 and 8-tick estimates before dispatch."};
     }
     if(c.id==="arrival"){
-      if(interrupt==="none")return{why:`Editor became Ready at t=1 with only 1 CPU tick needed, but Build was already Running. A Ready-selection rule cannot replace a process that the interrupt rule refuses to stop.`,opportunity:`Suitability cue: “respond immediately to a late arrival” means the scheduler must reconsider Running. Compare CPU left when new Ready work appears and pre-empt when the newcomer is shorter.`,rules:ruleText};
-      if(interrupt==="slice2")return{why:`Editor arrived after Build had used only 1 of its 2 time-slice ticks, so it had to wait for the slice boundary. The rule was pre-emptive, but not immediate enough for a zero-response target.`,opportunity:`Missed opportunity: Editor needed 1 tick while Build still had about 7. A remaining-work comparison can interrupt at the arrival itself instead of waiting for a clock slice.`,rules:ruleText};
-      return{why:`The Editor was visible in Ready before it first received CPU, so the chosen rules still allowed an avoidable response delay.`,opportunity:`Suitability cue: for a late interactive job, ask whether the current Running process may be interrupted now, then whether the newly Ready process will actually be dispatched.`,rules:ruleText};
+      if(interrupt==="none")return{why:"Editor arrived at t=1, but Build could not be interrupted.",opportunity:"Compare their remaining CPU work when Editor arrives."};
+      if(interrupt==="slice2")return{why:"Editor waited for the two-tick slice to end.",opportunity:"A remaining-work rule can interrupt at arrival."};
+      return{why:"Editor waited "+m.editorResponse+" ticks before its first turn.",opportunity:"Check both whether Build can be interrupted and which process is selected next."};
     }
     if(c.id==="interactive"){
-      if(interrupt==="none")return{why:`A long CPU-bound process could keep Running until completion, so other Ready processes waited too long for their first turn. That directly increased maximum response time.`,opportunity:`Suitability cue: the target says every process needs an early first turn. Use periodic pre-emption so Running repeatedly returns to Ready instead of optimizing one process to completion.`,rules:ruleText};
-      if(interrupt==="shorter")return{why:`Shortest-remaining-time favours whichever process has the least work left. Once a long task has started, its remaining work can become smaller than untouched peers, so it keeps the CPU while their first response is delayed.`,opportunity:`Missed opportunity: this target values fairness of first response, not shortest completion. A fixed time slice plus FIFO Ready order forces the CPU to circulate.`,rules:ruleText};
-      if(interrupt==="slice2"&&selector!=="oldest")return{why:`You added a time slice, but the Ready rule can immediately choose the same partially completed process again. Pre-emption only improves response when the interrupted process really goes behind other Ready work.`,opportunity:`Suitability cue: pair a fixed slice with oldest-in-Ready/FIFO. The slice creates the interruption; FIFO turns that interruption into a genuine next turn for someone else.`,rules:ruleText};
-      return{why:`At least one process still waited too long for its first CPU turn, so the current rules did not circulate the processor quickly enough.`,opportunity:`Suitability cue: inspect first-response times rather than finish times. The best setting here should repeatedly move Running → Ready and let a different Ready process run.`,rules:ruleText};
+      if(interrupt==="none")return{why:"A long job kept the CPU while others waited for their first turn.",opportunity:"Try a fixed time slice to share early turns."};
+      if(interrupt==="shorter")return{why:"The shorter remaining job kept priority over processes still waiting for a first turn.",opportunity:"Compare response times with a fixed time slice and FIFO Ready order."};
+      return{why:"The Ready rule selected unfinished work again before every process had a turn.",opportunity:"Pair the time slice with oldest-in-Ready order."};
     }
     return null;
   }
-  function renderTargets(){const root=$("targetRow"),c=currentChallenge(),m=currentMetrics();root.innerHTML="";document.body.classList.remove("run-failed","run-complete");if(!c.targets.length){const s=document.createElement("span");s.className="target-chip open";s.innerHTML='<span class="target-mark">↔</span><span class="target-copy"><b>Open experiment</b><small>No pass / fail target</small></span>';root.appendChild(s);return}let failed=false;if(m.done)document.body.classList.add("run-complete");c.targets.forEach(t=>{const s=document.createElement("span"),v=m[t.id],pass=m.done&&targetPass(t,m),fail=m.done&&!pass,shown=v==null?"—":(t.id==="avgWait"?v.toFixed(2):v);failed=failed||fail;s.className="target-chip "+(pass?"good":fail?"bad":"pending");s.innerHTML=`<span class="target-mark">${pass?"✓":fail?"×":"◎"}</span><span class="target-copy"><b>${t.label}</b><small>${m.done?(pass?"Target met":"Target missed"):"Live result"} · ${shown}</small></span>`;root.appendChild(s)});if(m.done&&failed){document.body.classList.add("run-failed");const insight=failureInsight(c,m);if(insight){const box=document.createElement("div");box.className="failure-insight";box.innerHTML=`<span class="failure-badge">!</span><div class="failure-point"><b>Why this missed</b><span>${insight.why}</span><span class="failure-rules">Your rules: ${insight.rules}</span></div><div class="failure-point"><b>Missed opportunity</b><span>${insight.opportunity}</span></div>`;root.appendChild(box)}}}
+  function renderTargets(){const root=$("targetRow"),c=currentChallenge(),m=currentMetrics();root.innerHTML="";document.body.classList.remove("run-failed","run-complete");if(!c.targets.length){const s=document.createElement("span");s.className="target-chip open";s.innerHTML='<span class="target-mark">↔</span><span class="target-copy"><b>Open experiment</b><small>No pass / fail target</small></span>';root.appendChild(s);return}let failed=false;if(m.done)document.body.classList.add("run-complete");c.targets.forEach(t=>{const s=document.createElement("span"),v=m[t.id],pass=m.done&&targetPass(t,m),fail=m.done&&!pass,shown=v==null?"—":(t.id==="avgWait"?v.toFixed(2):v);failed=failed||fail;s.className="target-chip "+(pass?"good":fail?"bad":"pending");s.innerHTML=`<span class="target-mark">${pass?"✓":fail?"×":"◎"}</span><span class="target-copy"><b>${t.label}</b><small>${m.done?(pass?"Target met":"Target missed"):"Live result"} · ${shown}</small></span>`;root.appendChild(s)});if(m.done&&failed){document.body.classList.add("run-failed");const insight=failureInsight(c,m);if(insight){const box=document.createElement("div");box.className="failure-insight";box.innerHTML=`<span class="failure-badge">!</span><div class="failure-point"><b>What delayed the target</b><span>${insight.why}</span></div><div class="failure-point"><b>Compare next</b><span>${insight.opportunity}</span></div>`;root.appendChild(box)}}}
 
   function routineKey(){if(!selector||!interrupt)return"incomplete";if(selector==="oldest"&&interrupt==="none")return"fcfs";if(selector==="shortestJob"&&interrupt==="none")return"sjf";if(selector==="shortestRemaining"&&interrupt==="shorter")return"srtf";if(selector==="oldest"&&interrupt==="slice2")return"rr";return"custom"}
   function renderRoutine(){const info=routineInfo[routineKey()];$("routineName").textContent=info.name;$("routineNote").textContent=info.note;const sr=SELECTORS.find(r=>r.id===selector);$("selectValue").innerHTML=sr?`<span class="rule-icon">${sr.icon}</span><span>${sr.name}</span>`:"No rule installed";$("selectNote").textContent=SELECTORS.find(r=>r.id===selector)?.note||"Which Ready process should be dispatched next?";const ir=INTERRUPTS.find(r=>r.id===interrupt);$("interruptValue").innerHTML=ir?`<span class="rule-icon">${ir.icon}</span><span>${ir.name}</span>`:"No rule installed";$("interruptNote").textContent=INTERRUPTS.find(r=>r.id===interrupt)?.note||"When should a running process be sent back to Ready?"}
@@ -3349,19 +3391,18 @@ window.LabDesign = {
     const cur=currentProcess(),ready=orderedReady(),next=nextReady();
     let readyLine,interruptLine,readyClass="",interruptClass="";
     if(!selector) readyLine="";
-    else if(!ready.length) readyLine='<b>Ready:</b> no eligible process.';
+    else if(!ready.length) readyLine="";
     else {
-      const vals=ready.map(p=>`<span class="mini-choice${p===next?" selected":""}">${p.name} <strong>${criterionLabel()} ${criterionValue(p)}</strong></span>`).join('');
       readyLine=`<b>Next dispatch</b><span class="mini-result">${next.name}</span><span class="mini-compare">${criterionLabel()} ${criterionValue(next)}</span>`;
     }
     if(!interrupt) interruptLine="";
-    else if(!cur) interruptLine='<b>Running:</b> CPU idle — no interrupt decision yet.';
+    else if(!cur) interruptLine="";
     else if(interrupt==="none") {interruptLine=`<b>Running:</b><span class="mini-result good">KEEP ${cur.name}</span><span class="mini-compare">CPU left ${cur.cpuRemaining} · no pre-emption</span>`;interruptClass="good";}
     else if(interrupt==="slice2") {const left=Math.max(0,2-sliceUsed);interruptLine=`<b>Running:</b><span class="mini-result ${left===0?"warn":""}">${left===0?"INTERRUPT DUE":"KEEP "+cur.name}</span><span class="mini-compare">slice ${sliceUsed}/2 · ${left} tick${left===1?"":"s"} left</span>`;interruptClass=left===0?"warn":"";}
     else {const contender=ready.slice().sort((a,b)=>a.cpuRemaining-b.cpuRemaining||a.readyOrder-b.readyOrder)[0],will=!!(contender&&contender.cpuRemaining<cur.cpuRemaining);interruptLine=`<b>Running:</b><span class="mini-result ${will?"warn":"good"}">${will?"PRE-EMPT "+cur.name:"KEEP "+cur.name}</span><span class="mini-compare">${cur.name} left ${cur.cpuRemaining}${contender?` ${will?">":"≤"} ${contender.name} left ${contender.cpuRemaining}`:" · no Ready contender"}</span>`;interruptClass=will?"warn":"good";}
     $("decisionPreview").innerHTML=`<div class="prediction-line ${readyClass}">${readyLine}</div><div class="prediction-line ${interruptClass}">${interruptLine}</div>`;
   }
-  function renderBoard(){const ready=orderedReady();processes.forEach(p=>{p._next=false;delete p._rank});if(selector){ready.forEach((p,i)=>p._rank=i+1);if(ready[0])ready[0]._next=true;}$("readyLane").innerHTML=ready.length?ready.map(p=>cardHTML(p)).join(""):'<div class="lane-empty">No Ready process is currently eligible for CPU.</div>';const cur=currentProcess();$("cpuContent").innerHTML=cur?`${cardHTML(cur,{inCpu:true})}`:'<div class="cpu-empty"><div class="cpu-chip"></div><div class="cpu-label">CPU IDLE</div><div style="margin-top:5px">The dispatcher can only take a process from Ready.</div></div>';const blocked=blockedProcesses();$("blockedLane").innerHTML=blocked.length?blocked.map(p=>cardHTML(p)).join(""):'<div class="lane-empty">No process is blocked on I/O.</div>';$("timeBadge").textContent=`t = ${time}`;$("readyCount").textContent=ready.length;$("cpuCount").textContent=cur?1:0;$("blockedCount").textContent=blocked.length;renderDecisionPreview()}
+  function renderBoard(){const ready=orderedReady();processes.forEach(p=>{p._next=false;delete p._rank});if(selector){ready.forEach((p,i)=>p._rank=i+1);if(ready[0])ready[0]._next=true;}$("readyLane").innerHTML=ready.length?ready.map(p=>cardHTML(p)).join(""):'<div class="lane-empty">Queue empty.</div>';const cur=currentProcess();$("cpuContent").innerHTML=cur?`${cardHTML(cur,{inCpu:true})}`:'<div class="cpu-empty"><div class="cpu-chip"></div><div class="cpu-label">CPU IDLE</div><div style="margin-top:5px">The dispatcher can only take a process from Ready.</div></div>';const blocked=blockedProcesses();$("blockedLane").innerHTML=blocked.length?blocked.map(p=>cardHTML(p)).join(""):'<div class="lane-empty">No I/O in progress.</div>';$("timeBadge").textContent=`t = ${time}`;$("readyCount").textContent=ready.length;$("cpuCount").textContent=cur?1:0;$("blockedCount").textContent=blocked.length;renderDecisionPreview()}
   function renderTransitions(){["transDispatch","transInterrupt","transBlock","transUnblock"].forEach(id=>$(id).classList.remove("active","good"));$("schedulerGate").classList.toggle("active",transitionActive==="dispatch");$("ioFlow").classList.toggle("active",transitionActive==="block");const map={dispatch:"transDispatch",interrupt:"transInterrupt",block:"transBlock",unblock:"transUnblock"};if(map[transitionActive])$(map[transitionActive]).classList.add(transitionActive==="unblock"?"good":"active")}
   function renderEvent(){$("eventStrip").className="event-strip "+(lastEvent.kind||"");$("eventStrip").innerHTML=`<strong>${lastEvent.title}</strong><span>${lastEvent.detail}</span>`;$("eventStrip").hidden=time===0&&!runStarted}
   function renderControls(){renderRoutine();$("runBtn").disabled=!(selector&&interrupt);$("runBtn").textContent=running?"Pause":done()?"Run again":"Run workload";$("stepBtn").disabled=running||!(selector&&interrupt)||done();$("resetBtn").disabled=running;$("clearCompareBtn").disabled=!comparisonRun}

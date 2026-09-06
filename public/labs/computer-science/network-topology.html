@@ -2485,6 +2485,51 @@ input.lab-intro-target{outline:none;animation:none}
 .computing-memory-management .bus-arrow-left{left:-8px}.computing-memory-management .bus-arrow-right{right:-8px}
 @media(max-width:700px){.computing-memory-management .bus-line{left:10%;right:10%}.computing-memory-management .bus-arrow-left{left:10%}.computing-memory-management .bus-arrow-right{right:10%}}
 
+/* Revealed menus share the homepage surface; native selection stays intact. */
+@supports (appearance:base-select){
+  .lab-adopt-v3 select:not([multiple]):not([size]),.lab-adopt-v3 select:not([multiple]):not([size])::picker(select){appearance:base-select}
+  .lab-adopt-v3 select:not([multiple]):not([size]){background-image:none;padding:8px 12px;gap:12px;align-items:center;border:1px solid var(--lab-line);border-radius:999px;background-color:white;color:var(--lab-ink);font:400 12px/1.4 var(--lab-font-sans);min-height:40px;box-shadow:0 1px 3px #1d1d1f14}
+  .lab-adopt-v3 select::picker(select){border:1px solid #1d1d1f1f;border-radius:18px;box-shadow:0 18px 50px #1d1d1f1f,0 3px 12px #1d1d1f14;background:white;padding:7px;margin-block:9px;max-height:min(360px,70vh);overflow:auto;color:var(--lab-ink);font:400 14px/1.4 var(--lab-font-sans)}
+  .lab-adopt-v3 select::picker-icon{content:"";width:7px;height:7px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;color:var(--lab-muted);rotate:45deg;margin-inline:6px 2px;transition:rotate .15s}
+  .lab-adopt-v3 select:open::picker-icon{rotate:225deg}
+  .lab-adopt-v3 select option{border:0;border-radius:12px;min-height:42px;padding:9px 11px;background:white;color:var(--lab-ink);font:400 14px/1.4 var(--lab-font-sans);cursor:pointer;gap:16px}
+  .lab-adopt-v3 select option:is(:hover,:focus){background:var(--lab-surface-muted);outline:none}
+  .lab-adopt-v3 select option:checked{background:var(--lab-accent-soft);color:var(--lab-accent-ink)}
+  .lab-adopt-v3 select option::checkmark{order:2;margin-left:auto;color:var(--lab-accent)}
+  .lab-adopt-v3 select :is(option,optgroup):disabled,.lab-adopt-v3 select:disabled{color:var(--lab-muted);background:var(--lab-surface-muted);cursor:default;box-shadow:none}
+}
+/* Distinguishable index I without changing surrounding glyphs. */
+@font-face{font-family:Lab Index I;src:local('Georgia');unicode-range:U+0049;font-weight:100 900}
+.lab-index-text,.computing-fetch-decode-execute :is(.cpu-svg text,.ram-address,.ram-word,.operation,.step-note,.bus-value),.computing-assembly :is(.cpu-diagram text,.operation p,.ram-word,.internal-value,.bus-value){font-family:'Lab Index I',var(--lab-font-sans,sans-serif)}
+/* Installed rules are the current configuration, with stronger material identity. */
+.computing-process-states-scheduling .rule-slot:has(.rule-icon){background:color-mix(in srgb,var(--slot-tone) 22%,white);border-color:color-mix(in srgb,var(--slot-tone) 55%,white);box-shadow:0 2px 5px #1d1d1f12}
+.computing-process-states-scheduling .compact-scheduler .rule-slot-value{font-size:16px;line-height:1.35;gap:10px;color:var(--lab-ink)}
+.computing-process-states-scheduling .rule-slot .rule-icon{width:42px;height:42px;background:white;color:var(--slot-tone);font-size:14px}
+.computing-process-states-scheduling .rule-ghost{box-shadow:0 10px 24px #1d1d1f30;border:1px solid var(--lab-line-strong);background:white}
+.computing-process-states-scheduling .failure-insight{background:var(--lab-surface-muted);gap:14px}
+.computing-process-states-scheduling .failure-point+.failure-point{border:0;padding-left:0}
+.computing-process-states-scheduling .failure-point b{color:var(--lab-ink);font:400 14px/1.4 var(--lab-font-sans);text-transform:none;letter-spacing:normal}
+.computing-process-states-scheduling .failure-point span{color:var(--lab-ink-secondary);font:400 12px/1.45 var(--lab-font-sans)}
+.computing-process-states-scheduling .target-chip.bad{background:color-mix(in srgb,var(--lab-bad) 7%,white);border-color:color-mix(in srgb,var(--lab-bad) 25%,white)}
+.computing-memory-management .desktop{height:480px}
+.computing-memory-management .desktop-icons{left:12px;top:16px;grid-template-columns:68px;gap:7px}
+.computing-memory-management .desktop-icon{min-height:64px;padding:4px;border:1px solid transparent;border-radius:10px;font:400 11px/1.25 var(--lab-font-sans);text-shadow:none;color:var(--lab-ink)}
+.computing-memory-management .desktop-window{left:100px;right:12px;top:24px;bottom:44px}
+.computing-memory-management .app-glyph{background:color-mix(in srgb,var(--icon-tone,var(--lab-accent)) 22%,white);color:var(--icon-tone,var(--lab-accent));box-shadow:0 2px 5px #1d1d1f20}
+.computing-memory-management [data-owner="image"]{--icon-tone:var(--lab-concept-violet,#7563a7)}
+.computing-memory-management [data-owner="sheet"]{--icon-tone:var(--lab-concept-teal,#2d8792)}
+.computing-memory-management [data-owner="media"]{--icon-tone:var(--lab-concept-amber,#c9782c)}
+.computing-memory-management [data-owner="scan"]{--icon-tone:var(--lab-concept-violet,#7563a7)}
+.computing-memory-management [data-owner="taskmgr"]{--icon-tone:var(--lab-concept-teal,#2d8792)}
+.computing-memory-management .desktop-icons[data-awaiting-interaction="true"] .desktop-icon{animation:lab-desktop-attention 2s ease-in-out infinite;background:#ffffff70}
+.computing-memory-management .work-card{background:white;box-shadow:0 2px 7px #1d1d1f18}
+@keyframes lab-desktop-attention{50%{border-color:var(--lab-accent);background:#ffffffd9}}
+@media(prefers-reduced-motion:reduce){.computing-memory-management .desktop-icons[data-awaiting-interaction="true"] .desktop-icon{animation:none;border-color:var(--lab-accent)}}
+
+.computing-memory-management .desktop-icon{padding:2px}
+.computing-memory-management .app-glyph{width:28px;height:28px;margin-bottom:2px}
+.computing-assembly :is(.operation code,.reference code,.translation-table code,#sourceEditor){font-family:"Lab Index I",var(--mono,monospace)}
+
 </style>
 <script data-lab-design-runtime>
 /* Shared model dragging: retain the point grabbed while the model rerenders. */

@@ -1369,6 +1369,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
     scan:{name:"Security Scan",short:"AV",color:"#d09832",basePages:3}
   };
 
+  let desktopIconsUsed = false;
   const DESKTOP_APPS = ["browser","image","sheet","media","scan","taskmgr"];
 
   let ramCapacity = 32;
@@ -2890,9 +2891,9 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
       </div>` : "";
 
     $("desktop").innerHTML=`
-      <div class="desktop-icons">
+      <div class="desktop-icons" data-awaiting-interaction="${!desktopIconsUsed}">
         ${DESKTOP_APPS.map(id=>`
-          <button class="desktop-icon" data-action="open-window" data-owner="${id}">
+          <button class="desktop-icon" ${desktopIconsUsed?"":'data-lab-intro="desktop-apps" data-lab-intro-title="Open an application" data-lab-intro-copy="Choose an icon to load its pages into memory. Watch the queue and RAM respond."'} data-action="open-window" data-owner="${id}">
             <span class="app-glyph">${appIcon(id)}</span>
             ${id==="taskmgr"?"Task Manager":ownerDef(id).name}
           </button>
@@ -3248,6 +3249,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
       desktopState.startOpen=!desktopState.startOpen;
       renderDesktop();
     }else if(action==="open-window"){
+      desktopIconsUsed=true;
       desktopState.startOpen=false;
       if(owner==="taskmgr"){
         desktopState.window="taskmgr";

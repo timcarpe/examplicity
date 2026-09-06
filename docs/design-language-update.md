@@ -1098,3 +1098,16 @@ Batch 6 implementation: `dd9d94ed84014c88004b994586577a523df8e342`; canonical ki
 Validation: both FDE models still complete all three supplied programs; memory boots, progresses workloads and shows a nonzero 6px bar; all three Scheduler targets, rule drag and arrival keyboard control pass. SVG backgrounds refit around changing values; readout/log placement checked in the browser. No horizontal page overflow or canvas scrolling at 900/390px in those flows.
 
 Review-refinement implementation: `ab1bced0b32d86b998a2d004935a38044bf7fde4`; canonical styling/runtime/guides: `78a80b0`. All 57 download/contract checks, developer sync and authoring bundle checks pass. Exact duplicate shared declarations were removed, so the download-size allowance remains unchanged.
+
+### Batch 6 review refinements — 6 September 2026
+
+- Shared CSS: homepage-style revealed native select menus (progressive browser
+  support), stronger installed rule cards, neutral causal feedback, desktop icon
+  colour/spacing and queue-card shadow; serif I in FDE/Assembly identifiers.
+- Scheduling HTML: shortened routine, scenario and failed-target explanations;
+  removed duplicate installed-rule narration. Scheduling calculations unchanged.
+- Memory HTML: one first-application interaction flag and shared icon tooltip.
+  Desktop redraws retain dismissal; storage and memory logic unchanged.
+- Canonical visual guide and style contract document the treatments. CSS remains
+  bundled into downloadable HTML. Unsupported browsers retain native menus.
+- Packaging: Sound Sampling remains an offline audio artifact; its existing scoped cap rises by 10 KB to 1.485 MB for shared CSS. The general download limit is unchanged.
