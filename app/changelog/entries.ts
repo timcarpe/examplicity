@@ -10,10 +10,12 @@ export const changelogEntries: readonly ChangelogEntry[] = [
     date: '2026-09-06',
     displayDate: '6 September 2026',
     publicChanges: [
+      'Reworked the developer reference with actionable AI remix instructions, lab contribution guidance and a plain-text companion; linked it directly from the Remix prompt.',
       'Refreshed ten Mathematics labs covering ratio and flow, relative frequency, conditional probability, scatter diagrams, sets, similarity, solids, time zones, transformations and vectors with shared controls, clearer working and targeted interaction hints.',
       'Unified Time Zones under Working: None / Some / All, made its calendars and date controls easier to read, and preserved the complete-meeting availability checks.',
     ],
     internalChanges: [
+      'Added managed developer-reference links to published and downloaded lab HTML heads.',
       'Added implementation maps for all ten labs, preserving learning relationships and documenting support, inputs, evidence and completion dependencies.',
       'Extended the canonical shared design resources with investigation sidebars, native date selects and accessible checkpoints; retained the same resources in standalone lab downloads and the developer guide.',
     ],

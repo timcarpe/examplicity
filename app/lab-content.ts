@@ -120,6 +120,8 @@ const renderHead = (lab: Lab) => {
 <title>${title}</title>
 <meta name="description" content="${description}">
 <link rel="canonical" href="${canonicalUrl}">
+<link rel="help" href="${productionSiteUrl}/developer" title="Remix and developer reference">
+<link rel="help" type="text/plain" href="${productionSiteUrl}/developer/llms.txt" title="LLM remix instructions">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Examplicity">
 <meta property="og:title" content="${title}">

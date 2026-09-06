@@ -43,7 +43,7 @@ Please work with me collaboratively:
 5. Preserve the learning relationship, contract invariants, and curriculum alignment unless my request explicitly requires changing them. Keep difficulty and cases within the selected curriculum; you have creative freedom over the implementation when that serves my request.
 6. Return one polished, accessible, standalone HTML file that works offline.
 
-General information about how Examplicity labs are packaged is available at https://www.examplicity.org/developer if useful.
+If you can access the web, consult https://www.examplicity.org/developer#remix (plain text: https://www.examplicity.org/developer/llms.txt) before editing. Follow its design and contract links as relevant. If unavailable, say so and continue using the attached HTML and embedded contract. Keep required resources embedded; documentation URLs must not become runtime dependencies.
 
 The current lab is described as: ${lab.description}`;
 

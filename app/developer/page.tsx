@@ -3,8 +3,8 @@ import Link from 'next/link';
 import styles from './developer.module.css';
 
 export const metadata: Metadata = {
-  title: 'Lab system reference | Examplicity',
-  description: 'The living design guide, reusable lab kit, source layout and publication flow for Examplicity labs.',
+  title: 'Remix and developer reference | Examplicity',
+  description: 'Instructions for AI remixing, offline HTML labs, design resources and contributing fixes.',
   alternates: { canonical: '/developer' },
 };
 
@@ -44,6 +44,8 @@ export default function DeveloperPage() {
       <div className={styles.layout}>
         <aside className={styles.contents} aria-label="On this page">
           <p>On this page</p>
+          <a href="#contribute">Contribute a fix</a>
+          <a href="#remix">Remix a lab</a>
           <a href="#design">Design language</a>
           <a href="#model">Artifact model</a>
           <a href="#anatomy">Source anatomy</a>
@@ -54,14 +56,45 @@ export default function DeveloperPage() {
 
         <article className={styles.document}>
           <header className={styles.titleBlock}>
-            <p className={styles.eyebrow}>Current repository · September 2026</p>
-            <h1>Lab system reference</h1>
-            <p>
-              Examplicity labs are authored as self-contained HTML, compiled with pinned shared resources,
-              served from the site, and downloadable as one offline HTML file. Paths below are relative to the
-              repository root.
-            </p>
+            <h1>Remix and developer reference</h1>
+            <p>How to adapt a lab, preserve its learning relationships, and contribute improvements.
+              <a href="/developer/llms.txt"> Plain-text instructions for LLMs</a>.</p>
           </header>
+
+          <section id="contribute" className={styles.contribution}>
+            <h2>Improve a lab</h2>
+            <p>Submit focused fixes and improvements to <a href="https://github.com/timcarpe/examplicity">timcarpe/examplicity on GitHub</a>.
+              For larger changes, <a href="https://github.com/timcarpe/examplicity/issues">open an issue</a> to agree the scope first.</p>
+            <ol className={styles.plainList}>
+              <li>Fork the repository and create a branch. Edit <code>labs-src/&lt;subject&gt;/&lt;slug&gt;/lab.html</code>.
+                Update <code>lab-contracts/&lt;subject&gt;/&lt;slug&gt;.lab.json</code> when behaviour or guidance changes.</li>
+              <li>Follow the repository’s <code>AGENTS.md</code>, run the <a href="#publish">relevant checks</a>, and regenerate the published HTML.</li>
+              <li>Open a PR with the lab URL, problem, change and validation results. Include a screenshot for visual changes.
+                An LLM without repository access can prepare a patch and PR description for a developer to submit.</li>
+            </ol>
+          </section>
+
+          <section id="remix" className={styles.section}>
+            <h2>Remix a lab</h2>
+            <ol className={styles.plainList}>
+              <li>Read the attached HTML and its <code>script[data-examplicity-lab-contract]</code> JSON.
+                Use the contract as adaptation guidance; inspect the code to establish actual behaviour.
+                An implementation map may be stale after edits.</li>
+              <li>Identify the learning relationship, learner inputs, model outputs, feedback and completion rules.
+                Ask about the audience and requested changes; agree a short plan before editing.</li>
+              <li>Preserve the learning relationship, contract invariants and selected curriculum unless the user explicitly changes them.
+                Revise affected contract guidance to match the result. Do not invent exam alignment.</li>
+              <li>Use the <a href="#design">design references</a> for changed surfaces. Preserve meaningful interactions,
+                keyboard access and readable feedback. Shared styling does not require a new layout or controls.</li>
+              <li>Return one complete HTML file with required CSS, JavaScript and assets embedded. It must work offline.
+                Check the changed interaction, reset, keyboard operation and narrow-screen layout.</li>
+            </ol>
+            <p>A downloaded HTML file is the editable artifact for a personal remix. A repository PR edits authored source
+              and the separate contract, then regenerates publication output. Do not replace source with a packaged download.</p>
+            <p>If online references are unavailable, use the attached HTML and embedded contract, state that limitation,
+              and continue. Documentation links are references, never runtime dependencies.</p>
+            <p><Link href="/developer/lab-contract">Contract fields and implementation maps</Link> · <a href="/developer/lab-contract.schema.json">JSON Schema</a></p>
+          </section>
 
           <section id="design" className={styles.section}>
             <h2>Design language</h2>
@@ -143,7 +176,14 @@ app/labs.ts
 
           <section id="publish" className={styles.section}>
             <h2>Publish and check</h2>
-            <h3>Generate</h3>
+            <h3>Check a focused lab change</h3>
+            <pre className={styles.command}><code>{`npm ci
+npm run lab -- inspect <slug>
+npm run lab -- validate <slug>
+npm run lab -- build <slug>`}</code></pre>
+            <p>Review and include the generated lab in the PR. Test the changed behaviour in the browser and offline download.
+              Run wider checks below when shared resources or publication code change.</p>
+            <h3>Generate the catalogue</h3>
             <pre className={styles.command}><code>{`npm run labs:sync
 npm run lab -- build <slug>`}</code></pre>
             <p>
@@ -200,16 +240,7 @@ npm run build`}</code></pre>
               <code> LabKit.numeric.clamp(...)</code>, or <code>LabKit.svg.point(...)</code>. The vendored file is
               the authoritative API surface; there is not yet a separate generated API reference.
             </p>
-            <dl className={styles.apiList}>
-              <div><dt><code>dom</code></dt><dd><code>get</code>, <code>all</code>, <code>byId</code>, <code>require</code>, <code>on</code></dd></div>
-              <div><dt><code>numeric</code></dt><dd><code>parse</code>, <code>clamp</code>, <code>lerp</code>, <code>inverseLerp</code>, <code>round</code>, <code>format</code></dd></div>
-              <div><dt><code>rng</code></dt><dd><code>create</code>, <code>hashSeed</code></dd></div>
-              <div><dt><code>status</code></dt><dd><code>set</code>, <code>announce</code>, <code>ensure</code></dd></div>
-              <div><dt><code>history</code></dt><dd><code>create</code></dd></div>
-              <div><dt><code>svg</code></dt><dd><code>point</code>, <code>clientPoint</code></dd></div>
-              <div><dt><code>animation</code></dt><dd><code>create</code></dd></div>
-              <div><dt><code>direct</code></dt><dd><code>keyboardAdjustable</code></dd></div>
-            </dl>
+
           </section>
 
           <section id="interfaces" className={styles.section}>
@@ -221,10 +252,7 @@ npm run build`}</code></pre>
               <li><strong>Adaptation metadata:</strong> every published lab carries an embedded Lab Contract. <Link href="/developer/lab-contract">Read its exact boundary.</Link></li>
               <li><strong>Discovery:</strong> compact indexes are available at <Link href="/llms.txt">/llms.txt</Link> and <Link href="/developer/llms.txt">/developer/llms.txt</Link>.</li>
             </ul>
-            <p className={styles.boundary}>
-              This page records implemented surfaces only. Lab-creation notes and implementation decisions stay
-              with the offline creation workflow instead of being turned into public contribution requirements.
-            </p>
+
           </section>
         </article>
       </div>
