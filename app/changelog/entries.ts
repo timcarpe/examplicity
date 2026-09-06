@@ -10,6 +10,7 @@ export const changelogEntries: readonly ChangelogEntry[] = [
     date: '2026-09-06',
     displayDate: '6 September 2026',
     publicChanges: [
+      'Simplified the homepage by removing the handwritten catalogue prompt and arrow.',
       'Refreshed all 57 labs with consistent Working and exam controls, clearer goals and evidence cards, readable labels and purposeful interaction cues, while preserving their distinct diagrams and workbench layouts.',
       'Improved direct manipulation and working across Mathematics, including percentage bars, histogram handles, coordinate constructions and repeating decimals. Restored the Bounds instruments and proof stages, with separate Core and Extended investigations.',
       'Clarified networking devices, packet flows and draggable parts; improved programming consoles, recursive frames and neuron controls. Memory Management now shows other ready CPU work continuing during page transfers.',

@@ -167,10 +167,6 @@ export default function HomeHero() {
           {paused ? 'Resume' : 'Pause'}
         </button>
       </div>
-      <div className="home-explore-note">
-        <span>explore labs below</span>
-        <svg viewBox="0 0 88 76" aria-hidden="true"><path d="M8 10C30 0 58 7 58 27c0 12-14 15-14 29v11M33 55l11 13 11-13" /></svg>
-      </div>
     </div>
   );
 }
