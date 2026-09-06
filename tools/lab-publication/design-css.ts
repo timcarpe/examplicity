@@ -1,14 +1,8 @@
 import { PurgeCSS } from 'purgecss';
 
-// Expand only after comparing offline downloads with the full stylesheet.
-export const DESIGN_CSS_PILOT = new Set([
-  'binary-numbers',
-  'recursive-call-stack',
-  'gas-compression-at-constant-temperature',
-]);
-
 export type DesignCssPolicy = {
   standard: string[];
+  standardPatterns?: string[];
   components: string[];
   dynamicAttributes: string[];
 };
@@ -29,7 +23,7 @@ export async function packageDesignCss(css: string, html: string, policy: Design
     content: [{ raw: content, extension: 'html' }],
     css: [{ raw: css }],
     safelist: {
-      standard: policy.standard,
+      standard: [...policy.standard, ...(policy.standardPatterns ?? []).map(pattern => new RegExp(pattern))],
       deep: policy.components.map(pattern => new RegExp(pattern)),
       keyframes,
     },

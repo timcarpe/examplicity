@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
-import { DESIGN_CSS_PILOT, packageDesignCss } from '../tools/lab-publication/design-css.ts';
+import { packageDesignCss } from '../tools/lab-publication/design-css.ts';
 import { compilePublicationLab, loadPublicationContext } from '../tools/lab-publication/index.ts';
 import { findUnresolvedRuntimeResources } from '../tools/lab-compiler/index.ts';
 
@@ -13,6 +13,8 @@ test('packaging retains runtime states and remix primitives without retaining un
     .unused { color: red; }
     :is(input,textarea,select):focus { border-color: gray; }
     :where(.absent):hover { color: red; }
+    button:where(:not(.counter,.person-card)) { padding: 8px 14px; }
+    .lab-checkpoint:is(:hover,:focus-within) .lab-checkpoint-detail { display: block; }
     .runtime-field[data-state="complete"] { color: green; }
     [data-lab-setting="exam"] { color: black; }
     .lab-adopt-v3 .lab-work-card .future-child:focus-visible { border-color: blue; }
@@ -32,16 +34,18 @@ test('packaging retains runtime states and remix primitives without retaining un
   const result = await packageDesignCss(css, html, policy);
   assert.doesNotMatch(result, /\.unused|\.absent|unrelated-adapter|unused-animation/);
   assert.match(result, /:is\(input,textarea,select\):focus/);
+  assert.match(result, /button:where\(:not\(\.counter,\.person-card\)\)/);
+  assert.match(result, /:is\(:hover,:focus-within\)/);
   for (const token of ['data-lab-setting', 'runtime-field', 'future-child', ':has(input)', ':is(button, input)', ':disabled', 'max-width', 'prefers-reduced-motion', '@keyframes pulse', '@keyframes local-animation', '--lab-blue']) {
     assert.ok(result.includes(token), token);
   }
   assert.equal(await packageDesignCss(css, html, policy), result);
 });
 
-test('three pilot downloads use reduced CSS; other labs keep the full resource', async () => {
+test('publication downloads use reduced CSS with shared remix primitives', async () => {
   const context = await loadPublicationContext(process.cwd());
   const css = await readFile('public/developer/lab-kit/0.3.0/src/lab-design.css', 'utf8');
-  for (const slug of DESIGN_CSS_PILOT) {
+  for (const slug of ['binary-numbers', 'recursive-call-stack', 'gas-compression-at-constant-temperature', 'sequence-patterns-differences', 'translator']) {
     const lab = await compilePublicationLab(context, slug, { check: true });
     const packaged = lab.output.match(/<style data-lab-design>\n([\s\S]*?)\n<\/style>/)![1];
     assert.ok(Buffer.byteLength(packaged) < Buffer.byteLength(css) * .8, slug);
@@ -51,6 +55,4 @@ test('three pilot downloads use reduced CSS; other labs keep the full resource',
     }
     assert.deepEqual(findUnresolvedRuntimeResources(lab.standalone), []);
   }
-  const control = await compilePublicationLab(context, 'sequence-patterns-differences');
-  assert.ok(control.output.includes(css));
 });

@@ -60,3 +60,9 @@ The previous 52 labs were adapted in reviewed batches across mathematics and com
 - Added PurgeCSS to publication for Binary, Recursive Call Stacks and Gas only. Shared CSS is selected at packaging; local styles, models and runtimes remain intact. The other 54 labs retain the full stylesheet.
 - Canonical `lab-design-purge.json` preserves common remix primitives and ships with the kit, authoring bundle and developer resources. Both style guides explain the boundary. Removed Recursive's download-size allowance.
 - Added packaging tests and compared full/reduced offline files across 29 initial, later, narrow and added-component states. Fixed dataset attribute extraction and compound pseudo-class preservation found by those comparisons. Sizes, limits and reproduction commands: `docs/css-packaging-feasibility.md`; local screenshots and comparison evidence: `D:/Cambridge Labs/purge-pilot/`.
+
+## Selective CSS rollout — 6 September 2026
+
+- Enabled shared CSS selection for all 57 labs; retained the canonical remix primitives and all local models/styles/runtime code. Published HTML is 12.9 MB smaller than the pilot baseline.
+- Random spot check: Selection Pressure, Non-right Triangles, Scatter, TCP/IP and Translator. All 16 opening/interaction/reset/theme comparisons match full CSS after fixing nested pseudo-class preservation centrally. No additional lab redesigns.
+- Updated packaging tests, shared policy and generated kit resources; removed Translator's obsolete size allowance. Details and local evidence paths are in `docs/css-packaging-feasibility.md`.

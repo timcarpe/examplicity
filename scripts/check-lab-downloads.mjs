@@ -9,10 +9,6 @@ const count = (source, value) => source.split(value).length - 1;
 const artifactLimitBytes = 512 * 1024;
 const licenseNotice = (await readFile(path.join(root, 'LICENSE'), 'utf8')).trim().replaceAll('\r\n', '\n');
 const artifactSizeWaivers = new Map([
-  ['translator', {
-    maxBytes: 670_000,
-    reason: 'Reviewed unchanged offline translation/interpreter engine plus embedded shared workbench styles and interaction helpers.',
-  }],
   ['python-programming-practice', {
     maxBytes: 1_510_000,
     reason: 'Reviewed unchanged offline Skulpt runtime and standard-library payload plus embedded shared workbench styles and interaction helpers.',
