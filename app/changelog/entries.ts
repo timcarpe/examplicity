@@ -19,7 +19,7 @@ export const changelogEntries: readonly ChangelogEntry[] = [
       'Unified Time Zones under Working: None / Some / All, made its calendars and date controls easier to read, and preserved the complete-meeting availability checks.',
     ],
     internalChanges: [
-      'Added revision-pinned behaviour maps for five construction and representation labs, a shared builder adapter and matching guide examples; synchronized the authoring bundle and standalone resources. Updated Bitmap and Automated Systems review revisions after the inline working and shared chip refinement.',
+      'Added revision-pinned behaviour maps for five construction and representation labs, a shared builder adapter and matching guide examples; synchronized the authoring bundle and standalone resources. Updated Bitmap and Automated Systems review revisions after the inline working and shared chip refinement, including the restored flowchart item chooser.',
       'Added five current-behaviour implementation maps and a shared computing-workspace adapter; documented space balancing and preserved the standalone resource packaging. Added focused concurrency and page-ownership checks for the memory simulation.',
       'Added managed developer-reference links to published and downloaded lab HTML heads.',
       'Added implementation maps for the ten Mathematics labs and ten communication/representation labs, preserving learning relationships and documenting support, inputs, evidence and completion dependencies.',
