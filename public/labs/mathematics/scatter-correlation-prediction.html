@@ -3069,6 +3069,39 @@ html[data-theme="dark"] .lab-programming select::picker(select){border-color:var
 .cs-python-programming-practice .challenge-brief{grid-template-columns:minmax(0,1fr) auto;align-items:start;background:var(--lab-accent-soft)}
 .cs-python-programming-practice .challenge-brief-actions{position:static;align-self:start}
 .cs-python-programming-practice .challenge-prompt .semantic-call{font-weight:400}
+/* Shared model tool rows keep reset actions below mission/settings. */
+.lab-model-tools{display:flex;align-items:center;flex-wrap:wrap;gap:10px;padding:12px 20px;border-bottom:1px solid var(--lab-line-subtle);background:var(--lab-surface)}
+.lab-similarity .relationship-dock>:is(.relationship-placeholder,.relationship-result){border:0;box-shadow:none;background:transparent;padding:0}
+/* Attention is owned by the current task and ends when that target is used. */
+button[data-lab-attention="true"]:not(:disabled){animation:lab-run-attention 1.8s ease-in-out infinite}
+svg [data-lab-attention="true"]>.card{animation:lab-card-attention 1.8s ease-in-out infinite;stroke:var(--lab-accent);stroke-width:2}
+@keyframes lab-card-attention{50%{stroke:var(--lab-accent-pressed,#3a5d99);stroke-width:3.5;filter:drop-shadow(0 0 3px color-mix(in srgb,var(--lab-accent) 35%,transparent))}}
+@media(prefers-reduced-motion:reduce){button[data-lab-attention="true"],svg [data-lab-attention="true"]>.card{animation:none!important}}
+.lab-sets .board{padding:0 20px 20px}.lab-sets .board>.lab-model-tools{margin-inline:-20px}.lab-sets #setContext{margin:16px 0 20px}.lab-sets #setContext p{margin:6px 0 0}
+.lab-sets :is(.flow[hidden],#missionVisual,.mission-hint,.drop-zone,.explore-banner,.feedback[hidden],.recipient-row[hidden],.recipient-card[hidden],#nextSet[hidden]){display:none!important}
+.lab-sets .lab-set-layout{display:grid;grid-template-columns:minmax(0,1fr) 320px;align-items:start;gap:20px}
+.lab-sets .inspection{grid-column:2;grid-row:auto;display:flex;flex-direction:column;align-items:stretch;gap:14px;padding:0 0 0 20px;border-left:1px solid var(--lab-line-subtle)}
+.lab-sets .venn-stage{padding:0;background:none}.lab-sets .venn-scroll{overflow:visible}.lab-sets #venn{width:100%;height:auto}
+.lab-sets :is(.rule-card,.lab-set-selection,.recipient-card){padding:12px;border:1px solid var(--lab-line-subtle);border-radius:10px;background:var(--lab-surface-muted);box-shadow:none}
+.lab-sets [data-state="needed"]{background:var(--lab-needed-surface,#fffdf4);border-color:var(--lab-needed-line,#d8c36a)}
+.lab-sets [data-state="correct"]{background:var(--lab-good-surface,#f7fcf8);border-color:var(--lab-good-line,#9cc7aa)}
+.lab-sets [data-state="mistake"]{background:var(--lab-bad-surface,#fff8f7);border-color:var(--lab-bad-line,#d8aaa4)}
+.lab-sets :is(.rule-head strong,.trace h3){font:400 15px/1.4 var(--lab-font-sans);color:var(--lab-ink);margin:0 0 10px}.lab-sets .rule-head{display:flex;flex-wrap:wrap;align-items:center;gap:8px}.lab-sets .rule-head strong{margin:0}.lab-sets .rule-controls{margin-top:12px}
+.lab-sets :is(.trace,.trace-top){display:block;padding:0;border:0;background:none}.lab-sets .trace p{font:400 14px/1.45 var(--lab-font-sans);margin:8px 0 0}.lab-sets .lab-set-facts{display:flex;flex-wrap:wrap;gap:6px}.lab-sets .lab-set-facts span{padding:4px 7px;border-radius:5px;background:color-mix(in srgb,var(--lab-concept-violet) 16%,white);font:400 14px/1.4 var(--lab-font-sans)}
+.lab-sets .move-controls{justify-content:flex-start;padding:12px 0 0;gap:6px}.lab-sets #selectedLabel{width:100%;font:400 12px/1.4 var(--lab-font-sans)}.lab-sets .move-controls button{padding:7px 9px;font-size:12px}.lab-sets .move-controls button[aria-pressed="true"]{background:var(--lab-accent-soft);border-color:var(--lab-accent)}
+.lab-sets .placement-requirements{display:grid;width:100%;grid-template-columns:1fr;gap:8px}.lab-sets .requirement{display:flex;gap:5px;padding:8px 0;border:0;border-radius:0;background:none}.lab-sets .requirement+.requirement{border-top:1px solid var(--lab-line-subtle)}.lab-sets .requirement strong{flex:1;font:400 14px/1.4 var(--lab-font-sans)}.lab-sets .notation{font:400 12px/1.4 var(--lab-font-sans);padding:4px 6px;border:0;border-radius:5px}.lab-sets .req-state{background:none;font-size:14px}.lab-sets .notation.a{background:color-mix(in srgb,var(--lab-accent) 16%,white);color:var(--lab-accent-ink)}.lab-sets .notation.b{background:color-mix(in srgb,var(--lab-concept-violet) 16%,white);color:var(--lab-concept-violet)}
+.lab-sets .recipient-card{display:flex;align-items:center;flex-wrap:wrap;gap:8px;text-align:left}.lab-sets .recipient-card #recipientCount{font:400 16px/1.4 var(--lab-font-sans)}.lab-sets .recipient-row{display:block;padding:0}.lab-sets .recipient-label{margin-bottom:8px}.lab-sets .recipient-set{gap:6px}.lab-sets .recipient-chip{font:400 12px/1.4 var(--lab-font-sans);padding:5px 8px;border:0;background:var(--lab-accent-soft)}.lab-sets .feedback{padding:0;border:0}.lab-sets .feedback .action-line{display:block;padding:12px;border-radius:10px;font:400 14px/1.45 var(--lab-font-sans)}.lab-sets .feedback strong{font-weight:400}.lab-sets #nextSet{align-self:flex-end}
+.lab-sets #caseTabs{margin-left:auto;flex-wrap:nowrap}.lab-sets #caseTabs [aria-disabled="true"]{cursor:default}
+/* Set identities stay blue/violet; correctness is reserved for green/red. */
+.lab-sets .universe{fill:var(--lab-surface);stroke:var(--lab-line);stroke-width:1.2}.lab-sets .set-base-a{fill:color-mix(in srgb,var(--lab-accent) 16%,white)}.lab-sets .set-base-b{fill:color-mix(in srgb,var(--lab-concept-violet) 16%,transparent)}.lab-sets .set-base-shared{fill:none}.lab-sets .set-outline-a{stroke:var(--lab-accent);stroke-width:1.8}.lab-sets .set-outline-b{stroke:var(--lab-concept-violet);stroke-width:1.8}
+.lab-sets .result-region.active{fill:var(--lab-accent);opacity:.22}.lab-sets .result-region.drag-target{fill:var(--lab-accent);opacity:.15}
+.lab-sets #venn text{font-family:var(--lab-font-sans);font-weight:400}.lab-sets .set-mark{font-size:16px}.lab-sets .set-mark.a{fill:var(--lab-accent-ink)}.lab-sets .set-mark.b{fill:var(--lab-concept-violet)}.lab-sets :is(.universe-label,.region-label){font-size:13px;fill:var(--lab-muted)}
+.lab-sets .person .card{fill:white;stroke:var(--lab-line);stroke-width:1.2;filter:none;stroke-dasharray:none}.lab-sets .person.selected .card{stroke:var(--lab-accent);filter:none}.lab-sets .person.target-pending .card{fill:white;stroke:var(--lab-needed-line,#d8c36a);stroke-dasharray:none}.lab-sets .person.target-correct .card{fill:var(--lab-good-surface);stroke:var(--lab-good)}.lab-sets .person.reference{opacity:1}.lab-sets .person .name{font-size:14px;fill:var(--lab-ink)}.lab-sets .person .membership-symbol{font-size:11px}.lab-sets .person .membership-pill{stroke:none}.lab-sets .person .membership-pill.a.on{fill:color-mix(in srgb,var(--lab-accent) 16%,white)}.lab-sets .person .membership-pill.b.on{fill:color-mix(in srgb,var(--lab-concept-violet) 16%,white)}.lab-sets .person .membership-pill.off{fill:var(--lab-surface-muted)}.lab-sets .person .membership-symbol.a.on{fill:var(--lab-accent-ink)}.lab-sets .person .membership-symbol.b.on{fill:var(--lab-concept-violet)}.lab-sets .person .membership-symbol.off{fill:var(--lab-muted)}.lab-sets .target-pending :is(.goal-dot,.goal-check){display:none}.lab-sets .person.problem-extra .card,.lab-sets .person.problem-missed .card{fill:var(--lab-bad-surface);stroke:var(--lab-bad);stroke-dasharray:none}
+.cs-logic-circuit-flip-flop :is(#wire-q-out,#wire-qbar-out){stroke-width:3.5}.cs-logic-circuit-flip-flop :is(#wire-q-feedback,#wire-qbar-feedback){stroke-width:1.7}.cs-logic-circuit-flip-flop :is(#q-node,#qbar-node){stroke-width:2}
+@media(max-width:980px){.lab-sets .lab-set-layout{grid-template-columns:1fr}.lab-sets .inspection{grid-column:1;border-left:0;padding:16px 0 0;border-top:1px solid var(--lab-line-subtle)}}
+svg rect[data-lab-attention="true"]{animation:lab-card-attention 1.8s ease-in-out infinite;stroke:var(--lab-accent)}
+@media(prefers-reduced-motion:reduce){svg rect[data-lab-attention="true"]{animation:none!important}}
+.cs-logic-circuit-flip-flop .output-label{font:400 14px var(--lab-font-sans);fill:var(--lab-ink)}.cs-logic-circuit-flip-flop .output-caption{display:none}
 
 </style>
 <script data-lab-design-runtime>
@@ -3535,7 +3568,9 @@ window.LabDesign = {
       "A fit must satisfy the source's whole-cloud quality heuristic and the selected correlation direction before the standard case is fitReady.",
       "Standard completion also requires the probe at the query and any selected support inputs; zero-correlation completion requires the no-trend choice.",
       "Extrapolation requires saving a second distinct fit, seeing both inside and outside probe states, correct comparison work and choosing outside.",
-      "The next card appears only from isComplete(); support upgrades and next datasets are offered through that card."
+      "The next card appears only from isComplete(); support upgrades and next datasets are offered through that card.",
+      "The existing reset action is in the model-tools row below the mission and global settings.",
+      "Axis labels, observed-range annotations and the residual ribbon have separate vertical space; the moving probe label sits inside the plot above the x-axis."
     ],
     "completion": "The source isComplete() check combines case-specific fit/probe/correlation conditions with support-gated working; when true, #nextCard is shown and the solved count may unlock a higher support level.",
     "limitations": [
@@ -3594,7 +3629,7 @@ window.LabDesign = {
           <strong id="nextTitle">Practice complete</strong>
           <div class="next-actions"><button id="nextDataset" type="button">Another dataset</button><button id="upgradeSupport" type="button" hidden></button><button id="keepExploring" class="quiet" type="button">Adjust fit</button></div>
         </div>
-        <svg data-lab-readable-chart="12" id="plot" viewBox="0 0 920 650" role="img" aria-labelledby="plotTitle plotDesc" data-lab-role="model" data-lab-manipulative="best-fit-line"></svg>
+        <svg data-lab-readable-chart="12" id="plot" viewBox="0 0 920 700" role="img" aria-labelledby="plotTitle plotDesc" data-lab-role="model" data-lab-manipulative="best-fit-line"></svg>
       </div>
       <div class="stage-footer"><div id="footerEvidence"><strong>Next action:</strong> drag the ruler through the whole cloud.</div><span id="footerStatus" class="footer-status">Waiting for a fit</span></div>
     </section>
@@ -4021,7 +4056,7 @@ const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const fmt=(v,d=0)=>{const n=Number(v);if(!Number.isFinite(n))return '—';const s=n.toFixed(d).replace(/\.0+$/,'').replace(/(\.\d*?)0+$/,'$1');return s.replace('-', '−')};
 const near=(a,b,t)=>Math.abs(a-b)<=t;
 const plotBox={x:92,y:48,w:730,h:415};
-const ribbon={x:92,y:520,w:730,h:92,centre:566};
+const ribbon={x:92,y:558,w:730,h:122,centre:626};
 const supportNames=['working shown','some working','full working'];
 const firstFiveFocus=['positive','negative','zero','noisy','extrapolation'];
 const standardTemplates={
@@ -4223,8 +4258,8 @@ function drawRibbon(root,q){
   for(let i=1;i<3;i++)add(root,'line',{x1:ribbon.x+ribbon.w*i/3,y1:ribbon.y+34,x2:ribbon.x+ribbon.w*i/3,y2:ribbon.y+ribbon.h-8,class:'ribbon-divider'});
   ['left third','middle third','right third'].forEach((t,i)=>add(root,'text',{x:ribbon.x+ribbon.w*(i+.5)/3,y:ribbon.y+43,class:'ribbon-segment'},t));
   if(!state.evidenceVisible&&state.drag){add(root,'rect',{x:ribbon.x+1,y:ribbon.y+32,width:ribbon.w-2,height:ribbon.h-33,rx:9,class:'ribbon-mask'});add(root,'text',{x:ribbon.x+ribbon.w/2,y:ribbon.centre+4,class:'ribbon-release'},'Release the ruler to inspect the balance');return;}
-  const scale=32/(yRange()*.22);
-  for(const p of q.residuals){const len=clamp(Math.abs(p.r)*scale,3,32),up=p.r>yRange()*.012,down=p.r<-yRange()*.012,y2=up?ribbon.centre-len:down?ribbon.centre+len:ribbon.centre;add(root,'line',{x1:sx(p.x),y1:ribbon.centre,x2:sx(p.x),y2,class:`residual-tick ${up?'above':down?'below':'near'}`})}
+  const scale=18/(yRange()*.22);
+  for(const p of q.residuals){const len=clamp(Math.abs(p.r)*scale,3,18),up=p.r>yRange()*.012,down=p.r<-yRange()*.012,y2=up?ribbon.centre-len:down?ribbon.centre+len:ribbon.centre;add(root,'line',{x1:sx(p.x),y1:ribbon.centre,x2:sx(p.x),y2,class:`residual-tick ${up?'above':down?'below':'near'}`})}
   q.segments.forEach((s,i)=>add(root,'text',{x:ribbon.x+ribbon.w*(i+.5)/3,y:ribbon.y+ribbon.h-9,class:'ribbon-count'},`${s.above} above · ${s.below} below`));
 }
 function probeTargetX(){const c=current();if(c.kind==='extrapolation')return state.seenInside?c.outside:c.inside;return c.query}
@@ -4240,7 +4275,7 @@ function drawProbe(root){
   vals.forEach((v,i)=>{add(root,'line',{x1:plotBox.x,y1:sy(v),x2:sx(x),y2:sy(v),class:'probe-horizontal'});add(root,'circle',{cx:sx(x),cy:sy(v),r:6,class:'probe-point'});if(c.kind==='extrapolation'){const g=add(root,'g',{}),yy=sy(v)+(i===0?-15:17);add(g,'rect',{x:sx(x)-31,y:yy-12,width:62,height:18,rx:8,class:`compare-pill ${i===0?'first':'second'}`});add(g,'text',{x:sx(x),y:yy+1,class:'compare-text'},`fit ${i+1}: ${fmt(v,c.answerDigits)}`)}});
   const handle=add(root,'g',{tabindex:0,role:'slider','aria-label':'Move the prediction probe along the x-axis'});add(handle,'circle',{cx:sx(x),cy:plotBox.y+plotBox.h,r:14,class:'probe-handle'});add(handle,'circle',{cx:sx(x),cy:plotBox.y+plotBox.h,r:25,class:'handle-hit'});handle.addEventListener('pointerdown',e=>{state.probeDragging=true;state.drag={kind:'probe',pointerId:e.pointerId,offsetX:svgPoint(e).x-sx(x)};handle.setPointerCapture?.(e.pointerId);e.preventDefault()});handle.addEventListener('keydown',e=>{if(!['ArrowLeft','ArrowRight'].includes(e.key))return;e.preventDefault();const step=current().xStep/5*(e.shiftKey?5:1);state.probeX=clamp((state.probeX??current().xDomain[0])+(e.key==='ArrowRight'?step:-step),current().xDomain[0],current().xDomain[1]);afterProbeMove(false)});
   const target=probeTargetX(),reached=Math.abs(x-target)<=c.xStep*.13;
-  const labelX=sx(x),labelY=plotBox.y+plotBox.h+5;add(root,'rect',{x:labelX-34,y:labelY+12,width:68,height:20,rx:9,class:'probe-label-bg'});add(root,'text',{x:labelX,y:labelY+26,class:'probe-label'},reached?`x = ${fmt(target,target%1?1:0)}`:`x = ${fmt(x,1)}`);
+  const labelX=sx(x),labelY=plotBox.y+plotBox.h-38;add(root,'rect',{x:labelX-34,y:labelY+12,width:68,height:20,rx:9,class:'probe-label-bg'});add(root,'text',{x:labelX,y:labelY+26,class:'probe-label'},reached?`x = ${fmt(target,target%1?1:0)}`:`x = ${fmt(x,1)}`);
 }
 function renderPlot(){
   const svg=$('plot');svg.replaceChildren();add(svg,'title',{id:'plotTitle'},`${current().context} scatter diagram`);add(svg,'desc',{id:'plotDesc'},'A scatter diagram of small crosses, an adjustable straight ruler spanning the full observed data set, a residual evidence ribbon and, once the fit is accepted, a draggable prediction probe.');add(svg,'rect',{width:920,height:650,class:'plot-bg'});drawGrid(svg);drawPoints(svg);drawFitLine(svg);const q=state.lastQuality||quality();drawRibbon(svg,q);drawProbe(svg);
@@ -4364,6 +4399,7 @@ window.addEventListener('pointermove',e=>{
 });
 function endPointer(e){if(!state.drag||state.drag.pointerId!==e.pointerId)return;const kind=state.drag.kind;state.drag=null;if(kind==='probe'){state.probeDragging=false;afterProbeMove(true)}else afterLineChange(true)}
 window.addEventListener('pointerup',endPointer);window.addEventListener('pointercancel',endPointer);
+const modelTools=document.createElement('div');modelTools.className='lab-model-tools';modelTools.append(document.getElementById('resetCase'));document.querySelector('.workspace').before(modelTools);
 $('resetCase').addEventListener('click',resetStateForCase);
 document.querySelectorAll('[data-support]').forEach(b=>b.addEventListener('click',()=>setSupportLevel(Number(b.dataset.support))));
 $('nextDataset').addEventListener('click',()=>nextCase());

@@ -2937,6 +2937,39 @@ html[data-theme="dark"] .lab-programming select::picker(select){border-color:var
 .cs-python-programming-practice .challenge-brief{grid-template-columns:minmax(0,1fr) auto;align-items:start;background:var(--lab-accent-soft)}
 .cs-python-programming-practice .challenge-brief-actions{position:static;align-self:start}
 .cs-python-programming-practice .challenge-prompt .semantic-call{font-weight:400}
+/* Shared model tool rows keep reset actions below mission/settings. */
+.lab-model-tools{display:flex;align-items:center;flex-wrap:wrap;gap:10px;padding:12px 20px;border-bottom:1px solid var(--lab-line-subtle);background:var(--lab-surface)}
+.lab-similarity .relationship-dock>:is(.relationship-placeholder,.relationship-result){border:0;box-shadow:none;background:transparent;padding:0}
+/* Attention is owned by the current task and ends when that target is used. */
+button[data-lab-attention="true"]:not(:disabled){animation:lab-run-attention 1.8s ease-in-out infinite}
+svg [data-lab-attention="true"]>.card{animation:lab-card-attention 1.8s ease-in-out infinite;stroke:var(--lab-accent);stroke-width:2}
+@keyframes lab-card-attention{50%{stroke:var(--lab-accent-pressed,#3a5d99);stroke-width:3.5;filter:drop-shadow(0 0 3px color-mix(in srgb,var(--lab-accent) 35%,transparent))}}
+@media(prefers-reduced-motion:reduce){button[data-lab-attention="true"],svg [data-lab-attention="true"]>.card{animation:none!important}}
+.lab-sets .board{padding:0 20px 20px}.lab-sets .board>.lab-model-tools{margin-inline:-20px}.lab-sets #setContext{margin:16px 0 20px}.lab-sets #setContext p{margin:6px 0 0}
+.lab-sets :is(.flow[hidden],#missionVisual,.mission-hint,.drop-zone,.explore-banner,.feedback[hidden],.recipient-row[hidden],.recipient-card[hidden],#nextSet[hidden]){display:none!important}
+.lab-sets .lab-set-layout{display:grid;grid-template-columns:minmax(0,1fr) 320px;align-items:start;gap:20px}
+.lab-sets .inspection{grid-column:2;grid-row:auto;display:flex;flex-direction:column;align-items:stretch;gap:14px;padding:0 0 0 20px;border-left:1px solid var(--lab-line-subtle)}
+.lab-sets .venn-stage{padding:0;background:none}.lab-sets .venn-scroll{overflow:visible}.lab-sets #venn{width:100%;height:auto}
+.lab-sets :is(.rule-card,.lab-set-selection,.recipient-card){padding:12px;border:1px solid var(--lab-line-subtle);border-radius:10px;background:var(--lab-surface-muted);box-shadow:none}
+.lab-sets [data-state="needed"]{background:var(--lab-needed-surface,#fffdf4);border-color:var(--lab-needed-line,#d8c36a)}
+.lab-sets [data-state="correct"]{background:var(--lab-good-surface,#f7fcf8);border-color:var(--lab-good-line,#9cc7aa)}
+.lab-sets [data-state="mistake"]{background:var(--lab-bad-surface,#fff8f7);border-color:var(--lab-bad-line,#d8aaa4)}
+.lab-sets :is(.rule-head strong,.trace h3){font:400 15px/1.4 var(--lab-font-sans);color:var(--lab-ink);margin:0 0 10px}.lab-sets .rule-head{display:flex;flex-wrap:wrap;align-items:center;gap:8px}.lab-sets .rule-head strong{margin:0}.lab-sets .rule-controls{margin-top:12px}
+.lab-sets :is(.trace,.trace-top){display:block;padding:0;border:0;background:none}.lab-sets .trace p{font:400 14px/1.45 var(--lab-font-sans);margin:8px 0 0}.lab-sets .lab-set-facts{display:flex;flex-wrap:wrap;gap:6px}.lab-sets .lab-set-facts span{padding:4px 7px;border-radius:5px;background:color-mix(in srgb,var(--lab-concept-violet) 16%,white);font:400 14px/1.4 var(--lab-font-sans)}
+.lab-sets .move-controls{justify-content:flex-start;padding:12px 0 0;gap:6px}.lab-sets #selectedLabel{width:100%;font:400 12px/1.4 var(--lab-font-sans)}.lab-sets .move-controls button{padding:7px 9px;font-size:12px}.lab-sets .move-controls button[aria-pressed="true"]{background:var(--lab-accent-soft);border-color:var(--lab-accent)}
+.lab-sets .placement-requirements{display:grid;width:100%;grid-template-columns:1fr;gap:8px}.lab-sets .requirement{display:flex;gap:5px;padding:8px 0;border:0;border-radius:0;background:none}.lab-sets .requirement+.requirement{border-top:1px solid var(--lab-line-subtle)}.lab-sets .requirement strong{flex:1;font:400 14px/1.4 var(--lab-font-sans)}.lab-sets .notation{font:400 12px/1.4 var(--lab-font-sans);padding:4px 6px;border:0;border-radius:5px}.lab-sets .req-state{background:none;font-size:14px}.lab-sets .notation.a{background:color-mix(in srgb,var(--lab-accent) 16%,white);color:var(--lab-accent-ink)}.lab-sets .notation.b{background:color-mix(in srgb,var(--lab-concept-violet) 16%,white);color:var(--lab-concept-violet)}
+.lab-sets .recipient-card{display:flex;align-items:center;flex-wrap:wrap;gap:8px;text-align:left}.lab-sets .recipient-card #recipientCount{font:400 16px/1.4 var(--lab-font-sans)}.lab-sets .recipient-row{display:block;padding:0}.lab-sets .recipient-label{margin-bottom:8px}.lab-sets .recipient-set{gap:6px}.lab-sets .recipient-chip{font:400 12px/1.4 var(--lab-font-sans);padding:5px 8px;border:0;background:var(--lab-accent-soft)}.lab-sets .feedback{padding:0;border:0}.lab-sets .feedback .action-line{display:block;padding:12px;border-radius:10px;font:400 14px/1.45 var(--lab-font-sans)}.lab-sets .feedback strong{font-weight:400}.lab-sets #nextSet{align-self:flex-end}
+.lab-sets #caseTabs{margin-left:auto;flex-wrap:nowrap}.lab-sets #caseTabs [aria-disabled="true"]{cursor:default}
+/* Set identities stay blue/violet; correctness is reserved for green/red. */
+.lab-sets .universe{fill:var(--lab-surface);stroke:var(--lab-line);stroke-width:1.2}.lab-sets .set-base-a{fill:color-mix(in srgb,var(--lab-accent) 16%,white)}.lab-sets .set-base-b{fill:color-mix(in srgb,var(--lab-concept-violet) 16%,transparent)}.lab-sets .set-base-shared{fill:none}.lab-sets .set-outline-a{stroke:var(--lab-accent);stroke-width:1.8}.lab-sets .set-outline-b{stroke:var(--lab-concept-violet);stroke-width:1.8}
+.lab-sets .result-region.active{fill:var(--lab-accent);opacity:.22}.lab-sets .result-region.drag-target{fill:var(--lab-accent);opacity:.15}
+.lab-sets #venn text{font-family:var(--lab-font-sans);font-weight:400}.lab-sets .set-mark{font-size:16px}.lab-sets .set-mark.a{fill:var(--lab-accent-ink)}.lab-sets .set-mark.b{fill:var(--lab-concept-violet)}.lab-sets :is(.universe-label,.region-label){font-size:13px;fill:var(--lab-muted)}
+.lab-sets .person .card{fill:white;stroke:var(--lab-line);stroke-width:1.2;filter:none;stroke-dasharray:none}.lab-sets .person.selected .card{stroke:var(--lab-accent);filter:none}.lab-sets .person.target-pending .card{fill:white;stroke:var(--lab-needed-line,#d8c36a);stroke-dasharray:none}.lab-sets .person.target-correct .card{fill:var(--lab-good-surface);stroke:var(--lab-good)}.lab-sets .person.reference{opacity:1}.lab-sets .person .name{font-size:14px;fill:var(--lab-ink)}.lab-sets .person .membership-symbol{font-size:11px}.lab-sets .person .membership-pill{stroke:none}.lab-sets .person .membership-pill.a.on{fill:color-mix(in srgb,var(--lab-accent) 16%,white)}.lab-sets .person .membership-pill.b.on{fill:color-mix(in srgb,var(--lab-concept-violet) 16%,white)}.lab-sets .person .membership-pill.off{fill:var(--lab-surface-muted)}.lab-sets .person .membership-symbol.a.on{fill:var(--lab-accent-ink)}.lab-sets .person .membership-symbol.b.on{fill:var(--lab-concept-violet)}.lab-sets .person .membership-symbol.off{fill:var(--lab-muted)}.lab-sets .target-pending :is(.goal-dot,.goal-check){display:none}.lab-sets .person.problem-extra .card,.lab-sets .person.problem-missed .card{fill:var(--lab-bad-surface);stroke:var(--lab-bad);stroke-dasharray:none}
+.cs-logic-circuit-flip-flop :is(#wire-q-out,#wire-qbar-out){stroke-width:3.5}.cs-logic-circuit-flip-flop :is(#wire-q-feedback,#wire-qbar-feedback){stroke-width:1.7}.cs-logic-circuit-flip-flop :is(#q-node,#qbar-node){stroke-width:2}
+@media(max-width:980px){.lab-sets .lab-set-layout{grid-template-columns:1fr}.lab-sets .inspection{grid-column:1;border-left:0;padding:16px 0 0;border-top:1px solid var(--lab-line-subtle)}}
+svg rect[data-lab-attention="true"]{animation:lab-card-attention 1.8s ease-in-out infinite;stroke:var(--lab-accent)}
+@media(prefers-reduced-motion:reduce){svg rect[data-lab-attention="true"]{animation:none!important}}
+.cs-logic-circuit-flip-flop .output-label{font:400 14px var(--lab-font-sans);fill:var(--lab-ink)}.cs-logic-circuit-flip-flop .output-caption{display:none}
 
 </style>
 <script data-lab-design-runtime>
@@ -3283,12 +3316,11 @@ window.LabDesign = {
       "task": {
         "selectors": [
           "#missionTitle",
-          "#missionHint",
-          "#missionVisual",
+          "#setContext",
           "#caseTabs"
         ],
         "kind": "given",
-        "description": "Current set-membership placement or operation request and case progression.",
+        "description": "Text mission, set definitions/criterion above the canvas and six gated checkpoint dots with task/status tooltips.",
         "visibility": "Shown for the current case."
       },
       "model": {
@@ -3307,30 +3339,28 @@ window.LabDesign = {
       "working": {
         "selectors": [
           "#ruleControls",
-          "#ruleCue",
-          "#board"
+          ".lab-set-selection"
         ],
         "kind": "working",
-        "description": "Set-rule choices and physical placement actions for the current case.",
+        "description": "Right-side membership requirements or rule decisions and a separate selected-student current-membership card. Yellow unfinished, green match, red attempted mismatch.",
         "visibility": "Placement requirements or operation choices are generated by case."
       },
       "evidence": {
         "selectors": [
           "#traceTop",
-          "#traceNote",
           "#recipientCount",
-          "#recipientSet",
           "#actionLine"
         ],
         "kind": "evidence",
         "description": "Membership trace, live notation, recipient count/set and send feedback show the evaluated rule.",
-        "visibility": "Updates after selection, movement and send attempts."
+        "visibility": "Current membership updates on every move; count and send feedback belong to operation tasks. Duplicate placement and recipient lists are hidden."
       },
       "completion": {
         "selectors": [
           "#sendMessage",
           "#actionLine",
-          "#board"
+          "#nextSet",
+          "#caseTabs"
         ],
         "kind": "completion",
         "description": "Correct placement or sent operation result and case progression.",
@@ -3338,10 +3368,11 @@ window.LabDesign = {
       },
       "controls": {
         "selectors": [
-          "#ruleControls [data-region]",
+          ".move-controls [data-region]",
           "#peopleLayer [data-id]",
           "#sendMessage",
-          "#resetMembers"
+          "#resetMembers",
+          "#nextSet"
         ],
         "kind": "control",
         "description": "Region moves, rule choices, send and reset actions.",
@@ -3362,10 +3393,9 @@ window.LabDesign = {
         "description": "A, B, union, intersection, complement and compound predicate choices.",
         "domain": "Set expression selected by generated rule controls.",
         "source": "#ruleControls choices and operation case.",
-        "output": "#expression, #ruleCue and the evaluated recipient set.",
+        "output": "#expression and the evaluated recipient set.",
         "inputSlots": [
-          "#ruleControls button.choice",
-          "#ruleControls [data-region]"
+          "#ruleControls button.choice"
         ]
       },
       "recipient-set": {
@@ -3394,9 +3424,10 @@ window.LabDesign = {
       "Only the highlighted/selected student can be moved by a region control; moving a card recomputes membership and clears a prior sent state.",
       "Placement completes when all generated requirements are correct. Operation completion requires a send whose recipient set exactly matches the predicate.",
       "Changing operator or complement choice invalidates the prior send; case tabs remain gated by earlier completion.",
-      "Region membership is derived from the card centre, so boundary placement changes the evaluated set."
+      "Region membership is derived from the card centre, so boundary placement changes the evaluated set.",
+      "Unfinished movable student cards pulse until acted on; coordinate conversion uses the SVG screen transform to preserve pointer geometry. Reset lives below the mission; required notation is not repeated inside it."
     ],
-    "completion": "The source adds a case to completed after all placement requirements pass or an operation send has the exact target predicate; the next case becomes available through the case tabs/state.",
+    "completion": "The source adds a case to completed after all placement requirements pass or an operation send has the exact target predicate; the next case becomes available through the case tabs/state. Continue advances to the next unlocked task after current completion; checkpoint navigation preserves existing unlock rules.",
     "limitations": [
       "People and placement/rule controls are generated for the current case; student IDs and per-choice selectors are not fixed across cases.",
       "There is no typed set-notation answer; selection, movement and send are the answer mechanics."
@@ -3915,6 +3946,16 @@ window.LabDesign = {
 <script>
 (() => {
   const $=id=>document.getElementById(id),svgNS="http://www.w3.org/2000/svg",regionOrder=["N","A","AB","B"];
+  const sidebar=document.querySelector('.inspection');
+  const context=document.createElement('div');context.className='lab-context';context.id='setContext';context.innerHTML='<h2>A · Coding club &nbsp; B · Robotics club</h2><p id="setContextCopy"></p>';
+  document.querySelector('.lab-set-layout').before(context);
+  const tools=document.createElement('div');tools.className='lab-model-tools';tools.append($('resetMembers'));context.before(tools);
+  sidebar.prepend(document.querySelector('.rule-card'));
+  const selection=document.createElement('section');selection.className='lab-set-selection';selection.append(document.querySelector('.trace'),document.querySelector('.move-controls'));sidebar.append(selection);
+  sidebar.append(document.querySelector('.recipient-card'),document.querySelector('.recipient-row'),document.querySelector('.feedback'));
+  const next=document.createElement('button');next.id='nextSet';next.type='button';next.className='lab-action';next.dataset.priority='primary';next.textContent='Continue';next.hidden=true;sidebar.append(next);
+  document.querySelector('.flow').hidden=true;$('missionVisual').hidden=true;
+  const touchedStudents=new Set();
   const cases=[
     {id:"place-one",tab:"1 · Membership",mode:"placement",title:"Place Aisha so both membership statements are true.",hint:"∈ means “is an element of”. Read the two statements on Aisha’s goal card, then move her.",message:"Aisha",audience:"Read her membership notation",requirements:[{id:"aisha",a:true,b:true}],start:{aisha:"B"},success:"Aisha ∈ A and Aisha ∈ B, so her card belongs in the overlap A ∩ B."},
     {id:"place-four",tab:"2 · Four regions",mode:"placement",title:"Place the four highlighted students from their membership notation.",hint:"Use ∈ and ∉ to distinguish A only, both, B only and neither. The other four cards are references.",message:"Four highlighted students",audience:"Match each ∈ / ∉ statement",requirements:[{id:"maya",a:true,b:false},{id:"aisha",a:true,b:true},{id:"leo",a:false,b:true},{id:"chloe",a:false,b:false}],start:{maya:"B",aisha:"N",leo:"A",chloe:"AB"},success:"The four membership combinations map to the four regions: A only, A ∩ B, B only and neither."},
@@ -3967,7 +4008,11 @@ window.LabDesign = {
       const route=document.createElement("div");route.className="mission-route";route.innerHTML=`<span class="mission-goal-word">Goal</span><span class="mini-mail" aria-hidden="true"></span><strong>${c.message}</strong><span class="route-arrow">→</span><span class="mission-audience">${c.audience}</span>`;host.append(route);
     }
   }
-  function renderMission(){const c=current();$("missionTitle").textContent=c.title;$("missionHint").textContent=c.hint;renderMissionVisual();const host=$("caseTabs");host.replaceChildren();cases.forEach((item,i)=>{const b=document.createElement("button");b.type="button";b.className=`case-tab${i===state.caseIndex?" active":""}${state.completed.has(item.id)?" complete":""}`;b.textContent=state.completed.has(item.id)?`${item.tab} ✓`:item.tab;b.disabled=!unlocked(i);b.addEventListener("click",()=>selectCase(i));host.appendChild(b)})}
+  function renderMission(){const c=current();$('missionTitle').textContent=c.title;$('missionHint').textContent='';$('setContextCopy').textContent=isPlacement()?'∈ means belongs to the set; ∉ means does not belong. Match the statements in the working card.':c.audience+'. The highlighted students are the recipients of your current rule.';
+    const host=$('caseTabs');LabDesign.checkpoints(host,cases.map(item=>item.tab.replace(/^\d+ · /,'')),state.caseIndex,i=>state.completed.has(cases[i].id));
+    [...host.children].forEach((dot,i)=>{dot.setAttribute('role','button');dot.setAttribute('aria-disabled',String(!unlocked(i)));dot.querySelector('.lab-checkpoint-detail span').textContent=(state.completed.has(cases[i].id)?'Completed. ':i===state.caseIndex?'Current task. ':'')+cases[i].title;const activate=()=>selectCase(i);dot.addEventListener('click',activate);dot.addEventListener('keydown',e=>{if(['Enter',' '].includes(e.key)){e.preventDefault();activate()}})});
+  }
+
   function setToken(letter){const b=document.createElement("button");b.type="button";b.className=`set-token ${letter.toLowerCase()}`;b.textContent=letter;b.disabled=true;b.setAttribute("aria-label",`Set ${letter}`);return b}
   function choice(text,pressed,handler,label,extra=""){const b=document.createElement("button");b.type="button";b.className=`choice ${extra}`.trim();b.innerHTML=text;b.setAttribute("aria-pressed",String(pressed));b.setAttribute("aria-label",label);b.addEventListener("click",handler);return b}
   function requirementNode(req){const p=state.people.find(x=>x.id===req.id),row=document.createElement("div");row.className=`requirement${placementCorrect(req)?" correct":""}`;const name=document.createElement("strong");name.textContent=p.name;const stateDot=document.createElement("span");stateDot.className="req-state";stateDot.textContent=placementCorrect(req)?"✓":"·";row.append(name,notationChip(req.a,"A"),notationChip(req.b,"B"),stateDot);return row}
@@ -3992,17 +4037,18 @@ window.LabDesign = {
   function personNode(person){person.region=personRegion(person);const m=personMembership(person),req=requirementFor(person.id),goalCorrect=req?placementCorrect(req):false,preview=!isPlacement()&&included(person),sent=!isPlacement()&&state.sent&&preview,extra=!isPlacement()&&state.sent&&preview&&!targetIncluded(person),missed=!isPlacement()&&state.sent&&!preview&&targetIncluded(person);const classes=["person",preview?"preview":"",sent?"sent":"",extra?"problem-extra":"",missed?"problem-missed":"",person.id===state.selectedId?"selected":"",state.drag?.id===person.id?"dragging":"",state.justSent&&sent?"just-sent":"",req&&!goalCorrect?"target-pending":"",req&&goalCorrect?"target-correct":"",isPlacement()&&!req?"reference":""].filter(Boolean).join(" ");const movable=canMove(person),g=svg("g",{class:classes,transform:`translate(${person.x} ${person.y})`,tabindex:movable?"0":"-1",role:movable?"button":"img","aria-label":`${person.name}, ${regionName(person.region)}. ${notationText(m.a,"A")}, ${notationText(m.b,"B")}.${movable?" Drag freely; membership changes when the card centre crosses a set boundary. Select to use the move buttons.":" Reference card."}`});g.dataset.id=person.id;
     g.append(svg("rect",{class:"card",x:"-52",y:"-25",width:"104",height:"50",rx:"11"}));for(const x of [-45,-41])for(const y of [-7,0,7])g.append(svg("circle",{class:"grab",cx:String(x),cy:String(y),r:"1.25"}));const name=svg("text",{class:"name",x:"-33",y:"-8"});name.textContent=person.name;g.append(name);
     const pill=(set,on,x)=>{const cls=`${set.toLowerCase()} ${on?"on":"off"}`;g.append(svg("rect",{class:`membership-pill ${cls}`,x:String(x),y:"2",width:"39",height:"17",rx:"8.5"}));const t=svg("text",{class:`membership-symbol ${cls}`,x:String(x+19.5),y:"11"});t.textContent=notationText(on,set);g.append(t)};pill("A",m.a,-38);pill("B",m.b,3);
-    if(req){const dot=svg("circle",{class:"goal-dot",cx:"43",cy:"-16",r:"7.5"}),check=svg("text",{class:"goal-check",x:"43",y:"-15"});check.textContent=goalCorrect?"✓":"!";g.append(dot,check)}
+    if(req){const dot=svg("circle",{class:"goal-dot",cx:"43",cy:"-16",r:"7.5"}),check=svg("text",{class:"goal-check",x:"43",y:"-15"});check.textContent=goalCorrect?"✓":"";g.append(dot,check)}
     const badge=svg("g",{class:"mail-badge"});badge.append(svg("circle",{class:"mail-circle",cx:"43",cy:"-15",r:"7.5"}),svg("path",{class:"mail-icon",d:"M39 -18H47V-13H39ZM39 -18L43 -15L47 -18"}));g.append(badge);
     if(movable){g.addEventListener("pointerdown",e=>beginDrag(e,person.id));g.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();state.selectedId=person.id;renderAll(false)}});g.addEventListener("click",()=>{if(!state.drag?.moved){state.selectedId=person.id;renderAll(false)}})}return g
   }
   function renderPeople(){const host=$("peopleLayer");host.replaceChildren();const score=p=>{let v=0;if(requirementFor(p.id))v+=10;if(p.id===state.selectedId)v+=20;if(state.drag?.id===p.id)v+=40;return v};[...state.people].sort((a,b)=>score(a)-score(b)).forEach(p=>host.appendChild(personNode(p)))}
-  function renderTrace(){const p=selected();p.region=personRegion(p);const m=personMembership(p),host=$("traceTop");host.replaceChildren();if(isPlacement()){
-      const req=requirementFor(p.id);if(!req){const s=document.createElement("span");s.className="trace-name";s.textContent=`${p.name} · reference card`;host.append(s);$("traceNote").textContent="Only the highlighted cards need moving in this placement challenge.";$("selectedLabel").textContent=`Move ${current().requirements[0]?state.people.find(x=>x.id===current().requirements[0].id).name:p.name}:`;return}
-      const currentOk=placementCorrect(req),items=[["trace-name",p.name],[`trace-fact a ${m.a?"yes":"no"}`,notationText(m.a,"A")],[`trace-fact b ${m.b?"yes":"no"}`,notationText(m.b,"B")],["trace-arrow","→"],[`trace-goal ${currentOk?"good":""}`,`${notationText(req.a,"A")} · ${notationText(req.b,"B")}`],["trace-arrow","→"],[`trace-result ${currentOk?"yes":"no"}`,currentOk?"matches":"move again"]];items.forEach(([cls,text])=>{const s=document.createElement("span");s.className=cls;s.textContent=text;host.append(s)});$("traceNote").textContent=`Position determines membership: ${p.name}'s card now says ${notationText(m.a,"A")} and ${notationText(m.b,"B")}.`;$("selectedLabel").textContent=`Move ${p.name}:`;return;
-    }
-    const gets=included(p),items=[["trace-name",p.name],[`trace-fact a ${m.a?"yes":"no"}`,notationText(m.a,"A")],[`trace-fact b ${m.b?"yes":"no"}`,notationText(m.b,"B")],["trace-arrow","→"],["trace-expression",expression()],["trace-arrow","→"],[`trace-result ${gets?"yes":"no"}`,gets?"included":"excluded"]];items.forEach(([cls,text])=>{const s=document.createElement("span");s.className=cls;s.textContent=text;host.append(s)});$("traceNote").textContent=`The rule checks ${p.name}'s membership facts. Changing either the rule or ${p.name}'s region changes this result immediately.`;$("selectedLabel").textContent=`Move ${p.name}:`;
+  function renderTrace(){const p=selected(),m=personMembership(p),req=requirementFor(p.id),ok=req&&placementCorrect(req);p.region=personRegion(p);
+    $('traceTop').innerHTML='<h3>'+p.name+' · current membership</h3><div class="lab-set-facts"><span>'+p.name+' '+notationText(m.a,'A')+'</span><span>'+p.name+' '+notationText(m.b,'B')+'</span></div><p>'+(isPlacement()?(ok?'✓ Matches the required membership.':state.lastMove?.id===p.id?'Compare these memberships with the goal above.':'The card’s centre determines its membership.'):(included(p)?'Included by ':'Excluded by ')+expression())+'</p>';
+    $('traceNote').textContent='';$('selectedLabel').textContent='Move '+p.name;
+    const card=document.querySelector('.lab-set-selection');card.dataset.state=isPlacement()?(ok?'correct':state.lastMove?.id===p.id?'mistake':'needed'):'reference';
+    document.querySelectorAll('[data-region]').forEach(button=>{button.disabled=!canMove(p);button.setAttribute('aria-pressed',String(button.dataset.region===p.region))});
   }
+
   function renderRecipients(){const host=$("recipientSet");host.replaceChildren();if(isPlacement()){
       current().requirements.forEach(req=>{const p=state.people.find(x=>x.id===req.id),b=document.createElement("button");b.type="button";b.className=`recipient-chip ${placementCorrect(req)?"correct":"pending"}`;b.textContent=`${placementCorrect(req)?"✓":"·"} ${p.name} · ${regionName(p.region)}`;b.addEventListener("click",()=>{state.selectedId=p.id;renderAll(false)});host.appendChild(b)});return;
     }
@@ -4013,16 +4059,23 @@ window.LabDesign = {
     }
     board.classList.toggle("complete",state.sent&&expressionCorrect());if(state.sent){const extras=state.people.filter(p=>included(p)&&!targetIncluded(p)),missed=state.people.filter(p=>!included(p)&&targetIncluded(p));if(!extras.length&&!missed.length&&expressionCorrect()){line.classList.add("good");line.innerHTML=`<strong>Delivered to exactly the requested set.</strong> ${current().success}`;return}line.classList.add("bad");const parts=[];if(extras.length)parts.push(`wrong recipient${extras.length>1?"s":""}: ${extras.map(p=>p.name).join(", ")}`);if(missed.length)parts.push(`missed: ${missed.map(p=>p.name).join(", ")}`);line.innerHTML=`<strong>The rule sent to the wrong set.</strong> ${parts.join(" · ")}. The affected cards are marked in the Venn diagram.`;return}if(state.lastMove){const effect=state.lastMove.before===state.lastMove.after?"recipient status stayed the same":state.lastMove.after?"entered the live set":"left the live set";line.innerHTML=`<strong>${state.lastMove.name}: ${regionName(state.lastMove.from)} → ${regionName(state.lastMove.to)}.</strong> ${effect}.`;return}line.innerHTML="<strong>Preview:</strong> the shaded regions and outlined student cards are exactly the elements selected by the current rule."
   }
-  function introduceInteraction(){const root=document.querySelector('main'),targets=isPlacement()?[...$('venn').querySelectorAll('.person[tabindex="0"]')]:[...$('ruleControls').querySelectorAll('button:not(:disabled)')]; LabDesign.introduce(root,targets,'sets-'+current().id,isPlacement()?'Change a membership':'Build the recipient rule',isPlacement()?'Move a student into the region that matches their memberships. The recipient set updates with the move.':'Choose the set and operation, compare the recipients with the request, then send the message.'); document.querySelectorAll('.case-tab').forEach((b,i)=>{b.title=cases[i].title;b.setAttribute('aria-pressed',String(i===state.caseIndex))});}
-function renderAll(full=true){if(full)renderMission();renderRule();updateRegions();renderPeople();renderTrace();renderRecipients();renderFeedback();introduceInteraction()}
-  function boardPoint(e){const r=$("venn").getBoundingClientRect();return{x:(e.clientX-r.left)/r.width*900,y:(e.clientY-r.top)/r.height*365}}
+  function introduceInteraction(){const root=document.querySelector('main'),targets=isPlacement()?[...$('venn').querySelectorAll('.person.target-pending[tabindex="0"]')]:[...$('ruleControls').querySelectorAll('button:not(:disabled)')]; LabDesign.introduce(root,targets,'sets-'+current().id,isPlacement()?'Change a membership':'Build the recipient rule',isPlacement()?'Move a student into the region that matches their memberships. The recipient set updates with the move.':'Choose the set and operation, compare the recipients with the request, then send the message.'); document.querySelectorAll('.case-tab').forEach((b,i)=>{b.title=cases[i].title;b.setAttribute('aria-pressed',String(i===state.caseIndex))});}
+function renderAll(full=true){if(full)renderMission();renderRule();updateRegions();renderPeople();renderTrace();renderRecipients();renderFeedback();
+    $('board').dataset.placement=String(isPlacement());document.querySelector('.recipient-row').hidden=true;document.querySelector('.recipient-card').hidden=isPlacement();
+    document.querySelector('.rule-card').dataset.state=isPlacement()?(placementComplete()?'correct':'needed'):state.sent?(expressionCorrect()?'correct':'mistake'):'needed';
+    $('ruleTitle').textContent=isPlacement()?'Membership to match':'Recipient rule';$('expression').hidden=isPlacement();
+    document.querySelector('.feedback').hidden=isPlacement()?!placementComplete():!state.sent;
+    const complete=isPlacement()?placementComplete():state.sent&&expressionCorrect();$('nextSet').hidden=!complete||state.caseIndex===cases.length-1;
+    document.querySelectorAll('.person').forEach(node=>{node.dataset.labAttention=String(isPlacement()&&requirementFor(node.dataset.id)&&!placementCorrect(requirementFor(node.dataset.id))&&!touchedStudents.has(current().id+node.dataset.id))});introduceInteraction()}
+  function boardPoint(e){const r=$("venn").getBoundingClientRect();return LabDesign.svgPoint($('venn'),e)}
   function pointRegion(x,y){const m=pointMembership(x,y);return m.a&&m.b?"AB":m.a?"A":m.b?"B":"N"}
-  function beginDrag(e,id){if(e.button!==0)return;const p=state.people.find(x=>x.id===id);if(!p||!canMove(p))return;e.preventDefault();const pt=boardPoint(e);state.selectedId=id;p.region=personRegion(p);state.drag={id,pointerId:e.pointerId,startX:pt.x,startY:pt.y,origX:p.x,origY:p.y,startRegion:p.region,currentRegion:p.region,beforeIncluded:included(p),moved:false};$("venn").setPointerCapture?.(e.pointerId);renderAll(false)}
+  function beginDrag(e,id){if(e.button!==0)return;const p=state.people.find(x=>x.id===id);if(!p||!canMove(p))return;e.preventDefault();touchedStudents.add(current().id+id);const pt=boardPoint(e);state.selectedId=id;p.region=personRegion(p);state.drag={id,pointerId:e.pointerId,startX:pt.x,startY:pt.y,origX:p.x,origY:p.y,startRegion:p.region,currentRegion:p.region,beforeIncluded:included(p),moved:false};$("venn").setPointerCapture?.(e.pointerId);renderAll(false)}
   function moveDrag(e){const d=state.drag;if(!d||d.pointerId!==e.pointerId)return;const p=state.people.find(x=>x.id===d.id),pt=boardPoint(e),dx=pt.x-d.startX,dy=pt.y-d.startY;if(!d.moved&&Math.hypot(dx,dy)>3)d.moved=true;if(!d.moved)return;p.x=Math.max(82,Math.min(818,d.origX+dx));p.y=Math.max(80,Math.min(300,d.origY+dy));d.currentRegion=pointRegion(p.x,p.y);p.region=d.currentRegion;state.sent=false;state.justSent=false;renderAll(false)}
   function endDrag(e){const d=state.drag;if(!d||d.pointerId!==e.pointerId)return;const p=state.people.find(x=>x.id===d.id);if(d.moved){const before=d.beforeIncluded,from=d.startRegion;p.region=personRegion(p);const after=included(p);state.lastMove={id:p.id,name:p.name,from,to:p.region,before,after};state.sent=false}else state.selectedId=p.id;state.drag=null;const newlyComplete=completionAfterPlacement();renderAll(newlyComplete)}
-  function moveSelected(region){const p=selected();if(!p||!canMove(p))return;p.region=personRegion(p);const from=p.region,before=included(p);if(from===region)return;placeInRegion(p,region);const after=included(p);state.lastMove={id:p.id,name:p.name,from,to:p.region,before,after};state.sent=false;state.justSent=false;const newlyComplete=completionAfterPlacement();renderAll(newlyComplete)}
+  function moveSelected(region){const p=selected();touchedStudents.add(current().id+p.id);if(!p||!canMove(p))return;p.region=personRegion(p);const from=p.region,before=included(p);if(from===region)return;placeInRegion(p,region);const after=included(p);state.lastMove={id:p.id,name:p.name,from,to:p.region,before,after};state.sent=false;state.justSent=false;const newlyComplete=completionAfterPlacement();renderAll(newlyComplete)}
   function send(){if(isPlacement())return;state.sent=true;state.justSent=true;const problems=state.people.filter(p=>included(p)!==targetIncluded(p));if(problems.length)state.selectedId=problems[0].id;else if(expressionCorrect())state.completed.add(current().id);saveSession();renderAll();setTimeout(()=>{state.justSent=false;renderPeople()},380)}
   document.querySelectorAll("[data-region]").forEach(b=>b.addEventListener("click",()=>moveSelected(b.dataset.region)));$("resetMembers").addEventListener("click",()=>{resetPeople();renderAll(false)});$("sendMessage").addEventListener("click",send);$("venn").addEventListener("pointermove",moveDrag);$("venn").addEventListener("pointerup",endDrag);$("venn").addEventListener("pointercancel",endDrag);
+  $('nextSet').addEventListener('click',()=>selectCase(state.caseIndex+1));
   resetPeople();state.operator=current().initialOp??"∩";state.outside=current().initialOutside??false;renderAll();
 })();
 </script>

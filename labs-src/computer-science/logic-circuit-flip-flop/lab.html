@@ -670,9 +670,9 @@ button:disabled{opacity:.45;cursor:not-allowed}
             <circle class="wire-junction" cx="692" cy="350" r="3" fill="var(--signal-off)"/>
             <circle id="q-node" class="node" cx="714" cy="170" r="8"/>
             <circle id="qbar-node" class="node" cx="714" cy="350" r="8"/>
-            <text class="output-label" x="688" y="153">Q</text>
+            <text id="q-output-value" class="output-label" x="610" y="153">Q = 0</text>
             <text class="output-caption" x="677" y="187">STORED OUTPUT</text>
-            <text class="output-label" x="675" y="337">Q̅</text>
+            <text id="qbar-output-value" class="output-label" x="610" y="337">Q̅ = 1</text>
             <text class="output-caption" x="662" y="369">COMPLEMENT</text>
 
             <g transform="translate(520 92)"><rect id="pill-qbar-feedback" class="value-pill" width="32" height="22" rx="7"/><text id="value-qbar-feedback" class="value-text" x="16" y="15">1</text></g>
@@ -979,6 +979,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
     document.querySelectorAll(".wire-junction").forEach((node, index) => {
       node.style.fill = getComputedStyle(index === 0 ? wires.qOut : wires.qbarOut).stroke;
     });
+    document.getElementById('q-output-value').textContent='Q = '+(qSignal??'?');document.getElementById('qbar-output-value').textContent='Q̅ = '+(qbarSignal??'?');
     setNodeState(elements.qNode, qSignal);
     setNodeState(elements.qbarNode, qbarSignal);
     setPill(elements.pillQFeedback, elements.valueQFeedback, qSignal);
@@ -1359,6 +1360,8 @@ button:disabled{opacity:.45;cursor:not-allowed}
     }
   }
 
+  const actionCuesUsed=new Set();
+  document.addEventListener('click',event=>{const button=event.target.closest('[data-lab-action-cue]');if(button){actionCuesUsed.add(button.dataset.labActionCue);button.dataset.labAttention='false'}},true);
   function render() {
     renderCircuit();
     renderControls();
@@ -1372,6 +1375,8 @@ button:disabled{opacity:.45;cursor:not-allowed}
     const target=state.modalOpen?null:({s:elements.svgSBlock,r:elements.svgRBlock,j:elements.svgJBlock,k:elements.svgKBlock,clock:elements.svgClockBlock})[taskTargets()[0]];
     LabDesign.introduce(document.querySelector('.stage-shell'),target?[target]:[],'flip-'+state.phase,'Operate the circuit',state.phase==='jk_toggle'?'Set J and K, then pulse the rising clock edge. Watch which feedback path changes Q.':'Select the highlighted input to change its bit. Compare Q before and after in the trace.');
     renderPhaseModal();
+    const cues={s:elements.svgSBlock,r:elements.svgRBlock,j:elements.svgJBlock,k:elements.svgKBlock,clock:elements.svgClockBlock};Object.entries(cues).forEach(([name,node])=>{const key=state.phase+':'+name;node.dataset.labActionCue=key;node.dataset.labAttention=String(taskTargets().includes(name)&&controlAllowed(name)&&!actionCuesUsed.has(key))});
+    document.querySelectorAll('#phase-actions button').forEach(button=>{const key=state.phase+':'+button.textContent;button.dataset.labActionCue=key;button.dataset.labAttention=String(!button.disabled&&!actionCuesUsed.has(key))});
   }
 
   function addTrace({ inputs, inputLabel, condition, before, after, afterLabel = "", evidence = "", note = "" }) {

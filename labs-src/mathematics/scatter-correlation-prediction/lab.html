@@ -593,7 +593,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
           <strong id="nextTitle">Practice complete</strong>
           <div class="next-actions"><button id="nextDataset" type="button">Another dataset</button><button id="upgradeSupport" type="button" hidden></button><button id="keepExploring" class="quiet" type="button">Adjust fit</button></div>
         </div>
-        <svg data-lab-readable-chart="12" id="plot" viewBox="0 0 920 650" role="img" aria-labelledby="plotTitle plotDesc" data-lab-role="model" data-lab-manipulative="best-fit-line"></svg>
+        <svg data-lab-readable-chart="12" id="plot" viewBox="0 0 920 700" role="img" aria-labelledby="plotTitle plotDesc" data-lab-role="model" data-lab-manipulative="best-fit-line"></svg>
       </div>
       <div class="stage-footer"><div id="footerEvidence"><strong>Next action:</strong> drag the ruler through the whole cloud.</div><span id="footerStatus" class="footer-status">Waiting for a fit</span></div>
     </section>
@@ -615,7 +615,7 @@ const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const fmt=(v,d=0)=>{const n=Number(v);if(!Number.isFinite(n))return '—';const s=n.toFixed(d).replace(/\.0+$/,'').replace(/(\.\d*?)0+$/,'$1');return s.replace('-', '−')};
 const near=(a,b,t)=>Math.abs(a-b)<=t;
 const plotBox={x:92,y:48,w:730,h:415};
-const ribbon={x:92,y:520,w:730,h:92,centre:566};
+const ribbon={x:92,y:558,w:730,h:122,centre:626};
 const supportNames=['working shown','some working','full working'];
 const firstFiveFocus=['positive','negative','zero','noisy','extrapolation'];
 const standardTemplates={
@@ -817,8 +817,8 @@ function drawRibbon(root,q){
   for(let i=1;i<3;i++)add(root,'line',{x1:ribbon.x+ribbon.w*i/3,y1:ribbon.y+34,x2:ribbon.x+ribbon.w*i/3,y2:ribbon.y+ribbon.h-8,class:'ribbon-divider'});
   ['left third','middle third','right third'].forEach((t,i)=>add(root,'text',{x:ribbon.x+ribbon.w*(i+.5)/3,y:ribbon.y+43,class:'ribbon-segment'},t));
   if(!state.evidenceVisible&&state.drag){add(root,'rect',{x:ribbon.x+1,y:ribbon.y+32,width:ribbon.w-2,height:ribbon.h-33,rx:9,class:'ribbon-mask'});add(root,'text',{x:ribbon.x+ribbon.w/2,y:ribbon.centre+4,class:'ribbon-release'},'Release the ruler to inspect the balance');return;}
-  const scale=32/(yRange()*.22);
-  for(const p of q.residuals){const len=clamp(Math.abs(p.r)*scale,3,32),up=p.r>yRange()*.012,down=p.r<-yRange()*.012,y2=up?ribbon.centre-len:down?ribbon.centre+len:ribbon.centre;add(root,'line',{x1:sx(p.x),y1:ribbon.centre,x2:sx(p.x),y2,class:`residual-tick ${up?'above':down?'below':'near'}`})}
+  const scale=18/(yRange()*.22);
+  for(const p of q.residuals){const len=clamp(Math.abs(p.r)*scale,3,18),up=p.r>yRange()*.012,down=p.r<-yRange()*.012,y2=up?ribbon.centre-len:down?ribbon.centre+len:ribbon.centre;add(root,'line',{x1:sx(p.x),y1:ribbon.centre,x2:sx(p.x),y2,class:`residual-tick ${up?'above':down?'below':'near'}`})}
   q.segments.forEach((s,i)=>add(root,'text',{x:ribbon.x+ribbon.w*(i+.5)/3,y:ribbon.y+ribbon.h-9,class:'ribbon-count'},`${s.above} above · ${s.below} below`));
 }
 function probeTargetX(){const c=current();if(c.kind==='extrapolation')return state.seenInside?c.outside:c.inside;return c.query}
@@ -834,7 +834,7 @@ function drawProbe(root){
   vals.forEach((v,i)=>{add(root,'line',{x1:plotBox.x,y1:sy(v),x2:sx(x),y2:sy(v),class:'probe-horizontal'});add(root,'circle',{cx:sx(x),cy:sy(v),r:6,class:'probe-point'});if(c.kind==='extrapolation'){const g=add(root,'g',{}),yy=sy(v)+(i===0?-15:17);add(g,'rect',{x:sx(x)-31,y:yy-12,width:62,height:18,rx:8,class:`compare-pill ${i===0?'first':'second'}`});add(g,'text',{x:sx(x),y:yy+1,class:'compare-text'},`fit ${i+1}: ${fmt(v,c.answerDigits)}`)}});
   const handle=add(root,'g',{tabindex:0,role:'slider','aria-label':'Move the prediction probe along the x-axis'});add(handle,'circle',{cx:sx(x),cy:plotBox.y+plotBox.h,r:14,class:'probe-handle'});add(handle,'circle',{cx:sx(x),cy:plotBox.y+plotBox.h,r:25,class:'handle-hit'});handle.addEventListener('pointerdown',e=>{state.probeDragging=true;state.drag={kind:'probe',pointerId:e.pointerId,offsetX:svgPoint(e).x-sx(x)};handle.setPointerCapture?.(e.pointerId);e.preventDefault()});handle.addEventListener('keydown',e=>{if(!['ArrowLeft','ArrowRight'].includes(e.key))return;e.preventDefault();const step=current().xStep/5*(e.shiftKey?5:1);state.probeX=clamp((state.probeX??current().xDomain[0])+(e.key==='ArrowRight'?step:-step),current().xDomain[0],current().xDomain[1]);afterProbeMove(false)});
   const target=probeTargetX(),reached=Math.abs(x-target)<=c.xStep*.13;
-  const labelX=sx(x),labelY=plotBox.y+plotBox.h+5;add(root,'rect',{x:labelX-34,y:labelY+12,width:68,height:20,rx:9,class:'probe-label-bg'});add(root,'text',{x:labelX,y:labelY+26,class:'probe-label'},reached?`x = ${fmt(target,target%1?1:0)}`:`x = ${fmt(x,1)}`);
+  const labelX=sx(x),labelY=plotBox.y+plotBox.h-38;add(root,'rect',{x:labelX-34,y:labelY+12,width:68,height:20,rx:9,class:'probe-label-bg'});add(root,'text',{x:labelX,y:labelY+26,class:'probe-label'},reached?`x = ${fmt(target,target%1?1:0)}`:`x = ${fmt(x,1)}`);
 }
 function renderPlot(){
   const svg=$('plot');svg.replaceChildren();add(svg,'title',{id:'plotTitle'},`${current().context} scatter diagram`);add(svg,'desc',{id:'plotDesc'},'A scatter diagram of small crosses, an adjustable straight ruler spanning the full observed data set, a residual evidence ribbon and, once the fit is accepted, a draggable prediction probe.');add(svg,'rect',{width:920,height:650,class:'plot-bg'});drawGrid(svg);drawPoints(svg);drawFitLine(svg);const q=state.lastQuality||quality();drawRibbon(svg,q);drawProbe(svg);
@@ -958,6 +958,7 @@ window.addEventListener('pointermove',e=>{
 });
 function endPointer(e){if(!state.drag||state.drag.pointerId!==e.pointerId)return;const kind=state.drag.kind;state.drag=null;if(kind==='probe'){state.probeDragging=false;afterProbeMove(true)}else afterLineChange(true)}
 window.addEventListener('pointerup',endPointer);window.addEventListener('pointercancel',endPointer);
+const modelTools=document.createElement('div');modelTools.className='lab-model-tools';modelTools.append(document.getElementById('resetCase'));document.querySelector('.workspace').before(modelTools);
 $('resetCase').addEventListener('click',resetStateForCase);
 document.querySelectorAll('[data-support]').forEach(b=>b.addEventListener('click',()=>setSupportLevel(Number(b.dataset.support))));
 $('nextDataset').addEventListener('click',()=>nextCase());

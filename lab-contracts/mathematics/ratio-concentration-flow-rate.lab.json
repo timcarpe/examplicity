@@ -7,26 +7,118 @@
     "evidence": "Pump settings, mixer monitor, bottle output and answer checks show whether the target is met.",
     "nextDecision": "Choose which flow rate to change to satisfy the ratio or throughput requirement."
   },
-  "invariants": ["Total flow is the sum of the two ingredient flows.", "A mixture ratio depends on the relative ingredient flows, not their display order."],
-  "safeAdaptations": ["Vary achievable recipe ratios, flows and bottle targets.", "Adjust calculation scaffolding while retaining separate composition and throughput evidence."],
-  "nonGoals": ["Treating ratio and total flow as interchangeable quantities."],
+  "invariants": [
+    "Total flow is the sum of the two ingredient flows.",
+    "A mixture ratio depends on the relative ingredient flows, not their display order."
+  ],
+  "safeAdaptations": [
+    "Vary achievable recipe ratios, flows and bottle targets.",
+    "Adjust calculation scaffolding while retaining separate composition and throughput evidence."
+  ],
+  "nonGoals": [
+    "Treating ratio and total flow as interchangeable quantities."
+  ],
   "developerGuide": "https://www.examplicity.org/developer/lab-contract",
   "implementation": {
     "reviewedRevision": "8522b625b0a4b0e38b6c779b70c566c1db6b461b",
     "surfaces": {
-      "task": {"selectors": ["#missionTitle", "#missionHint"], "kind": "given", "description": "Current target recipe, target volume and dwell requirement.", "visibility": "Shown for the current blending case."},
-      "model": {"selectors": ["#plant", "#stageWrap"], "kind": "model", "description": "Blending plant, recipe bars, fill monitor and bottles update from the two pump flows.", "visibility": "Present throughout the case; result bottle is populated after a release."},
-      "working": {"selectors": ["#workingDock"], "kind": "working", "description": "Working-level calculation fields for total flow and then the two component flows.", "visibility": "Always present; dynamic fields appear at Working Some or All."},
-      "evidence": {"selectors": ["#fillMonitor", "#actionLine", "#resultBottle"], "kind": "evidence", "description": "Live ratio, predicted fill, target line, under/overfill status and released bottle expose the checks.", "visibility": "Monitor is shown while adjusting; result evidence appears after a release."},
-      "completion": {"selectors": ["#nextCard"], "kind": "completion", "description": "Solved state and next problem action.", "visibility": "Shown only when ratio, fill and selected working checks pass."},
-      "settings": {"selectors": ["[data-work-level]", "#resetCase"], "kind": "control", "description": "Working support level and case reset.", "visibility": "Working level controls are shown for the current case."},
-      "inputs": {"selectors": ["#concFlow", "#waterFlow", "#workingDock input"], "kind": "input", "description": "Two pump sliders and later total/component answer fields.", "visibility": "Sliders are present throughout; generated answer fields depend on Working level."}
+      "task": {
+        "selectors": [
+          "#missionTitle",
+          "#missionHint"
+        ],
+        "kind": "given",
+        "description": "Current target recipe, target volume and dwell requirement.",
+        "visibility": "Shown for the current blending case."
+      },
+      "model": {
+        "selectors": [
+          "#plant",
+          "#stageWrap"
+        ],
+        "kind": "model",
+        "description": "Blending plant, recipe bars, fill monitor and bottles update from the two pump flows.",
+        "visibility": "Present throughout the case; result bottle is populated after a release."
+      },
+      "working": {
+        "selectors": [
+          "#workingDock"
+        ],
+        "kind": "working",
+        "description": "Working-level calculation fields for total flow and then the two component flows.",
+        "visibility": "Always present; dynamic fields appear at Working Some or All."
+      },
+      "evidence": {
+        "selectors": [
+          "#fillMonitor",
+          "#actionLine",
+          "#resultBottle"
+        ],
+        "kind": "evidence",
+        "description": "Live ratio, predicted fill, target line, under/overfill status and released bottle expose the checks.",
+        "visibility": "Monitor is shown while adjusting; result evidence appears after a release."
+      },
+      "completion": {
+        "selectors": [
+          "#nextCard"
+        ],
+        "kind": "completion",
+        "description": "Solved state and next problem action.",
+        "visibility": "Shown only when ratio, fill and selected working checks pass."
+      },
+      "settings": {
+        "selectors": [
+          "[data-work-level]",
+          "#resetCase"
+        ],
+        "kind": "control",
+        "description": "Working support level and case reset.",
+        "visibility": "Working level controls are shown for the current case."
+      },
+      "inputs": {
+        "selectors": [
+          "#concFlow",
+          "#waterFlow",
+          "#workingDock input"
+        ],
+        "kind": "input",
+        "description": "Two pump sliders and later total/component answer fields.",
+        "visibility": "Sliders are present throughout; generated answer fields depend on Working level."
+      }
     },
     "quantities": {
-      "pump-flows": {"description": "Concentrate and water flow rates, kept as separate physical pump slots.", "domain": "Litres per minute; sliders use 0.1 L/min steps.", "source": "Learner adjusts #concFlow and #waterFlow; some/all also expose the corresponding calculation fields.", "output": "Pump readouts, current recipe bars and current recipe text.", "inputSlots": ["#concFlow", "#waterFlow", "#pumpFields input"]},
-      "total-flow": {"description": "Sum of the two ingredient flow rates used for throughput.", "domain": "Litres per minute.", "source": "Computed from both pumps; Working Some/All supplies a generated total field.", "output": "#concOutput, #waterOutput, #monitorCurrent and total-flow status.", "inputSlots": ["#totalFields input"]},
-      "composition": {"description": "Concentrate share and concentrate:water ratio; this is independent of total flow.", "domain": "Ratio or unitless fraction.", "source": "Computed from nonzero pump settings and the generated target recipe.", "output": "#currentRecipe, #currentRecipeText and ratio status in #actionLine."},
-      "throughput": {"description": "Required total flow and resulting bottle volume over the fixed dwell.", "domain": "Litres per minute and litres; dwell is in seconds converted to minutes.", "source": "Target recipe scale and dwell generated for the case.", "output": "#monitorTarget, #monitorRequired, #monitorBar, #activeFill, #resultVolume."}
+      "pump-flows": {
+        "description": "Concentrate and water flow rates, kept as separate physical pump slots.",
+        "domain": "Litres per minute; sliders use 0.1 L/min steps.",
+        "source": "Learner adjusts #concFlow and #waterFlow; some/all also expose the corresponding calculation fields.",
+        "output": "Pump readouts, current recipe bars and current recipe text.",
+        "inputSlots": [
+          "#concFlow",
+          "#waterFlow",
+          "#pumpFields input"
+        ]
+      },
+      "total-flow": {
+        "description": "Sum of the two ingredient flow rates used for throughput.",
+        "domain": "Litres per minute.",
+        "source": "Computed from both pumps; Working Some/All supplies a generated total field.",
+        "output": "#concOutput, #waterOutput, #monitorCurrent and total-flow status.",
+        "inputSlots": [
+          "#totalFields input"
+        ]
+      },
+      "composition": {
+        "description": "Concentrate share and concentrate:water ratio; this is independent of total flow.",
+        "domain": "Ratio or unitless fraction.",
+        "source": "Computed from nonzero pump settings and the generated target recipe.",
+        "output": "#currentRecipe, #currentRecipeText and ratio status in #actionLine."
+      },
+      "throughput": {
+        "description": "Required total flow and resulting bottle volume over the fixed dwell.",
+        "domain": "Litres per minute and litres; dwell is in seconds converted to minutes.",
+        "source": "Target recipe scale and dwell generated for the case.",
+        "output": "#monitorTarget, #monitorRequired, #monitorBar, #activeFill, #resultVolume."
+      }
     },
     "modes": {
       "none": "Existing Off level: the two pump sliders are available and the calculation is shown in the working dock.",
@@ -37,7 +129,8 @@
     "dependencies": [
       "A release is solved only when the pump ratio is correct, predicted bottle volume equals the target, and the selected working-level fields are correct.",
       "At Some/All, the total answer must be correct before component fields are unlocked; changing flows recalculates ratio and fill evidence.",
-      "#nextProblem advances only from the solved state; #resetCase starts a fresh generated case."
+      "#nextProblem advances only from the solved state; #resetCase starts a fresh generated case.",
+      "The existing reset action is in the model-tools row below the mission and global settings."
     ],
     "completion": "The source solved() check requires ratioCorrect, fillCorrect and workingComplete. A solved release shows #nextCard and permits #nextProblem; level-up is offered after three solved cases at the current level.",
     "limitations": [

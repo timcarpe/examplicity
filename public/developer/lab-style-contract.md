@@ -813,3 +813,14 @@ Connect circuit wires to the actual gate ports. Use explicit junction dots for b
 Frame identifiers such as F4 and F5 are compact, regular-weight 12px concept chips, not full-height status strips. Keep assessment colour on the working card. Programming consoles use shared surface/ink tokens, 14px text and padded output/input regions, including dark mode.
 
 Only place geometric grips on geometry that exists. For an offscreen or degenerate boundary, keep stable parameter-value controls available. The shared lab-value-grip combines a padded value, horizontal drag cue and arrow-key access. Disabled values are visually quiet. Parameter-specific geometry remains lab-owned: avoid division by a moving near-zero pointer coordinate. Freeze manipulation during a proof, then restore it in Explore.
+
+
+### Task context, model tools and actionable identity
+
+Keep mission bars for the task and global settings/checkpoints. Put reset and other model tools in a shared lab-model-tools row immediately below, before the canvas. Membership requirements belong in the working area, not as mini diagrams inside a mission title. Use the shared context strip for set definitions or the criterion being tested.
+
+Separate required facts from the selected item's live facts. Yellow indicates unfinished action, green a match and red a checked mismatch. Do not repeat placement progress below a diagram when the working card and checkpoints already show it. Flat relationship material inside a containing card needs padding, not another border.
+
+Use data-lab-attention on task-owned buttons or SVG student cards to pulse the actionable border until that target is used; mark only movable, unfinished students. Preserve a static border with reduced motion. Navigation checkpoints retain keyboard access, gated progression and useful task/status tooltips.
+
+Venn set identities use approved blue and violet tints with white student cards, regular labels and light boundaries. Reserve green/red for correctness. Circuit outputs can be heavier than feedback paths, with current bit values beside each output; preserve crossing gaps and junctions. Chart annotations need separate vertical space from axes, probes and residual evidence.

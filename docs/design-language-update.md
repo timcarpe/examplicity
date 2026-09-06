@@ -1329,3 +1329,15 @@ Implemented:
 - Updated canonical style contract, living HTML guide and Floating Point/Neuron behaviour maps. Shared resources remain compiled into standalone downloads.
 - Review checks: six existing learner flows; direct threshold/weight dragging and release; recursion success/mistake colours; zero-weight/offscreen recovery and XOR proof lock; visual inspection of affected layouts.
 - Visual follow-up: removed the duplicate neuron proof caption over point C; corrected Python challenge grid after its number badge was hidden, restoring full-width instructions.
+
+
+### Mathematics review recovery and Flip-Flop cues
+
+Change list / touched:
+- Set Membership: retained all six placement/rule tasks and gating. Rebuilt the right working area into requirements, current facts and send feedback; added shared checkpoint dots and Continue, removed mission mini-design and duplicate progress/recipient lists. Approved blue/violet Venn tints, white readable student cards and first-use border pulses. Reset below mission. SVG screen-coordinate conversion preserves dragging.
+- Scatter: reset below mission; separate vertical space for x-axis/observed-range labels and residual ribbon; shorter residual ticks retain proportional distance; probe value above the axis.
+- Ratio: reset below mission. Similarity: remove the inner relationship border/background.
+- Flip-Flops: first-use pulses on phase buttons and enabled circuit input buttons; clearer heavy output paths, lighter feedback paths and live Q/Q-bar values beside outputs.
+- Canonical shared stylesheet owns presentation; HTML guide and style contract updated and embedded into publication/downloads. Three existing offline-runtime size allowances gain 15KB solely for the larger shared stylesheet. No simulation runtime was added.
+- Direct checks: six Set tasks including pointer drag, keyboard moves, wrong placement/send, gated navigation and completion; Flip-Flop cues/output; reset actions; desktop/900px/390px geometry. Review pending.
+- Full SR/JK sequence replay passed with normal animation timing, including stored 1/0, invalid pair, recovery and two JK clock toggles.
