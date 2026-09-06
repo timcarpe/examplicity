@@ -1076,10 +1076,8 @@ button.primary{background:var(--lab-accent);border-color:var(--lab-accent);color
   window.addEventListener('resize',renderAll);
 
 function renderDesign(){
-    const target=state.step==='predict'?$('predictionOptions'):state.step==='moveObject'?$('objectLayer'):['moveScreen','sampleNear','sampleFar','sampleVirtual'].includes(state.step)?$('screenLayer'):null;
-    const instruction=stageInstruction();
-    const plain=document.createElement('div');plain.innerHTML=instruction?.text||'';
-    LabDesign.introduce(document.querySelector('main'),target?[target]:[],'lens-'+state.phase+'-'+state.step,instruction?.title.replace(' ↓','')||'Inspect the image',state.step==='predict'?'Choose where the image should form, then test the prediction with the object and screen.':plain.textContent);
+    const target=state.free?null:state.step==='predict'?$('predictionPanel'):state.step==='moveObject'?$('objectDragCue'):['moveScreen','sampleNear','sampleFar','sampleVirtual'].includes(state.step)?$('screenDragCue'):state.step==='success'?$('continueButton'):null;
+    LabDesign.attention(document.querySelector('main'),[target]);
   }
 
   window.__lensLab={

@@ -36,6 +36,14 @@ window.LabDesign = {
     }
     return group;
   },
+  // State-owned attention: call after rendering each required step; [] clears it.
+  attention(scope, targets) {
+    const active = new Set(targets.filter(target => target && !target.disabled && target.getClientRects().length));
+    scope.querySelectorAll('.lab-sequence-target').forEach(target => {
+      if (!active.has(target)) target.classList.remove('lab-sequence-target');
+    });
+    active.forEach(target => target.classList.add('lab-sequence-target'));
+  },
   introduce(scope, targets, key, title, copy) {
     scope.querySelectorAll('[data-lab-intro]').forEach(target => {
       delete target.dataset.labIntro; delete target.dataset.labIntroTitle; delete target.dataset.labIntroCopy;

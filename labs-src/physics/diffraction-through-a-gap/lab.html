@@ -2226,9 +2226,15 @@ body>main{width:min(1200px,calc(100vw - 28px));height:auto;max-height:calc(100vh
 function renderDesign(){
     const index=['gap','wave','compare'].indexOf(state.phase),working=document.querySelector('.working-switch');working.hidden=state.phase!=='compare';
     LabDesign.checkpoints($('scienceCheckpoints'),['Narrow the gap','Increase wavelength','Build a counterexample'],index,i=>[state.gapDone,state.waveDone,state.challengeSuccess][i]);
-    const prediction=state.phase==='gap'?!state.gapPrediction:state.phase==='wave'?!state.wavePrediction:false;
-    const target=prediction?$(state.phase+'Phase').querySelector('.prediction-row'):state.phase==='wave'?$('lambdaMeasure'):state.phase==='gap'?$('gapTopHandle'):document.querySelector('#workingBox input:not(:disabled)')||$('gapTopHandle');
-    LabDesign.introduce(document.querySelector('main'),target?[target]:[],'diffraction-'+state.phase+'-'+(prediction?'predict':'operate'),prediction?'Predict the spread':'Change the wave setup',prediction?'Choose the expected change before moving the control.':state.phase==='wave'?'Drag the wavelength grip; the gap stays fixed. Compare the outgoing wavefronts.':state.phase==='gap'?'Drag a gap edge inward and compare the outgoing spreading.':'Use a wider gap and increase wavelength enough to beat the reference, then test your setup.');
+    let target;
+    if(state.phase==='gap')target=!state.gapPrediction?document.querySelector('.coach'):state.gapDone?$('continueGap'):$('gapTopHandle');
+    else if(state.phase==='wave')target=!state.wavePrediction?document.querySelector('.coach'):state.waveDone?$('continueWave'):$('lambdaMeasure');
+    else {
+      const conditions=challengeConditions();
+      const pending=requiredWorkingKeys().find(key=>!state.workingAnswers[key].trim());
+      target=state.challengeSuccess?$('resetChallenge'):!conditions.gapWide?$('gapTopHandle'):!conditions.spreadWider?$('lambdaMeasure'):pending?$('work'+(pending==='lambda'?'Lambda':pending[0].toUpperCase()+pending.slice(1))+'Field'):state.workingChecked&&!conditions.workingCorrect?$('workingBox'):$('testChallenge');
+    }
+    LabDesign.attention(document.querySelector('main'),[target]);
   }
 
   window.__diffractionLab = {

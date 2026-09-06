@@ -396,7 +396,7 @@ function renderWork(){
   const g=currentProblem(),headTitle=state.round===0?'Find one threshold':state.round===1?'Compare a second threshold':`Fresh example ${state.practiceCount}`,headSub=state.round===0?'Acrylic inside; air outside.':state.round===1?'Diamond inside; the same air outside.':`${g.label} inside, n = ${f2(MEDIA.practice.n)}; air outside. Previous c stays marked.`;const head=`<div class="work-head"><div class="work-head-top"><strong>${headTitle}</strong><span class="work-badge">${WORK_LABELS[state.level]}</span></div><span>${headSub}</span></div>${liveEvidenceMarkup()}${processRail()}`;
   if(state.roundSummary){workPanel.innerHTML=`${head}${resultSummary()}<details class="completed-details"><summary>Review completed working</summary><div class="completed-body">${predictStep()}${exploreStep()}${markStep()}${calculateStep()}</div></details><details class="source-basis"><summary>Why the semicircle?</summary><p>The laser points through the centre of curvature, so it enters the curved face along the normal. This isolates the refraction at the flat boundary.</p></details>`;}
   else{workPanel.innerHTML=`${head}${predictStep()}${exploreStep()}${markStep()}${calculateStep()}<details class="source-basis"><summary>Why the semicircle?</summary><p>The laser points through the centre of curvature, so it enters the curved face along the normal. This isolates the refraction at the flat boundary.</p></details>`;}
-  updateLiveFields();revealCurrentWork();
+  updateLiveFields();revealCurrentWork();renderDesign();
 }
 function updateLiveFields(){const r=refraction(),c=criticalAngle(),o=optics(),reg=regime();const map={liveI:`${f1(state.angle)}°`,liveR:r===null?'none':`${f1(r)}°`,liveC:(state.marked||state.free)&&c!==null?`${f1(c)}°`:c===null?'none':'not marked',livePower:`${pct(o.R)} / ${pct(o.T)}`,currentAngle:`${f1(state.angle)}°`};Object.entries(map).forEach(([id,v])=>{const el=$(id);if(el)el.textContent=v});const rn=$('liveRNote');if(rn)rn.textContent=reg==='tir'?'no outside ray':reg==='critical'?'limiting direction':'outside ray';const cn=$('liveCNote');if(cn)cn.textContent=c===null?'TIR impossible':state.marked||state.free?'from n values':'find the threshold'}
 function renderGuide(){const show=!state.free&&predictionDone()&&!state.changed&&!state.roundSummary;$('guideCard').hidden=!show;state.guide=show}
@@ -407,7 +407,7 @@ function setAngle(raw,user=true,snap=true){let v=clamp(Number(raw)||5,5,80),c=cr
 function pointerAngle(e){const pt=stage.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;const m=stage.getScreenCTM();const p=m?pt.matrixTransform(m.inverse()):{x:e.offsetX,y:e.offsetY};return Math.atan2(410-p.x,Math.max(1,p.y-245))/DEG}
 function startDrag(e){if(!(state.free||predictionDone()))return;const target=e.target.closest('[data-angle-control]');if(!target)return;e.preventDefault();state.dragOffset=pointerAngle(e)-state.angle;state.dragging=true;stage.setPointerCapture?.(e.pointerId);setAngle(pointerAngle(e)-state.dragOffset,true);renderStage()}
 function moveDrag(e){if(!state.dragging)return;e.preventDefault();setAngle(pointerAngle(e)-state.dragOffset,true)}
-function endDrag(e){if(!state.dragging)return;state.dragging=false;stage.releasePointerCapture?.(e.pointerId);renderStage()}
+function endDrag(e){if(!state.dragging)return;state.dragging=false;stage.releasePointerCapture?.(e.pointerId);renderStage();renderDesign()}
 
 stage.addEventListener('pointerdown',startDrag);stage.addEventListener('pointermove',moveDrag);stage.addEventListener('pointerup',endDrag);stage.addEventListener('pointercancel',endDrag);
 stage.addEventListener('keydown',e=>{if(!(state.free||predictionDone()))return;let next=state.angle,handled=true;const step=e.shiftKey?1:.2;if(e.key==='ArrowRight'||e.key==='ArrowUp')next+=step;else if(e.key==='ArrowLeft'||e.key==='ArrowDown')next-=step;else if(e.key==='PageUp')next+=5;else if(e.key==='PageDown')next-=5;else if(e.key==='Home')next=5;else if(e.key==='End')next=80;else handled=false;if(handled){e.preventDefault();setAngle(next,true,false)}});
@@ -427,7 +427,7 @@ document.addEventListener('click',e=>{
   if(action==='set-below'){const c=criticalAngle();if(c!==null)setAngle(Math.max(5,c-8),true)}
   if(action==='set-above'){const c=criticalAngle();if(c!==null)setAngle(Math.min(80,c+8),true)}
 });
-document.addEventListener('input',e=>{if(e.target.id==='sinInput')state.sinText=e.target.value;if(e.target.id==='angleInput')state.angleText=e.target.value});
+document.addEventListener('input',e=>{if(e.target.id==='sinInput')state.sinText=e.target.value;if(e.target.id==='angleInput')state.angleText=e.target.value;renderDesign()});
 document.addEventListener('change',e=>{if(e.target.id==='insideSelect'){state.inside=e.target.value;state.angle=Math.min(state.angle,80);renderAll()}if(e.target.id==='outsideSelect'){state.outside=e.target.value;state.angle=Math.min(state.angle,80);renderAll()}});
 $('resetBtn').addEventListener('click',resetAll);
 
@@ -439,9 +439,17 @@ function renderDesign(){
     const ph=phase(),steps=['predict','explore','mark','calculate'];
     const done=[predictionDone(),explored(),state.marked,calcDone()];
     LabDesign.checkpoints($('scienceCheckpoints'),['Predict','Test both sides','Mark the threshold','Calculate'],state.free||state.roundSummary?-1:steps.indexOf(ph),i=>done[i]);
-    const target=ph==='predict'?workPanel.querySelector('.choice-grid'):ph==='explore'?stage:ph==='mark'?workPanel.querySelector('[data-action="mark"]'):workPanel.querySelector('input');
-    const copy={predict:'Choose what should change, then test the ray.',explore:'Rotate the laser through the boundary: observe an escaping ray and total internal reflection.',mark:'Return to the transition and mark the incidence angle.',calculate:'Use the refractive indices to calculate the critical angle.'};
-    LabDesign.introduce(document.querySelector('main'),state.free||state.roundSummary?[]:target?[target]:[],'critical-'+state.round+'-'+ph,'Find the critical angle',copy[ph]||'Compare your observation and calculation.');
+    let target=null;
+    if(!state.free){
+      if(ph==='predict')target=workPanel.querySelector('.work-step.current');
+      else if(ph==='explore'||ph==='mark'&&Math.abs(state.angle-criticalAngle())>.6)target=stage.querySelector('.laser-handle');
+      else if(ph==='mark')target=workPanel.querySelector('[data-action="mark"]');
+      else if(ph==='summary')target=workPanel.querySelector('.result-actions .primary');
+      else if(state.level===0)target=workPanel.querySelector('[data-action="record"]');
+      else if(state.level===2&&!state.formula||state.calcChecked&&!calcDone())target=workPanel.querySelector('.work-step.current');
+      else target=[...workPanel.querySelectorAll('input')].find(input=>!input.value.trim())?.closest('.work-step')||workPanel.querySelector('[data-action="check-calc"]');
+    }
+    LabDesign.attention(document.querySelector('main'),[target]);
   }
 
 window.__labTest={

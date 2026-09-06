@@ -85,7 +85,7 @@ Use lightweight step cards to distinguish current, completed and upcoming work, 
 
 Available unattempted cards pulse their needed border until interaction with their input or associated model. Remember dismissal through redraws; restart it for a fresh activity. Locked, reference, wrong and completed cards stay static. Reduced motion uses a static border.
 
-Prediction choices count as working at None: pulse the containing card as well as introducing the actionable target. Science adapters derive this from the shared `.lab-intro-target`, so the border settles when that introduction is consumed.
+Prediction choices count as working at None: pulse the yellow card while a choice is required. When visible context explains the task, use `LabDesign.attention(scope, targets)` without a guidance popup. Recompute targets after state changes: prediction → control or calculation → next action. Clear with `[]` in free exploration. Pulse the actual grip, not the whole diagram; completed cards stay static while their next-action button may pulse. Unlike a one-shot introduction, this cue persists until the required step changes.
 
 Checkpoints represent real stages. Place them farthest right, with current/complete/upcoming states and useful hover, focus and tap details. Show completed evidence and the current task; do not reveal future answers or create skip-ahead navigation. Omit “1/4”, internal phase names and redundant progress headings. Lab state owns completion; shared styling renders it.
 
@@ -111,7 +111,8 @@ Checkpoints represent real stages. Place them farthest right, with current/compl
 | Working/evidence | `lab-work-card`, `lab-evidence-card`, `lab-sidebar` | Contents and state |
 | Formula/value | `lab-math-surface` | Short expression; 3px × 7px padding, 4px corners, no border |
 | Informational chip | `lab-chip`, `lab-chip-row` | Neutral/violet/amber purpose; chips are not buttons |
-| Required-action cue | `data-lab-intro`, `LabDesign.introduce` | Target, stable key, title and short purpose |
+| Sequenced action pulse | `LabDesign.attention` | Current card, grip or button; update after rendering, no popup |
+| Explanatory introduction | `data-lab-intro`, `LabDesign.introduce` | Use when visible context is insufficient; target, stable key, title and short purpose |
 | Attention | `data-lab-attention` | Actionable state and dismissal |
 | Stage markers | `LabDesign.checkpoints` | Stage names, current/completed state and evidence |
 | SVG dragging | `LabDesign.bindSvgDrag`, `LabDesign.svgPoint` | Model coordinates and constraints |

@@ -2974,6 +2974,7 @@ html[data-theme="dark"] .lab-programming :is(.sync-badge,.workspace-state){color
 .lab-boundary-grip:hover .lab-boundary-knob,.lab-boundary-grip:focus .lab-boundary-knob{stroke:var(--lab-accent-ink);stroke-width:3}
 .lab-boundary-grip.is-locked{opacity:.4;cursor:default}
 .lab-boundary-icon{font:400 22px/1 var(--lab-font-sans);fill:var(--lab-accent-ink);text-anchor:middle;dominant-baseline:middle;pointer-events:none}
+.lab-boundary-arrow{fill:none;stroke:var(--lab-accent-ink);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
 .lab-boundary-label{font:400 14px/1 var(--lab-font-sans);fill:var(--lab-ink);text-anchor:middle;paint-order:stroke;stroke:#fff;stroke-width:4px;stroke-linejoin:round}
 .cs-single-neuron-threshold .lab-parameter-readouts{padding:12px 16px;border:0}
 .cs-single-neuron-threshold .lab-parameter-readouts :is(.side-heading,.param-track,#paramNote){display:none}
@@ -3265,7 +3266,11 @@ svg rect[data-lab-attention="true"]{animation:lab-card-attention 1.8s ease-in-ou
 .science-gas .work-cell{padding:8px;border:0;background:var(--lab-surface);border-radius:6px}
 .science-gas .work-cell :is(label,span){font-size:12px;font-weight:400}
 .science-gas .completion-layer{position:static;background:none;pointer-events:none}
-.science-gas .completion-card{pointer-events:auto}.science-gas .completion-kicker{display:none}
+.science-gas .completion-card{position:static;width:auto;margin:12px 0 0;padding:12px;box-shadow:none;pointer-events:auto;background:var(--lab-good-surface);border-color:var(--lab-good-line)}.science-gas .completion-kicker{display:none}
+.science-gas .completion-card.reflect{background:var(--lab-needed-surface);border-color:var(--lab-needed-line)}
+.science-gas .completion-card>strong{font:400 15px/1.4 var(--lab-font-sans)}
+.science-gas .completion-card>span,.science-gas .completion-evidence{font:400 12px/1.45 var(--lab-font-sans)}
+.science-gas .completion-evidence{padding:8px 0;border:0;background:none}
 .science-gas :is(.bath-sub,.gauge-sub,.impact-sub,.pv-sub,.drag-label){display:none}
 /* Selection: retain the linked environment/population/histogram; current decisions live beside it. */
 .science-selection :is(.workspace,.stage-side,.work-side){height:auto!important;min-height:0!important;max-height:none!important}
@@ -3342,8 +3347,9 @@ html:has(body.lab-science),body.lab-science{height:auto;overflow:visible}
 .science-gas .completion-actions{justify-content:center;gap:8px}
 .science-selection .history-row{padding:7px 8px;font:400 11px/1.4 var(--lab-font-sans);border:0;background:var(--lab-surface);border-radius:6px}
 /* Science review: clear first decisions, direct grips, and compact comparison evidence. */
-.lab-science :is(.phase-panel,.phase-card,.work-step,.coach,.stage-card):has(.lab-intro-target){animation:workingAttention 2s ease-in-out infinite;border-color:var(--lab-needed-line)}
-.lab-science :is(.prediction-options,.prediction-row,.prediction-grid,.choice-grid,.claim-options).lab-intro-target{outline:none;box-shadow:none}
+.lab-adopt-v3 .lab-sequence-target{animation:workingAttention 2s ease-in-out infinite;border-color:var(--lab-needed-line)}
+.lab-adopt-v3 button.lab-sequence-target:not(:disabled){animation:lab-run-attention 1.8s ease-in-out infinite;border-color:var(--lab-accent)}
+.lab-adopt-v3 svg .lab-sequence-target{animation:labSvgIntroAttention 2s ease-in-out infinite}
 .science-critical .live-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 4px}
 .science-critical .live-card{padding:12px;border:0;border-radius:8px;background:var(--lab-surface-muted)}
 .science-critical .live-card.incident{background:color-mix(in srgb,var(--lab-concept-amber) 18%,white)}
@@ -3384,7 +3390,7 @@ html:has(body.lab-science),body.lab-science{height:auto;overflow:visible}
 .science-selection .stage .bar-current.band-mid{fill:color-mix(in srgb,var(--lab-accent) 78%,white)}
 .science-selection .stage .bar-current.band-high{fill:var(--lab-accent)}
 @media(max-width:960px){.science-diffraction .lab.panel{grid-template-areas:'head' 'stage' 'work'}.science-selection .preview-metrics{grid-template-columns:repeat(3,minmax(0,1fr))}}
-@media(prefers-reduced-motion:reduce){.lab-science :is(.phase-panel,.phase-card,.work-step,.coach,.stage-card):has(.lab-intro-target){animation:none;border-color:var(--lab-needed-line)}}
+@media(prefers-reduced-motion:reduce){.lab-adopt-v3 .lab-sequence-target{animation:none!important}.lab-adopt-v3 svg .lab-sequence-target{filter:drop-shadow(0 0 3px var(--lab-accent))}}
 
 </style>
 <script data-lab-design-runtime>
@@ -3425,6 +3431,14 @@ window.LabDesign = {
       offset += 26;
     }
     return group;
+  },
+  // State-owned attention: call after rendering each required step; [] clears it.
+  attention(scope, targets) {
+    const active = new Set(targets.filter(target => target && !target.disabled && target.getClientRects().length));
+    scope.querySelectorAll('.lab-sequence-target').forEach(target => {
+      if (!active.has(target)) target.classList.remove('lab-sequence-target');
+    });
+    active.forEach(target => target.classList.add('lab-sequence-target'));
   },
   introduce(scope, targets, key, title, copy) {
     scope.querySelectorAll('[data-lab-intro]').forEach(target => {

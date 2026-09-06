@@ -2795,6 +2795,7 @@ html[data-theme="dark"] .lab-programming :is(.sync-badge,.workspace-state){color
 .lab-boundary-grip:hover .lab-boundary-knob,.lab-boundary-grip:focus .lab-boundary-knob{stroke:var(--lab-accent-ink);stroke-width:3}
 .lab-boundary-grip.is-locked{opacity:.4;cursor:default}
 .lab-boundary-icon{font:400 22px/1 var(--lab-font-sans);fill:var(--lab-accent-ink);text-anchor:middle;dominant-baseline:middle;pointer-events:none}
+.lab-boundary-arrow{fill:none;stroke:var(--lab-accent-ink);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
 .lab-boundary-label{font:400 14px/1 var(--lab-font-sans);fill:var(--lab-ink);text-anchor:middle;paint-order:stroke;stroke:#fff;stroke-width:4px;stroke-linejoin:round}
 .cs-single-neuron-threshold .lab-parameter-readouts{padding:12px 16px;border:0}
 .cs-single-neuron-threshold .lab-parameter-readouts :is(.side-heading,.param-track,#paramNote){display:none}
@@ -3086,7 +3087,11 @@ svg rect[data-lab-attention="true"]{animation:lab-card-attention 1.8s ease-in-ou
 .science-gas .work-cell{padding:8px;border:0;background:var(--lab-surface);border-radius:6px}
 .science-gas .work-cell :is(label,span){font-size:12px;font-weight:400}
 .science-gas .completion-layer{position:static;background:none;pointer-events:none}
-.science-gas .completion-card{pointer-events:auto}.science-gas .completion-kicker{display:none}
+.science-gas .completion-card{position:static;width:auto;margin:12px 0 0;padding:12px;box-shadow:none;pointer-events:auto;background:var(--lab-good-surface);border-color:var(--lab-good-line)}.science-gas .completion-kicker{display:none}
+.science-gas .completion-card.reflect{background:var(--lab-needed-surface);border-color:var(--lab-needed-line)}
+.science-gas .completion-card>strong{font:400 15px/1.4 var(--lab-font-sans)}
+.science-gas .completion-card>span,.science-gas .completion-evidence{font:400 12px/1.45 var(--lab-font-sans)}
+.science-gas .completion-evidence{padding:8px 0;border:0;background:none}
 .science-gas :is(.bath-sub,.gauge-sub,.impact-sub,.pv-sub,.drag-label){display:none}
 /* Selection: retain the linked environment/population/histogram; current decisions live beside it. */
 .science-selection :is(.workspace,.stage-side,.work-side){height:auto!important;min-height:0!important;max-height:none!important}
@@ -3163,8 +3168,9 @@ html:has(body.lab-science),body.lab-science{height:auto;overflow:visible}
 .science-gas .completion-actions{justify-content:center;gap:8px}
 .science-selection .history-row{padding:7px 8px;font:400 11px/1.4 var(--lab-font-sans);border:0;background:var(--lab-surface);border-radius:6px}
 /* Science review: clear first decisions, direct grips, and compact comparison evidence. */
-.lab-science :is(.phase-panel,.phase-card,.work-step,.coach,.stage-card):has(.lab-intro-target){animation:workingAttention 2s ease-in-out infinite;border-color:var(--lab-needed-line)}
-.lab-science :is(.prediction-options,.prediction-row,.prediction-grid,.choice-grid,.claim-options).lab-intro-target{outline:none;box-shadow:none}
+.lab-adopt-v3 .lab-sequence-target{animation:workingAttention 2s ease-in-out infinite;border-color:var(--lab-needed-line)}
+.lab-adopt-v3 button.lab-sequence-target:not(:disabled){animation:lab-run-attention 1.8s ease-in-out infinite;border-color:var(--lab-accent)}
+.lab-adopt-v3 svg .lab-sequence-target{animation:labSvgIntroAttention 2s ease-in-out infinite}
 .science-critical .live-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 4px}
 .science-critical .live-card{padding:12px;border:0;border-radius:8px;background:var(--lab-surface-muted)}
 .science-critical .live-card.incident{background:color-mix(in srgb,var(--lab-concept-amber) 18%,white)}
@@ -3205,7 +3211,7 @@ html:has(body.lab-science),body.lab-science{height:auto;overflow:visible}
 .science-selection .stage .bar-current.band-mid{fill:color-mix(in srgb,var(--lab-accent) 78%,white)}
 .science-selection .stage .bar-current.band-high{fill:var(--lab-accent)}
 @media(max-width:960px){.science-diffraction .lab.panel{grid-template-areas:'head' 'stage' 'work'}.science-selection .preview-metrics{grid-template-columns:repeat(3,minmax(0,1fr))}}
-@media(prefers-reduced-motion:reduce){.lab-science :is(.phase-panel,.phase-card,.work-step,.coach,.stage-card):has(.lab-intro-target){animation:none;border-color:var(--lab-needed-line)}}
+@media(prefers-reduced-motion:reduce){.lab-adopt-v3 .lab-sequence-target{animation:none!important}.lab-adopt-v3 svg .lab-sequence-target{filter:drop-shadow(0 0 3px var(--lab-accent))}}
 
 </style>
 <script data-lab-design-runtime>
@@ -3246,6 +3252,14 @@ window.LabDesign = {
       offset += 26;
     }
     return group;
+  },
+  // State-owned attention: call after rendering each required step; [] clears it.
+  attention(scope, targets) {
+    const active = new Set(targets.filter(target => target && !target.disabled && target.getClientRects().length));
+    scope.querySelectorAll('.lab-sequence-target').forEach(target => {
+      if (!active.has(target)) target.classList.remove('lab-sequence-target');
+    });
+    active.forEach(target => target.classList.add('lab-sequence-target'));
   },
   introduce(scope, targets, key, title, copy) {
     scope.querySelectorAll('[data-lab-intro]').forEach(target => {
@@ -3738,12 +3752,11 @@ window.LabDesign = {
             <g id="collisionLayer"></g>
             <g id="forceLayer"></g>
             <g id="piston" class="piston-handle" tabindex="0" role="slider" aria-label="Gas volume controlled by the piston" aria-valuemin="2" aria-valuemax="8" aria-valuenow="6" aria-valuetext="6.00 litres" data-lab-manipulative="gas-volume">
-              <rect class="handle-halo" x="-17" y="97" width="137" height="204" rx="12"/>
               <rect id="pistonWall" x="-10" y="104" width="20" height="190" rx="5" fill="#4f5c64" stroke="#2f3940" stroke-width="2"/>
               <rect x="7" y="178" width="92" height="34" rx="10" fill="url(#metalGrad)" stroke="#6d7a82" stroke-width="2"/>
               <rect x="83" y="166" width="30" height="58" rx="10" fill="#59666e" stroke="#313b41" stroke-width="2"/>
               <path d="M-5 116 L-5 282" stroke="#a9b3b8" stroke-width="3"/>
-              <text x="53" y="199" text-anchor="middle" fill="#39464d" font-size="8" font-weight="850">↔</text>
+              <g id="pistonGrip" class="lab-boundary-grip"><rect class="lab-boundary-knob" x="25" y="173" width="54" height="44" rx="12"/><path class="lab-boundary-arrow" d="M36 195 H68 M43 188 L36 195 L43 202 M61 188 L68 195 L61 202" aria-hidden="true"/></g>
             </g>
             <rect x="712" y="138" width="18" height="130" rx="7" fill="#64727a"/>
             <path d="M128 329 H690" stroke="#9aa7ae" stroke-width="2"/>
@@ -3791,7 +3804,6 @@ window.LabDesign = {
           </g>
         </svg>
         <div id="interactionGuide" class="interaction-guide" hidden aria-live="polite"><div id="guideConnector" class="guide-connector" aria-hidden="true"></div><div id="guideCard" class="guide-card"><span id="guideKicker" class="guide-kicker">Now test it</span><strong id="guideTitle">Drag the piston wall to the marked volume.</strong><span id="guideCopy">Watch the particle impacts, gauge needle and graph point move together.</span></div></div>
-        <div id="completionLayer" class="completion-layer" hidden><section id="completionCard" class="completion-card next-card" role="dialog" aria-modal="false" aria-live="polite"><span id="completionKicker" class="completion-kicker">Evidence observed</span><strong id="completionTitle"></strong><span id="completionText"></span><div id="completionEvidence" class="completion-evidence"></div><div class="completion-actions"><button id="exploreFree" type="button" hidden>Explore freely</button><button id="nextCase" class="primary" data-priority="primary" type="button">Next investigation</button></div></section></div>
       </div>
       <section class="relationship-card">
         <h3>Action → physical consequence</h3>
@@ -3814,6 +3826,7 @@ window.LabDesign = {
     <aside class="evidence-side" aria-label="Investigation guidance and evidence">
       <section id="phaseCard" class="phase-card" aria-live="polite"></section>
       <section id="workingDock" class="working-dock" aria-label="Working area" aria-live="polite" data-lab-role="working"></section>
+        <div id="completionLayer" class="completion-layer" hidden><section id="completionCard" class="completion-card" role="region" aria-labelledby="completionTitle" aria-live="polite"><span id="completionKicker" class="completion-kicker">Evidence observed</span><strong id="completionTitle"></strong><span id="completionText"></span><div id="completionEvidence" class="completion-evidence"></div><div class="completion-actions"><button id="exploreFree" type="button" hidden>Explore freely</button><button id="nextCase" class="primary" data-priority="primary" type="button">Next investigation</button></div></section></div>
 
       <section class="invariants">
         <h3>What stays constant</h3>
@@ -4381,7 +4394,7 @@ window.LabDesign = {
     }
     host.innerHTML=`<div class="working-head"><div><strong>Pressure and volume</strong><span>${intro}${!enabled?' Record the qualitative prediction above first.':''}</span></div><b class="work-level-pill">${level===1?'Some':'All'}</b></div><div class="equation-line">p₁V₁ = p₂V₂</div><div class="work-flow">${flow}</div><div class="working-actions">${button}</div><div id="workingFeedback" class="working-feedback">${!enabled?'The yellow working unlocks after your prediction.':'Enter the yellow '+(level===1?'result':'values')+', place the marker, then test it. A wrong marker stays visible.'}</div>`;
     const first=[...host.querySelectorAll('.work-box.entry:not(.locked)')].find(el=>!el.querySelector('input').value.trim());if(first)first.classList.add('guide-work-target');
-    host.querySelectorAll('[data-work-input]').forEach(input=>input.addEventListener('input',e=>{state.work[e.target.dataset.workInput]=e.target.value;state.markerP=null;state.markerV=null;state.markerPlaced=false;renderTargets()}));
+    host.querySelectorAll('[data-work-input]').forEach(input=>input.addEventListener('input',e=>{state.work[e.target.dataset.workInput]=e.target.value;state.markerP=null;state.markerV=null;state.markerPlaced=false;renderTargets();renderDesign()}));
     $('placeWorkMarker')?.addEventListener('click',placeWorkMarker);
   }
   function placeWorkMarker(){
@@ -4450,7 +4463,7 @@ window.LabDesign = {
     else if(cfg.id==='gauge')$('missionHint').textContent=state.workingLevel===0?'Predict the direction, then use the gauge to find 150 kPa. No calculation is required.':state.workingLevel===1?'Predict the direction, complete the one yellow volume result, place its marker, then test it with the gauge.':'Predict the direction, complete both yellow calculation boxes, place your marker, then test it with the gauge.';
     else $('missionHint').textContent=state.workingLevel===0?`The worked pressure marker is shown. Move to ${fmt(cfg.targetV,2)} L and test whether the physical system agrees.`:state.workingLevel===1?`Complete the one yellow pressure result, place your marker, then test it at ${fmt(cfg.targetV,2)} L.`:`Complete both yellow calculation boxes, place your pressure marker, then test it at ${fmt(cfg.targetV,2)} L.`;
     if(rebuildPhase){$('phaseCard').innerHTML=phaseMarkup();attachPhaseEvents()}$('phaseCard').classList.toggle('needs-action',!state.free&&!cfg.working&&!state.prediction);renderWorkingDock();renderWorkingFeedback();renderCaseRail();
-    if(cfg.id==='gauge'){$('guideKicker').textContent=state.workingLevel>0?'3 · Test your result':'2 · Control the gas';$('guideTitle').textContent='Drag the piston wall until pressure reaches 150 kPa.';$('guideCopy').textContent=state.workingLevel>0?'Compare the purple calculated volume marker with the gauge target and collision evidence.':'Use the gauge or live pressure readout. Notice what happens to particle impacts.'}else if(cfg.working){$('guideKicker').textContent='2 · Test your calculation';$('guideTitle').textContent=`Drag the piston wall to ${fmt(cfg.targetV,2)} L.`;$('guideCopy').textContent='Your pressure marker stays fixed while the gauge and graph reveal the measured pressure.'}else{$('guideKicker').textContent='2 · Now test it';$('guideTitle').textContent='Drag the piston wall to the marked volume.';$('guideCopy').textContent='Watch the particle impacts, gauge needle and graph point move together.'}const showGuide=canDrag()&&!targetReached()&&!state.free&&!state.solved[state.caseIndex]&&!state.drag;$('interactionGuide').hidden=!showGuide;if(showGuide)$('piston').classList.add('guide');else if(!state.drag)$('piston').classList.remove('guide');positionOverlayCards();renderDesign()
+    if(cfg.id==='gauge'){$('guideKicker').textContent=state.workingLevel>0?'3 · Test your result':'2 · Control the gas';$('guideTitle').textContent='Drag the piston wall until pressure reaches 150 kPa.';$('guideCopy').textContent=state.workingLevel>0?'Compare the purple calculated volume marker with the gauge target and collision evidence.':'Use the gauge or live pressure readout. Notice what happens to particle impacts.'}else if(cfg.working){$('guideKicker').textContent='2 · Test your calculation';$('guideTitle').textContent=`Drag the piston wall to ${fmt(cfg.targetV,2)} L.`;$('guideCopy').textContent='Your pressure marker stays fixed while the gauge and graph reveal the measured pressure.'}else{$('guideKicker').textContent='2 · Now test it';$('guideTitle').textContent='Drag the piston wall to the marked volume.';$('guideCopy').textContent='Watch the particle impacts, gauge needle and graph point move together.'}const showGuide=canDrag()&&!targetReached()&&!state.free&&!state.solved[state.caseIndex]&&!state.drag;$('interactionGuide').hidden=true;if(showGuide)$('piston').classList.add('guide');else if(!state.drag)$('piston').classList.remove('guide');positionOverlayCards();renderDesign()
   }
   function eventPoint(e){const svgEl=$('stage'),r=svgEl.getBoundingClientRect();return{x:(e.clientX-r.left)/r.width*1040,y:(e.clientY-r.top)/r.height*620}}
   $('piston').addEventListener('pointerdown',e=>{if(!canDrag())return;e.preventDefault();state.drag={id:e.pointerId,offset:eventPoint(e).x-volumeToX(state.volume)};$('piston').setPointerCapture?.(e.pointerId);$('piston').classList.add('dragging');$('piston').classList.remove('guide');$('interactionGuide').hidden=true});
@@ -4469,8 +4482,20 @@ window.LabDesign = {
     const host=$('collisionLayer');host.innerHTML='';state.flashes=state.flashes.filter(f=>{f.life-=dt*3.2;if(f.life<=0)return false;const g=svg('g',{transform:`translate(${f.x} ${f.y})`,opacity:f.life});g.append(svg('line',{x1:-11,y1:0,x2:-2,y2:0,class:'collision-flash live'}));g.append(svg('line',{x1:-8,y1:-8,x2:-2,y2:-2,class:'collision-flash live'}));g.append(svg('line',{x1:-8,y1:8,x2:-2,y2:2,class:'collision-flash live'}));host.append(g);return true});
     if(Math.floor(state.pulsePhase*2)%2===0)renderImpactPanel(impactRate(state.volume));requestAnimationFrame(animation)}
 function renderDesign(){
-    const cfg=c(),target=!state.prediction&&!state.free?$('phaseCard').querySelector('.prediction-grid'):canDrag()?$('piston'):$('workingDock').querySelector('input');
-    LabDesign.introduce(document.querySelector('main'),state.solved[state.caseIndex]&&!state.free?[]:target?[target]:[],'gas-'+state.caseIndex+'-'+(!state.prediction?'predict':canDrag()?'piston':'working'),!state.prediction?'Predict the pressure':'Test the pressure–volume relationship',!state.prediction?'Choose how pressure changes before moving the piston.':canDrag()?'Drag the piston to the target. Compare the gauge, impacts and pressure–volume point.':'Calculate the required value, place its marker, then test it with the piston.');
+    const cfg=c(),inputs=[...$('workingDock').querySelectorAll('input:not(:disabled)')];
+    let target=null;
+    if(!state.free){
+      if(!$('completionLayer').hidden)target=$('nextCase');
+      else if(!cfg.working&&!state.prediction)target=$('phaseCard');
+      else if(!canDrag()||targetReached()&&!workCorrect()){
+        const revision=targetReached()&&!workCorrect()?inputs.find(input=>!close(Number(input.value),input.dataset.workInput==='product'?K:cfg.id==='gauge'?cfg.targetV:cfg.targetP,input.dataset.workInput==='volume'?.03:1)):null;
+        target=(revision||inputs.find(input=>!input.value.trim()))?.closest('.work-box')||$('placeWorkMarker');
+      }
+      else target=$('pistonGrip');
+    }
+    $('piston').setAttribute('aria-disabled',String(!canDrag()));
+    $('pistonGrip').classList.toggle('is-locked',!canDrag());
+    LabDesign.attention(document.querySelector('main'),[target]);
   }
 
   initStatic();startCase(0);requestAnimationFrame(animation);
