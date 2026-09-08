@@ -22,7 +22,7 @@
   ],
   "developerGuide": "https://www.examplicity.org/developer/lab-contract",
   "implementation": {
-    "reviewedRevision": "prototype-source-sha256:745ecdfabecba5ad3a0441f5fd149e633bea7fd64e03ca8bc65604eef8ac1917",
+    "reviewedRevision": "prototype-source-sha256:1a3435ad14d9f6dc936935096cd5fe0e2a637bcee49c0ce49823518890650fc1",
     "surfaces": {
       "prompt": {
         "selectors": [
@@ -30,7 +30,7 @@
           "#intro"
         ],
         "kind": "given",
-        "description": "One current model task and one short action prompt.",
+        "description": "A visually identified current mission, with context connecting the previous experience to the next action.",
         "visibility": "Current step only."
       },
       "model": {
@@ -46,7 +46,7 @@
           "#working"
         ],
         "kind": "working",
-        "description": "Consistent worked examples linked to the model precede required learner calculations; the same rows, quantities and units carry through.",
+        "description": "Worked examples precede learner calculations. Explicit quantity keys connect source labels to formula operands, with sequential animation, matching highlights and replay. Hover, focus and tap explain each source and calculation.",
         "visibility": "Changes with the current step."
       },
       "evidence": {
@@ -60,7 +60,9 @@
       },
       "completion": {
         "selectors": [
-          "#next"
+          "#next",
+          "#outcome",
+          "#outcomeTitle"
         ],
         "kind": "completion",
         "description": "Advances only after the current model-derived criterion.",
@@ -71,24 +73,29 @@
       "food": {
         "description": "One or two Gaussian food-advantage peaks across the beak-depth axis.",
         "domain": "Peak centres 4.5 to 15.5 mm; widths 0.55 to 3 mm.",
-        "source": "SVG seed-distribution handles and free-mode range input.",
+        "source": "SVG food-peak and independent food-width handles.",
         "output": "Reproductive weights; no direct adult trait change.",
         "inputSlots": [
           "[data-control=\"food-0\"]",
           "[data-control=\"food-1\"]",
-          "#foodWidth"
+          "[data-control=\"food-width-0\"]",
+          "[data-control=\"food-width-1\"]",
+          "#foodPressure"
         ]
       },
       "population": {
-        "description": "72 inherited beak-depth values.",
-        "domain": "4.05 to 15.95 mm; 24 parents selected per generation.",
+        "description": "Inherited beak-depth values for every adult.",
+        "domain": "4.05 to 15.95 mm; 72 adults and 24 parents guided. Experiment populations of 36, 72 or 144, with one third selected as parents.",
         "source": "Seeded weighted sampling with offspring variation of SD 0.43 mm.",
-        "output": "Adult count dots, parent-to-offspring transitions, beak-depth frequency bars and mean/SD/middle frequencies."
+        "output": "Adult count dots, parent-to-offspring transitions, beak-depth frequency bars and mean/SD/middle frequencies.",
+        "inputSlots": [
+          "#populationSize"
+        ]
       },
       "frequency": {
-        "description": "Percentage of the 72 adults within a named trait group.",
+        "description": "Percentage of the current adults within a named trait group.",
         "domain": "0 to 100 percent; the assessed middle group is 8.5–11.5 mm inclusive.",
-        "source": "Current adult count divided by 72 and multiplied by 100.",
+        "source": "Group adult count divided by the total population and multiplied by 100; guided total 72.",
         "output": "Worked frequency examples precede a checked learner calculation to one decimal place.",
         "inputSlots": [
           "#frequencyInput"
@@ -97,7 +104,7 @@
     },
     "modes": {
       "guided": "Small ordered visual investigations, with model actions and in-place revision.",
-      "experiment": "Final open mode keeps all variables within the original conceptual model, comparison readings and reset."
+      "experiment": "Ungated experiment: one/two movable peaks with independent widths, steady/alternating/even food, populations of 36/72/144, inherited reproduction and history."
     },
     "dependencies": [
       "Move food advantage toward deeper existing beaks.",
@@ -105,13 +112,13 @@
       "At least three generations and mean rise above 1.2 mm.",
       "At least three generations, SD below 78% of baseline, and a checked middle-group frequency within 0.11 percentage points.",
       "At least four generations, wider SD, smaller middle, and at least 15% in each tail.",
-      "Ungated experiment: one/two movable peaks, width control, separately staged reproduction, history and a fresh population."
+      "Ungated experiment: one/two movable peaks with independent widths, steady/alternating/even food, populations of 36/72/144, inherited reproduction and history."
     ],
     "completion": "Every guided criterion is evaluated from actual model state. Continue never bypasses an unmet criterion. Restart returns to the first step; Back repeats a prior step.",
     "limitations": [
       "Simplified heritable continuous trait, not a complete genetic, ecological, or demographic simulation.",
-      "Fixed population size. Seeded stochastic selection means each generation still varies; the model does not claim inevitable outcomes.",
-      "Dashed columns show starting frequencies; bars show the current 72 adults. Bird drawings are representative trait examples. Spread is population standard deviation; the middle band is 8.5–11.5 mm."
+      "Population size stays fixed within a run. Choosing a size starts a fresh seeded cohort. Steady food is editable; alternating food switches shallow/deep advantage after each generation; even food gives all traits equal reproductive weights, while random sampling remains.",
+      "Dashed columns show starting frequencies; bars show every current adult. Bird drawings are representative trait examples. Spread is population standard deviation; the middle band is 8.5–11.5 mm."
     ]
   }
 }

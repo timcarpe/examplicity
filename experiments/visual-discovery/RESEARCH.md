@@ -14,20 +14,20 @@ The learner sees one current goal, a short action prompt, and the relevant model
 
 Early steps constrain the task. A later step introduces a second dimension, a threshold, an invariant, or a generation. Feedback describes the current model state. Continue becomes available when the learner has produced the necessary evidence. Wrong numerical predictions remain revisable, and changing an answer clears previous success immediately.
 
-One shared working card connects each calculation to the visible model. Early examples show the quantities, operation and units. Changed values briefly highlight; later steps keep the same calculation order while replacing results with learner inputs. The Maths reverse factors, optical index ratio, gas product and population percentage all follow this pattern. Cards appear where they support the current task.
+One shared working card connects each calculation to the visible model. Early examples show the quantities, operation and units. Source labels and formula operands use explicit quantity identities: air’s refractive index connects to the numerator because it is the refracted index, not because both happen to display 1. Earlier calculated results can become sources for the next row. Later steps keep this calculation order while replacing results with learner inputs. The Maths reverse factors, optical index ratio, gas product and population percentage all follow this pattern.
 
-The final step removes guided completion gates. Learners retain the model’s full supported variable range, can keep or clear observations, and can reset an experiment. This is an open investigation within the original conceptual scope, rather than an unlimited scientific simulator.
+The final step removes guided completion gates and opens additional variables. Maths includes larger factors and independent height; Physics includes hypothetical indices; Chemistry introduces temperature and relative gas amount; Biology introduces population size and alternating or even food pressure. The controls sit on the model where practical. Scope and limits are explicit in the embedded contracts.
 
 ## Why these four labs
 
 | Subject and existing source | Visual reasoning retained | Scaffolding and independent experiment |
 | --- | --- | --- |
-| Maths: Similarity and Scale Effects | Corresponding lengths, unit faces, layers, and unequal edge ratios | Length → four squares → eight cubes → reverse area → reverse volume → similarity repair. Experiment with positive scale factors, separate layers, stretch height, keep readings, and solve new area/volume targets. |
-| Physics: Critical Angle and Total Internal Reflection | Semicircular block, radial source entry, normal, refraction, reflection and critical angle | Rotate below the threshold → observe both regimes and mark the limit → calculate for diamond → reverse the boundary. Experiment with both media and compare thresholds and transmitted power. |
-| Chemistry: Gas Compression at Constant Temperature | Thermostatted bath, sealed piston, fixed-speed particles, impact marks, pressure gauge and p–V graph | Compress → predict expansion → collect an invariant → calculate and test a target. Experiment with the full volume range, linked graph and readings. This is the existing Physics/Chemistry cross-listed lab. |
-| Biology: Selection Pressure and Trait Frequency | Existing variation, environmental advantage, selected parents, inherited offspring and frequency distributions | Change food without changing adults → distinguish selection from replacement → directional, stabilising and disruptive selection. Experiment with one or two food sources, food range and successive generations. |
+| Maths: Similarity and Scale Effects | Corresponding lengths, unit faces, layers, and unequal edge ratios | Length → four squares → eight cubes → reverse area → reverse volume → similarity repair. Experiment with factors up to 5, separate layers, independent height, saved readings and new area/volume targets. |
+| Physics: Critical Angle and Total Internal Reflection | Semicircular block, radial source entry, normal, refraction, reflection and critical angle | Rotate below the threshold → observe both regimes and mark the limit → calculate for diamond → reverse the boundary. Experiment with both media or custom indices and compare thresholds and transmitted power. |
+| Chemistry: Gas Compression at Constant Temperature | Thermostatted bath, sealed piston, fixed-speed guided particles, impact marks, pressure gauge and p–V graph | Compress → predict expansion → collect an invariant → calculate and test a target. Experiment with volume, temperature and gas amount, using the linked graph and readings. This is the existing Physics/Chemistry cross-listed lab. |
+| Biology: Selection Pressure and Trait Frequency | Existing variation, environmental advantage, selected parents, inherited offspring and frequency distributions | Change food without changing adults → distinguish selection from replacement → directional, stabilising and disruptive selection. Experiment with food peaks and widths, changing pressure, population sizes and successive generations. |
 
-The change to a one-unit reference in Maths and the glass index example in Physics fall within the source contracts’ safe adaptations. Chemistry retains a fixed amount of gas at 300 K. Biology preserves the original seeded sampling mechanism and continuous inherited trait model.
+The change to a one-unit reference in Maths and the index examples in Physics fall within the source contracts’ safe adaptations. Chemistry retains a fixed amount of gas at 300 K throughout guidance; the user-requested final experiment deliberately extends the original contract’s temperature and gas-amount non-goal. Its generated contract documents that extension, while the pedagogy data retains the original non-goal for provenance. Biology preserves seeded sampling and continuous inherited traits, with population size fixed within each chosen run.
 
 ## Visual continuity
 
@@ -39,7 +39,28 @@ The source’s unit grids and corresponding faces, semicircular optics apparatus
 
 The gas gauge always reports actual pressure. A numerical prediction sits in the working card, and testing animates the piston to the test volume before comparing the result. Glass changes explicitly to a visibly distinct diamond block, retaining the glass threshold as a reference. Brief laser cues show travel direction. Selected Biology parents produce 72 inherited offspring before those offspring replace the adults; animation paths use the actual sampled parent identities. Dot rows reserve enough room for the entire population in one group.
 
-Progressive disclosure replaces support switches and guidance overlays. The existing shared required-answer treatment and brief calculation-value highlights supply local attention cues. Motion respects reduced-motion preferences. These are scoped interaction changes, not new general rules for existing labs.
+Progressive disclosure replaces support switches and guidance overlays. The existing shared required-answer treatment remains. The motion and connection pattern below is a proposed reference for future labs, implemented locally without changing the shared style guide.
+
+## Connection and transition reference
+
+These are design decisions informed by the research above, not separately validated learning-effectiveness claims:
+
+- `data-source` and `data-value-ref` identify each quantity. A starting measurement and a current measurement have different identities even when their values match. Derived results can feed later working.
+- After a changed state settles for 450 ms, a source pulses, its value travels along a short curved path for 560 ms when both ends are visible, and its formula operands pulse. The calculation follows row order. **Trace values** replays it; selecting one source or operand isolates that connection.
+- Hover or focus highlights both locations and opens a small 12 px explanation. Tap and Enter/Space work on source labels; Escape dismisses the explanation. The working card explains the complete calculation. Tooltips can be hovered without vanishing.
+- New stages enter with a 320 ms fade and 7 px rise, staggered by 45 ms. Cube layers separate or rejoin over 420 ms. Piston tests interpolate actual volume; offspring travel from their sampled parents. None of these animations bypasses a criterion.
+- A completed criterion receives a green check and a short evidence heading, within the existing semantic palette. Editing an answer clears success. Missions provide the previous result, the current purpose and the next action.
+- Reduced motion uses paired static outlines without travelling values or stage movement. Edits, dragging, scrolling and stage changes cancel stale cues; tracing never scrolls the page automatically.
+
+## Expanded experimental limits
+
+Maths permits positive factors from 0.5 to 5 and independent height. The view fits the geometry automatically; labels retain the true factors. A face factor means one corresponding square face, and a stretched solid uses k²h for volume.
+
+Physics permits hypothetical indices from 1 to 3.5 under the same ideal, lossless Snell/Fresnel model. These custom values are not claims about real materials. Recorded comparisons preserve both indices so later edits do not change what a saved reading means.
+
+Chemistry uses pV = 600 × (T/300) × relative gas amount, with T in kelvin. The experiment permits 150–600 K and 0.5–2 times the starting sample. Representative particle speed scales with √T; pressure is calculated from the ideal-gas relationship, not measured from 2D collisions. Bath equilibrium is instantaneous. The graph shows the current conditions; the table retains all saved conditions. Returning to guidance restores the fixed sample and speed.
+
+Biology permits 36, 72 or 144 adults, selecting one third as parents. Changing size starts a fresh seeded population. Steady food retains editable peaks, alternating food switches shallow/deep advantage each generation, and even food assigns equal reproductive weights while retaining random sampling. The model does not imply inevitable selection outcomes or simulate complete genetics, ecology or population growth.
 
 ## Review evidence and limits
 

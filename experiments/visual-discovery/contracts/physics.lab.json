@@ -22,7 +22,7 @@
   ],
   "developerGuide": "https://www.examplicity.org/developer/lab-contract",
   "implementation": {
-    "reviewedRevision": "prototype-source-sha256:e500f00b5d300db786ff3cd9885f22a75bc1a4c48a98dd54b0fae853063783be",
+    "reviewedRevision": "prototype-source-sha256:c5c4bd08dacbe12d9b7c7c35ee56366ec607c9fc6c71b9db3ccf64a83332fcde",
     "surfaces": {
       "prompt": {
         "selectors": [
@@ -30,7 +30,7 @@
           "#intro"
         ],
         "kind": "given",
-        "description": "One current model task and one short action prompt.",
+        "description": "A visually identified current mission, with context connecting the previous experience to the next action.",
         "visibility": "Current step only."
       },
       "model": {
@@ -46,7 +46,7 @@
           "#working"
         ],
         "kind": "working",
-        "description": "Consistent worked examples linked to the model precede required learner calculations; the same rows, quantities and units carry through.",
+        "description": "Worked examples precede learner calculations. Explicit quantity keys connect source labels to formula operands, with sequential animation, matching highlights and replay. Hover, focus and tap explain each source and calculation.",
         "visibility": "Changes with the current step."
       },
       "evidence": {
@@ -60,7 +60,9 @@
       },
       "completion": {
         "selectors": [
-          "#next"
+          "#next",
+          "#outcome",
+          "#outcomeTitle"
         ],
         "kind": "completion",
         "description": "Advances only after the current model-derived criterion.",
@@ -70,7 +72,7 @@
     "quantities": {
       "angle": {
         "description": "Angle of incidence measured from the normal.",
-        "domain": "5 to 80 degrees; first step limited to 35 degrees.",
+        "domain": "5 to 80 degrees guided; first step limited to 35 degrees. Experiment: 0 to 89.9 degrees.",
         "source": "SVG source or predicted-angle input.",
         "output": "Rays, reflected/transmitted power, angular marks and regime.",
         "inputSlots": [
@@ -86,24 +88,27 @@
         "inputSlots": [
           "#ratioInput",
           "#insideMedium",
-          "#outsideMedium"
+          "#outsideMedium",
+          "#insideIndex",
+          "#outsideIndex"
         ]
       }
     },
     "modes": {
       "guided": "Small ordered visual investigations, with model actions and in-place revision.",
-      "experiment": "Final open mode keeps all variables within the original conceptual model, comparison readings and reset."
+      "experiment": "Ungated experiment: choose real examples or set either hypothetical refractive index, inspect thresholds up to 89.9 degrees and keep measured readings."
     },
     "dependencies": [
       "Rotate beyond 29 degrees, while limited below the first critical angle.",
       "Observe angles on both sides of c and mark within 0.55 degrees; the accepted marker snaps to c.",
       "Replace glass with diamond, then supply the index ratio and inverse-sine result and test the beam. Earlier working shows the same calculation for glass. Edits immediately clear success.",
       "Observe the reversed boundary near both ends of the angle range.",
-      "Ungated experiment: change either medium, mark/inspect thresholds, and keep measured readings."
+      "Ungated experiment: choose real examples or set either hypothetical refractive index, inspect thresholds up to 89.9 degrees and keep measured readings."
     ],
     "completion": "Every guided criterion is evaluated from actual model state. Continue never bypasses an unmet criterion. Restart returns to the first step; Back repeats a prior step.",
     "limitations": [
       "Ideal lossless flat boundary; radial entry through the semicircular face is normal to that face. Unpolarised Fresnel power. The grazing ray at c indicates a limiting direction.",
+      "Custom media accept hypothetical indices from 1 to 3.5; they do not represent measured real materials. Saved readings retain both indices.",
       "Ray lengths are illustrative. A minimum ray opacity preserves visibility; the saved power values are physical model values."
     ]
   }

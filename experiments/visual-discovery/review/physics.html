@@ -50,7 +50,7 @@ SOFTWARE.
   ],
   "developerGuide": "https://www.examplicity.org/developer/lab-contract",
   "implementation": {
-    "reviewedRevision": "prototype-source-sha256:e500f00b5d300db786ff3cd9885f22a75bc1a4c48a98dd54b0fae853063783be",
+    "reviewedRevision": "prototype-source-sha256:c5c4bd08dacbe12d9b7c7c35ee56366ec607c9fc6c71b9db3ccf64a83332fcde",
     "surfaces": {
       "prompt": {
         "selectors": [
@@ -58,7 +58,7 @@ SOFTWARE.
           "#intro"
         ],
         "kind": "given",
-        "description": "One current model task and one short action prompt.",
+        "description": "A visually identified current mission, with context connecting the previous experience to the next action.",
         "visibility": "Current step only."
       },
       "model": {
@@ -74,7 +74,7 @@ SOFTWARE.
           "#working"
         ],
         "kind": "working",
-        "description": "Consistent worked examples linked to the model precede required learner calculations; the same rows, quantities and units carry through.",
+        "description": "Worked examples precede learner calculations. Explicit quantity keys connect source labels to formula operands, with sequential animation, matching highlights and replay. Hover, focus and tap explain each source and calculation.",
         "visibility": "Changes with the current step."
       },
       "evidence": {
@@ -88,7 +88,9 @@ SOFTWARE.
       },
       "completion": {
         "selectors": [
-          "#next"
+          "#next",
+          "#outcome",
+          "#outcomeTitle"
         ],
         "kind": "completion",
         "description": "Advances only after the current model-derived criterion.",
@@ -98,7 +100,7 @@ SOFTWARE.
     "quantities": {
       "angle": {
         "description": "Angle of incidence measured from the normal.",
-        "domain": "5 to 80 degrees; first step limited to 35 degrees.",
+        "domain": "5 to 80 degrees guided; first step limited to 35 degrees. Experiment: 0 to 89.9 degrees.",
         "source": "SVG source or predicted-angle input.",
         "output": "Rays, reflected/transmitted power, angular marks and regime.",
         "inputSlots": [
@@ -114,24 +116,27 @@ SOFTWARE.
         "inputSlots": [
           "#ratioInput",
           "#insideMedium",
-          "#outsideMedium"
+          "#outsideMedium",
+          "#insideIndex",
+          "#outsideIndex"
         ]
       }
     },
     "modes": {
       "guided": "Small ordered visual investigations, with model actions and in-place revision.",
-      "experiment": "Final open mode keeps all variables within the original conceptual model, comparison readings and reset."
+      "experiment": "Ungated experiment: choose real examples or set either hypothetical refractive index, inspect thresholds up to 89.9 degrees and keep measured readings."
     },
     "dependencies": [
       "Rotate beyond 29 degrees, while limited below the first critical angle.",
       "Observe angles on both sides of c and mark within 0.55 degrees; the accepted marker snaps to c.",
       "Replace glass with diamond, then supply the index ratio and inverse-sine result and test the beam. Earlier working shows the same calculation for glass. Edits immediately clear success.",
       "Observe the reversed boundary near both ends of the angle range.",
-      "Ungated experiment: change either medium, mark/inspect thresholds, and keep measured readings."
+      "Ungated experiment: choose real examples or set either hypothetical refractive index, inspect thresholds up to 89.9 degrees and keep measured readings."
     ],
     "completion": "Every guided criterion is evaluated from actual model state. Continue never bypasses an unmet criterion. Restart returns to the first step; Back repeats a prior step.",
     "limitations": [
       "Ideal lossless flat boundary; radial entry through the semicircular face is normal to that face. Unpolarised Fresnel power. The grazing ray at c indicates a limiting direction.",
+      "Custom media accept hypothetical indices from 1 to 3.5; they do not represent measured real materials. Saved readings retain both indices.",
       "Ray lengths are illustrative. A minimum ray opacity preserves visibility; the saved power values are physical model values."
     ]
   }
@@ -169,45 +174,59 @@ SOFTWARE.
     "Visual model before formal notation",
     "Prediction, observation and immediate model-specific revision",
     "Scaffolding fades into an open experiment",
-    "Worked calculation rows retain the same quantities, order and units when learners later supply the answers"
+    "Worked calculation rows retain the same quantities, order and units when learners later supply the answers",
+    "Explicit source identities link model quantities and earlier calculations to later formula operands",
+    "Optional hover, focus and tap explanations keep context available without adding permanent panels"
   ],
   "sequence": [
     {
       "label": "Follow the ray",
-      "title": "Observe how the refracted ray changes.",
-      "intro": "Rotate the laser away from the normal. Compare the incident and refracted rays.",
+      "title": "Explore what happens when light leaves glass.",
+      "intro": "The laser enters the curved face straight on. Rotate it and watch how the ray bends at the flat glass–air boundary.",
+      "success": "The ray bends away from the normal.",
       "criterion": "Rotate beyond 29 degrees, while limited below the first critical angle.",
       "mode": "guided"
     },
     {
       "label": "Find the boundary",
-      "title": "Measure the critical angle for glass to air.",
-      "intro": "Explore both sides of the transition, then mark the ray along the surface.",
+      "title": "Find the angle where light stops escaping.",
+      "intro": "You have seen the refracted ray bend away from the normal. Keep rotating until it runs along the surface, then mark that angle.",
+      "success": "You found the critical angle for glass.",
       "criterion": "Observe angles on both sides of c and mark within 0.55 degrees; the accepted marker snaps to c.",
       "mode": "guided"
     },
     {
       "label": "Predict, then test",
-      "title": "Calculate the critical angle for diamond to air.",
-      "intro": "Replace the glass with diamond, then calculate and test the new threshold.",
+      "title": "Use the glass result to predict what diamond will do.",
+      "intro": "Glass reached its limit at 41.8°. Replace it with diamond, then use the same calculation to find the new critical angle before testing.",
+      "success": "Your prediction matches the diamond boundary.",
       "criterion": "Replace glass with diamond, then supply the index ratio and inverse-sine result and test the beam. Earlier working shows the same calculation for glass. Edits immediately clear success.",
       "mode": "guided"
     },
     {
       "label": "Reverse the direction",
-      "title": "Test whether total internal reflection is possible from air to glass.",
-      "intro": "Sweep the laser from 5° to 80°. Look for an escaping ray.",
+      "title": "Check the same boundary in the opposite direction.",
+      "intro": "A critical angle appeared when light left a higher-index material. Now send light from air into glass and test angles from 5° to 80°.",
+      "success": "The direction of travel matters.",
       "criterion": "Observe the reversed boundary near both ends of the angle range.",
       "mode": "guided"
     },
     {
       "label": "Experiment",
-      "title": "Compare critical angles for different pairs of media.",
-      "intro": "Choose the two media, rotate the laser and record the results.",
-      "criterion": "Ungated experiment: change either medium, mark/inspect thresholds, and keep measured readings.",
+      "title": "Choose your own pair of materials and compare the results.",
+      "intro": "You now have a way to predict total internal reflection. Change either material or set an index of your own, then compare your calculations with the rays.",
+      "success": "",
+      "criterion": "Ungated experiment: choose real examples or set either hypothetical refractive index, inspect thresholds up to 89.9 degrees and keep measured readings.",
       "mode": "experiment"
     }
   ],
+  "connections": {
+    "mapping": "data-source quantity keys pair with data-value-ref operands; earlier calculated results can be sources for later rows. Matching digits alone never creates a link.",
+    "cue": "After an unchanged state settles for 450 ms: source pulse, 560 ms curved value transfer when both ends are visible, then destination pulse. Trace values replays the ordered calculation. Edits, dragging, scrolling and stage changes cancel stale cues.",
+    "help": "Compact source and method tooltips support hover, keyboard focus, tap and Escape dismissal. Matching terms highlight in both directions.",
+    "transition": "320 ms fade and 7 px entrance, with 45 ms stagger. Verified outcomes receive a separate semantic heading and check mark; edited answers remove success immediately.",
+    "reducedMotion": "No value travel or stage movement. Static paired outlines retain the connection."
+  },
   "outcomeContinuity": {
     "relationship": "Changing incidence angle and the refractive-index boundary connects refraction to the critical threshold and total internal reflection, with calculation checked against the visible ray behaviour.",
     "invariants": [
@@ -215,9 +234,15 @@ SOFTWARE.
       "A critical angle exists only from higher to lower refractive index; total internal reflection requires exceeding it.",
       "Guidance levels change calculation support without removing the physical threshold investigation."
     ],
+    "originalNonGoals": [
+      "Do not present total internal reflection as occurring at every boundary or every angle.",
+      "Do not expand into wave interference or a full optical-instrument simulator."
+    ],
+    "extensions": "Ungated experiment: choose real examples or set either hypothetical refractive index, inspect thresholds up to 89.9 degrees and keep measured readings.",
     "interactionChanges": "Replaces simultaneous panels, support-level switches and completion overlays with a sequenced model surface. The existing curriculum catalogue is untouched.",
     "modelLimitations": [
       "Ideal lossless flat boundary; radial entry through the semicircular face is normal to that face. Unpolarised Fresnel power. The grazing ray at c indicates a limiting direction.",
+      "Custom media accept hypothetical indices from 1 to 3.5; they do not represent measured real materials. Saved readings retain both indices.",
       "Ray lengths are illustrative. A minimum ray opacity preserves visibility; the saved power values are physical model values."
     ]
   },
@@ -3005,7 +3030,22 @@ html:has(body.lab-science),body.lab-science{height:auto;overflow:visible}
 .lesson-head{grid-template-columns:minmax(0,1fr) auto;gap:8px 22px;min-height:76px}.lesson-head h1{grid-row:1;align-self:center}.lesson-head #restart{grid-column:2;grid-row:1;min-height:36px}.lesson-head .intro{grid-row:2}.lab-checkpoints{grid-column:2;grid-row:2;justify-content:flex-end}.context:empty{display:none}.context{margin:14px 0 0;display:flex;justify-content:center;gap:12px;flex-wrap:wrap}.learning-work{max-width:800px;margin:10px auto 12px;padding:12px 16px}.learning-work h2{margin:0 0 10px;font:400 15px/1.4 var(--lab-font-sans);color:var(--lab-accent-ink)}.work-steps{display:flex;gap:16px 24px;align-items:flex-start;flex-wrap:wrap}.work-step{flex:1;min-width:180px}.work-label{display:block;font:400 12px/1.4 var(--lab-font-sans);color:var(--lab-muted);margin-bottom:7px}.work-expression{display:flex;align-items:center;gap:7px;flex-wrap:wrap;font:400 15px/1.7 var(--lab-font-sans);font-variant-numeric:tabular-nums}.work-note{font:400 12px/1.5 var(--lab-font-sans);color:var(--lab-ink-secondary);margin:8px 0 0}.work-note:empty,.work-actions:empty{display:none}.work-actions{display:flex;gap:8px;margin-top:12px}.learning-work input{width:86px;min-height:40px;padding:6px 8px;background:var(--lab-needed-surface);border:1px solid var(--lab-needed-line);border-radius:var(--lab-control-radius);font:400 15px var(--lab-font-sans);text-align:center;color:var(--lab-ink)}.learning-work input.good{border-color:var(--lab-good-line);background:var(--lab-good-soft)}.learning-work input.bad{border-color:var(--lab-bad-line);background:var(--lab-bad-soft)}.learning-work input:focus-visible{outline:2px solid var(--lab-accent);outline-offset:2px}.material-choice{display:flex;align-items:center;gap:9px;font-size:12px;color:var(--lab-muted)}.material-choice select{font:400 12px var(--lab-font-sans);padding:10px 24px 10px 10px;min-height:40px;border:1px solid var(--lab-line);border-radius:8px;background:white;color:var(--lab-ink)}.material-swatch{width:12px;height:12px;border:1px solid var(--lab-line);border-radius:3px;display:inline-block}.stage .beam-flow{stroke-dasharray:5 32;animation:beamTravel 1.1s linear 2;pointer-events:none}.stage .material-piece{animation:materialArrive .5s ease-out}.stage .offspring{pointer-events:none}@keyframes beamTravel{to{stroke-dashoffset:-111}}@keyframes materialArrive{from{opacity:.25}to{opacity:1}}@media(max-width:600px){.lesson-head{gap:10px 12px}.lesson-head h1{grid-column:1/-1;grid-row:1}.lesson-head .intro{grid-column:1/-1;grid-row:2}.lesson-head #restart{grid-column:2;grid-row:3;justify-self:end}.lab-checkpoints{grid-column:1;grid-row:3;justify-content:flex-start}.learning-work{padding:14px;margin-top:10px}.work-steps{gap:14px}.work-step{flex-basis:100%;min-width:0}.work-expression{font-size:14px}.material-choice{gap:6px}.material-choice select{max-width:128px}.stage-wrap{margin-top:4px}}@media(prefers-reduced-motion:reduce){.stage .beam-flow{display:none}}
 
 .material-change{min-height:40px;display:flex;align-items:center;gap:8px;font:400 12px/1.4 var(--lab-font-sans);color:var(--lab-ink-secondary)}
-</style></head><body><main class="lab"><header class="lesson-head"><h1 id="title" tabindex="-1"></h1><button type="button" class="lab-action" id="restart" data-lab-action="reset">Start over</button><p class="intro" id="intro"></p><div id="checkpoints" class="lab-checkpoints" aria-label="Learning progress"></div></header><div id="context" class="context"></div><div class="stage-wrap" id="stageWrap"><svg xmlns="http://www.w3.org/2000/svg" class="stage" id="stage" role="group" data-lab-role="model"></svg></div><section id="working" class="lab-work-card learning-work" hidden data-lab-role="working" aria-label="Working"></section><div class="controls" id="controls" data-lab-role="control"></div><table class="records" id="records" hidden aria-label="Experiment readings" data-lab-role="evidence"></table><footer class="foot"><button class="lab-action" id="back" aria-label="Previous step" title="Previous step">←</button><p class="feedback" id="feedback" role="status" aria-live="polite"></p><button class="lab-action" data-priority="primary" id="next">Continue →</button></footer><p class="smallprint">Ideal boundary. Rays show direction; recorded percentages show transmitted power.</p><noscript>This interactive lab needs JavaScript enabled in your browser.</noscript></main><script data-lab-design>/* Shared model dragging: retain the point grabbed while the model rerenders. */
+
+/* Motion extends the shared materials: blue for a connection, green for evidence. */
+.lesson-head.lab-context{margin:-4px -8px 14px;padding:16px;grid-template-columns:minmax(0,1fr) auto;gap:12px 20px;align-items:center;min-height:100px}
+.mission-copy{display:flex;gap:12px;align-items:flex-start;grid-column:1;grid-row:1/3;min-width:0}.mission-copy>div{min-width:0}.mission-copy h1{margin:0 0 6px}.mission-copy .intro{margin:0;max-width:760px}.mission-symbol{width:28px;height:28px;flex:none;margin-top:1px;fill:none;stroke:var(--lab-accent);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}.lesson-head[data-complete=true] .mission-symbol{stroke:var(--lab-good)}
+.lesson-head #restart{grid-column:2;grid-row:1}.lesson-head .lab-checkpoints{grid-column:2;grid-row:2;align-self:center;padding:0}
+.work-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}.learning-work .work-heading h2{margin:0}.trace-button.lab-action{display:inline-flex;align-items:center;gap:6px;min-height:30px;padding:4px 7px;border-color:transparent;box-shadow:none;background:transparent;white-space:nowrap}.trace-button svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}.trace-button:hover{background:var(--lab-accent-soft)}
+.work-expression .linked-term{display:inline-block;padding:0 2px;border-radius:3px;text-decoration:underline dotted var(--lab-line-strong);text-underline-offset:5px;cursor:help}.linked-term.linked-focus,.linked-term.value-arrived{background:var(--lab-accent-soft);color:var(--lab-accent-ink);text-decoration-color:var(--lab-accent)}.linked-term:focus-visible{outline:1.5px solid var(--lab-accent);outline-offset:3px}.learning-work:focus-visible{outline:1.5px solid var(--lab-accent);outline-offset:3px}
+.stage .value-source{cursor:help;outline:none}.stage .source-hit{fill:transparent;stroke:transparent;stroke-width:1}.stage .source-underline{stroke:var(--lab-line-strong);stroke-width:1;stroke-dasharray:1 3;opacity:.75}.stage .value-source:is(:hover,:focus-visible,.linked-focus) .source-hit{fill:var(--lab-accent-soft);stroke:var(--lab-accent-line)}.stage [data-help]{cursor:help}.stage .model-control[data-help]{cursor:grab}
+.lab-value-tooltip{position:fixed;z-index:60;max-width:min(265px,calc(100vw - 16px));padding:9px 12px;border:1px solid var(--lab-line);border-radius:8px;background:var(--lab-surface);box-shadow:0 4px 14px rgba(29,29,31,.1);color:var(--lab-ink-secondary);font:400 12px/1.5 var(--lab-font-sans);pointer-events:auto}
+#connectionLayer{position:fixed;inset:0;z-index:40;pointer-events:none;overflow:hidden}.connection-halo{position:absolute;display:block;border:1.5px solid var(--lab-accent);border-radius:6px;background:color-mix(in srgb,var(--lab-accent) 9%,transparent);box-shadow:0 0 0 4px color-mix(in srgb,var(--lab-accent) 9%,transparent);opacity:.65}.connection-halo.destination{background:transparent}.travelling-value{position:absolute;top:0;left:0;padding:3px 7px;border:1px solid var(--lab-accent-line);border-radius:4px;background:var(--lab-surface);color:var(--lab-accent-ink);font:400 14px/1.4 var(--lab-font-sans);box-shadow:0 2px 8px rgba(29,29,31,.08);white-space:nowrap}
+.foot{align-items:center}.outcome{flex:1;min-width:0;display:flex;align-items:flex-start;gap:10px;padding:12px;border:1px solid transparent;border-radius:9px}.outcome-symbol{width:27px;height:27px;flex:none;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}.outcome[data-state=idle]{padding:4px 0}.outcome[data-state=idle] .outcome-symbol{display:none}.outcome[data-state=good]{background:var(--lab-good-surface);border-color:var(--lab-good-line);color:var(--lab-good-ink)}.outcome[data-state=retry]{background:var(--lab-bad-surface);border-color:var(--lab-bad-line);color:var(--lab-bad-ink)}.outcome[data-state=good] .retry-mark,.outcome[data-state=retry] .success-mark{display:none}.outcome-title{margin:0 0 4px;font:400 15px/1.4 var(--lab-font-sans)}.outcome .feedback{color:var(--lab-ink-secondary);min-height:0}.outcome .feedback::before{content:none}.outcome[data-state=good] .success-mark{stroke-dasharray:20;stroke-dashoffset:0;animation:drawSuccess 360ms ease-out}.outcome .feedback.good{color:var(--lab-good-ink)}.outcome .feedback.retry{color:var(--lab-bad-ink)}
+@keyframes drawSuccess{from{stroke-dashoffset:20}to{stroke-dashoffset:0}}
+@media(max-width:600px){.lesson-head.lab-context{margin:-4px -4px 14px;padding:12px;gap:12px;min-height:0}.mission-copy{grid-column:1/-1;grid-row:1;gap:9px}.mission-symbol{width:23px;height:23px}.lesson-head #restart{grid-column:2;grid-row:2}.lesson-head .lab-checkpoints{grid-column:1;grid-row:2;justify-content:flex-start}.work-heading{align-items:flex-start;flex-wrap:wrap}.trace-button.lab-action{margin-left:auto;min-height:30px}.outcome{flex-basis:calc(100% - 55px);padding:10px;gap:8px}.outcome-title{font-size:14px}.outcome-symbol{width:23px;height:23px}}
+@media(prefers-reduced-motion:reduce){.travelling-value{display:none}.connection-halo{box-shadow:none}.outcome .success-mark{animation:none}}
+.material-index{width:76px;min-height:34px;padding:5px 8px;border:1px solid var(--lab-line);border-radius:6px;background:var(--lab-surface);color:var(--lab-ink);font:inherit;font-variant-numeric:tabular-nums}
+</style></head><body><main class="lab"><header class="lesson-head lab-context"><div class="mission-copy"><svg class="mission-symbol" viewBox="0 0 28 28" aria-hidden="true"><path d="M7 23V5m0 1c5-4 9 4 14 0v10c-5 4-9-4-14 0"/></svg><div><h1 id="title" tabindex="-1"></h1><p class="intro" id="intro"></p></div></div><button type="button" class="lab-action" id="restart" data-lab-action="reset">Start over</button><div id="checkpoints" class="lab-checkpoints" aria-label="Learning progress"></div></header><div id="context" class="context"></div><div class="stage-wrap" id="stageWrap"><svg xmlns="http://www.w3.org/2000/svg" class="stage" id="stage" role="group" data-lab-role="model"></svg></div><section id="working" class="lab-work-card learning-work" hidden data-lab-role="working" aria-label="Working"></section><div class="controls" id="controls" data-lab-role="control"></div><table class="records" id="records" hidden aria-label="Experiment readings" data-lab-role="evidence"></table><footer class="foot"><button class="lab-action" id="back" aria-label="Previous step" title="Previous step">←</button><div class="outcome" id="outcome" data-state="idle" role="status" aria-live="polite"><svg class="outcome-symbol" viewBox="0 0 28 28" aria-hidden="true"><circle cx="14" cy="14" r="11"/><path class="success-mark" d="m8.5 14 3.5 3.5 7.5-7.5"/><path class="retry-mark" d="m10 10 8 8m0-8-8 8"/></svg><div><p class="outcome-title" id="outcomeTitle" hidden></p><p class="feedback" id="feedback"></p></div></div><button class="lab-action" data-priority="primary" id="next">Continue →</button></footer><p class="smallprint">Ideal boundary. Rays show direction; recorded percentages show transmitted power.</p><noscript>This interactive lab needs JavaScript enabled in your browser.</noscript></main><script data-lab-design>/* Shared model dragging: retain the point grabbed while the model rerenders. */
 window.LabDesign = {
   checkpoints(host, labels, current, completed = index => index < current, detail = '') {
     host.classList.add('lab-checkpoints'); host.removeAttribute('aria-hidden');
@@ -3343,41 +3383,152 @@ function el(tag,attrs={},text,parent=svg){const n=document.createElementNS(NS,ta
 function text(x,y,t,cls='',anchor='start',parent=svg){return el('text',{x,y,class:cls,'text-anchor':anchor},t,parent)}
 function line(x1,y1,x2,y2,attrs={},parent=svg){return el('line',{x1,y1,x2,y2,stroke:'var(--ink)','stroke-width':2,...attrs},undefined,parent)}
 function dot(x,y,r,attrs={},parent=svg){return el('circle',{cx:x,cy:y,r,...attrs},undefined,parent)}
-function clear(){const active=document.activeElement?.getAttribute('data-control');svg.replaceChildren();svg.dataset.restoreFocus=active||'';}
-function endDraw(){const id=svg.dataset.restoreFocus;if(id)svg.querySelector(`[data-control="${id}"]`)?.focus({preventScroll:true});}
+function clear(){const active=document.activeElement?.getAttribute('data-control'),source=document.activeElement?.getAttribute('data-source');svg.dataset.restoreSource=source||'';svg.replaceChildren();svg.dataset.restoreFocus=active||'';}
+function endDraw(){const id=svg.dataset.restoreFocus,key=svg.dataset.restoreSource;if(id)svg.querySelector(`[data-control="${id}"]`)?.focus({preventScroll:true});else if(key)svg.querySelector(`[data-source="${key}"]`)?.focus({preventScroll:true});updateConnections();}
 function point(e){const p=svg.createSVGPoint();p.x=e.clientX;p.y=e.clientY;return p.matrixTransform(svg.getScreenCTM().inverse())}
-function handle(id,x,y,config){const g=el('g',{'data-control':id,class:'model-control',tabindex:0,role:'slider','aria-label':config.label,'aria-valuemin':config.min,'aria-valuemax':config.max,'aria-valuenow':config.value,'aria-valuetext':config.valueText??`${fmt(config.value,2)}`});dot(x,y,24,{fill:'transparent'},g);dot(x,y,12,{class:'handle'},g);dot(x,y,3,{fill:'var(--lab-accent)'},g);g.onpointerdown=e=>{e.preventDefault();drag={id,config,offset:config.value-config.fromPoint(point(e))};svg.setPointerCapture(e.pointerId);g.focus({preventScroll:true});};g.onkeydown=e=>{let v=config.value;if(['ArrowLeft','ArrowDown'].includes(e.key))v-=config.increment||.1;else if(['ArrowRight','ArrowUp'].includes(e.key))v+=config.increment||.1;else if(e.key==='Home')v=config.min;else if(e.key==='End')v=config.max;else return;e.preventDefault();config.set(clamp(v,config.min,config.max));};return g}
+function handle(id,x,y,config){const g=el('g',{'data-control':id,class:'model-control',tabindex:0,role:'slider','aria-label':config.label,'aria-valuemin':config.min,'aria-valuemax':config.max,'aria-valuenow':config.value,'aria-valuetext':config.valueText??`${fmt(config.value,2)}`});g.dataset.help=config.help||config.label+'. Drag this control, or use the arrow keys to change its value.';dot(x,y,24,{fill:'transparent'},g);dot(x,y,12,{class:'handle'},g);dot(x,y,3,{fill:'var(--lab-accent)'},g);g.onpointerdown=e=>{e.preventDefault();drag={id,config,offset:config.value-config.fromPoint(point(e))};svg.setPointerCapture(e.pointerId);g.focus({preventScroll:true});};g.onkeydown=e=>{let v=config.value;if(['ArrowLeft','ArrowDown'].includes(e.key))v-=config.increment||.1;else if(['ArrowRight','ArrowUp'].includes(e.key))v+=config.increment||.1;else if(e.key==='Home')v=config.min;else if(e.key==='End')v=config.max;else return;e.preventDefault();config.set(clamp(v,config.min,config.max));};return g}
 svg.addEventListener('pointermove',e=>{if(!drag)return;e.preventDefault();drag.config.set(clamp(drag.config.fromPoint(point(e))+drag.offset,drag.config.min,drag.config.max))});
 svg.addEventListener('pointerup',e=>{if(!drag)return;const id=drag.id;drag=null;if(svg.hasPointerCapture(e.pointerId))svg.releasePointerCapture(e.pointerId);svg.querySelector(`[data-control="${id}"]`)?.focus({preventScroll:true})});
 svg.addEventListener('pointercancel',()=>{drag=null});
-function feedback(message,ok=false,retry=false){$('feedback').textContent=message;$('feedback').className='feedback'+(ok?' good':retry?' retry':'');ready=ok;$('next').disabled=!ready}
-function head(title,intro){$('title').textContent=title;$('intro').textContent=intro;LabDesign.checkpoints($('checkpoints'),lesson.map(x=>x.label),step,i=>i<step);$('back').disabled=step===0;$('next').hidden=step===lesson.length-1;$('next').textContent=step===lesson.length-2?'Open experiment':'Continue';svg.setAttribute('aria-label',title+' '+intro)}
+function feedback(message,ok=false,retry=false){$('feedback').textContent=message;$('feedback').className='feedback'+(ok?' good':retry?' retry':'');ready=ok;$('next').disabled=!ready;scheduleOutcome()}
+function head(title,intro){$('title').textContent=title;$('intro').textContent=intro;if($('checkpoints').dataset.step!==String(step)){LabDesign.checkpoints($('checkpoints'),lesson.map(x=>x.label),step,i=>i<step);$('checkpoints').dataset.step=step}$('back').disabled=step===0;$('next').hidden=step===lesson.length-1;$('next').textContent=step===lesson.length-2?'Open experiment':'Continue';svg.setAttribute('aria-label',title+' '+intro)}
 
-function go(n){step=clamp(n,0,lesson.length-1);maxStep=Math.max(maxStep,step);$('controls').replaceChildren();$('context').replaceChildren();$('working').hidden=true;$('records').innerHTML='';$('records').hidden=true;ready=false;enter();resize();$('title').focus({preventScroll:true})}
+function go(n){step=clamp(n,0,lesson.length-1);maxStep=Math.max(maxStep,step);$('controls').replaceChildren();$('context').replaceChildren();$('working').hidden=true;$('records').innerHTML='';$('records').hidden=true;ready=false;enter();resize();$('title').focus({preventScroll:true});stageArrival();window.scrollTo({top:0,behavior:reduced.matches?'instant':'smooth'})}
 $('next').onclick=()=>{if(ready)go(step+1)};$('back').onclick=()=>go(step-1);$('restart').onclick=()=>{maxStep=0;reset();go(0)};
 function button(label,fn,attrs={}){const b=document.createElement('button');b.type='button';b.className='lab-action';b.textContent=label;for(const[k,v]of Object.entries(attrs))b.setAttribute(k,v);b.classList.add('lab-action');b.onclick=fn;$('controls').appendChild(b);return b}
 function workRow(label,expression){return `<div class="work-step"><span class="work-label">${label}</span><div class="work-expression">${expression}</div></div>`}
 function workOutput(id){return `<output class="lab-math-surface" id="${id}"></output>`}
 function workSetup(title,body,note='',required=false){
  const area=$('working');area.hidden=false;area.dataset.workState=required?'needed':'reference';area.dataset.interacted='false';
- area.innerHTML=`<h2>${title}</h2><div class="work-steps">${body}</div><p class="work-note" id="workNote">${note}</p><div class="work-actions" id="workActions"></div>`;
+ area.innerHTML=`<div class="work-heading"><h2>${title}</h2><button type="button" class="lab-action trace-button" id="traceWorking" data-help="Follow each value from the model into its place in the calculation." aria-label="Trace values from model to calculation"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="4" cy="5" r="2.5"/><path d="M4 7.5v4a4 4 0 0 0 4 4h8m-3-3 3 3-3 3"/></svg>Trace values</button></div><div class="work-steps">${body}</div><p class="work-note" id="workNote">${note}</p><div class="work-actions" id="workActions"></div>`;
  area.oninput=area.onpointerdown=()=>{area.dataset.interacted='true'};
 }
-function workValue(id,value){const node=$(id);if(!node||node.textContent===String(value))return;const changed=node.textContent!=='';node.textContent=value;if(changed&&!reduced.matches)node.animate([{backgroundColor:getComputedStyle(document.documentElement).getPropertyValue('--lab-needed-soft')},{backgroundColor:getComputedStyle(node).backgroundColor}],{duration:650})}
+function workValue(id,value){const node=$(id);if(!node||node.textContent===String(value))return;node.textContent=value}
 function workState(state){$('working').dataset.workState=state}
 function workAction(label,fn){const b=button(label,fn,{'data-priority':'primary'});$('workActions').appendChild(b);return b}
 function table(headers,rows){$('records').hidden=!rows.length;$('records').innerHTML=`<thead><tr>${headers.map(x=>`<th scope="col">${x}</th>`).join('')}</tr></thead><tbody>${rows.map(row=>`<tr>${row.map(x=>`<td>${x}</td>`).join('')}</tr>`).join('')}</tbody>`}
 function resize(){const b=$('stageWrap').getBoundingClientRect();W=b.width;mobile=W<600;H=typeof sceneHeight==='function'?sceneHeight(W):(mobile?400:360);if(b.height!==H)$('stageWrap').style.height=H+'px';svg.setAttribute('viewBox',`0 0 ${W} ${H}`);render()}
 function start(){reset();enter();new ResizeObserver(resize).observe($('stageWrap'));resize()}
 
+// Teaching links use explicit quantity keys, never a search for matching numbers.
+const explanations=new Map();
+const connectionLayer=document.createElement('div');connectionLayer.id='connectionLayer';connectionLayer.setAttribute('aria-hidden','true');document.body.appendChild(connectionLayer);
+const helpTip=document.createElement('div');helpTip.id='helpTip';helpTip.className='lab-value-tooltip';helpTip.role='tooltip';helpTip.hidden=true;document.body.appendChild(helpTip);
+let cueTimer=0,cueVersion=0,cueSignature='',autoCuePending=false,helpTimer=0,helpOwner=null,outcomeQueued=false,shownOutcome='',arrivalAnimations=[];
+const escapeHtml=value=>String(value).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('"','&quot;');
+function term(key,value){return `<span class="linked-term" data-value-ref="${key}" tabindex="0">${escapeHtml(value)}</span>`}
+function result(key,value,description){explanations.set(key,description);return `<span class="lab-math-surface" data-result data-source="${key}" data-link="${key}" data-help="${escapeHtml(description)}" tabindex="0">${escapeHtml(value)}</span>`}
+function explain(node,description,key=''){node.dataset.help=description;if(key)node.dataset.link=key;return node}
+function sourceLabel(key,x,y,label,description,cls='small',anchor='start'){
+ const g=el('g',{'data-source':key,'data-link':key,tabindex:0,role:'button','aria-label':label+'. '+description,class:'value-source'});
+ const t=text(x,y,label,cls,anchor,g),b=t.getBBox();
+ const hit=el('rect',{x:b.x-6,y:b.y-7,width:b.width+12,height:b.height+14,rx:5,class:'source-hit'},undefined,g);g.insertBefore(hit,t);
+ line(b.x,b.y+b.height+3,b.x+b.width,b.y+b.height+3,{class:'source-underline'},g);
+ explanations.set(key,description);explain(g,description,key);return g;
+}
+function workFormula(id,html){const node=$(id);if(node&&node.innerHTML!==html)node.innerHTML=html}
+function workingExplanation(description){const area=$('working');area.dataset.help=description;area.tabIndex=0;area.setAttribute('aria-label',description);}
+function linkedSources(key){return [...document.querySelectorAll(`[data-source="${key}"]`)].filter(node=>node.getClientRects().length&&(!('value' in node)||node.value!==''))}
+function linkedTerms(key){return [...document.querySelectorAll(`[data-value-ref="${key}"]`)].filter(node=>node.getClientRects().length)}
+function linkPairs(){return [...new Set([...$('working').querySelectorAll('[data-value-ref]')].map(node=>node.dataset.valueRef))].flatMap(key=>{const source=linkedSources(key)[0],targets=linkedTerms(key);return source&&targets.length?[{key,source,targets}]:[]})}
+function stopConnections(){clearTimeout(cueTimer);cueVersion++;connectionLayer.replaceChildren();delete connectionLayer.dataset.active;document.querySelectorAll('.value-arrived').forEach(n=>n.classList.remove('value-arrived'));}
+function visibleRect(node){const r=node.getBoundingClientRect();return r.width&&r.height&&r.bottom>0&&r.top<innerHeight&&r.right>0&&r.left<innerWidth?r:null}
+function halo(node,kind){const r=visibleRect(node);if(!r)return null;const box=document.createElement('span');box.className='connection-halo '+kind;Object.assign(box.style,{left:r.x-5+'px',top:r.y-5+'px',width:r.width+10+'px',height:r.height+10+'px'});connectionLayer.appendChild(box);return box;}
+const pauseCue=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+async function tracePair(pair,version){
+ if(version!==cueVersion||!pair.source.isConnected)return;
+ connectionLayer.dataset.active=pair.key;
+ const a=visibleRect(pair.source),target=pair.targets[0],b=visibleRect(target),sourceHalo=halo(pair.source,'source');
+ if(reduced.matches){pair.targets.forEach(node=>halo(node,'destination'));await pauseCue(750);return}
+ sourceHalo?.animate([{opacity:0,transform:'scale(.97)'},{opacity:1,transform:'scale(1)'},{opacity:1}],{duration:240,fill:'forwards'});
+ await pauseCue(220);if(version!==cueVersion)return;
+ if(a&&b){
+  const token=document.createElement('span');token.className='travelling-value';token.textContent=target.textContent;connectionLayer.appendChild(token);
+  const x1=a.x+a.width/2,y1=a.y+a.height/2,x2=b.x+b.width/2,y2=b.y+b.height/2;
+  const bend=Math.min(45,Math.abs(y2-y1)*.15),frames=[0,.25,.5,.75,1].map((t,i)=>({transform:`translate(${x1+(x2-x1)*t+bend*Math.sin(Math.PI*t)}px,${y1+(y2-y1)*t}px) translate(-50%,-50%)`,opacity:i===0||i===4?0:1}));
+  await token.animate(frames,{duration:560,easing:'cubic-bezier(.22,.68,.3,1)',fill:'forwards'}).finished.catch(()=>{});token.remove();
+ }
+ if(version!==cueVersion)return;
+ pair.targets.forEach(node=>{halo(node,'destination')?.animate([{opacity:0,transform:'scale(.97)'},{opacity:1,transform:'scale(1)'}],{duration:180,fill:'forwards'});node.classList.add('value-arrived')});
+ await pauseCue(330);
+}
+async function traceValues(key){
+ stopConnections();autoCuePending=false;const version=cueVersion,pairs=linkPairs().filter(pair=>!key||pair.key===key);
+ for(const pair of pairs){await tracePair(pair,version);if(version!==cueVersion)return;connectionLayer.replaceChildren();document.querySelectorAll('.value-arrived').forEach(n=>n.classList.remove('value-arrived'))}
+ delete connectionLayer.dataset.active;
+ if(!key&&!reduced.matches&&pairs.length){$('working').querySelectorAll('[data-result]').forEach(node=>node.animate([{backgroundColor:'var(--lab-accent-soft)'},{backgroundColor:'transparent'}],{duration:600}))}
+}
+function queueAutoTrace(){clearTimeout(cueTimer);if(autoCuePending&&!drag)cueTimer=setTimeout(()=>traceValues(),450)}
+function updateConnections(){
+ if(helpOwner&&!helpOwner.isConnected)hideHelp();
+ const pairs=$('working').hidden?[]:linkPairs();
+ const replay=$('traceWorking');if(replay){replay.hidden=!pairs.length;replay.onclick=()=>{hideHelp();traceValues()}}
+ document.querySelectorAll('[data-value-ref]').forEach(node=>{const key=node.dataset.valueRef;node.dataset.help=explanations.get(key)||'This value is taken from the labelled model.';node.dataset.link=key;node.setAttribute('aria-label',node.textContent+'. '+node.dataset.help)});
+ const signature=step+'|'+pairs.map(({key,source,targets})=>key+':'+(source.value??source.textContent)+'='+targets.map(n=>n.textContent).join(',')).join('|');
+ if(signature!==cueSignature){cueSignature=signature;stopConnections();autoCuePending=!!pairs.length;queueAutoTrace()}
+}
+function clearLinkedFocus(){document.querySelectorAll('.linked-focus').forEach(node=>node.classList.remove('linked-focus'))}
+function hideHelp(){clearTimeout(helpTimer);helpTip.hidden=true;helpOwner?.removeAttribute('aria-describedby');helpOwner=null;clearLinkedFocus()}
+function showHelp(owner){
+ const description=owner.dataset.help;if(!description||!owner.isConnected)return;
+ hideHelp();helpOwner=owner;helpTip.textContent=description;helpTip.hidden=false;owner.setAttribute('aria-describedby','helpTip');
+ const r=owner.getBoundingClientRect(),b=helpTip.getBoundingClientRect(),top=r.bottom+b.height+12<innerHeight?r.bottom+9:Math.max(8,r.top-b.height-9);
+ helpTip.style.left=clamp(r.x+r.width/2-b.width/2,8,innerWidth-b.width-8)+'px';helpTip.style.top=top+'px';
+ const key=owner.dataset.link;if(key)[...linkedSources(key),...linkedTerms(key)].forEach(node=>node.classList.add('linked-focus'));
+}
+document.addEventListener('pointerover',e=>{if(e.pointerType==='touch'||drag)return;const node=e.target.closest('[data-help]');if(!node||node===helpOwner)return;clearTimeout(helpTimer);helpTimer=setTimeout(()=>showHelp(node),200)});
+document.addEventListener('pointerout',e=>{if(e.relatedTarget&&((helpOwner?.contains(e.relatedTarget))||helpTip.contains(e.relatedTarget)))return;if(e.target.closest('[data-help]')){clearTimeout(helpTimer);helpTimer=setTimeout(hideHelp,100)}});
+helpTip.onpointerenter=()=>clearTimeout(helpTimer);helpTip.onpointerleave=hideHelp;
+document.addEventListener('focusin',e=>{const node=e.target.closest('[data-help]');if(node)showHelp(node)});
+document.addEventListener('focusout',e=>{if(!helpTip.contains(e.relatedTarget))hideHelp()});
+document.addEventListener('pointerdown',e=>{if(e.target.closest('#traceWorking'))return;stopConnections();autoCuePending=false;if(!e.target.closest('[data-help],#helpTip'))hideHelp();if(e.target.closest('#stage,#working'))$('working').dataset.interacted='true'});
+svg.addEventListener('pointerup',queueAutoTrace);
+document.addEventListener('click',e=>{const node=e.target.closest('[data-source],[data-value-ref]');if(node&&!e.target.closest('input,select')){showHelp(node);traceValues(node.dataset.link)}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){hideHelp();stopConnections();autoCuePending=false}else if(['Enter',' '].includes(e.key)&&e.target.matches('[data-source],[data-value-ref]')){e.preventDefault();showHelp(e.target);traceValues(e.target.dataset.link)}});
+document.addEventListener('input',()=>{stopConnections();hideHelp();queueAutoTrace()});
+window.addEventListener('scroll',()=>{stopConnections();hideHelp();queueAutoTrace()},{passive:true});window.addEventListener('resize',()=>{stopConnections();hideHelp();queueAutoTrace()});
+reduced.addEventListener('change',()=>{stopConnections();arrivalAnimations.forEach(a=>a.cancel())});
+function arrive(nodes){if(reduced.matches)return;arrivalAnimations.forEach(a=>a.cancel());arrivalAnimations=nodes.filter(Boolean).map((node,i)=>node.animate([{opacity:.25,transform:'translateY(7px)'},{opacity:1,transform:'translateY(0)'}],{duration:320,delay:i*45,easing:'cubic-bezier(.2,.7,.25,1)'}));}
+function stageArrival(){hideHelp();stopConnections();arrive([document.querySelector('.mission-copy'),svg,$('working').hidden?null:$('working')]);cueSignature='';updateConnections()}
+function scheduleOutcome(){if(outcomeQueued)return;outcomeQueued=true;queueMicrotask(()=>{
+ outcomeQueued=false;const outcome=$('outcome'),state=ready?'good':$('feedback').classList.contains('retry')?'retry':'idle',key=step+':'+state;
+ outcome.dataset.state=state;$('outcomeTitle').hidden=state==='idle';$('outcomeTitle').textContent=state==='good'?lesson[step].success||'You have completed this investigation.':state==='retry'?'Let’s check that again.':'';
+ if(key!==shownOutcome){shownOutcome=key;if(state!=='idle')arrive([outcome]);document.querySelector('.lesson-head').dataset.complete=String(ready)}
+ });}
+
 const lesson=[
- {label:'Follow the ray',title:'Observe how the refracted ray changes.',intro:'Rotate the laser away from the normal. Compare the incident and refracted rays.'},
- {label:'Find the boundary',title:'Measure the critical angle for glass to air.',intro:'Explore both sides of the transition, then mark the ray along the surface.'},
- {label:'Predict, then test',title:'Calculate the critical angle for diamond to air.',intro:'Replace the glass with diamond, then calculate and test the new threshold.'},
- {label:'Reverse the direction',title:'Test whether total internal reflection is possible from air to glass.',intro:'Sweep the laser from 5° to 80°. Look for an escaping ray.'},
- {label:'Experiment',title:'Compare critical angles for different pairs of media.',intro:'Choose the two media, rotate the laser and record the results.'}
+ {
+  "label": "Follow the ray",
+  "title": "Explore what happens when light leaves glass.",
+  "intro": "The laser enters the curved face straight on. Rotate it and watch how the ray bends at the flat glass–air boundary.",
+  "success": "The ray bends away from the normal."
+ },
+ {
+  "label": "Find the boundary",
+  "title": "Find the angle where light stops escaping.",
+  "intro": "You have seen the refracted ray bend away from the normal. Keep rotating until it runs along the surface, then mark that angle.",
+  "success": "You found the critical angle for glass."
+ },
+ {
+  "label": "Predict, then test",
+  "title": "Use the glass result to predict what diamond will do.",
+  "intro": "Glass reached its limit at 41.8°. Replace it with diamond, then use the same calculation to find the new critical angle before testing.",
+  "success": "Your prediction matches the diamond boundary."
+ },
+ {
+  "label": "Reverse the direction",
+  "title": "Check the same boundary in the opposite direction.",
+  "intro": "A critical angle appeared when light left a higher-index material. Now send light from air into glass and test angles from 5° to 80°.",
+  "success": "The direction of travel matters."
+ },
+ {
+  "label": "Experiment",
+  "title": "Choose your own pair of materials and compare the results.",
+  "intro": "You now have a way to predict total internal reflection. Change either material or set an index of your own, then compare your calculations with the rays.",
+  "success": ""
+ }
 ];
-const materials={air:{name:'Air',n:1},water:{name:'Water',n:1.33},glass:{name:'Glass',n:1.5},diamond:{name:'Diamond',n:2.42}};
+const materials={air:{name:'Air',n:1},water:{name:'Water',n:1.33},glass:{name:'Glass',n:1.5},diamond:{name:'Diamond',n:2.42},insideCustom:{name:'Custom A',n:1.6},outsideCustom:{name:'Custom B',n:1.2}};
 const s={angle:15,inside:'glass',outside:'air',below:false,above:false,marked:false,low:false,high:false,ratio:'',angleText:'',tested:false,records:[],swapped:false};
 let previousMaterial='';
 function reset(){Object.assign(s,{angle:15,inside:'glass',outside:'air',below:false,above:false,marked:false,low:false,high:false,ratio:'',angleText:'',tested:false,records:[]})}
@@ -3385,13 +3536,13 @@ function critical(){const a=materials[s.inside].n,b=materials[s.outside].n;retur
 function optics(angle=s.angle){const a=materials[s.inside].n,b=materials[s.outside].n,i=angle*Math.PI/180,q=a/b*Math.sin(i);if(q>1+1e-9)return{r:null,R:1};const r=Math.asin(Math.min(1,q)),ci=Math.cos(i),cr=Math.cos(r);const rs=(a*ci-b*cr)/(a*ci+b*cr),rp=(a*cr-b*ci)/(a*cr+b*ci);return{r:r*180/Math.PI,R:(rs*rs+rp*rp)/2}}
 function enter(){s.marked=false;s.below=false;s.above=false;s.tested=false;if(step===0){s.angle=15;s.inside='glass';s.outside='air'}if(step===1){s.angle=25;s.inside='glass';s.outside='air';s.below=true}if(step===2){s.inside='glass';s.outside='air';s.angle=Math.asin(1/1.5)*180/Math.PI;s.ratio='';s.angleText='';s.swapped=false}if(step===3){s.inside='air';s.outside='glass';s.angle=35;s.low=false;s.high=false}if(step===4){s.inside='glass';s.outside='air';s.angle=30;s.records=[]}controls()}
 function setAngle(v){let c=critical();v=Math.round(v*10)/10;if(c!==null&&Math.abs(v-c)<.45&&step!==2)v=c;s.angle=v;if(step===2&&s.swapped){s.angleText=fmt(v);s.tested=false;if($('angleInput'))$('angleInput').value=s.angleText}if(step===1&&c!==null){if(v<c-1.5)s.below=true;if(v>c+1.5)s.above=true;s.marked=false}if(step===3){if(v<=6)s.low=true;if(v>=79)s.high=true}render()}
-function materialTone(id){return{air:'slate',glass:'blue',water:'teal',diamond:'violet'}[id]}
+function materialTone(id){return{air:'slate',glass:'blue',water:'teal',diamond:'violet',insideCustom:'blue',outsideCustom:'teal'}[id]}
 function setupPhysicsWork(){
  $('working').hidden=true;
  if(step===1||step===2&&!s.swapped)workSetup('Calculate from the boundary measurement',workRow('index ratio',workOutput('ratioWork'))+workRow('inverse sine',workOutput('criticalWork')),step===1?'Mark the critical angle to compare the calculation with the ray.':'Use the same calculation after changing the material.');
  if(step===2&&s.swapped){
-  workSetup('Calculate before testing the beam',workRow('index ratio','sin c = 1 ÷ 2.42 = <input id="ratioInput" type="number" step="0.001" inputmode="decimal" aria-label="Sine of critical angle">')+workRow('inverse sine','c = sin⁻¹(ratio) = <input id="angleInput" type="number" min="5" max="80" step="0.1" inputmode="decimal" aria-label="Predicted critical angle in degrees">°'),'The dashed mark keeps the glass result, 41.8°, for comparison.',true);
-  $('ratioInput').value=s.ratio;$('angleInput').value=s.angleText;
+  workSetup('Calculate before testing the beam',workRow('index ratio','<span id="ratioSubstitution"></span> <input data-source="index-ratio" id="ratioInput" type="number" step="0.001" inputmode="decimal" aria-label="Sine of critical angle">')+workRow('inverse sine','<span id="angleSubstitution"></span> <input id="angleInput" type="number" min="5" max="80" step="0.1" inputmode="decimal" aria-label="Predicted critical angle in degrees">°'),'The dashed mark keeps the glass result, 41.8°, for comparison.',true);
+  $('ratioInput').value=s.ratio;$('angleInput').value=s.angleText;explain($('ratioInput'),'Your index ratio becomes the input to inverse sine.','index-ratio');explanations.set('index-ratio','The index ratio from the first line becomes the input to inverse sine.');
   $('ratioInput').oninput=e=>{s.ratio=e.target.value;s.tested=false;render()};
   $('angleInput').oninput=e=>{s.angleText=e.target.value;s.tested=false;if(e.target.value!=='')s.angle=clamp(Number(e.target.value),5,80);render()};
   workAction('Test the beam',()=>{if(s.ratio===''||s.angleText===''){feedback('Enter both values before testing.',false,true);return}s.tested=true;render()});
@@ -3404,18 +3555,18 @@ function controls(){
  if(step===2&&!s.swapped){const b=button('Replace glass with diamond',()=>{s.swapped=true;s.inside='diamond';s.angle=42;s.tested=false;controls();render()},{'data-priority':'primary'});$('context').appendChild(b)}
  if(step===2&&s.swapped)$('context').innerHTML='<div class="material-change"><span class="material-swatch" style="background:var(--lab-concept-blue-fill)"></span>Glass · n = 1.5 <span aria-label="replaced by">→</span><span class="material-swatch" style="background:var(--lab-concept-violet-fill)"></span>Diamond · n = 2.42</div>';
  if(step===4){
-  for(const[key,label]of [['inside','Incident medium'],['outside','Other medium']]){
+  for(const[key,label]of [['inside','From'],['outside','Into']]){
    const l=document.createElement('label');l.className='material-choice';l.textContent=label+' ';
    const swatch=document.createElement('span');swatch.className='material-swatch';swatch.style.background=`var(--lab-concept-${materialTone(s[key])}-fill)`;l.appendChild(swatch);
-   const select=document.createElement('select');select.id=key+'Medium';select.setAttribute('aria-label',label);
-   for(const[id,m]of Object.entries(materials)){const opt=document.createElement('option');opt.value=id;opt.textContent=`${m.name} · n ${fmt(m.n,2)}`;select.appendChild(opt)}
-   select.value=s[key];select.onchange=e=>{s[key]=e.target.value;s.marked=false;swatch.style.background=`var(--lab-concept-${materialTone(s[key])}-fill)`;render()};l.appendChild(select);$('context').appendChild(l);
+   const select=document.createElement('select');select.id=key+'Medium';select.setAttribute('aria-label',label+' medium');explain(select,key==='inside'?'The beam approaches the boundary through this medium. Choose Custom to set a hypothetical index.':'The beam can leave into this medium. Choose Custom to set a hypothetical index.');
+   for(const[id,m]of Object.entries(materials).filter(([id])=>!id.endsWith('Custom')||id===key+'Custom')){const opt=document.createElement('option');opt.value=id;opt.textContent=id.endsWith('Custom')?'Custom':`${m.name} · n ${fmt(m.n,2)}`;select.appendChild(opt)}
+   select.value=s[key];select.onchange=e=>{s[key]=e.target.value;s.marked=false;controls();render()};l.appendChild(select);if(s[key].endsWith('Custom')){const input=document.createElement('input');input.type='number';input.className='material-index';input.id=key+'Index';input.min='1';input.max='3.5';input.step='.01';input.value=materials[s[key]].n;input.setAttribute('aria-label',label+' refractive index');explain(input,'Set a hypothetical refractive index from 1 to 3.5. Larger indices mean slower light in the material.');input.oninput=()=>{const value=Number(input.value);if(input.value!==''&&value>=1&&value<=3.5){materials[s[key]].n=value;s.marked=false;render()}};l.appendChild(input)}$('context').appendChild(l);
   }
-  button('Record reading',()=>{s.records.push([`${materials[s.inside].name} → ${materials[s.outside].name}`,`${fmt(s.angle)}°`,critical()===null?'None':`${fmt(critical())}°`,optics().r===null?'None':`${fmt((1-optics().R)*100)}%`]);s.records=s.records.slice(-6);render()});
+  button('Record reading',()=>{s.records.push([`${materials[s.inside].name} (${fmt(materials[s.inside].n,2)}) → ${materials[s.outside].name} (${fmt(materials[s.outside].n,2)})`,`${fmt(s.angle)}°`,critical()===null?'None':`${fmt(critical())}°`,optics().r===null?'None':`${fmt((1-optics().R)*100)}%`]);s.records=s.records.slice(-6);render()});
   button('Find threshold',()=>{const c=critical();if(c===null){feedback('This pair has no critical angle in this direction.',false,true);return}s.angle=c;s.marked=true;render()});
   button('Clear readings',()=>{s.records=[];render()});
  }
- setupPhysicsWork();
+ setupPhysicsWork();workingExplanation('For light leaving a higher-index medium, sin c = refracted index ÷ incident index. First divide the two labelled indices; then use inverse sine in degrees. No critical angle exists in the opposite direction.');
 }
 start();
 
@@ -3442,8 +3593,8 @@ function render(){
  el('path',{d:`M ${cx-r+15} ${cy+16} A ${r-18} ${r-18} 0 0 0 ${cx-r*.57} ${cy+r*.77}`,fill:'none',stroke:'white','stroke-width':3.5,'stroke-linecap':'round',opacity:.85});
  line(edgeLeft,cy,edgeRight,cy,{stroke:'var(--lab-concept-slate)','stroke-width':2});
  line(cx,40,cx,cy+r+19,{stroke:'var(--lab-concept-slate)','stroke-width':1,'stroke-dasharray':'5 6'});
- text(cx+9,51,'normal','small');text(edgeLeft+12,47,`${b.name} · n = ${fmt(b.n,2)}`,'small');
- text(cx+r*.55,H-23,`${a.name} · n = ${fmt(a.n,2)}`,'small','middle');
+ explain(text(cx+9,51,'normal','small'),'The normal is perpendicular to the surface. Both ray angles are measured from this line.');sourceLabel('n-outside',edgeLeft+12,47,`${b.name} · n = ${fmt(b.n,2)}`,`${b.name} is on the refracted side. Its refractive index n = ${fmt(b.n,2)} compares light’s speed in a vacuum with its speed here. ${b.name==='Air'?'Air is approximated as n = 1 in this model.':''}`);
+ sourceLabel('n-inside',cx+r*.55,H-23,`${a.name} · n = ${fmt(a.n,2)}`,`Light approaches the boundary through ${a.name.toLowerCase()}. Its index n = ${fmt(a.n,2)} belongs in the denominator of the critical-angle ratio.`,'small','middle');
  for(let deg=20;deg<=80;deg+=20){
   const t=deg*Math.PI/180,inner=r-5,outer=r+3,label=r+15;
   line(cx-inner*Math.sin(t),cy+inner*Math.cos(t),cx-outer*Math.sin(t),cy+outer*Math.cos(t),{stroke:'var(--lab-concept-slate)','stroke-width':1});
@@ -3457,13 +3608,13 @@ function render(){
    const rr=o.r*Math.PI/180,dx=Math.sin(rr),dy=-Math.cos(rr),reach=Math.min((edgeRight-cx)/Math.max(.0001,dx),(cy-32)/Math.max(.0001,-dy));
    ray(cx,cy,cx+reach*dx,cy+reach*dy,'var(--lab-concept-blue)',3.5,Math.abs(o.r-90)<.01?.9:Math.max(.25,1-o.R));
    dot(cx+reach*dx,cy+reach*dy,3,{fill:'var(--lab-concept-blue)'});
-   if(step>0)text(edgeRight-8,cy-18,`r = ${fmt(o.r)}°`,'accent','end');
+   if(step>0)sourceLabel('refraction',edgeRight-8,cy-18,`r = ${fmt(o.r)}°`,'The refracted angle is measured from the normal on the far side of the boundary. It approaches 90° at the critical angle.','accent','end');
   }else text(edgeRight-8,cy-18,'No escaping ray','accent','end');
  }else line(sx,sy,cx,cy,{stroke:'var(--lab-concept-violet)','stroke-width':2,'stroke-dasharray':'5 6'});
  const ar=mobile?40:54;
  el('path',{d:`M ${cx} ${cy+ar} A ${ar} ${ar} 0 0 1 ${cx-ar*Math.sin(rad)} ${cy+ar*Math.cos(rad)}`,fill:'none',stroke:'var(--lab-concept-amber)','stroke-width':1.5});
- text(cx-ar-13,cy+ar+19,`i = ${fmt(s.angle)}°`,'small','end');
- const source=handle('angle',sx,sy,{label:predict?'Predicted critical angle':'Incidence angle from the normal',min:5,max:step===0?35:80,value:s.angle,valueText:`${fmt(s.angle)} degrees`,increment:1,set:setAngle,fromPoint:p=>Math.atan2(cx-p.x,Math.max(1,p.y-cy))*180/Math.PI});
+ sourceLabel('incidence',cx-ar-13,cy+ar+19,`i = ${fmt(s.angle)}°`,'The angle of incidence is measured between the incoming ray and the normal. Beyond the critical angle, light reflects completely.','small','end');
+ const source=handle('angle',sx,sy,{label:predict?'Predicted critical angle':'Incidence angle from the normal',min:step===4?0:5,max:step===0?35:step===4?89.9:80,value:s.angle,valueText:`${fmt(s.angle)} degrees`,increment:1,set:setAngle,fromPoint:p=>Math.atan2(cx-p.x,Math.max(1,p.y-cy))*180/Math.PI});
  source.replaceChildren();dot(sx,sy,24,{fill:'transparent'},source);
  const barrel=el('g',{transform:`translate(${sx} ${sy}) rotate(${s.angle})`},undefined,source);
  el('rect',{x:-10,y:-5,width:20,height:34,rx:5,fill:'#353f45',stroke:'#151a1d','stroke-width':1},undefined,barrel);
@@ -3473,7 +3624,7 @@ function render(){
  if(step===2&&s.swapped){const ref=Math.asin(1/1.5);line(cx,cy,cx-r*Math.sin(ref),cy+r*Math.cos(ref),{stroke:'var(--lab-concept-blue)','stroke-width':1.2,'stroke-dasharray':'4 4'});text(edgeLeft,H-23,'Glass: c = 41.8°','small')}
  if(s.marked&&c!==null){
   const cr=c*Math.PI/180;line(cx,cy,cx-r*Math.sin(cr),cy+r*Math.cos(cr),{stroke:'var(--lab-concept-violet)','stroke-width':1.5,'stroke-dasharray':'3 4'});
-  text(edgeRight,H-23,`c = ${fmt(c)}°`,'accent','end');
+  sourceLabel('critical-angle',edgeRight,H-23,`c = ${fmt(c)}°`,'At the critical angle, the refracted ray runs along the surface at 90° to the normal. A larger incidence angle gives total internal reflection.','accent','end');
  }
  dot(cx,cy,4,{fill:'white',stroke:'var(--lab-concept-slate)','stroke-width':1.5});
  if(step===0)feedback(s.angle>=29?'The ray bends away from the normal as it enters the lower-index medium.':'Move the amber source. The blue ray is the light that escapes.',s.angle>=29);
@@ -3488,7 +3639,7 @@ function render(){
  if(step===3)feedback(s.low&&s.high?'Light still escapes. Total internal reflection needs a higher-to-lower index boundary.':`Sweep the full range. ${s.low?'5° explored. ':''}${s.high?'80° explored.':''}`,s.low&&s.high);
  if(step===4){feedback(c===null?'No critical angle: the incident medium has an equal or lower refractive index.':`sin c = ${fmt(b.n,2)} ÷ ${fmt(a.n,2)}. c = ${fmt(c)}°. TIR requires i > c.`,false);table(['From → to','Incidence','Critical angle','Escaping light'],s.records)}
  if(step===2&&!s.swapped)feedback('Glass to air: c = 41.8°. Replace the glass to compare a higher refractive index.');
- if(step===1||step===2&&!s.swapped||step===4){const show=step!==1||s.marked;workValue('ratioWork',show?`${fmt(b.n,2)} ÷ ${fmt(a.n,2)} ≈ ${fmt(b.n/a.n,3)}`:'n outside ÷ n inside');workValue('criticalWork',!show?'c = sin⁻¹(index ratio)':c===null?'No critical angle':`sin⁻¹(${fmt(b.n/a.n,3)}) ≈ ${fmt(c)}°`)}
- endDraw();
+ if(step===1||step===2&&!s.swapped||step===4){const show=step!==1||s.marked;workFormula('ratioWork',show?`${term('n-outside',fmt(b.n,2))} ÷ ${term('n-inside',fmt(a.n,2))} ≈ ${result('index-ratio',fmt(b.n/a.n,3),'Divide the index on the refracted side by the incident index. This ratio is sin c when the incident index is higher.')}`:'n outside ÷ n inside');workFormula('criticalWork',!show?'c = sin⁻¹(index ratio)':c===null?'No critical angle':`sin⁻¹(${term('index-ratio',fmt(b.n/a.n,3))}) ≈ ${result('calculated-angle',fmt(c)+'°','Inverse sine turns the index ratio into an angle. Use degree mode on your calculator.')}`)}
+ if(step===2&&s.swapped){workFormula('ratioSubstitution',`sin c = ${term('n-outside','1')} ÷ ${term('n-inside','2.42')} =`);workFormula('angleSubstitution',`c = sin⁻¹(${term('index-ratio',s.ratio||'ratio')}) =`)}endDraw();
 }
 </script></body></html>

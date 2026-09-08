@@ -1,29 +1,30 @@
 {
   "schemaVersion": 1,
-  "relationship": "Moving a piston changes the volume of a fixed gas at constant temperature, connecting collision frequency and pressure to the inverse pressure-volume relationship.",
+  "relationship": "Guided stages use pV = 600 kPa·L with fixed particle count and speed. The experiment extends the same ideal-gas model to pV = 600 × (T/300) × relative gas amount, with particle speed proportional to sqrt(T).",
   "learnerLoop": {
     "action": "Compress a fixed gas, predict an expansion, keep three different readings, calculate a pressure target, then investigate freely.",
-    "modelChange": "Pressure is 600/V kPa; particle count and velocity magnitudes remain fixed at constant temperature.",
+    "modelChange": "Guided stages use pV = 600 kPa·L with fixed particle count and speed. The experiment extends the same ideal-gas model to pV = 600 × (T/300) × relative gas amount, with particle speed proportional to sqrt(T).",
     "evidence": "Piston impacts, pressure gauge, volume and recorded pV products all respond to the same volume state.",
     "nextDecision": "Revise a prediction, derive a new pressure or volume from the invariant, or collect another reading."
   },
   "invariants": [
-    "Pressure and volume satisfy the same constant product in the gauge, graph and calculation.",
-    "Constant temperature is represented by unchanged particle speed, not faster particles during compression.",
-    "Collision-frequency evidence changes with volume and stays distinct from particle-speed evidence.",
+    "At a fixed temperature and gas amount: Pressure and volume satisfy the same constant product in the gauge, graph and calculation.",
+    "At a fixed temperature and gas amount: Constant temperature is represented by unchanged particle speed, not faster particles during compression.",
+    "At a fixed temperature and gas amount: Collision-frequency evidence changes with volume and stays distinct from particle-speed evidence.",
     "Working assistance preserves the need to manipulate the piston and compare physical evidence."
   ],
   "safeAdaptations": [
     "Change target values, wording or working support within the supported volume range.",
-    "Add comparisons of pinned readings that test the inverse relationship."
+    "Add comparisons of pinned readings that test the inverse relationship.",
+    "In the final experiment, vary bath temperature and relative gas amount while preserving pV proportional to amount × absolute temperature."
   ],
   "nonGoals": [
-    "Do not model changing temperature, changing gas amount or non-ideal gas behaviour.",
+    "Do not model non-ideal gas behaviour or transient heat exchange.",
     "Do not replace the piston investigation with a formula-only quiz."
   ],
   "developerGuide": "https://www.examplicity.org/developer/lab-contract",
   "implementation": {
-    "reviewedRevision": "prototype-source-sha256:80456e0a9262b526dffdd69b9907659df387a0791ecd636652f9b4b6b53a5be7",
+    "reviewedRevision": "prototype-source-sha256:059ec3968d43325978ed59ec2c2b3bf6f079a2c3d6246220c5a878eb0f311c28",
     "surfaces": {
       "prompt": {
         "selectors": [
@@ -31,7 +32,7 @@
           "#intro"
         ],
         "kind": "given",
-        "description": "One current model task and one short action prompt.",
+        "description": "A visually identified current mission, with context connecting the previous experience to the next action.",
         "visibility": "Current step only."
       },
       "model": {
@@ -39,7 +40,7 @@
           "#stage"
         ],
         "kind": "model",
-        "description": "Pressure is 600/V kPa; particle count and velocity magnitudes remain fixed at constant temperature.",
+        "description": "Guided stages use pV = 600 kPa·L with fixed particle count and speed. The experiment extends the same ideal-gas model to pV = 600 × (T/300) × relative gas amount, with particle speed proportional to sqrt(T).",
         "visibility": "Always visible; later controls are progressively disclosed."
       },
       "working": {
@@ -47,7 +48,7 @@
           "#working"
         ],
         "kind": "working",
-        "description": "Consistent worked examples linked to the model precede required learner calculations; the same rows, quantities and units carry through.",
+        "description": "Worked examples precede learner calculations. Explicit quantity keys connect source labels to formula operands, with sequential animation, matching highlights and replay. Hover, focus and tap explain each source and calculation.",
         "visibility": "Changes with the current step."
       },
       "evidence": {
@@ -61,7 +62,9 @@
       },
       "completion": {
         "selectors": [
-          "#next"
+          "#next",
+          "#outcome",
+          "#outcomeTitle"
         ],
         "kind": "completion",
         "description": "Advances only after the current model-derived criterion.",
@@ -80,8 +83,8 @@
         ]
       },
       "pressure": {
-        "description": "p = 600/V.",
-        "domain": "75 to 300 kPa.",
+        "description": "Guided p = 600/V; experiment p = 600 × (T/300) × relative gas amount / V.",
+        "domain": "75 to 300 kPa guided; 18.75 to 1200 kPa in the expanded experiment.",
         "source": "Actual gas volume; predictions are entered separately in the working card.",
         "output": "Gauge, prediction feedback and readings.",
         "inputSlots": [
@@ -90,30 +93,49 @@
       },
       "product": {
         "description": "Initial pressure times initial volume.",
-        "domain": "600 kPa·L in this experiment.",
+        "domain": "600 kPa·L throughout the guided investigation; fixed for each chosen temperature and gas amount in the experiment.",
         "source": "Learner uses 150 kPa at 4 L.",
         "output": "Checks that predicted 2.5 L gives 240 kPa.",
         "inputSlots": [
           "#productInput"
         ]
+      },
+      "temperature": {
+        "description": "Absolute gas temperature T, instantaneously equilibrated with the bath.",
+        "domain": "300 K guided; 150 to 600 K in steps of 10 K in the experiment.",
+        "source": "On-bath SVG thermostat.",
+        "output": "Particle speed and ideal-gas pressure.",
+        "inputSlots": [
+          "[data-control=\"temperature\"]"
+        ]
+      },
+      "amount": {
+        "description": "Amount relative to the starting sample.",
+        "domain": "1 guided; 0.5 to 2 in half-sample steps in the experiment.",
+        "source": "On-apparatus add/remove gas buttons.",
+        "output": "9 to 36 representative particles and ideal-gas pressure.",
+        "inputSlots": [
+          "[data-control=\"add-gas\"]",
+          "[data-control=\"remove-gas\"]"
+        ]
       }
     },
     "modes": {
       "guided": "Small ordered visual investigations, with model actions and in-place revision.",
-      "experiment": "Final open mode keeps all variables within the original conceptual model, comparison readings and reset."
+      "experiment": "Ungated experiment: move the piston, vary temperature and relative gas amount on the apparatus, and retain readings with all conditions. Returning to guidance restores the fixed gas sample and speed."
     },
     "dependencies": [
       "Compress from 6 L to 3 L.",
       "Enter the predicted pressure within 1 kPa of 100 kPa, then test an animated expansion from 3 L to 6 L. The gauge always shows actual pressure.",
       "Record three distinct volumes, each showing the same product.",
       "Calculate 600 kPa·L and 2.5 L before testing the piston against 240 kPa.",
-      "Ungated experiment: manipulate the full range, record and clear readings, and attempt new pressure targets."
+      "Ungated experiment: move the piston, vary temperature and relative gas amount on the apparatus, and retain readings with all conditions. Returning to guidance restores the fixed gas sample and speed."
     ],
     "completion": "Every guided criterion is evaluated from actual model state. Continue never bypasses an unmet criterion. Restart returns to the first step; Back repeats a prior step.",
     "limitations": [
       "This is the existing Physics/Chemistry cross-listed gas model, presented as a Chemistry prototype.",
-      "Eighteen representative particles illustrate collisions; the displayed pressure follows the ideal-gas invariant, not measured 2D simulation impulses.",
-      "Temperature 300 K and amount of gas remain fixed; no heating, non-ideal gases, or quantitative kinetic-theory simulation."
+      "The starting sample uses eighteen representative particles; the displayed pressure follows the ideal-gas relationship, not measured 2D simulation impulses.",
+      "Temperature 300 K and gas amount remain fixed throughout the guided stages. The user-requested final extension varies both, with instantaneous bath equilibrium, no thermal transient, no non-ideal gas behaviour and no quantitative collision-pressure simulation."
     ]
   }
 }

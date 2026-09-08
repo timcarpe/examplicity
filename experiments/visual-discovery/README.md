@@ -7,7 +7,18 @@ Open [the review index](review/index.html), or an individual offline file:
 - [Chemistry — Investigate pressure and volume](review/chemistry.html): four guided experiences and an experiment.
 - [Biology — Trace selection across generations](review/biology.html): five guided experiences and an experiment.
 
-Each lab opens with a direct mission and one model. Shared working cards introduce calculations before learners supply the same quantities themselves. Pressure predictions remain separate from the actual gauge; changing the optical material is an explicit step; biology shows selected parents producing offspring before population replacement.
+Each lab opens with a contextual mission and one model. Shared working cards introduce calculations before learners supply the same quantities themselves. Source labels connect to the exact formula operands through an ordered pulse and value transfer; **Trace values** replays the connection. Hover, focus or tap a labelled quantity for a compact explanation, or focus the working card for the method. Escape dismisses the explanation. Reduced motion replaces travel with static paired outlines.
+
+Verified results have a distinct check mark and outcome heading. Stage entrances, material changes, separating cube layers, piston tests and inherited offspring use brief transitions that retain the existing design language. Pressure predictions remain separate from the actual gauge; selected parents produce offspring before population replacement.
+
+The final modes add these experiments without a separate control panel:
+
+| Lab | Independent experiments |
+| --- | --- |
+| Maths | Scale factors from 0.5 to 5, independent height, moving cube layers, length/square/solid views and saved comparisons |
+| Physics | Either medium, hypothetical indices from 1 to 3.5, incidence up to 89.9°, threshold finding and readings that retain both indices |
+| Chemistry | Piston volume, an on-bath thermostat from 150–600 K, a gas valve for 0.5–2 times the starting amount, and readings with all conditions |
+| Biology | One or two food peaks with independent widths, steady/alternating/even food, populations of 36/72/144 and inherited generations |
 
 Each file includes its SVG model, styles, runtime, verbatim MIT licence and pedagogical data. It opens independently with no network or package installation. Use Start over to return to the first experience; Back repeats an earlier experience. Progress and observations are held only for the current page session.
 
@@ -30,8 +41,8 @@ The build reads the existing four `lab-contracts` sidecars, `LICENSE`, `docs/exa
 
 Each HTML contains:
 
-- `script[data-examplicity-lab-contract]`: the valid v1 contract, preserving relationship, invariants, safe adaptations, non-goals and developer guide while replacing the implementation map with the actual prototype surfaces and quantities.
-- `script[data-examplicity-pedagogy]`: research, original source revision/hash, the ordered lesson criteria, accessibility behaviour and model limits.
+- `script[data-examplicity-lab-contract]`: the valid v1 contract and actual implementation map. Original guided outcomes remain intact. Chemistry explicitly extends its former fixed-temperature/fixed-amount scope in the final experiment; its relationship, conditional invariants, adaptations and non-goals document that change.
+- `script[data-examplicity-pedagogy]`: research, original source revision/hash, original invariants and non-goals, the ordered lesson criteria, extensions, quantity-link conventions, motion, accessibility and model limits.
 
 The implementation revision is a SHA-256 of the embedded token layer, shared design CSS/runtime and prototype CSS/runtime/model. The generated sidecar and embedded contract must be identical.
 
@@ -41,7 +52,9 @@ The implementation revision is a SHA-256 of the embedded token layer, shared des
 node --experimental-strip-types experiments/visual-discovery/verify.mjs <path-to-agent-browser-executable>
 ```
 
-The script uses the isolated `visual-discovery` browser session. It exercises all guided steps and experiment controls through mouse/keyboard interaction; browser evaluation only reads model state for assertions. It checks contract parity, JavaScript syntax, offline packaging, scientific invariants, revisions, and opening/final layouts at 1200×800, 900×800 and 390×844. It also checks reduced motion, revised-answer states, parent-to-offspring replacement, and dot packing when all 72 birds share one trait group. No full-site build is needed for these additive standalone files.
+Append `maths`, `physics`, `chemistry` or `biology` to repeat only that lab’s browser journey; packaging checks still cover all four files. Focused results use a separate report file.
+
+The script uses the isolated `visual-discovery` browser session. It exercises all guided steps and experiment controls through mouse/keyboard interaction; browser evaluation only reads model state for assertions. It checks contract parity, JavaScript syntax, offline packaging, scientific invariants, revisions, and opening/final layouts at 1200×800, 900×800 and 390×844. It also checks source/formula explanations, value tracing and its reduced-motion alternative, layer transitions, revised-answer states, the expanded experimental variables, parent-to-offspring replacement, and dot packing when all 72 guided birds share one trait group. No full-site build is needed for these standalone files.
 
 The completed run passed all four journeys. In the seeded Biology run, directional selection reached generation 3 with mean 12.80 mm; stabilising selection reached generation 3 with SD 0.72 mm; disruptive selection reached generation 4 with SD 3.08 mm, an empty middle band and both tails represented. These are simulated results, not empirical biology data.
 
@@ -58,6 +71,7 @@ All lab deliverables are confined to this directory. The repository's required i
 | `serve.mjs` | Optional local review server |
 | `verify.mjs` | Focused browser acceptance checks |
 | `src/shared.css`, `src/shared.js` | Shared progressive layout and DOM/lesson helpers |
+| `src/connections.js` | Explicit source-to-formula links, minimal explanations, value-transfer cues, stage transitions and outcome presentation |
 | `src/maths.js` | Similarity model, SVG and seven-step journey |
 | `src/physics.js`, `src/physics-svg.js` | Optical model, controls, SVG apparatus and five-step journey |
 | `src/chemistry.js`, `src/chemistry-svg.js` | Gas model, animation, SVG instruments/graph and five-step journey |
