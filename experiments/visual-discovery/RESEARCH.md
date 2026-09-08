@@ -46,11 +46,12 @@ Progressive disclosure replaces support switches and guidance overlays. The exis
 These are design decisions informed by the research above, not separately validated learning-effectiveness claims:
 
 - `data-source` and `data-value-ref` identify each quantity. A starting measurement and a current measurement have different identities even when their values match. Derived results can feed later working.
-- After a changed state settles for 450 ms, a source pulses, its value travels along a short curved path for 560 ms when both ends are visible, and its formula operands pulse. The calculation follows row order. **Trace values** replays it; selecting one source or operand isolates that connection.
+- Only activating **Trace values** starts the sequence: a source pulses, its value travels along a short curved path for 560 ms when both ends are visible, and its formula operands pulse. The calculation follows row order. Loading, editing, scrolling, changing checkpoints and selecting a source never start a trace.
 - Hover or focus highlights both locations and opens a small 12 px explanation. Tap and Enter/Space work on source labels; Escape dismisses the explanation. The working card explains the complete calculation. Tooltips can be hovered without vanishing.
-- New stages enter with a 320 ms fade and 7 px rise, staggered by 45 ms. Cube layers separate or rejoin over 420 ms. Piston tests interpolate actual volume; offspring travel from their sampled parents. None of these animations bypasses a criterion.
-- A completed criterion receives a green check and a short evidence heading, within the existing semantic palette. Editing an answer clears success. Missions provide the previous result, the current purpose and the next action.
-- Reduced motion uses paired static outlines without travelling values or stage movement. Edits, dragging, scrolling and stage changes cancel stale cues; tracing never scrolls the page automatically.
+- Checkpoint transitions compare rendered visual parts. Changed mission text, working, controls, feedback and SVG elements fade out for 150 ms before their replacements fade in for 300 ms. Identical apparatus and controls remain visible; changing working and model areas resize smoothly. Temporary visual copies are inert and hidden from assistive technology, with isolated SVG references, and are removed when the transition finishes. Navigation is briefly locked to prevent skipping a checkpoint.
+- Cube layers separate or rejoin over 420 ms. Piston tests interpolate actual volume; offspring travel from their sampled parents. These model-specific animations retain their causal meaning.
+- A completed criterion receives a white checkmark on a green disc and a short evidence heading. Editing an answer clears success. Missions use aligned blue headings, quieter context and spacing, without an icon. Their text supplies the previous result, current purpose and next action.
+- Reduced motion changes checkpoints immediately and uses paired static outlines only when tracing is requested. Edits, dragging, scrolling and stage changes cancel a running trace; tracing never scrolls the page automatically.
 
 ## Expanded experimental limits
 

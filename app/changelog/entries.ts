@@ -11,7 +11,7 @@ export const changelogEntries: readonly ChangelogEntry[] = [
     displayDate: '8 September 2026',
     publicChanges: [],
     internalChanges: [
-      'Added four isolated visual lab review prototypes with contextual missions, source-to-formula animations and explanations, worked calculations, clear outcomes and SVG transitions. Expanded experiments include independent dimensions, custom optical indices, gas temperature and amount, and population sizes and food pressures. Embedded teaching contracts, research notes and browser checks document the guided outcomes and experimental extensions.',
+      'Added four isolated visual lab review prototypes with contextual missions, button-triggered source-to-formula traces and explanations, worked calculations and clear checkmark outcomes. Checkpoint transitions fade changed parts while keeping continuing models visible. Expanded experiments include independent dimensions, custom optical indices, gas temperature and amount, and population sizes and food pressures. Embedded teaching contracts, research notes and browser checks document the guided outcomes and experimental extensions.',
     ],
   },
   {
