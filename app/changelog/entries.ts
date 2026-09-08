@@ -7,6 +7,14 @@ export type ChangelogEntry = {
 
 export const changelogEntries: readonly ChangelogEntry[] = [
   {
+    date: '2026-09-08',
+    displayDate: '8 September 2026',
+    publicChanges: [],
+    internalChanges: [
+      'Added four isolated visual lab review prototypes with scaffolded SVG investigations, independent experiment modes, embedded teaching contracts, research notes and focused browser checks.',
+    ],
+  },
+  {
     date: '2026-09-06',
     displayDate: '6 September 2026',
     publicChanges: [

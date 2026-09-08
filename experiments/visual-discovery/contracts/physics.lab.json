@@ -1,0 +1,110 @@
+{
+  "schemaVersion": 1,
+  "relationship": "Changing incidence angle and the refractive-index boundary connects refraction to the critical threshold and total internal reflection, with calculation checked against the visible ray behaviour.",
+  "learnerLoop": {
+    "action": "Rotate the source, observe both regimes, mark the limiting ray, calculate a new threshold, then reverse the media.",
+    "modelChange": "Snell’s law and unpolarised Fresnel reflectance derive from the same two refractive indices and incidence angle.",
+    "evidence": "An escaping ray becomes a grazing ray and then disappears; normal-referenced angles and calculation agree.",
+    "nextDecision": "Calculate another threshold or test whether any threshold exists for a reversed pair."
+  },
+  "invariants": [
+    "Angles are measured from the normal and refraction follows the same index ratio used in the calculation.",
+    "A critical angle exists only from higher to lower refractive index; total internal reflection requires exceeding it.",
+    "Guidance levels change calculation support without removing the physical threshold investigation."
+  ],
+  "safeAdaptations": [
+    "Change index examples and prediction wording within the existing optical model.",
+    "Adjust working support while preserving the observe, mark and calculate sequence."
+  ],
+  "nonGoals": [
+    "Do not present total internal reflection as occurring at every boundary or every angle.",
+    "Do not expand into wave interference or a full optical-instrument simulator."
+  ],
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract",
+  "implementation": {
+    "reviewedRevision": "prototype-source-sha256:f2e42660e3c2249070513e149f390fecb06e8f9fca712142e9a39b3a34a53447",
+    "surfaces": {
+      "prompt": {
+        "selectors": [
+          "#title",
+          "#intro"
+        ],
+        "kind": "given",
+        "description": "One current model task and one short action prompt.",
+        "visibility": "Current step only."
+      },
+      "model": {
+        "selectors": [
+          "#stage"
+        ],
+        "kind": "model",
+        "description": "Snell’s law and unpolarised Fresnel reflectance derive from the same two refractive indices and incidence angle.",
+        "visibility": "Always visible; later controls are progressively disclosed."
+      },
+      "working": {
+        "selectors": [
+          "#controls"
+        ],
+        "kind": "working",
+        "description": "Only the input or action needed for the current step; experiment controls appear at the end.",
+        "visibility": "Changes with the current step."
+      },
+      "evidence": {
+        "selectors": [
+          "#feedback",
+          "#records"
+        ],
+        "kind": "evidence",
+        "description": "An escaping ray becomes a grazing ray and then disappears; normal-referenced angles and calculation agree.",
+        "visibility": "In-place feedback; readings only in relevant steps."
+      },
+      "completion": {
+        "selectors": [
+          "#next"
+        ],
+        "kind": "completion",
+        "description": "Advances only after the current model-derived criterion.",
+        "visibility": "Guided steps; absent in the open experiment."
+      }
+    },
+    "quantities": {
+      "angle": {
+        "description": "Angle of incidence measured from the normal.",
+        "domain": "5 to 80 degrees; first step limited to 35 degrees.",
+        "source": "SVG source or predicted-angle input.",
+        "output": "Rays, reflected/transmitted power, angular marks and regime.",
+        "inputSlots": [
+          "[data-control=\"angle\"]",
+          "#angleInput"
+        ]
+      },
+      "critical": {
+        "description": "c = asin(n outside / n inside), only if n inside > n outside.",
+        "domain": "Degrees; no critical angle when the index condition fails.",
+        "source": "Media and learner calculation.",
+        "output": "Marked threshold and calculation feedback.",
+        "inputSlots": [
+          "#ratioInput",
+          "#insideMedium",
+          "#outsideMedium"
+        ]
+      }
+    },
+    "modes": {
+      "guided": "Small ordered visual investigations, with model actions and in-place revision.",
+      "experiment": "Final open mode keeps all variables within the original conceptual model, comparison readings and reset."
+    },
+    "dependencies": [
+      "Rotate beyond 29 degrees, while limited below the first critical angle.",
+      "Observe angles on both sides of c and mark within 0.55 degrees; the accepted marker snaps to c.",
+      "Supply index ratio and inverse-sine result for diamond to air; test the beam. Edits immediately clear success.",
+      "Observe the reversed boundary near both ends of the angle range.",
+      "Ungated experiment: change either medium, mark/inspect thresholds, and keep measured readings."
+    ],
+    "completion": "Every guided criterion is evaluated from actual model state. Continue never bypasses an unmet criterion. Restart returns to the first step; Back repeats a prior step.",
+    "limitations": [
+      "Ideal lossless flat boundary; radial entry through the semicircular face is normal to that face. Unpolarised Fresnel power. The grazing ray at c indicates a limiting direction.",
+      "Ray lengths are illustrative. A minimum ray opacity preserves visibility; the saved power values are physical model values."
+    ]
+  }
+}

@@ -1,0 +1,108 @@
+{
+  "schemaVersion": 1,
+  "relationship": "Changing the seed environment changes differential reproduction of existing inherited beak variation, so trait frequencies change across generations rather than individual birds changing their beaks.",
+  "learnerLoop": {
+    "action": "Move food advantage, select parents, replace adults with their offspring, and sustain three different pressures.",
+    "modelChange": "Environment changes reproductive weights of existing adults. Weighted parent selection and inherited variation generate a new fixed-size population.",
+    "evidence": "Large bird glyphs illustrate three representative beak depths; count dots and frequency bars derive from the same population as mean, spread and middle-band readings. Original adults remain in place when food is edited.",
+    "nextDecision": "Compare directional, stabilising and disruptive effects, then reverse or reshape food in the experiment."
+  },
+  "invariants": [
+    "Editing the environment changes likely parents without changing existing adult traits.",
+    "Selection precedes inheritance and generation replacement; offspring resemble successful parents with variation.",
+    "Distribution and numerical evidence describe the same population and distinguish the three selection patterns."
+  ],
+  "safeAdaptations": [
+    "Change organism context or guidance while preserving heritable variation and differential reproduction.",
+    "Offer additional seed environments and prediction prompts that test changes in frequency over generations."
+  ],
+  "nonGoals": [
+    "Do not portray adaptation as individuals deliberately acquiring a needed trait.",
+    "Do not extend this population model into a full genetic or ecological simulator."
+  ],
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract",
+  "implementation": {
+    "reviewedRevision": "prototype-source-sha256:34b5dfb7e564b9404bffeae8e82b1e087b482dfc724342085f2367a6fe861039",
+    "surfaces": {
+      "prompt": {
+        "selectors": [
+          "#title",
+          "#intro"
+        ],
+        "kind": "given",
+        "description": "One current model task and one short action prompt.",
+        "visibility": "Current step only."
+      },
+      "model": {
+        "selectors": [
+          "#stage"
+        ],
+        "kind": "model",
+        "description": "Environment changes reproductive weights of existing adults. Weighted parent selection and inherited variation generate a new fixed-size population.",
+        "visibility": "Always visible; later controls are progressively disclosed."
+      },
+      "working": {
+        "selectors": [
+          "#controls"
+        ],
+        "kind": "working",
+        "description": "Only the input or action needed for the current step; experiment controls appear at the end.",
+        "visibility": "Changes with the current step."
+      },
+      "evidence": {
+        "selectors": [
+          "#feedback",
+          "#records"
+        ],
+        "kind": "evidence",
+        "description": "Large bird glyphs illustrate three representative beak depths; count dots and frequency bars derive from the same population as mean, spread and middle-band readings. Original adults remain in place when food is edited.",
+        "visibility": "In-place feedback; readings only in relevant steps."
+      },
+      "completion": {
+        "selectors": [
+          "#next"
+        ],
+        "kind": "completion",
+        "description": "Advances only after the current model-derived criterion.",
+        "visibility": "Guided steps; absent in the open experiment."
+      }
+    },
+    "quantities": {
+      "food": {
+        "description": "One or two Gaussian food-advantage peaks across the beak-depth axis.",
+        "domain": "Peak centres 4.5 to 15.5 mm; widths 0.55 to 3 mm.",
+        "source": "SVG seed-distribution handles and free-mode range input.",
+        "output": "Reproductive weights; no direct adult trait change.",
+        "inputSlots": [
+          "[data-control=\"food-0\"]",
+          "[data-control=\"food-1\"]",
+          "#foodWidth"
+        ]
+      },
+      "population": {
+        "description": "72 inherited beak-depth values.",
+        "domain": "4.05 to 15.95 mm; 24 parents selected per generation.",
+        "source": "Seeded weighted sampling with offspring variation of SD 0.43 mm.",
+        "output": "Adult count dots, beak-depth frequency bars and mean/SD/middle frequencies."
+      }
+    },
+    "modes": {
+      "guided": "Small ordered visual investigations, with model actions and in-place revision.",
+      "experiment": "Final open mode keeps all variables within the original conceptual model, comparison readings and reset."
+    },
+    "dependencies": [
+      "Move food advantage toward deeper existing beaks.",
+      "Select 24 parents, then explicitly replace adults with 72 offspring.",
+      "At least three generations and mean rise above 1.2 mm.",
+      "At least three generations and SD below 78% of baseline.",
+      "At least four generations, wider SD, smaller middle, and at least 15% in each tail.",
+      "Ungated experiment: one/two movable peaks, width control, separately staged reproduction, history and a fresh population."
+    ],
+    "completion": "Every guided criterion is evaluated from actual model state. Continue never bypasses an unmet criterion. Restart returns to the first step; Back repeats a prior step.",
+    "limitations": [
+      "Simplified heritable continuous trait, not a complete genetic, ecological, or demographic simulation.",
+      "Fixed population size. Seeded stochastic selection means each generation still varies; the model does not claim inevitable outcomes.",
+      "Dashed columns show starting frequencies; bars show the current 72 adults. Bird drawings are representative trait examples. Spread is population standard deviation; the middle band is 8.5–11.5 mm."
+    ]
+  }
+}

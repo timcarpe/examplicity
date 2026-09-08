@@ -1,0 +1,119 @@
+{
+  "schemaVersion": 1,
+  "relationship": "Moving a piston changes the volume of a fixed gas at constant temperature, connecting collision frequency and pressure to the inverse pressure-volume relationship.",
+  "learnerLoop": {
+    "action": "Compress a fixed gas, predict an expansion, keep three different readings, calculate a pressure target, then investigate freely.",
+    "modelChange": "Pressure is 600/V kPa; particle count and velocity magnitudes remain fixed at constant temperature.",
+    "evidence": "Piston impacts, pressure gauge, volume and recorded pV products all respond to the same volume state.",
+    "nextDecision": "Revise a prediction, derive a new pressure or volume from the invariant, or collect another reading."
+  },
+  "invariants": [
+    "Pressure and volume satisfy the same constant product in the gauge, graph and calculation.",
+    "Constant temperature is represented by unchanged particle speed, not faster particles during compression.",
+    "Collision-frequency evidence changes with volume and stays distinct from particle-speed evidence.",
+    "Working assistance preserves the need to manipulate the piston and compare physical evidence."
+  ],
+  "safeAdaptations": [
+    "Change target values, wording or working support within the supported volume range.",
+    "Add comparisons of pinned readings that test the inverse relationship."
+  ],
+  "nonGoals": [
+    "Do not model changing temperature, changing gas amount or non-ideal gas behaviour.",
+    "Do not replace the piston investigation with a formula-only quiz."
+  ],
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract",
+  "implementation": {
+    "reviewedRevision": "prototype-source-sha256:a175dbd8371d0b50505562ce5a88044dc668b0a028242d35cb688320d953809c",
+    "surfaces": {
+      "prompt": {
+        "selectors": [
+          "#title",
+          "#intro"
+        ],
+        "kind": "given",
+        "description": "One current model task and one short action prompt.",
+        "visibility": "Current step only."
+      },
+      "model": {
+        "selectors": [
+          "#stage"
+        ],
+        "kind": "model",
+        "description": "Pressure is 600/V kPa; particle count and velocity magnitudes remain fixed at constant temperature.",
+        "visibility": "Always visible; later controls are progressively disclosed."
+      },
+      "working": {
+        "selectors": [
+          "#controls"
+        ],
+        "kind": "working",
+        "description": "Only the input or action needed for the current step; experiment controls appear at the end.",
+        "visibility": "Changes with the current step."
+      },
+      "evidence": {
+        "selectors": [
+          "#feedback",
+          "#records"
+        ],
+        "kind": "evidence",
+        "description": "Piston impacts, pressure gauge, volume and recorded pV products all respond to the same volume state.",
+        "visibility": "In-place feedback; readings only in relevant steps."
+      },
+      "completion": {
+        "selectors": [
+          "#next"
+        ],
+        "kind": "completion",
+        "description": "Advances only after the current model-derived criterion.",
+        "visibility": "Guided steps; absent in the open experiment."
+      }
+    },
+    "quantities": {
+      "volume": {
+        "description": "Gas volume V.",
+        "domain": "2 to 8 L, in 0.05 L increments by pointer and 0.25 L by keyboard.",
+        "source": "Piston slider or predicted-volume input.",
+        "output": "Chamber size, gauge pressure and reading table.",
+        "inputSlots": [
+          "[data-control=\"volume\"]",
+          "#volumeInput"
+        ]
+      },
+      "pressure": {
+        "description": "p = 600/V.",
+        "domain": "75 to 300 kPa.",
+        "source": "Actual gas volume; separate marker for an untested prediction.",
+        "output": "Gauge, prediction feedback and readings.",
+        "inputSlots": [
+          "[data-control=\"pressurePrediction\"]"
+        ]
+      },
+      "product": {
+        "description": "Initial pressure times initial volume.",
+        "domain": "600 kPa·L in this experiment.",
+        "source": "Learner uses 150 kPa at 4 L.",
+        "output": "Checks that predicted 2.5 L gives 240 kPa.",
+        "inputSlots": [
+          "#productInput"
+        ]
+      }
+    },
+    "modes": {
+      "guided": "Small ordered visual investigations, with model actions and in-place revision.",
+      "experiment": "Final open mode keeps all variables within the original conceptual model, comparison readings and reset."
+    },
+    "dependencies": [
+      "Compress from 6 L to 3 L.",
+      "Place the predicted gauge marker within 5 kPa of 100 kPa, then expand.",
+      "Record three distinct volumes, each showing the same product.",
+      "Calculate 600 kPa·L and 2.5 L before testing the piston against 240 kPa.",
+      "Ungated experiment: manipulate the full range, record and clear readings, and attempt new pressure targets."
+    ],
+    "completion": "Every guided criterion is evaluated from actual model state. Continue never bypasses an unmet criterion. Restart returns to the first step; Back repeats a prior step.",
+    "limitations": [
+      "This is the existing Physics/Chemistry cross-listed gas model, presented as a Chemistry prototype.",
+      "Eighteen representative particles illustrate collisions; the displayed pressure follows the ideal-gas invariant, not measured 2D simulation impulses.",
+      "Temperature 300 K and amount of gas remain fixed; no heating, non-ideal gases, or quantitative kinetic-theory simulation."
+    ]
+  }
+}

@@ -1,0 +1,107 @@
+{
+  "schemaVersion": 1,
+  "relationship": "A single linear scale factor changes corresponding lengths by that factor, areas by its square and volumes by its cube.",
+  "learnerLoop": {
+    "action": "Drag an edge, fill four unit squares, lift cube layers, reverse area and volume factors, and repair an unequal height.",
+    "modelChange": "Lengths, corresponding face area, and volume derive from k, k², and k²h. h = k for similarity.",
+    "evidence": "Actual unit tilings and cube layers precede the displayed powers; unequal dimensions remain visibly unequal.",
+    "nextDecision": "Use the relationship for a reverse target, a counterexample, or a self-directed comparison."
+  },
+  "invariants": [
+    "Similar solids keep one common linear scale factor across corresponding edges.",
+    "Area and volume factors are respectively the square and cube of that factor."
+  ],
+  "safeAdaptations": [
+    "Vary positive scale factors and prototype dimensions.",
+    "Adjust working support while preserving the linked length, area and volume representations."
+  ],
+  "nonGoals": [
+    "Applying the linear scale factor directly to area or volume."
+  ],
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract",
+  "implementation": {
+    "reviewedRevision": "prototype-source-sha256:b2bfa4ee18265d5805005e76c24cc6c1d77b28b49fb7929de3e85ac5592b033d",
+    "surfaces": {
+      "prompt": {
+        "selectors": [
+          "#title",
+          "#intro"
+        ],
+        "kind": "given",
+        "description": "One current model task and one short action prompt.",
+        "visibility": "Current step only."
+      },
+      "model": {
+        "selectors": [
+          "#stage"
+        ],
+        "kind": "model",
+        "description": "Lengths, corresponding face area, and volume derive from k, k², and k²h. h = k for similarity.",
+        "visibility": "Always visible; later controls are progressively disclosed."
+      },
+      "working": {
+        "selectors": [
+          "#controls"
+        ],
+        "kind": "working",
+        "description": "Only the input or action needed for the current step; experiment controls appear at the end.",
+        "visibility": "Changes with the current step."
+      },
+      "evidence": {
+        "selectors": [
+          "#feedback",
+          "#records"
+        ],
+        "kind": "evidence",
+        "description": "Actual unit tilings and cube layers precede the displayed powers; unequal dimensions remain visibly unequal.",
+        "visibility": "In-place feedback; readings only in relevant steps."
+      },
+      "completion": {
+        "selectors": [
+          "#next"
+        ],
+        "kind": "completion",
+        "description": "Advances only after the current model-derived criterion.",
+        "visibility": "Guided steps; absent in the open experiment."
+      }
+    },
+    "quantities": {
+      "scale": {
+        "description": "Common corresponding-edge factor k.",
+        "domain": "0.5 to 3, in steps of 0.1.",
+        "source": "SVG corner slider.",
+        "output": "Edge, face grid, cube grid and factor labels.",
+        "inputSlots": [
+          "[data-control=\"scale\"]"
+        ]
+      },
+      "height": {
+        "description": "Independent height factor h for the non-similar counterexample.",
+        "domain": "0.5 to 3.",
+        "source": "SVG height slider.",
+        "output": "Shape and actual volume k²h.",
+        "inputSlots": [
+          "[data-control=\"height\"]"
+        ]
+      }
+    },
+    "modes": {
+      "guided": "Small ordered visual investigations, with model actions and in-place revision.",
+      "experiment": "Final open mode keeps all variables within the original conceptual model, comparison readings and reset."
+    },
+    "dependencies": [
+      "Reach k = 2.",
+      "Place all four unit squares.",
+      "Build two layers, four cubes each.",
+      "Infer k = 3 from area factor 9.",
+      "Infer k = 3 from volume factor 27.",
+      "Restore the height to match the two other edge ratios.",
+      "Ungated experiment: compare views, separate layers, stretch a dimension, record readings, and solve reverse area/volume targets."
+    ],
+    "completion": "Every guided criterion is evaluated from actual model state. Continue never bypasses an unmet criterion. Restart returns to the first step; Back repeats a prior step.",
+    "limitations": [
+      "One-unit reference cube; face area means one corresponding face, not total surface area.",
+      "Continuous positive factors include partial units; all three powers apply only when h = k."
+    ]
+  }
+}
