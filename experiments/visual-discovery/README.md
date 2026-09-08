@@ -3,9 +3,11 @@
 Open [the review index](review/index.html), or an individual offline file:
 
 - [Maths — Similarity and scale](review/maths.html): six guided experiences and an experiment.
-- [Physics — When light stays inside](review/physics.html): four guided experiences and an experiment.
-- [Chemistry — Room for a gas](review/chemistry.html): four guided experiences and an experiment.
-- [Biology — A population changes](review/biology.html): five guided experiences and an experiment.
+- [Physics — Measure critical angles](review/physics.html): four guided experiences and an experiment.
+- [Chemistry — Investigate pressure and volume](review/chemistry.html): four guided experiences and an experiment.
+- [Biology — Trace selection across generations](review/biology.html): five guided experiences and an experiment.
+
+Each lab opens with a direct mission and one model. Shared working cards introduce calculations before learners supply the same quantities themselves. Pressure predictions remain separate from the actual gauge; changing the optical material is an explicit step; biology shows selected parents producing offspring before population replacement.
 
 Each file includes its SVG model, styles, runtime, verbatim MIT licence and pedagogical data. It opens independently with no network or package installation. Use Start over to return to the first experience; Back repeats an earlier experience. Progress and observations are held only for the current page session.
 
@@ -39,7 +41,7 @@ The implementation revision is a SHA-256 of the embedded token layer, shared des
 node --experimental-strip-types experiments/visual-discovery/verify.mjs <path-to-agent-browser-executable>
 ```
 
-The script uses the isolated `visual-discovery` browser session. It exercises all guided steps and experiment controls through mouse/keyboard interaction; browser evaluation only reads model state for assertions. It checks contract parity, JavaScript syntax, offline packaging, scientific invariants, revisions, and opening/final layouts at 1200×800, 900×800 and 390×844. It also checks reduced motion. No full-site build is needed for these additive standalone files.
+The script uses the isolated `visual-discovery` browser session. It exercises all guided steps and experiment controls through mouse/keyboard interaction; browser evaluation only reads model state for assertions. It checks contract parity, JavaScript syntax, offline packaging, scientific invariants, revisions, and opening/final layouts at 1200×800, 900×800 and 390×844. It also checks reduced motion, revised-answer states, parent-to-offspring replacement, and dot packing when all 72 birds share one trait group. No full-site build is needed for these additive standalone files.
 
 The completed run passed all four journeys. In the seeded Biology run, directional selection reached generation 3 with mean 12.80 mm; stabilising selection reached generation 3 with SD 0.72 mm; disruptive selection reached generation 4 with SD 3.08 mm, an empty middle band and both tails represented. These are simulated results, not empirical biology data.
 

@@ -1,5 +1,24 @@
-function sceneHeight(){return step<2?440:520}
+function sceneHeight(){return step<2?450:520}
 function traitColour(trait){return trait<8.5?'#93bbe5':trait<=11.5?'#5277b8':'#304f8a'}
+function populationPositions(pop){
+ const left=mobile?23:W*.12,right=mobile?W-23:W*.88,gap=mobile?7:9,counts=[0,0,0];
+ return pop.map((trait,id)=>{const band=trait<8.5?0:trait<=11.5?1:2,j=counts[band]++,cx=left+(3+band*3)/12*(right-left);return{id,band,x:cx-3.5*gap+(j%8)*gap,y:199+Math.floor(j/8)*gap}});
+}
+function drawReproduction(){
+ const left=mobile?23:W*.12,right=mobile?W-23:W*.88,parents=new Map();
+ text(W/2,25,'24 selected parents','accent','middle');
+ for(let band=0;band<3;band++)bird(left+(3+band*3)/12*(right-left)-4,65,7+band*3,mobile?.55:.75);
+ populationPositions(s.parents.map(p=>p.trait)).forEach((p,i)=>{const x=p.x,y=p.y-90;parents.set(s.parents[i].id,{x,y});dot(x,y,mobile?3:3.7,{fill:traitColour(s.parents[i].trait),stroke:'var(--lab-concept-violet)','stroke-width':1.5})});
+ const children=populationPositions(s.pending);
+ s.pending.forEach((trait,i)=>{
+  const origin=parents.get(s.lineage[i]),x=children[i].x,y=children[i].y+51;
+  if(i%12===0)el('path',{d:`M ${origin.x} ${origin.y+6} C ${origin.x} 178 ${x} 190 ${x} ${y-6}`,fill:'none',stroke:'var(--lab-concept-violet-line)','stroke-width':1,'stroke-dasharray':'3 4',opacity:.65});
+  const child=dot(reduced.matches?x:origin.x,reduced.matches?y:origin.y,reduced.matches?(mobile?2.4:3):1,{fill:traitColour(trait),stroke:'white','stroke-width':1,class:'offspring','data-parent-id':s.lineage[i]});
+  if(!reduced.matches)for(const [attributeName,from,to,dur]of [['cx',origin.x,x,'.95s'],['cy',origin.y,y,'.95s'],['r',1,mobile?2.4:3,'.45s']]){const motion=el('animate',{attributeName,from,to,dur,begin:'indefinite',fill:'freeze'},undefined,child);motion.beginElementAt((i%12)*.025)}
+ });
+ el('rect',{x:W/2-50,y:186,width:100,height:25,rx:4,fill:'var(--lab-surface)'});text(W/2,203,'72 offspring','accent','middle');
+ text(W/2,H-55,`Generation ${s.generation+1} will replace the current adults.`,'small','middle');
+}
 // Reuses the source lab's trait colours; beak depth changes the silhouette itself.
 function bird(x,y,trait,scale=1,opacity=1,parent=svg){
  const g=el('g',{transform:`translate(${x} ${y}) scale(${scale})`,opacity},undefined,parent),depth=trait*.53;
@@ -16,7 +35,7 @@ function bird(x,y,trait,scale=1,opacity=1,parent=svg){
  return g;
 }
 function render(){
- clear();head(lesson[step].title,lesson[step].intro);
+ clear();head(lesson[step].title,lesson[step].intro);if(s.phase==='offspring'){drawReproduction();feedback('Producing offspring from the selected parents…');$('back').disabled=true;endDraw();return}
  const m=stats(s.population),left=mobile?23:W*.12,right=mobile?W-23:W*.88,x=v=>left+(v-4)/12*(right-left),intro=step<2;
  text(left,22,`Generation ${s.generation}`,'accent');text(right,22,s.parents?'24 selected parents':'72 adult birds','small','end');
  const bandNames=['Shallow','Middle','Deep'];
@@ -30,10 +49,12 @@ function render(){
   bird(xx-(mobile?4:7),yy,trait,intro?(mobile?.86:1.5):(mobile?.57:.85));
   text(xx,intro?174:124,intro?bandNames[band]:`${trait} mm`,'small','middle');
   if(intro){
-   const gap=mobile?7:9,cols=8,dotX=xx-(cols-1)*gap/2;
-   for(let j=0;j<adults;j++)dot(dotX+(j%cols)*gap,199+Math.floor(j/cols)*gap,mobile?2.4:3,{fill:s.parents?(j<parents?'var(--lab-concept-violet)':'var(--lab-line)'):traitColour(trait)});
-   text(xx,265,s.parents?`${parents} of ${adults} selected`:`${adults} adults`,'small','middle');
+   text(xx,297,s.parents?`${parents} / ${adults} selected`:`${adults} adults`,'small','middle');
   }
+ }
+ if(intro){
+  const selected=new Set(s.parents?.map(p=>p.id));
+  for(const p of populationPositions(s.population))dot(p.x,p.y,mobile?2.4:3,{'data-bird-id':p.id,fill:s.parents?(selected.has(p.id)?'var(--lab-concept-violet)':'var(--lab-line)'):traitColour(s.population[p.id])});
  }
  if(!intro){
   const bins=Array(18).fill(0),original=Array(18).fill(0),selected=Array(18).fill(0),bin=v=>Math.min(17,Math.floor((v-4)*1.5));
@@ -55,7 +76,7 @@ function render(){
   for(const v of [4,8,12,16])text(x(v),base+22,String(v),'small','middle');
   text((left+right)/2,base+43,'Beak depth / mm','small','middle');
  }
- const foodBase=intro?396:455,foodHeight=intro?64:65,path=[];
+ const foodBase=intro?409:455,foodHeight=intro?64:65,path=[];
  for(let v=4;v<=16.01;v+=.1)path.push([x(v),foodBase-Math.min(1,food(v))*foodHeight]);
  el('path',{d:`M ${left} ${foodBase} L ${path.map(p=>p.join(' ')).join(' L ')} L ${right} ${foodBase} Z`,fill:'var(--lab-concept-amber-fill)',stroke:'var(--lab-concept-amber)','stroke-width':1.25});
  // Seed positions are a stable illustration of the current advantage curve.
@@ -66,7 +87,7 @@ function render(){
   el('ellipse',{rx:mobile?2.1:2.8,ry:mobile?3.2:4,fill:'var(--lab-concept-amber)'},undefined,seed);
   line(0,-2,0,2,{stroke:'var(--lab-concept-amber-fill)','stroke-width':.6},seed);
  }
- text(left,foodBase+22,'Food advantage','small');
+ text(left,foodBase+22,'Food advantage by beak depth','small');
  if(step===0||step===5)s.peaks.forEach((p,i)=>{
   const hx=x(p.c),hy=foodBase-foodHeight-10;
   line(hx,hy+13,hx,foodBase,{stroke:'var(--lab-concept-amber)','stroke-width':1,'stroke-dasharray':'3 4',opacity:.5});
@@ -81,5 +102,5 @@ function render(){
  if(step===3){const ok=s.generation>=3&&m.sd<s.baseline.sd*.78;feedback(ok?'Stabilising selection: the spread narrows as middle-sized beaks are favoured.':`${s.generation} generations. Compare the spread with the dashed starting distribution.`,ok)}
  if(step===4){const ok=s.generation>=4&&m.sd>s.baseline.sd*1.2&&m.middle<s.baseline.middle*.72&&m.left>=.15&&m.right>=.15;feedback(ok?'Disruptive selection: both tails remain while the middle becomes less common.':`${s.generation} generations. Look for two groups and a smaller middle.`,ok)}
  if(step===5){feedback(s.parents?'Selected parents are highlighted. Make offspring to change the population.':'Moving food changes the advantage now. Trait frequencies change only after reproduction.',false);table(['Generation','Mean / mm','Spread / mm','Middle band'],s.history.slice(-6).map(r=>[r.g,fmt(r.mean,2),fmt(r.sd,2),Math.round(r.middle*100)+'%']))}
- endDraw();
+ updateBiologyWork();endDraw();
 }

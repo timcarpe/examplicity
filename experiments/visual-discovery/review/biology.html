@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>A population changes · Examplicity</title>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Investigate natural selection · Examplicity</title>
 <!-- LICENSE
 MIT License
 
@@ -50,7 +50,7 @@ SOFTWARE.
   ],
   "developerGuide": "https://www.examplicity.org/developer/lab-contract",
   "implementation": {
-    "reviewedRevision": "prototype-source-sha256:34b5dfb7e564b9404bffeae8e82b1e087b482dfc724342085f2367a6fe861039",
+    "reviewedRevision": "prototype-source-sha256:745ecdfabecba5ad3a0441f5fd149e633bea7fd64e03ca8bc65604eef8ac1917",
     "surfaces": {
       "prompt": {
         "selectors": [
@@ -71,10 +71,10 @@ SOFTWARE.
       },
       "working": {
         "selectors": [
-          "#controls"
+          "#working"
         ],
         "kind": "working",
-        "description": "Only the input or action needed for the current step; experiment controls appear at the end.",
+        "description": "Consistent worked examples linked to the model precede required learner calculations; the same rows, quantities and units carry through.",
         "visibility": "Changes with the current step."
       },
       "evidence": {
@@ -111,7 +111,16 @@ SOFTWARE.
         "description": "72 inherited beak-depth values.",
         "domain": "4.05 to 15.95 mm; 24 parents selected per generation.",
         "source": "Seeded weighted sampling with offspring variation of SD 0.43 mm.",
-        "output": "Adult count dots, beak-depth frequency bars and mean/SD/middle frequencies."
+        "output": "Adult count dots, parent-to-offspring transitions, beak-depth frequency bars and mean/SD/middle frequencies."
+      },
+      "frequency": {
+        "description": "Percentage of the 72 adults within a named trait group.",
+        "domain": "0 to 100 percent; the assessed middle group is 8.5–11.5 mm inclusive.",
+        "source": "Current adult count divided by 72 and multiplied by 100.",
+        "output": "Worked frequency examples precede a checked learner calculation to one decimal place.",
+        "inputSlots": [
+          "#frequencyInput"
+        ]
       }
     },
     "modes": {
@@ -120,9 +129,9 @@ SOFTWARE.
     },
     "dependencies": [
       "Move food advantage toward deeper existing beaks.",
-      "Select 24 parents, then explicitly replace adults with 72 offspring.",
+      "Select 24 parents, observe 72 offspring inheriting traits from those parents, then replace the adults after the transition.",
       "At least three generations and mean rise above 1.2 mm.",
-      "At least three generations and SD below 78% of baseline.",
+      "At least three generations, SD below 78% of baseline, and a checked middle-group frequency within 0.11 percentage points.",
       "At least four generations, wider SD, smaller middle, and at least 15% in each tail.",
       "Ungated experiment: one/two movable peaks, width control, separately staged reproduction, history and a fresh population."
     ],
@@ -166,48 +175,49 @@ SOFTWARE.
     "One causal relationship per guided screen",
     "Visual model before formal notation",
     "Prediction, observation and immediate model-specific revision",
-    "Scaffolding fades into an open experiment"
+    "Scaffolding fades into an open experiment",
+    "Worked calculation rows retain the same quantities, order and units when learners later supply the answers"
   ],
   "sequence": [
     {
       "label": "Existing variation",
-      "title": "Food changes. Beaks don’t.",
-      "intro": "Move the food toward deeper beaks. Watch which adults gain an advantage.",
+      "title": "Change food availability without changing adult beaks.",
+      "intro": "Move the food toward deeper beaks. Compare their food advantage with the adult counts.",
       "criterion": "Move food advantage toward deeper existing beaks.",
       "mode": "guided"
     },
     {
       "label": "Parents, then offspring",
-      "title": "An advantage becomes inheritance.",
-      "intro": "Select parents, then let their offspring replace this generation.",
-      "criterion": "Select 24 parents, then explicitly replace adults with 72 offspring.",
+      "title": "Trace selected parents into the next generation.",
+      "intro": "Select 24 parents, then produce 72 offspring to replace the adults.",
+      "criterion": "Select 24 parents, observe 72 offspring inheriting traits from those parents, then replace the adults after the transition.",
       "mode": "guided"
     },
     {
       "label": "One direction",
-      "title": "Let the same pressure persist.",
-      "intro": "Run several generations. Follow the centre of the population.",
+      "title": "Test whether selection shifts the mean beak depth.",
+      "intro": "Keep food availability unchanged for at least three generations.",
       "criterion": "At least three generations and mean rise above 1.2 mm.",
       "mode": "guided"
     },
     {
       "label": "Favour the middle",
-      "title": "What if the extremes lose out?",
-      "intro": "Start with the original population. Favour middle-sized beaks.",
-      "criterion": "At least three generations and SD below 78% of baseline.",
+      "title": "Measure the effect of favouring middle-sized beaks.",
+      "intro": "Run at least three generations, then calculate the middle group’s frequency.",
+      "criterion": "At least three generations, SD below 78% of baseline, and a checked middle-group frequency within 0.11 percentage points.",
       "mode": "guided"
     },
     {
       "label": "Favour both extremes",
-      "title": "Two food sources. Two advantages.",
-      "intro": "Start again. Favour small and large beaks; follow the middle and both tails.",
+      "title": "Test selection that favours both extremes.",
+      "intro": "Favour small and large beaks for at least four generations. Compare the middle group and both tails.",
       "criterion": "At least four generations, wider SD, smaller middle, and at least 15% in each tail.",
       "mode": "guided"
     },
     {
       "label": "Experiment",
-      "title": "Change the world. Follow the generations.",
-      "intro": "Move food sources, change their range, and test whether a trend reverses.",
+      "title": "Investigate how food availability changes trait frequencies.",
+      "intro": "Move or widen the food sources, then compare successive generations.",
       "criterion": "Ungated experiment: one/two movable peaks, width control, separately staged reproduction, history and a fresh population.",
       "mode": "experiment"
     }
@@ -229,7 +239,7 @@ SOFTWARE.
   "accessibility": {
     "pointer": "Touch and mouse operate the same SVG handles; all handle hit targets at least 44 CSS px.",
     "keyboard": "Arrow keys and Home/End operate SVG sliders. Enter/Space activate unit tiles. Native inputs and buttons support the calculation and generation steps.",
-    "motion": "Respects prefers-reduced-motion; particle animation can also be paused.",
+    "motion": "Respects prefers-reduced-motion; particle animation can also be paused. Laser direction cues are brief, piston tests interpolate physical volume, and offspring move from their actual sampled parents before population replacement.",
     "feedback": "Visible feedback is announced with a polite live region; focus stays on manipulated handles."
   }
 }</script>
@@ -3005,8 +3015,12 @@ html:has(body.lab-science),body.lab-science{height:auto;overflow:visible}
 @media(max-width:700px){.sim-parity-arq .parity-settings{grid-template-columns:1fr 1fr}.sim-parity-arq .parity-settings .field:first-child{grid-column:1/-1}.sim-parity-arq .parity-settings #resetAll{grid-column:2}.sim-parity-arq .parity-settings .switch-line{grid-column:1;white-space:normal}.sim-parity-arq .transmission-rail{grid-template-columns:1fr}.sim-parity-arq .parity-actions{padding:8px 16px 12px;flex-wrap:wrap}.sim-parity-arq .parity-footnotes{padding:0 16px 12px}}
 </style><style>/* Local layout for a progressively disclosed lab. Materials and controls come from the shared v3 kit. */
 :root{--accent:var(--lab-accent);--soft:var(--lab-concept-blue-fill);--muted:var(--lab-muted);--line:var(--lab-line);--ink:var(--lab-ink)}
-*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--lab-canvas);color:var(--lab-ink);font-family:var(--lab-font-sans);-webkit-font-smoothing:antialiased}button,input,select{font-family:inherit}button{cursor:pointer}button:disabled{cursor:default}[hidden]{display:none!important}.lab{width:calc(100% - 36px);max-width:1100px;margin:24px auto;padding:20px 24px;background:var(--lab-surface);border:1px solid var(--lab-line);border-radius:var(--lab-panel-radius)}.topbar{display:flex;align-items:center;gap:14px;margin-bottom:16px}.lab-name{font-size:15px;font-weight:400}.subject{font-size:12px;color:var(--lab-muted)}.topbar #restart{margin-left:auto;min-height:34px}.lesson-head{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 22px;align-items:start;min-height:48px}.lesson-head h1{grid-column:1;margin:0;font:400 16px/1.5 var(--lab-font-sans);letter-spacing:normal;color:var(--lab-accent-ink)}.lesson-head .intro{grid-column:1;margin:0;font:400 14px/1.45 var(--lab-font-sans);color:var(--lab-ink-secondary)}.lab-checkpoints{display:flex;gap:9px;align-items:center;grid-column:2;grid-row:1 / 3;padding:7px 0}.lab-checkpoint{display:block;width:11px;height:11px;border:1px solid var(--lab-line-strong);border-radius:50%;background:white}.lab-checkpoint[aria-current=true]{border-color:var(--lab-accent);background:var(--lab-accent-soft);box-shadow:inset 0 0 0 2px white}.lab-checkpoint[data-complete=true]{background:var(--lab-good);border-color:var(--lab-good)}.stage-wrap{position:relative;margin-top:12px;height:360px}.stage{display:block;width:100%;height:100%;overflow:visible;touch-action:pan-y}.stage text{font:400 14px var(--lab-font-sans);fill:var(--lab-ink)}.stage .small{font-size:12px;fill:var(--lab-ink-secondary)}.stage .big{font-size:24px;font-weight:400}.stage .accent{fill:var(--lab-accent-ink)}.stage .model-control{cursor:grab;touch-action:none}.stage .model-control:active{cursor:grabbing}.stage .clickable{cursor:pointer}.stage .hair{stroke:var(--lab-line);stroke-width:1}.stage .handle{fill:white;stroke:var(--lab-accent);stroke-width:2}.stage .ghost{fill:none;stroke:var(--lab-concept-violet);stroke-width:1.5;stroke-dasharray:5 5;opacity:.75}.stage [data-control]:focus-visible{outline:2px solid var(--lab-accent);outline-offset:3px}.controls{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:10px;min-height:40px;margin-top:8px;font:400 14px/1.45 var(--lab-font-sans)}.controls:empty{display:none}.controls label{display:flex;align-items:center;gap:8px}.controls input[type=number]{width:84px;padding:8px;border:1px solid var(--lab-needed-line);border-radius:8px;background:var(--lab-needed-surface);color:var(--lab-ink);font:400 14px var(--lab-font-sans);text-align:center;min-height:40px}.controls input.good{border-color:var(--lab-good-line);background:var(--lab-good-surface)}.controls input.bad{border-color:var(--lab-bad-line);background:var(--lab-bad-surface)}.controls select{max-width:150px;min-height:40px;padding:8px 28px 8px 12px;border:1px solid var(--lab-line);border-radius:8px;background:white;font:400 12px var(--lab-font-sans);color:var(--lab-ink);box-shadow:0 1px 3px rgba(29,29,31,.08)}.controls input[type=range]{width:130px;accent-color:var(--lab-accent)}.controls .choice[aria-pressed=true]{background:var(--lab-accent-soft);border-color:var(--lab-accent);color:var(--lab-accent-ink)}.foot{margin-top:22px;padding-top:18px;border-top:1px solid var(--lab-line-subtle);display:flex;gap:12px;align-items:center}.feedback{flex:1;min-height:22px;margin:0;font:400 14px/1.45 var(--lab-font-sans);color:var(--lab-ink-secondary)}.feedback.good{color:var(--lab-good-ink)}.feedback.retry{color:var(--lab-bad-ink)}.feedback.good::before{content:'✓ ';color:var(--lab-good)}.feedback.retry::before{content:'× ';color:var(--lab-bad)}#next{min-width:108px}.smallprint{font:400 11px/1.45 var(--lab-font-sans);color:var(--lab-muted);margin:16px 0 0}.records{border-collapse:collapse;font:400 12px/1.45 var(--lab-font-sans);font-variant-numeric:tabular-nums;margin:16px auto 0;width:min(100%,650px)}.records th{font-weight:400;color:var(--lab-muted)}.records td,.records th{padding:7px 12px;text-align:right;border-bottom:1px solid var(--lab-line-subtle)}.records td:first-child,.records th:first-child{text-align:left}.model-fade{animation:appear .25s ease-out}@keyframes appear{from{opacity:.3}to{opacity:1}}#title:focus{outline:none}.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}button:focus-visible,a:focus-visible{outline:2px solid var(--lab-accent);outline-offset:3px}@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}@media(max-width:600px){.lab{width:calc(100% - 20px);margin:10px auto;padding:16px 14px}.topbar{gap:8px;flex-wrap:wrap;margin-bottom:18px}.lab-name{font-size:14px}.subject{font-size:11px}.topbar #restart{padding-inline:9px}.lesson-head{gap:6px 10px}.lesson-head h1{font-size:16px}.lesson-head .intro{font-size:14px}.lab-checkpoints{gap:5px;padding-top:8px}.lab-checkpoint{width:9px;height:9px}.stage-wrap{margin-top:12px}.stage .small{font-size:11px}.stage .big{font-size:21px}.controls{gap:8px}.controls label{font-size:12px}.controls input[type=range]{width:90px}.foot{flex-wrap:wrap;margin-top:18px;padding-top:14px}.feedback{flex-basis:calc(100% - 55px);font-size:14px}#next{margin-left:auto}.records td,.records th{padding:6px 4px}.smallprint{font-size:11px}}
-</style></head><body><main class="lab"><header class="topbar"><span class="lab-name">A population changes</span><span class="subject">Biology</span><button type="button" class="lab-action" id="restart" data-lab-action="reset">Start over</button></header><section class="lesson-head"><h1 id="title" tabindex="-1"></h1><p class="intro" id="intro"></p><div id="checkpoints" class="lab-checkpoints" aria-label="Learning progress"></div></section><div class="stage-wrap" id="stageWrap"><svg xmlns="http://www.w3.org/2000/svg" class="stage" id="stage" role="group" data-lab-role="model"></svg></div><div class="controls" id="controls" data-lab-role="working"></div><table class="records" id="records" hidden aria-label="Experiment readings" data-lab-role="evidence"></table><footer class="foot"><button class="lab-action" id="back" aria-label="Previous step" title="Previous step">←</button><p class="feedback" id="feedback" role="status" aria-live="polite"></p><button class="lab-action" data-priority="primary" id="next">Continue →</button></footer><p class="smallprint">A simplified inheritance model. Spread = standard deviation.</p><noscript>This interactive lab needs JavaScript enabled in your browser.</noscript></main><script data-lab-design>/* Shared model dragging: retain the point grabbed while the model rerenders. */
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--lab-canvas);color:var(--lab-ink);font-family:var(--lab-font-sans);-webkit-font-smoothing:antialiased}button,input,select{font-family:inherit}button{cursor:pointer}button:disabled{cursor:default}[hidden]{display:none!important}.lab{width:calc(100% - 36px);max-width:1100px;margin:24px auto;padding:20px 24px;background:var(--lab-surface);border:1px solid var(--lab-line);border-radius:var(--lab-panel-radius)}.topbar{display:flex;align-items:center;gap:14px;margin-bottom:16px}.lab-name{font-size:15px;font-weight:400}.subject{font-size:12px;color:var(--lab-muted)}.topbar #restart{margin-left:auto;min-height:34px}.lesson-head{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 22px;align-items:start;min-height:48px}.lesson-head h1{grid-column:1;margin:0;font:400 16px/1.5 var(--lab-font-sans);letter-spacing:normal;color:var(--lab-accent-ink)}.lesson-head .intro{grid-column:1;margin:0;font:400 14px/1.45 var(--lab-font-sans);color:var(--lab-ink-secondary)}.lab-checkpoints{display:flex;gap:9px;align-items:center;grid-column:2;grid-row:1 / 3;padding:7px 0}.lab-checkpoint{display:block;width:11px;height:11px;border:1px solid var(--lab-line-strong);border-radius:50%;background:white}.lab-checkpoint[aria-current=true]{border-color:var(--lab-accent);background:var(--lab-accent-soft);box-shadow:inset 0 0 0 2px white}.lab-checkpoint[data-complete=true]{background:var(--lab-good);border-color:var(--lab-good)}.stage-wrap{position:relative;margin-top:12px;height:360px}.stage{display:block;width:100%;height:100%;overflow:visible;touch-action:pan-y}.stage text{font:400 14px var(--lab-font-sans);fill:var(--lab-ink)}.stage .small{font-size:12px;fill:var(--lab-ink-secondary)}.stage .big{font-size:24px;font-weight:400}.stage .accent{fill:var(--lab-accent-ink)}.stage .model-control{cursor:grab;touch-action:none}.stage .model-control:active{cursor:grabbing}.stage .clickable{cursor:pointer}.stage .hair{stroke:var(--lab-line);stroke-width:1}.stage .handle{fill:white;stroke:var(--lab-accent);stroke-width:2}.stage .ghost{fill:none;stroke:var(--lab-concept-violet);stroke-width:1.5;stroke-dasharray:5 5;opacity:.75}.stage [data-control]:focus-visible{outline:2px solid var(--lab-accent);outline-offset:3px}.controls{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:10px;min-height:40px;margin-top:8px;font:400 14px/1.45 var(--lab-font-sans)}.controls:empty{display:none}.controls label{display:flex;align-items:center;gap:8px}.controls input[type=number]{width:84px;padding:8px;border:1px solid var(--lab-needed-line);border-radius:8px;background:var(--lab-needed-surface);color:var(--lab-ink);font:400 14px var(--lab-font-sans);text-align:center;min-height:40px}.controls input.good{border-color:var(--lab-good-line);background:var(--lab-good-surface)}.controls input.bad{border-color:var(--lab-bad-line);background:var(--lab-bad-surface)}.controls select{max-width:150px;min-height:40px;padding:8px 28px 8px 12px;border:1px solid var(--lab-line);border-radius:8px;background:white;font:400 12px var(--lab-font-sans);color:var(--lab-ink);box-shadow:0 1px 3px rgba(29,29,31,.08)}.controls input[type=range]{width:130px;accent-color:var(--lab-accent)}.controls .choice[aria-pressed=true]{background:var(--lab-accent-soft);border-color:var(--lab-accent);color:var(--lab-accent-ink)}.foot{margin-top:16px;padding-top:14px;border-top:1px solid var(--lab-line-subtle);display:flex;gap:12px;align-items:center}.feedback{flex:1;min-height:22px;margin:0;font:400 14px/1.45 var(--lab-font-sans);color:var(--lab-ink-secondary)}.feedback.good{color:var(--lab-good-ink)}.feedback.retry{color:var(--lab-bad-ink)}.feedback.good::before{content:'✓ ';color:var(--lab-good)}.feedback.retry::before{content:'× ';color:var(--lab-bad)}#next{min-width:108px}.smallprint{font:400 11px/1.45 var(--lab-font-sans);color:var(--lab-muted);margin:16px 0 0}.records{border-collapse:collapse;font:400 12px/1.45 var(--lab-font-sans);font-variant-numeric:tabular-nums;margin:16px auto 0;width:min(100%,650px)}.records th{font-weight:400;color:var(--lab-muted)}.records td,.records th{padding:7px 12px;text-align:right;border-bottom:1px solid var(--lab-line-subtle)}.records td:first-child,.records th:first-child{text-align:left}.model-fade{animation:appear .25s ease-out}@keyframes appear{from{opacity:.3}to{opacity:1}}#title:focus{outline:none}.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}button:focus-visible,a:focus-visible{outline:2px solid var(--lab-accent);outline-offset:3px}@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}@media(max-width:600px){.lab{width:calc(100% - 20px);margin:10px auto;padding:16px 14px}.topbar{gap:8px;flex-wrap:wrap;margin-bottom:18px}.lab-name{font-size:14px}.subject{font-size:11px}.topbar #restart{padding-inline:9px}.lesson-head{gap:6px 10px}.lesson-head h1{font-size:16px}.lesson-head .intro{font-size:14px}.lab-checkpoints{gap:5px;padding-top:8px}.lab-checkpoint{width:9px;height:9px}.stage-wrap{margin-top:12px}.stage .small{font-size:11px}.stage .big{font-size:21px}.controls{gap:8px}.controls label{font-size:12px}.controls input[type=range]{width:90px}.foot{flex-wrap:wrap;margin-top:18px;padding-top:14px}.feedback{flex-basis:calc(100% - 55px);font-size:14px}#next{margin-left:auto}.records td,.records th{padding:6px 4px}.smallprint{font-size:11px}}
+/* Working uses the existing card, answer-state and formula primitives. */
+.lesson-head{grid-template-columns:minmax(0,1fr) auto;gap:8px 22px;min-height:76px}.lesson-head h1{grid-row:1;align-self:center}.lesson-head #restart{grid-column:2;grid-row:1;min-height:36px}.lesson-head .intro{grid-row:2}.lab-checkpoints{grid-column:2;grid-row:2;justify-content:flex-end}.context:empty{display:none}.context{margin:14px 0 0;display:flex;justify-content:center;gap:12px;flex-wrap:wrap}.learning-work{max-width:800px;margin:10px auto 12px;padding:12px 16px}.learning-work h2{margin:0 0 10px;font:400 15px/1.4 var(--lab-font-sans);color:var(--lab-accent-ink)}.work-steps{display:flex;gap:16px 24px;align-items:flex-start;flex-wrap:wrap}.work-step{flex:1;min-width:180px}.work-label{display:block;font:400 12px/1.4 var(--lab-font-sans);color:var(--lab-muted);margin-bottom:7px}.work-expression{display:flex;align-items:center;gap:7px;flex-wrap:wrap;font:400 15px/1.7 var(--lab-font-sans);font-variant-numeric:tabular-nums}.work-note{font:400 12px/1.5 var(--lab-font-sans);color:var(--lab-ink-secondary);margin:8px 0 0}.work-note:empty,.work-actions:empty{display:none}.work-actions{display:flex;gap:8px;margin-top:12px}.learning-work input{width:86px;min-height:40px;padding:6px 8px;background:var(--lab-needed-surface);border:1px solid var(--lab-needed-line);border-radius:var(--lab-control-radius);font:400 15px var(--lab-font-sans);text-align:center;color:var(--lab-ink)}.learning-work input.good{border-color:var(--lab-good-line);background:var(--lab-good-soft)}.learning-work input.bad{border-color:var(--lab-bad-line);background:var(--lab-bad-soft)}.learning-work input:focus-visible{outline:2px solid var(--lab-accent);outline-offset:2px}.material-choice{display:flex;align-items:center;gap:9px;font-size:12px;color:var(--lab-muted)}.material-choice select{font:400 12px var(--lab-font-sans);padding:10px 24px 10px 10px;min-height:40px;border:1px solid var(--lab-line);border-radius:8px;background:white;color:var(--lab-ink)}.material-swatch{width:12px;height:12px;border:1px solid var(--lab-line);border-radius:3px;display:inline-block}.stage .beam-flow{stroke-dasharray:5 32;animation:beamTravel 1.1s linear 2;pointer-events:none}.stage .material-piece{animation:materialArrive .5s ease-out}.stage .offspring{pointer-events:none}@keyframes beamTravel{to{stroke-dashoffset:-111}}@keyframes materialArrive{from{opacity:.25}to{opacity:1}}@media(max-width:600px){.lesson-head{gap:10px 12px}.lesson-head h1{grid-column:1/-1;grid-row:1}.lesson-head .intro{grid-column:1/-1;grid-row:2}.lesson-head #restart{grid-column:2;grid-row:3;justify-self:end}.lab-checkpoints{grid-column:1;grid-row:3;justify-content:flex-start}.learning-work{padding:14px;margin-top:10px}.work-steps{gap:14px}.work-step{flex-basis:100%;min-width:0}.work-expression{font-size:14px}.material-choice{gap:6px}.material-choice select{max-width:128px}.stage-wrap{margin-top:4px}}@media(prefers-reduced-motion:reduce){.stage .beam-flow{display:none}}
+
+.material-change{min-height:40px;display:flex;align-items:center;gap:8px;font:400 12px/1.4 var(--lab-font-sans);color:var(--lab-ink-secondary)}
+</style></head><body><main class="lab"><header class="lesson-head"><h1 id="title" tabindex="-1"></h1><button type="button" class="lab-action" id="restart" data-lab-action="reset">Start over</button><p class="intro" id="intro"></p><div id="checkpoints" class="lab-checkpoints" aria-label="Learning progress"></div></header><div id="context" class="context"></div><div class="stage-wrap" id="stageWrap"><svg xmlns="http://www.w3.org/2000/svg" class="stage" id="stage" role="group" data-lab-role="model"></svg></div><section id="working" class="lab-work-card learning-work" hidden data-lab-role="working" aria-label="Working"></section><div class="controls" id="controls" data-lab-role="control"></div><table class="records" id="records" hidden aria-label="Experiment readings" data-lab-role="evidence"></table><footer class="foot"><button class="lab-action" id="back" aria-label="Previous step" title="Previous step">←</button><p class="feedback" id="feedback" role="status" aria-live="polite"></p><button class="lab-action" data-priority="primary" id="next">Continue →</button></footer><p class="smallprint">A simplified inheritance model. Spread = standard deviation.</p><noscript>This interactive lab needs JavaScript enabled in your browser.</noscript></main><script data-lab-design>/* Shared model dragging: retain the point grabbed while the model rerenders. */
 window.LabDesign = {
   checkpoints(host, labels, current, completed = index => index < current, detail = '') {
     host.classList.add('lab-checkpoints'); host.removeAttribute('aria-hidden');
@@ -3354,39 +3368,83 @@ svg.addEventListener('pointercancel',()=>{drag=null});
 function feedback(message,ok=false,retry=false){$('feedback').textContent=message;$('feedback').className='feedback'+(ok?' good':retry?' retry':'');ready=ok;$('next').disabled=!ready}
 function head(title,intro){$('title').textContent=title;$('intro').textContent=intro;LabDesign.checkpoints($('checkpoints'),lesson.map(x=>x.label),step,i=>i<step);$('back').disabled=step===0;$('next').hidden=step===lesson.length-1;$('next').textContent=step===lesson.length-2?'Open experiment':'Continue';svg.setAttribute('aria-label',title+' '+intro)}
 
-function go(n){step=clamp(n,0,lesson.length-1);maxStep=Math.max(maxStep,step);$('controls').replaceChildren();$('records').innerHTML='';$('records').hidden=true;ready=false;enter();resize();$('title').focus({preventScroll:true})}
+function go(n){step=clamp(n,0,lesson.length-1);maxStep=Math.max(maxStep,step);$('controls').replaceChildren();$('context').replaceChildren();$('working').hidden=true;$('records').innerHTML='';$('records').hidden=true;ready=false;enter();resize();$('title').focus({preventScroll:true})}
 $('next').onclick=()=>{if(ready)go(step+1)};$('back').onclick=()=>go(step-1);$('restart').onclick=()=>{maxStep=0;reset();go(0)};
 function button(label,fn,attrs={}){const b=document.createElement('button');b.type='button';b.className='lab-action';b.textContent=label;for(const[k,v]of Object.entries(attrs))b.setAttribute(k,v);b.classList.add('lab-action');b.onclick=fn;$('controls').appendChild(b);return b}
+function workRow(label,expression){return `<div class="work-step"><span class="work-label">${label}</span><div class="work-expression">${expression}</div></div>`}
+function workOutput(id){return `<output class="lab-math-surface" id="${id}"></output>`}
+function workSetup(title,body,note='',required=false){
+ const area=$('working');area.hidden=false;area.dataset.workState=required?'needed':'reference';area.dataset.interacted='false';
+ area.innerHTML=`<h2>${title}</h2><div class="work-steps">${body}</div><p class="work-note" id="workNote">${note}</p><div class="work-actions" id="workActions"></div>`;
+ area.oninput=area.onpointerdown=()=>{area.dataset.interacted='true'};
+}
+function workValue(id,value){const node=$(id);if(!node||node.textContent===String(value))return;const changed=node.textContent!=='';node.textContent=value;if(changed&&!reduced.matches)node.animate([{backgroundColor:getComputedStyle(document.documentElement).getPropertyValue('--lab-needed-soft')},{backgroundColor:getComputedStyle(node).backgroundColor}],{duration:650})}
+function workState(state){$('working').dataset.workState=state}
+function workAction(label,fn){const b=button(label,fn,{'data-priority':'primary'});$('workActions').appendChild(b);return b}
 function table(headers,rows){$('records').hidden=!rows.length;$('records').innerHTML=`<thead><tr>${headers.map(x=>`<th scope="col">${x}</th>`).join('')}</tr></thead><tbody>${rows.map(row=>`<tr>${row.map(x=>`<td>${x}</td>`).join('')}</tr>`).join('')}</tbody>`}
 function resize(){const b=$('stageWrap').getBoundingClientRect();W=b.width;mobile=W<600;H=typeof sceneHeight==='function'?sceneHeight(W):(mobile?400:360);if(b.height!==H)$('stageWrap').style.height=H+'px';svg.setAttribute('viewBox',`0 0 ${W} ${H}`);render()}
 function start(){reset();enter();new ResizeObserver(resize).observe($('stageWrap'));resize()}
 
 const lesson=[
- {label:'Existing variation',title:'Food changes. Beaks don’t.',intro:'Move the food toward deeper beaks. Watch which adults gain an advantage.'},
- {label:'Parents, then offspring',title:'An advantage becomes inheritance.',intro:'Select parents, then let their offspring replace this generation.'},
- {label:'One direction',title:'Let the same pressure persist.',intro:'Run several generations. Follow the centre of the population.'},
- {label:'Favour the middle',title:'What if the extremes lose out?',intro:'Start with the original population. Favour middle-sized beaks.'},
- {label:'Favour both extremes',title:'Two food sources. Two advantages.',intro:'Start again. Favour small and large beaks; follow the middle and both tails.'},
- {label:'Experiment',title:'Change the world. Follow the generations.',intro:'Move food sources, change their range, and test whether a trend reverses.'}
+ {label:'Existing variation',title:'Change food availability without changing adult beaks.',intro:'Move the food toward deeper beaks. Compare their food advantage with the adult counts.'},
+ {label:'Parents, then offspring',title:'Trace selected parents into the next generation.',intro:'Select 24 parents, then produce 72 offspring to replace the adults.'},
+ {label:'One direction',title:'Test whether selection shifts the mean beak depth.',intro:'Keep food availability unchanged for at least three generations.'},
+ {label:'Favour the middle',title:'Measure the effect of favouring middle-sized beaks.',intro:'Run at least three generations, then calculate the middle group’s frequency.'},
+ {label:'Favour both extremes',title:'Test selection that favours both extremes.',intro:'Favour small and large beaks for at least four generations. Compare the middle group and both tails.'},
+ {label:'Experiment',title:'Investigate how food availability changes trait frequencies.',intro:'Move or widen the food sources, then compare successive generations.'}
 ];
 const N=72,COUNT=24,LO=4,HI=16;
 const s={population:[],initial:[],parents:null,pending:null,generation:0,peaks:[{c:10,w:1.4}],history:[],baseline:null,changed:false};
-let rng;
+let rng,generationTimer;
+s.phase='idle';s.frequency='';s.frequencyChecked=false;s.lineage=[];
 function random(seed){return function(){let t=seed+=0x6D2B79F5;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296}}
 function normal(sd){let u=0,v=0;while(!u)u=rng();while(!v)v=rng();return sd*Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)}
 function stats(pop){const mean=pop.reduce((a,v)=>a+v,0)/pop.length;return{mean,sd:Math.sqrt(pop.reduce((a,v)=>a+(v-mean)**2,0)/pop.length),middle:pop.filter(v=>v>=8.5&&v<=11.5).length/pop.length,left:pop.filter(v=>v<8.2).length/pop.length,right:pop.filter(v=>v>11.8).length/pop.length}}
-function initial(){rng=random(9137);s.population=Array.from({length:N},()=>clamp(10+normal(1.85),4.08,15.92));s.initial=[...s.population];s.generation=0;s.parents=null;s.pending=null;s.baseline=stats(s.population);s.history=[{g:0,...s.baseline}];s.changed=false}
+function initial(){clearTimeout(generationTimer);s.phase='idle';s.frequency='';s.frequencyChecked=false;rng=random(9137);s.population=Array.from({length:N},()=>clamp(10+normal(1.85),4.08,15.92));s.initial=[...s.population];s.generation=0;s.parents=null;s.pending=null;s.baseline=stats(s.population);s.history=[{g:0,...s.baseline}];s.changed=false}
 function reset(){s.peaks=[{c:10,w:1.4}];initial()}
 function food(v){return s.peaks.reduce((a,p)=>a+Math.exp(-.5*((v-p.c)/p.w)**2),0)}
 function fitness(v){let max=.001;for(let x=4;x<=16;x+=.05)max=Math.max(max,food(x));return clamp(food(v)/max,0,1)}
-function selectParents(){rng=random(9137+step*100003+s.generation*7919+17);const pool=s.population.map((trait,id)=>({trait,id,w:.2+fitness(trait)**1.4})),parents=[];for(let i=0;i<COUNT;i++){let r=rng()*pool.reduce((a,p)=>a+p.w,0),j=0;for(;j<pool.length-1;j++){r-=pool[j].w;if(r<=0)break}parents.push(pool.splice(j,1)[0])}s.parents=parents;const total=parents.reduce((a,p)=>a+.25+fitness(p.trait)**1.1,0);s.pending=[];for(let i=0;i<N;i++){let r=rng()*total,p=parents[0];for(const candidate of parents){r-=.25+fitness(candidate.trait)**1.1;if(r<=0){p=candidate;break}}s.pending.push(clamp(p.trait+normal(.43),4.05,15.95))}}
-function reproduce(){if(!s.pending)selectParents();s.population=s.pending;s.parents=null;s.pending=null;s.generation++;s.history.push({g:s.generation,...stats(s.population)});render();controls();svg.classList.remove('model-fade');void svg.getBoundingClientRect();svg.classList.add('model-fade')}
-function enter(){if(step<=1){initial();s.peaks=[{c:step===0?10:13.2,w:1.4}]}if(step===2){if(s.generation!==1)initial();s.peaks=[{c:13.2,w:1.4}]}if(step===3){initial();s.peaks=[{c:10,w:.7}]}if(step===4){initial();s.peaks=[{c:6.8,w:.8},{c:13.2,w:.8}]}if(step===5){initial();s.peaks=[{c:13.2,w:1.4}]}controls()}
-function controls(){const c=$('controls');c.innerHTML='';if(step===1||step===5)button(s.parents?'Make next generation':'Select parents',()=>{if(s.parents)reproduce();else{selectParents();render();controls()}});if(step>=2&&step<=4)button('Next generation',reproduce);if(step===5){button('One / two food sources',()=>{if(s.peaks.length===1)s.peaks=[{c:6.8,w:.9},{c:13.2,w:.9}];else s.peaks=[{c:10,w:1.4}];s.parents=null;s.pending=null;controls();render()});const label=document.createElement('label');label.textContent='Food range ';const range=document.createElement('input');range.type='range';range.id='foodWidth';range.min='.55';range.max='3';range.step='.05';range.value=s.peaks[0].w;range.setAttribute('aria-label','Range of beak depths favoured by food');range.oninput=e=>{s.peaks.forEach(p=>p.w=Number(e.target.value));s.parents=null;s.pending=null;render();const next=c.querySelector('button');if(next)next.textContent='Select parents'};label.appendChild(range);c.appendChild(label);button('Fresh population',()=>{initial();controls();render()},{class:'quiet'})}}
+function selectParents(){rng=random(9137+step*100003+s.generation*7919+17);const pool=s.population.map((trait,id)=>({trait,id,w:.2+fitness(trait)**1.4})),parents=[];for(let i=0;i<COUNT;i++){let r=rng()*pool.reduce((a,p)=>a+p.w,0),j=0;for(;j<pool.length-1;j++){r-=pool[j].w;if(r<=0)break}parents.push(pool.splice(j,1)[0])}s.parents=parents;const total=parents.reduce((a,p)=>a+.25+fitness(p.trait)**1.1,0);s.pending=[];s.lineage=[];for(let i=0;i<N;i++){let r=rng()*total,p=parents[0];for(const candidate of parents){r-=.25+fitness(candidate.trait)**1.1;if(r<=0){p=candidate;break}}s.pending.push(clamp(p.trait+normal(.43),4.05,15.95));s.lineage.push(p.id)}}
+function reproduce(){if(s.phase!=='idle')return;if(!s.pending)selectParents();s.phase='offspring';s.frequency='';s.frequencyChecked=false;controls();render();if(reduced.matches)commitGeneration();else generationTimer=setTimeout(commitGeneration,1500)}
+function commitGeneration(){if(s.phase!=='offspring')return;s.population=s.pending;s.parents=null;s.pending=null;s.phase='idle';s.generation++;s.history.push({g:s.generation,...stats(s.population)});controls();render()}
+function enter(){clearTimeout(generationTimer);s.phase='idle';if(step<=1){initial();s.peaks=[{c:step===0?10:13.2,w:1.4}]}if(step===2){if(s.generation!==1)initial();s.peaks=[{c:13.2,w:1.4}]}if(step===3){initial();s.peaks=[{c:10,w:.7}]}if(step===4){initial();s.peaks=[{c:6.8,w:.8},{c:13.2,w:.8}]}if(step===5){initial();s.peaks=[{c:13.2,w:1.4}]}controls()}
+function controls(){const c=$('controls');c.innerHTML='';setupBiologyWork();if(s.phase!=='idle')return;if(step===1||step===5)button(s.parents?'Produce offspring':'Select parents',()=>{if(s.parents)reproduce();else{selectParents();controls();render()}});if(step>=2&&step<=4)button('Next generation',reproduce);if(step===5){button(s.peaks.length===1?'Use two food sources':'Use one food source',()=>{if(s.peaks.length===1)s.peaks=[{c:6.8,w:.9},{c:13.2,w:.9}];else s.peaks=[{c:10,w:1.4}];s.parents=null;s.pending=null;controls();render()});const label=document.createElement('label');label.textContent='Food range ';const range=document.createElement('input');range.type='range';range.id='foodWidth';range.min='.55';range.max='3';range.step='.05';range.value=s.peaks[0].w;range.setAttribute('aria-label','Range of beak depths favoured by food');range.oninput=e=>{s.peaks.forEach(p=>p.w=Number(e.target.value));s.parents=null;s.pending=null;render();const next=c.querySelector('button');if(next)next.textContent='Select parents'};label.appendChild(range);c.appendChild(label);button('Reset population',()=>{initial();controls();render()},{class:'quiet'})}}
 start();
+function setupBiologyWork(){
+ if(s.phase==='offspring'){workSetup('Inheritance',workRow('selected parents','<span class="lab-math-surface">24</span>')+workRow('offspring replacing the adults','<span class="lab-math-surface">72</span>'),'Each offspring inherits a trait from a selected parent, with variation.');return}
+ if(step===0||step===1||step===2)workSetup('Calculate a trait frequency',workRow('deep-beaked birds ÷ all birds × 100',workOutput('frequencyWork')),'Frequency is the percentage of the population in this group.');
+ if(step===3){workSetup('Calculate the middle group’s frequency',workRow('middle-sized birds ÷ all birds × 100','<span id="middleCount"></span> ÷ 72 × 100 = <input id="frequencyInput" type="number" min="0" max="100" step="0.1" inputmode="decimal" aria-label="Percentage of birds in the middle group">%'),'Run at least three generations, then give the frequency to one decimal place.',true);$('frequencyInput').value=s.frequency;$('frequencyInput').oninput=e=>{s.frequency=e.target.value;s.frequencyChecked=false;render()};workAction('Check frequency',()=>{s.frequencyChecked=true;render()})}
+ if(step===4)workSetup('Compare the middle group’s frequency',workRow('starting population',workOutput('initialFrequency'))+workRow('current population',workOutput('currentFrequency')),'Compare these frequencies with the groups at both ends of the distribution.');
+ if(step===5)$('working').hidden=true;
+}
+function updateBiologyWork(){
+ const m=stats(s.population),deep=s.population.filter(v=>v>11.5).length,middle=s.population.filter(v=>v>=8.5&&v<=11.5).length;
+ if(step<=2)workValue('frequencyWork',`${deep} ÷ 72 × 100 = ${fmt(deep/72*100)}%`);
+ if(step===3){workValue('middleCount',middle);const correct=s.frequency!==''&&Math.abs(Number(s.frequency)-m.middle*100)<=.11,observed=s.generation>=3&&m.sd<s.baseline.sd*.78,ok=s.frequencyChecked&&correct&&observed;$('frequencyInput').disabled=s.generation<3;$('workActions').querySelector('button').disabled=s.generation<3;$('frequencyInput').className=s.frequencyChecked?(correct?'good':'bad'):'';workState(s.frequencyChecked?(correct?'good':'bad'):'needed');if(observed)feedback(ok?'Correct. Middle-sized beaks are more frequent and the spread is narrower.':s.frequencyChecked?'Divide the middle group count by 72 and multiply by 100.':'Calculate the current middle group’s frequency to complete the investigation.',ok,s.frequencyChecked&&!correct)}
+ if(step===4){const initial=s.initial.filter(v=>v>=8.5&&v<=11.5).length;workValue('initialFrequency',`${initial} ÷ 72 × 100 = ${fmt(initial/72*100)}%`);workValue('currentFrequency',`${middle} ÷ 72 × 100 = ${fmt(middle/72*100)}%`)}
+}
 
-function sceneHeight(){return step<2?440:520}
+function sceneHeight(){return step<2?450:520}
 function traitColour(trait){return trait<8.5?'#93bbe5':trait<=11.5?'#5277b8':'#304f8a'}
+function populationPositions(pop){
+ const left=mobile?23:W*.12,right=mobile?W-23:W*.88,gap=mobile?7:9,counts=[0,0,0];
+ return pop.map((trait,id)=>{const band=trait<8.5?0:trait<=11.5?1:2,j=counts[band]++,cx=left+(3+band*3)/12*(right-left);return{id,band,x:cx-3.5*gap+(j%8)*gap,y:199+Math.floor(j/8)*gap}});
+}
+function drawReproduction(){
+ const left=mobile?23:W*.12,right=mobile?W-23:W*.88,parents=new Map();
+ text(W/2,25,'24 selected parents','accent','middle');
+ for(let band=0;band<3;band++)bird(left+(3+band*3)/12*(right-left)-4,65,7+band*3,mobile?.55:.75);
+ populationPositions(s.parents.map(p=>p.trait)).forEach((p,i)=>{const x=p.x,y=p.y-90;parents.set(s.parents[i].id,{x,y});dot(x,y,mobile?3:3.7,{fill:traitColour(s.parents[i].trait),stroke:'var(--lab-concept-violet)','stroke-width':1.5})});
+ const children=populationPositions(s.pending);
+ s.pending.forEach((trait,i)=>{
+  const origin=parents.get(s.lineage[i]),x=children[i].x,y=children[i].y+51;
+  if(i%12===0)el('path',{d:`M ${origin.x} ${origin.y+6} C ${origin.x} 178 ${x} 190 ${x} ${y-6}`,fill:'none',stroke:'var(--lab-concept-violet-line)','stroke-width':1,'stroke-dasharray':'3 4',opacity:.65});
+  const child=dot(reduced.matches?x:origin.x,reduced.matches?y:origin.y,reduced.matches?(mobile?2.4:3):1,{fill:traitColour(trait),stroke:'white','stroke-width':1,class:'offspring','data-parent-id':s.lineage[i]});
+  if(!reduced.matches)for(const [attributeName,from,to,dur]of [['cx',origin.x,x,'.95s'],['cy',origin.y,y,'.95s'],['r',1,mobile?2.4:3,'.45s']]){const motion=el('animate',{attributeName,from,to,dur,begin:'indefinite',fill:'freeze'},undefined,child);motion.beginElementAt((i%12)*.025)}
+ });
+ el('rect',{x:W/2-50,y:186,width:100,height:25,rx:4,fill:'var(--lab-surface)'});text(W/2,203,'72 offspring','accent','middle');
+ text(W/2,H-55,`Generation ${s.generation+1} will replace the current adults.`,'small','middle');
+}
 // Reuses the source lab's trait colours; beak depth changes the silhouette itself.
 function bird(x,y,trait,scale=1,opacity=1,parent=svg){
  const g=el('g',{transform:`translate(${x} ${y}) scale(${scale})`,opacity},undefined,parent),depth=trait*.53;
@@ -3403,7 +3461,7 @@ function bird(x,y,trait,scale=1,opacity=1,parent=svg){
  return g;
 }
 function render(){
- clear();head(lesson[step].title,lesson[step].intro);
+ clear();head(lesson[step].title,lesson[step].intro);if(s.phase==='offspring'){drawReproduction();feedback('Producing offspring from the selected parents…');$('back').disabled=true;endDraw();return}
  const m=stats(s.population),left=mobile?23:W*.12,right=mobile?W-23:W*.88,x=v=>left+(v-4)/12*(right-left),intro=step<2;
  text(left,22,`Generation ${s.generation}`,'accent');text(right,22,s.parents?'24 selected parents':'72 adult birds','small','end');
  const bandNames=['Shallow','Middle','Deep'];
@@ -3417,10 +3475,12 @@ function render(){
   bird(xx-(mobile?4:7),yy,trait,intro?(mobile?.86:1.5):(mobile?.57:.85));
   text(xx,intro?174:124,intro?bandNames[band]:`${trait} mm`,'small','middle');
   if(intro){
-   const gap=mobile?7:9,cols=8,dotX=xx-(cols-1)*gap/2;
-   for(let j=0;j<adults;j++)dot(dotX+(j%cols)*gap,199+Math.floor(j/cols)*gap,mobile?2.4:3,{fill:s.parents?(j<parents?'var(--lab-concept-violet)':'var(--lab-line)'):traitColour(trait)});
-   text(xx,265,s.parents?`${parents} of ${adults} selected`:`${adults} adults`,'small','middle');
+   text(xx,297,s.parents?`${parents} / ${adults} selected`:`${adults} adults`,'small','middle');
   }
+ }
+ if(intro){
+  const selected=new Set(s.parents?.map(p=>p.id));
+  for(const p of populationPositions(s.population))dot(p.x,p.y,mobile?2.4:3,{'data-bird-id':p.id,fill:s.parents?(selected.has(p.id)?'var(--lab-concept-violet)':'var(--lab-line)'):traitColour(s.population[p.id])});
  }
  if(!intro){
   const bins=Array(18).fill(0),original=Array(18).fill(0),selected=Array(18).fill(0),bin=v=>Math.min(17,Math.floor((v-4)*1.5));
@@ -3442,7 +3502,7 @@ function render(){
   for(const v of [4,8,12,16])text(x(v),base+22,String(v),'small','middle');
   text((left+right)/2,base+43,'Beak depth / mm','small','middle');
  }
- const foodBase=intro?396:455,foodHeight=intro?64:65,path=[];
+ const foodBase=intro?409:455,foodHeight=intro?64:65,path=[];
  for(let v=4;v<=16.01;v+=.1)path.push([x(v),foodBase-Math.min(1,food(v))*foodHeight]);
  el('path',{d:`M ${left} ${foodBase} L ${path.map(p=>p.join(' ')).join(' L ')} L ${right} ${foodBase} Z`,fill:'var(--lab-concept-amber-fill)',stroke:'var(--lab-concept-amber)','stroke-width':1.25});
  // Seed positions are a stable illustration of the current advantage curve.
@@ -3453,7 +3513,7 @@ function render(){
   el('ellipse',{rx:mobile?2.1:2.8,ry:mobile?3.2:4,fill:'var(--lab-concept-amber)'},undefined,seed);
   line(0,-2,0,2,{stroke:'var(--lab-concept-amber-fill)','stroke-width':.6},seed);
  }
- text(left,foodBase+22,'Food advantage','small');
+ text(left,foodBase+22,'Food advantage by beak depth','small');
  if(step===0||step===5)s.peaks.forEach((p,i)=>{
   const hx=x(p.c),hy=foodBase-foodHeight-10;
   line(hx,hy+13,hx,foodBase,{stroke:'var(--lab-concept-amber)','stroke-width':1,'stroke-dasharray':'3 4',opacity:.5});
@@ -3468,6 +3528,6 @@ function render(){
  if(step===3){const ok=s.generation>=3&&m.sd<s.baseline.sd*.78;feedback(ok?'Stabilising selection: the spread narrows as middle-sized beaks are favoured.':`${s.generation} generations. Compare the spread with the dashed starting distribution.`,ok)}
  if(step===4){const ok=s.generation>=4&&m.sd>s.baseline.sd*1.2&&m.middle<s.baseline.middle*.72&&m.left>=.15&&m.right>=.15;feedback(ok?'Disruptive selection: both tails remain while the middle becomes less common.':`${s.generation} generations. Look for two groups and a smaller middle.`,ok)}
  if(step===5){feedback(s.parents?'Selected parents are highlighted. Make offspring to change the population.':'Moving food changes the advantage now. Trait frequencies change only after reproduction.',false);table(['Generation','Mean / mm','Spread / mm','Middle band'],s.history.slice(-6).map(r=>[r.g,fmt(r.mean,2),fmt(r.sd,2),Math.round(r.middle*100)+'%']))}
- endDraw();
+ updateBiologyWork();endDraw();
 }
 </script></body></html>

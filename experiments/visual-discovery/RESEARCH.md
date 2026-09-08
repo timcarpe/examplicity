@@ -14,6 +14,8 @@ The learner sees one current goal, a short action prompt, and the relevant model
 
 Early steps constrain the task. A later step introduces a second dimension, a threshold, an invariant, or a generation. Feedback describes the current model state. Continue becomes available when the learner has produced the necessary evidence. Wrong numerical predictions remain revisable, and changing an answer clears previous success immediately.
 
+One shared working card connects each calculation to the visible model. Early examples show the quantities, operation and units. Changed values briefly highlight; later steps keep the same calculation order while replacing results with learner inputs. The Maths reverse factors, optical index ratio, gas product and population percentage all follow this pattern. Cards appear where they support the current task.
+
 The final step removes guided completion gates. Learners retain the model’s full supported variable range, can keep or clear observations, and can reset an experiment. This is an open investigation within the original conceptual scope, rather than an unlimited scientific simulator.
 
 ## Why these four labs
@@ -35,11 +37,13 @@ The build embeds the pinned shared CSS/runtime and the guide’s token layer. Re
 
 The source’s unit grids and corresponding faces, semicircular optics apparatus, gas instruments, blue trait identities and amber food distribution are retained or redrawn at a clearer size. The Biology opening uses representative beak drawings and individual count dots before revealing the frequency plot. The gas graph appears after learners have observed the apparatus. Both changes remove simultaneous representations from the opening without losing them from the lab.
 
-At the user’s direction, these prototypes replace support switches, guidance overlays and attention pulses with progressive disclosure. That is an intentional interaction change, not a new general rule for existing labs.
+The gas gauge always reports actual pressure. A numerical prediction sits in the working card, and testing animates the piston to the test volume before comparing the result. Glass changes explicitly to a visibly distinct diamond block, retaining the glass threshold as a reference. Brief laser cues show travel direction. Selected Biology parents produce 72 inherited offspring before those offspring replace the adults; animation paths use the actual sampled parent identities. Dot rows reserve enough room for the entire population in one group.
+
+Progressive disclosure replaces support switches and guidance overlays. The existing shared required-answer treatment and brief calculation-value highlights supply local attention cues. Motion respects reduced-motion preferences. These are scoped interaction changes, not new general rules for existing labs.
 
 ## Review evidence and limits
 
-All 19 guided criteria and four experiment entries were exercised through the browser’s learner controls. Checks include reverse scale calculations, optical regimes, wrong/correct predictions, immediate success invalidation, constant pV and particle speed, unchanged adult traits during environmental edits, and all three selection patterns. Opening and experiment layouts were checked at 1200, 900 and 390 pixels, with offline and reduced-motion checks.
+All 19 guided criteria and four experiment entries were exercised through the browser’s learner controls. Checks include reverse scale calculations, optical regimes, wrong/correct predictions, immediate success invalidation, constant pV and particle speed, unchanged adult traits during environmental edits, and all three selection patterns. Opening and experiment layouts were checked at 1200, 900 and 390 pixels, with additional reviews of calculation and material-change screens, offline and reduced-motion checks.
 
 The SVG review compares model clarity and source continuity, not merely absence of browser errors. These remain review prototypes: visual acceptance and learning effectiveness should be assessed with the intended learners. No catalogue entries or published labs have been replaced.
 

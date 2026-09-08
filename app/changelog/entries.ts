@@ -11,7 +11,7 @@ export const changelogEntries: readonly ChangelogEntry[] = [
     displayDate: '8 September 2026',
     publicChanges: [],
     internalChanges: [
-      'Added four isolated visual lab review prototypes with scaffolded SVG investigations, independent experiment modes, embedded teaching contracts, research notes and focused browser checks.',
+      'Added four isolated visual lab review prototypes with mission-led SVG investigations, consistent worked examples and learner calculations, clearer piston predictions and optical material changes, animated inheritance, independent experiments, embedded teaching contracts, research notes and browser checks.',
     ],
   },
   {
