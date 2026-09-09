@@ -303,6 +303,7 @@ body[data-lab-layout="compact"] [data-lab-workspace] {
     transition-duration: 0.001ms !important;
   }
 }
+
 </style>
 <!-- LAB_FRAME_STYLES_END -->
 <link rel="stylesheet" href="./lab-kit.css" data-lab-resource="lab-kit.css">
@@ -447,6 +448,12 @@ h1{margin:0;font-size:28px;font-weight:640;letter-spacing:-.03em;line-height:1.1
 @media(prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;transition-duration:.001ms!important;scroll-behavior:auto!important}}
 </style>
 <!-- LAB_DESIGN_COMPONENTS -->
+<style data-tcp-interaction-styles>
+.packet-explainer{margin:10px 0;font-size:13px;line-height:1.5}.packet-explainer summary{cursor:pointer}.packet-explainer p{max-width:70ch}
+.interaction-pulse{animation:interactionPulse .8s ease-in-out 3}
+@keyframes interactionPulse{50%{outline:3px solid var(--lab-accent,#587cad);outline-offset:3px}}
+@media(prefers-reduced-motion:reduce){.interaction-pulse{animation:none;outline:2px solid var(--lab-accent,#587cad)}}
+</style>
 </head>
 <body class="lab-adopt-v3 lab-simulation sim-tcp-ip-encapsulation" data-lab-layout="standard">
 <main>
@@ -472,6 +479,7 @@ h1{margin:0;font-size:28px;font-weight:640;letter-spacing:-.03em;line-height:1.1
   <span data-lab-authored-subtitle-slot hidden></span>
 <section class="lab-activity-bar sim-top"><div class="lab-activity-task"><strong id="challengeTitle">Get the browser request to the web-server process</strong></div><div class="sim-top-tools"></div></section>
 
+  <details class="packet-explainer"><summary>How to build a packet</summary><p>Click, tap or drag shells to wrap the application message: TCP, then IP, then Ethernet. Send to watch the receiver unpack them in reverse. Remove the outer shell with × to revise your stack.</p></details>
   <section class="sim-legacy panel challenge-bar">
     <div class="challenge-copy">
 
@@ -481,7 +489,7 @@ h1{margin:0;font-size:28px;font-weight:640;letter-spacing:-.03em;line-height:1.1
   </section>
 
   <div class="lab-tool-bar lab-secondary-bar"><div class="challenge-actions">
-      <button id="compareProcess" type="button" hidden data-lab-intro="tcp-process" data-lab-intro-title="Compare another process" data-lab-intro-copy="Build for the mail process on the same server, then compare which destination information changes." class="lab-action">Compare another process</button>
+      <button id="compareProcess" type="button" hidden class="lab-action">Compare another process</button>
       <button id="resetPacket" type="button" data-lab-action="reset" class="lab-action">Restart lab</button>
     </div></div><section class="panel lab-board lab-kit-canvas" data-grid="square" aria-label="Interactive TCP IP encapsulation workshop">
     <div class="board-head">
@@ -499,7 +507,7 @@ h1{margin:0;font-size:28px;font-weight:640;letter-spacing:-.03em;line-height:1.1
     <div class="board-stage">
       <section class="station lab-kit-panel">
         <div class="station-title"><strong>Protocol shells</strong><span>Click a shell to wrap the whole current object. The rack is deliberately not ordered.</span></div>
-        <div id="rack" class="rack" data-lab-intro="tcp-wrap" data-lab-intro-title="Wrap the entire object" data-lab-intro-copy="Choose a protocol shell to add its header. The remove button peels only the outer shell; send at any point to test the order.">
+        <div id="rack" class="rack">
           <button class="wrapper-tool ip" data-wrapper="ip" type="button"><span class="tool-shell">IP</span><span><strong>Internet layer</strong><small>host → host<br>adds IP addresses</small></span></button>
           <button class="wrapper-tool tcp" data-wrapper="tcp" type="button"><span class="tool-shell">TCP</span><span><strong>Transport layer</strong><small>process → process<br>adds port numbers</small></span></button>
           <button class="wrapper-tool link" data-wrapper="link" type="button"><span class="tool-shell">ETH</span><span><strong>Link layer</strong><small>NIC → NIC<br>adds MAC addresses</small></span></button>
@@ -522,7 +530,7 @@ h1{margin:0;font-size:28px;font-weight:640;letter-spacing:-.03em;line-height:1.1
           <div class="wire-line"></div>
           <div id="flightPacket" class="flight-packet"><i class="mini-shell link"></i><i class="mini-shell ip"></i><i class="mini-shell tcp"></i><i class="mini-core"></i></div>
         </div>
-        <button id="sendButton" class="lab-action primary send-button" type="button" data-lab-intro="tcp-send" data-lab-intro-title="Test the outermost header" data-lab-intro-copy="Choose shells to wrap the current object, then send it. The receiver rejects an outer format it cannot interpret." data-priority="primary">Send packet</button>
+        <button id="sendButton" class="lab-action primary send-button" type="button" data-priority="primary">Send packet</button>
       </section>
 
       <section class="station receiver-station lab-kit-panel">
@@ -621,9 +629,10 @@ h1{margin:0;font-size:28px;font-weight:640;letter-spacing:-.03em;line-height:1.1
     document.querySelectorAll('.wrapper-tool').forEach(btn=>{
       const used=state.wrappers.includes(btn.dataset.wrapper);
       btn.classList.toggle('used',used);
-      btn.disabled=state.busy||!!state.filling||used;
+      btn.disabled=state.busy||used;
     });
-    $('sendButton').disabled=state.busy||!!state.filling;
+    $('sendButton').disabled=state.busy;
+    updatePulse();
   }
   function renderTarget(){
     const service=currentService();
@@ -644,22 +653,30 @@ h1{margin:0;font-size:28px;font-weight:640;letter-spacing:-.03em;line-height:1.1
     const core=currentService().protocol;
     return wrappers.length?wrappers.slice().reverse().map(t=>defs[t].short).concat(core).join(' [ ')+' ]'.repeat(wrappers.length):`${core} message only`;
   }
-  async function addWrapper(type){
-    if(state.busy||state.filling||state.wrappers.includes(type))return false;
+  function updatePulse(){
+    document.querySelectorAll('.interaction-pulse').forEach(el=>el.classList.remove('interaction-pulse'));
+    if(state.busy)return;
+    const order=['tcp','ip','link'];
+    const valid=state.wrappers.every((type,i)=>type===order[i]);
+    const target=!valid?document.querySelector('[data-peel]'):
+      state.wrappers.length<3?document.querySelector('[data-wrapper="'+order[state.wrappers.length]+'"]'):
+      state.lastOutcome?.kind==='success'?(!$('compareProcess').hidden?$('compareProcess'):null):$('sendButton');
+    target?.classList.add('interaction-pulse');
+  }
+  function addWrapper(type){
+    if(state.busy||!defs[type]||state.wrappers.includes(type))return false;
     state.wrappers.push(type);
-    state.filling=type;
+    state.lastOutcome=null;
+    clearReceiver();
     renderPacket();
     const d=defs[type];
-    setStatus('',`${d.layer} creates a ${d.protocol} header`,`The complete object already on the mat is placed inside as payload. Now this layer fills only its own header fields.`);
-    await sleep(360);
-    state.filling=null;
-    renderPacket();
-    setStatus('good',`${d.protocol} header filled`,`${d.layer} added ${d.srcLabel} and ${d.dstLabel}. The inner object was not rewritten.`,structureText());
+    setStatus('good',d.protocol+' header added',d.layer+' added '+d.srcLabel+' and '+d.dstLabel+'. The complete inner object stays intact.',structureText());
     return true;
   }
   function peelOuter(){
     if(state.busy||state.filling||!state.wrappers.length)return;
     const type=state.wrappers.pop();
+    state.lastOutcome=null;clearReceiver();
     renderPacket();
     setStatus('',`${defs[type].protocol} shell removed`,`Only the outside shell was removed; the payload inside stayed intact.`);
   }
@@ -786,7 +803,7 @@ h1{margin:0;font-size:28px;font-weight:640;letter-spacing:-.03em;line-height:1.1
   function beginToolDrag(e){
     const button=e.currentTarget,type=button.dataset.wrapper;
     if(button.disabled||e.button>0)return;
-    e.preventDefault();
+    delete button.dataset.suppress;
     drag={pointerId:e.pointerId,type,button,moved:false,startX:e.clientX,startY:e.clientY,ghost:null};
     button.setPointerCapture?.(e.pointerId);
   }
@@ -806,16 +823,17 @@ h1{margin:0;font-size:28px;font-weight:640;letter-spacing:-.03em;line-height:1.1
     const {type,button,moved,ghost}=drag;
     button.classList.remove('dragging-source');ghost?.remove();$('packingMat').classList.remove('drop-ready');
     if(moved){
+      button.dataset.suppress='1';
       const r=$('packingMat').getBoundingClientRect();
-      if(e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom)addWrapper(type);
-      button.dataset.suppress='1';setTimeout(()=>delete button.dataset.suppress,0);
+      if(e.type==='pointerup'&&e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom)addWrapper(type);
+
     }
     drag=null;
   }
 
   document.querySelectorAll('.wrapper-tool').forEach(btn=>{
     btn.addEventListener('pointerdown',beginToolDrag);
-    btn.addEventListener('click',()=>{if(btn.dataset.suppress)return;addWrapper(btn.dataset.wrapper);});
+    btn.addEventListener('click',e=>{if(e.detail!==0&&btn.dataset.suppress){delete btn.dataset.suppress;return;}addWrapper(btn.dataset.wrapper);});
   });
   window.addEventListener('pointermove',moveToolDrag,{passive:false});
   window.addEventListener('pointerup',endToolDrag);

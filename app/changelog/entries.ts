@@ -7,6 +7,14 @@ export type ChangelogEntry = {
 
 export const changelogEntries: readonly ChangelogEntry[] = [
   {
+    date: '2026-09-09',
+    displayDate: '9 September 2026',
+    publicChanges: [
+      'Fixed missed clicks when building TCP/IP packets, improved recovery when correcting a stack, and replaced repeated guidance prompts with one expandable explainer and brief interaction pulses.',
+    ],
+    internalChanges: [],
+  },
+  {
     date: '2026-09-06',
     displayDate: '6 September 2026',
     publicChanges: [
