@@ -10,7 +10,7 @@ export const changelogEntries: readonly ChangelogEntry[] = [
     date: '2026-09-09',
     displayDate: '9 September 2026',
     publicChanges: [
-      'Fixed missed clicks when building TCP/IP packets, improved recovery when correcting a stack, and replaced repeated guidance prompts with one expandable explainer and brief interaction pulses.',
+      'Fixed missed clicks when building TCP/IP packets, improved recovery when correcting a stack, and replaced repeated guidance prompts with one expandable explainer and one-time interaction introductions for the layers, Send and Compare controls.',
     ],
     internalChanges: [],
   },

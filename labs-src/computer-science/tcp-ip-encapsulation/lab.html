@@ -450,9 +450,7 @@ h1{margin:0;font-size:28px;font-weight:640;letter-spacing:-.03em;line-height:1.1
 <!-- LAB_DESIGN_COMPONENTS -->
 <style data-tcp-interaction-styles>
 .packet-explainer{margin:10px 0;font-size:13px;line-height:1.5}.packet-explainer summary{cursor:pointer}.packet-explainer p{max-width:70ch}
-.interaction-pulse{animation:interactionPulse .8s ease-in-out 3}
-@keyframes interactionPulse{50%{outline:3px solid var(--lab-accent,#587cad);outline-offset:3px}}
-@media(prefers-reduced-motion:reduce){.interaction-pulse{animation:none;outline:2px solid var(--lab-accent,#587cad)}}
+.sim-tcp-ip-encapsulation .lab-intro-target{animation-iteration-count:1}
 </style>
 </head>
 <body class="lab-adopt-v3 lab-simulation sim-tcp-ip-encapsulation" data-lab-layout="standard">
@@ -594,6 +592,7 @@ h1{margin:0;font-size:28px;font-weight:640;letter-spacing:-.03em;line-height:1.1
 
   let state={wrappers:[],service:'web',busy:false,filling:null,lastOutcome:null,successful:new Set(),receiverWrappers:[]};
   let drag=null,runToken=0;
+  const introduced=new Set();
 
   function currentService(){return services[state.service];}
   function valuesFor(type){
@@ -653,15 +652,20 @@ h1{margin:0;font-size:28px;font-weight:640;letter-spacing:-.03em;line-height:1.1
     const core=currentService().protocol;
     return wrappers.length?wrappers.slice().reverse().map(t=>defs[t].short).concat(core).join(' [ ')+' ]'.repeat(wrappers.length):`${core} message only`;
   }
+  function introduceOnce(key,targets){
+    if(introduced.has(key))return;
+    introduced.add(key);
+    targets.forEach(target=>{
+      target.classList.add('lab-intro-target');
+      const clear=()=>target.classList.remove('lab-intro-target');
+      target.addEventListener('animationend',clear,{once:true});
+      setTimeout(clear,2000);
+    });
+  }
   function updatePulse(){
-    document.querySelectorAll('.interaction-pulse').forEach(el=>el.classList.remove('interaction-pulse'));
-    if(state.busy)return;
-    const order=['tcp','ip','link'];
-    const valid=state.wrappers.every((type,i)=>type===order[i]);
-    const target=!valid?document.querySelector('[data-peel]'):
-      state.wrappers.length<3?document.querySelector('[data-wrapper="'+order[state.wrappers.length]+'"]'):
-      state.lastOutcome?.kind==='success'?(!$('compareProcess').hidden?$('compareProcess'):null):$('sendButton');
-    target?.classList.add('interaction-pulse');
+    introduceOnce('layers',document.querySelectorAll('.wrapper-tool'));
+    if(state.wrappers.length===3)introduceOnce('send',[$('sendButton')]);
+    if(!$('compareProcess').hidden)introduceOnce('compare',[$('compareProcess')]);
   }
   function addWrapper(type){
     if(state.busy||!defs[type]||state.wrappers.includes(type))return false;
