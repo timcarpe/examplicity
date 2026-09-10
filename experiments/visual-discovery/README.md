@@ -1,15 +1,19 @@
-# Four visual lab prototypes
+# Five visual lab prototypes
 
 Open [the review index](review/index.html), or an individual standalone file. No network, account or package installation is needed to use a lab.
 
 | Lab | Guided investigation | Independent experiment |
 | --- | --- | --- |
-| [Maths](review/maths.html) | Length → tiled area → cube layers → reverse area → a non-unit reference cube → similarity repair | Change scale and height, separate layers, save and compare outlines |
+| [Maths — scale](review/maths.html) | Length → tiled area → cube layers → reverse area → a non-unit reference cube → similarity repair | Change scale and height, separate layers, save and compare outlines |
 | [Physics](review/physics.html) | Observe refraction → mark a threshold → calculate for diamond → predict water’s threshold and reverse the boundary | Choose either medium or hypothetical indices; compare frozen readings |
 | [Chemistry](review/chemistry.html) | Compress and expand without formulas → collect an invariant → predict pressure at an unfamiliar volume → plan a target volume | Change volume, temperature or gas amount; compare saved piston and curve references |
 | [Biology](review/biology.html) | Existing variation → parents and offspring → a directional worked case → middle-group frequency → construct a two-source environment | Reshape food, change population size, repeat with a new sample and compare distributions |
 
-There are 19 guided experiences and four open experiments. These are review prototypes, not replacements for published labs.
+| [Maths — rails](review/straight-lines.html) | Tilt → slide → equation → falling-line transfer → horizontal line → vertical line | Change coefficients, move the carriage and compare saved lines |
+
+There are 25 guided experiences and five open experiments. These are review prototypes, not replacements for published labs.
+
+The newest [straight-line rails pilot](STRAIGHT-LINES-PILOT.md) demonstrates reuse of the polished shell with a different mathematical model. Its source is pinned to revision `53be3e9`; the original four generated labs are unchanged.
 
 ## Interaction and support
 
@@ -46,14 +50,16 @@ The original production-source comparison is revision `a42aaaa78d437926ba59b766a
 Model checks require only Node’s built-in modules:
 
 ```sh
-node --test experiments/visual-discovery/tests/models.test.mjs
+node --test experiments/visual-discovery/tests/*.test.mjs
 ```
 
 Browser acceptance uses Playwright as a development-only tool; it is not a lab dependency. With Playwright and Chromium installed in the test environment:
 
 ```sh
 node --experimental-strip-types experiments/visual-discovery/verify.mjs
-# Or one journey, while still checking all four packages:
+# The new pilot has its own complete journey and package checks:
+node --experimental-strip-types experiments/visual-discovery/verify-straight-lines.mjs
+# Or one original journey, while still checking its four packages:
 node --experimental-strip-types experiments/visual-discovery/verify.mjs chemistry
 ```
 
@@ -61,10 +67,10 @@ Set `PLAYWRIGHT_MODULE` to an installed Playwright module entry file when it is 
 
 The runner loads the exact generated HTML into isolated browser pages, blocks all external requests, and uses real pointer, keyboard and form controls. Page evaluation reads state for assertions; it does not bypass learner completion rules. This also permits artifact testing in environments that prohibit `file://` or loopback navigation. It is not a deployed-site test.
 
-Checks cover every guided journey and experiment, wrong/revised predictions, help, immutable references, state restoration, scientific invariants, 1200×800 / 900×800 / 390×844 layouts, optional tracing, reduced motion and inheritance timing. Results and screenshots are written to ignored `outputs/visual-discovery/`; `VERIFICATION.md` records the delivered run. The tests do not establish learning effectiveness or cover every experimental history.
+Checks cover every guided journey and experiment, wrong/revised predictions, help, immutable references, state restoration, scientific invariants, 1200×800 / 900×800 / 390×844 layouts, optional tracing, reduced motion and inheritance timing. Results and screenshots are written to ignored `outputs/visual-discovery/` (original pilots) and `outputs/straight-lines-pilot/` (new pilot); `VERIFICATION.md` records the delivered run. The tests do not establish learning effectiveness or cover every experimental history.
 
 ## Contents
 
-`src/` contains the shared local helpers and four models; `build.mjs` packages them; `serve.mjs` optionally serves this experiment directory; `verify.mjs` and `tests/` provide acceptance and model checks; `contracts/` and `review/` are generated deliverables. Every HTML includes its licence, teaching contract, implementation map, original provenance and model limits.
+`src/` contains the shared local helpers and five models; `build.mjs` packages them; `serve.mjs` optionally serves this experiment directory; `verify.mjs` and `tests/` provide acceptance and model checks; `contracts/` and `review/` are generated deliverables. Every HTML includes its licence, teaching contract, implementation map, original provenance and model limits.
 
 See [research and design decisions](RESEARCH.md) and the [learner review protocol](LEARNER-REVIEW.md). The learner review has not been conducted as part of this implementation.

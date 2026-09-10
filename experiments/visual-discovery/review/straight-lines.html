@@ -1,4 +1,353 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Visual lab review · Examplicity</title><style>:root {
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Align rails with straight-line equations · Examplicity</title>
+<!-- LICENSE
+MIT License
+
+Copyright (c) 2026 Tim Carpenter
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+-->
+<!-- LAB_CONTRACT_START -->
+<script type="application/json" data-examplicity-lab-contract data-contract-version="1">
+{
+  "schemaVersion": 1,
+  "relationship": "Manipulating a straight line makes its coordinates, gradient, intercept and equation change together, while testing across the graph distinguishes a genuine relationship from a match at one point.",
+  "learnerLoop": {
+    "action": "Tilt or slide the rail, write a connected equation, then move the test carriage across the required interval.",
+    "modelChange": "A nonvertical rail follows y = mx + c; tilt changes only m and slide changes only c. A vertical rail follows x = k. All plotted coordinates, comparison lines and gap readings use these same coefficients.",
+    "evidence": "The equal-unit graph, signed rise/run triangle, mounting points, predicted-equation overlay and carriage gap expose whether the geometry and equation describe the same line across the interval.",
+    "nextDecision": "Decide whether to change direction, intercept or the constant coordinate; revise a prediction, then compare the whole straight-line relationship rather than one intersection."
+  },
+  "invariants": [
+    "The geometric and algebraic representations describe the same line, so changes in one have coherent consequences in the others.",
+    "Learners use evidence across the line, rather than a single visual coincidence, to justify whether a constraint is satisfied."
+  ],
+  "safeAdaptations": [
+    "Invent new contexts, values, constraints, manipulatives or challenge sequences that connect straight-line geometry and algebra.",
+    "Vary difficulty, scaffolding, working requirements and feedback to suit different learners while preserving meaningful mathematical decisions.",
+    "Add alternative representations or ways to test and explain a line relationship, provided their evidence remains mathematically connected."
+  ],
+  "nonGoals": [
+    "Expanding into nonlinear graph families unless that comparison directly deepens understanding of straight lines."
+  ],
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract",
+  "implementation": {
+    "reviewedRevision": "prototype-source-sha256:93c0f95dd6d25a07ed2bc1a81306f28792afe3ec2bdd0aa847f20d685b68d1b7",
+    "surfaces": {
+      "actions": {
+        "selectors": [
+          "#learningDock",
+          "#next",
+          "#back",
+          "#forwardVisited",
+          "#secondaryAction"
+        ],
+        "kind": "control",
+        "description": "One persistent primary action; Back and optional previously-visited Forward are secondary. Model-specific callbacks and gates are unchanged.",
+        "visibility": "Same relative position below the apparatus and working; before saved readings."
+      },
+      "help": {
+        "selectors": [
+          "#evidenceHelp",
+          "#hintText"
+        ],
+        "kind": "support",
+        "description": "Learner-requested evidence cue, relationship hint and contrasting worked example; no automatic answer-directed pulse.",
+        "visibility": "Only when requested in the relevant experience."
+      },
+      "reset": {
+        "selectors": [
+          "#resetMenu",
+          "#repeat",
+          "#restart"
+        ],
+        "kind": "control",
+        "description": "A consistent top-right disclosure separates repeating the step from restarting the lab.",
+        "visibility": "Restart options always available; Repeat disabled during model transitions."
+      },
+      "prompt": {
+        "selectors": [
+          "#title",
+          "#intro"
+        ],
+        "kind": "given",
+        "description": "A short goal and action sentence above the apparatus, with a guided-step label and quiet restart disclosure.",
+        "visibility": "Current step only."
+      },
+      "model": {
+        "selectors": [
+          "#stage"
+        ],
+        "kind": "model",
+        "description": "A nonvertical rail follows y = mx + c; tilt changes only m and slide changes only c. A vertical rail follows x = k. All plotted coordinates, comparison lines and gap readings use these same coefficients.",
+        "visibility": "Always visible; later controls are progressively disclosed."
+      },
+      "comparison": {
+        "selectors": [
+          "#records",
+          "#comparisonNote"
+        ],
+        "kind": "evidence",
+        "description": "Frozen readings and explicitly labelled comparison conditions; graphical overlays use the selected saved reading.",
+        "visibility": "Recorded experiment comparisons only."
+      },
+      "navigation": {
+        "selectors": [
+          "#back",
+          "#next",
+          "#repeat",
+          "#restart"
+        ],
+        "kind": "control",
+        "description": "Back and Forward restore snapshots; Repeat resets the current experience; Start over clears the session.",
+        "visibility": "Back and Forward depend on visited progress."
+      },
+      "working": {
+        "selectors": [
+          "#working"
+        ],
+        "kind": "working",
+        "description": "Worked examples precede learner calculations. Explicit quantity keys connect source labels to formula operands, with matching highlights and a button-triggered trace. Hover, focus and tap explain each source and calculation.",
+        "visibility": "Changes with the current step."
+      },
+      "evidence": {
+        "selectors": [
+          "#feedback",
+          "#records"
+        ],
+        "kind": "evidence",
+        "description": "The equal-unit graph, signed rise/run triangle, mounting points, predicted-equation overlay and carriage gap expose whether the geometry and equation describe the same line across the interval.",
+        "visibility": "In-place feedback; readings only in relevant steps."
+      },
+      "completion": {
+        "selectors": [
+          "#next",
+          "#outcome",
+          "#outcomeTitle"
+        ],
+        "kind": "completion",
+        "description": "The persistent dock button runs the current test/check and changes to Continue only after the original model-derived criterion. Feedback and help share this dock; presentation does not set completion.",
+        "visibility": "Guided steps; absent in the open experiment."
+      }
+    },
+    "quantities": {
+      "gradient": {
+        "description": "Signed gradient m, changed independently of the intercept.",
+        "domain": "−1.5 to 1.5 in steps of 0.25; prediction inputs accept decimals and fractions.",
+        "source": "On-rail Tilt handle and measured coordinate changes.",
+        "output": "Rail direction, signed rise over a run of 2, equation and carriage coordinates.",
+        "inputSlots": [
+          "[data-control=rail-tilt]",
+          "#gradientInput"
+        ]
+      },
+      "intercept": {
+        "description": "Value of y when x is zero.",
+        "domain": "−2 to 2 in steps of 0.5.",
+        "source": "On-rail Slide handle; coordinate where the rail crosses the y-axis.",
+        "output": "Rail position without a change of gradient.",
+        "inputSlots": [
+          "[data-control=rail-slide]",
+          "#interceptInput"
+        ]
+      },
+      "vertical": {
+        "description": "Constant x-coordinate k, distinct from the changing y-coordinate.",
+        "domain": "−3 to 3 in steps of 0.5.",
+        "source": "Horizontal slide of the vertical rail; learner chooses x or y for the equation.",
+        "output": "Actual x = k geometry; an incorrect y = k prediction is drawn horizontally after Test.",
+        "inputSlots": [
+          "[data-control=rail-vertical]",
+          "#axisInput",
+          "#constantInput"
+        ]
+      },
+      "travel": {
+        "description": "Independent carriage position along the actual rail, with gap evidence and visited interval.",
+        "domain": "−2 to 2 in steps of 0.25; x varies on nonvertical rails and y varies on vertical rails.",
+        "source": "The learner moves the on-model carriage control.",
+        "output": "Exact coordinates and vertical or horizontal separation; different-orientation comparisons are not given a misleading scalar gap.",
+        "inputSlots": [
+          "[data-control=rail-probe]"
+        ]
+      }
+    },
+    "modes": {
+      "guided": "Small ordered visual investigations, with model actions and in-place revision.",
+      "experiment": "Ungated experiment: tilt, slide, switch to vertical, read carriage coordinates, save up to six immutable readings and select a dashed comparison. Back/Forward restore state; Repeat resets only the current step."
+    },
+    "dependencies": [
+      "Tilt the amber rail to the reference gradient 0.5 with intercept fixed at −1; inspect carriage positions −2 and 2 without changing the geometry. The vertical gap remains 2, demonstrating parallel direction rather than coincidence.",
+      "Slide the parallel rail through P(0, 2) without changing gradient 0.5; inspect both ends. A worked rise/run and intercept card uses quantities on the same graph.",
+      "Commit m = 0.5 and c = 1 for the fixed rail, then inspect both ends after the Test action. No correctness feedback is supplied while typing.",
+      "Independently adjust both coefficients to pass A(−2, 3) and B(2, 1); commit the matching equation y = −0.5x + 2 and inspect both ends. The initial line passes B alone and is deliberately insufficient.",
+      "Build the horizontal line through A(−2, −2) and B(2, −2), commit gradient zero and intercept −2, and inspect both ends. y = −2 is distinct from x = −2.",
+      "Move the vertical rail through P(2, 1); explicitly choose x and constant 2, test, and inspect the lower and upper ends. No finite or infinite numerical gradient answer is requested.",
+      "Ungated experiment: tilt, slide, switch to vertical, read carriage coordinates, save up to six immutable readings and select a dashed comparison. Back/Forward restore state; Repeat resets only the current step."
+    ],
+    "completion": "New experiences require their model-derived criterion. Back and Forward revisit saved state without forcing a rerun; Repeat experience resets only that experience. Start over clears all session snapshots. Worked observations are not mastery claims.",
+    "limitations": [
+      "Cartesian axes have equal scales. Rails are ideal straight lines, not a mechanical force simulation.",
+      "The absolute affine gap on the closed test interval is largest at an endpoint. Acceptance checks coefficients and interval endpoints analytically; a single matching point never completes a guided task.",
+      "Both ends must be inspected for the current geometry and committed prediction. Editing either invalidates previous travel evidence; mere resizing, hints or focus changes do not.",
+      "Prediction inputs build one equation through structured coefficients rather than a general algebra parser. Finite decimals and fractions are supported; expressions and zero denominators are rejected without evaluation.",
+      "Guided progression covers positive and negative fractional gradients, intercepts, parallel direction, horizontal and vertical lines. It does not introduce perpendicular-line theorems or nonlinear families.",
+      "Six immutable experiment readings retain orientation, coefficients and carriage coordinates. References are comparisons, not replayed completion evidence. Session progress is not persisted after closing the page."
+    ]
+  }
+}
+</script>
+<!-- LAB_CONTRACT_END -->
+<script type="application/json" data-examplicity-pedagogy>{
+  "schemaVersion": 1,
+  "designStatus": "Review prototype; no empirical learning-effectiveness claim.",
+  "source": {
+    "baseRevision": "53be3e934205817549dedb0fbbcf41b84cc40b59",
+    "labSource": "labs-src/mathematics/straight-line-coordinates-equations/lab.html",
+    "contract": "lab-contracts/mathematics/straight-line-coordinates-equations.lab.json",
+    "originalContractSha256": "78cc55356951f94a8904de3f0d594603e642e6bc6d3e6cb7fbb50819801f4394"
+  },
+  "research": [
+    {
+      "id": "brilliant",
+      "title": "How Brilliant teaches math and helps understanding stick",
+      "url": "https://brilliant.org/resources/choosing-brilliant/how-brilliant-teaches-math/",
+      "accessed": "2026-09-08",
+      "role": "Primary description of sequenced visual problems, feedback, and fading support; not independent evidence of this prototype’s effectiveness."
+    },
+    {
+      "id": "phet",
+      "title": "Implicit scaffolding in interactive simulations: Design strategies to support multiple educational goals",
+      "url": "https://arxiv.org/abs/1306.6544",
+      "accessed": "2026-09-08",
+      "role": "Research framework and case study for affordances, constraints, cueing, and feedback built into the model."
+    }
+  ],
+  "approaches": [
+    "Implicit scaffolding through direct manipulation and constrained initial states",
+    "One causal relationship per guided screen",
+    "Visual model before formal notation",
+    "Prediction, observation and immediate model-specific revision",
+    "Faded transfer cases remove supplied methods but preserve the apparatus before the open experiment",
+    "Evidence-first optional hints precede a contrasting worked example",
+    "Session snapshots preserve learner evidence during Back and Forward navigation",
+    "Immutable comparison readings retain conditions and selected model overlays",
+    "Worked calculation rows retain the same quantities, order and units when learners later supply the answers",
+    "Explicit source identities link model quantities and earlier calculations to later formula operands",
+    "Optional quantity explanations keep context available without adding permanent panels",
+    "Consistent goal above the model and feedback/actions below it; evidence, retry and continuation do not create competing cards",
+    "One optional hint entry; restart controls separated from the learning action"
+  ],
+  "sequence": [
+    {
+      "label": "Tilt",
+      "title": "Make the rails run in the same direction.",
+      "intro": "Drag Tilt to turn the amber rail. Then move the carriage to both ends and compare the gap.",
+      "success": "The gap stays constant.",
+      "criterion": "Tilt the amber rail to the reference gradient 0.5 with intercept fixed at −1; inspect carriage positions −2 and 2 without changing the geometry. The vertical gap remains 2, demonstrating parallel direction rather than coincidence.",
+      "mode": "guided"
+    },
+    {
+      "label": "Slide",
+      "title": "Keep the direction. Move the rail through P.",
+      "intro": "Drag Slide until the amber rail passes through P(0, 2). Check both ends with the carriage.",
+      "success": "Sliding changes the intercept, not the gradient.",
+      "criterion": "Slide the parallel rail through P(0, 2) without changing gradient 0.5; inspect both ends. A worked rise/run and intercept card uses quantities on the same graph.",
+      "mode": "guided"
+    },
+    {
+      "label": "Describe",
+      "title": "Write an equation for the amber rail.",
+      "intro": "Use the marked coordinates to enter m and c. Test your equation, then compare it at both ends.",
+      "success": "One equation describes the whole rail.",
+      "criterion": "Commit m = 0.5 and c = 1 for the fixed rail, then inspect both ends after the Test action. No correctness feedback is supplied while typing.",
+      "mode": "guided"
+    },
+    {
+      "label": "Falling rail",
+      "title": "Build a rail through both mounting points.",
+      "intro": "Use Tilt and Slide to reach A(−2, 3) and B(2, 1). Write its equation and test both ends.",
+      "success": "Both points and the equation agree.",
+      "criterion": "Independently adjust both coefficients to pass A(−2, 3) and B(2, 1); commit the matching equation y = −0.5x + 2 and inspect both ends. The initial line passes B alone and is deliberately insufficient.",
+      "mode": "guided"
+    },
+    {
+      "label": "Level rail",
+      "title": "Build a level rail through both mounts.",
+      "intro": "Place the rail through A(−2, −2) and B(2, −2). Enter its gradient and intercept, then test.",
+      "success": "A horizontal line has zero gradient.",
+      "criterion": "Build the horizontal line through A(−2, −2) and B(2, −2), commit gradient zero and intercept −2, and inspect both ends. y = −2 is distinct from x = −2.",
+      "mode": "guided"
+    },
+    {
+      "label": "Vertical rail",
+      "title": "Slide a vertical rail through P.",
+      "intro": "Reach P(2, 1), then choose which coordinate stays constant. Test the equation along the rail.",
+      "success": "A vertical line keeps x constant.",
+      "criterion": "Move the vertical rail through P(2, 1); explicitly choose x and constant 2, test, and inspect the lower and upper ends. No finite or infinite numerical gradient answer is requested.",
+      "mode": "guided"
+    },
+    {
+      "label": "Experiment",
+      "title": "Compare lines of your own.",
+      "intro": "Tilt or slide the rail, move the carriage and save a reading. Select a saved line to compare it.",
+      "success": "",
+      "criterion": "Ungated experiment: tilt, slide, switch to vertical, read carriage coordinates, save up to six immutable readings and select a dashed comparison. Back/Forward restore state; Repeat resets only the current step.",
+      "mode": "experiment"
+    }
+  ],
+  "connections": {
+    "mapping": "data-source quantity keys pair with data-value-ref operands; earlier calculated results can be sources for later rows. Matching digits alone never creates a link.",
+    "cue": "Only activating the Trace values button starts the ordered source pulse, 560 ms curved value transfer and destination pulse. Loading, changing checkpoints, editing values and selecting sources never start a trace. Edits, dragging, scrolling and stage changes cancel a running trace.",
+    "help": "Quantity tooltips support hover, keyboard focus, tap and Escape dismissal. The whole working card no longer triggers a method popup; authored guidance is in the single requested hint disclosure.",
+    "transition": "Only changed mission, working, feedback, control and SVG parts fade out for 150 ms, then fade in for 300 ms. Identical visual parts stay visible, while changing working and model areas resize smoothly. Missions use typography without an icon; success uses one filled green checkmark in the feedback dock. Test and Continue retain the same button. Navigation is locked for the brief transition; reduced motion changes checkpoints immediately.",
+    "reducedMotion": "No value travel or stage movement. Button-triggered static paired outlines retain the connection."
+  },
+  "outcomeContinuity": {
+    "relationship": "Manipulating a straight line makes its coordinates, gradient, intercept and equation change together, while testing across the graph distinguishes a genuine relationship from a match at one point.",
+    "invariants": [
+      "The geometric and algebraic representations describe the same line, so changes in one have coherent consequences in the others.",
+      "Learners use evidence across the line, rather than a single visual coincidence, to justify whether a constraint is satisfied."
+    ],
+    "originalNonGoals": [
+      "Expanding into nonlinear graph families unless that comparison directly deepens understanding of straight lines."
+    ],
+    "extensions": "Ungated experiment: tilt, slide, switch to vertical, read carriage coordinates, save up to six immutable readings and select a dashed comparison. Back/Forward restore state; Repeat resets only the current step.",
+    "interactionChanges": "Replaces simultaneous panels, support-level switches and completion overlays with a sequenced model surface. The existing curriculum catalogue is untouched.",
+    "modelLimitations": [
+      "Cartesian axes have equal scales. Rails are ideal straight lines, not a mechanical force simulation.",
+      "The absolute affine gap on the closed test interval is largest at an endpoint. Acceptance checks coefficients and interval endpoints analytically; a single matching point never completes a guided task.",
+      "Both ends must be inspected for the current geometry and committed prediction. Editing either invalidates previous travel evidence; mere resizing, hints or focus changes do not.",
+      "Prediction inputs build one equation through structured coefficients rather than a general algebra parser. Finite decimals and fractions are supported; expressions and zero denominators are rejected without evaluation.",
+      "Guided progression covers positive and negative fractional gradients, intercepts, parallel direction, horizontal and vertical lines. It does not introduce perpendicular-line theorems or nonlinear families.",
+      "Six immutable experiment readings retain orientation, coefficients and carriage coordinates. References are comparisons, not replayed completion evidence. Session progress is not persisted after closing the page."
+    ]
+  },
+  "accessibility": {
+    "pointer": "Touch and mouse operate the same SVG handles; all handle hit targets at least 44 CSS px.",
+    "keyboard": "Arrow keys and Home/End operate SVG sliders. Enter/Space activate unit tiles. Native inputs and buttons support the calculation and generation steps.",
+    "motion": "Respects prefers-reduced-motion; particle animation can also be paused. Laser direction cues are brief, piston tests interpolate physical volume, and offspring move from their actual sampled parents before population replacement.",
+    "feedback": "One polite, atomic live region announces settled status changes. The visible dock retains its position and one primary button; edits and result updates do not move focus. Dynamic pointer feedback is debounced."
+  }
+}</script>
+<style data-examplicity-tokens>:root {
   /* Publication frame */
   --lab-rail: 1200px;
   --lab-compact-rail: 820px;
@@ -177,8 +526,7 @@
   --lab-kit-radius: var(--lab-panel-radius);
   --lab-kit-control-radius: var(--lab-control-radius);
   --lab-kit-shadow: var(--lab-shadow-panel);
-}
-/* Canonical Examplicity shared design components.
+}</style><style data-lab-design>/* Canonical Examplicity shared design components.
    Edit this file, then sync the guide, authoring bundle and published labs.
    Compatibility selectors retain the reviewed labs; use the public API for new labs. */
 
@@ -2769,8 +3117,7 @@ html:has(body.lab-science),body.lab-science{height:auto;overflow:visible}
 .sim-parity-arq .parity-footnotes .stream-preview{max-width:none;white-space:normal;overflow-wrap:anywhere;text-align:left}
 @media(max-width:1000px){.sim-parity-arq .parity-settings{grid-template-columns:minmax(160px,1fr) 1fr 1fr}.sim-parity-arq .parity-settings #resetAll{grid-column:3}.sim-parity-arq .parity-settings .switch-line{grid-column:1/3}}
 @media(max-width:700px){.sim-parity-arq .parity-settings{grid-template-columns:1fr 1fr}.sim-parity-arq .parity-settings .field:first-child{grid-column:1/-1}.sim-parity-arq .parity-settings #resetAll{grid-column:2}.sim-parity-arq .parity-settings .switch-line{grid-column:1;white-space:normal}.sim-parity-arq .transmission-rail{grid-template-columns:1fr}.sim-parity-arq .parity-actions{padding:8px 16px 12px;flex-wrap:wrap}.sim-parity-arq .parity-footnotes{padding:0 16px 12px}}
-
-/* Local layout for a progressively disclosed lab. Materials and controls come from the shared v3 kit. */
+</style><style>/* Local layout for a progressively disclosed lab. Materials and controls come from the shared v3 kit. */
 :root{--accent:var(--lab-accent);--soft:var(--lab-concept-blue-fill);--muted:var(--lab-muted);--line:var(--lab-line);--ink:var(--lab-ink)}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--lab-canvas);color:var(--lab-ink);font-family:var(--lab-font-sans);-webkit-font-smoothing:antialiased}button,input,select{font-family:inherit}button{cursor:pointer}button:disabled{cursor:default}[hidden]{display:none!important}.lab{width:calc(100% - 36px);max-width:1100px;margin:24px auto;padding:20px 24px;background:var(--lab-surface);border:1px solid var(--lab-line);border-radius:var(--lab-panel-radius)}.topbar{display:flex;align-items:center;gap:14px;margin-bottom:16px}.lab-name{font-size:15px;font-weight:400}.subject{font-size:12px;color:var(--lab-muted)}.topbar #restart{margin-left:auto;min-height:34px}.lesson-head{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 22px;align-items:start;min-height:48px}.lesson-head h1{grid-column:1;margin:0;font:400 16px/1.5 var(--lab-font-sans);letter-spacing:normal;color:var(--lab-accent-ink)}.lesson-head .intro{grid-column:1;margin:0;font:400 14px/1.45 var(--lab-font-sans);color:var(--lab-ink-secondary)}.lab-checkpoints{display:flex;gap:9px;align-items:center;grid-column:2;grid-row:1 / 3;padding:7px 0}.lab-checkpoint{display:block;width:11px;height:11px;border:1px solid var(--lab-line-strong);border-radius:50%;background:white}.lab-checkpoint[aria-current=true]{border-color:var(--lab-accent);background:var(--lab-accent-soft);box-shadow:inset 0 0 0 2px white}.lab-checkpoint[data-complete=true]{background:var(--lab-good);border-color:var(--lab-good)}.stage-wrap{position:relative;margin-top:12px;height:360px}.stage{display:block;width:100%;height:100%;overflow:visible;touch-action:pan-y}.stage text{font:400 14px var(--lab-font-sans);fill:var(--lab-ink)}.stage .small{font-size:12px;fill:var(--lab-ink-secondary)}.stage .big{font-size:24px;font-weight:400}.stage .accent{fill:var(--lab-accent-ink)}.stage .model-control{cursor:grab;touch-action:none}.stage .model-control:active{cursor:grabbing}.stage .clickable{cursor:pointer}.stage .hair{stroke:var(--lab-line);stroke-width:1}.stage .handle{fill:white;stroke:var(--lab-accent);stroke-width:2}.stage .ghost{fill:none;stroke:var(--lab-concept-violet);stroke-width:1.5;stroke-dasharray:5 5;opacity:.75}.stage [data-control]:focus-visible{outline:2px solid var(--lab-accent);outline-offset:3px}.controls{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:10px;min-height:40px;margin-top:8px;font:400 14px/1.45 var(--lab-font-sans)}.controls:empty{display:none}.controls label{display:flex;align-items:center;gap:8px}.controls input[type=number]{width:84px;padding:8px;border:1px solid var(--lab-needed-line);border-radius:8px;background:var(--lab-needed-surface);color:var(--lab-ink);font:400 14px var(--lab-font-sans);text-align:center;min-height:40px}.controls input.good{border-color:var(--lab-good-line);background:var(--lab-good-surface)}.controls input.bad{border-color:var(--lab-bad-line);background:var(--lab-bad-surface)}.controls select{max-width:150px;min-height:40px;padding:8px 28px 8px 12px;border:1px solid var(--lab-line);border-radius:8px;background:white;font:400 12px var(--lab-font-sans);color:var(--lab-ink);box-shadow:0 1px 3px rgba(29,29,31,.08)}.controls input[type=range]{width:130px;accent-color:var(--lab-accent)}.controls .choice[aria-pressed=true]{background:var(--lab-accent-soft);border-color:var(--lab-accent);color:var(--lab-accent-ink)}.foot{margin-top:16px;padding-top:14px;border-top:1px solid var(--lab-line-subtle);display:flex;gap:12px;align-items:center}.feedback{flex:1;min-height:22px;margin:0;font:400 14px/1.45 var(--lab-font-sans);color:var(--lab-ink-secondary)}.feedback.good{color:var(--lab-good-ink)}.feedback.retry{color:var(--lab-bad-ink)}.feedback.good::before{content:'✓ ';color:var(--lab-good)}.feedback.retry::before{content:'× ';color:var(--lab-bad)}#next{min-width:108px}.smallprint{font:400 11px/1.45 var(--lab-font-sans);color:var(--lab-muted);margin:16px 0 0}.records{border-collapse:collapse;font:400 12px/1.45 var(--lab-font-sans);font-variant-numeric:tabular-nums;margin:16px auto 0;width:min(100%,650px)}.records th{font-weight:400;color:var(--lab-muted)}.records td,.records th{padding:7px 12px;text-align:right;border-bottom:1px solid var(--lab-line-subtle)}.records td:first-child,.records th:first-child{text-align:left}.model-fade{animation:appear .25s ease-out}@keyframes appear{from{opacity:.3}to{opacity:1}}#title:focus{outline:none}.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}button:focus-visible,a:focus-visible{outline:2px solid var(--lab-accent);outline-offset:3px}@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}@media(max-width:600px){.lab{width:calc(100% - 20px);margin:10px auto;padding:16px 14px}.topbar{gap:8px;flex-wrap:wrap;margin-bottom:18px}.lab-name{font-size:14px}.subject{font-size:11px}.topbar #restart{padding-inline:9px}.lesson-head{gap:6px 10px}.lesson-head h1{font-size:16px}.lesson-head .intro{font-size:14px}.lab-checkpoints{gap:5px;padding-top:8px}.lab-checkpoint{width:9px;height:9px}.stage-wrap{margin-top:12px}.stage .small{font-size:11px}.stage .big{font-size:21px}.controls{gap:8px}.controls label{font-size:12px}.controls input[type=range]{width:90px}.foot{flex-wrap:wrap;margin-top:18px;padding-top:14px}.feedback{flex-basis:calc(100% - 55px);font-size:14px}#next{margin-left:auto}.records td,.records th{padding:6px 4px}.smallprint{font-size:11px}}
 /* Working uses the existing card, answer-state and formula primitives. */
@@ -2900,4 +3247,964 @@ html:has(body.lab-science),body.lab-science{height:auto;overflow:visible}
 
 /* One- and two-line action labels occupy the same button height. */
 .primary-slot>.lab-action{min-height:48px}
-.review{max-width:850px;margin:32px auto;padding:24px}.review h1{font:400 16px/1.5 var(--lab-font-sans);color:var(--lab-accent-ink);margin:0 0 12px}.review p{font-size:14px;line-height:1.6}.entry{display:grid;grid-template-columns:90px 1fr auto;gap:20px;align-items:center;padding:22px 0;border-top:1px solid var(--lab-line-subtle);text-decoration:none;color:var(--lab-ink)}.entry h2{font:400 15px/1.5 var(--lab-font-sans);margin:0 0 4px;color:var(--lab-accent-ink)}.entry p{font-size:14px;margin:0;color:var(--lab-ink-secondary)}.entry span{font-size:12px;color:var(--lab-muted)}.entry:hover h2{text-decoration:underline}.review-note{border-top:1px solid var(--lab-line-subtle);padding-top:18px}.review-note a{color:var(--lab-accent-ink)}@media(max-width:600px){.review{margin:10px auto;padding:18px}.entry{grid-template-columns:1fr auto;gap:8px}.entry>span:first-child{grid-column:1/-1}}</style></head><body><main class="lab review"><h1>Visual lab review</h1><p>Five guided investigations that open into independent experiments.</p><a class="entry" href="maths.html"><span>Maths</span><div><h2>Investigate similarity and scale</h2><p>Compare length, area and volume factors using squares and cubes.</p></div><span aria-hidden="true">→</span></a><a class="entry" href="physics.html"><span>Physics</span><div><h2>Measure critical angles</h2><p>Measure and calculate when refraction becomes total internal reflection.</p></div><span aria-hidden="true">→</span></a><a class="entry" href="chemistry.html"><span>Chemistry</span><div><h2>Investigate gas pressure and volume</h2><p>Predict pressure and volume changes for a gas at constant temperature.</p></div><span aria-hidden="true">→</span></a><a class="entry" href="biology.html"><span>Biology</span><div><h2>Investigate natural selection</h2><p>Compare selected parents, inherited offspring and trait frequencies.</p></div><span aria-hidden="true">→</span></a><a class="entry" href="straight-lines.html"><span>Maths</span><div><h2>Align rails with straight-line equations</h2><p>Tilt and slide a rail, predict its equation, and test more than a one-point match.</p></div><span aria-hidden="true">→</span></a><p class="review-note">Each lab works offline. Structured teaching contracts and research rationale are embedded in the HTML.<br><a href="../RESEARCH.md">Research and design decisions</a> · <a href="../README.md">Scope and source notes</a></p></main></body></html>
+
+/* Local geometry vocabulary; goal, hints, feedback and navigation use the shared pilot shell. */
+.rail-lab .rail-plot{fill:var(--lab-surface);stroke:var(--lab-line);stroke-width:1}
+.rail-lab .rail-grid{stroke:var(--lab-line-subtle);stroke-width:1}
+.rail-lab .rail-axis{stroke:var(--lab-concept-slate);stroke-width:1.3}
+.rail-lab .stage .rail-tick{font-size:11px;fill:var(--lab-muted);paint-order:stroke;stroke:var(--lab-surface);stroke-width:3px;stroke-linejoin:round}
+.rail-lab .rail-candidate{color:var(--lab-concept-amber)}
+.rail-lab .rail-reference{color:var(--lab-concept-blue)}
+.rail-lab .rail-bed{stroke:currentColor;stroke-width:10;opacity:.16;stroke-linecap:round}
+.rail-lab .rail-edge{stroke:currentColor;stroke-width:3;stroke-linecap:round}
+.rail-lab .rail-sleeper{stroke:currentColor;stroke-width:1;opacity:.45}
+.rail-lab .rail-ghost{stroke:var(--lab-concept-violet);stroke-width:2;stroke-dasharray:6 5}
+.rail-lab .rail-triangle{fill:var(--lab-concept-teal-fill);opacity:.45;stroke:none}
+.rail-lab .rail-rise,.rail-lab .rail-run{stroke:var(--lab-concept-teal);stroke-width:1.2;stroke-dasharray:4 3}
+.rail-lab .rail-mount{fill:var(--lab-surface);stroke:var(--lab-concept-violet);stroke-width:1.5}
+.rail-lab .rail-mount-cross{stroke:var(--lab-concept-violet);stroke-width:1.2}
+.rail-lab .rail-coordinate-dot{fill:var(--lab-concept-amber);stroke:var(--lab-surface);stroke-width:1.5}
+.rail-lab .rail-handle .handle{stroke:var(--lab-concept-amber);stroke-width:2.2}
+.rail-lab [data-control=rail-probe] .handle{stroke:var(--lab-concept-slate)}
+.rail-lab .stage .rail-control-label{font-size:12px;fill:var(--lab-ink-secondary);paint-order:stroke;stroke:var(--lab-surface);stroke-width:4;stroke-linejoin:round;pointer-events:none}
+.rail-lab .rail-carriage{fill:var(--lab-surface);stroke:var(--lab-concept-slate);stroke-width:2}
+.rail-lab .rail-other-point{fill:var(--lab-surface);stroke:var(--lab-concept-violet);stroke-width:1.5}
+.rail-lab .rail-gap{stroke:var(--lab-concept-violet);stroke-width:1.7;stroke-dasharray:3 3}
+.rail-lab .rail-probe-guide{stroke:var(--lab-concept-slate);stroke-width:1;opacity:.4;stroke-dasharray:3 4}
+.rail-lab .rail-travel-base{stroke:var(--lab-line-strong);stroke-width:4;stroke-linecap:round}
+.rail-lab .rail-travel-visited{stroke:var(--lab-concept-teal);stroke-width:4;stroke-linecap:round}
+.rail-lab .rail-stop{fill:var(--lab-surface);stroke:var(--lab-line-strong);stroke-width:1.5}
+.rail-lab .rail-stop.visited{fill:var(--lab-concept-teal);stroke:var(--lab-concept-teal)}
+.rail-lab .learning-work select{font:inherit;min-height:44px;max-width:180px;padding:6px;border:1px solid var(--lab-line);border-radius:var(--lab-control-radius);background:var(--lab-surface);color:var(--lab-ink)}
+.rail-lab .learning-work input{width:76px;min-height:44px}
+.rail-lab .learning-work [aria-invalid=true]{border-color:var(--lab-bad);outline-color:var(--lab-bad)}
+.rail-lab .stage .source-underline{opacity:.5}
+/* SVG group touch-action alone does not stop mobile scroll arbitration after a redraw. */
+.rail-lab .stage{touch-action:none}
+</style></head><body><main class="lab rail-lab"><header class="lesson-head lab-context" aria-labelledby="title"><div class="lesson-meta"><p id="stepLabel" class="step-label"></p><div id="checkpoints" class="lab-checkpoints" aria-label="Learning progress"></div></div><details id="resetMenu" class="reset-menu"><summary>Restart options</summary><div class="reset-options"><button type="button" class="lab-action" id="repeat">Repeat this step</button><button type="button" class="lab-action" id="restart" data-lab-action="reset">Restart lab</button></div></details><div class="mission-copy"><h1 id="title" tabindex="-1"></h1><p class="intro" id="intro"></p></div></header><div id="context" class="context"></div><div class="stage-wrap" id="stageWrap"><svg xmlns="http://www.w3.org/2000/svg" class="stage" id="stage" role="group" data-lab-role="model"></svg></div><section id="working" class="lab-work-card learning-work" hidden data-lab-role="working" aria-label="Working"></section><div class="controls" id="controls" data-lab-role="control"></div><footer class="foot learning-dock" id="learningDock" aria-label="Feedback and next action" data-state="idle"><div class="outcome" id="outcome" data-state="idle"><svg class="outcome-symbol" viewBox="0 0 24 24" aria-hidden="true"><circle class="outcome-disc" cx="12" cy="12" r="10.5"/><path class="success-mark" d="m7 12 3.25 3.25L17 8.5"/><path class="retry-mark" d="M12 7v6m0 4h.01"/></svg><div><p class="outcome-title" id="outcomeTitle"></p><p class="feedback" id="feedback"></p></div></div><div class="dock-actions"><div class="dock-navigation"><button class="lab-action" id="back" aria-label="Previous step">Back</button><button class="lab-action" id="forwardVisited" hidden>Forward</button><button type="button" class="lab-action hint-toggle" id="hintToggle" aria-expanded="false" aria-controls="evidenceHelp">Hint</button></div><div class="dock-advance"><button type="button" class="lab-action" id="secondaryAction" hidden></button><div class="primary-slot"><button type="button" class="lab-action" data-priority="primary" id="next" aria-describedby="feedback">Continue</button></div></div></div><section id="evidenceHelp" class="evidence-help" aria-labelledby="hintTitle" hidden><h2 id="hintTitle"></h2><p id="hintText"></p><div class="hint-navigation"><button type="button" id="previousHint" class="lab-action">Previous hint</button><button type="button" id="anotherHint" class="lab-action">Next hint</button></div></section></footer><table class="records" id="records" hidden aria-label="Experiment readings" data-lab-role="evidence"></table><p id="comparisonNote" class="comparison-note" hidden></p><p id="statusAnnouncement" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></p><p class="smallprint">Coordinate units. Gradient is signed rise ÷ run. Vertical lines use x = k, not an infinite numerical gradient. The carriage checks the interval from −2 to 2.</p><noscript>This interactive lab needs JavaScript enabled in your browser.</noscript></main><script data-lab-design>/* Shared model dragging: retain the point grabbed while the model rerenders. */
+window.LabDesign = {
+  checkpoints(host, labels, current, completed = index => index < current, detail = '') {
+    host.classList.add('lab-checkpoints'); host.removeAttribute('aria-hidden');
+    host.replaceChildren(...labels.map((label, index) => {
+      const dot = document.createElement('span'); dot.className = 'lab-checkpoint'; dot.tabIndex = 0;
+      dot.dataset.complete = String(completed(index)); dot.setAttribute('aria-current', String(index === current));
+      const status = completed(index) ? 'Completed' : index === current ? 'In progress' : 'Upcoming';
+      dot.setAttribute('aria-label', label + ': ' + status);
+      const tooltip = document.createElement('span'); tooltip.className = 'lab-checkpoint-detail'; tooltip.setAttribute('role', 'tooltip');
+      const title = document.createElement('strong'); title.textContent = label;
+      const copy = document.createElement('span'); copy.textContent = status + (index === current && detail ? '. ' + detail : '');
+      tooltip.append(title, copy); dot.append(tooltip); return dot;
+    }));
+  },
+  digitalReadout(root, value, { x, y, label }) {
+    const ns = 'http://www.w3.org/2000/svg';
+    const append = (parent, tag, attributes) => {
+      const node = document.createElementNS(ns, tag);
+      Object.entries(attributes).forEach(([key, val]) => node.setAttribute(key, val));
+      parent.appendChild(node); return node;
+    };
+    const group = append(root, 'g', { class: 'lab-digital-readout', transform: `translate(${x} ${y})`, role: 'img', 'aria-label': label });
+    const segments = [[3,0,14,3],[17,3,3,12],[17,19,3,12],[3,31,14,3],[0,19,3,12],[0,3,3,12],[3,15,14,3]];
+    const digits = ['abcdef','bc','abdeg','abcdg','bcfg','acdfg','acdefg','abc','abcdefg','abcdfg'];
+    let offset = 0;
+    for (const digit of String(value)) {
+      if (digit === '.') {
+        append(group, 'circle', { cx: offset + 2, cy: 32, r: 2, class: 'lab-digital-segment is-on' }); offset += 8; continue;
+      }
+      segments.forEach(([sx, sy, width, height], index) => append(group, 'rect', {
+        x: offset + sx, y: sy, width, height, rx: 1,
+        class: `lab-digital-segment${digits[Number(digit)].includes('abcdefg'[index]) ? ' is-on' : ''}`,
+      }));
+      offset += 26;
+    }
+    return group;
+  },
+  // State-owned attention: call after rendering each required step; [] clears it.
+  attention(scope, targets) {
+    const active = new Set(targets.filter(target => target && !target.disabled && target.getClientRects().length));
+    scope.querySelectorAll('.lab-sequence-target').forEach(target => {
+      if (!active.has(target)) target.classList.remove('lab-sequence-target');
+    });
+    active.forEach(target => target.classList.add('lab-sequence-target'));
+  },
+  introduce(scope, targets, key, title, copy) {
+    scope.querySelectorAll('[data-lab-intro]').forEach(target => {
+      delete target.dataset.labIntro; delete target.dataset.labIntroTitle; delete target.dataset.labIntroCopy;
+    });
+    targets.filter(Boolean).forEach(target => {
+      target.dataset.labIntro = key; target.dataset.labIntroTitle = title; target.dataset.labIntroCopy = copy;
+    });
+    document.dispatchEvent(new Event('lab-introduction-change'));
+  },
+  svgPoint(stage, event) {
+    const point = stage.createSVGPoint(); point.x = event.clientX; point.y = event.clientY;
+    return point.matrixTransform(stage.getScreenCTM().inverse());
+  },
+  bindSvgDrag(stage, { start, move, end }) {
+    let active = null;
+    stage.addEventListener('pointerdown', event => {
+      if (active || !event.isPrimary || event.button !== 0) return;
+      const point = LabDesign.svgPoint(stage, event), grip = start(event, point);
+      if (!grip) return;
+      active = { id: event.pointerId, x: point.x - grip.x, y: point.y - grip.y };
+      stage.setPointerCapture(event.pointerId); stage.classList.add('lab-is-dragging'); event.preventDefault();
+    });
+    stage.addEventListener('pointermove', event => {
+      if (!active || active.id !== event.pointerId) return;
+      const point = LabDesign.svgPoint(stage, event);
+      move({ x: point.x - active.x, y: point.y - active.y }, event); event.preventDefault();
+    });
+    const finish = event => {
+      if (!active || active.id !== event.pointerId) return;
+      active = null; stage.classList.remove('lab-is-dragging');
+      if (stage.hasPointerCapture(event.pointerId)) stage.releasePointerCapture(event.pointerId);
+      end(event);
+    };
+    ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(type => stage.addEventListener(type, finish));
+  }
+};
+
+/* Shared progressive-card attention and movable completion for opted-in labs. */
+(() => {
+  // Prefer unoccupied space inside the visible workspace, then the least overlap.
+  function popupPosition(popup, scope, anchor) {
+    const box = scope.getBoundingClientRect(), w = popup.offsetWidth, h = popup.offsetHeight;
+    const left = Math.max(8, box.left + 8), top = Math.max(8, box.top + 8);
+    const right = Math.max(left, Math.min(innerWidth - 8, box.right - 8) - w);
+    const bottom = Math.max(top, Math.min(innerHeight - 8, box.bottom - 8) - h);
+    const occupied = [];
+    const add = r => { if (r.width && r.height && r.bottom > top && r.top < bottom + h) occupied.push(r); };
+    const walker = document.createTreeWalker(scope, NodeFilter.SHOW_TEXT);
+    while (walker.nextNode()) {
+      const node = walker.currentNode, parent = node.parentElement;
+      if (!node.textContent.trim() || !parent || parent.closest('svg,script,style,.next-card,.lab-intro-card') || !parent.getClientRects().length) continue;
+      const range = document.createRange(); range.selectNodeContents(node);
+      for (const r of range.getClientRects()) add(r);
+    }
+    scope.querySelectorAll('input,button,select,textarea,canvas,svg text,svg path,svg line,svg circle,svg rect,[data-lab-popup-avoid]').forEach(element => {
+      if (element.closest('.next-card,.lab-intro-card') || !element.getClientRects().length) return;
+      const r = element.getBoundingClientRect(), css = getComputedStyle(element);
+      if (css.visibility === 'hidden' || css.opacity === '0') return;
+      // Large SVG backgrounds are workspace, not an operated object.
+      if (element.tagName === 'rect' && (r.width * r.height > box.width * box.height / 5 || css.fill === 'transparent' || css.fill === 'rgba(0, 0, 0, 0)')) return;
+      add(r);
+    });
+    if (anchor) occupied.push(anchor);
+    const candidates = [[right, top], [left, top], [right, bottom], [left, bottom]];
+    if (anchor) candidates.unshift([anchor.right + 16, anchor.top], [anchor.left - w - 16, anchor.top], [anchor.left, anchor.bottom + 16], [anchor.left, anchor.top - h - 16]);
+    for (let y = top; y <= bottom; y += 48) for (let x = left; x <= right; x += 48) candidates.push([x, y]);
+    const score = ([x, y]) => occupied.reduce((sum, r) => sum + Math.max(0, Math.min(x + w, r.right + 6) - Math.max(x, r.left - 6)) * Math.max(0, Math.min(y + h, r.bottom + 6) - Math.max(y, r.top - 6)), 0);
+    const distance = ([x, y]) => anchor ? Math.hypot(x + w / 2 - (anchor.left + anchor.right) / 2, y + h / 2 - (anchor.top + anchor.bottom) / 2) : 0;
+    return candidates.map(([x, y]) => [Math.max(left, Math.min(right, x)), Math.max(top, Math.min(bottom, y))]).sort((a, b) => score(a) - score(b) || distance(a) - distance(b))[0];
+  }
+  function normalizeSettingHeaders() {
+    document.body.classList.add("lab-settings-adopt");
+    document.querySelectorAll('[data-lab-reset-target]').forEach(button => {
+      const host = document.querySelector(button.dataset.labResetTarget);
+      if (!host || host.contains(button)) return;
+      button.classList.add('lab-action', 'lab-reset-action');
+      host.classList.add('lab-reset-host');
+      host.appendChild(button);
+    });
+      // Flatten only setting wrappers for visual ordering; preserve nodes and event owners.
+      document.querySelectorAll('.lab-activity-bar').forEach(bar => {
+        const groups = [
+          ['working', '.lab-working-toggle,.lab-toggle[data-kind="working"]'],
+          ['exam', '.lab-toggle[data-kind="exam"],.lab-toggle[data-kind="curriculum"],.pill-toggle.level-toggle'],
+          ['checkpoints', '.lab-checkpoints,.lab-stage-progress']
+        ];
+        let lead = true;
+        for (const [kind, selector] of groups) bar.querySelectorAll(selector).forEach(control => {
+          control.dataset.labSetting = kind;
+          control.toggleAttribute('data-lab-setting-lead', lead); lead = false;
+          if (kind === 'working' || kind === 'exam') {
+            const parent = control.parentElement;
+            parent.querySelectorAll('span,strong,label').forEach(label => {
+              if (!control.contains(label) && (kind === 'working' ? /^Working:?$/i : /^\d{4}:$/).test(label.textContent.trim())) label.classList.add('lab-setting-old-label');
+            });
+          }
+          for (let parent = control.parentElement; parent && parent !== bar; parent = parent.parentElement) parent.classList.add('lab-settings-path');
+        });
+      });
+  }
+  function init() {
+    normalizeSettingHeaders();
+    if (!document.body.classList.contains('lab-adopt-v3')) {
+      let pending=false;
+      new MutationObserver(()=>{if(!pending){pending=true;requestAnimationFrame(()=>{pending=false;normalizeSettingHeaders()})}}).observe(document.querySelector('main')||document.body,{childList:true,subtree:true});
+      return;
+    }
+    // SVG units change with the viewBox; keep opted-in chart labels at their display size.
+    document.querySelectorAll('svg[data-lab-readable-chart]').forEach(stage => {
+      const fitText = () => {
+        const width = stage.getBoundingClientRect().width;
+        if (width) stage.style.setProperty('--lab-chart-text-size', (Number(stage.dataset.labReadableChart) || 14) * stage.viewBox.baseVal.width / width + 'px');
+      };
+      new ResizeObserver(fitText).observe(stage);
+      new MutationObserver(fitText).observe(stage, { attributes: true, attributeFilter: ['viewBox'] });
+      fitText();
+    });
+    // Small flat surfaces follow each opted-in SVG value, including changing instructions.
+    document.querySelectorAll('svg text[data-lab-value]').forEach(value => {
+      const surface = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      surface.setAttribute('class', 'lab-svg-value-surface'); surface.setAttribute('rx', '5');
+      surface.setAttribute('aria-hidden', 'true'); value.before(surface);
+      let frame;
+      const fit = () => { cancelAnimationFrame(frame); frame = requestAnimationFrame(() => {
+        if (!value.isConnected) return;
+        value.style.removeProperty('--lab-value-fit-size');
+        const css = getComputedStyle(value), px = Number(css.getPropertyValue('--lab-value-padding-x')) || 7, py = Number(css.getPropertyValue('--lab-value-padding-y')) || 3;
+        let b = value.getBBox();
+        const component = [...value.parentElement.children].find(el => el.tagName === 'rect' && !el.classList.contains('lab-svg-value-surface'));
+        // Ordinary values share one size; unusually long instructions still fit their component.
+        if (component) {
+          const box = component.getBBox(), centre = b.x + b.width / 2;
+          const available = 2 * Math.min(centre - box.x, box.x + box.width - centre) - 2 * px - 8;
+          if (available > 0 && b.width > available) {
+            value.style.setProperty('--lab-value-fit-size', parseFloat(css.fontSize) * available / b.width + 'px');
+            b = value.getBBox();
+          }
+        }
+        Object.entries({x:b.x-px,y:b.y-py,width:b.width+2*px,height:b.height+2*py}).forEach(([k,v])=>surface.setAttribute(k,v));
+      }); };
+      new MutationObserver(fit).observe(value, {childList:true,characterData:true,subtree:true});
+      new ResizeObserver(fit).observe(value.ownerSVGElement);
+      document.fonts?.ready.then(fit); fit();
+    });
+    const touched = new Set();
+    const introduced = new Set();
+    const placed = new WeakMap(), moved = new WeakSet();
+    let introduction = null, interacting = false;
+    const hint = document.createElement('aside');
+    hint.id = 'lab-intro-hint'; hint.className = 'lab-intro-card'; hint.setAttribute('role', 'tooltip'); hint.hidden = true;
+    const hintTitle = document.createElement('strong'), hintCopy = document.createElement('span');
+    hint.append(hintTitle, hintCopy); document.body.append(hint);
+    function clearIntroduction() {
+      if (introduction) {
+        introduction.classList.remove('lab-intro-target');
+        const ids = (introduction.getAttribute('aria-describedby') || '').split(' ').filter(id => id && id !== hint.id);
+        if (ids.length) introduction.setAttribute('aria-describedby', ids.join(' ')); else introduction.removeAttribute('aria-describedby');
+      }
+      introduction = null; hint.hidden = true;
+    }
+    function refreshIntroduction() {
+      clearIntroduction();
+      if (interacting || [...document.querySelectorAll('.next-card')].some(card => !card.hidden && card.getClientRects().length)) return;
+      introduction = [...document.querySelectorAll('[data-lab-intro]')].find(target => {
+        if (introduced.has(target.dataset.labIntro) || target.disabled || !target.getClientRects().length) return false;
+        const r = target.getBoundingClientRect(); return r.bottom > 20 && r.top < innerHeight - 20 && r.right > 0 && r.left < innerWidth;
+      });
+      if (!introduction) return;
+      introduction.classList.add('lab-intro-target');
+      introduction.setAttribute('aria-describedby', ((introduction.getAttribute('aria-describedby') || '') + ' ' + hint.id).trim());
+      hintTitle.textContent = introduction.dataset.labIntroTitle;
+      hintCopy.textContent = introduction.dataset.labIntroCopy;
+      hint.hidden = false;
+      const [x, y] = popupPosition(hint, document.querySelector('main') || document.body, introduction.getBoundingClientRect());
+      hint.style.left = x + 'px'; hint.style.top = y + 'px';
+    }
+    // Explicit adapter for legacy mode groups whose state lives in a CSS class.
+    document.querySelectorAll('.lab-toggle[data-active-class]').forEach(group => {
+      const sync = () => group.querySelectorAll('button').forEach(button => {
+        const value = String(button.classList.contains(group.dataset.activeClass));
+        if (button.getAttribute('aria-pressed') !== value) button.setAttribute('aria-pressed', value);
+      });
+      new MutationObserver(sync).observe(group, {childList:true,subtree:true,attributes:true,attributeFilter:['class']});
+      sync();
+    });
+    const cardSelector = '.calc-step,.solve-card,.derive-step,.work-step,.working-step,.lab-work-card,.lab-investigation .work-section,.lab-investigation .evidence-section,.lab-investigation .work-block';
+    let queued = false;
+    const key = card => card.id || [...card.querySelectorAll('input')].map(input => input.id || input.name || [...input.attributes].filter(a => a.name.startsWith('data-')).map(a => a.name + a.value).join(':')).join('|') || card.querySelector('.step-head,.derive-step-head,.work-step-head,.eyebrow,strong')?.textContent;
+    function refresh() {
+      queued = false;
+      normalizeSettingHeaders();
+      document.querySelectorAll('[data-lab-actions] button').forEach(button => {
+        if (!button.classList.contains('lab-action')) button.classList.add('lab-action');
+        if (button.classList.contains('primary') && button.dataset.priority !== 'primary') button.dataset.priority = 'primary';
+      });
+      document.querySelectorAll(cardSelector).forEach(card => {
+        if (touched.has(key(card)) && card.dataset.interacted !== 'true') card.dataset.interacted = 'true';
+      });
+      document.querySelectorAll('.next-card').forEach(card => {
+        if (card.hidden || !card.getClientRects().length) { placed.delete(card); moved.delete(card); return; }
+        if (!moved.has(card) && placed.get(card) !== card.textContent) {
+          const scope = card.offsetParent, box = scope.getBoundingClientRect();
+          const [x, y] = popupPosition(card, scope);
+          card.style.right = 'auto'; card.style.bottom = 'auto';
+          card.style.left = x - box.left - scope.clientLeft + scope.scrollLeft + 'px';
+          card.style.top = y - box.top - scope.clientTop + scope.scrollTop + 'px';
+          placed.set(card, card.textContent);
+        }
+        if (card.querySelector('.lab-dialog-move')) return;
+        const handle = document.createElement('button');
+        handle.type = 'button'; handle.className = 'lab-dialog-move';
+        handle.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 3v18M3 12h18M8 7l4-4 4 4M8 17l4 4 4-4M7 8l-4 4 4 4M17 8l4 4-4 4"/></svg>';
+        handle.setAttribute('aria-label', 'Move completion card. Use arrow keys to reposition.');
+        card.prepend(handle);
+      });
+      refreshIntroduction();
+    }
+    const schedule = () => { if (!queued) { queued = true; requestAnimationFrame(refresh); } };
+    document.addEventListener('pointerdown', event => {
+      const target = event.target.closest('[data-lab-intro]');
+      if (!target) return;
+      introduced.add(target.dataset.labIntro); interacting = true; clearIntroduction();
+    }, true);
+    ['pointerup', 'pointercancel'].forEach(type => document.addEventListener(type, () => { interacting = false; schedule(); }));
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && introduction) { introduced.add(introduction.dataset.labIntro); clearIntroduction(); return; }
+      const target = event.target.closest('[data-lab-intro]') || event.target.closest('svg')?.querySelector('.lab-intro-target');
+      if (target && event.key !== 'Tab') { introduced.add(target.dataset.labIntro); clearIntroduction(); schedule(); }
+    }, true);
+    window.addEventListener('resize', () => {
+      // A viewport change invalidates automatic placement, while a card the
+      // learner has moved must retain its chosen position.
+      document.querySelectorAll('.next-card').forEach(card => {
+        if (!moved.has(card)) placed.delete(card);
+      });
+      schedule();
+    });
+    document.addEventListener('lab-introduction-change', schedule);
+    window.addEventListener('scroll', schedule, true);
+    document.addEventListener('focusin', event => {
+      if (!event.target.matches('input,textarea,select,button')) return;
+      const card = event.target.closest(cardSelector);
+      if (card) { touched.add(key(card)); card.dataset.interacted = 'true'; }
+    });
+    document.addEventListener('pointerdown', event => {
+      const input = event.target.closest('input,select,textarea,button,[data-lab-intro]');
+      const card = input?.closest(cardSelector);
+      if (card) { touched.add(key(card)); card.dataset.interacted = 'true'; }
+    });
+    document.addEventListener('click', event => {
+      if (event.target.closest('[data-work-level],[data-level],#reset,#resetCase,#resetChallenge,#resetGraph,#nextProblem,#nextStageButton,[data-next],#newJourney')) {
+        touched.clear(); document.querySelectorAll(cardSelector).forEach(card => delete card.dataset.interacted);
+      }
+    }, true);
+    const move = (card, left, top) => {
+      moved.add(card);
+      const bounds = card.offsetParent;
+      card.style.right = 'auto'; card.style.bottom = 'auto';
+      card.style.left = Math.max(0, Math.min(left, bounds.clientWidth - card.offsetWidth)) + 'px';
+      card.style.top = Math.max(0, Math.min(top, bounds.clientHeight - card.offsetHeight)) + 'px';
+    };
+    document.addEventListener('pointerdown', event => {
+      const handle = event.target.closest('.lab-dialog-move');
+      if (!handle || event.button !== 0) return;
+      const card = handle.closest('.next-card'), x = event.clientX, y = event.clientY, left = card.offsetLeft, top = card.offsetTop;
+      handle.setPointerCapture(event.pointerId); event.preventDefault();
+      const update = e => { if (e.pointerId === event.pointerId) move(card, left + e.clientX - x, top + e.clientY - y); };
+      const stop = () => { handle.removeEventListener('pointermove', update); handle.removeEventListener('pointerup', stop); handle.removeEventListener('pointercancel', stop); handle.removeEventListener('lostpointercapture', stop); };
+      handle.addEventListener('pointermove', update); handle.addEventListener('pointerup', stop); handle.addEventListener('pointercancel', stop); handle.addEventListener('lostpointercapture', stop);
+    });
+    document.addEventListener('keydown', event => {
+      const handle = event.target.closest('.lab-dialog-move');
+      const delta = {ArrowLeft:[-10,0],ArrowRight:[10,0],ArrowUp:[0,-10],ArrowDown:[0,10]}[event.key];
+      if (!handle || !delta) return;
+      event.preventDefault(); const card = handle.closest('.next-card'); move(card, card.offsetLeft + delta[0], card.offsetTop + delta[1]);
+    });
+    new MutationObserver(schedule).observe(document.querySelector('main') || document.body, {childList:true,subtree:true});
+    refresh();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, {once:true}); else init();
+})();
+</script><script>// Small DOM and lesson helpers. Each model owns its state and completion conditions.
+const $=id=>document.getElementById(id), NS='http://www.w3.org/2000/svg';
+const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+const fmt=(x,d=1)=>Number(x.toFixed(d)).toString();
+const reduced=matchMedia('(prefers-reduced-motion: reduce)');
+let W=900,H=420,mobile=false,step=0,maxStep=0,ready=false,drag=null;
+// Session-only snapshots: inspecting an earlier result must not rerun the experiment.
+const checkpointSnapshots=new Map();
+let hintSteps=[];
+let activeDockSource=null,secondaryDockSource=null,announcementTimer=0,outcomeHeading='';
+const validNumber=value=>String(value).trim()!==''&&Number.isFinite(Number(value));
+
+const svg=$('stage');
+function el(tag,attrs={},text,parent=svg){const n=document.createElementNS(NS,tag);for(const [k,v]of Object.entries(attrs))n.setAttribute(k,v);if(text!==undefined)n.textContent=text;parent.appendChild(n);return n}
+function text(x,y,t,cls='',anchor='start',parent=svg){return el('text',{x,y,class:cls,'text-anchor':anchor},t,parent)}
+function line(x1,y1,x2,y2,attrs={},parent=svg){return el('line',{x1,y1,x2,y2,stroke:'var(--ink)','stroke-width':2,...attrs},undefined,parent)}
+function dot(x,y,r,attrs={},parent=svg){return el('circle',{cx:x,cy:y,r,...attrs},undefined,parent)}
+function clear(){const active=document.activeElement?.getAttribute('data-control'),source=document.activeElement?.getAttribute('data-source');svg.dataset.restoreSource=source||'';svg.replaceChildren();svg.dataset.restoreFocus=active||'';}
+function endDraw(){const id=svg.dataset.restoreFocus,key=svg.dataset.restoreSource;if(id)svg.querySelector(`[data-control="${id}"]`)?.focus({preventScroll:true});else if(key)svg.querySelector(`[data-source="${key}"]`)?.focus({preventScroll:true});updateConnections();syncHint();}
+function point(e){const p=svg.createSVGPoint();p.x=e.clientX;p.y=e.clientY;return p.matrixTransform(svg.getScreenCTM().inverse())}
+function handle(id,x,y,config){const g=el('g',{'data-control':id,class:'model-control',tabindex:0,role:'slider','aria-label':config.label,'aria-valuemin':config.min,'aria-valuemax':config.max,'aria-valuenow':config.value,'aria-valuetext':config.valueText??`${fmt(config.value,2)}`});g.dataset.help=config.help||config.label+'. Drag this control, or use the arrow keys to change its value.';dot(x,y,24,{fill:'transparent'},g);dot(x,y,12,{class:'handle'},g);dot(x,y,3,{fill:'var(--lab-accent)'},g);g.onpointerdown=e=>{e.preventDefault();drag={id,config,offset:config.value-config.fromPoint(point(e))};svg.setPointerCapture(e.pointerId);g.focus({preventScroll:true});};g.onkeydown=e=>{let v=config.value;if(['ArrowLeft','ArrowDown'].includes(e.key))v-=config.increment||.1;else if(['ArrowRight','ArrowUp'].includes(e.key))v+=config.increment||.1;else if(e.key==='Home')v=config.min;else if(e.key==='End')v=config.max;else return;e.preventDefault();config.set(clamp(v,config.min,config.max));};return g}
+svg.addEventListener('pointermove',e=>{if(!drag)return;e.preventDefault();drag.config.set(clamp(drag.config.fromPoint(point(e))+drag.offset,drag.config.min,drag.config.max))});
+svg.addEventListener('pointerup',e=>{if(!drag)return;const id=drag.id;drag=null;if(svg.hasPointerCapture(e.pointerId))svg.releasePointerCapture(e.pointerId);svg.querySelector(`[data-control="${id}"]`)?.focus({preventScroll:true})});
+svg.addEventListener('pointercancel',()=>{drag=null});
+function feedback(message,ok=false,retry=false,heading=''){
+ outcomeHeading=heading;
+ if($('feedback').textContent!==message)$('feedback').textContent=message;
+ $('feedback').className='feedback'+(ok?' good':retry?' retry':'');
+ ready=ok;
+ $('next').disabled=!ok&&step>=maxStep;
+ scheduleOutcome();
+}
+function head(title,intro){
+ $('title').textContent=title;$('intro').textContent=intro;
+ $('stepLabel').textContent=step===lesson.length-1?'Experiment':`Step ${step+1} of ${lesson.length-1} · ${lesson[step].label}`;
+ if($('checkpoints').dataset.step!==String(step)){
+  LabDesign.checkpoints($('checkpoints'),lesson.slice(0,-1).map(x=>x.label),step===lesson.length-1?-1:step,i=>i<maxStep);
+  $('checkpoints').dataset.step=step;
+ }
+ $('back').disabled=step===0;
+ $('next').hidden=step===lesson.length-1;
+ $('next').textContent=step<maxStep?'Forward':step===lesson.length-2?'Open experiment':'Continue';
+ svg.setAttribute('aria-label',title+' '+intro);
+}
+function checkpointState(){
+ s.helpOpen=!$('evidenceHelp').hidden;
+ return {state:structuredClone(s),extras:typeof snapshotExtras==='function'?snapshotExtras():null};
+}
+function restoreCheckpoint(saved){
+ for(const key of Object.keys(s))delete s[key];
+ Object.assign(s,structuredClone(saved.state));
+ if(typeof restoreExtras==='function')restoreExtras(structuredClone(saved.extras));
+ restoreView();
+}
+function go(n,restart=false,repeat=false){
+ if(checkpointBusy)return;
+ if(!restart&&(s.busy||s.phase==='offspring'))return;
+ if(!restart&&!repeat)checkpointSnapshots.set(step,checkpointState());
+ if(typeof stopModel==='function')stopModel();
+ return changeCheckpoint(()=>{
+  if(restart){checkpointSnapshots.clear();maxStep=0;step=0;reset();}
+  step=clamp(n,0,lesson.length-1);
+  if(repeat)checkpointSnapshots.delete(step);
+  maxStep=Math.max(maxStep,step);
+  $('controls').replaceChildren();$('context').replaceChildren();
+  $('working').hidden=true;$('working').replaceChildren();$('records').replaceChildren();$('records').hidden=true;
+  $('comparisonNote').hidden=true;$('evidenceHelp').hidden=true;
+  hintSteps=[];ready=false;drag=null;
+  const saved=checkpointSnapshots.get(step);
+  if(saved)restoreCheckpoint(saved);else{s.helpLevel=0;s.helpOpen=false;enter();}
+  resize(true);
+ });
+}
+$('next').onclick=e=>{
+ if(e.detail>1||checkpointBusy||s.busy||s.phase==='offspring')return;
+ if(activeDockSource)runDockAction(activeDockSource,e);
+ else if(ready||step<maxStep)go(step+1);
+};
+$('forwardVisited').onclick=e=>{if(e.detail<=1&&step<maxStep)go(step+1)};
+$('back').onclick=()=>go(step-1);
+$('restart').onclick=()=>{$('resetMenu').open=false;go(0,true)};
+$('repeat').onclick=()=>{$('resetMenu').open=false;go(step,false,true)};
+
+// One disclosure location. Opening/closing help never shifts the action row above it.
+function setHelp(steps){
+ hintSteps=steps;
+ $('hintToggle').hidden=!steps.length;
+ syncHint();
+}
+function syncHint(){
+ document.querySelectorAll('.evidence-cue').forEach(node=>node.classList.remove('evidence-cue'));
+ const open=hintSteps.length>0&&!!s.helpOpen;
+ $('evidenceHelp').hidden=!open;
+ $('hintToggle').setAttribute('aria-expanded',String(open));
+ $('hintToggle').textContent=open?'Hide hint':'Hint';
+ if(!open)return;
+ const level=clamp(s.helpLevel||0,0,hintSteps.length-1),value=hintSteps[level];
+ const hint=typeof value==='function'?value():value;
+ $('hintTitle').textContent=`${hint.example?'Worked example':'Hint'} ${level+1} of ${hintSteps.length}`;
+ const text=typeof hint==='string'?hint:hint.text;
+ if($('hintText').textContent!==text)$('hintText').textContent=text;
+ $('previousHint').disabled=level===0;
+ $('anotherHint').disabled=level>=hintSteps.length-1;
+ $('anotherHint').textContent=hintSteps[level+1]?.example?'Show example':'Next hint';
+ for(const key of hint.keys||[])document.querySelectorAll(`[data-source="${key}"]`).forEach(node=>node.classList.add('evidence-cue'));
+}
+$('hintToggle').onclick=()=>{s.helpOpen=!s.helpOpen;syncHint();if(s.helpOpen)requestAnimationFrame(()=>{if(s.helpOpen)$('evidenceHelp').scrollIntoView({block:'nearest',behavior:'instant'});});};
+$('previousHint').onclick=()=>{s.helpLevel=Math.max(0,(s.helpLevel||0)-1);syncHint();};
+$('anotherHint').onclick=()=>{s.helpLevel=Math.min(hintSteps.length-1,(s.helpLevel||0)+1);syncHint();};
+document.addEventListener('keydown',e=>{
+ if(e.key!=='Escape')return;
+ if($('resetMenu').open){$('resetMenu').open=false;$('resetMenu').querySelector('summary').focus();}
+ else if(s.helpOpen&&(e.target.closest('#evidenceHelp')||e.target===$('hintToggle'))){s.helpOpen=false;syncHint();$('hintToggle').focus();}
+});
+document.addEventListener('pointerdown',e=>{if(!e.target.closest('#resetMenu'))$('resetMenu').open=false;});
+
+// A single, persistent button for Test / Check / Continue. Model calculations and
+// completion predicates remain in the subject files; the dock invokes their real callbacks.
+function dockSources(){
+ return [...document.querySelectorAll('[data-dock-action]')]
+  .filter(node=>!node.disabled&&!node.closest('[hidden]'))
+  .sort((a,b)=>Number(b.dataset.dockRank||10)-Number(a.dataset.dockRank||10));
+}
+function syncActionDock(){
+ const busy=!!s.busy||s.phase==='offspring',experiment=step===lesson.length-1;
+ const sources=dockSources(),next=$('next'),secondary=$('secondaryAction');
+ activeDockSource=!ready?sources[0]||null:null;
+ secondaryDockSource=sources.find(node=>node!==activeDockSource&&node.dataset.repeatable==='true')||null;
+ next.hidden=experiment&&!busy&&!activeDockSource;
+ next.disabled=busy||(!activeDockSource&&!ready&&step>=maxStep);
+ next.textContent=busy?(s.phase==='offspring'?'Producing offspring…':'Testing…'):activeDockSource?activeDockSource.textContent:step<maxStep?'Forward':step===lesson.length-2?'Open experiment':'Continue';
+ secondary.hidden=busy||!secondaryDockSource;
+ if(secondaryDockSource)secondary.textContent=secondaryDockSource.textContent;
+ $('forwardVisited').hidden=step>=maxStep||!activeDockSource;
+ $('forwardVisited').disabled=busy;
+ $('back').disabled=busy||step===0;
+ $('repeat').disabled=busy;
+ $('learningDock').setAttribute('aria-busy',String(busy));
+ // The same button changes from Test to Continue: focus and pointer position are retained.
+}
+function runDockAction(source,event){
+ if(event.detail>1||checkpointBusy||s.busy||s.phase==='offspring'||!source?.isConnected||source.disabled)return;
+ source.click();
+}
+$('secondaryAction').onclick=e=>runDockAction(secondaryDockSource,e);
+function announceOutcome(state){
+ clearTimeout(announcementTimer);
+ const message=$('outcomeTitle').textContent+'. '+$('feedback').textContent;
+ announcementTimer=setTimeout(()=>{
+  if($('statusAnnouncement').textContent!==message)$('statusAnnouncement').textContent=message;
+ },state==='good'||state==='retry'?0:300);
+}
+function rememberReading(reading){
+ s.records.push(structuredClone(reading));
+ if(s.records.length>6){s.records.shift();s.comparison=s.comparison>0?s.comparison-1:null;}
+ if(s.comparison==null)s.comparison=s.records.length-1;
+}
+function clearReadings(){s.records=[];s.comparison=null;render();}
+function comparisonDescription(before,after){
+ const changed=Object.keys(after).filter(key=>String(before[key])!==String(after[key]));
+ return changed.length?'Changed: '+changed.map(key=>`${key} ${before[key]} → ${after[key]}`).join('; ')+'.':'Same conditions. Change one quantity to compare its consequence.';
+}
+function comparisonNote(message){const node=$('comparisonNote');node.hidden=!message;node.textContent=message;}
+function button(label,fn,attrs={}){const b=document.createElement('button');b.type='button';b.className='lab-action';b.textContent=label;for(const[k,v]of Object.entries(attrs))b.setAttribute(k,v);b.classList.add('lab-action');b.onclick=fn;$('controls').appendChild(b);return b}
+function workRow(label,expression){return `<div class="work-step"><span class="work-label">${label}</span><div class="work-expression">${expression}</div></div>`}
+function workOutput(id){return `<output class="lab-math-surface" id="${id}"></output>`}
+function workSetup(title,body,note='',required=false){
+ const area=$('working');area.hidden=false;area.dataset.workState=required?'needed':'reference';area.dataset.interacted='false';
+ area.innerHTML=`<div class="work-heading"><h2 id="workingTitle">${title}</h2><button type="button" class="lab-action trace-button" id="traceWorking" data-help="Follow each value from the model into its place in the calculation." aria-label="Trace values from model to calculation"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="4" cy="5" r="2.5"/><path d="M4 7.5v4a4 4 0 0 0 4 4h8m-3-3 3 3-3 3"/></svg>Trace values</button></div><div class="work-steps">${body}</div><p class="work-note" id="workNote">${note}</p><div class="work-actions" id="workActions"></div>`;
+ area.oninput=area.onpointerdown=()=>{area.dataset.interacted='true'};
+}
+function workValue(id,value){const node=$(id);if(!node||node.textContent===String(value))return;node.textContent=value}
+function workState(state){$('working').dataset.workState=state}
+function workAction(label,fn,attrs={}){const b=button(label,fn,{'data-dock-action':'true','data-dock-rank':'20',...attrs});$('workActions').appendChild(b);return b}
+function table(headers,rows,compare=false){
+ const node=$('records');node.hidden=!rows.length;
+ if(!rows.length){comparisonNote('');return;}
+ const cells=compare?['Compare',...headers]:headers;
+ node.innerHTML=`<thead><tr>${cells.map(x=>`<th scope="col">${escapeHtml(x)}</th>`).join('')}</tr></thead><tbody>${rows.map((row,i)=>`<tr${compare&&s.comparison===i?' class="selected-reading"':''}>${compare?`<td><button type="button" class="reading-choice" data-reading="${i}" aria-label="Compare reading ${i+1}" aria-pressed="${s.comparison===i}">${i+1}</button></td>`:''}${row.map(x=>`<td>${escapeHtml(x)}</td>`).join('')}</tr>`).join('')}</tbody>`;
+ if(compare)node.querySelectorAll('[data-reading]').forEach(b=>b.onclick=()=>{
+  const index=Number(b.dataset.reading);s.comparison=s.comparison===index?null:index;render();
+  $('records').querySelector(`[data-reading="${index}"]`)?.focus({preventScroll:true});
+ });
+}
+function resize(force=false){if(checkpointBusy&&!force)return;const b=$('stageWrap').getBoundingClientRect();W=b.width;mobile=W<600;H=typeof sceneHeight==='function'?sceneHeight(W):(mobile?400:360);if(b.height!==H)$('stageWrap').style.height=H+'px';svg.setAttribute('viewBox',`0 0 ${W} ${H}`);render()}
+function start(){reset();enter();new ResizeObserver(([entry])=>{if(Math.abs(entry.contentRect.width-W)>.5)resize()}).observe($('stageWrap'));resize()}
+
+// Teaching links use explicit quantity keys, never a search for matching numbers.
+const explanations=new Map();
+const connectionLayer=document.createElement('div');connectionLayer.id='connectionLayer';connectionLayer.setAttribute('aria-hidden','true');document.body.appendChild(connectionLayer);
+const helpTip=document.createElement('div');helpTip.id='helpTip';helpTip.className='lab-value-tooltip';helpTip.role='tooltip';helpTip.hidden=true;document.body.appendChild(helpTip);
+let cueVersion=0,cueSignature='',helpTimer=0,helpOwner=null,outcomeQueued=false,shownOutcome='',arrivalAnimations=[],checkpointBusy=false,checkpointAnimations=[],transitionSerial=0;
+const escapeHtml=value=>String(value).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('"','&quot;');
+function term(key,value){return `<span class="linked-term" data-value-ref="${key}" tabindex="0">${escapeHtml(value)}</span>`}
+function result(key,value,description){explanations.set(key,description);return `<span class="lab-math-surface" data-result data-source="${key}" data-link="${key}" data-help="${escapeHtml(description)}" tabindex="0">${escapeHtml(value)}</span>`}
+function explain(node,description,key=''){node.dataset.help=description;if(key)node.dataset.link=key;return node}
+function sourceLabel(key,x,y,label,description,cls='small',anchor='start'){
+ const g=el('g',{'data-source':key,'data-link':key,tabindex:0,role:'button','aria-label':label+'. '+description,class:'value-source'});
+ const t=text(x,y,label,cls,anchor,g),b=t.getBBox();
+ const hit=el('rect',{x:b.x-6,y:b.y-7,width:b.width+12,height:b.height+14,rx:5,class:'source-hit'},undefined,g);g.insertBefore(hit,t);
+ line(b.x,b.y+b.height+3,b.x+b.width,b.y+b.height+3,{class:'source-underline'},g);
+ explanations.set(key,description);explain(g,description,key);return g;
+}
+function workFormula(id,html){const node=$(id);if(node&&node.innerHTML!==html)node.innerHTML=html}
+function workingExplanation(description){const area=$('working');area.dataset.method=description;area.removeAttribute('data-help');area.removeAttribute('tabindex');area.setAttribute('aria-labelledby','workingTitle');area.setAttribute('aria-describedby','workNote');}
+function linkedSources(key){return [...document.querySelectorAll(`[data-source="${key}"]`)].filter(node=>node.getClientRects().length&&(!('value' in node)||node.value!==''))}
+function linkedTerms(key){return [...document.querySelectorAll(`[data-value-ref="${key}"]`)].filter(node=>node.getClientRects().length)}
+function linkPairs(){return [...new Set([...$('working').querySelectorAll('[data-value-ref]')].map(node=>node.dataset.valueRef))].flatMap(key=>{const source=linkedSources(key)[0],targets=linkedTerms(key);return source&&targets.length?[{key,source,targets}]:[]})}
+function stopConnections(){cueVersion++;connectionLayer.replaceChildren();delete connectionLayer.dataset.active;document.querySelectorAll('.value-arrived').forEach(n=>n.classList.remove('value-arrived'));}
+function visibleRect(node){const r=node.getBoundingClientRect();return r.width&&r.height&&r.bottom>0&&r.top<innerHeight&&r.right>0&&r.left<innerWidth?r:null}
+function halo(node,kind){const r=visibleRect(node);if(!r)return null;const box=document.createElement('span');box.className='connection-halo '+kind;Object.assign(box.style,{left:r.x-5+'px',top:r.y-5+'px',width:r.width+10+'px',height:r.height+10+'px'});connectionLayer.appendChild(box);return box;}
+const pauseCue=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+async function tracePair(pair,version){
+ if(version!==cueVersion||!pair.source.isConnected)return;
+ connectionLayer.dataset.active=pair.key;
+ const a=visibleRect(pair.source),target=pair.targets[0],b=visibleRect(target),sourceHalo=halo(pair.source,'source');
+ if(reduced.matches){pair.targets.forEach(node=>halo(node,'destination'));await pauseCue(750);return}
+ sourceHalo?.animate([{opacity:0,transform:'scale(.97)'},{opacity:1,transform:'scale(1)'},{opacity:1}],{duration:240,fill:'forwards'});
+ await pauseCue(220);if(version!==cueVersion)return;
+ if(a&&b){
+  const token=document.createElement('span');token.className='travelling-value';token.textContent=target.textContent;connectionLayer.appendChild(token);
+  const x1=a.x+a.width/2,y1=a.y+a.height/2,x2=b.x+b.width/2,y2=b.y+b.height/2;
+  const bend=Math.min(45,Math.abs(y2-y1)*.15),frames=[0,.25,.5,.75,1].map((t,i)=>({transform:`translate(${x1+(x2-x1)*t+bend*Math.sin(Math.PI*t)}px,${y1+(y2-y1)*t}px) translate(-50%,-50%)`,opacity:i===0||i===4?0:1}));
+  await token.animate(frames,{duration:560,easing:'cubic-bezier(.22,.68,.3,1)',fill:'forwards'}).finished.catch(()=>{});token.remove();
+ }
+ if(version!==cueVersion)return;
+ pair.targets.forEach(node=>{halo(node,'destination')?.animate([{opacity:0,transform:'scale(.97)'},{opacity:1,transform:'scale(1)'}],{duration:180,fill:'forwards'});node.classList.add('value-arrived')});
+ await pauseCue(330);
+}
+async function traceValues(){
+ stopConnections();const version=cueVersion,pairs=linkPairs();
+ for(const pair of pairs){await tracePair(pair,version);if(version!==cueVersion)return;connectionLayer.replaceChildren();document.querySelectorAll('.value-arrived').forEach(n=>n.classList.remove('value-arrived'))}
+ delete connectionLayer.dataset.active;
+ if(!reduced.matches&&pairs.length){$('working').querySelectorAll('[data-result]').forEach(node=>node.animate([{backgroundColor:'var(--lab-accent-soft)'},{backgroundColor:'transparent'}],{duration:600}))}
+}
+function updateConnections(){
+ if(helpOwner&&!helpOwner.isConnected)hideHelp();
+ const pairs=$('working').hidden?[]:linkPairs();
+ const replay=$('traceWorking');if(replay){replay.hidden=!pairs.length;replay.onclick=()=>{hideHelp();traceValues()}}
+ document.querySelectorAll('[data-value-ref]').forEach(node=>{const key=node.dataset.valueRef;node.dataset.help=explanations.get(key)||'This value is taken from the labelled model.';node.dataset.link=key;node.setAttribute('aria-label',node.textContent+'. '+node.dataset.help)});
+ const signature=step+'|'+pairs.map(({key,source,targets})=>key+':'+(source.value??source.textContent)+'='+targets.map(n=>n.textContent).join(',')).join('|');
+ if(signature!==cueSignature){cueSignature=signature;stopConnections()}
+}
+function clearLinkedFocus(){document.querySelectorAll('.linked-focus').forEach(node=>node.classList.remove('linked-focus'))}
+function hideHelp(){clearTimeout(helpTimer);helpTip.hidden=true;helpOwner?.removeAttribute('aria-describedby');helpOwner=null;clearLinkedFocus()}
+function showHelp(owner){
+ const description=owner.dataset.help;if(!description||!owner.isConnected)return;
+ hideHelp();helpOwner=owner;helpTip.textContent=description;helpTip.hidden=false;owner.setAttribute('aria-describedby','helpTip');
+ const r=owner.getBoundingClientRect(),b=helpTip.getBoundingClientRect(),top=r.bottom+b.height+12<innerHeight?r.bottom+9:Math.max(8,r.top-b.height-9);
+ helpTip.style.left=clamp(r.x+r.width/2-b.width/2,8,innerWidth-b.width-8)+'px';helpTip.style.top=top+'px';
+ const key=owner.dataset.link;if(key)[...linkedSources(key),...linkedTerms(key)].forEach(node=>node.classList.add('linked-focus'));
+}
+document.addEventListener('pointerover',e=>{if(e.pointerType==='touch'||drag)return;const node=e.target.closest('[data-help]');if(!node||node===helpOwner)return;clearTimeout(helpTimer);helpTimer=setTimeout(()=>showHelp(node),200)});
+document.addEventListener('pointerout',e=>{if(e.relatedTarget&&((helpOwner?.contains(e.relatedTarget))||helpTip.contains(e.relatedTarget)))return;if(e.target.closest('[data-help]')){clearTimeout(helpTimer);helpTimer=setTimeout(hideHelp,100)}});
+helpTip.onpointerenter=()=>clearTimeout(helpTimer);helpTip.onpointerleave=hideHelp;
+document.addEventListener('focusin',e=>{const node=e.target.closest('[data-help]');if(node)showHelp(node)});
+document.addEventListener('focusout',e=>{if(!helpTip.contains(e.relatedTarget))hideHelp()});
+document.addEventListener('pointerdown',e=>{if(e.target.closest('#traceWorking'))return;stopConnections();if(!e.target.closest('[data-help],#helpTip'))hideHelp();if(e.target.closest('#stage,#working'))$('working').dataset.interacted='true'});
+document.addEventListener('click',e=>{const node=e.target.closest('[data-source],[data-value-ref]');if(node&&!e.target.closest('input,select'))showHelp(node)});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){hideHelp();stopConnections()}else if(['Enter',' '].includes(e.key)&&e.target.matches('[data-source],[data-value-ref]')){e.preventDefault();showHelp(e.target)}});
+document.addEventListener('input',()=>{stopConnections();hideHelp()});
+window.addEventListener('scroll',()=>{stopConnections();hideHelp()},{passive:true});window.addEventListener('resize',()=>{stopConnections();hideHelp()});
+reduced.addEventListener('change',()=>{stopConnections();[...arrivalAnimations,...checkpointAnimations].forEach(a=>a.cancel())});
+function arrive(nodes){if(reduced.matches||checkpointBusy)return;arrivalAnimations.forEach(a=>a.cancel());arrivalAnimations=nodes.filter(Boolean).map(node=>node.animate([{opacity:0},{opacity:1}],{duration:240,easing:'ease-out'}));}
+// Compare rendered parts, keeping identical apparatus and controls fully visible.
+function visualKey(node){const copy=node.cloneNode(true);for(const n of [copy,...copy.querySelectorAll('*')]){for(const a of [...n.attributes])if(a.name.startsWith('aria-')||['tabindex','role','data-help','data-link','data-source','data-value-ref','data-control'].includes(a.name))n.removeAttribute(a.name);n.classList.remove('linked-focus','value-arrived');if(!n.classList.length)n.removeAttribute('class')}return copy.outerHTML}
+function transitionCopy(node){const copy=node.cloneNode(true),prefix='checkpoint-old-'+(++transitionSerial)+'-',ids=new Map();for(const n of [copy,...copy.querySelectorAll('*')])if(n.id){ids.set(n.id,prefix+n.id);n.id=prefix+n.id}for(const n of [copy,...copy.querySelectorAll('*')]){for(const name of ['data-source','data-value-ref','data-link','data-control','aria-live'])n.removeAttribute(name);n.removeAttribute('tabindex');for(const a of [...n.attributes]){let value=a.value.replace(/url\(#([^)]+)\)/g,(m,id)=>ids.has(id)?'url(#'+ids.get(id)+')':m);if(a.name==='href'&&ids.has(value.slice(1)))value='#'+ids.get(value.slice(1));if(value!==a.value)n.setAttribute(a.name,value)}n.style.animation='none'}copy.setAttribute('aria-hidden','true');copy.style.pointerEvents='none';return copy}
+function partSnapshot(node){const visible=!!node.getClientRects().length,style=getComputedStyle(node);return{node,visible,key:visible?visualKey(node):'',copy:visible?transitionCopy(node):null,height:visible?node.getBoundingClientRect().height:0,style:{width:style.width,maxWidth:style.maxWidth,marginTop:visible?style.marginTop:'0px',marginBottom:visible?style.marginBottom:'0px',marginLeft:style.marginLeft,marginRight:style.marginRight,gridArea:style.gridArea,flex:style.flex}}}
+async function changeCheckpoint(update){
+ if(checkpointBusy)return;checkpointBusy=true;hideHelp();stopConnections();arrivalAnimations.forEach(a=>a.cancel());
+ const lab=document.querySelector('.lab'),stage=$('stageWrap'),parts=['.mission-copy','#context','#working','#controls','#records','#outcome'].map(selector=>partSnapshot(document.querySelector(selector))),oldModel=svg.cloneNode(true),oldHeight=stage.getBoundingClientRect().height;
+ const cleanups=[],outgoing=[],incoming=[],sizes=[];lab.inert=true;lab.setAttribute('aria-busy','true');
+ const animate=(node,frames,duration)=>{const a=node.animate(frames,{duration,easing:'cubic-bezier(.2,.65,.3,1)',fill:'forwards'});checkpointAnimations.push(a);return a.finished.catch(()=>{})};
+ try{
+  update();await Promise.resolve();
+  if(reduced.matches){window.scrollTo({top:0,behavior:'instant'});return}
+  for(const before of parts){
+   const node=before.node,after=partSnapshot(node);if(before.key===after.key)continue;
+   const hidden=node.hidden,originalStyle=node.getAttribute('style'),shell=document.createElement('div'),layout=after.visible?after.style:before.style;
+   shell.className='checkpoint-part';Object.assign(shell.style,layout,{height:before.height+'px',marginTop:before.style.marginTop,marginBottom:before.style.marginBottom});
+   node.replaceWith(shell);shell.appendChild(node);node.hidden=false;Object.assign(node.style,{position:'absolute',inset:'0 auto auto 0',width:'100%',margin:'0',opacity:'0'});
+   if(before.copy){Object.assign(before.copy.style,{position:'absolute',inset:'0 auto auto 0',width:'100%',margin:'0'});shell.appendChild(before.copy);outgoing.push(before.copy)}
+   if(after.visible)incoming.push({node,opacity:1});sizes.push({node:shell,from:{height:before.height+'px',marginTop:before.style.marginTop,marginBottom:before.style.marginBottom},to:{height:after.height+'px',marginTop:after.style.marginTop,marginBottom:after.style.marginBottom}});
+   cleanups.push(()=>{shell.replaceWith(node);node.hidden=hidden;if(originalStyle===null)node.removeAttribute('style');else node.setAttribute('style',originalStyle)});
+  }
+  const oldNodes=[...oldModel.children],oldKeys=oldNodes.map(visualKey),matched=new Set();
+  for(const node of [...svg.children]){if(node.tagName.toLowerCase()==='defs')continue;const key=visualKey(node),index=oldNodes.findIndex((old,i)=>!matched.has(i)&&oldKeys[i]===key);
+   if(index>=0){matched.add(index);node.getAnimations({subtree:true}).forEach(a=>a.cancel());continue}
+   const style=node.getAttribute('style'),opacity=getComputedStyle(node).opacity;node.style.opacity='0';incoming.push({node,opacity});cleanups.push(()=>{if(style===null)node.removeAttribute('style');else node.setAttribute('style',style)});
+  }
+  oldNodes.forEach((node,i)=>{if(matched.has(i))node.remove()});
+  if([...oldModel.children].some(node=>node.tagName.toLowerCase()!=='defs')){const oldLayer=transitionCopy(oldModel);oldLayer.classList.add('checkpoint-model');Object.assign(oldLayer.style,{height:oldHeight+'px'});stage.appendChild(oldLayer);outgoing.push(oldLayer);cleanups.push(()=>oldLayer.remove())}
+  const newHeight=stage.getBoundingClientRect().height,svgHeight=svg.style.height;svg.style.height=newHeight+'px';stage.style.height=oldHeight+'px';sizes.push({node:stage,from:{height:oldHeight+'px'},to:{height:newHeight+'px'}});cleanups.push(()=>{stage.style.height=newHeight+'px';svg.style.height=svgHeight});
+  lab.dataset.checkpointTransition='leaving';window.scrollTo({top:0,behavior:'smooth'});await Promise.all(outgoing.map(node=>animate(node,[{opacity:1},{opacity:0}],150)));
+  outgoing.forEach(node=>node.remove());if(reduced.matches)return;
+  lab.dataset.checkpointTransition='entering';await Promise.all([...incoming.map(({node,opacity})=>animate(node,[{opacity:0},{opacity}],300)),...sizes.map(({node,from,to})=>animate(node,[from,to],300))]);
+ }finally{
+  checkpointAnimations.forEach(a=>a.cancel());checkpointAnimations=[];cleanups.forEach(fn=>fn());delete lab.dataset.checkpointTransition;lab.inert=false;lab.removeAttribute('aria-busy');checkpointBusy=false;
+  if(Math.abs(stage.getBoundingClientRect().width-W)>.5)resize();$('title').focus({preventScroll:true});
+ }
+}
+function scheduleOutcome(){if(outcomeQueued)return;outcomeQueued=true;queueMicrotask(()=>{
+ outcomeQueued=false;
+ const busy=!!s.busy||s.phase==='offspring';
+ const state=busy?'busy':ready?'good':$('feedback').classList.contains('retry')?'retry':'idle';
+ const title=outcomeHeading||(state==='good'?lesson[step].success||'Result':state==='retry'?'Try again':state==='busy'?'In progress':step===lesson.length-1?'Compare your results':'Try it');
+ $('outcome').dataset.state=state;$('learningDock').dataset.state=state;
+ if($('outcomeTitle').textContent!==title)$('outcomeTitle').textContent=title;
+ syncActionDock();announceOutcome(state);
+ });}
+
+const lesson = [
+  {label:'Tilt', title:'Make the rails run in the same direction.', intro:'Drag Tilt to turn the amber rail. Then move the carriage to both ends and compare the gap.', success:'The gap stays constant.'},
+  {label:'Slide', title:'Keep the direction. Move the rail through P.', intro:'Drag Slide until the amber rail passes through P(0, 2). Check both ends with the carriage.', success:'Sliding changes the intercept, not the gradient.'},
+  {label:'Describe', title:'Write an equation for the amber rail.', intro:'Use the marked coordinates to enter m and c. Test your equation, then compare it at both ends.', success:'One equation describes the whole rail.'},
+  {label:'Falling rail', title:'Build a rail through both mounting points.', intro:'Use Tilt and Slide to reach A(−2, 3) and B(2, 1). Write its equation and test both ends.', success:'Both points and the equation agree.'},
+  {label:'Level rail', title:'Build a level rail through both mounts.', intro:'Place the rail through A(−2, −2) and B(2, −2). Enter its gradient and intercept, then test.', success:'A horizontal line has zero gradient.'},
+  {label:'Vertical rail', title:'Slide a vertical rail through P.', intro:'Reach P(2, 1), then choose which coordinate stays constant. Test the equation along the rail.', success:'A vertical line keeps x constant.'},
+  {label:'Experiment', title:'Compare lines of your own.', intro:'Tilt or slide the rail, move the carriage and save a reading. Select a saved line to compare it.', success:''}
+];
+const s = {mode:'linear',m:1,c:-1,k:-1,probe:0,visitedLow:null,visitedHigh:null,answerM:'',answerC:'',axis:'',answerK:'',tested:false,invalid:false,records:[],comparison:null};
+function currentRail() { return {mode:s.mode,m:s.m,c:s.c,k:s.k}; }
+function targetRail() {
+  return [
+    {mode:'linear',m:.5,c:-1}, {mode:'linear',m:.5,c:2}, {mode:'linear',m:.5,c:1},
+    {mode:'linear',m:-.5,c:2}, {mode:'linear',m:0,c:-2}, {mode:'vertical',k:2}
+  ][step] || null;
+}
+function referenceRail() { return step===0?{mode:'linear',m:.5,c:1}:step===1?{mode:'linear',m:.5,c:0}:null; }
+function predictedRail() {
+  if (step===5) {
+    const k=railNumber(s.answerK);
+    return k===null||!['x','y'].includes(s.axis)?null:s.axis==='x'?{mode:'vertical',k}:{mode:'linear',m:0,c:k};
+  }
+  const m=railNumber(s.answerM),c=railNumber(s.answerC);
+  return m===null||c===null?null:{mode:'linear',m,c};
+}
+function needsEquation() { return step>=2 && step<=5; }
+function geometryMatches() { return step===0?railParallel(currentRail(),targetRail()):railSame(currentRail(),targetRail()); }
+function comparedBothEnds() { return s.visitedLow!==null&&s.visitedLow<=-2&&s.visitedHigh>=2; }
+function clearTravel() { s.visitedLow=null;s.visitedHigh=null; }
+function invalidateRail() { s.tested=false;s.invalid=false;clearTravel(); }
+function setRailValue(key,value) {
+  const increment=key==='m'?.25:.5;
+  const next=Math.round(value/increment)*increment;
+  if(s[key]!==next){s[key]=next;invalidateRail();}
+  render();
+}
+function setProbe(value) {
+  s.probe=Math.round(value*4)/4;
+  if(!needsEquation()||s.tested) {
+    s.visitedLow=s.visitedLow===null?s.probe:Math.min(s.visitedLow,s.probe);
+    s.visitedHigh=s.visitedHigh===null?s.probe:Math.max(s.visitedHigh,s.probe);
+  }
+  render();
+}
+function reset() { Object.assign(s,{mode:'linear',m:1,c:-1,k:-1,probe:0,visitedLow:null,visitedHigh:null,answerM:'',answerC:'',axis:'',answerK:'',tested:false,invalid:false,records:[],comparison:null,helpLevel:0,helpOpen:false}); }
+function enter() {
+  invalidateRail();Object.assign(s,{probe:0,answerM:'',answerC:'',answerK:'',axis:''});
+  const initial=[{m:1,c:-1},{m:.5,c:-1},{m:.5,c:1},{m:.5,c:0},{m:.5,c:-1},{k:-1},{m:.5,c:1,k:0}][step];
+  Object.assign(s,initial,{mode:step===5?'vertical':'linear'});
+  if(step===6){s.records=[];s.comparison=null;}
+  controls();
+}
+function restoreView() { controls(); }
+function inputHtml(id,label) { return `<input type="text" inputmode="text" autocomplete="off" spellcheck="false" id="${id}" aria-label="${label}" placeholder="${id==='gradientInput'?'m':id==='interceptInput'?'c':'value'}" maxlength="20">`; }
+function controls() {
+  $('context').replaceChildren();$('controls').replaceChildren();$('working').hidden=true;
+  if(step===1) workSetup('Read the gradient, then the intercept',workRow('vertical change ÷ horizontal change',workOutput('gradientWork'))+workRow('where x = 0',workOutput('interceptWork')));
+  if(needsEquation()) {
+    const body=step===5?
+      workRow('constant-coordinate equation','<select id="axisInput" aria-label="Constant coordinate"><option value="">Choose x or y</option><option value="x">x</option><option value="y">y</option></select> = '+inputHtml('constantInput','Constant coordinate value')):
+      workRow('your equation',`y = ${inputHtml('gradientInput','Predicted gradient m')} x + ${inputHtml('interceptInput','Predicted intercept c')}`);
+    workSetup('Predict, then compare',body,step===5?'Choose the coordinate, not the direction of movement.':'Decimals and fractions are accepted, including negative values.',true);
+    $('traceWorking').hidden=true; // No supplied numerical substitution in these transfer cases.
+    const fields=step===5?[['constantInput','answerK'],['axisInput','axis']]:[['gradientInput','answerM'],['interceptInput','answerC']];
+    fields.forEach(([id,key])=>{const input=$(id);input.value=s[key];input.addEventListener(id==='axisInput'?'change':'input',()=>{s[key]=input.value;invalidateRail();render();});});
+    workAction('Test equation',()=>{s.invalid=!predictedRail();s.tested=!s.invalid;clearTravel();render();});
+  }
+  if(step===6) {
+    const label=document.createElement('label');label.textContent='Rail ';
+    const select=document.createElement('select');select.id='railMode';select.setAttribute('aria-label','Rail orientation');
+    select.innerHTML='<option value="linear">Tilt and slide</option><option value="vertical">Vertical</option>';select.value=s.mode;
+    select.onchange=()=>{s.mode=select.value;invalidateRail();s.probe=0;controls();render();};label.appendChild(select);$('controls').appendChild(label);
+    button('Record reading',()=>{rememberReading({...currentRail(),probe:s.probe,coordinate:railPoint(currentRail(),s.probe)});render();});
+    button('Clear readings',clearReadings);
+  }
+  setHelp(railHints());
+}
+function railHints() {
+  const examples={
+    tilt:[{text:'Compare the amber rail with the blue reference at the left and right ends. Does the gap change?',keys:['gap']},{text:'Tilt changes the vertical rise while the horizontal run stays fixed. Parallel rails have the same gradient.',keys:['rise','run']},{text:'A different rail rises 2 units over a run of 4. Its gradient is 2 ÷ 4 = 0.5. Sliding it does not change that ratio.',example:true}],
+    equation:[()=>({text:step===3?'Both mounts matter. Your line can pass through B yet miss A. Compare their y-coordinates as x increases.':'The marked points belong to the amber rail. Compare vertical change with horizontal change; then inspect x = 0.',keys:['point-a','point-b','intercept']}),{text:'Gradient is change in y divided by change in x. The intercept is the y-value at x = 0, not the height at any other point.',keys:['rise','run','intercept']},{text:'Different points (0, −1) and (4, 1) give m = (1 − (−1)) ÷ (4 − 0) = 0.5 and c = −1. Their equation is y = 0.5x − 1.',example:true}],
+    vertical:[{text:'Move the carriage along the rail and watch the two coordinates. Which one does not change?',keys:['probe-coordinate']},{text:'Vertical travel changes y but not x. A vertical line cannot be written as y = mx + c with a finite gradient.'},{text:'For a different vertical line through (−3, 0) and (−3, 4), every point has x = −3. Its equation is x = −3, not y = −3.',example:true}]
+  };
+  if(step===0)return examples.tilt;
+  if(step===1)return [{text:'P is on the y-axis. Slide moves every point up or down by the same amount.',keys:['point-p','intercept']},examples.tilt[1],examples.tilt[2]];
+  if(step===5)return examples.vertical;
+  if(step===6)return [{text:'Save a line, then change only Tilt or Slide. The dashed line preserves your saved geometry.'},{text:'The carriage reads actual coordinates. For two nonvertical lines, equal gradients keep their vertical separation constant; equal intercepts alone do not.'}];
+  return examples.equation;
+}
+function updateRailWork() {
+  if(step===1) {
+    workFormula('gradientWork',`${term('rise',railText(2*s.m))} ÷ ${term('run','2')} = ${result('gradient-result',railText(s.m),'The ratio of vertical to horizontal change sets the direction.')}`);
+    workFormula('interceptWork',`c = ${term('intercept',railText(s.c))}`);
+  }
+  if(!needsEquation())return;
+  const prediction=predictedRail();
+  const grade=(id,correct)=>{const input=$(id);if(!input)return;input.className=s.tested&&!correct||s.invalid&&!validNumber(input.value)&&railNumber(input.value)===null?'bad':'';input.setAttribute('aria-invalid',String(input.className==='bad'));};
+  if(step===5){grade('constantInput',railNumber(s.answerK)===s.k);$('axisInput').setAttribute('aria-invalid',String(s.tested&&s.axis!=='x'||s.invalid&&!s.axis));}
+  else {grade('gradientInput',prediction&&Math.abs(prediction.m-s.m)<1e-8);grade('interceptInput',prediction&&Math.abs(prediction.c-s.c)<1e-8);}
+  // Route the action through the shared persistent button. Valid equations still need travel evidence.
+  const source=$('workActions').querySelector('button');
+  source.disabled=!!(s.tested&&prediction&&railSame(prediction,currentRail())&&geometryMatches());
+  workState(s.invalid?'bad':'needed');
+}
+function railFeedback() {
+  if(step===6){
+    feedback(`${railEquation(currentRail())}. Move the carriage to read another point.`,false,false,'Explore and compare');
+    const saved=s.comparison===null?null:s.records[s.comparison];
+    table(['Equation','Carriage point'],s.records.map(r=>[railEquation(r),`(${railText(r.coordinate.x)}, ${railText(r.coordinate.y)})`]),true);
+    if(saved)comparisonNote(comparisonDescription({equation:railEquation(saved)},{equation:railEquation(currentRail())})+(railParallel(saved,currentRail())?' The lines have the same direction.':' The directions differ.'));
+    else comparisonNote('');
+    return;
+  }
+  const geometric=geometryMatches(),prediction=predictedRail();
+  if(s.invalid){feedback(step===5?'Choose x or y and enter a finite number.':'Enter both values as numbers or fractions. A denominator cannot be zero.',false,true,'Complete the equation');return;}
+  if(needsEquation()&&!s.tested){feedback(step===3||step===4?'Position the rail, enter its equation, then test.':'Enter your equation before comparing it along the rail.',false,false,'Make a prediction');return;}
+  if(needsEquation()&&prediction&&!railSame(prediction,currentRail())) {
+    const message=step===5?(prediction.mode!=='vertical'?'Your equation draws a horizontal line, but the rail is vertical. Follow which coordinate stays constant.':'Your constant coordinate places a different vertical line. Compare it with the amber rail.'):
+      Math.abs(prediction.m-s.m)>1e-8?'The dashed equation and amber rail have different directions. Compare the rise with the run.':'The direction agrees, but the intercept does not. Compare the two lines where x = 0.';
+    feedback(message,false,true,'Compare your equation');return;
+  }
+  if(!geometric){
+    const message=step===0?'Turn the Tilt handle. Compare the blue and amber directions.':step===1?'The direction is fixed. Slide the rail until it reaches P.':step===5?'The equation matches your rail, but the rail does not reach P. Slide it and revise the constant.':'Your equation matches the rail, but a mounting point is missed. Adjust the geometry and revise your equation.';
+    feedback(message,false,needsEquation(),step===0?'Compare directions':'Check the placement');return;
+  }
+  if(!comparedBothEnds()){
+    feedback(s.mode==='vertical'?'Move the carriage from y = −2 to y = 2. Check that x stays constant.':'Move the carriage to x = −2 and x = 2. Compare the rail at both stops.',false,false,'Check both ends');return;
+  }
+  const evidence=[
+    'The vertical gap is 2 units at both ends. Equal gradients keep these rails parallel.',
+    'The rail passes through (0, 2). Its gradient stays 0.5 as its intercept moves to 2.',
+    'y = 0.5x + 1 agrees at x = −2 and x = 2. Both representations describe the same straight line.',
+    'From A to B, y falls 2 while x increases 4. y = −0.5x + 2 reaches both mounts.',
+    'y stays −2 as x changes: m = 0, so the equation simplifies to y = −2.',
+    'x stays 2 as y changes. The equation is x = 2; its gradient is undefined, not zero.'
+  ][step];
+  feedback(evidence,true);
+}
+start();
+
+// Pure straight-line model. No DOM, sampling-based equality or expression evaluation.
+function railNumber(value) {
+  const raw = String(value).trim().replace(/−/g, '-').replace(/\s/g, '');
+  if (!raw) return null;
+  const match = raw.match(/^([+-]?(?:\d+(?:\.\d*)?|\.\d+))(?:\/([+-]?(?:\d+(?:\.\d*)?|\.\d+)))?$/);
+  if (!match) return null;
+  const numerator = Number(match[1]), denominator = match[2] === undefined ? 1 : Number(match[2]);
+  const valueNumber = numerator / denominator;
+  return denominator !== 0 && Number.isFinite(valueNumber) ? valueNumber : null;
+}
+function railValue(rail, position) { return rail.mode === 'vertical' ? rail.k : rail.m * position + rail.c; }
+function railPoint(rail, position) { return rail.mode === 'vertical' ? {x: rail.k, y: position} : {x: position, y: railValue(rail, position)}; }
+function railGap(a, b, position) { return a.mode === b.mode ? railValue(a, position) - railValue(b, position) : null; }
+function railExtent(a, b, low = -2, high = 2) {
+  // The gap is affine. Its absolute maximum on a closed interval is at an endpoint.
+  if (a.mode !== b.mode) return null;
+  return Math.max(Math.abs(railGap(a, b, low)), Math.abs(railGap(a, b, high)));
+}
+function railSame(a, b) { const gap = railExtent(a, b); return gap !== null && gap < 1e-8; }
+function railParallel(a, b) { return a.mode === b.mode && (a.mode === 'vertical' || Math.abs(a.m - b.m) < 1e-8); }
+function railText(value) {
+  const clean = Math.abs(value) < 1e-9 ? 0 : Math.round(value * 10000) / 10000;
+  return String(clean).replace('-', '−');
+}
+function railEquation(rail) {
+  if (rail.mode === 'vertical') return `x = ${railText(rail.k)}`;
+  if (Math.abs(rail.m) < 1e-9) return `y = ${railText(rail.c)}`;
+  const first = rail.m === 1 ? 'x' : rail.m === -1 ? '−x' : `${railText(rail.m)}x`;
+  return 'y = ' + first + (rail.c === 0 ? '' : ` ${rail.c < 0 ? '−' : '+'} ${railText(Math.abs(rail.c))}`);
+}
+function railOnPoint(rail, point) { return Math.abs(rail.mode === 'vertical' ? point.x - rail.k : point.y - railValue(rail, point.x)) < 1e-8; }
+
+function railLayout() {
+  const size=Math.min(W-68,350),left=(W-size)/2,top=42,unit=size/10;
+  return {size,left,top,unit,right:left+size,bottom:top+size,x:v=>left+(v+5)*unit,y:v=>top+(5-v)*unit};
+}
+function sceneHeight() { return Math.min(W-68,350)+182; }
+function drawRail(rail,kind,plot) {
+  const group=el('g',{'clip-path':'url(#railPlotClip)',class:`rail-line rail-${kind}`,'data-rail':kind});
+  const start=railPoint(rail,-5),end=railPoint(rail,5);
+  if(kind==='candidate'||kind==='reference') {
+    line(plot.x(start.x),plot.y(start.y),plot.x(end.x),plot.y(end.y),{class:'rail-bed'},group);
+    line(plot.x(start.x),plot.y(start.y),plot.x(end.x),plot.y(end.y),{class:'rail-edge'},group);
+    // Regular sleepers make the rail an operated construction, not a detached graph preview.
+    for(let position=-5;position<=5;position+=.5){
+      const p=railPoint(rail,position),norm=rail.mode==='vertical'?1:Math.hypot(rail.m,1),dx=rail.mode==='vertical'?4:4*rail.m/norm,dy=rail.mode==='vertical'?0:4/norm;
+      line(plot.x(p.x)-dx,plot.y(p.y)-dy,plot.x(p.x)+dx,plot.y(p.y)+dy,{class:'rail-sleeper'},group);
+    }
+  } else line(plot.x(start.x),plot.y(start.y),plot.x(end.x),plot.y(end.y),{class:'rail-ghost'},group);
+}
+function railMount(label,x,y,plot,key) {
+  const xx=plot.x(x),yy=plot.y(y);
+  dot(xx,yy,7,{class:'rail-mount'});
+  line(xx-3,yy,xx+3,yy,{class:'rail-mount-cross'});line(xx,yy-3,xx,yy+3,{class:'rail-mount-cross'});
+  sourceLabel(key,xx+(x<0?-12:12),yy-15,`${label}(${railText(x)}, ${railText(y)})`,'A fixed mounting point. The same straight rail must pass through every supplied mount.','small',x<0?'end':'start');
+}
+function railHandle(id,x,y,label,config) {
+  const g=handle(id,x,y,{label,...config});
+  g.classList.add('rail-handle');
+  return g;
+}
+function drawRailTriangle(plot) {
+  if(s.mode!=='linear'||step===0||step===5)return;
+  const ax=plot.x(0),ay=plot.y(s.c),bx=plot.x(2),by=plot.y(2*s.m+s.c);
+  el('path',{d:`M ${ax} ${ay} H ${bx} V ${by} Z`,class:'rail-triangle'});
+  line(ax,ay,bx,ay,{class:'rail-run'});line(bx,ay,bx,by,{class:'rail-rise'});
+  if(step<=2||step===6){
+    sourceLabel('run',(ax+bx)/2,ay+(s.m>=0?24:-16),'run 2','The horizontal coordinate increases by 2 units. This is the denominator of the gradient.','small','middle');
+    sourceLabel('rise',bx+18,(ay+by)/2+4,`rise ${railText(2*s.m)}`,'The signed vertical change is final y minus starting y. It is negative when the rail falls as x increases.','small');
+  }
+}
+function drawRailControls(plot) {
+  const editableTilt=[0,3,4,6].includes(step)&&s.mode==='linear',editableSlide=[1,3,4,6].includes(step)&&s.mode==='linear';
+  if(editableTilt){
+    const x=plot.x(2),y=plot.y(2*s.m+s.c);
+    railHandle('rail-tilt',x,y,'Tilt: gradient',{help:'Drag up or down to change the gradient. The intercept stays fixed.',min:-1.5,max:1.5,value:s.m,increment:.25,set:v=>setRailValue('m',v),fromPoint:p=>((plot.top+plot.size-p.y)/plot.unit-5-s.c)/2});
+    text(x+19,y+([3,4].includes(step)||y<plot.top+28?24:-16),'Tilt','rail-control-label');
+  }
+  if(editableSlide){
+    const x=plot.x(0),y=plot.y(s.c);
+    railHandle('rail-slide',x,y,'Slide: y-intercept',{help:'Drag vertically to move the whole rail. Its gradient does not change.',min:-2,max:2,value:s.c,increment:.5,set:v=>setRailValue('c',v),fromPoint:p=>(plot.top+plot.size-p.y)/plot.unit-5});
+    text(x-20,y-16,'Slide','rail-control-label','end');
+  }
+  if(s.mode==='vertical'){
+    const xx=plot.x(s.k),yy=plot.y(0);
+    railHandle('rail-vertical',xx,yy,'Slide: constant x-coordinate',{help:'Drag horizontally. Every point on the vertical rail keeps the same x-coordinate.',min:-3,max:3,value:s.k,increment:.5,set:v=>setRailValue('k',v),fromPoint:p=>(p.x-plot.left)/plot.unit-5});
+    text(xx+18,yy-18,'Slide','rail-control-label');
+  }
+  // Coordinate labels are given measurements, never correctness signals.
+  if(s.mode==='linear'&&step<=2){
+    const xx=plot.x(0),yy=plot.y(s.c);
+    if(!editableSlide)dot(xx,yy,4,{class:'rail-coordinate-dot'});
+    sourceLabel('intercept',xx-16,yy+17,`(0, ${railText(s.c)})`,'At x = 0 the second coordinate is the y-intercept c.','small','end');
+    if(step===2){dot(plot.x(2),plot.y(2*s.m+s.c),4,{class:'rail-coordinate-dot'});sourceLabel('point-b',plot.x(2)+14,plot.y(2*s.m+s.c)-18,`(2, ${railText(2*s.m+s.c)})`,'A second measured point on the amber rail. Compare its coordinates with the point at x = 0.','small');}
+  }
+}
+function drawRailProbe(plot,other) {
+  const p=railPoint(currentRail(),s.probe),xx=plot.x(p.x),yy=plot.y(p.y),trackY=plot.bottom+45;
+  const group=el('g',{'clip-path':'url(#railPlotClip)'});
+  line(xx,yy,xx,plot.bottom,{class:'rail-probe-guide'},group);
+  if(s.mode==='linear')line(xx,plot.bottom,xx,trackY,{class:'rail-probe-guide'});
+  // A neutral carriage follows the actual rail. It never changes the geometry or prediction.
+  dot(xx,yy,5,{class:'rail-carriage'},group);
+  if(other){
+    if(other.mode===s.mode){
+      const q=railPoint(other,s.probe);
+      line(xx,yy,plot.x(q.x),plot.y(q.y),{class:'rail-gap'},group);
+      dot(plot.x(q.x),plot.y(q.y),4,{class:'rail-other-point'},group);
+    }
+  }
+  const left=plot.x(-2),right=plot.x(2),trackX=left+(s.probe+2)/4*(right-left);
+  line(left,trackY,right,trackY,{class:'rail-travel-base'});
+  if(s.visitedLow!==null)line(plot.x(s.visitedLow),trackY,plot.x(s.visitedHigh),trackY,{class:'rail-travel-visited'});
+  for(const value of [-2,2]){const visited=value<0?s.visitedLow!==null&&s.visitedLow<=-2:s.visitedHigh!==null&&s.visitedHigh>=2;dot(plot.x(value),trackY,5,{class:`rail-stop${visited?' visited':''}`});text(plot.x(value),trackY+26,railText(value),'small','middle');}
+  railHandle('rail-probe',trackX,trackY,'Test carriage position',{help:s.mode==='vertical'?'Move between −2 and 2 to inspect the lower and upper ends of the vertical rail.':'Move between −2 and 2 to compare the rail at different x-coordinates.',min:-2,max:2,value:s.probe,increment:.25,valueText:`${s.mode==='vertical'?'y':'x'} = ${railText(s.probe)}`,set:setProbe,fromPoint:q=>-2+4*(q.x-left)/(right-left)});
+  text(W/2,trackY-23,'Test carriage','small','middle');
+  sourceLabel('probe-coordinate',W/2,trackY+55,`Point (${railText(p.x)}, ${railText(p.y)})`,'The carriage reads a point on the actual amber rail. First coordinate: x. Second coordinate: y.','accent','middle');
+  const gap=other?railGap(currentRail(),other,s.probe):null;
+  const reading=other?(gap===null?'Different directions':`${s.mode==='vertical'?'Horizontal':'Vertical'} gap: ${railText(Math.abs(gap))}`):s.mode==='vertical'?'x stays constant as the carriage travels.':'Read x, then y, at this position.';
+  sourceLabel('gap',W/2,trackY+80,reading,'The gap compares the rails at the same x-coordinate, or at the same y-coordinate for two vertical rails. A single matching point is not enough.','small','middle');
+}
+function render() {
+  clear();head(lesson[step].title,lesson[step].intro);
+  const plot=railLayout(),ref=referenceRail(),prediction=needsEquation()&&s.tested?predictedRail():null;
+  const saved=step===6&&s.comparison!==null?s.records[s.comparison]:null;
+  const defs=el('defs'),clip=el('clipPath',{id:'railPlotClip'},undefined,defs);
+  el('rect',{x:plot.left,y:plot.top,width:plot.size,height:plot.size},undefined,clip);
+  el('rect',{x:plot.left,y:plot.top,width:plot.size,height:plot.size,class:'rail-plot'});
+  for(let i=-5;i<=5;i++){
+    line(plot.x(i),plot.top,plot.x(i),plot.bottom,{class:i===0?'rail-axis':'rail-grid'});
+    line(plot.left,plot.y(i),plot.right,plot.y(i),{class:i===0?'rail-axis':'rail-grid'});
+    if(i!==0&&i%2===0){text(plot.x(i),plot.y(0)+15,String(i),'rail-tick','middle');text(plot.x(0)-7,plot.y(i)+4,String(i),'rail-tick','end');}
+  }
+  text(plot.right+14,plot.y(0)+5,'x','small','middle');text(plot.x(0),plot.top-10,'y','small','middle');
+  // The legend is stable and sits outside the drawing, not in floating cards over it.
+  line(plot.left,17,plot.left+17,17,{stroke:'var(--lab-concept-amber)','stroke-width':3});text(plot.left+24,21,'Your rail','small');
+  if(ref){line(plot.right-100,17,plot.right-83,17,{stroke:'var(--lab-concept-blue)','stroke-width':3});text(plot.right-76,21,'Reference','small');drawRail(ref,'reference',plot);}
+  else if(prediction||saved){line(plot.right-109,17,plot.right-90,17,{stroke:'var(--lab-concept-violet)','stroke-width':2,'stroke-dasharray':'5 3'});text(plot.right-84,21,saved?'Saved line':'Equation','small');}
+  drawRailTriangle(plot);drawRail(currentRail(),'candidate',plot);
+  if(prediction)drawRail(prediction,'prediction',plot);if(saved)drawRail(saved,'saved',plot);
+  if(step===1)railMount('P',0,2,plot,'point-p');
+  if(step===3){railMount('A',-2,3,plot,'point-a');railMount('B',2,1,plot,'point-b');}
+  if(step===4){railMount('A',-2,-2,plot,'point-a');railMount('B',2,-2,plot,'point-b');}
+  if(step===5)railMount('P',2,1,plot,'point-p');
+  drawRailControls(plot);drawRailProbe(plot,prediction||saved||ref);
+  updateRailWork();railFeedback();endDraw();
+}
+</script></body></html>
