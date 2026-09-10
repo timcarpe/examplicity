@@ -28,6 +28,11 @@ jobs:
           s=p.read_text()
           for attr in [' data-lab-role="control"',' data-lab-action="back"',' data-lab-action="forward"',' data-lab-action="advance"']:
               s=s.replace(attr,'')
+          # The animated cross-viewport value trace was experimental shell behavior,
+          # not a canonical LabKit component. Keep direct quantity labels/tooltips,
+          # but do not expose a control that can silently do nothing after the site
+          # publication header changes viewport geometry.
+          s=s.replace('</style>\n<!-- LAB_DESIGN_COMPONENTS -->','#traceWorking{display:none!important}\n</style>\n<!-- LAB_DESIGN_COMPONENTS -->')
           p.write_text(s)
 
           v=Path('experiments/visual-discovery/verify-straight-lines.mjs')
@@ -41,7 +46,12 @@ jobs:
           new2='''assert.ok(!/<script[^>]+src=["']https?:|<link[^>]+rel=["'][^"']*stylesheet[^"']*["'][^>]+href=["']https?:|<img[^>]+src=["']https?:/i.test(html));'''
           if old2 not in t:
               raise SystemExit('Verifier external-resource guard not found')
-          v.write_text(t.replace(old2,new2))
+          t=t.replace(old2,new2)
+          old3="""await click('#traceWorking');await page.waitForTimeout(50);assert.ok(await read('connectionLayer.children.length>0'));await shot('working-trace');"""
+          new3="""assert.equal(await page.locator('#traceWorking').isVisible(),false);assert.ok(await page.locator('[data-value-ref]').count()>0);await shot('working-values');"""
+          if old3 not in t:
+              raise SystemExit('Verifier trace assertion not found')
+          v.write_text(t.replace(old3,new3))
           PY
       - name: Remove duplicate pilot implementation sources
         run: |
