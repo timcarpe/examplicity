@@ -15,6 +15,7 @@ export const changelogEntries: readonly ChangelogEntry[] = [
       'Organized the Pseudocode and Python Translator controls into settings and execution rows, stabilized button sizing, and clarified its icons across desktop and mobile layouts.',
     ],
     internalChanges: [
+      'Added a bounded lab-authoring workspace with a retained catalogue, local execution and selective promotion of production files.',
       'Integrated a scoped visual-discovery component into the existing publication pipeline, retained local validation coverage, and updated stale interaction assertions.',
     ],
   },
