@@ -1,38 +1,38 @@
 const lesson=[
  {
   "label": "Existing variation",
-  "title": "See what changes when different food becomes available.",
-  "intro": "These adults already have different beak depths. Move the food toward deeper beaks and compare food advantage with the unchanged adult counts.",
-  "success": "Food advantage changed; adult beaks did not."
+  "title": "Change the food, not the birds.",
+  "intro": "Move food advantage toward deeper beaks. Compare the amber shading with the unchanged adult counts.",
+  "success": "Food advantage changed; adults did not"
  },
  {
   "label": "Parents, then offspring",
-  "title": "Follow the parents into the next generation.",
-  "intro": "Food changed which beaks were favoured. Select 24 parents, then watch their 72 offspring replace the adults.",
-  "success": "The offspring inherit variation from their parents."
+  "title": "Follow parents into the next generation.",
+  "intro": "Select 24 parents, then produce offspring. Watch 72 offspring inherit traits before replacing the adults.",
+  "success": "Offspring inherit variation from their parents"
  },
  {
   "label": "One direction",
-  "title": "Find out whether the population shifts over several generations.",
-  "intro": "One generation showed inheritance. Keep the same food pressure for at least three generations and follow the mean beak depth.",
-  "success": "Selection has shifted the population mean."
+  "title": "Observe change over three generations.",
+  "intro": "Keep the food pressure steady. Advance generations and compare mean beak depth with the starting population.",
+  "success": "Three generations are ready to compare"
  },
  {
   "label": "Favour the middle",
-  "title": "Compare a food supply that favours middle-sized beaks.",
-  "intro": "The last environment favoured deeper beaks. Now favour the middle for at least three generations, then calculate this group’s frequency.",
-  "success": "You measured the middle group’s frequency."
+  "title": "Compare selection that favours middle-sized beaks.",
+  "intro": "Run three generations, then calculate the middle group’s frequency to one decimal place.",
+  "success": "The middle-group frequency matches the count"
  },
  {
-  "label": "Favour both extremes",
-  "title": "Build a food supply that keeps both extremes.",
-  "intro": "The target has fewer middle beaks and more birds in both tails. Arrange two food sources yourself, then run at least three generations without editing and compare with the starting population.",
-  "success": "Both extremes remain while the middle becomes less common."
+  "label": "Build the environment",
+  "title": "Favour both extremes instead of the middle.",
+  "intro": "Arrange the two food sources and run at least three generations. Compare the adult distribution with the target shape.",
+  "success": "Both extremes increased relative to the middle"
  },
  {
   "label": "Experiment",
-  "title": "Build an environment and follow its effect across generations.",
-  "intro": "Keep a population as a reference, change its food or repeat with a new sample. Existing adults keep their beaks; reproduction reveals the consequence.",
+  "title": "Build an environment and compare generations.",
+  "intro": "Change food or population size. Record a distribution, then compare it with later generations or a new sample.",
   "success": ""
  }
 ];
@@ -57,15 +57,15 @@ function controls(){
  setHelp(step===3?[
   {text:'Use the actual middle-group count, not the three representative bird drawings.',keys:['middle-count','adult-total']},
   {text:'Divide the group count by all adults and multiply by 100.'},
-  {text:'Another population: 18 of 60 adults gives 18 ÷ 60 × 100 = 30%.'}
+  {example:true,text:'Another population: 18 of 60 adults gives 18 ÷ 60 × 100 = 30%.'}
  ]:step===4?[
   {text:'Compare where food gives an advantage with the two tails you want to retain. Editing food must not move the adult bars.',keys:['shallow-count','middle-count','deep-count']},
   {text:'A central food peak favours middle beaks. Two separated, narrower sources can favour both tails. Test your arrangement rather than advancing generations under the same unhelpful conditions.'},
   {text:'In the previous case one narrow source favoured the middle. Apply that same relationship to two different parts of the trait range.'}
- ]:[]);
+ ]:step===0?[{text:'The amber food advantage can change without changing any existing adult count.',keys:['shallow-count','middle-count','deep-count']}]:step===1?[{text:'Selected parents are still adults. Counts change when offspring replace them.'}]:step===2?[{text:'Keep food unchanged and compare the mean with the starting distribution.',keys:['mean']}]:[]);
 if(s.phase!=='idle')return;
- if(step===1)button(s.parents?'Produce offspring':'Select parents',()=>{if(s.parents)reproduce();else{selectParents();controls();render()}});
- if(step>=2)button('Next generation',reproduce,{'data-priority':'primary'});if(step===4&&s.generation)button('Reset population',()=>{initial();s.changed=true;controls();render();});
+ if(step===1)button(s.parents?'Produce offspring':'Select parents',()=>{if(s.parents)reproduce();else{selectParents();controls();render()}},{'data-dock-action':'true'});
+ if(step>=2)button('Next generation',reproduce,{'data-dock-action':'true','data-repeatable':'true'});if(step===4&&s.generation)button('Reset population',()=>{initial();s.changed=true;controls();render();});
  if(step===5){
   const addSelect=(id,label,options,value,change)=>{const l=document.createElement('label');l.textContent=label+' ';const select=document.createElement('select');select.id=id;select.setAttribute('aria-label',label);for(const[v,name]of options){const opt=document.createElement('option');opt.value=v;opt.textContent=name;select.appendChild(opt)}select.value=value;select.onchange=()=>change(select.value);l.appendChild(select);c.appendChild(l);return select};
   explain(addSelect('foodPressure','Food',[['steady','Steady'],['alternating','Alternating'],['even','Even']],s.pressure,value=>{s.pressure=value;s.parents=null;s.pending=null;if(value==='alternating')s.peaks=[{c:s.generation%2?6.8:13.2,w:1.4}];controls();render()}),'Steady food keeps the pressure you set. Alternating food switches between shallow and deep beaks each generation. Even food gives all beaks the same reproductive advantage.');
@@ -81,15 +81,15 @@ start();
 function setupBiologyWork(){
  if(s.phase==='offspring'){workSetup('Inheritance',workRow('selected parents',term('parents',COUNT))+workRow('offspring replacing the adults',term('offspring',N)),'Each offspring inherits a trait from a selected parent, with variation.');workingExplanation('Parents contribute inherited beak-depth values to the offspring. Small inherited variation makes the offspring similar to their parents without making them exact copies.');return}
  if(step===0||step===1){$('working').hidden=true;return;}
- if(step===2)workSetup('Calculate a trait frequency',workRow('deep-beaked birds ÷ all birds × 100',workOutput('frequencyWork')),'Frequency is the percentage of the population in this group.');
- if(step===3){workSetup('Calculate the middle group’s frequency',workRow('middle-sized birds ÷ all birds × 100',`<span id="middleCount"></span> ÷ ${term('adult-total',N)} × 100 = <input id="frequencyInput" type="number" min="0" max="100" step="0.1" inputmode="decimal" aria-label="Percentage of birds in the middle group">%`),'Run at least three generations, then give the frequency to one decimal place.',true);$('frequencyInput').value=s.frequency;$('frequencyInput').oninput=e=>{s.frequency=e.target.value;s.frequencyChecked=false;render()};workAction('Check frequency',()=>{s.frequencyChecked=true;render()})}
+ if(step===2)workSetup('Trait frequency',workRow('deep-beaked birds ÷ all birds × 100',workOutput('frequencyWork')),'Frequency is the percentage of the population in this group.');
+ if(step===3){workSetup('Middle-group frequency',workRow('middle-sized birds ÷ all birds × 100',`<span id="middleCount"></span> ÷ ${term('adult-total',N)} × 100 = <input id="frequencyInput" type="number" min="0" max="100" step="0.1" inputmode="decimal" aria-label="Percentage of birds in the middle group">%`),'Run at least three generations, then give the frequency to one decimal place.',true);$('frequencyInput').value=s.frequency;$('frequencyInput').oninput=e=>{s.frequency=e.target.value;s.frequencyChecked=false;render()};workAction('Check frequency',()=>{s.frequencyChecked=true;render()})}
  if(step===4){$('working').hidden=true;return;}
  if(step===5)$('working').hidden=true;workingExplanation('A trait frequency is the group count divided by the total adult count. Multiply by 100 to express that fraction as a percentage. The counts come from the current population, not from the representative bird drawings.');
 }
 function updateBiologyWork(){
  const m=stats(s.population),deep=s.population.filter(v=>v>11.5).length,middle=s.population.filter(v=>v>=8.5&&v<=11.5).length;
  if(step===2)workFormula('frequencyWork',`${term('deep-count',deep)} ÷ ${term('adult-total',N)} × 100 = ${result('deep-frequency',fmt(deep/N*100)+'%','This is the percentage of current adults with beaks deeper than 11.5 mm.')}`);
- if(step===3){workFormula('middleCount',term('middle-count',middle));const correct=s.frequency!==''&&Math.abs(Number(s.frequency)-m.middle*100)<=.11,observed=s.generation>=3,ok=s.frequencyChecked&&correct&&observed;$('frequencyInput').disabled=s.generation<3;$('workActions').querySelector('button').disabled=s.generation<3;$('frequencyInput').className=s.frequencyChecked?(correct?'good':'bad'):'';workState(s.frequencyChecked?(correct?'good':'bad'):'needed');if(observed)feedback(ok?`${middle} of ${N} adults are in the middle group: ${fmt(m.middle*100,1)}%. Compare their distribution with the dashed starting bars.`:s.frequencyChecked?'Divide the middle group count by 72 and multiply by 100.':'Calculate the current middle group’s frequency to complete the investigation.',ok,s.frequencyChecked&&!correct)}
+ if(step===3){workFormula('middleCount',term('middle-count',middle));const correct=s.frequency!==''&&Math.abs(Number(s.frequency)-m.middle*100)<=.11,observed=s.generation>=3,ok=s.frequencyChecked&&correct&&observed;$('frequencyInput').disabled=s.generation<3;$('workActions').querySelector('button').disabled=s.generation<3;$('frequencyInput').className=s.frequencyChecked?(correct?'good':'bad'):'';workState(s.frequencyChecked?(correct?'good':'bad'):'needed');if(observed)feedback(ok?`${middle} of ${N} adults are in the middle group: ${fmt(m.middle*100,1)}%. Compare their distribution with the dashed starting bars.`:s.frequencyChecked?`There are ${middle} middle-group birds out of ${N}. Recheck your percentage.`:'Calculate the current middle group’s frequency to complete the investigation.',ok,s.frequencyChecked&&!correct)}
 
 }
 

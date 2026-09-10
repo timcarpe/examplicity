@@ -24,24 +24,19 @@
   ],
   "developerGuide": "https://www.examplicity.org/developer/lab-contract",
   "implementation": {
-    "reviewedRevision": "prototype-source-sha256:30bc983950fa01dcfb50be51d1cc0f7276f058975418390972d382ee2bd33e28",
+    "reviewedRevision": "prototype-source-sha256:53c651fedf61a4b3cb539b0dad79ce185f36a0a8ca3896cd7ee7b0c1c8c4da9c",
     "surfaces": {
-      "prompt": {
+      "actions": {
         "selectors": [
-          "#title",
-          "#intro"
+          "#learningDock",
+          "#next",
+          "#back",
+          "#forwardVisited",
+          "#secondaryAction"
         ],
-        "kind": "given",
-        "description": "A visually identified current mission, with context connecting the previous experience to the next action.",
-        "visibility": "Current step only."
-      },
-      "model": {
-        "selectors": [
-          "#stage"
-        ],
-        "kind": "model",
-        "description": "Guided stages use pV = 600 kPa·L with fixed particle count and speed. The experiment extends the same ideal-gas model to pV = 600 × (T/300) × relative gas amount, with particle speed proportional to sqrt(T).",
-        "visibility": "Always visible; later controls are progressively disclosed."
+        "kind": "control",
+        "description": "One persistent primary action; Back and optional previously-visited Forward are secondary. Model-specific callbacks and gates are unchanged.",
+        "visibility": "Same relative position below the apparatus and working; before saved readings."
       },
       "help": {
         "selectors": [
@@ -51,6 +46,33 @@
         "kind": "support",
         "description": "Learner-requested evidence cue, relationship hint and contrasting worked example; no automatic answer-directed pulse.",
         "visibility": "Only when requested in the relevant experience."
+      },
+      "reset": {
+        "selectors": [
+          "#resetMenu",
+          "#repeat",
+          "#restart"
+        ],
+        "kind": "control",
+        "description": "A consistent top-right disclosure separates repeating the step from restarting the lab.",
+        "visibility": "Restart options always available; Repeat disabled during model transitions."
+      },
+      "prompt": {
+        "selectors": [
+          "#title",
+          "#intro"
+        ],
+        "kind": "given",
+        "description": "A short goal and action sentence above the apparatus, with a guided-step label and quiet restart disclosure.",
+        "visibility": "Current step only."
+      },
+      "model": {
+        "selectors": [
+          "#stage"
+        ],
+        "kind": "model",
+        "description": "Guided stages use pV = 600 kPa·L with fixed particle count and speed. The experiment extends the same ideal-gas model to pV = 600 × (T/300) × relative gas amount, with particle speed proportional to sqrt(T).",
+        "visibility": "Always visible; later controls are progressively disclosed."
       },
       "comparison": {
         "selectors": [
@@ -96,7 +118,7 @@
           "#outcomeTitle"
         ],
         "kind": "completion",
-        "description": "New progression uses a model-derived criterion; previously visited experiences can be inspected without repeating them.",
+        "description": "The persistent dock button runs the current test/check and changes to Continue only after the original model-derived criterion. Feedback and help share this dock; presentation does not set completion.",
         "visibility": "Guided steps; absent in the open experiment."
       }
     },

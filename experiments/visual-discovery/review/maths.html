@@ -48,24 +48,19 @@ SOFTWARE.
   ],
   "developerGuide": "https://www.examplicity.org/developer/lab-contract",
   "implementation": {
-    "reviewedRevision": "prototype-source-sha256:967b3c5eb2f7eb1ea5ff1ac836343ed51d6da84f396162e86ca9a97694478477",
+    "reviewedRevision": "prototype-source-sha256:8b789288683a7a68f4179b4a603dbd243aca73d33ba9d655e1394d6dd2c3f5a0",
     "surfaces": {
-      "prompt": {
+      "actions": {
         "selectors": [
-          "#title",
-          "#intro"
+          "#learningDock",
+          "#next",
+          "#back",
+          "#forwardVisited",
+          "#secondaryAction"
         ],
-        "kind": "given",
-        "description": "A visually identified current mission, with context connecting the previous experience to the next action.",
-        "visibility": "Current step only."
-      },
-      "model": {
-        "selectors": [
-          "#stage"
-        ],
-        "kind": "model",
-        "description": "Lengths, corresponding face area, and volume derive from k, k², and k²h. h = k for similarity.",
-        "visibility": "Always visible; later controls are progressively disclosed."
+        "kind": "control",
+        "description": "One persistent primary action; Back and optional previously-visited Forward are secondary. Model-specific callbacks and gates are unchanged.",
+        "visibility": "Same relative position below the apparatus and working; before saved readings."
       },
       "help": {
         "selectors": [
@@ -75,6 +70,33 @@ SOFTWARE.
         "kind": "support",
         "description": "Learner-requested evidence cue, relationship hint and contrasting worked example; no automatic answer-directed pulse.",
         "visibility": "Only when requested in the relevant experience."
+      },
+      "reset": {
+        "selectors": [
+          "#resetMenu",
+          "#repeat",
+          "#restart"
+        ],
+        "kind": "control",
+        "description": "A consistent top-right disclosure separates repeating the step from restarting the lab.",
+        "visibility": "Restart options always available; Repeat disabled during model transitions."
+      },
+      "prompt": {
+        "selectors": [
+          "#title",
+          "#intro"
+        ],
+        "kind": "given",
+        "description": "A short goal and action sentence above the apparatus, with a guided-step label and quiet restart disclosure.",
+        "visibility": "Current step only."
+      },
+      "model": {
+        "selectors": [
+          "#stage"
+        ],
+        "kind": "model",
+        "description": "Lengths, corresponding face area, and volume derive from k, k², and k²h. h = k for similarity.",
+        "visibility": "Always visible; later controls are progressively disclosed."
       },
       "comparison": {
         "selectors": [
@@ -120,7 +142,7 @@ SOFTWARE.
           "#outcomeTitle"
         ],
         "kind": "completion",
-        "description": "New progression uses a model-derived criterion; previously visited experiences can be inspected without repeating them.",
+        "description": "The persistent dock button runs the current test/check and changes to Continue only after the original model-derived criterion. Feedback and help share this dock; presentation does not set completion.",
         "visibility": "Guided steps; absent in the open experiment."
       }
     },
@@ -203,61 +225,63 @@ SOFTWARE.
     "Immutable comparison readings retain conditions and selected model overlays",
     "Worked calculation rows retain the same quantities, order and units when learners later supply the answers",
     "Explicit source identities link model quantities and earlier calculations to later formula operands",
-    "Optional hover, focus and tap explanations keep context available without adding permanent panels"
+    "Optional quantity explanations keep context available without adding permanent panels",
+    "Consistent goal above the model and feedback/actions below it; evidence, retry and continuation do not create competing cards",
+    "One optional hint entry; restart controls separated from the learning action"
   ],
   "sequence": [
     {
       "label": "One length",
-      "title": "Double a length and compare it with the original.",
-      "intro": "The grey line is one unit long. Drag the blue endpoint until the new line is twice as long.",
-      "success": "You have doubled the length.",
+      "title": "Double the reference length.",
+      "intro": "Drag the blue endpoint. Compare the new length with the fixed 1-unit reference.",
+      "success": "Length doubled",
       "criterion": "Reach k = 2.",
       "mode": "guided"
     },
     {
       "label": "A whole face",
-      "title": "Find out what doubling the sides does to the area.",
-      "intro": "The length scale factor is now 2. Fill the larger square with unit squares and compare its area with the original.",
-      "success": "Two doubled sides give four times the area.",
+      "title": "Compare the area after doubling both sides.",
+      "intro": "Fill the larger square with unit squares. Compare it with the 1-unit square.",
+      "success": "Four times the area",
       "criterion": "Place all four unit squares.",
       "mode": "guided"
     },
     {
       "label": "Into three dimensions",
-      "title": "Build a doubled cube, one layer at a time.",
-      "intro": "The doubled face holds four unit squares. Lift the handle to add layers and see how many unit cubes fill the solid.",
-      "success": "Two layers give eight times the volume.",
+      "title": "Build the doubled cube.",
+      "intro": "Lift the handle to add layers. Count the unit cubes in each layer and in the whole solid.",
+      "success": "Eight times the volume",
       "criterion": "Build two layers, four cubes each.",
       "mode": "guided"
     },
     {
       "label": "Work backwards",
-      "title": "Work backwards from an area nine times as large.",
-      "intro": "You have seen how a length factor produces an area factor. Now calculate the length factor first, then resize the square to check it.",
-      "success": "Your calculation matches the larger square.",
+      "title": "Find the length factor for nine times the area.",
+      "intro": "Predict the factor, resize the square, then test your prediction.",
+      "success": "Prediction matches the area",
       "criterion": "Predict k = 3 from area factor 9, resize independently, then explicitly test; typing never grades the answer and edits invalidate success.",
       "mode": "guided"
     },
     {
-      "label": "Reverse a volume",
-      "title": "Scale a different-sized reference cube to 64 unit³.",
-      "intro": "The reference edge is 2 units, not 1. Predict the length scale factor, resize the new cube, then test its volume. Request help only when needed.",
-      "success": "Your factor and the non-unit reference agree.",
+      "label": "A different reference",
+      "title": "Scale the 2-unit cube to a volume of 64 unit³.",
+      "intro": "Predict the length scale factor, then resize and test the cube. The reference edge is 2 units, not 1.",
+      "success": "Prediction matches the scaled cube",
       "criterion": "Use an original edge of 2 and original volume 8 to produce volume 64. Predict k = 2, resize, then test; the method is available through optional evidence-first hints.",
       "mode": "guided"
     },
     {
       "label": "Test the condition",
-      "title": "Check what makes two solids similar.",
-      "intro": "The width and depth have doubled, but the height has changed by a different factor. Adjust it until all three corresponding edge ratios agree.",
-      "success": "All three edge ratios now agree.",
+      "title": "Make the two solids similar.",
+      "intro": "Width and depth have doubled. Adjust the height until all three corresponding edge ratios agree.",
+      "success": "All three edge ratios match",
       "criterion": "Restore the height to match the two other edge ratios.",
       "mode": "guided"
     },
     {
       "label": "Experiment",
-      "title": "Explore how size and shape change area and volume.",
-      "intro": "Try larger scale factors, separate the layers or change the proportions. Keep readings when you find a comparison you want to return to.",
+      "title": "Compare changes in size and shape.",
+      "intro": "Change scale or height, separate the layers, and record a reading to keep a visual reference.",
       "success": "",
       "criterion": "Ungated experiment: change view, separate layers, alter height, record immutable readings and select a comparison outline; returning restores the entire experiment.",
       "mode": "experiment"
@@ -266,8 +290,8 @@ SOFTWARE.
   "connections": {
     "mapping": "data-source quantity keys pair with data-value-ref operands; earlier calculated results can be sources for later rows. Matching digits alone never creates a link.",
     "cue": "Only activating the Trace values button starts the ordered source pulse, 560 ms curved value transfer and destination pulse. Loading, changing checkpoints, editing values and selecting sources never start a trace. Edits, dragging, scrolling and stage changes cancel a running trace.",
-    "help": "Compact source and method tooltips support hover, keyboard focus, tap and Escape dismissal. Matching terms highlight in both directions.",
-    "transition": "Only changed mission, working, feedback, control and SVG parts fade out for 150 ms, then fade in for 300 ms. Identical visual parts stay visible, while changing working and model areas resize smoothly. Missions use typography without an icon; success uses a filled green checkmark. Navigation is locked for the brief transition; reduced motion changes checkpoints immediately.",
+    "help": "Quantity tooltips support hover, keyboard focus, tap and Escape dismissal. The whole working card no longer triggers a method popup; authored guidance is in the single requested hint disclosure.",
+    "transition": "Only changed mission, working, feedback, control and SVG parts fade out for 150 ms, then fade in for 300 ms. Identical visual parts stay visible, while changing working and model areas resize smoothly. Missions use typography without an icon; success uses one filled green checkmark in the feedback dock. Test and Continue retain the same button. Navigation is locked for the brief transition; reduced motion changes checkpoints immediately.",
     "reducedMotion": "No value travel or stage movement. Button-triggered static paired outlines retain the connection."
   },
   "outcomeContinuity": {
@@ -290,7 +314,7 @@ SOFTWARE.
     "pointer": "Touch and mouse operate the same SVG handles; all handle hit targets at least 44 CSS px.",
     "keyboard": "Arrow keys and Home/End operate SVG sliders. Enter/Space activate unit tiles. Native inputs and buttons support the calculation and generation steps.",
     "motion": "Respects prefers-reduced-motion; particle animation can also be paused. Laser direction cues are brief, piston tests interpolate physical volume, and offspring move from their actual sampled parents before population replacement.",
-    "feedback": "Visible feedback is announced with a polite live region; focus stays on manipulated handles."
+    "feedback": "One polite, atomic live region announces settled status changes. The visible dock retains its position and one primary button; edits and result updates do not move focus. Dynamic pointer feedback is debounced."
   }
 }</script>
 <style data-examplicity-tokens>:root {
@@ -3120,7 +3144,80 @@ html:has(body.lab-science),body.lab-science{height:auto;overflow:visible}
  .controls{gap:6px}
  .foot{margin-top:10px;padding-top:10px}
 }
-</style></head><body><main class="lab"><header class="lesson-head lab-context"><div class="mission-copy"><h1 id="title" tabindex="-1"></h1><p class="intro" id="intro"></p></div><button type="button" class="lab-action" id="restart" data-lab-action="reset">Start over</button><button type="button" class="lab-action repeat-action" id="repeat">Repeat experience</button><div id="checkpoints" class="lab-checkpoints" aria-label="Learning progress"></div></header><div id="context" class="context"></div><div class="stage-wrap" id="stageWrap"><svg xmlns="http://www.w3.org/2000/svg" class="stage" id="stage" role="group" data-lab-role="model"></svg></div><section id="working" class="lab-work-card learning-work" hidden data-lab-role="working" aria-label="Working"></section><details id="evidenceHelp" class="evidence-help" hidden><summary>Need a hint?</summary><p id="hintText" role="status"></p><button type="button" id="anotherHint" class="lab-action">Another hint</button></details><div class="controls" id="controls" data-lab-role="control"></div><table class="records" id="records" hidden aria-label="Experiment readings" data-lab-role="evidence"></table><p id="comparisonNote" class="comparison-note" hidden></p><footer class="foot"><button class="lab-action" id="back" aria-label="Previous step" title="Previous step">←</button><div class="outcome" id="outcome" data-state="idle" role="status" aria-live="polite"><svg class="outcome-symbol" viewBox="0 0 24 24" aria-hidden="true"><circle class="outcome-disc" cx="12" cy="12" r="10.5"/><path class="success-mark" d="m7 12 3.25 3.25L17 8.5"/><path class="retry-mark" d="m8.5 8.5 7 7m0-7-7 7"/></svg><div><p class="outcome-title" id="outcomeTitle" hidden></p><p class="feedback" id="feedback"></p></div></div><button class="lab-action" data-priority="primary" id="next">Continue →</button></footer><p class="smallprint">Face area refers to one corresponding face. Reference dimensions are labelled in each experience.</p><noscript>This interactive lab needs JavaScript enabled in your browser.</noscript></main><script data-lab-design>/* Shared model dragging: retain the point grabbed while the model rerenders. */
+
+/* Goal / feedback polish: two consistent anchors, one primary action, one help entry. */
+.lesson-head.lab-context{grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto auto;padding:14px 16px;margin:0 0 12px;gap:10px 16px;align-items:start}
+.lesson-meta{grid-column:1;grid-row:1;display:flex;align-items:center;gap:14px;min-height:32px;min-width:0;flex-wrap:wrap}
+.step-label{margin:0;font:400 12px/1.4 var(--lab-font-sans);color:var(--lab-ink-secondary)}
+.lesson-head .lab-checkpoints{grid-area:auto;padding:0;gap:6px;flex:none}
+.lesson-head .mission-copy{grid-column:1/-1;grid-row:2}
+.lesson-head.lab-context h1{font:600 18px/1.4 var(--lab-font-sans);margin:0 0 6px;max-width:60ch}
+.lesson-head.lab-context .intro{font:400 14px/1.5 var(--lab-font-sans);margin:0;max-width:85ch}
+.reset-menu{position:relative;grid-column:2;grid-row:1;font-size:12px;z-index:5}
+.reset-menu>summary{cursor:pointer;min-height:32px;padding:6px 8px;color:var(--lab-ink-secondary);border-radius:6px}
+.reset-menu>summary:focus-visible{outline:2px solid var(--lab-accent);outline-offset:2px}
+.reset-options{position:absolute;top:calc(100% + 6px);right:0;width:174px;display:grid;gap:6px;padding:8px;background:var(--lab-surface);border:1px solid var(--lab-line);border-radius:8px;box-shadow:0 4px 14px rgba(29,29,31,.1)}
+.reset-options .lab-action{width:100%;margin:0;text-align:left;min-height:40px}
+.learning-work,.learning-work[data-work-state]{background:var(--lab-surface);border:1px solid var(--lab-line);box-shadow:none;animation:none}
+.learning-work .work-heading h2{font-size:14px;font-weight:600;color:var(--lab-ink)}
+.learning-work .work-note{color:var(--lab-ink-secondary)}
+[data-dock-action],#workActions{display:none!important}
+.learning-dock.foot{display:block;margin:14px 0 0;padding:14px 16px;border:1px solid var(--lab-line);border-radius:10px;background:var(--lab-surface-muted)}
+.learning-dock[data-state=good]{border-color:var(--lab-good-line);background:var(--lab-good-surface)}
+.learning-dock[data-state=retry]{border-color:var(--lab-warn-line);background:var(--lab-warn-soft)}
+.learning-dock .outcome,.learning-dock .outcome[data-state]{min-height:74px;display:flex;align-items:flex-start;gap:10px;padding:0;margin:0;border:0;background:transparent;border-radius:0}
+.learning-dock .outcome>div{flex:1;min-width:0}
+.learning-dock .outcome-title{display:block;margin:0 0 5px;font:600 15px/1.4 var(--lab-font-sans);color:var(--lab-ink)}
+.learning-dock .outcome[data-state=good] .outcome-title{color:var(--lab-good-ink)}
+.learning-dock .outcome[data-state=retry] .outcome-title{color:var(--lab-warn-ink)}
+.learning-dock .feedback{margin:0;font:400 14px/1.5 var(--lab-font-sans);color:var(--lab-ink-secondary);min-height:0}
+.learning-dock .feedback::before{content:none}
+.learning-dock .outcome-symbol{width:23px;height:23px;margin-top:0;flex:none}
+.learning-dock .outcome[data-state=idle] .outcome-symbol,.learning-dock .outcome[data-state=busy] .outcome-symbol{display:none}
+.learning-dock .outcome[data-state=retry] .outcome-symbol{color:var(--lab-warn-ink)}
+.dock-actions{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-top:8px}
+.dock-navigation,.dock-advance{display:flex;align-items:center;gap:8px;min-width:0}
+.dock-navigation .lab-action,.dock-advance>#secondaryAction{background:transparent;border-color:transparent;box-shadow:none}
+.dock-navigation .lab-action:hover,.dock-advance>#secondaryAction:hover{background:var(--lab-accent-soft)}
+.dock-navigation .lab-action:disabled{opacity:.45}
+.primary-slot{width:170px;flex:none}
+.primary-slot>.lab-action{width:100%;min-height:44px;line-height:1.25;padding:9px 12px;white-space:normal}
+.hint-toggle[aria-expanded=true]{background:var(--lab-accent-soft)}
+.evidence-help{max-width:none;margin:14px 0 0;padding:14px 0 0;border-top:1px solid var(--lab-line);font:400 14px/1.5 var(--lab-font-sans)}
+.evidence-help h2{margin:0 0 6px;font:600 13px/1.5 var(--lab-font-sans);color:var(--lab-ink)}
+.evidence-help p{margin:0;max-width:75ch;min-height:42px}
+.hint-navigation{display:flex;justify-content:space-between;gap:10px;margin-top:10px}
+.hint-navigation .lab-action{min-height:40px;background:transparent;box-shadow:none}
+.records{margin-top:16px}
+@media(max-width:600px){
+ .lesson-head.lab-context{padding:12px;gap:8px 10px}
+ .lesson-meta{gap:7px;align-content:start;min-height:32px}
+ .lesson-head .lab-checkpoints{width:100%;gap:5px}
+ .step-label{font-size:11px}
+ .lesson-head.lab-context h1{font-size:17px;line-height:1.4}
+ .reset-menu{font-size:11px}
+ .reset-menu>summary{padding:6px 2px}
+ .learning-dock.foot{padding:12px;margin-top:12px}
+ .learning-dock .outcome,.learning-dock .outcome[data-state]{min-height:114px;gap:8px}
+ .learning-dock .outcome-title{font-size:14px}
+ .learning-dock .feedback{font-size:13px;line-height:1.5}
+ .dock-actions{gap:8px;flex-wrap:wrap}
+ .dock-navigation{gap:2px;flex:1}
+ .dock-navigation .lab-action{padding:8px 7px;min-height:44px;font-size:12px}
+ .dock-advance{gap:6px;flex-wrap:wrap;justify-content:flex-end;margin-left:auto}
+ .dock-advance>#secondaryAction{font-size:12px;padding:6px 8px}
+ .primary-slot{width:138px}
+ .primary-slot>.lab-action{font-size:12px;padding:8px;min-height:44px}
+ .evidence-help{font-size:13px}
+ .hint-navigation .lab-action{font-size:12px}
+}
+/* Source controls invoke through the dock; do not leave their old rows as blank space. */
+.controls:not(:has(> :not([data-dock-action]))),.context:not(:has(> :not([data-dock-action]))){display:none}
+.learning-dock .outcome[data-state=idle] .outcome-symbol,.learning-dock .outcome[data-state=busy] .outcome-symbol{display:block;visibility:hidden}
+
+/* One- and two-line action labels occupy the same button height. */
+.primary-slot>.lab-action{min-height:48px}
+</style></head><body><main class="lab"><header class="lesson-head lab-context" aria-labelledby="title"><div class="lesson-meta"><p id="stepLabel" class="step-label"></p><div id="checkpoints" class="lab-checkpoints" aria-label="Learning progress"></div></div><details id="resetMenu" class="reset-menu"><summary>Restart options</summary><div class="reset-options"><button type="button" class="lab-action" id="repeat">Repeat this step</button><button type="button" class="lab-action" id="restart" data-lab-action="reset">Restart lab</button></div></details><div class="mission-copy"><h1 id="title" tabindex="-1"></h1><p class="intro" id="intro"></p></div></header><div id="context" class="context"></div><div class="stage-wrap" id="stageWrap"><svg xmlns="http://www.w3.org/2000/svg" class="stage" id="stage" role="group" data-lab-role="model"></svg></div><section id="working" class="lab-work-card learning-work" hidden data-lab-role="working" aria-label="Working"></section><div class="controls" id="controls" data-lab-role="control"></div><footer class="foot learning-dock" id="learningDock" aria-label="Feedback and next action" data-state="idle"><div class="outcome" id="outcome" data-state="idle"><svg class="outcome-symbol" viewBox="0 0 24 24" aria-hidden="true"><circle class="outcome-disc" cx="12" cy="12" r="10.5"/><path class="success-mark" d="m7 12 3.25 3.25L17 8.5"/><path class="retry-mark" d="M12 7v6m0 4h.01"/></svg><div><p class="outcome-title" id="outcomeTitle"></p><p class="feedback" id="feedback"></p></div></div><div class="dock-actions"><div class="dock-navigation"><button class="lab-action" id="back" aria-label="Previous step">Back</button><button class="lab-action" id="forwardVisited" hidden>Forward</button><button type="button" class="lab-action hint-toggle" id="hintToggle" aria-expanded="false" aria-controls="evidenceHelp">Hint</button></div><div class="dock-advance"><button type="button" class="lab-action" id="secondaryAction" hidden></button><div class="primary-slot"><button type="button" class="lab-action" data-priority="primary" id="next" aria-describedby="feedback">Continue</button></div></div></div><section id="evidenceHelp" class="evidence-help" aria-labelledby="hintTitle" hidden><h2 id="hintTitle"></h2><p id="hintText"></p><div class="hint-navigation"><button type="button" id="previousHint" class="lab-action">Previous hint</button><button type="button" id="anotherHint" class="lab-action">Next hint</button></div></section></footer><table class="records" id="records" hidden aria-label="Experiment readings" data-lab-role="evidence"></table><p id="comparisonNote" class="comparison-note" hidden></p><p id="statusAnnouncement" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></p><p class="smallprint">Face area refers to one corresponding face. Reference dimensions are labelled in each experience.</p><noscript>This interactive lab needs JavaScript enabled in your browser.</noscript></main><script data-lab-design>/* Shared model dragging: retain the point grabbed while the model rerenders. */
 window.LabDesign = {
   checkpoints(host, labels, current, completed = index => index < current, detail = '') {
     host.classList.add('lab-checkpoints'); host.removeAttribute('aria-hidden');
@@ -3456,6 +3553,7 @@ let W=900,H=420,mobile=false,step=0,maxStep=0,ready=false,drag=null;
 // Session-only snapshots: inspecting an earlier result must not rerun the experiment.
 const checkpointSnapshots=new Map();
 let hintSteps=[];
+let activeDockSource=null,secondaryDockSource=null,announcementTimer=0,outcomeHeading='';
 const validNumber=value=>String(value).trim()!==''&&Number.isFinite(Number(value));
 
 const svg=$('stage');
@@ -3470,8 +3568,9 @@ function handle(id,x,y,config){const g=el('g',{'data-control':id,class:'model-co
 svg.addEventListener('pointermove',e=>{if(!drag)return;e.preventDefault();drag.config.set(clamp(drag.config.fromPoint(point(e))+drag.offset,drag.config.min,drag.config.max))});
 svg.addEventListener('pointerup',e=>{if(!drag)return;const id=drag.id;drag=null;if(svg.hasPointerCapture(e.pointerId))svg.releasePointerCapture(e.pointerId);svg.querySelector(`[data-control="${id}"]`)?.focus({preventScroll:true})});
 svg.addEventListener('pointercancel',()=>{drag=null});
-function feedback(message,ok=false,retry=false){
- $('feedback').textContent=message;
+function feedback(message,ok=false,retry=false,heading=''){
+ outcomeHeading=heading;
+ if($('feedback').textContent!==message)$('feedback').textContent=message;
  $('feedback').className='feedback'+(ok?' good':retry?' retry':'');
  ready=ok;
  $('next').disabled=!ok&&step>=maxStep;
@@ -3479,8 +3578,9 @@ function feedback(message,ok=false,retry=false){
 }
 function head(title,intro){
  $('title').textContent=title;$('intro').textContent=intro;
+ $('stepLabel').textContent=step===lesson.length-1?'Experiment':`Step ${step+1} of ${lesson.length-1} · ${lesson[step].label}`;
  if($('checkpoints').dataset.step!==String(step)){
-  LabDesign.checkpoints($('checkpoints'),lesson.map(x=>x.label),step,i=>i<maxStep);
+  LabDesign.checkpoints($('checkpoints'),lesson.slice(0,-1).map(x=>x.label),step===lesson.length-1?-1:step,i=>i<maxStep);
   $('checkpoints').dataset.step=step;
  }
  $('back').disabled=step===0;
@@ -3489,7 +3589,7 @@ function head(title,intro){
  svg.setAttribute('aria-label',title+' '+intro);
 }
 function checkpointState(){
- s.helpOpen=$('evidenceHelp').open;
+ s.helpOpen=!$('evidenceHelp').hidden;
  return {state:structuredClone(s),extras:typeof snapshotExtras==='function'?snapshotExtras():null};
 }
 function restoreCheckpoint(saved){
@@ -3509,7 +3609,7 @@ function go(n,restart=false,repeat=false){
   if(repeat)checkpointSnapshots.delete(step);
   maxStep=Math.max(maxStep,step);
   $('controls').replaceChildren();$('context').replaceChildren();
-  $('working').hidden=true;$('records').replaceChildren();$('records').hidden=true;
+  $('working').hidden=true;$('working').replaceChildren();$('records').replaceChildren();$('records').hidden=true;
   $('comparisonNote').hidden=true;$('evidenceHelp').hidden=true;
   hintSteps=[];ready=false;drag=null;
   const saved=checkpointSnapshots.get(step);
@@ -3517,29 +3617,84 @@ function go(n,restart=false,repeat=false){
   resize(true);
  });
 }
-$('next').onclick=()=>{if(ready||step<maxStep)go(step+1)};
+$('next').onclick=e=>{
+ if(e.detail>1||checkpointBusy||s.busy||s.phase==='offspring')return;
+ if(activeDockSource)runDockAction(activeDockSource,e);
+ else if(ready||step<maxStep)go(step+1);
+};
+$('forwardVisited').onclick=e=>{if(e.detail<=1&&step<maxStep)go(step+1)};
 $('back').onclick=()=>go(step-1);
-$('restart').onclick=()=>go(0,true);
-$('repeat').onclick=()=>go(step,false,true);
+$('restart').onclick=()=>{$('resetMenu').open=false;go(0,true)};
+$('repeat').onclick=()=>{$('resetMenu').open=false;go(step,false,true)};
 
-// Help is learner-requested. It points to evidence before offering another worked case.
+// One disclosure location. Opening/closing help never shifts the action row above it.
 function setHelp(steps){
  hintSteps=steps;
- const help=$('evidenceHelp');help.hidden=!steps.length;help.open=!!s.helpOpen;
- help.ontoggle=()=>{s.helpOpen=help.open;syncHint();};
- $('anotherHint').onclick=()=>{s.helpLevel=Math.min((s.helpLevel||0)+1,steps.length-1);syncHint();};
+ $('hintToggle').hidden=!steps.length;
  syncHint();
 }
 function syncHint(){
  document.querySelectorAll('.evidence-cue').forEach(node=>node.classList.remove('evidence-cue'));
- if(!hintSteps.length||!$('evidenceHelp').open)return;
- const value=hintSteps[Math.min(s.helpLevel||0,hintSteps.length-1)];
+ const open=hintSteps.length>0&&!!s.helpOpen;
+ $('evidenceHelp').hidden=!open;
+ $('hintToggle').setAttribute('aria-expanded',String(open));
+ $('hintToggle').textContent=open?'Hide hint':'Hint';
+ if(!open)return;
+ const level=clamp(s.helpLevel||0,0,hintSteps.length-1),value=hintSteps[level];
  const hint=typeof value==='function'?value():value;
- $('hintText').textContent=typeof hint==='string'?hint:hint.text;
- $('anotherHint').hidden=(s.helpLevel||0)>=hintSteps.length-1;
- for(const key of hint.keys||[]){
-  document.querySelectorAll(`[data-source="${key}"]`).forEach(node=>node.classList.add('evidence-cue'));
- }
+ $('hintTitle').textContent=`${hint.example?'Worked example':'Hint'} ${level+1} of ${hintSteps.length}`;
+ const text=typeof hint==='string'?hint:hint.text;
+ if($('hintText').textContent!==text)$('hintText').textContent=text;
+ $('previousHint').disabled=level===0;
+ $('anotherHint').disabled=level>=hintSteps.length-1;
+ $('anotherHint').textContent=hintSteps[level+1]?.example?'Show example':'Next hint';
+ for(const key of hint.keys||[])document.querySelectorAll(`[data-source="${key}"]`).forEach(node=>node.classList.add('evidence-cue'));
+}
+$('hintToggle').onclick=()=>{s.helpOpen=!s.helpOpen;syncHint();if(s.helpOpen)requestAnimationFrame(()=>{if(s.helpOpen)$('evidenceHelp').scrollIntoView({block:'nearest',behavior:'instant'});});};
+$('previousHint').onclick=()=>{s.helpLevel=Math.max(0,(s.helpLevel||0)-1);syncHint();};
+$('anotherHint').onclick=()=>{s.helpLevel=Math.min(hintSteps.length-1,(s.helpLevel||0)+1);syncHint();};
+document.addEventListener('keydown',e=>{
+ if(e.key!=='Escape')return;
+ if($('resetMenu').open){$('resetMenu').open=false;$('resetMenu').querySelector('summary').focus();}
+ else if(s.helpOpen&&(e.target.closest('#evidenceHelp')||e.target===$('hintToggle'))){s.helpOpen=false;syncHint();$('hintToggle').focus();}
+});
+document.addEventListener('pointerdown',e=>{if(!e.target.closest('#resetMenu'))$('resetMenu').open=false;});
+
+// A single, persistent button for Test / Check / Continue. Model calculations and
+// completion predicates remain in the subject files; the dock invokes their real callbacks.
+function dockSources(){
+ return [...document.querySelectorAll('[data-dock-action]')]
+  .filter(node=>!node.disabled&&!node.closest('[hidden]'))
+  .sort((a,b)=>Number(b.dataset.dockRank||10)-Number(a.dataset.dockRank||10));
+}
+function syncActionDock(){
+ const busy=!!s.busy||s.phase==='offspring',experiment=step===lesson.length-1;
+ const sources=dockSources(),next=$('next'),secondary=$('secondaryAction');
+ activeDockSource=!ready?sources[0]||null:null;
+ secondaryDockSource=sources.find(node=>node!==activeDockSource&&node.dataset.repeatable==='true')||null;
+ next.hidden=experiment&&!busy&&!activeDockSource;
+ next.disabled=busy||(!activeDockSource&&!ready&&step>=maxStep);
+ next.textContent=busy?(s.phase==='offspring'?'Producing offspring…':'Testing…'):activeDockSource?activeDockSource.textContent:step<maxStep?'Forward':step===lesson.length-2?'Open experiment':'Continue';
+ secondary.hidden=busy||!secondaryDockSource;
+ if(secondaryDockSource)secondary.textContent=secondaryDockSource.textContent;
+ $('forwardVisited').hidden=step>=maxStep||!activeDockSource;
+ $('forwardVisited').disabled=busy;
+ $('back').disabled=busy||step===0;
+ $('repeat').disabled=busy;
+ $('learningDock').setAttribute('aria-busy',String(busy));
+ // The same button changes from Test to Continue: focus and pointer position are retained.
+}
+function runDockAction(source,event){
+ if(event.detail>1||checkpointBusy||s.busy||s.phase==='offspring'||!source?.isConnected||source.disabled)return;
+ source.click();
+}
+$('secondaryAction').onclick=e=>runDockAction(secondaryDockSource,e);
+function announceOutcome(state){
+ clearTimeout(announcementTimer);
+ const message=$('outcomeTitle').textContent+'. '+$('feedback').textContent;
+ announcementTimer=setTimeout(()=>{
+  if($('statusAnnouncement').textContent!==message)$('statusAnnouncement').textContent=message;
+ },state==='good'||state==='retry'?0:300);
 }
 function rememberReading(reading){
  s.records.push(structuredClone(reading));
@@ -3557,12 +3712,12 @@ function workRow(label,expression){return `<div class="work-step"><span class="w
 function workOutput(id){return `<output class="lab-math-surface" id="${id}"></output>`}
 function workSetup(title,body,note='',required=false){
  const area=$('working');area.hidden=false;area.dataset.workState=required?'needed':'reference';area.dataset.interacted='false';
- area.innerHTML=`<div class="work-heading"><h2>${title}</h2><button type="button" class="lab-action trace-button" id="traceWorking" data-help="Follow each value from the model into its place in the calculation." aria-label="Trace values from model to calculation"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="4" cy="5" r="2.5"/><path d="M4 7.5v4a4 4 0 0 0 4 4h8m-3-3 3 3-3 3"/></svg>Trace values</button></div><div class="work-steps">${body}</div><p class="work-note" id="workNote">${note}</p><div class="work-actions" id="workActions"></div>`;
+ area.innerHTML=`<div class="work-heading"><h2 id="workingTitle">${title}</h2><button type="button" class="lab-action trace-button" id="traceWorking" data-help="Follow each value from the model into its place in the calculation." aria-label="Trace values from model to calculation"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="4" cy="5" r="2.5"/><path d="M4 7.5v4a4 4 0 0 0 4 4h8m-3-3 3 3-3 3"/></svg>Trace values</button></div><div class="work-steps">${body}</div><p class="work-note" id="workNote">${note}</p><div class="work-actions" id="workActions"></div>`;
  area.oninput=area.onpointerdown=()=>{area.dataset.interacted='true'};
 }
 function workValue(id,value){const node=$(id);if(!node||node.textContent===String(value))return;node.textContent=value}
 function workState(state){$('working').dataset.workState=state}
-function workAction(label,fn){const b=button(label,fn,{'data-priority':'primary'});$('workActions').appendChild(b);return b}
+function workAction(label,fn,attrs={}){const b=button(label,fn,{'data-dock-action':'true','data-dock-rank':'20',...attrs});$('workActions').appendChild(b);return b}
 function table(headers,rows,compare=false){
  const node=$('records');node.hidden=!rows.length;
  if(!rows.length){comparisonNote('');return;}
@@ -3593,7 +3748,7 @@ function sourceLabel(key,x,y,label,description,cls='small',anchor='start'){
  explanations.set(key,description);explain(g,description,key);return g;
 }
 function workFormula(id,html){const node=$(id);if(node&&node.innerHTML!==html)node.innerHTML=html}
-function workingExplanation(description){const area=$('working');area.dataset.help=description;area.tabIndex=0;area.setAttribute('aria-label',description);}
+function workingExplanation(description){const area=$('working');area.dataset.method=description;area.removeAttribute('data-help');area.removeAttribute('tabindex');area.setAttribute('aria-labelledby','workingTitle');area.setAttribute('aria-describedby','workNote');}
 function linkedSources(key){return [...document.querySelectorAll(`[data-source="${key}"]`)].filter(node=>node.getClientRects().length&&(!('value' in node)||node.value!==''))}
 function linkedTerms(key){return [...document.querySelectorAll(`[data-value-ref="${key}"]`)].filter(node=>node.getClientRects().length)}
 function linkPairs(){return [...new Set([...$('working').querySelectorAll('[data-value-ref]')].map(node=>node.dataset.valueRef))].flatMap(key=>{const source=linkedSources(key)[0],targets=linkedTerms(key);return source&&targets.length?[{key,source,targets}]:[]})}
@@ -3691,52 +3846,56 @@ async function changeCheckpoint(update){
  }
 }
 function scheduleOutcome(){if(outcomeQueued)return;outcomeQueued=true;queueMicrotask(()=>{
- outcomeQueued=false;const outcome=$('outcome'),state=ready?'good':$('feedback').classList.contains('retry')?'retry':'idle',key=step+':'+state;
- outcome.dataset.state=state;$('outcomeTitle').hidden=state==='idle';$('outcomeTitle').textContent=state==='good'?lesson[step].success||'You have completed this investigation.':state==='retry'?'Let’s check that again.':'';
- if(key!==shownOutcome){shownOutcome=key;if(state!=='idle')arrive([outcome])}
+ outcomeQueued=false;
+ const busy=!!s.busy||s.phase==='offspring';
+ const state=busy?'busy':ready?'good':$('feedback').classList.contains('retry')?'retry':'idle';
+ const title=outcomeHeading||(state==='good'?lesson[step].success||'Result':state==='retry'?'Try again':state==='busy'?'In progress':step===lesson.length-1?'Compare your results':'Try it');
+ $('outcome').dataset.state=state;$('learningDock').dataset.state=state;
+ if($('outcomeTitle').textContent!==title)$('outcomeTitle').textContent=title;
+ syncActionDock();announceOutcome(state);
  });}
 
 const lesson=[
  {
   "label": "One length",
-  "title": "Double a length and compare it with the original.",
-  "intro": "The grey line is one unit long. Drag the blue endpoint until the new line is twice as long.",
-  "success": "You have doubled the length."
+  "title": "Double the reference length.",
+  "intro": "Drag the blue endpoint. Compare the new length with the fixed 1-unit reference.",
+  "success": "Length doubled"
  },
  {
   "label": "A whole face",
-  "title": "Find out what doubling the sides does to the area.",
-  "intro": "The length scale factor is now 2. Fill the larger square with unit squares and compare its area with the original.",
-  "success": "Two doubled sides give four times the area."
+  "title": "Compare the area after doubling both sides.",
+  "intro": "Fill the larger square with unit squares. Compare it with the 1-unit square.",
+  "success": "Four times the area"
  },
  {
   "label": "Into three dimensions",
-  "title": "Build a doubled cube, one layer at a time.",
-  "intro": "The doubled face holds four unit squares. Lift the handle to add layers and see how many unit cubes fill the solid.",
-  "success": "Two layers give eight times the volume."
+  "title": "Build the doubled cube.",
+  "intro": "Lift the handle to add layers. Count the unit cubes in each layer and in the whole solid.",
+  "success": "Eight times the volume"
  },
  {
   "label": "Work backwards",
-  "title": "Work backwards from an area nine times as large.",
-  "intro": "You have seen how a length factor produces an area factor. Now calculate the length factor first, then resize the square to check it.",
-  "success": "Your calculation matches the larger square."
+  "title": "Find the length factor for nine times the area.",
+  "intro": "Predict the factor, resize the square, then test your prediction.",
+  "success": "Prediction matches the area"
  },
  {
-  "label": "Reverse a volume",
-  "title": "Scale a different-sized reference cube to 64 unit³.",
-  "intro": "The reference edge is 2 units, not 1. Predict the length scale factor, resize the new cube, then test its volume. Request help only when needed.",
-  "success": "Your factor and the non-unit reference agree."
+  "label": "A different reference",
+  "title": "Scale the 2-unit cube to a volume of 64 unit³.",
+  "intro": "Predict the length scale factor, then resize and test the cube. The reference edge is 2 units, not 1.",
+  "success": "Prediction matches the scaled cube"
  },
  {
   "label": "Test the condition",
-  "title": "Check what makes two solids similar.",
-  "intro": "The width and depth have doubled, but the height has changed by a different factor. Adjust it until all three corresponding edge ratios agree.",
-  "success": "All three edge ratios now agree."
+  "title": "Make the two solids similar.",
+  "intro": "Width and depth have doubled. Adjust the height until all three corresponding edge ratios agree.",
+  "success": "All three edge ratios match"
  },
  {
   "label": "Experiment",
-  "title": "Explore how size and shape change area and volume.",
-  "intro": "Try larger scale factors, separate the layers or change the proportions. Keep readings when you find a comparison you want to return to.",
+  "title": "Compare changes in size and shape.",
+  "intro": "Change scale or height, separate the layers, and record a reading to keep a visual reference.",
   "success": ""
  }
 ];
@@ -3783,26 +3942,26 @@ start();
 function restoreView(){if(step===6)controls();setupMathWork();}
 function setupMathWork(){
  if(step===6){$('working').hidden=true;setHelp([]);return;}
- if(step===0)workSetup('Calculate a length scale factor',workRow('new length ÷ reference length',workOutput('lengthWork')));
- if(step===1)workSetup('Connect the side lengths to the area',workRow('two scaled directions',workOutput('areaWork')));
- if(step===2)workSetup('Connect the layers to the volume',workRow('unit cubes in one layer',workOutput('layerWork'))+workRow('cubes per layer × layers',workOutput('volumeWork')));
+ if(step===0)workSetup('Length scale factor',workRow('new length ÷ reference length',workOutput('lengthWork')));
+ if(step===1)workSetup('Area factor',workRow('two scaled directions',workOutput('areaWork')));
+ if(step===2)workSetup('Volume factor',workRow('unit cubes in one layer',workOutput('layerWork'))+workRow('cubes per layer × layers',workOutput('volumeWork')));
  if(step===3||step===4){
-  const expression=step===3?`k = √(${term('target-factor',9)}) = `:'Your length scale factor k = ';
-  workSetup(step===3?'Predict, resize, then test':'Use the non-unit reference',workRow('your prediction',`${expression}<input id="scaleAnswer" type="number" min="0.1" max="5" step="0.1" inputmode="decimal" aria-label="Predicted length scale factor">`),step===4?'A scale factor has no units. The edge length is a different quantity.':'Resizing changes the actual square. The prediction is checked only when you test.',true);
+  const expression=step===3?`k = √(${term('target-factor',9)}) = `:'k = ';
+  workSetup('Your prediction',workRow('length scale factor',`${expression}<input id="scaleAnswer" type="number" min="0.1" max="5" step="0.1" inputmode="decimal" aria-label="Predicted length scale factor">`),step===4?'A scale factor has no units. The edge length is a different quantity.':'Resizing changes the actual square. The prediction is checked only when you test.',true);
   $('scaleAnswer').value=s.answer;
   $('scaleAnswer').oninput=e=>{s.answer=e.target.value;s.tested=false;render();};
-  workAction('Test the model',()=>{
+  workAction('Test prediction',()=>{
    if(!validNumber(s.answer)||Number(s.answer)<=0){feedback('Enter a positive scale factor before testing.',false,true);return;}
    s.tested=true;render();
   });
  }
- if(step===5)workSetup('Compare the corresponding edge ratios',workRow('width',workOutput('widthWork'))+workRow('height',workOutput('heightWork'))+workRow('depth',workOutput('depthWork')));
+ if(step===5)workSetup('Corresponding edge ratios',workRow('width',workOutput('widthWork'))+workRow('height',workOutput('heightWork'))+workRow('depth',workOutput('depthWork')));
  workingExplanation(step===4?'Predict a common length scale factor, not the new edge length. Request a hint for an example with a different reference.':'Compare corresponding lengths. Count the two directions in a face and the three directions in a solid.');
  setHelp(step===3||step===4?[
   ()=>({text:step===4&&validNumber(s.answer)&&Math.abs(Number(s.answer)-s.k*2)<.01?'Your prediction matches an edge length. Compare that edge with the 2-unit original: are those the same quantity?':step===4?'The original cube is not one cubic unit. Inspect its edge and volume before comparing.':'The face grows in two perpendicular directions. Count rows as well as columns.',keys:step===4?['reference-edge','reference-volume','new-edge']:['edge','area-count']}),
   {text:step===4?'Compare new volume with original volume. Reverse the three-direction relationship to get the common edge ratio.':'A square root reverses an area factor. The model should agree with your chosen factor.'},
-  {text:step===4?'Another case: a 3-unit cube has volume 27. A new volume of 729 is 27 times as large; its edge ratio is ∛27 = 3 and its edge is 9 units.':'Another case: an area factor of 16 means the common length factor is √16 = 4.'}
- ]:[]);
+  {example:true,text:step===4?'Another case: a 3-unit cube has volume 27. A new volume of 729 is 27 times as large; its edge ratio is ∛27 = 3 and its edge is 9 units.':'Another case: an area factor of 16 means the common length factor is √16 = 4.'}
+ ]:step===0?[{text:'Use the fixed grey line as your reference. Only the blue endpoint moves.',keys:['reference','length']}]:step===1?[{text:'Each small square has the same area as the reference. Count both rows.',keys:['reference-area','area-count']}]:step===2?[{text:'Count the cubes in one layer, then the number of layers.',keys:['layer-edge','layers']}]:step===5?[{text:'Compare all three edge ratios, not the overall height of the drawing.',keys:['width','height','depth']}]:[]);
 }
 function updateMathWork(){
  if(step===0)workFormula('lengthWork',`${term('length',fmt(s.k))} ÷ ${term('reference',1)} = ${result('scale-factor',fmt(s.k),'The length scale factor compares new length with the original.')}`);
@@ -3812,8 +3971,9 @@ function updateMathWork(){
   const expected=step===3?3:2,correct=validNumber(s.answer)&&Math.abs(Number(s.answer)-expected)<.01,modelOK=Math.abs(s.k-expected)<.01,ok=s.tested&&correct&&modelOK;
   $('scaleAnswer').className=s.tested?(correct?'good':'bad'):'';
   workState(s.tested?(ok?'good':'bad'):'needed');
-  $('workNote').textContent=s.tested?step===4?`Measured edge: ${fmt(2*s.k)} units; measured volume: ${fmt(8*s.k**3,2)} unit³. Target: 64 unit³.`:`Measured area: ${fmt(s.k*s.k,2)} unit². Target: 9 unit².`:'Predict, resize the model, then test. Typing does not check the answer.';
-  feedback(ok?'Your prediction, the reference and the measured model agree.':s.tested?'Compare the measured model with the target. Revise the prediction or the shape, then test again.':'Keep your prediction separate from the model until you test.',ok,s.tested&&!ok);
+  $('workNote').textContent=step===4?'A scale factor has no units; an edge length does.':'Your predicted factor stays separate from the square.';
+  const measurement=step===4?`Edge ${fmt(2*s.k)} units; volume ${fmt(8*s.k**3,2)} unit³. Target: 64 unit³.`:`Area ${fmt(s.k*s.k,2)} unit². Target: 9 unit².`;
+  feedback(ok?step===4?'The edge factor is 2: an edge of 4 units gives a volume of 64 unit³.':'A length factor of 3 gives an area factor of 9.':s.tested?measurement+' Revise the prediction or shape, then test again.':'Enter a factor and resize the shape. Test when both are ready.',ok,s.tested&&!ok);
  }
  if(step===5)for(const [id,value]of [['width',2],['height',s.height],['depth',2]])workFormula(id+'Work',`${term(id,fmt(value))} ÷ ${term('reference',1)} = ${result(id+'-ratio',fmt(value),'This ratio compares corresponding edges.')}`);
 }

@@ -1,44 +1,44 @@
 const lesson=[
  {
   "label": "One length",
-  "title": "Double a length and compare it with the original.",
-  "intro": "The grey line is one unit long. Drag the blue endpoint until the new line is twice as long.",
-  "success": "You have doubled the length."
+  "title": "Double the reference length.",
+  "intro": "Drag the blue endpoint. Compare the new length with the fixed 1-unit reference.",
+  "success": "Length doubled"
  },
  {
   "label": "A whole face",
-  "title": "Find out what doubling the sides does to the area.",
-  "intro": "The length scale factor is now 2. Fill the larger square with unit squares and compare its area with the original.",
-  "success": "Two doubled sides give four times the area."
+  "title": "Compare the area after doubling both sides.",
+  "intro": "Fill the larger square with unit squares. Compare it with the 1-unit square.",
+  "success": "Four times the area"
  },
  {
   "label": "Into three dimensions",
-  "title": "Build a doubled cube, one layer at a time.",
-  "intro": "The doubled face holds four unit squares. Lift the handle to add layers and see how many unit cubes fill the solid.",
-  "success": "Two layers give eight times the volume."
+  "title": "Build the doubled cube.",
+  "intro": "Lift the handle to add layers. Count the unit cubes in each layer and in the whole solid.",
+  "success": "Eight times the volume"
  },
  {
   "label": "Work backwards",
-  "title": "Work backwards from an area nine times as large.",
-  "intro": "You have seen how a length factor produces an area factor. Now calculate the length factor first, then resize the square to check it.",
-  "success": "Your calculation matches the larger square."
+  "title": "Find the length factor for nine times the area.",
+  "intro": "Predict the factor, resize the square, then test your prediction.",
+  "success": "Prediction matches the area"
  },
  {
-  "label": "Reverse a volume",
-  "title": "Scale a different-sized reference cube to 64 unit³.",
-  "intro": "The reference edge is 2 units, not 1. Predict the length scale factor, resize the new cube, then test its volume. Request help only when needed.",
-  "success": "Your factor and the non-unit reference agree."
+  "label": "A different reference",
+  "title": "Scale the 2-unit cube to a volume of 64 unit³.",
+  "intro": "Predict the length scale factor, then resize and test the cube. The reference edge is 2 units, not 1.",
+  "success": "Prediction matches the scaled cube"
  },
  {
   "label": "Test the condition",
-  "title": "Check what makes two solids similar.",
-  "intro": "The width and depth have doubled, but the height has changed by a different factor. Adjust it until all three corresponding edge ratios agree.",
-  "success": "All three edge ratios now agree."
+  "title": "Make the two solids similar.",
+  "intro": "Width and depth have doubled. Adjust the height until all three corresponding edge ratios agree.",
+  "success": "All three edge ratios match"
  },
  {
   "label": "Experiment",
-  "title": "Explore how size and shape change area and volume.",
-  "intro": "Try larger scale factors, separate the layers or change the proportions. Keep readings when you find a comparison you want to return to.",
+  "title": "Compare changes in size and shape.",
+  "intro": "Change scale or height, separate the layers, and record a reading to keep a visual reference.",
   "success": ""
  }
 ];
@@ -85,26 +85,26 @@ start();
 function restoreView(){if(step===6)controls();setupMathWork();}
 function setupMathWork(){
  if(step===6){$('working').hidden=true;setHelp([]);return;}
- if(step===0)workSetup('Calculate a length scale factor',workRow('new length ÷ reference length',workOutput('lengthWork')));
- if(step===1)workSetup('Connect the side lengths to the area',workRow('two scaled directions',workOutput('areaWork')));
- if(step===2)workSetup('Connect the layers to the volume',workRow('unit cubes in one layer',workOutput('layerWork'))+workRow('cubes per layer × layers',workOutput('volumeWork')));
+ if(step===0)workSetup('Length scale factor',workRow('new length ÷ reference length',workOutput('lengthWork')));
+ if(step===1)workSetup('Area factor',workRow('two scaled directions',workOutput('areaWork')));
+ if(step===2)workSetup('Volume factor',workRow('unit cubes in one layer',workOutput('layerWork'))+workRow('cubes per layer × layers',workOutput('volumeWork')));
  if(step===3||step===4){
-  const expression=step===3?`k = √(${term('target-factor',9)}) = `:'Your length scale factor k = ';
-  workSetup(step===3?'Predict, resize, then test':'Use the non-unit reference',workRow('your prediction',`${expression}<input id="scaleAnswer" type="number" min="0.1" max="5" step="0.1" inputmode="decimal" aria-label="Predicted length scale factor">`),step===4?'A scale factor has no units. The edge length is a different quantity.':'Resizing changes the actual square. The prediction is checked only when you test.',true);
+  const expression=step===3?`k = √(${term('target-factor',9)}) = `:'k = ';
+  workSetup('Your prediction',workRow('length scale factor',`${expression}<input id="scaleAnswer" type="number" min="0.1" max="5" step="0.1" inputmode="decimal" aria-label="Predicted length scale factor">`),step===4?'A scale factor has no units. The edge length is a different quantity.':'Resizing changes the actual square. The prediction is checked only when you test.',true);
   $('scaleAnswer').value=s.answer;
   $('scaleAnswer').oninput=e=>{s.answer=e.target.value;s.tested=false;render();};
-  workAction('Test the model',()=>{
+  workAction('Test prediction',()=>{
    if(!validNumber(s.answer)||Number(s.answer)<=0){feedback('Enter a positive scale factor before testing.',false,true);return;}
    s.tested=true;render();
   });
  }
- if(step===5)workSetup('Compare the corresponding edge ratios',workRow('width',workOutput('widthWork'))+workRow('height',workOutput('heightWork'))+workRow('depth',workOutput('depthWork')));
+ if(step===5)workSetup('Corresponding edge ratios',workRow('width',workOutput('widthWork'))+workRow('height',workOutput('heightWork'))+workRow('depth',workOutput('depthWork')));
  workingExplanation(step===4?'Predict a common length scale factor, not the new edge length. Request a hint for an example with a different reference.':'Compare corresponding lengths. Count the two directions in a face and the three directions in a solid.');
  setHelp(step===3||step===4?[
   ()=>({text:step===4&&validNumber(s.answer)&&Math.abs(Number(s.answer)-s.k*2)<.01?'Your prediction matches an edge length. Compare that edge with the 2-unit original: are those the same quantity?':step===4?'The original cube is not one cubic unit. Inspect its edge and volume before comparing.':'The face grows in two perpendicular directions. Count rows as well as columns.',keys:step===4?['reference-edge','reference-volume','new-edge']:['edge','area-count']}),
   {text:step===4?'Compare new volume with original volume. Reverse the three-direction relationship to get the common edge ratio.':'A square root reverses an area factor. The model should agree with your chosen factor.'},
-  {text:step===4?'Another case: a 3-unit cube has volume 27. A new volume of 729 is 27 times as large; its edge ratio is ∛27 = 3 and its edge is 9 units.':'Another case: an area factor of 16 means the common length factor is √16 = 4.'}
- ]:[]);
+  {example:true,text:step===4?'Another case: a 3-unit cube has volume 27. A new volume of 729 is 27 times as large; its edge ratio is ∛27 = 3 and its edge is 9 units.':'Another case: an area factor of 16 means the common length factor is √16 = 4.'}
+ ]:step===0?[{text:'Use the fixed grey line as your reference. Only the blue endpoint moves.',keys:['reference','length']}]:step===1?[{text:'Each small square has the same area as the reference. Count both rows.',keys:['reference-area','area-count']}]:step===2?[{text:'Count the cubes in one layer, then the number of layers.',keys:['layer-edge','layers']}]:step===5?[{text:'Compare all three edge ratios, not the overall height of the drawing.',keys:['width','height','depth']}]:[]);
 }
 function updateMathWork(){
  if(step===0)workFormula('lengthWork',`${term('length',fmt(s.k))} ÷ ${term('reference',1)} = ${result('scale-factor',fmt(s.k),'The length scale factor compares new length with the original.')}`);
@@ -114,8 +114,9 @@ function updateMathWork(){
   const expected=step===3?3:2,correct=validNumber(s.answer)&&Math.abs(Number(s.answer)-expected)<.01,modelOK=Math.abs(s.k-expected)<.01,ok=s.tested&&correct&&modelOK;
   $('scaleAnswer').className=s.tested?(correct?'good':'bad'):'';
   workState(s.tested?(ok?'good':'bad'):'needed');
-  $('workNote').textContent=s.tested?step===4?`Measured edge: ${fmt(2*s.k)} units; measured volume: ${fmt(8*s.k**3,2)} unit³. Target: 64 unit³.`:`Measured area: ${fmt(s.k*s.k,2)} unit². Target: 9 unit².`:'Predict, resize the model, then test. Typing does not check the answer.';
-  feedback(ok?'Your prediction, the reference and the measured model agree.':s.tested?'Compare the measured model with the target. Revise the prediction or the shape, then test again.':'Keep your prediction separate from the model until you test.',ok,s.tested&&!ok);
+  $('workNote').textContent=step===4?'A scale factor has no units; an edge length does.':'Your predicted factor stays separate from the square.';
+  const measurement=step===4?`Edge ${fmt(2*s.k)} units; volume ${fmt(8*s.k**3,2)} unit³. Target: 64 unit³.`:`Area ${fmt(s.k*s.k,2)} unit². Target: 9 unit².`;
+  feedback(ok?step===4?'The edge factor is 2: an edge of 4 units gives a volume of 64 unit³.':'A length factor of 3 gives an area factor of 9.':s.tested?measurement+' Revise the prediction or shape, then test again.':'Enter a factor and resize the shape. Test when both are ready.',ok,s.tested&&!ok);
  }
  if(step===5)for(const [id,value]of [['width',2],['height',s.height],['depth',2]])workFormula(id+'Work',`${term(id,fmt(value))} ÷ ${term('reference',1)} = ${result(id+'-ratio',fmt(value),'This ratio compares corresponding edges.')}`);
 }

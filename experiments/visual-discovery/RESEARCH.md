@@ -54,3 +54,7 @@ The original guided relationships and curriculum mappings remain traceable throu
 ## Validation boundary
 
 Automated model tests exercise invariants across multiple inputs and seeds. Browser acceptance exercises real learner controls and checks desktop/tablet/phone layouts, incorrect predictions, state restoration and motion alternatives against generated offline artifacts. These checks establish implementation behaviour, not learning effectiveness. The human [learner review](LEARNER-REVIEW.md) remains to be conducted.
+
+## Goal, feedback and help polish
+
+The follow-up interface pass keeps the teaching sequence and scientific models intact. [UI-POLISH.md](UI-POLISH.md) records the primary-source comparison and the adopted placement, language and disclosure conventions. The working card no longer opens a broad method tooltip or repeats a full success state. Status announcements are consolidated; the goal, current action and optional hints have consistent roles.

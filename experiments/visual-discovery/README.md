@@ -15,11 +15,19 @@ There are 19 guided experiences and four open experiments. These are review prot
 
 The apparatus remains the primary control. Arrow keys, Home and End operate focused model handles. The first experiences constrain irrelevant variables; later experiences require a fresh decision with less supplied working. Numerical predictions are checked on **Test**, not while typing. Changing a prediction invalidates its previous result.
 
-**Need a hint?** offers evidence first, then a relationship and a different worked example. It never opens automatically. **Trace values** explicitly connects labelled quantities to formula operands; source clicks, edits and stage changes do not start the trace. Reduced motion uses static paired outlines instead of moving values.
+**Hint** in the feedback area offers evidence first, then a relationship and a different worked example. It never opens automatically. **Trace values** explicitly connects labelled quantities to formula operands; source clicks, edits and stage changes do not start the trace. Reduced motion uses static paired outlines instead of moving values.
 
-**Back** restores the earlier model, answers and readings. **Forward** revisits a previously visited experience without requiring its work again. **Repeat experience** resets only the current experience; **Start over** clears the session. No progress is stored after the page closes. Navigation cannot interrupt a piston test or offspring replacement, except Start over, which cancels the transition safely.
+**Back** restores the earlier model, answers and readings. **Forward** revisits a previously visited experience without requiring its work again. **Repeat this step** resets only the current experience; **Restart lab** clears the session. No progress is stored after the page closes. Navigation cannot interrupt a piston test or offspring replacement, except Restart lab, which cancels the transition safely.
 
 Record a reading in an experiment, then select its row to hold a dashed reference on the model. Changing current controls does not rewrite that reading. The comparison states which conditions differ. Biology labels cross-population overlays as rescaled proportions rather than pretending different population counts are directly comparable. **New sample** changes the seed, not the chosen food pressure; resetting the same sample remains reproducible.
+
+## Goal and feedback polish
+
+The goal stays above the model. Status, the main action and Hint share one dock below the working, before saved readings. The same button changes from Test prediction to Continue; input edits restore the test action without moving focus. There is no second success card in the working area.
+
+Hints are an explicit disclosure with previous/next controls and Escape dismissal. Opening help reveals it below the action row without resizing the model. Restart options group Repeat this step and Restart lab in the header.
+
+See [the interface review](UI-POLISH.md) for source references, scope and acceptance checks.
 
 ## Build
 

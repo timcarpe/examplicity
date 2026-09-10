@@ -106,11 +106,11 @@ function render(){
  }
  if(step===0)feedback(s.peaks[0].c>=12.5?'The adults keep their beaks. Existing deeper beaks now have more food advantage.':'Amber shading shows food advantage. Each dot is an adult whose beak stays unchanged.',s.peaks[0].c>=12.5);
  if(step===1)feedback(s.generation>0?'These are offspring. They resemble the successful parents, with inherited variation.':s.parents?'Violet dots are selected parents. Their offspring have not replaced them yet.':'Selection changes who reproduces. It does not change an adult’s inherited trait.',s.generation>0);
- if(step===2){const ok=s.generation>=3;feedback(ok?'Directional selection: deeper beaks become more common across generations.':`${s.generation} generations. Keep the pressure unchanged and follow the mean.`,ok)}
+ if(step===2){const ok=s.generation>=3;feedback(ok?`Mean beak depth: ${fmt(s.baseline.mean)} → ${fmt(m.mean)} mm over ${s.generation} generations.`:`${s.generation} generations. Keep the pressure unchanged and follow the mean.`,ok)}
  if(step===3){const ok=s.generation>=3;feedback(ok?'Stabilising selection: the spread narrows as middle-sized beaks are favoured.':`${s.generation} generations. Compare the spread with the dashed starting distribution.`,ok)}
  if(step===4){
   const ok=designedPattern(),left=s.population.filter(v=>v<8.5).length,middle=s.population.filter(v=>v>=8.5&&v<=11.5).length,right=s.population.filter(v=>v>11.5).length;
-  feedback(ok?'Your environment increased both tails and reduced the middle relative to the starting population.':s.generationsSinceEdit<3?`${s.generationsSinceEdit} of 3 generations under this food arrangement. Keep the environment steady to compare.`:`Current groups: ${left} shallow, ${middle} middle, ${right} deep. Compare with the starting bars. Adjust food and test again, or reset the population with your arrangement.`,ok);
+  feedback(ok?`Counts: ${left} shallow, ${middle} middle, ${right} deep. Compare both tails with the starting bars.`:s.generationsSinceEdit<3?`${s.generationsSinceEdit} of 3 generations under this food arrangement. Keep the environment steady to compare.`:`Counts: ${left} shallow, ${middle} middle, ${right} deep. Compare the starting bars and adjust the food.`,ok);
  }
 
  if(step===5){

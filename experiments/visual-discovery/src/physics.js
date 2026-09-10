@@ -1,32 +1,32 @@
 const lesson=[
  {
   "label": "Follow the ray",
-  "title": "Explore what happens when light leaves glass.",
-  "intro": "The laser enters the curved face straight on. Rotate it and watch how the ray bends at the flat glass–air boundary.",
-  "success": "The ray bends away from the normal."
+  "title": "Observe light leaving glass.",
+  "intro": "Rotate the laser. Watch how the ray bends at the flat glass–air boundary.",
+  "success": "The ray bends away from the normal"
  },
  {
   "label": "Find the boundary",
-  "title": "Find the angle where light stops escaping.",
-  "intro": "You have seen the refracted ray bend away from the normal. Keep rotating until it runs along the surface, then mark that angle.",
-  "success": "You found the critical angle for glass."
+  "title": "Find the critical angle for glass.",
+  "intro": "Observe escaping and fully reflected light. Return to the transition and mark the angle.",
+  "success": "Glass reaches its critical angle"
  },
  {
   "label": "Predict, then test",
-  "title": "Use the glass result to predict what diamond will do.",
-  "intro": "Glass reached its limit at 41.8°. Replace it with diamond, then use the same calculation to find the new critical angle before testing.",
-  "success": "Your prediction matches the diamond boundary."
+  "title": "Predict the critical angle for diamond.",
+  "intro": "Replace glass with diamond. Use the two refractive indices to calculate an angle, then test your prediction.",
+  "success": "Diamond has a smaller critical angle"
  },
  {
   "label": "Transfer and reverse",
-  "title": "Predict a new boundary, then reverse it.",
-  "intro": "Use the water and air indices to predict a critical angle. Test the beam, then reverse the same boundary to compare.",
-  "success": "The direction of travel matters."
+  "title": "Predict water’s critical angle, then reverse the boundary.",
+  "intro": "Use the water and air indices. Test your predicted angle, then swap the direction of travel.",
+  "success": "Reversing the boundary removes the critical angle"
  },
  {
   "label": "Experiment",
-  "title": "Choose your own pair of materials and compare the results.",
-  "intro": "You now have a way to predict total internal reflection. Change either material or set an index of your own, then compare your calculations with the rays.",
+  "title": "Compare different pairs of materials.",
+  "intro": "Change either medium or set a hypothetical index. Record a reading to keep its boundary and angle for comparison.",
   "success": ""
  }
 ];
@@ -43,31 +43,32 @@ function setupPhysicsWork(){
  $('working').hidden=true;
  if(step===1||step===2&&!s.swapped)workSetup('Calculate from the boundary measurement',workRow('index ratio',workOutput('ratioWork'))+workRow('inverse sine',workOutput('criticalWork')),step===1?'Mark the critical angle to compare the calculation with the ray.':'Use the same calculation after changing the material.');
  if(step===2&&s.swapped){
-  workSetup('Calculate before testing the beam',workRow('index ratio','<span id="ratioSubstitution"></span> <input data-source="index-ratio" id="ratioInput" type="number" step="0.001" inputmode="decimal" aria-label="Sine of critical angle">')+workRow('inverse sine','<span id="angleSubstitution"></span> <input id="angleInput" type="number" min="5" max="80" step="0.1" inputmode="decimal" aria-label="Predicted critical angle in degrees">°'),'The dashed mark keeps the glass result, 41.8°, for comparison.',true);
+  workSetup('Your prediction',workRow('index ratio','<span id="ratioSubstitution"></span> <input data-source="index-ratio" id="ratioInput" type="number" step="0.001" inputmode="decimal" aria-label="Sine of critical angle">')+workRow('inverse sine','<span id="angleSubstitution"></span> <input id="angleInput" type="number" min="5" max="80" step="0.1" inputmode="decimal" aria-label="Predicted critical angle in degrees">°'),'The dashed mark keeps the glass result, 41.8°, for comparison.',true);
   $('ratioInput').value=s.ratio;$('angleInput').value=s.angleText;explain($('ratioInput'),'Your index ratio becomes the input to inverse sine.','index-ratio');explanations.set('index-ratio','The index ratio from the first line becomes the input to inverse sine.');
   $('ratioInput').oninput=e=>{s.ratio=e.target.value;s.tested=false;render()};
   $('angleInput').oninput=e=>{s.angleText=e.target.value;s.tested=false;if(e.target.value!=='')s.angle=clamp(Number(e.target.value),5,80);render()};
-  workAction('Test the beam',()=>{if(!validNumber(s.ratio)||!validNumber(s.angleText)){feedback('Enter both values before testing.',false,true);return}s.tested=true;render()});
+  workAction('Test prediction',()=>{if(!validNumber(s.ratio)||!validNumber(s.angleText)){feedback('Enter both values before testing.',false,true);return}s.tested=true;render()});
  }
  if(step===3&&!s.reversed){
-  workSetup('Predict before testing',workRow('your critical-angle prediction','<input id="angleInput" type="number" min="5" max="80" step="0.1" inputmode="decimal" aria-label="Predicted critical angle in degrees">°'),'The glass result remains as a reference. Request a hint for the method.',true);
+  workSetup('Your prediction',workRow('critical angle','<input id="angleInput" type="number" min="5" max="80" step="0.1" inputmode="decimal" aria-label="Predicted critical angle in degrees">°'),'The dashed line keeps the glass result as a reference.',true);
   $('angleInput').value=s.angleText;
   $('angleInput').oninput=e=>{s.angleText=e.target.value;s.tested=false;if(validNumber(s.angleText))s.angle=clamp(Number(s.angleText),5,80);render();};
-  workAction('Test the beam',()=>{
+  workAction('Test prediction',()=>{
    if(!validNumber(s.angleText)){feedback('Place a numerical angle prediction first.',false,true);return;}
    s.tested=true;if(waterPredictionCorrect())s.angle=critical();controls();render();
   });
   if(waterPredictionCorrect())workAction('Reverse this boundary',()=>{
+   if(!waterPredictionCorrect())return;
    s.waterPrediction=s.angle;s.reversed=true;s.inside='air';s.outside='water';controls();render();
-  });
+  },{id:'reverseBoundary','data-dock-rank':'30'});
  }
  if(step===3&&s.reversed)workSetup('Compare the direction of travel',workRow('water → air',`Critical angle: ${fmt(s.waterPrediction)}°`)+workRow('air → water','No critical angle'),'The same angle now produces an escaping ray. Rotate it to explore the reversed boundary.');
  if(step===4)workSetup('Calculate the critical angle',workRow('index ratio',workOutput('ratioWork'))+workRow('inverse sine',workOutput('criticalWork')),'A critical angle requires a higher refractive index on the incident side.');
 }
 function controls(){
  $('controls').innerHTML='';$('context').innerHTML='';
- if(step===1)button('Mark this angle',()=>{const c=critical();if(s.below&&s.above&&Math.abs(s.angle-c)<=.55){s.angle=c;s.marked=true;render()}else{render();feedback(!s.below||!s.above?'Observe both refraction and total internal reflection first.':optics().r===null?'The ray is fully reflected. Reduce the incidence angle slightly.':'The ray still travels upward. Increase the incidence angle slightly.',false,true)}});
- if(step===2&&!s.swapped){const b=button('Replace glass with diamond',()=>{s.swapped=true;s.inside='diamond';s.angle=42;s.tested=false;controls();render()},{'data-priority':'primary'});$('context').appendChild(b)}
+ if(step===1)button('Mark angle',()=>{const c=critical();if(s.below&&s.above&&Math.abs(s.angle-c)<=.55){s.angle=c;s.marked=true;render()}else{render();feedback(!s.below||!s.above?'Observe both refraction and total internal reflection first.':optics().r===null?'The ray is fully reflected. Reduce the incidence angle slightly.':'The ray still travels upward. Increase the incidence angle slightly.',false,true)}},{'data-dock-action':'true'});
+ if(step===2&&!s.swapped){const b=button('Replace glass with diamond',()=>{s.swapped=true;s.inside='diamond';s.angle=42;s.tested=false;controls();render()},{'data-dock-action':'true'});$('context').appendChild(b)}
  if(step===2&&s.swapped)$('context').innerHTML='<div class="material-change"><span class="material-swatch" style="background:var(--lab-concept-blue-fill)"></span>Glass · n = 1.5 <span aria-label="replaced by">→</span><span class="material-swatch" style="background:var(--lab-concept-violet-fill)"></span>Diamond · n = 2.42</div>';
  if(step===4){
   for(const[key,label]of [['inside','From'],['outside','Into']]){

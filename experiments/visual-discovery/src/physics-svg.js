@@ -65,8 +65,8 @@ function render(){
   feedback(ok?`sin c = 1 ÷ 2.42 ≈ 0.413. c ≈ ${fmt(c)}°: a smaller threshold.`:s.tested?'Compare your angle with the ray. Use inverse sine on the index ratio.':'Use sin c = n outside ÷ n inside. Both values belong to the same boundary.',ok,s.tested&&!ok);
  }
  if(step===3){
-  if(s.reversed){head('Compare the same boundary in reverse.','The incident and outgoing media have swapped. At your earlier angle the ray now escapes. Rotate the source to compare other angles.');feedback('Reversing the media removes the critical angle. The higher-to-lower condition matters.',true);}
-  else{const ok=waterPredictionCorrect();$('angleInput').className=s.tested?(ok?'good':'bad'):'';workState(s.tested?(ok?'good':'bad'):'needed');feedback(ok?'Your new-boundary prediction agrees. Reverse this boundary to compare the condition.':s.tested?'Compare your predicted angle with the actual outgoing ray. Revise or request a hint.':'Place your predicted angle before revealing the outgoing ray.',false,s.tested&&!ok);}
+  if(s.reversed){head('Compare light travelling from air into water.','The media have swapped. Rotate the source and compare the escaping ray with the earlier water–air result.');feedback('Reversing the media removes the critical angle. The higher-to-lower condition matters.',true);}
+  else{const ok=waterPredictionCorrect();if($('reverseBoundary'))$('reverseBoundary').disabled=!ok;$('angleInput').className=s.tested?(ok?'good':'bad'):'';workState(s.tested?(ok?'good':'bad'):'needed');feedback(ok?`At ${fmt(s.angle)}°, light runs along the surface. Reverse the boundary to compare.`:s.tested?'The outgoing ray does not run along the surface. Revise your angle, then test again.':'Place your predicted angle before revealing the outgoing ray.',false,s.tested&&!ok,ok?'Prediction matches the water–air threshold':'');}
  }
  if(step===4){
   feedback(c===null?'No critical angle: the incident medium has an equal or lower refractive index.':`Critical angle ${fmt(c)}°. Total internal reflection requires a larger incidence angle.`,false);

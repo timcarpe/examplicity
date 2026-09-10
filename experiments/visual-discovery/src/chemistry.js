@@ -1,9 +1,34 @@
 const lesson=[
- {label:'Compress and expand',title:'What changes when you move the piston?',intro:'Push the sealed gas from 6 L to 3 L, then return to 6 L. Watch the gauge and wall impacts; the bath holds temperature steady.',success:'You compared compression with expansion.'},
- {label:'Compare readings',title:'Find a relationship across different readings.',intro:'Keep three readings at different volumes. Compare pressure and volume before looking at their products.',success:'The recorded products agree.'},
- {label:'Predict, then test',title:'Predict the pressure at a new volume.',intro:'The gas now starts at 3 L and 200 kPa. Predict its pressure at 4 L, then test against the actual gauge.',success:'Your prediction agrees with the new reading.'},
- {label:'Plan a new volume',title:'Make the gauge reach 240 kPa.',intro:'Start from 150 kPa at 4 L. Use your invariant to plan a volume, then test it against the gauge.',success:'Your planned volume produces the target pressure.'},
- {label:'Experiment',title:'Keep a case, change one condition, and compare.',intro:'Record a reading to keep its piston position and curve as a reference. Change volume, temperature or gas amount and inspect what differs.',success:''}
+ {
+  "label": "Compress and expand",
+  "title": "Compare compression and expansion.",
+  "intro": "Push the piston from 6 L to 3 L, then return to 6 L. Watch pressure and wall impacts at constant temperature.",
+  "success": "Compression and expansion compared"
+ },
+ {
+  "label": "Compare readings",
+  "title": "Find a relationship between pressure and volume.",
+  "intro": "Keep three readings at different volumes. Compare the readings, then their products.",
+  "success": "The pressure–volume products agree"
+ },
+ {
+  "label": "Predict, then test",
+  "title": "Predict the pressure at 4 L.",
+  "intro": "The gas starts at 3 L and 200 kPa. Enter a prediction, then test the expansion against the gauge.",
+  "success": "Prediction matches the gauge"
+ },
+ {
+  "label": "Plan a new volume",
+  "title": "Find a volume that gives 240 kPa.",
+  "intro": "Start from 150 kPa at 4 L. Enter the pressure–volume product and your planned volume, then test.",
+  "success": "The planned volume reaches the target pressure"
+ },
+ {
+  "label": "Experiment",
+  "title": "Change one condition and compare the effect.",
+  "intro": "Record a reading to keep its piston and curve. Change volume, temperature or gas amount and compare.",
+  "success": ""
+ }
 ];
 const s={V:6,prediction:'',tested:false,product:'',forecast:'',records:[],comparison:null,target:null,paused:false,busy:false,temperature:300,amount:1,compressed:false,expanded:false};
 const particles=[];let chamber={x:0,y:0,width:1,height:1},lastTime=0,particleNodes=[],impactNodes=[],testFrame=0;
@@ -58,21 +83,21 @@ function setupGasWork(){
  $('working').hidden=true;
  if(step===1&&s.records.length>=3)workSetup('Compare the recorded products',workRow('current pressure × volume',workOutput('productWork')),'These measurements share a temperature and gas amount.');
  if(step===2){
-  workSetup('Predict the pressure at 4 L',workRow('starting pressure × volume',`${term('start-pressure',200)} × ${term('start-volume',3)} = ${result('fixed-product','600 kPa·L','The measured product stays constant for this fixed sample at the same temperature.')}`)+workRow('product ÷ new volume',`p = ${term('fixed-product',600)} ÷ ${term('test-volume',4)} = <input id="pressureInput" type="number" min="0" step="1" inputmode="decimal" aria-label="Predicted pressure at 4 litres"> kPa`),'The gauge is a measurement, not your prediction.',true);
+  workSetup('Your pressure prediction',workRow('starting pressure × volume',`${term('start-pressure',200)} × ${term('start-volume',3)} = ${result('fixed-product','600 kPa·L','The measured product stays constant for this fixed sample at the same temperature.')}`)+workRow('product ÷ new volume',`p = ${term('fixed-product',600)} ÷ ${term('test-volume',4)} = <input id="pressureInput" type="number" min="0" step="1" inputmode="decimal" aria-label="Predicted pressure at 4 litres"> kPa`),'The gauge is a measurement, not your prediction.',true);
   $('pressureInput').value=s.prediction;
   $('pressureInput').oninput=e=>{s.prediction=e.target.value;s.tested=false;s.V=3;render();};
-  workAction('Test expansion to 4 L',()=>{
+  workAction('Test prediction',()=>{
    if(!validNumber(s.prediction)||Number(s.prediction)<=0){feedback('Enter a positive pressure prediction before testing.',false,true);return;}
    testVolume(4);
   });
  }
  if(step===3){
-  workSetup('Plan before moving the piston',workRow('your invariant',`<input data-source="predicted-product" id="productInput" type="number" min="0" inputmode="decimal" aria-label="Predicted pressure volume product"> kPa·L`)+workRow('your planned volume',`<input id="volumeInput" type="number" min="2" max="8" step="0.05" inputmode="decimal" aria-label="Predicted volume"> L`),'The violet marker shows your plan. Only testing moves the actual piston.',true);
+  workSetup('Your volume prediction',workRow('your invariant',`<input data-source="predicted-product" id="productInput" type="number" min="0" inputmode="decimal" aria-label="Predicted pressure volume product"> kPa·L`)+workRow('your planned volume',`<input id="volumeInput" type="number" min="2" max="8" step="0.05" inputmode="decimal" aria-label="Predicted volume"> L`),'The violet marker shows your plan. Only testing moves the actual piston.',true);
   $('productInput').value=s.product;$('volumeInput').value=s.forecast;
   explain($('productInput'),'Use a quantity that remained unchanged in your previous readings.','predicted-product');
   $('productInput').oninput=e=>{s.product=e.target.value;s.tested=false;s.V=4;render();};
   $('volumeInput').oninput=e=>{s.forecast=e.target.value;s.tested=false;s.V=4;render();};
-  workAction('Test predicted volume',()=>{
+  workAction('Test prediction',()=>{
    if(!validNumber(s.product)||Number(s.product)<=0||!validNumber(s.forecast)||Number(s.forecast)<2||Number(s.forecast)>8){feedback('Enter a positive product and a volume from 2 to 8 L.',false,true);return;}
    testVolume(Number(s.forecast));
   });
@@ -81,7 +106,7 @@ function setupGasWork(){
 }
 function controls(){
  $('controls').replaceChildren();setupGasWork();
- if(step===1||step===4)button('Record reading',keep);
+ if(step===1||step===4)button('Record reading',keep,step===1?{'data-dock-action':'true','data-repeatable':'true'}:{});
  if(step===4)button('Clear readings',clearReadings);
  button(s.paused?'Play particles':'Pause particles',()=>{s.paused=!s.paused;controls();render();},{'aria-pressed':s.paused});
  setHelp(step===0?[
@@ -92,7 +117,7 @@ function controls(){
  ]:step===2||step===3?[
   ()=>({text:step===3&&validNumber(s.forecast)&&Number(s.forecast)>4?'Your planned volume is larger, but the target pressure is also larger. Test which direction compression changes the gauge.':'Compare the starting and target conditions. Which variable must increase, and which must decrease?',keys:['start-pressure','start-volume','target-pressure']}),
   {text:'Keep pressure × volume constant. Divide that product by the new volume to find pressure, or by the target pressure to find volume.'},
-  {text:'Another case: 120 kPa at 5 L gives 600 kPa·L. A target of 200 kPa needs 600 ÷ 200 = 3 L. The gauge is the check, not the answer box.'}
+  {example:true,text:'Another case: 120 kPa at 5 L gives 600 kPa·L. A target of 200 kPa needs 600 ÷ 200 = 3 L. The gauge is the check, not the answer box.'}
  ]:[]);
 }
 function updateGasWork(){
@@ -100,14 +125,14 @@ function updateGasWork(){
  if(step===2){
   const ok=s.tested&&validNumber(s.prediction)&&Math.abs(Number(s.prediction)-150)<=1;
   workState(s.tested?(ok?'good':'bad'):'needed');$('pressureInput').className=s.tested?(ok?'good':'bad'):'';
-  $('workNote').textContent=s.tested?`Your prediction: ${s.prediction} kPa. Actual pressure: 150 kPa at 4 L.`:'Before the test: 3 L, 200 kPa. Your answer is not checked while typing.';
-  feedback(s.busy?'Expanding the gas to 4 L…':ok?'The new reading agrees with the fixed product.':s.tested?'The gauge and prediction differ. Revise your plan or request a hint.':'Enter a prediction, then compare it with the apparatus.',ok,s.tested&&!ok);
+  $('workNote').textContent='Starting measurement: 3 L and 200 kPa. The gauge always shows actual pressure.';
+  feedback(s.busy?'The piston is moving to 4 L. Watch the pressure gauge.':ok?'At 4 L, pressure is 150 kPa. The product remains 600 kPa·L.':s.tested?`Prediction: ${s.prediction} kPa. Gauge: 150 kPa at 4 L. Revise your prediction, then test again.`:'Enter a pressure prediction, then test the expansion to 4 L.',ok,s.tested&&!ok);
  }
  if(step===3){
   const productOK=validNumber(s.product)&&Math.abs(Number(s.product)-600)<.01,volumeOK=validNumber(s.forecast)&&Math.abs(Number(s.forecast)-2.5)<.03,ok=s.tested&&productOK&&volumeOK;
   workState(s.tested?(ok?'good':'bad'):'needed');$('productInput').className=s.tested?(productOK?'good':'bad'):'';$('volumeInput').className=s.tested?(volumeOK?'good':'bad'):'';
-  $('workNote').textContent=s.tested?`Planned volume: ${s.forecast} L. Actual pressure: ${fmt(gasProduct()/s.V)} kPa. Target: 240 kPa.`:'Place your prediction; the actual piston stays at 4 L until you test.';
-  feedback(s.busy?'Moving the piston to your planned volume…':ok?'The planned volume and measured pressure agree.':s.tested?'Compare the target with the actual gauge. Your invariant and planned volume remain revisable.':'Plan both quantities, then test the volume.',ok,s.tested&&!ok);
+  $('workNote').textContent='The violet marker shows your plan. Testing moves the piston to that volume.';
+  feedback(s.busy?'The piston is moving to your planned volume. Watch the gauge.':ok?'At 2.5 L, the gauge reads 240 kPa. The product is still 600 kPa·L.':s.tested?`At ${s.forecast} L, the gauge reads ${fmt(gasProduct()/s.V)} kPa. Target: 240 kPa. Recheck both entries.`:'Enter the product and your planned volume, then test the prediction.',ok,s.tested&&!ok);
  }
  if(s.busy){$('back').disabled=true;$('next').disabled=true;$('repeat').disabled=true;}else $('repeat').disabled=false;
 }
