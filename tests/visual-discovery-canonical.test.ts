@@ -3,7 +3,7 @@ import {readFile} from 'node:fs/promises';
 import path from 'node:path';
 import test from 'node:test';
 import {fileURLToPath} from 'node:url';
-import {extractEmbeddedLabContract,parseLabContractV1} from '../tools/lab-contract/index.ts';
+import {extractEmbeddedLabContract,inspectLabHooks,parseLabContractV1} from '../tools/lab-contract/index.ts';
 
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const slug='straight-line-coordinates-equations';
@@ -31,7 +31,7 @@ test('visual-discovery canary is a normal canonical lab package',async()=>{
   assert.match(source,/data-lab-manipulative="graph"/);
   assert.match(source,/data-lab-role="working"/);
   assert.match(source,/data-lab-role="evidence"/);
-  assert.match(source,/data-lab-action="advance"/);
+  assert.deepEqual(inspectLabHooks(source).actions,['reset'],'only the supported reset hook belongs in authored markup');
 
   assert.deepEqual(extractEmbeddedLabContract(output),contract,'publication must inject the exact sidecar');
   assert.match(output,/LAB_RESOURCE_START id="lab-kit\.css"/);
