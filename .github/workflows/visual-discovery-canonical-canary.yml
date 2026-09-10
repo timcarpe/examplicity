@@ -51,9 +51,9 @@ jobs:
           mkdir -p /tmp/vd-browser
           npm install --prefix /tmp/vd-browser playwright@1.57.0
           /tmp/vd-browser/node_modules/.bin/playwright install --with-deps chromium
+          ln -s /tmp/vd-browser/node_modules/playwright node_modules/playwright
+          ln -s /tmp/vd-browser/node_modules/playwright-core node_modules/playwright-core
       - name: Exercise the canonical published rail lab
-        env:
-          PLAYWRIGHT_MODULE: /tmp/vd-browser/node_modules/playwright/index.js
         run: node --experimental-strip-types experiments/visual-discovery/verify-straight-lines.mjs
       - name: Remove one-shot migration script and commit canonical result
         run: |
