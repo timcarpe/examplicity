@@ -395,6 +395,9 @@ export const compilePublicationLab = async (
   }
   const source = await readFile(labPackage.sourcePath, 'utf8');
   assertNoEmbeddedLabContract(source);
+  if (source.includes('LabDesign.discovery.mount(') && countMarker(source, '<!-- LAB_DESIGN_COMPONENTS -->') !== 1) {
+    throw new Error(`${resolved.entry.slug}: discovery requires exactly one LAB_DESIGN_COMPONENTS marker`);
+  }
 
   const hooks = inspectLabHooks(source);
   let contract: LabContractV1 | null = null;
@@ -410,8 +413,13 @@ export const compilePublicationLab = async (
   }
 
   if (compilableSource.includes('<!-- LAB_DESIGN_COMPONENTS -->')) {
-    const design = await readFile(path.join(context.root, 'public/developer/lab-kit/0.3.0/src/lab-design.css'), 'utf8');
-    const designScript = await readFile(path.join(context.root, 'public/developer/lab-kit/0.3.0/src/lab-design.js'), 'utf8');
+    let design = await readFile(path.join(context.root, 'public/developer/lab-kit/0.3.0/src/lab-design.css'), 'utf8');
+    let designScript = await readFile(path.join(context.root, 'public/developer/lab-kit/0.3.0/src/lab-design.js'), 'utf8');
+    // Discovery is optional: legacy labs keep their existing runtime and CSS payloads.
+    if (!source.includes('LabDesign.discovery.mount(')) {
+      design = design.replace(/\s*\/\* LAB_DISCOVERY_STYLES_START \*\/[\s\S]*?\/\* LAB_DISCOVERY_STYLES_END \*\/\s*/g, '\n');
+      designScript = designScript.replace(/\s*\/\* LAB_DISCOVERY_RUNTIME_START \*\/[\s\S]*?\/\* LAB_DISCOVERY_RUNTIME_END \*\/\s*/g, '\n');
+    }
     compilableSource = compilableSource.replace('<!-- LAB_DESIGN_COMPONENTS -->', `<style data-lab-design>\n${design}\n</style>\n<script data-lab-design-runtime>\n${designScript}\n</script>`);
   }
   let compiledSource = compileLabResources(compilableSource, context.kit.resources).source;

@@ -1483,7 +1483,7 @@ export const labs: Lab[] = [
     title: 'Gas Compression at Constant Temperature',
     description: 'Compress a fixed mass of gas, inspect particle collisions, and test the inverse pressure–volume relationship at constant temperature.',
     metaDescription: 'Explore gas pressure, particle collisions and the pressure–volume relationship for Cambridge IGCSE Physics 0625, Chemistry 0620 and Co-ordinated Sciences 0654.',
-    subtitle: 'Move the piston while temperature and particle count stay fixed, then connect collision frequency to pressure and the constant pressure–volume product.',
+    subtitle: 'First keep temperature and gas amount fixed to connect particle collisions with the pressure–volume product. Then vary volume, temperature and gas amount in the open experiment.',
     topic: 'Thermal physics',
     format: 'Particle-pressure investigation',
     kind: 'lab',

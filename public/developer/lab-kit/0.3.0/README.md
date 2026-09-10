@@ -173,6 +173,17 @@ handle and hit target so both dismiss the same introduction.
 
 `LabDesign.bindSvgDrag(stage, {start, move, end})` supplies shared SVG pointer
 capture, pickup offsets, grab cursors and release/cancellation handling.
+
+Visual-discovery labs add `.lab-discovery` to their authored root and mount the
+shared shell with `LabDesign.discovery.mount(root, createModel)`. The factory
+receives scoped DOM, SVG, feedback, hint, snapshot, tracing and transition
+helpers, then returns `lesson`, `state`, `syncScene`, `reset`, `enter`, `render`
+and its own `controls` callback. It may also return `sceneHeight`, `restoreView`,
+`snapshotExtras`, `restoreExtras` or `stopModel`. Curriculum logic, model state,
+SVG geometry and completion criteria stay in the authored lab. Subject code
+should not destructure `controls` from the runtime; `validNumber` is available
+for the existing numeric-input models.
+
 `start(event, point)` returns the model handle's current `{x,y}` or nothing
 for a locked/non-draggable target. For an unconstrained coordinate, return the
 pointer coordinate. `move(point, event)` receives the offset-adjusted SVG

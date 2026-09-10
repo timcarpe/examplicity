@@ -1,6 +1,7 @@
 {
   "schemaVersion": 1,
   "relationship": "One grouped distribution is represented by histogram bar areas and cumulative-frequency growth, so changing an interval affects both displays and quartile read-offs.",
+  "rationale": "The canonical lesson preserves the guided build, cumulative read-off and comparison sequence, then adds one compact fresh-report path late in the experience so learners must own density, rank and IQR calculations on unequal-width data.",
   "learnerLoop": {
     "action": "Build intervals, read quartiles and alter a histogram bar.",
     "modelChange": "Frequency density, bar area, cumulative totals and quartile estimates update together.",
@@ -9,125 +10,135 @@
   },
   "invariants": [
     "Histogram area represents frequency even when class widths differ.",
-    "Cumulative frequency never decreases and ends at the total frequency."
+    "Cumulative frequency never decreases and ends at the total frequency.",
+    "Within-group cumulative read-offs use constant density and remain estimates.",
+    "Changing the report revision clears earlier density, total, rank and IQR checks."
   ],
   "safeAdaptations": [
     "Vary valid grouped intervals and frequencies while retaining linked displays.",
+    "Use five or six unequal-width groups in the bounded fresh-report path.",
     "Change working support without disconnecting quartile evidence from the cumulative curve."
   ],
   "nonGoals": [
-    "Using bar height alone as frequency for unequal-width classes."
+    "Using bar height alone as frequency for unequal-width classes.",
+    "Expanding the experience into unrelated statistics or permanently visible practice controls."
   ],
   "developerGuide": "https://www.examplicity.org/developer/lab-contract",
   "implementation": {
-    "reviewedRevision": "7a15bda",
+    "reviewedRevision": "source-git-blob:8ea6f5b919d82bc02931f21adf7a81cc51b4cbb5",
     "surfaces": {
       "task": {
         "selectors": [
-          "#goalSentence",
-          "#goalSub"
+          "#title",
+          "#intro",
+          "#context"
         ],
         "kind": "given",
-        "description": "Current problem statement and supplied quantities.",
-        "visibility": "Shown at the start of each problem or stage."
+        "description": "Current grouped-data task and concise stage prompt.",
+        "visibility": "Shown for the current guided stage or fresh report."
       },
       "model": {
         "selectors": [
           "#stage"
         ],
         "kind": "model",
-        "description": "Operated construction and its live measurements; see quantities for what is given and revealed.",
-        "visibility": "Present for the current problem; child controls and readouts follow the states described below."
+        "description": "Author-built unequal-width bars, cumulative graph, read-off ruler and comparison traces.",
+        "visibility": "Present for the current report; controls follow the current stage."
       },
       "working": {
         "selectors": [
-          "#workingPanel"
+          "#working",
+          "#controls"
         ],
         "kind": "working",
-        "description": "Ordered calculations, learner entries and consequential evidence for the current task.",
-        "visibility": "Present for the current problem; child controls and readouts follow the states described below."
+        "description": "Density, cumulative-total, quartile-rank and IQR entries tied to the same report revision.",
+        "visibility": "Guided working stays concise; fresh-report fields appear one stage at a time late in the experience."
+      },
+      "evidence": {
+        "selectors": [
+          "#stage",
+          "#records",
+          "#comparisonNote"
+        ],
+        "kind": "evidence",
+        "description": "Bar areas, cumulative growth, quartile highlights and saved reports preserve the model relationship.",
+        "visibility": "Updates as the report is constructed, read and compared."
       },
       "completion": {
         "selectors": [
-          "#nextCard"
+          "#learningDock",
+          "#next"
         ],
         "kind": "completion",
-        "description": "Achievement, next task or learning transition.",
-        "visibility": "Shown only when the local completion conditions below are satisfied; representation controls are separately identified."
-      },
-      "progress": {
-        "selectors": [
-          "#stageItem0",
-          "#stageItem1",
-          "#stageItem2",
-          "#stageItem3"
-        ],
-        "kind": "evidence",
-        "description": "Existing construction/read-off/summary progression and saved working.",
-        "visibility": "Present for the current problem; child controls and readouts follow the states described below."
+        "description": "Feedback and continuation after the current bars, totals or read-offs satisfy the guided condition.",
+        "visibility": "Persistent dock with completion state supplied by the shared runtime."
       },
       "controls": {
         "selectors": [
-          "[data-work-level]",
-          "#resetCurrentBtn",
-          "#newProblemBtn"
+          "#controls",
+          "[data-lab-action=\"new-report\"]",
+          "#stage .model-control"
         ],
         "kind": "control",
-        "description": "Working ownership, current-step reset and sample generation.",
-        "visibility": "Present for the current problem; child controls and readouts follow the states described below."
-      },
-      "feedback": {
-        "selectors": [
-          "#evidenceMain",
-          "#evidenceStatus"
-        ],
-        "kind": "evidence",
-        "description": "Current readiness, read-off, IQR and experiment feedback.",
-        "visibility": "Updates with the selected interval, working, read-off and experiment state."
+        "description": "Current-stage bar or cumulative controls, saved report actions and the late fresh-report entry point.",
+        "visibility": "New report appears only in the experiment or completed fresh-report context."
       }
     },
     "quantities": {
       "grouped-data": {
-        "description": "Supplied unequal class boundaries and class frequencies.",
+        "description": "Supplied or generated unequal class boundaries and class frequencies.",
         "domain": "Journey time in minutes and frequency in pupils.",
-        "source": "Generated sample data are given.",
-        "output": "Current interval values and completed history rows are visible."
+        "source": "The guided report or one bounded replayable fresh report.",
+        "output": "Current boundaries, bars and completed history rows are visible."
       },
       "density-total": {
-        "description": "Per-class density and next cumulative total are distinct quantities; repeated fields are indexed instances across intervals.",
+        "description": "Per-class density and cumulative total are distinct linked quantities.",
         "domain": "Pupils per minute and cumulative pupils.",
-        "source": "Produced by drag or typed entry according to ownership().",
-        "output": "Density controls bar height/area; the next total controls the curve rise.",
+        "source": "Bar area and running-total checks for the current report revision.",
+        "output": "Density controls bar height; cumulative totals control the curve rise.",
         "inputSlots": [
-          "#workingPanel input[data-field^=\"density-\"]",
-          "#workingPanel input[data-field^=\"total-\"]",
-          "#stage [data-bar-handle]",
-          "#stage [data-point-handle]"
+          "#working input",
+          "#stage [data-set-bar]",
+          "#stage [data-set-total]"
+        ]
+      },
+      "quartile-rank": {
+        "description": "Q1, median and Q3 ranks are 25%, 50% and 75% of the report total.",
+        "domain": "Ranks in pupils.",
+        "source": "The same cumulative total used by the report curve.",
+        "output": "Rank check gates each fresh-report read-off.",
+        "inputSlots": [
+          "#working input",
+          "#stage [data-set-ruler]"
         ]
       },
       "quartiles-iqr": {
-        "description": "Q1, median and Q3 are three read-offs of the same distribution; IQR is Q3−Q1, a distinct derived spread.",
-        "domain": "Ranks in pupils; read-offs and IQR in minutes.",
-        "source": "Learner positions the ruler at each target rank; All first requires the rank calculation.",
-        "output": "Accepted read-offs are estimates within grouped intervals; IQR entry controls the bracket.",
+        "description": "Three grouped read-offs and their derived interquartile range.",
+        "domain": "Estimated times in minutes.",
+        "source": "Constant-density interpolation within the containing group.",
+        "output": "Accepted read-offs and Q3 − Q1 bracket.",
         "inputSlots": [
-          "#stage [data-read-handle]",
-          "#workingPanel input[data-field^=\"rank-\"]",
-          "#workingPanel input[data-field=\"iqr\"]"
+          "#stage [data-set-ruler]",
+          "#working input"
         ]
       }
     },
     "modes": {
-      "none": "Drag each density bar, then its cumulative point; quartile ranks and IQR working are shown.",
-      "some": "Density is entered and controls its bar; cumulative rise remains a drag. IQR is entered.",
-      "all": "Density and cumulative totals are entered; quartile rank entries unlock the read-off ruler; IQR is entered.",
-      "experiment": "After the summary, an optional experiment changes an interval density and recomputes frequencies, cumulative totals and median."
+      "none": "Guided stages show area, density and cumulative relationships while controls support construction.",
+      "some": "Density is entered or manipulated while cumulative rises and read-offs remain visibly linked to the bars.",
+      "all": "The guided sequence requires all bar areas, cumulative totals, three quartile estimates and the IQR.",
+      "experiment": "Saved reports remain comparable on their own boundary sets; a compact New report path uses one validated five- or six-group unequal-width report and stages density, cumulative total, quartile rank/read-off and IQR ownership."
     },
     "dependencies": [
-      "A class requires barOK, riseOK and ownedWorkReady before moving to the next interval.",
-      "The cumulative point is rendered but cannot be manipulated until barOK; its interaction is gated by the correct bar density.",
-      "All class intervals precede Q1/median/Q3; required ranks gate the ruler; Q3 precedes IQR."
+      "A bar area is frequency density multiplied by its class width; every cumulative rise equals one bar area.",
+      "Each fresh report is generated from one boundary/count model, and a new report revision clears all previous checks.",
+      "Quartile rank checks precede ruler recording, and Q3 follows Q1 and the median before IQR can be checked.",
+      "Saved comparisons retain each report's boundary set and label the same model quantities rather than normalising unrelated axes."
     ],
-    "completion": "Pointer release, keyboard manipulation and typed change/Enter paths check the relevant work. The final guide follows three accepted quartiles and the IQR calculation (supplied at None); experiment remains optional."
+    "completion": "The shared runtime advances after the current guided construction or the bounded fresh-report sequence has checked linked areas, totals, ranks/read-offs and IQR.",
+    "limitations": [
+      "Within-group quartiles are estimates under constant density; the model does not claim individual journey times.",
+      "The fresh-report controls are staged and optional, so the guided introduction remains compact."
+    ]
   }
 }

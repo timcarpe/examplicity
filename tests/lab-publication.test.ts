@@ -101,3 +101,15 @@ test('case command explicitly reports that runtime cases are unavailable', async
   assert.equal(result.code, 2);
   assert.match(result.stderr, /unavailable until a runtime facade and named cases exist/);
 });
+
+// Optional teaching components must not increase every existing lab's offline payload.
+test('discovery runtime is included only for labs that mount it', async () => {
+  const context = await loadPublicationContext(repositoryRoot);
+  const discovery = await compilePublicationLab(context, 'straight-line-coordinates-equations', { check: true });
+  const legacy = await compilePublicationLab(context, 'fetch-decode-execute', { check: true });
+  assert.match(discovery.output, /LAB_DISCOVERY_RUNTIME_START/);
+  assert.match(discovery.standalone, /LAB_DISCOVERY_RUNTIME_START/);
+  assert.doesNotMatch(legacy.output, /LAB_DISCOVERY_RUNTIME_START|lab-discovery/);
+  assert.doesNotMatch(legacy.standalone, /LAB_DISCOVERY_RUNTIME_START|lab-discovery/);
+  assert.deepEqual(findUnresolvedRuntimeResources(discovery.standalone), []);
+});

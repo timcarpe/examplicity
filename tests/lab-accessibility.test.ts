@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import test from 'node:test';
+import { runInNewContext } from 'node:vm';
 
 const sourceRoot = path.resolve('labs-src', 'computer-science');
 const readSource = (slug: string) => readFile(path.join(sourceRoot, slug, 'lab.html'), 'utf8');
@@ -40,7 +41,17 @@ test('W1 TCP\/IP drag tools retain their native button activation path', async (
   const buttons = source.match(/<button class="wrapper-tool [^"]+"[^>]*type="button"/g) ?? [];
 
   assert.equal(buttons.length, 3);
-  assert.match(source, /btn\.addEventListener\('click',\(\)=>\{if\(btn\.dataset\.suppress\)return;addWrapper/);
+  const handler = source.match(/btn\.addEventListener\('click',(e=>\{[^\n]+?\})\);/);
+  assert.ok(handler, 'wrapper buttons retain a native click handler');
+  const added: string[] = [];
+  const btn = { dataset: { wrapper: 'tcp', suppress: '1' } as Record<string, string> };
+  const activate = runInNewContext(`(${handler[1]})`, { btn, addWrapper: (value: string) => added.push(value) });
+  activate({ detail: 0 }); // Keyboard activation is independent of a previous pointer drag.
+  assert.deepEqual(added, ['tcp']);
+  activate({ detail: 1 }); // Consume the synthetic click after dragging.
+  assert.deepEqual(added, ['tcp']);
+  activate({ detail: 1 }); // A subsequent deliberate click works again.
+  assert.deepEqual(added, ['tcp', 'tcp']);
 });
 
 test('circle construction handles expose keyboard adjustment for every rendered drag target', async () => {

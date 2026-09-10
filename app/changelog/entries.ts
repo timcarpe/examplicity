@@ -10,10 +10,13 @@ export const changelogEntries: readonly ChangelogEntry[] = [
     date: '2026-09-10',
     displayDate: '10 September 2026',
     publicChanges: [
+      'Reimagined six investigations around direct visual manipulation, small guided steps, linked working and open experiments: similarity, straight-line equations, histograms, total internal reflection, gas compression and natural selection.',
       'Restored full challenge instructions and accessible Run and Check controls in Python Programming Practice, with scrolling that keeps the workspace reachable above the site footer.',
       'Organized the Pseudocode and Python Translator controls into settings and execution rows, stabilized button sizing, and clarified its icons across desktop and mobile layouts.',
     ],
-    internalChanges: [],
+    internalChanges: [
+      'Integrated a scoped visual-discovery component into the existing publication pipeline, retained local validation coverage, and updated stale interaction assertions.',
+    ],
   },
   {
     date: '2026-09-09',

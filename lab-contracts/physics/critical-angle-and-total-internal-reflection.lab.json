@@ -2,15 +2,15 @@
   "schemaVersion": 1,
   "relationship": "Changing incidence angle and the refractive-index boundary connects refraction to the critical threshold and total internal reflection, with calculation checked against the visible ray behaviour.",
   "learnerLoop": {
-    "action": "Predict the threshold change, adjust incidence angle, mark the transition and complete critical-angle working.",
-    "modelChange": "The two media and incidence angle determine refracted and reflected rays and whether a critical angle exists.",
-    "evidence": "The ray diagram, regime indicator and recorded calculation expose refraction, the boundary case and total internal reflection.",
-    "nextDecision": "Compare observation with calculation and test a different refractive index or reverse the boundary."
+    "action": "Rotate a source, observe and mark the limiting ray, calculate diamond, independently predict water to air, then reverse that same boundary.",
+    "modelChange": "Snell’s law and unpolarised Fresnel reflectance derive from the same two refractive indices and incidence angle.",
+    "evidence": "An escaping ray becomes a grazing ray and then disappears; normal-referenced angles and calculation agree.",
+    "nextDecision": "Calculate another threshold or test whether any threshold exists for a reversed pair."
   },
   "invariants": [
     "Angles are measured from the normal and refraction follows the same index ratio used in the calculation.",
     "A critical angle exists only from higher to lower refractive index; total internal reflection requires exceeding it.",
-    "Guidance levels change calculation support without removing the physical threshold investigation."
+    "Later stages progressively reduce calculation support without removing the physical threshold investigation."
   ],
   "safeAdaptations": [
     "Change index examples and prediction wording within the existing optical model.",
@@ -22,74 +22,148 @@
   ],
   "developerGuide": "https://www.examplicity.org/developer/lab-contract",
   "implementation": {
-    "reviewedRevision": "1e3792ab43121c7473cc18a481567c61a61602cb",
+    "reviewedRevision": "source-git-blob:c435734f7372199a284a7be8f9cd91256c96aafd",
     "surfaces": {
-      "goal": {
+      "actions": {
         "selectors": [
-          "#missionTitle"
+          "#learningDock",
+          "#next",
+          "#back",
+          "#forwardVisited",
+          "#secondaryAction"
+        ],
+        "kind": "control",
+        "description": "One persistent primary action; Back and optional previously-visited Forward are secondary. Model-specific callbacks and completion gates remain local to this lab.",
+        "visibility": "Same relative position below the apparatus and working; before saved readings."
+      },
+      "help": {
+        "selectors": [
+          "#evidenceHelp",
+          "#hintText"
+        ],
+        "kind": "support",
+        "description": "Learner-requested evidence cue, relationship hint and contrasting worked example; no automatic answer-directed pulse.",
+        "visibility": "Only when requested in the relevant experience."
+      },
+      "reset": {
+        "selectors": [
+          "#resetMenu",
+          "#repeat",
+          "#restart",
+          "#resetConfirmation",
+          "#cancelRestart",
+          "#confirmRestart"
+        ],
+        "kind": "control",
+        "description": "Native disclosure with ordered actions and scope descriptions; full restart uses an inline confirmation. Cancel, Escape, outside click and tab-away preserve the current model.",
+        "visibility": "Disclosure always available; reset actions disabled during model transitions. Confirmation is never opened automatically."
+      },
+      "prompt": {
+        "selectors": [
+          "#title",
+          "#intro"
         ],
         "kind": "given",
-        "description": "Find the critical threshold for the supplied media.",
-        "visibility": "Present in the current investigation; child controls follow the mode and state."
+        "description": "A short goal and action sentence above the apparatus, with a guided-step label and quiet restart disclosure.",
+        "visibility": "Current step only."
       },
       "model": {
         "selectors": [
           "#stage"
         ],
         "kind": "model",
-        "description": "Rotatable ray, boundary, angular readings and relative reflected/transmitted power.",
-        "visibility": "Present in the current investigation; child controls follow the mode and state."
+        "description": "Snell’s law and unpolarised Fresnel reflectance derive from the same two refractive indices and incidence angle.",
+        "visibility": "Always visible; later controls are progressively disclosed."
+      },
+      "comparison": {
+        "selectors": [
+          "#records",
+          "#comparisonNote"
+        ],
+        "kind": "evidence",
+        "description": "Frozen readings and explicitly labelled comparison conditions; graphical overlays use the selected saved reading.",
+        "visibility": "Recorded experiment comparisons only."
+      },
+      "navigation": {
+        "selectors": [
+          "#back",
+          "#next",
+          "#repeat",
+          "#restart"
+        ],
+        "kind": "control",
+        "description": "Back and Forward restore snapshots; Repeat resets the current experience; Confirmed restart clears the session.",
+        "visibility": "Back and Forward depend on visited progress."
       },
       "working": {
         "selectors": [
-          "#workPanel"
+          "#working"
         ],
         "kind": "working",
-        "description": "Predict, observe both regimes, mark threshold and calculate. Shared attention follows the required card, laser grip, marking or calculation action without automatic guidance popups.",
-        "visibility": "Present in the current investigation; child controls follow the mode and state."
+        "description": "Worked examples precede learner calculations. Explicit quantity keys connect source labels to formula operands, with matching highlights and a button-triggered trace. Hover, focus and tap explain each source and calculation.",
+        "visibility": "Changes with the current step."
       },
-      "progress": {
+      "evidence": {
         "selectors": [
-          "#scienceCheckpoints"
+          "#feedback",
+          "#records"
         ],
         "kind": "evidence",
-        "description": "Four task stages, derived from actual local completion state.",
-        "visibility": "Present in the current investigation; child controls follow the mode and state."
+        "description": "An escaping ray becomes a grazing ray and then disappears; normal-referenced angles and calculation agree.",
+        "visibility": "In-place feedback; readings only in relevant steps."
+      },
+      "completion": {
+        "selectors": [
+          "#next",
+          "#outcome",
+          "#outcomeTitle"
+        ],
+        "kind": "completion",
+        "description": "The persistent dock button runs the current test/check and changes to Continue only after the model-derived criterion. Feedback and help share this dock; presentation does not set completion.",
+        "visibility": "Guided steps; absent in the open experiment."
       }
     },
     "quantities": {
-      "incidence": {
-        "description": "Incidence angle from the normal.",
-        "domain": "5–80 degrees.",
-        "source": "Learner rotates the ray.",
-        "output": "Refraction, reflection and regime update.",
+      "angle": {
+        "description": "Measured incidence or an untested predicted critical angle; the latter withholds outgoing rays until testing.",
+        "domain": "5 to 80 degrees guided; first step limited to 35 degrees. Experiment: 0 to 89.9 degrees.",
+        "source": "SVG source or predicted-angle input.",
+        "output": "Rays, reflected/transmitted power, angular marks and regime.",
         "inputSlots": [
-          "#stage"
+          "[data-control=\"angle\"]",
+          "#angleInput"
         ]
       },
-      "critical-angle": {
-        "description": "Observed threshold and calculated critical angle.",
-        "domain": "asin(n outside / n inside), when a critical angle exists.",
-        "source": "Media indices supplied; learner marks threshold; None shows calculation, Some asks angle, All asks formula/ratio/angle.",
-        "output": "Comparison of marked threshold and calculation.",
+      "critical": {
+        "description": "c = asin(n outside / n inside), only if n inside > n outside.",
+        "domain": "Degrees; no critical angle when the index condition fails.",
+        "source": "Media and learner calculation.",
+        "output": "Marked threshold and calculation feedback.",
         "inputSlots": [
-          "#workPanel input"
+          "#ratioInput",
+          "#insideMedium",
+          "#outsideMedium",
+          "#insideIndex",
+          "#outsideIndex"
         ]
       }
     },
     "modes": {
-      "none": "Predict, observe both regimes and mark; calculation supplied.",
-      "some": "Also calculate the critical angle.",
-      "all": "Select the ratio formula, enter sine ratio and angle.",
-      "comparison": "Second medium pair, then fresh practice and free media exploration."
+      "guided": "Small ordered visual investigations, with model actions and in-place revision.",
+      "experiment": "Ungated experiment with either medium and hypothetical indices; select frozen readings to compare a saved threshold and retain original numerical indices."
     },
     "dependencies": [
-      "Both escaping light and total internal reflection must be observed before marking.",
-      "Accepted threshold precedes recording/calculation completion."
+      "Rotate beyond 29 degrees, while limited below the first critical angle.",
+      "Observe angles on both sides of c and mark within 0.55 degrees; the accepted marker snaps to c.",
+      "Replace glass with diamond, then supply the index ratio and inverse-sine result and test the beam. Earlier working shows the same calculation for glass. Edits immediately clear success.",
+      "Predict water to air without a supplied substitution. Explicit testing accepts an angle within 0.3 degrees and aligns the measured limiting ray, then reversing the same boundary demonstrates no critical angle. No compulsory endpoint sweep.",
+      "Ungated experiment with either medium and hypothetical indices; select frozen readings to compare a saved threshold and retain original numerical indices."
     ],
-    "completion": "finishRound requires exploration and a marked threshold; numerical checking follows the selected working level.",
+    "completion": "New experiences require their model-derived criterion. Back and Forward revisit saved state without forcing a rerun; Repeat experience resets only that experience. Confirmed restart clears all session snapshots. Worked observations are not mastery claims.",
     "limitations": [
-      "Ideal planar-boundary optics; displayed power is model evidence, not a separate learner answer."
+      "Ideal lossless flat boundary; radial entry through the semicircular face is normal to that face. Unpolarised Fresnel power. The grazing ray at c indicates a limiting direction.",
+      "Custom media accept hypothetical indices from 1 to 3.5; they do not represent measured real materials. Saved readings retain both indices.",
+      "Ray lengths are illustrative. A minimum ray opacity preserves visibility; the saved power values are physical model values."
     ]
   }
 }

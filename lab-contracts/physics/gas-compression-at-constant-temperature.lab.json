@@ -1,118 +1,195 @@
 {
   "schemaVersion": 1,
-  "relationship": "Moving a piston changes the volume of a fixed gas at constant temperature, connecting collision frequency and pressure to the inverse pressure-volume relationship.",
+  "relationship": "Guided stages use pV = 600 kPa·L with fixed particle count and speed. The experiment extends the same ideal-gas model to pV = 600 × (T/300) × relative gas amount, with particle speed proportional to sqrt(T).",
   "learnerLoop": {
-    "action": "Predict compression or expansion, move the piston, then use gauge readings and working to meet a pressure or volume target.",
-    "modelChange": "Volume changes while the model keeps the gas amount and temperature fixed; pressure and collision-rate evidence respond inversely.",
-    "evidence": "Particle motion, impact indicators, the pressure gauge, graph trace and pressure-volume product reveal the linked change.",
-    "nextDecision": "Compare prediction with observation, calculate a new target, or pin readings to test the relationship in free investigation."
+    "action": "Compress and expand without a formula, collect three readings, inspect their products, predict a fresh pressure, then plan a target volume before testing.",
+    "modelChange": "Guided stages use pV = 600 kPa·L with fixed particle count and speed. The experiment extends the same ideal-gas model to pV = 600 × (T/300) × relative gas amount, with particle speed proportional to sqrt(T).",
+    "evidence": "Actual piston, impacts, gauge and recorded readings respond to the volume state. Products are disclosed after measurements, not before the initial observation.",
+    "nextDecision": "Revise a prediction, derive a new pressure or volume from the invariant, or collect another reading."
   },
   "invariants": [
-    "Pressure and volume satisfy the same constant product in the gauge, graph and calculation.",
-    "Constant temperature is represented by unchanged particle speed, not faster particles during compression.",
-    "Collision-frequency evidence changes with volume and stays distinct from particle-speed evidence.",
+    "At a fixed temperature and gas amount: Pressure and volume satisfy the same constant product in the gauge, graph and calculation.",
+    "At a fixed temperature and gas amount: Constant temperature is represented by unchanged particle speed, not faster particles during compression.",
+    "At a fixed temperature and gas amount: Collision-frequency evidence changes with volume and stays distinct from particle-speed evidence.",
     "Working assistance preserves the need to manipulate the piston and compare physical evidence."
   ],
   "safeAdaptations": [
     "Change target values, wording or working support within the supported volume range.",
-    "Add comparisons of pinned readings that test the inverse relationship."
+    "Add comparisons of pinned readings that test the inverse relationship.",
+    "In the final experiment, vary bath temperature and relative gas amount while preserving pV proportional to amount × absolute temperature."
   ],
   "nonGoals": [
-    "Do not model changing temperature, changing gas amount or non-ideal gas behaviour.",
+    "Do not model non-ideal gas behaviour or transient heat exchange.",
     "Do not replace the piston investigation with a formula-only quiz."
   ],
   "developerGuide": "https://www.examplicity.org/developer/lab-contract",
   "implementation": {
-    "reviewedRevision": "1e3792ab43121c7473cc18a481567c61a61602cb",
+    "reviewedRevision": "source-git-blob:534ab25bc489bba617089e2e2287a14862290acd",
     "surfaces": {
-      "goal": {
+      "actions": {
         "selectors": [
-          "#missionTitle"
+          "#learningDock",
+          "#next",
+          "#back",
+          "#forwardVisited",
+          "#secondaryAction"
+        ],
+        "kind": "control",
+        "description": "One persistent primary action; Back and optional previously-visited Forward are secondary. Model-specific callbacks and completion gates remain local to this lab.",
+        "visibility": "Same relative position below the apparatus and working; before saved readings."
+      },
+      "help": {
+        "selectors": [
+          "#evidenceHelp",
+          "#hintText"
+        ],
+        "kind": "support",
+        "description": "Learner-requested evidence cue, relationship hint and contrasting worked example; no automatic answer-directed pulse.",
+        "visibility": "Only when requested in the relevant experience."
+      },
+      "reset": {
+        "selectors": [
+          "#resetMenu",
+          "#repeat",
+          "#restart",
+          "#resetConfirmation",
+          "#cancelRestart",
+          "#confirmRestart"
+        ],
+        "kind": "control",
+        "description": "Native disclosure with ordered actions and scope descriptions; full restart uses an inline confirmation. Cancel, Escape, outside click and tab-away preserve the current model.",
+        "visibility": "Disclosure always available; reset actions disabled during model transitions. Confirmation is never opened automatically."
+      },
+      "prompt": {
+        "selectors": [
+          "#title",
+          "#intro"
         ],
         "kind": "given",
-        "description": "Current volume/pressure investigation.",
-        "visibility": "Present in the current investigation; child controls follow the mode and state."
+        "description": "A short goal and action sentence above the apparatus, with a guided-step label and quiet restart disclosure.",
+        "visibility": "Current step only."
       },
-      "apparatus": {
+      "model": {
         "selectors": [
-          "#stage",
-          "#piston"
+          "#stage"
         ],
         "kind": "model",
-        "description": "Sealed particles, piston with a shared rounded arrow grip, pressure gauge, impact frequency and p–V graph. Grip pulses while physical testing is required.",
-        "visibility": "Present in the current investigation; child controls follow the mode and state."
+        "description": "Guided stages use pV = 600 kPa·L with fixed particle count and speed. The experiment extends the same ideal-gas model to pV = 600 × (T/300) × relative gas amount, with particle speed proportional to sqrt(T).",
+        "visibility": "Always visible; later controls are progressively disclosed."
+      },
+      "comparison": {
+        "selectors": [
+          "#records",
+          "#comparisonNote"
+        ],
+        "kind": "evidence",
+        "description": "Frozen readings and explicitly labelled comparison conditions; graphical overlays use the selected saved reading.",
+        "visibility": "Recorded experiment comparisons only."
+      },
+      "navigation": {
+        "selectors": [
+          "#back",
+          "#next",
+          "#repeat",
+          "#restart"
+        ],
+        "kind": "control",
+        "description": "Back and Forward restore snapshots; Repeat resets the current experience; Confirmed restart clears the session.",
+        "visibility": "Back and Forward depend on visited progress."
       },
       "working": {
         "selectors": [
-          "#phaseCard",
-          "#workingDock"
+          "#working"
         ],
         "kind": "working",
-        "description": "Prediction followed by supplied or learner-calculated pressure/volume and marker; required cards and actions pulse without automatic guidance popups.",
-        "visibility": "Present in the current investigation; child controls follow the mode and state."
+        "description": "Worked examples precede learner calculations. Explicit quantity keys connect source labels to formula operands, with matching highlights and a button-triggered trace. Hover, focus and tap explain each source and calculation.",
+        "visibility": "Changes with the current step."
       },
       "evidence": {
         "selectors": [
-          "#chainVolume",
-          "#chainImpacts",
-          "#chainPressure",
-          "#equationUnlock"
+          "#feedback",
+          "#records"
         ],
         "kind": "evidence",
-        "description": "Causal chain and invariant under the apparatus.",
-        "visibility": "Present in the current investigation; child controls follow the mode and state."
+        "description": "Actual piston, impacts, gauge and recorded readings respond to the volume state. Products are disclosed after measurements, not before the initial observation.",
+        "visibility": "In-place feedback; readings only in relevant steps."
       },
       "completion": {
         "selectors": [
-          "#completionLayer",
-          "#completionCard"
+          "#next",
+          "#outcome",
+          "#outcomeTitle"
         ],
         "kind": "completion",
-        "description": "Inline result and next-investigation action in the working sidebar; apparatus stays unobscured.",
-        "visibility": "After target reached and any required marker/working is accepted."
+        "description": "The persistent dock button runs the current test/check and changes to Continue only after the model-derived criterion. Feedback and help share this dock; presentation does not set completion.",
+        "visibility": "Guided steps; absent in the open experiment."
       }
     },
     "quantities": {
       "volume": {
-        "description": "Gas volume controlled by piston.",
-        "domain": "2–8 L.",
-        "source": "Starting/target values from current case; learner moves piston.",
-        "output": "Gauge, graph and particle impacts update.",
+        "description": "Gas volume V.",
+        "domain": "2 to 8 L, in 0.05 L increments by pointer and 0.25 L by keyboard.",
+        "source": "Piston slider or predicted-volume input.",
+        "output": "Chamber size, gauge pressure and reading table.",
         "inputSlots": [
-          "#piston"
+          "[data-control=\"volume\"]",
+          "#volumeInput"
         ]
       },
       "pressure": {
-        "description": "Pressure p = K/V, with K fixed.",
-        "domain": "Pressure in kPa; pV = 600 kPa·L.",
-        "source": "Measured from current volume; later calculated before moving piston.",
-        "output": "Same value on gauge, graph and work."
-      },
-      "working": {
-        "description": "Product p₁V₁ and required pressure or volume.",
-        "domain": "Two scalar steps of one invariant calculation.",
-        "source": "Some supplies product; All asks product and target value.",
-        "output": "Accepted work places a prediction marker before physical test.",
+        "description": "Guided p = 600/V, including prediction at 4 L; experiment p = 600 × (T/300) × relative amount / V.",
+        "domain": "75 to 300 kPa guided; 18.75 to 1200 kPa in the expanded experiment.",
+        "source": "Actual gas volume; predictions are entered separately in the working card.",
+        "output": "Gauge, prediction feedback and readings.",
         "inputSlots": [
-          "#workingDock input"
+          "#pressureInput"
+        ]
+      },
+      "product": {
+        "description": "Initial pressure times initial volume.",
+        "domain": "600 kPa·L throughout the guided investigation; fixed for each chosen temperature and gas amount in the experiment.",
+        "source": "Learner uses 150 kPa at 4 L.",
+        "output": "Checks that predicted 2.5 L gives 240 kPa.",
+        "inputSlots": [
+          "#productInput"
+        ]
+      },
+      "temperature": {
+        "description": "Absolute gas temperature T, instantaneously equilibrated with the bath.",
+        "domain": "300 K guided; 150 to 600 K in steps of 10 K in the experiment.",
+        "source": "On-bath SVG thermostat.",
+        "output": "Particle speed and ideal-gas pressure.",
+        "inputSlots": [
+          "[data-control=\"temperature\"]"
+        ]
+      },
+      "amount": {
+        "description": "Amount relative to the starting sample.",
+        "domain": "1 guided; 0.5 to 2 in half-sample steps in the experiment.",
+        "source": "On-apparatus add/remove gas buttons.",
+        "output": "9 to 36 representative particles and ideal-gas pressure.",
+        "inputSlots": [
+          "[data-control=\"add-gas\"]",
+          "[data-control=\"remove-gas\"]"
         ]
       }
     },
     "modes": {
-      "observe": "Compression and expansion establish relationship before calculation levels unlock.",
-      "none": "Guided gauge test or supplied calculation; physical piston action remains.",
-      "some": "Enter target pressure/volume using supplied product.",
-      "all": "Also calculate the product.",
-      "free": "Pin readings and inspect the same fixed-temperature model."
+      "guided": "Small ordered visual investigations, with model actions and in-place revision.",
+      "experiment": "Ungated temperature/amount/volume experiment with immutable records, frozen piston/curve comparisons, shared plot scaling and restored particle/condition snapshots."
     },
     "dependencies": [
-      "Observational prediction precedes piston movement.",
-      "Earned calculation support follows the first two tests.",
-      "Owned values must place an accepted marker before piston verification."
+      "Compress 6 L to 3 L and return to 6 L. The gauge changes from 100 to 200 and back to 100 kPa; no formula card or numerical invariant is supplied.",
+      "Record three distinct volumes. A non-blocking nudge flags clustered readings; products and the curve are revealed after the third reading.",
+      "Predict 150 kPa for expansion from 3 L / 200 kPa to the unfamiliar 4 L. Explicit testing moves the piston; edits clear the verdict and restore the starting apparatus.",
+      "Supply the invariant 600 kPa·L and planned volume 2.5 L for a 240 kPa target. Method help is optional; the test animates actual volume, not the gauge prediction.",
+      "Ungated temperature/amount/volume experiment with immutable records, frozen piston/curve comparisons, shared plot scaling and restored particle/condition snapshots."
     ],
-    "completion": "maybeComplete checks targetReached and working/marker prerequisites; release snaps within target tolerance. Generated practice retains support.",
+    "completion": "New experiences require their model-derived criterion. Back and Forward revisit saved state without forcing a rerun; Repeat experience resets only that experience. Confirmed restart clears all session snapshots. Worked observations are not mastery claims.",
     "limitations": [
-      "Fixed temperature, particle count and piston area; idealised impact illustration, not a molecular dynamics solver."
+      "The starting sample uses eighteen representative particles; the displayed pressure follows the ideal-gas relationship, not measured 2D simulation impulses.",
+      "Temperature 300 K and gas amount remain fixed throughout the guided stages. The user-requested final extension varies both, with instantaneous bath equilibrium, no thermal transient, no non-ideal gas behaviour and no quantitative collision-pressure simulation.",
+      "Representative particle positions rescale with apparatus resizing; speed and scientific pressure remain model-derived, not collision-measured."
     ]
   }
 }

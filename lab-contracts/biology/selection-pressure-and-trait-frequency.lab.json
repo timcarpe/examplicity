@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "relationship": "Changing the seed environment changes differential reproduction of existing inherited beak variation, so trait frequencies change across generations rather than individual birds changing their beaks.",
   "learnerLoop": {
-    "action": "Predict a population change, reshape seed availability, and run selection and inheritance.",
-    "modelChange": "The environment biases the parent pool; offspring inherit varied traits before replacing the adult population.",
-    "evidence": "Adult and likely-parent distributions, generation history, and mean, spread and middle-band frequencies reveal directional, stabilising or disruptive selection.",
-    "nextDecision": "Compare the outcome with the prediction, then sustain or reverse the pressure to test the explanation."
+    "action": "Change food without changing adults, trace parents and offspring, inspect worked selection cases, then construct a two-source environment to change the population pattern.",
+    "modelChange": "Environment changes reproductive weights of existing adults. Weighted parent selection and inherited variation generate a new fixed-size population.",
+    "evidence": "Large bird glyphs illustrate three representative beak depths; count dots and frequency bars derive from the same population as mean, spread and middle-band readings. Original adults remain in place when food is edited.",
+    "nextDecision": "Compare directional, stabilising and disruptive effects, then reverse or reshape food in the experiment."
   },
   "invariants": [
     "Editing the environment changes likely parents without changing existing adult traits.",
@@ -22,91 +22,158 @@
   ],
   "developerGuide": "https://www.examplicity.org/developer/lab-contract",
   "implementation": {
-    "reviewedRevision": "1e3792ab43121c7473cc18a481567c61a61602cb",
+    "reviewedRevision": "source-git-blob:99dc4a0b1b5f59d8beea47a2e3ff858e8fc9c867",
     "surfaces": {
-      "goal": {
+      "actions": {
         "selectors": [
-          "#missionTitle"
+          "#learningDock",
+          "#next",
+          "#back",
+          "#forwardVisited",
+          "#secondaryAction"
+        ],
+        "kind": "control",
+        "description": "One persistent primary action; Back and optional previously-visited Forward are secondary. Model-specific callbacks and completion gates remain local to this lab.",
+        "visibility": "Same relative position below the apparatus and working; before saved readings."
+      },
+      "help": {
+        "selectors": [
+          "#evidenceHelp",
+          "#hintText"
+        ],
+        "kind": "support",
+        "description": "Learner-requested evidence cue, relationship hint and contrasting worked example; no automatic answer-directed pulse.",
+        "visibility": "Only when requested in the relevant experience."
+      },
+      "reset": {
+        "selectors": [
+          "#resetMenu",
+          "#repeat",
+          "#restart",
+          "#resetConfirmation",
+          "#cancelRestart",
+          "#confirmRestart"
+        ],
+        "kind": "control",
+        "description": "Native disclosure with ordered actions and scope descriptions; full restart uses an inline confirmation. Cancel, Escape, outside click and tab-away preserve the current model.",
+        "visibility": "Disclosure always available; reset actions disabled during model transitions. Confirmation is never opened automatically."
+      },
+      "prompt": {
+        "selectors": [
+          "#title",
+          "#intro"
         ],
         "kind": "given",
-        "description": "Directional, stabilising or disruptive population goal.",
-        "visibility": "Present in the current investigation; child controls follow the mode and state."
+        "description": "A short goal and action sentence above the apparatus, with a guided-step label and quiet restart disclosure.",
+        "visibility": "Current step only."
       },
       "model": {
         "selectors": [
           "#stage"
         ],
         "kind": "model",
-        "description": "Seed environment, inherited adult variation and adult/likely-parent histogram aligned by trait.",
-        "visibility": "Present in the current investigation; child controls follow the mode and state."
+        "description": "Environment changes reproductive weights of existing adults. Weighted parent selection and inherited variation generate a new fixed-size population.",
+        "visibility": "Always visible; later controls are progressively disclosed."
       },
-      "decision": {
+      "comparison": {
         "selectors": [
-          "#stageCard",
-          "#claimOptions",
-          "#stageCardActions"
+          "#records",
+          "#comparisonNote"
+        ],
+        "kind": "evidence",
+        "description": "Frozen readings and explicitly labelled comparison conditions; graphical overlays use the selected saved reading.",
+        "visibility": "Recorded experiment comparisons only."
+      },
+      "navigation": {
+        "selectors": [
+          "#back",
+          "#next",
+          "#repeat",
+          "#restart"
+        ],
+        "kind": "control",
+        "description": "Back and Forward restore snapshots; Repeat resets the current experience; Confirmed restart clears the session.",
+        "visibility": "Back and Forward depend on visited progress."
+      },
+      "working": {
+        "selectors": [
+          "#working"
         ],
         "kind": "working",
-        "description": "Prediction and current selection/inheritance/next-generation action beside the plots. Shared pulses follow the required card, seed grips and action without automatic guidance popups.",
-        "visibility": "Present in the current investigation; child controls follow the mode and state."
+        "description": "Worked examples precede learner calculations. Explicit quantity keys connect source labels to formula operands, with matching highlights and a button-triggered trace. Hover, focus and tap explain each source and calculation.",
+        "visibility": "Changes with the current step."
       },
       "evidence": {
         "selectors": [
-          "#evidenceSection",
-          "#processSection",
-          "#history"
+          "#feedback",
+          "#records"
         ],
         "kind": "evidence",
-        "description": "Mean/spread/middle-frequency comparison, causal mechanism and generation history.",
-        "visibility": "Present in the current investigation; child controls follow the mode and state."
+        "description": "Large bird glyphs illustrate three representative beak depths; count dots and frequency bars derive from the same population as mean, spread and middle-band readings. Original adults remain in place when food is edited.",
+        "visibility": "In-place feedback; readings only in relevant steps."
       },
-      "progress": {
+      "completion": {
         "selectors": [
-          "#scienceCheckpoints"
+          "#next",
+          "#outcome",
+          "#outcomeTitle"
         ],
         "kind": "completion",
-        "description": "Three investigation checkpoints; previously unlocked investigations remain revisitable.",
-        "visibility": "Present in the current investigation; child controls follow the mode and state."
+        "description": "The persistent dock button runs the current test/check and changes to Continue only after the model-derived criterion. Feedback and help share this dock; presentation does not set completion.",
+        "visibility": "Guided steps; absent in the open experiment."
       }
     },
     "quantities": {
-      "environment": {
-        "description": "Seed-size peak centres and widths.",
-        "domain": "Trait axis 4–16 mm; width constrained to 0.55–3 mm.",
-        "source": "Learner changes one or two food sources.",
-        "output": "Changes food access and likely reproductive contribution.",
+      "food": {
+        "description": "One or two Gaussian food-advantage peaks across the beak-depth axis.",
+        "domain": "Peak centres 4.5 to 15.5 mm; widths 0.55 to 3 mm.",
+        "source": "SVG food-peak and independent food-width handles.",
+        "output": "Reproductive weights; no direct adult trait change.",
         "inputSlots": [
-          "#stage [data-handle]"
+          "[data-control=\"food-0\"]",
+          "[data-control=\"food-1\"]",
+          "[data-control=\"food-width-0\"]",
+          "[data-control=\"food-width-1\"]",
+          "#foodPressure"
         ]
       },
-      "trait-frequency": {
-        "description": "Distribution of inherited beak depth in 72 adults.",
-        "domain": "Continuous bounded trait; histogram frequencies.",
-        "source": "Adults retain their values; selected parents produce similar offspring with variation.",
-        "output": "Next-generation mean, spread and middle/tail frequencies."
-      },
-      "prediction": {
-        "description": "Expected direction or shape of population change.",
-        "domain": "Mean increase, narrower distribution, or split distribution.",
-        "source": "Learner chooses before guided testing.",
-        "output": "Compared with observed generation outcome.",
+      "population": {
+        "description": "Inherited beak-depth values for every adult.",
+        "domain": "4.05 to 15.95 mm; 72 adults and 24 parents guided. Experiment populations of 36, 72 or 144, with one third selected as parents.",
+        "source": "Seeded weighted sampling with offspring variation SD 0.43 mm. Guided seed 9137; New sample increments the seed by 104729 without changing the food.",
+        "output": "Adult count dots, parent-to-offspring transitions, beak-depth frequency bars and mean/SD/middle frequencies.",
         "inputSlots": [
-          "#claimOptions"
+          "#populationSize"
+        ]
+      },
+      "frequency": {
+        "description": "Percentage of the current adults within a named trait group.",
+        "domain": "0 to 100 percent; the assessed middle group is 8.5–11.5 mm inclusive.",
+        "source": "Group adult count divided by the total population and multiplied by 100; guided total 72.",
+        "output": "Worked frequency examples precede a checked learner calculation to one decimal place.",
+        "inputSlots": [
+          "#frequencyInput"
         ]
       }
     },
     "modes": {
-      "guided": "Three successive selection patterns; first generation explicitly separates selection and inheritance. No Working toggle.",
-      "free": "One/two sources and repeated generations; returning restores guided state."
+      "guided": "Small ordered visual investigations, with model actions and in-place revision.",
+      "experiment": "Ungated food/population experiment: record frozen population snapshots, compare their distribution, repeat with a reproducible new seed, and return without losing the experiment. Cross-size overlays explicitly rescale proportions to the current total."
     },
     "dependencies": [
-      "Predict and change the food environment enough to produce a useful parent preview.",
-      "Selection precedes offspring production; offspring must replace adults before frequencies change.",
-      "Completion requires several generations and the relevant measured distribution change."
+      "Move food advantage toward deeper existing beaks.",
+      "Select 24 parents, observe 72 offspring inheriting traits from those parents, then replace the adults after the transition.",
+      "Observe at least three generations in the worked directional case; completion indicates a comparison is available, not mastery or a hidden mean threshold.",
+      "After at least three generations, explicitly check the current middle-group percentage to within 0.11 percentage points. No hidden spread threshold gates the calculation.",
+      "Arrange two initially central food sources and their widths. After at least three generations since the last edit, both visible tails must increase and the middle decrease relative to the starting distribution. No hidden SD or fixed 15-percent tail requirement.",
+      "Ungated food/population experiment: record frozen population snapshots, compare their distribution, repeat with a reproducible new seed, and return without losing the experiment. Cross-size overlays explicitly rescale proportions to the current total."
     ],
-    "completion": "Directional: ≥3 generations and mean increase ≥1.65 mm; stabilising uses generation/spread criterion; disruptive: ≥4 generations, enlarged spread, reduced middle and both tails retained.",
+    "completion": "New experiences require their model-derived criterion. Back and Forward revisit saved state without forcing a rerun; Repeat experience resets only that experience. Confirmed restart clears all session snapshots. Worked observations are not mastery claims.",
     "limitations": [
-      "Population size fixed; simplified heritable trait model. No claim that adult birds change their beaks, and no genetic-drift or Hardy–Weinberg model."
+      "Simplified heritable continuous trait, not a complete genetic, ecological, or demographic simulation.",
+      "Population size stays fixed within a run. Choosing a size starts a fresh seeded cohort. Steady food is editable; alternating food switches shallow/deep advantage after each generation; even food gives all traits equal reproductive weights, while random sampling remains.",
+      "Dashed columns show starting frequencies; bars show every current adult. Bird drawings are representative trait examples. Spread is population standard deviation; the middle band is 8.5–11.5 mm.",
+      "Comparison bands use the same 8.5 and 11.5 mm boundaries as the visible bird groups. Saved populations of a different size are explicitly normalised to the current total for the overlay."
     ]
   }
 }

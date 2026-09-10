@@ -5,91 +5,109 @@ import { runInNewContext } from 'node:vm';
 
 const sourcePath = 'labs-src/mathematics/histogram-area-cumulative-distribution/lab.html';
 
-test('Enter commits rebuilt working fields without relying on blur/change', async () => {
-  const html = await readFile(sourcePath, 'utf8');
-  const callback = html.match(/\$\('workingPanel'\)\.addEventListener\('keydown',(e=>\{[^\n]+?\})\);/);
-  assert.ok(callback);
-  const commits: string[] = [];
-  let prevented = 0;
-  const onKey = runInNewContext(`(${callback[1]})`, {
-    commitWorkInput: (event: { target: { dataset: { field: string } } }) => commits.push(event.target.dataset.field),
-  });
-  for (const field of ['density-0', 'total-0', 'rank-0', 'iqr']) {
-    onKey({ key: 'Enter', target: { dataset: { field }, blur() {} }, preventDefault() { prevented++; } });
+type HistogramDistribution = {
+  boundaries: number[];
+  frequencies: number[];
+  widths: number[];
+  densities: number[];
+  cumulative: number[];
+  total: number;
+};
+
+type HistogramModel = {
+  histogramDistribution(bounds: number[], frequencies: number[]): HistogramDistribution;
+  histogramCumulativeAt(data: HistogramDistribution, x: number): number;
+  histogramQuantile(data: HistogramDistribution, fraction: number): number | null;
+  histogramNumber(value: string): number | null;
+  histogramMatches(actual: number[], expected: number[], tolerance?: number): boolean;
+};
+
+const extractFunction = (source: string, name: string) => {
+  const start = source.indexOf(`function ${name}`);
+  assert.ok(start >= 0, `${name} should remain in the canonical source`);
+  const end = source.indexOf('\n  function ', start + name.length + 9);
+  return source.slice(start, end < 0 ? source.length : end).trim();
+};
+
+const loadModel = async () => {
+  const source = await readFile(sourcePath, 'utf8');
+  const names = ['histogramDistribution', 'histogramCumulativeAt', 'histogramQuantile', 'histogramNumber', 'histogramMatches'];
+  const declarations = names.map(name => extractFunction(source, name)).join('\n');
+  const model = runInNewContext(`(() => { ${declarations}; return { ${names.join(', ')} }; })()`) as HistogramModel;
+  return { source, model };
+};
+
+const loadFreshReports = async () => {
+  const source = await readFile(sourcePath, 'utf8');
+  const start = source.indexOf('const freshReports=');
+  assert.ok(start >= 0, 'bounded fresh reports should remain in the canonical source');
+  const end = source.indexOf('];', start) + 2;
+  assert.ok(end > start, 'fresh report list should be complete');
+  return runInNewContext(source.slice(start, end).replace('const freshReports=', '')) as Array<{
+    bounds: number[];
+    counts: number[];
+  }>;
+};
+
+test('fresh reports use unequal widths and one coherent distribution model', async () => {
+  const { model } = await loadModel();
+  const reports = await loadFreshReports();
+
+  assert.equal(reports.length, 3);
+  for (const report of reports) {
+    const data = model.histogramDistribution(report.bounds, report.counts);
+    assert.equal(data.boundaries.length, data.frequencies.length + 1);
+    assert.ok(new Set(data.widths).size > 1, 'fresh practice must include unequal widths');
+    const cumulative = [0];
+    for (const count of report.counts) cumulative.push(cumulative.at(-1)! + count);
+    assert.deepEqual(Array.from(data.cumulative), cumulative);
+    data.frequencies.forEach((count: number, index: number) => {
+      assert.ok(Math.abs(data.densities[index] * data.widths[index] - count) < 1e-9);
+    });
   }
-  onKey({ key: 'ArrowUp', target: { dataset: { field: 'iqr' } } });
-  onKey({ key: 'Enter', target: { dataset: {} } });
-  assert.deepEqual(commits, ['density-0', 'total-0', 'rank-0', 'iqr']);
-  assert.equal(prevented, 4);
 });
 
-test('Histogram completion card is outside the graph scroller', async () => {
-  const html = await readFile(sourcePath, 'utf8');
-  const shellStart = html.indexOf('<div id="stageShell" class="stage-shell">');
-  const shellClose = html.indexOf('</div>\n        <div id="completionLayer"', shellStart);
-  const completionStart = html.indexOf('<div id="completionLayer"', shellStart);
+test('constant-density interpolation returns ordered quartile estimates and a usable IQR', async () => {
+  const { model } = await loadModel();
+  const reports = await loadFreshReports();
+  const report = reports[0];
+  const data = model.histogramDistribution(report.bounds, report.counts);
+  const fractions = [.25, .5, .75];
+  const quartiles = fractions.map(fraction => model.histogramQuantile(data, fraction));
 
-  assert.ok(shellStart >= 0, 'graph scroller should exist');
-  assert.ok(shellClose > shellStart, 'graph scroller should close before the completion layer');
-  assert.ok(completionStart > shellClose, 'completion layer should be a sibling after the graph scroller');
-  assert.match(html, /<div class="stage-viewport">\s*<div id="stageShell"/);
-  assert.match(html, /\.stage-shell\{overflow-x:auto;overflow-y:hidden\}/);
-  assert.match(html, /nextPrimary'\)\.focus\(\{preventScroll:true\}\)/);
-  assert.match(html, /makeDraggableDialog\(document\.getElementById\('nextCard'\),document\.querySelector\('\.stage-viewport'\)\)/);
-  assert.doesNotMatch(html.slice(shellStart, completionStart), /id="completionLayer"/);
-
-  const positionFunction = html.match(/function positionCompletion\(\)\{([\s\S]*?)\nfunction renderCompletion/);
-  assert.ok(positionFunction, 'completion positioning function should remain explicit');
-  assert.doesNotMatch(positionFunction[1], /stageShell|scrollLeft|scrollTop/);
-  assert.doesNotMatch(html, /scrollIntoView/);
-});
-
-for (const type of ['bar', 'point', 'read']) {
-  test(`Histogram ${type} drag preserves off-centre pickup and pointer ownership`, async () => {
-    const html = await readFile(sourcePath, 'utf8');
-    const handlers = html.slice(html.indexOf('function startDrag(e,p)'), html.indexOf('function keyboardStage(e)'));
-    const shared = (await readFile('public/developer/lab-kit/0.3.0/src/lab-design.js', 'utf8')).split('/* Shared progressive-card')[0];
-    const listeners = new Map<string, (event: unknown) => void>();
-    const state = { stage: type === 'read' ? 'quartile' : 'class', guide: null, drag: null, classIndex: 0, barDensities: [2], pointTotals: [0, 20], readX: 2, quartileIndex: 0 };
-    const captured = new Set<number>();
-    let completed = 0;
-    const context = {
-      state, cfg: { histBottom: 100, histTop: 0, cfBottom: 100, cfTop: 0 },
-      window: {},
-      stage: { addEventListener: (type: string, callback: (event: unknown) => void) => listeners.set(type, callback), classList: { add() {}, remove() {} }, setPointerCapture: (id: number) => captured.add(id), hasPointerCapture: (id: number) => captured.has(id), releasePointerCapture: (id: number) => captured.delete(id) },
-      eventPoint: (e: { clientX: number; clientY: number }) => ({ x: e.clientX, y: e.clientY }),
-      ownership: () => ({ density: 'drag', total: 'drag' }), renderAll() {},
-      yDensity: (v: number) => 100 - v * 10, yCF: (v: number) => 100 - v,
-      xScale: (v: number) => v * 10, xValue: (v: number) => v / 10,
-      densityMax: () => 10, totalN: () => 100, widths: () => [10],
-      sample: () => ({ frequencies: [50], boundaries: [0, 10] }),
-      targetCumulative: () => [0, 50], barOK: () => true, quartileRankReady: () => true,
-      targetModel: () => ({ evalAt: (x: number) => x * 10 }), qTargets: () => [50], expectedQuartile: () => 5,
-      clamp: (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v)),
-      maybeCompleteClass: () => completed++, maybeCompleteQuartile: () => completed++,
-    };
-    runInNewContext(`${shared}; const LabDesign=window.LabDesign; LabDesign.svgPoint=(_stage,e)=>eventPoint(e); ${handlers}; LabDesign.bindSvgDrag(stage,{start:startDrag,move:moveDrag,end:endDrag});`, context);
-    const startDrag = listeners.get('pointerdown')!;
-    const moveDrag = listeners.get('pointermove')!;
-    const endDrag = listeners.get('pointercancel')!;
-    const selector = type === 'bar' ? '[data-bar-handle]' : type === 'point' ? '[data-point-handle]' : '[data-read-handle]';
-    const node = { dataset: { barHandle: '0', pointHandle: '0' } };
-    const event = { isPrimary: true, button: 0, pointerId: 1, clientX: 27, clientY: 88, target: { closest: (s: string) => s === selector ? node : null }, preventDefault() {} };
-    const value = () => type === 'bar' ? state.barDensities[0] : type === 'point' ? state.pointTotals[1] : state.readX;
-    const initial = value();
-    startDrag(event);
-    assert.equal(captured.has(1), true);
-    moveDrag(event);
-    assert.equal(value(), initial, 'stationary off-centre pickup must not jump');
-    moveDrag({ ...event, pointerId: 2, clientX: 37, clientY: 78 });
-    assert.equal(value(), initial, 'another pointer must not move this handle');
-    moveDrag({ ...event, clientX: 37, clientY: 78 });
-    assert.equal(value(), type === 'point' ? 30 : 3);
-    moveDrag({ ...event, clientX: 57, clientY: 58 });
-    assert.equal(value(), type === 'point' ? 50 : 5, 'target snapping remains available');
-    endDrag({ pointerId: 1, type: 'pointercancel' });
-    assert.equal(state.drag, null);
-    assert.equal(captured.size, 0);
-    assert.equal(completed, 0, 'cancellation is not a completed attempt');
+  assert.ok(quartiles.every((value: number | null): value is number => value !== null));
+  assert.ok(quartiles[0] < quartiles[1] && quartiles[1] < quartiles[2]);
+  quartiles.forEach((value: number, index: number) => {
+    assert.ok(Math.abs(model.histogramCumulativeAt(data, value) - data.total * fractions[index]) < 1e-9);
   });
-}
+  assert.ok(quartiles[2] - quartiles[0] > 0);
+});
+
+test('editing a fresh report invalidates prior checks and changes all later cumulative totals', async () => {
+  const { source, model } = await loadModel();
+  const reports = await loadFreshReports();
+  const report = reports[1];
+  const original = model.histogramDistribution(report.bounds, report.counts);
+  const editedCounts = report.counts.slice();
+  editedCounts[1] += 3;
+  const edited = model.histogramDistribution(report.bounds, editedCounts);
+
+  assert.equal(model.histogramMatches(original.cumulative, original.cumulative), true);
+  assert.equal(model.histogramMatches(original.cumulative, edited.cumulative), false);
+  assert.equal(edited.cumulative[2], original.cumulative[2] + 3);
+  assert.equal(edited.cumulative.at(-1), original.total + 3);
+  assert.match(source, /s\.densityChecked\[i\]=false/);
+  assert.match(source, /s\.totalChecked\[i\]=false/);
+  assert.match(source, /s\.rankChecked\[s\.qIndex\]=false/);
+  assert.match(source, /s\.practiceIqrChecked=false/);
+  assert.match(source, /s\.practiceIndex=\(s\.practiceIndex\+1\)%freshReports\.length/);
+  assert.match(source, /s\.practiceStage==='bars'\?s\.bounds\.length-1/);
+});
+
+test('practice number entries accept decimals and fractions while rejecting unsafe values', async () => {
+  const { model } = await loadModel();
+  assert.equal(model.histogramNumber(' 7.5 '), 7.5);
+  assert.equal(model.histogramNumber('15/2'), 7.5);
+  assert.equal(model.histogramNumber('15 / 0'), null);
+  assert.equal(model.histogramNumber('not a number'), null);
+});
