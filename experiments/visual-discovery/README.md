@@ -1,82 +1,62 @@
 # Four visual lab prototypes
 
-Open [the review index](review/index.html), or an individual offline file:
+Open [the review index](review/index.html), or an individual standalone file. No network, account or package installation is needed to use a lab.
 
-- [Maths — Similarity and scale](review/maths.html): six guided experiences and an experiment.
-- [Physics — Measure critical angles](review/physics.html): four guided experiences and an experiment.
-- [Chemistry — Investigate pressure and volume](review/chemistry.html): four guided experiences and an experiment.
-- [Biology — Trace selection across generations](review/biology.html): five guided experiences and an experiment.
+| Lab | Guided investigation | Independent experiment |
+| --- | --- | --- |
+| [Maths](review/maths.html) | Length → tiled area → cube layers → reverse area → a non-unit reference cube → similarity repair | Change scale and height, separate layers, save and compare outlines |
+| [Physics](review/physics.html) | Observe refraction → mark a threshold → calculate for diamond → predict water’s threshold and reverse the boundary | Choose either medium or hypothetical indices; compare frozen readings |
+| [Chemistry](review/chemistry.html) | Compress and expand without formulas → collect an invariant → predict pressure at an unfamiliar volume → plan a target volume | Change volume, temperature or gas amount; compare saved piston and curve references |
+| [Biology](review/biology.html) | Existing variation → parents and offspring → a directional worked case → middle-group frequency → construct a two-source environment | Reshape food, change population size, repeat with a new sample and compare distributions |
 
-Each lab opens with a contextual mission and one model. Shared working cards introduce calculations before learners supply the same quantities themselves. Press **Trace values** to connect source labels to the exact formula operands through an ordered pulse and value transfer. Tracing never starts automatically, including after a source click, a changed value or a new checkpoint. Hover, focus or tap a labelled quantity for a compact explanation, or focus the working card for the method. Escape dismisses the explanation. Reduced motion replaces the requested trace with static paired outlines.
+There are 19 guided experiences and four open experiments. These are review prototypes, not replacements for published labs.
 
-The mission uses aligned blue headings and quieter supporting text, without an icon. Verified results have a crisp white checkmark on a green disc and an outcome heading. Between checkpoints, only changed text, working, controls and SVG elements fade out and in; identical model elements stay visible. Working and model areas resize smoothly where their content changes. Material changes, separating cube layers, piston tests and inherited offspring retain their own brief transitions. Pressure predictions remain separate from the actual gauge; selected parents produce offspring before population replacement.
+## Interaction and support
 
-The final modes add these experiments without a separate control panel:
+The apparatus remains the primary control. Arrow keys, Home and End operate focused model handles. The first experiences constrain irrelevant variables; later experiences require a fresh decision with less supplied working. Numerical predictions are checked on **Test**, not while typing. Changing a prediction invalidates its previous result.
 
-| Lab | Independent experiments |
-| --- | --- |
-| Maths | Scale factors from 0.5 to 5, independent height, moving cube layers, length/square/solid views and saved comparisons |
-| Physics | Either medium, hypothetical indices from 1 to 3.5, incidence up to 89.9°, threshold finding and readings that retain both indices |
-| Chemistry | Piston volume, an on-bath thermostat from 150–600 K, a gas valve for 0.5–2 times the starting amount, and readings with all conditions |
-| Biology | One or two food peaks with independent widths, steady/alternating/even food, populations of 36/72/144 and inherited generations |
+**Need a hint?** offers evidence first, then a relationship and a different worked example. It never opens automatically. **Trace values** explicitly connects labelled quantities to formula operands; source clicks, edits and stage changes do not start the trace. Reduced motion uses static paired outlines instead of moving values.
 
-Each file includes its SVG model, styles, runtime, verbatim MIT licence and pedagogical data. It opens independently with no network or package installation. Use Start over to return to the first experience; Back repeats an earlier experience. Progress and observations are held only for the current page session.
+**Back** restores the earlier model, answers and readings. **Forward** revisits a previously visited experience without requiring its work again. **Repeat experience** resets only the current experience; **Start over** clears the session. No progress is stored after the page closes. Navigation cannot interrupt a piston test or offspring replacement, except Start over, which cancels the transition safely.
 
-Read [the research and source comparison](RESEARCH.md) for the rationale, preserved outcomes and limitations. This is a review experiment in `codex/visual-discovery-labs`, based on revision `a42aaaa78d437926ba59b766a6415ddd89ba46ed`. Production routes, source labs, curriculum mappings and the work owned by **Lab Internals (Orchestrator)** are untouched.
+Record a reading in an experiment, then select its row to hold a dashed reference on the model. Changing current controls does not rewrite that reading. The comparison states which conditions differ. Biology labels cross-population overlays as rescaled proportions rather than pretending different population counts are directly comparable. **New sample** changes the seed, not the chosen food pressure; resetting the same sample remains reproducible.
 
-## Rebuild or preview
+## Build
 
-From this worktree’s repository root, with Node 24:
+From the repository root, using Node 22.16 or later (Node 24 recommended):
 
-```powershell
+```sh
 node --experimental-strip-types experiments/visual-discovery/build.mjs
-node experiments/visual-discovery/serve.mjs
 ```
 
-The optional server prints its loopback review URL. Files still work offline without it. It serves only this experiment directory and does not modify files.
+Edit `src/` and `build.mjs`, then rebuild. Do not edit generated `review/*.html` or `contracts/*.lab.json` manually. The build validates each v1 contract and embeds it in its standalone HTML. It reads, but does not edit, the production contract sidecars, licence, living guide and pinned shared design-kit snapshots.
 
-The build reads the existing four `lab-contracts` sidecars, `LICENSE`, `docs/examplicity-living-style-guide-v3.html`, and the shipped `public/developer/lab-kit/0.3.0/src/lab-design.css` and `lab-design.js` snapshots. It does not edit those inputs. Edit `src/`, then rebuild; do not hand-edit the review HTML or generated contracts.
+The original production-source comparison is revision `a42aaaa78d437926ba59b766a6415ddd89ba46ed`. The refinements build on review revision `67ff19efc1042802bc266f7839363c9bdafaa92a`. Original production sources, curriculum mappings, public routes and shared components remain unchanged. The repository changelog records this work internally only.
 
-## Structured data
+## Verification
 
-Each HTML contains:
+Model checks require only Node’s built-in modules:
 
-- `script[data-examplicity-lab-contract]`: the valid v1 contract and actual implementation map. Original guided outcomes remain intact. Chemistry explicitly extends its former fixed-temperature/fixed-amount scope in the final experiment; its relationship, conditional invariants, adaptations and non-goals document that change.
-- `script[data-examplicity-pedagogy]`: research, original source revision/hash, original invariants and non-goals, the ordered lesson criteria, extensions, quantity-link conventions, motion, accessibility and model limits.
-
-The implementation revision is a SHA-256 of the embedded token layer, shared design CSS/runtime and prototype CSS/runtime/model. The generated sidecar and embedded contract must be identical.
-
-## Focused verification
-
-```powershell
-node --experimental-strip-types experiments/visual-discovery/verify.mjs <path-to-agent-browser-executable>
+```sh
+node --test experiments/visual-discovery/tests/models.test.mjs
 ```
 
-Append `maths`, `physics`, `chemistry` or `biology` to repeat only that lab’s browser journey; packaging checks still cover all four files. Focused results use a separate report file.
+Browser acceptance uses Playwright as a development-only tool; it is not a lab dependency. With Playwright and Chromium installed in the test environment:
 
-The script uses the isolated `visual-discovery` browser session. It exercises all guided steps and experiment controls through mouse/keyboard interaction; browser evaluation only reads model state for assertions. It checks contract parity, JavaScript syntax, offline packaging, scientific invariants, revisions, and opening/final layouts at 1200×800, 900×800 and 390×844. It also checks source/formula explanations, button-only tracing and its reduced-motion alternative, selective checkpoint fades with unchanged model labels staying visible, removal of temporary transition layers, revised-answer states, expanded experiments, parent-to-offspring replacement, and dot packing when all 72 guided birds share one trait group. No full-site build is needed for these standalone files.
+```sh
+node --experimental-strip-types experiments/visual-discovery/verify.mjs
+# Or one journey, while still checking all four packages:
+node --experimental-strip-types experiments/visual-discovery/verify.mjs chemistry
+```
 
-The completed run passed all four journeys. In the seeded Biology run, directional selection reached generation 3 with mean 12.80 mm; stabilising selection reached generation 3 with SD 0.72 mm; disruptive selection reached generation 4 with SD 3.08 mm, an empty middle band and both tails represented. These are simulated results, not empirical biology data.
+Set `PLAYWRIGHT_MODULE` to an installed Playwright module entry file when it is not available through normal module resolution. Set `CHROMIUM_EXECUTABLE` to an existing Chromium executable when required. A separate test environment may install Playwright and its browser without changing this repository’s package manifests.
 
-Machine results and inspected screenshots are under the ignored `outputs/visual-discovery/` directory. The test covers representative interactions and layouts, not every possible experiment history.
+The runner loads the exact generated HTML into isolated browser pages, blocks all external requests, and uses real pointer, keyboard and form controls. Page evaluation reads state for assertions; it does not bypass learner completion rules. This also permits artifact testing in environments that prohibit `file://` or loopback navigation. It is not a deployed-site test.
 
-## File inventory
+Checks cover every guided journey and experiment, wrong/revised predictions, help, immutable references, state restoration, scientific invariants, 1200×800 / 900×800 / 390×844 layouts, optional tracing, reduced motion and inheritance timing. Results and screenshots are written to ignored `outputs/visual-discovery/`; `VERIFICATION.md` records the delivered run. The tests do not establish learning effectiveness or cover every experimental history.
 
-All lab deliverables are confined to this directory. The repository's required internal review note is recorded in `app/changelog/entries.ts`; it does not appear in the public changelog.
+## Contents
 
-| File | Responsibility |
-| --- | --- |
-| `README.md`, `RESEARCH.md` | Review instructions, research, continuity, limitations and file inventory |
-| `build.mjs` | Offline packaging, contract validation and source provenance |
-| `serve.mjs` | Optional local review server |
-| `verify.mjs` | Focused browser acceptance checks |
-| `src/shared.css`, `src/shared.js` | Shared progressive layout and DOM/lesson helpers |
-| `src/connections.js` | Explicit source-to-formula links, minimal explanations, value-transfer cues, stage transitions and outcome presentation |
-| `src/maths.js` | Similarity model, SVG and seven-step journey |
-| `src/physics.js`, `src/physics-svg.js` | Optical model, controls, SVG apparatus and five-step journey |
-| `src/chemistry.js`, `src/chemistry-svg.js` | Gas model, animation, SVG instruments/graph and five-step journey |
-| `src/biology.js`, `src/biology-svg.js` | Selection/inheritance model, SVG birds/distributions and six-step journey |
-| `contracts/maths.lab.json`, `contracts/physics.lab.json`, `contracts/chemistry.lab.json`, `contracts/biology.lab.json` | Generated v1 implementation maps |
-| `review/index.html`, `review/maths.html`, `review/physics.html`, `review/chemistry.html`, `review/biology.html` | Review entry point and complete standalone deliverables |
+`src/` contains the shared local helpers and four models; `build.mjs` packages them; `serve.mjs` optionally serves this experiment directory; `verify.mjs` and `tests/` provide acceptance and model checks; `contracts/` and `review/` are generated deliverables. Every HTML includes its licence, teaching contract, implementation map, original provenance and model limits.
 
-Local verification also writes screenshots and `verification.json` under `outputs/visual-discovery/`. No shared resource, original source, published asset, project setting or other worktree is edited.
+See [research and design decisions](RESEARCH.md) and the [learner review protocol](LEARNER-REVIEW.md). The learner review has not been conducted as part of this implementation.

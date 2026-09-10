@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "relationship": "Changing incidence angle and the refractive-index boundary connects refraction to the critical threshold and total internal reflection, with calculation checked against the visible ray behaviour.",
   "learnerLoop": {
-    "action": "Rotate the source, observe both regimes, mark the limiting ray, calculate a new threshold, then reverse the media.",
+    "action": "Rotate a source, observe and mark the limiting ray, calculate diamond, independently predict water to air, then reverse that same boundary.",
     "modelChange": "Snell’s law and unpolarised Fresnel reflectance derive from the same two refractive indices and incidence angle.",
     "evidence": "An escaping ray becomes a grazing ray and then disappears; normal-referenced angles and calculation agree.",
     "nextDecision": "Calculate another threshold or test whether any threshold exists for a reversed pair."
@@ -22,7 +22,7 @@
   ],
   "developerGuide": "https://www.examplicity.org/developer/lab-contract",
   "implementation": {
-    "reviewedRevision": "prototype-source-sha256:56f3532fe687e1deb26b18a022fbfbf54090933ac9716207818d20729905e3c0",
+    "reviewedRevision": "prototype-source-sha256:aba016409129a9638e4bd6d95900cb3b8de4bc3ca295c888b7ab032b5bf124dd",
     "surfaces": {
       "prompt": {
         "selectors": [
@@ -40,6 +40,35 @@
         "kind": "model",
         "description": "Snell’s law and unpolarised Fresnel reflectance derive from the same two refractive indices and incidence angle.",
         "visibility": "Always visible; later controls are progressively disclosed."
+      },
+      "help": {
+        "selectors": [
+          "#evidenceHelp",
+          "#hintText"
+        ],
+        "kind": "support",
+        "description": "Learner-requested evidence cue, relationship hint and contrasting worked example; no automatic answer-directed pulse.",
+        "visibility": "Only when requested in the relevant experience."
+      },
+      "comparison": {
+        "selectors": [
+          "#records",
+          "#comparisonNote"
+        ],
+        "kind": "evidence",
+        "description": "Frozen readings and explicitly labelled comparison conditions; graphical overlays use the selected saved reading.",
+        "visibility": "Recorded experiment comparisons only."
+      },
+      "navigation": {
+        "selectors": [
+          "#back",
+          "#next",
+          "#repeat",
+          "#restart"
+        ],
+        "kind": "control",
+        "description": "Back and Forward restore snapshots; Repeat resets the current experience; Start over clears the session.",
+        "visibility": "Back and Forward depend on visited progress."
       },
       "working": {
         "selectors": [
@@ -65,13 +94,13 @@
           "#outcomeTitle"
         ],
         "kind": "completion",
-        "description": "Advances only after the current model-derived criterion.",
+        "description": "New progression uses a model-derived criterion; previously visited experiences can be inspected without repeating them.",
         "visibility": "Guided steps; absent in the open experiment."
       }
     },
     "quantities": {
       "angle": {
-        "description": "Angle of incidence measured from the normal.",
+        "description": "Measured incidence or an untested predicted critical angle; the latter withholds outgoing rays until testing.",
         "domain": "5 to 80 degrees guided; first step limited to 35 degrees. Experiment: 0 to 89.9 degrees.",
         "source": "SVG source or predicted-angle input.",
         "output": "Rays, reflected/transmitted power, angular marks and regime.",
@@ -96,16 +125,16 @@
     },
     "modes": {
       "guided": "Small ordered visual investigations, with model actions and in-place revision.",
-      "experiment": "Ungated experiment: choose real examples or set either hypothetical refractive index, inspect thresholds up to 89.9 degrees and keep measured readings."
+      "experiment": "Ungated experiment with either medium and hypothetical indices; select frozen readings to compare a saved threshold and retain original numerical indices."
     },
     "dependencies": [
       "Rotate beyond 29 degrees, while limited below the first critical angle.",
       "Observe angles on both sides of c and mark within 0.55 degrees; the accepted marker snaps to c.",
       "Replace glass with diamond, then supply the index ratio and inverse-sine result and test the beam. Earlier working shows the same calculation for glass. Edits immediately clear success.",
-      "Observe the reversed boundary near both ends of the angle range.",
-      "Ungated experiment: choose real examples or set either hypothetical refractive index, inspect thresholds up to 89.9 degrees and keep measured readings."
+      "Predict water to air without a supplied substitution. Explicit testing accepts an angle within 0.3 degrees and aligns the measured limiting ray, then reversing the same boundary demonstrates no critical angle. No compulsory endpoint sweep.",
+      "Ungated experiment with either medium and hypothetical indices; select frozen readings to compare a saved threshold and retain original numerical indices."
     ],
-    "completion": "Every guided criterion is evaluated from actual model state. Continue never bypasses an unmet criterion. Restart returns to the first step; Back repeats a prior step.",
+    "completion": "New experiences require their model-derived criterion. Back and Forward revisit saved state without forcing a rerun; Repeat experience resets only that experience. Start over clears all session snapshots. Worked observations are not mastery claims.",
     "limitations": [
       "Ideal lossless flat boundary; radial entry through the semicircular face is normal to that face. Unpolarised Fresnel power. The grazing ray at c indicates a limiting direction.",
       "Custom media accept hypothetical indices from 1 to 3.5; they do not represent measured real materials. Saved readings retain both indices.",

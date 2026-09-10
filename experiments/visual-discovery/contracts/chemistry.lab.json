@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "relationship": "Guided stages use pV = 600 kPa·L with fixed particle count and speed. The experiment extends the same ideal-gas model to pV = 600 × (T/300) × relative gas amount, with particle speed proportional to sqrt(T).",
   "learnerLoop": {
-    "action": "Compress a fixed gas, predict an expansion, keep three different readings, calculate a pressure target, then investigate freely.",
+    "action": "Compress and expand without a formula, collect three readings, inspect their products, predict a fresh pressure, then plan a target volume before testing.",
     "modelChange": "Guided stages use pV = 600 kPa·L with fixed particle count and speed. The experiment extends the same ideal-gas model to pV = 600 × (T/300) × relative gas amount, with particle speed proportional to sqrt(T).",
-    "evidence": "Piston impacts, pressure gauge, volume and recorded pV products all respond to the same volume state.",
+    "evidence": "Actual piston, impacts, gauge and recorded readings respond to the volume state. Products are disclosed after measurements, not before the initial observation.",
     "nextDecision": "Revise a prediction, derive a new pressure or volume from the invariant, or collect another reading."
   },
   "invariants": [
@@ -24,7 +24,7 @@
   ],
   "developerGuide": "https://www.examplicity.org/developer/lab-contract",
   "implementation": {
-    "reviewedRevision": "prototype-source-sha256:cfa04ddb0d3505e5d28144ec256bd7668aa272534734f91e21cc2a047dc5aec5",
+    "reviewedRevision": "prototype-source-sha256:30bc983950fa01dcfb50be51d1cc0f7276f058975418390972d382ee2bd33e28",
     "surfaces": {
       "prompt": {
         "selectors": [
@@ -43,6 +43,35 @@
         "description": "Guided stages use pV = 600 kPa·L with fixed particle count and speed. The experiment extends the same ideal-gas model to pV = 600 × (T/300) × relative gas amount, with particle speed proportional to sqrt(T).",
         "visibility": "Always visible; later controls are progressively disclosed."
       },
+      "help": {
+        "selectors": [
+          "#evidenceHelp",
+          "#hintText"
+        ],
+        "kind": "support",
+        "description": "Learner-requested evidence cue, relationship hint and contrasting worked example; no automatic answer-directed pulse.",
+        "visibility": "Only when requested in the relevant experience."
+      },
+      "comparison": {
+        "selectors": [
+          "#records",
+          "#comparisonNote"
+        ],
+        "kind": "evidence",
+        "description": "Frozen readings and explicitly labelled comparison conditions; graphical overlays use the selected saved reading.",
+        "visibility": "Recorded experiment comparisons only."
+      },
+      "navigation": {
+        "selectors": [
+          "#back",
+          "#next",
+          "#repeat",
+          "#restart"
+        ],
+        "kind": "control",
+        "description": "Back and Forward restore snapshots; Repeat resets the current experience; Start over clears the session.",
+        "visibility": "Back and Forward depend on visited progress."
+      },
       "working": {
         "selectors": [
           "#working"
@@ -57,7 +86,7 @@
           "#records"
         ],
         "kind": "evidence",
-        "description": "Piston impacts, pressure gauge, volume and recorded pV products all respond to the same volume state.",
+        "description": "Actual piston, impacts, gauge and recorded readings respond to the volume state. Products are disclosed after measurements, not before the initial observation.",
         "visibility": "In-place feedback; readings only in relevant steps."
       },
       "completion": {
@@ -67,7 +96,7 @@
           "#outcomeTitle"
         ],
         "kind": "completion",
-        "description": "Advances only after the current model-derived criterion.",
+        "description": "New progression uses a model-derived criterion; previously visited experiences can be inspected without repeating them.",
         "visibility": "Guided steps; absent in the open experiment."
       }
     },
@@ -83,7 +112,7 @@
         ]
       },
       "pressure": {
-        "description": "Guided p = 600/V; experiment p = 600 × (T/300) × relative gas amount / V.",
+        "description": "Guided p = 600/V, including prediction at 4 L; experiment p = 600 × (T/300) × relative amount / V.",
         "domain": "75 to 300 kPa guided; 18.75 to 1200 kPa in the expanded experiment.",
         "source": "Actual gas volume; predictions are entered separately in the working card.",
         "output": "Gauge, prediction feedback and readings.",
@@ -122,20 +151,21 @@
     },
     "modes": {
       "guided": "Small ordered visual investigations, with model actions and in-place revision.",
-      "experiment": "Ungated experiment: move the piston, vary temperature and relative gas amount on the apparatus, and retain readings with all conditions. Returning to guidance restores the fixed gas sample and speed."
+      "experiment": "Ungated temperature/amount/volume experiment with immutable records, frozen piston/curve comparisons, shared plot scaling and restored particle/condition snapshots."
     },
     "dependencies": [
-      "Compress from 6 L to 3 L.",
-      "Enter the predicted pressure within 1 kPa of 100 kPa, then test an animated expansion from 3 L to 6 L. The gauge always shows actual pressure.",
-      "Record three distinct volumes, each showing the same product.",
-      "Calculate 600 kPa·L and 2.5 L before testing the piston against 240 kPa.",
-      "Ungated experiment: move the piston, vary temperature and relative gas amount on the apparatus, and retain readings with all conditions. Returning to guidance restores the fixed gas sample and speed."
+      "Compress 6 L to 3 L and return to 6 L. The gauge changes from 100 to 200 and back to 100 kPa; no formula card or numerical invariant is supplied.",
+      "Record three distinct volumes. A non-blocking nudge flags clustered readings; products and the curve are revealed after the third reading.",
+      "Predict 150 kPa for expansion from 3 L / 200 kPa to the unfamiliar 4 L. Explicit testing moves the piston; edits clear the verdict and restore the starting apparatus.",
+      "Supply the invariant 600 kPa·L and planned volume 2.5 L for a 240 kPa target. Method help is optional; the test animates actual volume, not the gauge prediction.",
+      "Ungated temperature/amount/volume experiment with immutable records, frozen piston/curve comparisons, shared plot scaling and restored particle/condition snapshots."
     ],
-    "completion": "Every guided criterion is evaluated from actual model state. Continue never bypasses an unmet criterion. Restart returns to the first step; Back repeats a prior step.",
+    "completion": "New experiences require their model-derived criterion. Back and Forward revisit saved state without forcing a rerun; Repeat experience resets only that experience. Start over clears all session snapshots. Worked observations are not mastery claims.",
     "limitations": [
       "This is the existing Physics/Chemistry cross-listed gas model, presented as a Chemistry prototype.",
       "The starting sample uses eighteen representative particles; the displayed pressure follows the ideal-gas relationship, not measured 2D simulation impulses.",
-      "Temperature 300 K and gas amount remain fixed throughout the guided stages. The user-requested final extension varies both, with instantaneous bath equilibrium, no thermal transient, no non-ideal gas behaviour and no quantitative collision-pressure simulation."
+      "Temperature 300 K and gas amount remain fixed throughout the guided stages. The user-requested final extension varies both, with instantaneous bath equilibrium, no thermal transient, no non-ideal gas behaviour and no quantitative collision-pressure simulation.",
+      "Representative particle positions rescale with apparatus resizing; speed and scientific pressure remain model-derived, not collision-measured."
     ]
   }
 }

@@ -9,7 +9,7 @@ function ray(x1,y1,x2,y2,colour,width,opacity=1){
 function render(){
  const materialKey=s.inside+'/'+s.outside,materialChanged=materialKey!==previousMaterial;previousMaterial=materialKey;
  clear();head(lesson[step].title,lesson[step].intro);
- const {cx,cy,r}=opticsLayout(),radius=r+24,c=critical(),o=optics(),predict=step===2&&s.swapped&&!s.tested,a=materials[s.inside],b=materials[s.outside];
+ const {cx,cy,r}=opticsLayout(),radius=r+24,c=critical(),o=optics(),predict=(step===2&&s.swapped||step===3&&!s.reversed)&&!s.tested,a=materials[s.inside],b=materials[s.outside];
  const rad=s.angle*Math.PI/180,sx=cx-radius*Math.sin(rad),sy=cy+radius*Math.cos(rad),edgeRight=mobile?W-10:W*.85,edgeLeft=mobile?10:W*.15;
  // The original semicircular block keeps entry normal to the curved face.
  el('rect',{x:edgeLeft,y:25,width:edgeRight-edgeLeft,height:cy-25,fill:s.outside==='air'?'var(--lab-surface-muted)':`var(--lab-concept-${materialTone(s.outside)}-soft)`,'data-material':s.outside});
@@ -49,7 +49,7 @@ function render(){
  el('rect',{x:-10,y:9,width:20,height:6,fill:'var(--lab-concept-amber)'},undefined,barrel);
  el('rect',{x:-8,y:-8,width:16,height:5,rx:2,fill:'var(--lab-concept-amber-fill)',stroke:'var(--lab-concept-amber)','stroke-width':1},undefined,barrel);
  for(let j=0;j<2;j++)line(-6,20+j*4,6,20+j*4,{stroke:'#7c8a91','stroke-width':.8},barrel);
- if(step===2&&s.swapped){const ref=Math.asin(1/1.5);line(cx,cy,cx-r*Math.sin(ref),cy+r*Math.cos(ref),{stroke:'var(--lab-concept-blue)','stroke-width':1.2,'stroke-dasharray':'4 4'});text(edgeLeft,H-23,'Glass: c = 41.8°','small')}
+ if(step===2&&s.swapped||step===3&&!s.reversed){const ref=Math.asin(1/1.5);line(cx,cy,cx-r*Math.sin(ref),cy+r*Math.cos(ref),{stroke:'var(--lab-concept-blue)','stroke-width':1.2,'stroke-dasharray':'4 4'});text(edgeLeft,H-23,'Glass: c = 41.8°','small')}
  if(s.marked&&c!==null){
   const cr=c*Math.PI/180;line(cx,cy,cx-r*Math.sin(cr),cy+r*Math.cos(cr),{stroke:'var(--lab-concept-violet)','stroke-width':1.5,'stroke-dasharray':'3 4'});
   sourceLabel('critical-angle',edgeRight,H-23,`c = ${fmt(c)}°`,'At the critical angle, the refracted ray runs along the surface at 90° to the normal. A larger incidence angle gives total internal reflection.','accent','end');
@@ -64,8 +64,17 @@ function render(){
   workState(s.swapped?(s.tested?(ok?'good':'bad'):'needed'):'reference');
   feedback(ok?`sin c = 1 ÷ 2.42 ≈ 0.413. c ≈ ${fmt(c)}°: a smaller threshold.`:s.tested?'Compare your angle with the ray. Use inverse sine on the index ratio.':'Use sin c = n outside ÷ n inside. Both values belong to the same boundary.',ok,s.tested&&!ok);
  }
- if(step===3)feedback(s.low&&s.high?'Light still escapes. Total internal reflection needs a higher-to-lower index boundary.':`Sweep the full range. ${s.low?'5° explored. ':''}${s.high?'80° explored.':''}`,s.low&&s.high);
- if(step===4){feedback(c===null?'No critical angle: the incident medium has an equal or lower refractive index.':`sin c = ${fmt(b.n,2)} ÷ ${fmt(a.n,2)}. c = ${fmt(c)}°. TIR requires i > c.`,false);table(['From → to','Incidence','Critical angle','Escaping light'],s.records)}
+ if(step===3){
+  if(s.reversed){head('Compare the same boundary in reverse.','The incident and outgoing media have swapped. At your earlier angle the ray now escapes. Rotate the source to compare other angles.');feedback('Reversing the media removes the critical angle. The higher-to-lower condition matters.',true);}
+  else{const ok=waterPredictionCorrect();$('angleInput').className=s.tested?(ok?'good':'bad'):'';workState(s.tested?(ok?'good':'bad'):'needed');feedback(ok?'Your new-boundary prediction agrees. Reverse this boundary to compare the condition.':s.tested?'Compare your predicted angle with the actual outgoing ray. Revise or request a hint.':'Place your predicted angle before revealing the outgoing ray.',false,s.tested&&!ok);}
+ }
+ if(step===4){
+  feedback(c===null?'No critical angle: the incident medium has an equal or lower refractive index.':`Critical angle ${fmt(c)}°. Total internal reflection requires a larger incidence angle.`,false);
+  table(['From → to','Incidence','Critical angle','Escaping light'],s.records.map(r=>[`${r.from} (${fmt(r.nIn,2)}) → ${r.to} (${fmt(r.nOut,2)})`,`${fmt(r.angle)}°`,r.critical===null?'None':`${fmt(r.critical)}°`,`${fmt(r.transmitted*100)}%`]),true);
+  const old=s.records[s.comparison];
+  if(old){const mark=(old.critical??old.angle)*Math.PI/180;line(cx,cy,cx-r*Math.sin(mark),cy+r*Math.cos(mark),{class:'comparison-ghost'});comparisonNote(`Dashed reference: reading ${s.comparison+1}, ${old.from} (${fmt(old.nIn,2)}) → ${old.to} (${fmt(old.nOut,2)}), ${old.critical===null?'no threshold':`threshold ${fmt(old.critical)}°`}. `+comparisonDescription({from:`${old.from} ${fmt(old.nIn,2)}`,into:`${old.to} ${fmt(old.nOut,2)}`,incidence:fmt(old.angle)+'°'},{from:`${a.name} ${fmt(a.n,2)}`,into:`${b.name} ${fmt(b.n,2)}`,incidence:fmt(s.angle)+'°'}));}
+  else comparisonNote('Record a boundary, then select its reading to keep a frozen threshold reference.');
+ }
  if(step===2&&!s.swapped)feedback('Glass to air: c = 41.8°. Replace the glass to compare a higher refractive index.');
  if(step===1||step===2&&!s.swapped||step===4){const show=step!==1||s.marked;workFormula('ratioWork',show?`${term('n-outside',fmt(b.n,2))} ÷ ${term('n-inside',fmt(a.n,2))} ≈ ${result('index-ratio',fmt(b.n/a.n,3),'Divide the index on the refracted side by the incident index. This ratio is sin c when the incident index is higher.')}`:'n outside ÷ n inside');workFormula('criticalWork',!show?'c = sin⁻¹(index ratio)':c===null?'No critical angle':`sin⁻¹(${term('index-ratio',fmt(b.n/a.n,3))}) ≈ ${result('calculated-angle',fmt(c)+'°','Inverse sine turns the index ratio into an angle. Use degree mode on your calculator.')}`)}
  if(step===2&&s.swapped){workFormula('ratioSubstitution',`sin c = ${term('n-outside','1')} ÷ ${term('n-inside','2.42')} =`);workFormula('angleSubstitution',`c = sin⁻¹(${term('index-ratio',s.ratio||'ratio')}) =`)}endDraw();

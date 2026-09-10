@@ -7,6 +7,14 @@ export type ChangelogEntry = {
 
 export const changelogEntries: readonly ChangelogEntry[] = [
   {
+    date: '2026-09-10',
+    displayDate: '10 September 2026',
+    publicChanges: [],
+    internalChanges: [
+      'Refined the four isolated visual lab prototypes with observation-first gas tasks, less-supported scale and optical predictions, a learner-built selection environment, optional evidence-first hints, preserved checkpoint states and frozen experiment comparisons. Added reproducible population samples, model-invariant tests, offline browser journeys and a practical learner-review protocol; published labs and shared components are unchanged.',
+    ],
+  },
+  {
     date: '2026-09-08',
     displayDate: '8 September 2026',
     publicChanges: [],

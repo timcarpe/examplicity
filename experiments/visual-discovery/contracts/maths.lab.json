@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "relationship": "A single linear scale factor changes corresponding lengths by that factor, areas by its square and volumes by its cube.",
   "learnerLoop": {
-    "action": "Drag an edge, fill four unit squares, lift cube layers, reverse area and volume factors, and repair an unequal height.",
+    "action": "Drag an edge, fill unit squares, build cube layers, commit a prediction before checking, scale a non-unit reference, and repair an unequal height.",
     "modelChange": "Lengths, corresponding face area, and volume derive from k, k², and k²h. h = k for similarity.",
-    "evidence": "Actual unit tilings and cube layers precede the displayed powers; unequal dimensions remain visibly unequal.",
+    "evidence": "Unit tilings and cube layers precede the powers. A two-unit reference separates physical edge length from scale factor. Prediction verdicts appear only after testing.",
     "nextDecision": "Use the relationship for a reverse target, a counterexample, or a self-directed comparison."
   },
   "invariants": [
@@ -20,7 +20,7 @@
   ],
   "developerGuide": "https://www.examplicity.org/developer/lab-contract",
   "implementation": {
-    "reviewedRevision": "prototype-source-sha256:0d91a587993157a0c528bc7db517da75d051474dd86567fd907292756378e669",
+    "reviewedRevision": "prototype-source-sha256:967b3c5eb2f7eb1ea5ff1ac836343ed51d6da84f396162e86ca9a97694478477",
     "surfaces": {
       "prompt": {
         "selectors": [
@@ -39,6 +39,35 @@
         "description": "Lengths, corresponding face area, and volume derive from k, k², and k²h. h = k for similarity.",
         "visibility": "Always visible; later controls are progressively disclosed."
       },
+      "help": {
+        "selectors": [
+          "#evidenceHelp",
+          "#hintText"
+        ],
+        "kind": "support",
+        "description": "Learner-requested evidence cue, relationship hint and contrasting worked example; no automatic answer-directed pulse.",
+        "visibility": "Only when requested in the relevant experience."
+      },
+      "comparison": {
+        "selectors": [
+          "#records",
+          "#comparisonNote"
+        ],
+        "kind": "evidence",
+        "description": "Frozen readings and explicitly labelled comparison conditions; graphical overlays use the selected saved reading.",
+        "visibility": "Recorded experiment comparisons only."
+      },
+      "navigation": {
+        "selectors": [
+          "#back",
+          "#next",
+          "#repeat",
+          "#restart"
+        ],
+        "kind": "control",
+        "description": "Back and Forward restore snapshots; Repeat resets the current experience; Start over clears the session.",
+        "visibility": "Back and Forward depend on visited progress."
+      },
       "working": {
         "selectors": [
           "#working"
@@ -53,7 +82,7 @@
           "#records"
         ],
         "kind": "evidence",
-        "description": "Actual unit tilings and cube layers precede the displayed powers; unequal dimensions remain visibly unequal.",
+        "description": "Unit tilings and cube layers precede the powers. A two-unit reference separates physical edge length from scale factor. Prediction verdicts appear only after testing.",
         "visibility": "In-place feedback; readings only in relevant steps."
       },
       "completion": {
@@ -63,7 +92,7 @@
           "#outcomeTitle"
         ],
         "kind": "completion",
-        "description": "Advances only after the current model-derived criterion.",
+        "description": "New progression uses a model-derived criterion; previously visited experiences can be inspected without repeating them.",
         "visibility": "Guided steps; absent in the open experiment."
       }
     },
@@ -90,20 +119,20 @@
     },
     "modes": {
       "guided": "Small ordered visual investigations, with model actions and in-place revision.",
-      "experiment": "Ungated experiment: compare views, separate layers, change height independently, scale to factor 5 with automatic framing, record readings, and solve reverse area/volume targets."
+      "experiment": "Ungated experiment: change view, separate layers, alter height, record immutable readings and select a comparison outline; returning restores the entire experiment."
     },
     "dependencies": [
       "Reach k = 2.",
       "Place all four unit squares.",
       "Build two layers, four cubes each.",
-      "Calculate k = 3 from area factor 9 and set the model to match.",
-      "Calculate k = 3 from volume factor 27 and set the model to match.",
+      "Predict k = 3 from area factor 9, resize independently, then explicitly test; typing never grades the answer and edits invalidate success.",
+      "Use an original edge of 2 and original volume 8 to produce volume 64. Predict k = 2, resize, then test; the method is available through optional evidence-first hints.",
       "Restore the height to match the two other edge ratios.",
-      "Ungated experiment: compare views, separate layers, change height independently, scale to factor 5 with automatic framing, record readings, and solve reverse area/volume targets."
+      "Ungated experiment: change view, separate layers, alter height, record immutable readings and select a comparison outline; returning restores the entire experiment."
     ],
-    "completion": "Every guided criterion is evaluated from actual model state. Continue never bypasses an unmet criterion. Restart returns to the first step; Back repeats a prior step.",
+    "completion": "New experiences require their model-derived criterion. Back and Forward revisit saved state without forcing a rerun; Repeat experience resets only that experience. Start over clears all session snapshots. Worked observations are not mastery claims.",
     "limitations": [
-      "One-unit reference cube; face area means one corresponding face, not total surface area.",
+      "Introductory reference edge 1; the reverse-volume transfer uses reference edge 2 and volume 8. Face area means one corresponding face, not total surface area.",
       "Continuous positive factors include partial units; all three powers apply only when h = k."
     ]
   }

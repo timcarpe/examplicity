@@ -30,7 +30,7 @@ SOFTWARE.
   "schemaVersion": 1,
   "relationship": "Changing incidence angle and the refractive-index boundary connects refraction to the critical threshold and total internal reflection, with calculation checked against the visible ray behaviour.",
   "learnerLoop": {
-    "action": "Rotate the source, observe both regimes, mark the limiting ray, calculate a new threshold, then reverse the media.",
+    "action": "Rotate a source, observe and mark the limiting ray, calculate diamond, independently predict water to air, then reverse that same boundary.",
     "modelChange": "Snell’s law and unpolarised Fresnel reflectance derive from the same two refractive indices and incidence angle.",
     "evidence": "An escaping ray becomes a grazing ray and then disappears; normal-referenced angles and calculation agree.",
     "nextDecision": "Calculate another threshold or test whether any threshold exists for a reversed pair."
@@ -50,7 +50,7 @@ SOFTWARE.
   ],
   "developerGuide": "https://www.examplicity.org/developer/lab-contract",
   "implementation": {
-    "reviewedRevision": "prototype-source-sha256:56f3532fe687e1deb26b18a022fbfbf54090933ac9716207818d20729905e3c0",
+    "reviewedRevision": "prototype-source-sha256:aba016409129a9638e4bd6d95900cb3b8de4bc3ca295c888b7ab032b5bf124dd",
     "surfaces": {
       "prompt": {
         "selectors": [
@@ -68,6 +68,35 @@ SOFTWARE.
         "kind": "model",
         "description": "Snell’s law and unpolarised Fresnel reflectance derive from the same two refractive indices and incidence angle.",
         "visibility": "Always visible; later controls are progressively disclosed."
+      },
+      "help": {
+        "selectors": [
+          "#evidenceHelp",
+          "#hintText"
+        ],
+        "kind": "support",
+        "description": "Learner-requested evidence cue, relationship hint and contrasting worked example; no automatic answer-directed pulse.",
+        "visibility": "Only when requested in the relevant experience."
+      },
+      "comparison": {
+        "selectors": [
+          "#records",
+          "#comparisonNote"
+        ],
+        "kind": "evidence",
+        "description": "Frozen readings and explicitly labelled comparison conditions; graphical overlays use the selected saved reading.",
+        "visibility": "Recorded experiment comparisons only."
+      },
+      "navigation": {
+        "selectors": [
+          "#back",
+          "#next",
+          "#repeat",
+          "#restart"
+        ],
+        "kind": "control",
+        "description": "Back and Forward restore snapshots; Repeat resets the current experience; Start over clears the session.",
+        "visibility": "Back and Forward depend on visited progress."
       },
       "working": {
         "selectors": [
@@ -93,13 +122,13 @@ SOFTWARE.
           "#outcomeTitle"
         ],
         "kind": "completion",
-        "description": "Advances only after the current model-derived criterion.",
+        "description": "New progression uses a model-derived criterion; previously visited experiences can be inspected without repeating them.",
         "visibility": "Guided steps; absent in the open experiment."
       }
     },
     "quantities": {
       "angle": {
-        "description": "Angle of incidence measured from the normal.",
+        "description": "Measured incidence or an untested predicted critical angle; the latter withholds outgoing rays until testing.",
         "domain": "5 to 80 degrees guided; first step limited to 35 degrees. Experiment: 0 to 89.9 degrees.",
         "source": "SVG source or predicted-angle input.",
         "output": "Rays, reflected/transmitted power, angular marks and regime.",
@@ -124,16 +153,16 @@ SOFTWARE.
     },
     "modes": {
       "guided": "Small ordered visual investigations, with model actions and in-place revision.",
-      "experiment": "Ungated experiment: choose real examples or set either hypothetical refractive index, inspect thresholds up to 89.9 degrees and keep measured readings."
+      "experiment": "Ungated experiment with either medium and hypothetical indices; select frozen readings to compare a saved threshold and retain original numerical indices."
     },
     "dependencies": [
       "Rotate beyond 29 degrees, while limited below the first critical angle.",
       "Observe angles on both sides of c and mark within 0.55 degrees; the accepted marker snaps to c.",
       "Replace glass with diamond, then supply the index ratio and inverse-sine result and test the beam. Earlier working shows the same calculation for glass. Edits immediately clear success.",
-      "Observe the reversed boundary near both ends of the angle range.",
-      "Ungated experiment: choose real examples or set either hypothetical refractive index, inspect thresholds up to 89.9 degrees and keep measured readings."
+      "Predict water to air without a supplied substitution. Explicit testing accepts an angle within 0.3 degrees and aligns the measured limiting ray, then reversing the same boundary demonstrates no critical angle. No compulsory endpoint sweep.",
+      "Ungated experiment with either medium and hypothetical indices; select frozen readings to compare a saved threshold and retain original numerical indices."
     ],
-    "completion": "Every guided criterion is evaluated from actual model state. Continue never bypasses an unmet criterion. Restart returns to the first step; Back repeats a prior step.",
+    "completion": "New experiences require their model-derived criterion. Back and Forward revisit saved state without forcing a rerun; Repeat experience resets only that experience. Start over clears all session snapshots. Worked observations are not mastery claims.",
     "limitations": [
       "Ideal lossless flat boundary; radial entry through the semicircular face is normal to that face. Unpolarised Fresnel power. The grazing ray at c indicates a limiting direction.",
       "Custom media accept hypothetical indices from 1 to 3.5; they do not represent measured real materials. Saved readings retain both indices.",
@@ -150,7 +179,7 @@ SOFTWARE.
     "baseRevision": "a42aaaa78d437926ba59b766a6415ddd89ba46ed",
     "labSource": "labs-src/physics/critical-angle-and-total-internal-reflection/lab.html",
     "contract": "lab-contracts/physics/critical-angle-and-total-internal-reflection.lab.json",
-    "originalContractSha256": "ab7392d7fbe11040d37085784b09a2c5867ea28fd7beba6ed374c31848148ed3"
+    "originalContractSha256": "b7a63ca43f67c4777597aee81eeaf62190f27da6b4d3acac06541eb837cfd79b"
   },
   "research": [
     {
@@ -173,7 +202,10 @@ SOFTWARE.
     "One causal relationship per guided screen",
     "Visual model before formal notation",
     "Prediction, observation and immediate model-specific revision",
-    "Scaffolding fades into an open experiment",
+    "Faded transfer cases remove supplied methods but preserve the apparatus before the open experiment",
+    "Evidence-first optional hints precede a contrasting worked example",
+    "Session snapshots preserve learner evidence during Back and Forward navigation",
+    "Immutable comparison readings retain conditions and selected model overlays",
     "Worked calculation rows retain the same quantities, order and units when learners later supply the answers",
     "Explicit source identities link model quantities and earlier calculations to later formula operands",
     "Optional hover, focus and tap explanations keep context available without adding permanent panels"
@@ -204,11 +236,11 @@ SOFTWARE.
       "mode": "guided"
     },
     {
-      "label": "Reverse the direction",
-      "title": "Check the same boundary in the opposite direction.",
-      "intro": "A critical angle appeared when light left a higher-index material. Now send light from air into glass and test angles from 5° to 80°.",
+      "label": "Transfer and reverse",
+      "title": "Predict a new boundary, then reverse it.",
+      "intro": "Use the water and air indices to predict a critical angle. Test the beam, then reverse the same boundary to compare.",
       "success": "The direction of travel matters.",
-      "criterion": "Observe the reversed boundary near both ends of the angle range.",
+      "criterion": "Predict water to air without a supplied substitution. Explicit testing accepts an angle within 0.3 degrees and aligns the measured limiting ray, then reversing the same boundary demonstrates no critical angle. No compulsory endpoint sweep.",
       "mode": "guided"
     },
     {
@@ -216,7 +248,7 @@ SOFTWARE.
       "title": "Choose your own pair of materials and compare the results.",
       "intro": "You now have a way to predict total internal reflection. Change either material or set an index of your own, then compare your calculations with the rays.",
       "success": "",
-      "criterion": "Ungated experiment: choose real examples or set either hypothetical refractive index, inspect thresholds up to 89.9 degrees and keep measured readings.",
+      "criterion": "Ungated experiment with either medium and hypothetical indices; select frozen readings to compare a saved threshold and retain original numerical indices.",
       "mode": "experiment"
     }
   ],
@@ -238,7 +270,7 @@ SOFTWARE.
       "Do not present total internal reflection as occurring at every boundary or every angle.",
       "Do not expand into wave interference or a full optical-instrument simulator."
     ],
-    "extensions": "Ungated experiment: choose real examples or set either hypothetical refractive index, inspect thresholds up to 89.9 degrees and keep measured readings.",
+    "extensions": "Ungated experiment with either medium and hypothetical indices; select frozen readings to compare a saved threshold and retain original numerical indices.",
     "interactionChanges": "Replaces simultaneous panels, support-level switches and completion overlays with a sequenced model surface. The existing curriculum catalogue is untouched.",
     "modelLimitations": [
       "Ideal lossless flat boundary; radial entry through the semicircular face is normal to that face. Unpolarised Fresnel power. The grazing ray at c indicates a limiting direction.",
@@ -3045,7 +3077,42 @@ html:has(body.lab-science),body.lab-science{height:auto;overflow:visible}
 @media(max-width:600px){.lesson-head.lab-context{margin:-4px -4px 14px;padding:14px;gap:14px;min-height:0}.mission-copy{grid-column:1/-1;grid-row:1}.lesson-head #restart{grid-column:2;grid-row:2}.lesson-head .lab-checkpoints{grid-column:1;grid-row:2;justify-content:flex-start}.work-heading{align-items:flex-start;flex-wrap:wrap}.trace-button.lab-action{margin-left:auto;min-height:30px}.outcome{flex-basis:calc(100% - 55px);padding:10px;gap:8px}.outcome-title{font-size:14px}.outcome-symbol{width:23px;height:23px}}
 @media(prefers-reduced-motion:reduce){.travelling-value{display:none}.connection-halo{box-shadow:none}.outcome .success-mark{animation:none}}
 .material-index{width:76px;min-height:34px;padding:5px 8px;border:1px solid var(--lab-line);border-radius:6px;background:var(--lab-surface);color:var(--lab-ink);font:inherit;font-variant-numeric:tabular-nums}
-</style></head><body><main class="lab"><header class="lesson-head lab-context"><div class="mission-copy"><h1 id="title" tabindex="-1"></h1><p class="intro" id="intro"></p></div><button type="button" class="lab-action" id="restart" data-lab-action="reset">Start over</button><div id="checkpoints" class="lab-checkpoints" aria-label="Learning progress"></div></header><div id="context" class="context"></div><div class="stage-wrap" id="stageWrap"><svg xmlns="http://www.w3.org/2000/svg" class="stage" id="stage" role="group" data-lab-role="model"></svg></div><section id="working" class="lab-work-card learning-work" hidden data-lab-role="working" aria-label="Working"></section><div class="controls" id="controls" data-lab-role="control"></div><table class="records" id="records" hidden aria-label="Experiment readings" data-lab-role="evidence"></table><footer class="foot"><button class="lab-action" id="back" aria-label="Previous step" title="Previous step">←</button><div class="outcome" id="outcome" data-state="idle" role="status" aria-live="polite"><svg class="outcome-symbol" viewBox="0 0 24 24" aria-hidden="true"><circle class="outcome-disc" cx="12" cy="12" r="10.5"/><path class="success-mark" d="m7 12 3.25 3.25L17 8.5"/><path class="retry-mark" d="m8.5 8.5 7 7m0-7-7 7"/></svg><div><p class="outcome-title" id="outcomeTitle" hidden></p><p class="feedback" id="feedback"></p></div></div><button class="lab-action" data-priority="primary" id="next">Continue →</button></footer><p class="smallprint">Ideal boundary. Rays show direction; recorded percentages show transmitted power.</p><noscript>This interactive lab needs JavaScript enabled in your browser.</noscript></main><script data-lab-design>/* Shared model dragging: retain the point grabbed while the model rerenders. */
+
+/* Secondary support does not compete with the apparatus or reveal the next answer. */
+.lesson-head.lab-context{min-height:0;padding:12px 14px;gap:8px 16px;margin-bottom:8px}
+.lesson-head .mission-copy{grid-row:1/4}
+.lesson-head #repeat{grid-column:2;grid-row:2;justify-self:end;min-height:30px;font-size:12px}
+.lesson-head .lab-checkpoints{grid-row:3}
+.lab{margin:12px auto;padding:16px 20px}
+.learning-work{margin:8px auto;padding:10px 14px}
+.evidence-help{max-width:800px;margin:8px auto;font-size:13px;line-height:1.5}
+.evidence-help summary{cursor:pointer;color:var(--lab-accent-ink);width:fit-content}
+.evidence-help p{margin:8px 0;max-width:65ch}
+.evidence-cue .source-hit{fill:var(--lab-accent-soft);stroke:var(--lab-accent);stroke-width:1.5}
+.comparison-note{font-size:12px;line-height:1.5;max-width:800px;margin:8px auto;color:var(--lab-ink-secondary)}
+.reading-choice{min-width:36px;min-height:36px;border:1px solid var(--lab-line);background:var(--lab-surface);border-radius:6px;color:var(--lab-ink)}
+.reading-choice[aria-pressed=true]{border-color:var(--lab-accent);background:var(--lab-accent-soft)}
+.selected-reading{background:var(--lab-surface-muted)}
+.comparison-ghost{fill:none;stroke:var(--lab-concept-slate);stroke-width:1.6;stroke-dasharray:5 4;pointer-events:none}
+.transfer-note{font-size:12px;color:var(--lab-muted)}
+@media(max-width:600px){
+ .lab{padding:12px;width:calc(100% - 16px)}
+ .lesson-head.lab-context{padding:10px;gap:6px 10px}
+ .lesson-head .mission-copy{grid-column:1/-1;grid-row:1}
+ .lesson-head.lab-context h1{font-size:16px;margin-bottom:5px}
+ .lesson-head #restart{grid-row:2;grid-column:2}
+ .lesson-head #repeat{grid-row:2;grid-column:1;justify-self:start}
+ .lesson-head .lab-checkpoints{grid-column:1/-1;grid-row:3}
+ .learning-work{padding:10px;margin:6px 0}
+ .learning-work .work-heading h2{font-size:14px}
+ .work-steps{gap:9px}
+ .work-label{margin-bottom:3px}
+ .records{font-size:11px}
+ .records td,.records th{padding:5px 3px}
+ .controls{gap:6px}
+ .foot{margin-top:10px;padding-top:10px}
+}
+</style></head><body><main class="lab"><header class="lesson-head lab-context"><div class="mission-copy"><h1 id="title" tabindex="-1"></h1><p class="intro" id="intro"></p></div><button type="button" class="lab-action" id="restart" data-lab-action="reset">Start over</button><button type="button" class="lab-action repeat-action" id="repeat">Repeat experience</button><div id="checkpoints" class="lab-checkpoints" aria-label="Learning progress"></div></header><div id="context" class="context"></div><div class="stage-wrap" id="stageWrap"><svg xmlns="http://www.w3.org/2000/svg" class="stage" id="stage" role="group" data-lab-role="model"></svg></div><section id="working" class="lab-work-card learning-work" hidden data-lab-role="working" aria-label="Working"></section><details id="evidenceHelp" class="evidence-help" hidden><summary>Need a hint?</summary><p id="hintText" role="status"></p><button type="button" id="anotherHint" class="lab-action">Another hint</button></details><div class="controls" id="controls" data-lab-role="control"></div><table class="records" id="records" hidden aria-label="Experiment readings" data-lab-role="evidence"></table><p id="comparisonNote" class="comparison-note" hidden></p><footer class="foot"><button class="lab-action" id="back" aria-label="Previous step" title="Previous step">←</button><div class="outcome" id="outcome" data-state="idle" role="status" aria-live="polite"><svg class="outcome-symbol" viewBox="0 0 24 24" aria-hidden="true"><circle class="outcome-disc" cx="12" cy="12" r="10.5"/><path class="success-mark" d="m7 12 3.25 3.25L17 8.5"/><path class="retry-mark" d="m8.5 8.5 7 7m0-7-7 7"/></svg><div><p class="outcome-title" id="outcomeTitle" hidden></p><p class="feedback" id="feedback"></p></div></div><button class="lab-action" data-priority="primary" id="next">Continue →</button></footer><p class="smallprint">Ideal boundary. Rays show direction; recorded percentages show transmitted power.</p><noscript>This interactive lab needs JavaScript enabled in your browser.</noscript></main><script data-lab-design>/* Shared model dragging: retain the point grabbed while the model rerenders. */
 window.LabDesign = {
   checkpoints(host, labels, current, completed = index => index < current, detail = '') {
     host.classList.add('lab-checkpoints'); host.removeAttribute('aria-hidden');
@@ -3378,23 +3445,105 @@ const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
 const fmt=(x,d=1)=>Number(x.toFixed(d)).toString();
 const reduced=matchMedia('(prefers-reduced-motion: reduce)');
 let W=900,H=420,mobile=false,step=0,maxStep=0,ready=false,drag=null;
+// Session-only snapshots: inspecting an earlier result must not rerun the experiment.
+const checkpointSnapshots=new Map();
+let hintSteps=[];
+const validNumber=value=>String(value).trim()!==''&&Number.isFinite(Number(value));
+
 const svg=$('stage');
 function el(tag,attrs={},text,parent=svg){const n=document.createElementNS(NS,tag);for(const [k,v]of Object.entries(attrs))n.setAttribute(k,v);if(text!==undefined)n.textContent=text;parent.appendChild(n);return n}
 function text(x,y,t,cls='',anchor='start',parent=svg){return el('text',{x,y,class:cls,'text-anchor':anchor},t,parent)}
 function line(x1,y1,x2,y2,attrs={},parent=svg){return el('line',{x1,y1,x2,y2,stroke:'var(--ink)','stroke-width':2,...attrs},undefined,parent)}
 function dot(x,y,r,attrs={},parent=svg){return el('circle',{cx:x,cy:y,r,...attrs},undefined,parent)}
 function clear(){const active=document.activeElement?.getAttribute('data-control'),source=document.activeElement?.getAttribute('data-source');svg.dataset.restoreSource=source||'';svg.replaceChildren();svg.dataset.restoreFocus=active||'';}
-function endDraw(){const id=svg.dataset.restoreFocus,key=svg.dataset.restoreSource;if(id)svg.querySelector(`[data-control="${id}"]`)?.focus({preventScroll:true});else if(key)svg.querySelector(`[data-source="${key}"]`)?.focus({preventScroll:true});updateConnections();}
+function endDraw(){const id=svg.dataset.restoreFocus,key=svg.dataset.restoreSource;if(id)svg.querySelector(`[data-control="${id}"]`)?.focus({preventScroll:true});else if(key)svg.querySelector(`[data-source="${key}"]`)?.focus({preventScroll:true});updateConnections();syncHint();}
 function point(e){const p=svg.createSVGPoint();p.x=e.clientX;p.y=e.clientY;return p.matrixTransform(svg.getScreenCTM().inverse())}
 function handle(id,x,y,config){const g=el('g',{'data-control':id,class:'model-control',tabindex:0,role:'slider','aria-label':config.label,'aria-valuemin':config.min,'aria-valuemax':config.max,'aria-valuenow':config.value,'aria-valuetext':config.valueText??`${fmt(config.value,2)}`});g.dataset.help=config.help||config.label+'. Drag this control, or use the arrow keys to change its value.';dot(x,y,24,{fill:'transparent'},g);dot(x,y,12,{class:'handle'},g);dot(x,y,3,{fill:'var(--lab-accent)'},g);g.onpointerdown=e=>{e.preventDefault();drag={id,config,offset:config.value-config.fromPoint(point(e))};svg.setPointerCapture(e.pointerId);g.focus({preventScroll:true});};g.onkeydown=e=>{let v=config.value;if(['ArrowLeft','ArrowDown'].includes(e.key))v-=config.increment||.1;else if(['ArrowRight','ArrowUp'].includes(e.key))v+=config.increment||.1;else if(e.key==='Home')v=config.min;else if(e.key==='End')v=config.max;else return;e.preventDefault();config.set(clamp(v,config.min,config.max));};return g}
 svg.addEventListener('pointermove',e=>{if(!drag)return;e.preventDefault();drag.config.set(clamp(drag.config.fromPoint(point(e))+drag.offset,drag.config.min,drag.config.max))});
 svg.addEventListener('pointerup',e=>{if(!drag)return;const id=drag.id;drag=null;if(svg.hasPointerCapture(e.pointerId))svg.releasePointerCapture(e.pointerId);svg.querySelector(`[data-control="${id}"]`)?.focus({preventScroll:true})});
 svg.addEventListener('pointercancel',()=>{drag=null});
-function feedback(message,ok=false,retry=false){$('feedback').textContent=message;$('feedback').className='feedback'+(ok?' good':retry?' retry':'');ready=ok;$('next').disabled=!ready;scheduleOutcome()}
-function head(title,intro){$('title').textContent=title;$('intro').textContent=intro;if($('checkpoints').dataset.step!==String(step)){LabDesign.checkpoints($('checkpoints'),lesson.map(x=>x.label),step,i=>i<step);$('checkpoints').dataset.step=step}$('back').disabled=step===0;$('next').hidden=step===lesson.length-1;$('next').textContent=step===lesson.length-2?'Open experiment':'Continue';svg.setAttribute('aria-label',title+' '+intro)}
+function feedback(message,ok=false,retry=false){
+ $('feedback').textContent=message;
+ $('feedback').className='feedback'+(ok?' good':retry?' retry':'');
+ ready=ok;
+ $('next').disabled=!ok&&step>=maxStep;
+ scheduleOutcome();
+}
+function head(title,intro){
+ $('title').textContent=title;$('intro').textContent=intro;
+ if($('checkpoints').dataset.step!==String(step)){
+  LabDesign.checkpoints($('checkpoints'),lesson.map(x=>x.label),step,i=>i<maxStep);
+  $('checkpoints').dataset.step=step;
+ }
+ $('back').disabled=step===0;
+ $('next').hidden=step===lesson.length-1;
+ $('next').textContent=step<maxStep?'Forward':step===lesson.length-2?'Open experiment':'Continue';
+ svg.setAttribute('aria-label',title+' '+intro);
+}
+function checkpointState(){
+ s.helpOpen=$('evidenceHelp').open;
+ return {state:structuredClone(s),extras:typeof snapshotExtras==='function'?snapshotExtras():null};
+}
+function restoreCheckpoint(saved){
+ for(const key of Object.keys(s))delete s[key];
+ Object.assign(s,structuredClone(saved.state));
+ if(typeof restoreExtras==='function')restoreExtras(structuredClone(saved.extras));
+ restoreView();
+}
+function go(n,restart=false,repeat=false){
+ if(checkpointBusy)return;
+ if(!restart&&(s.busy||s.phase==='offspring'))return;
+ if(!restart&&!repeat)checkpointSnapshots.set(step,checkpointState());
+ if(typeof stopModel==='function')stopModel();
+ return changeCheckpoint(()=>{
+  if(restart){checkpointSnapshots.clear();maxStep=0;step=0;reset();}
+  step=clamp(n,0,lesson.length-1);
+  if(repeat)checkpointSnapshots.delete(step);
+  maxStep=Math.max(maxStep,step);
+  $('controls').replaceChildren();$('context').replaceChildren();
+  $('working').hidden=true;$('records').replaceChildren();$('records').hidden=true;
+  $('comparisonNote').hidden=true;$('evidenceHelp').hidden=true;
+  hintSteps=[];ready=false;drag=null;
+  const saved=checkpointSnapshots.get(step);
+  if(saved)restoreCheckpoint(saved);else{s.helpLevel=0;s.helpOpen=false;enter();}
+  resize(true);
+ });
+}
+$('next').onclick=()=>{if(ready||step<maxStep)go(step+1)};
+$('back').onclick=()=>go(step-1);
+$('restart').onclick=()=>go(0,true);
+$('repeat').onclick=()=>go(step,false,true);
 
-function go(n,restart=false){return changeCheckpoint(()=>{if(restart){maxStep=0;reset()}step=clamp(n,0,lesson.length-1);maxStep=Math.max(maxStep,step);$('controls').replaceChildren();$('context').replaceChildren();$('working').hidden=true;$('records').innerHTML='';$('records').hidden=true;ready=false;enter();resize(true)})}
-$('next').onclick=()=>{if(ready)go(step+1)};$('back').onclick=()=>go(step-1);$('restart').onclick=()=>go(0,true);
+// Help is learner-requested. It points to evidence before offering another worked case.
+function setHelp(steps){
+ hintSteps=steps;
+ const help=$('evidenceHelp');help.hidden=!steps.length;help.open=!!s.helpOpen;
+ help.ontoggle=()=>{s.helpOpen=help.open;syncHint();};
+ $('anotherHint').onclick=()=>{s.helpLevel=Math.min((s.helpLevel||0)+1,steps.length-1);syncHint();};
+ syncHint();
+}
+function syncHint(){
+ document.querySelectorAll('.evidence-cue').forEach(node=>node.classList.remove('evidence-cue'));
+ if(!hintSteps.length||!$('evidenceHelp').open)return;
+ const value=hintSteps[Math.min(s.helpLevel||0,hintSteps.length-1)];
+ const hint=typeof value==='function'?value():value;
+ $('hintText').textContent=typeof hint==='string'?hint:hint.text;
+ $('anotherHint').hidden=(s.helpLevel||0)>=hintSteps.length-1;
+ for(const key of hint.keys||[]){
+  document.querySelectorAll(`[data-source="${key}"]`).forEach(node=>node.classList.add('evidence-cue'));
+ }
+}
+function rememberReading(reading){
+ s.records.push(structuredClone(reading));
+ if(s.records.length>6){s.records.shift();s.comparison=s.comparison>0?s.comparison-1:null;}
+ if(s.comparison==null)s.comparison=s.records.length-1;
+}
+function clearReadings(){s.records=[];s.comparison=null;render();}
+function comparisonDescription(before,after){
+ const changed=Object.keys(after).filter(key=>String(before[key])!==String(after[key]));
+ return changed.length?'Changed: '+changed.map(key=>`${key} ${before[key]} → ${after[key]}`).join('; ')+'.':'Same conditions. Change one quantity to compare its consequence.';
+}
+function comparisonNote(message){const node=$('comparisonNote');node.hidden=!message;node.textContent=message;}
 function button(label,fn,attrs={}){const b=document.createElement('button');b.type='button';b.className='lab-action';b.textContent=label;for(const[k,v]of Object.entries(attrs))b.setAttribute(k,v);b.classList.add('lab-action');b.onclick=fn;$('controls').appendChild(b);return b}
 function workRow(label,expression){return `<div class="work-step"><span class="work-label">${label}</span><div class="work-expression">${expression}</div></div>`}
 function workOutput(id){return `<output class="lab-math-surface" id="${id}"></output>`}
@@ -3406,7 +3555,16 @@ function workSetup(title,body,note='',required=false){
 function workValue(id,value){const node=$(id);if(!node||node.textContent===String(value))return;node.textContent=value}
 function workState(state){$('working').dataset.workState=state}
 function workAction(label,fn){const b=button(label,fn,{'data-priority':'primary'});$('workActions').appendChild(b);return b}
-function table(headers,rows){$('records').hidden=!rows.length;$('records').innerHTML=`<thead><tr>${headers.map(x=>`<th scope="col">${x}</th>`).join('')}</tr></thead><tbody>${rows.map(row=>`<tr>${row.map(x=>`<td>${x}</td>`).join('')}</tr>`).join('')}</tbody>`}
+function table(headers,rows,compare=false){
+ const node=$('records');node.hidden=!rows.length;
+ if(!rows.length){comparisonNote('');return;}
+ const cells=compare?['Compare',...headers]:headers;
+ node.innerHTML=`<thead><tr>${cells.map(x=>`<th scope="col">${escapeHtml(x)}</th>`).join('')}</tr></thead><tbody>${rows.map((row,i)=>`<tr${compare&&s.comparison===i?' class="selected-reading"':''}>${compare?`<td><button type="button" class="reading-choice" data-reading="${i}" aria-label="Compare reading ${i+1}" aria-pressed="${s.comparison===i}">${i+1}</button></td>`:''}${row.map(x=>`<td>${escapeHtml(x)}</td>`).join('')}</tr>`).join('')}</tbody>`;
+ if(compare)node.querySelectorAll('[data-reading]').forEach(b=>b.onclick=()=>{
+  const index=Number(b.dataset.reading);s.comparison=s.comparison===index?null:index;render();
+  $('records').querySelector(`[data-reading="${index}"]`)?.focus({preventScroll:true});
+ });
+}
 function resize(force=false){if(checkpointBusy&&!force)return;const b=$('stageWrap').getBoundingClientRect();W=b.width;mobile=W<600;H=typeof sceneHeight==='function'?sceneHeight(W):(mobile?400:360);if(b.height!==H)$('stageWrap').style.height=H+'px';svg.setAttribute('viewBox',`0 0 ${W} ${H}`);render()}
 function start(){reset();enter();new ResizeObserver(([entry])=>{if(Math.abs(entry.contentRect.width-W)>.5)resize()}).observe($('stageWrap'));resize()}
 
@@ -3550,9 +3708,9 @@ const lesson=[
   "success": "Your prediction matches the diamond boundary."
  },
  {
-  "label": "Reverse the direction",
-  "title": "Check the same boundary in the opposite direction.",
-  "intro": "A critical angle appeared when light left a higher-index material. Now send light from air into glass and test angles from 5° to 80°.",
+  "label": "Transfer and reverse",
+  "title": "Predict a new boundary, then reverse it.",
+  "intro": "Use the water and air indices to predict a critical angle. Test the beam, then reverse the same boundary to compare.",
   "success": "The direction of travel matters."
  },
  {
@@ -3563,13 +3721,13 @@ const lesson=[
  }
 ];
 const materials={air:{name:'Air',n:1},water:{name:'Water',n:1.33},glass:{name:'Glass',n:1.5},diamond:{name:'Diamond',n:2.42},insideCustom:{name:'Custom A',n:1.6},outsideCustom:{name:'Custom B',n:1.2}};
-const s={angle:15,inside:'glass',outside:'air',below:false,above:false,marked:false,low:false,high:false,ratio:'',angleText:'',tested:false,records:[],swapped:false};
+const s={angle:15,inside:'glass',outside:'air',below:false,above:false,marked:false,low:false,high:false,ratio:'',angleText:'',tested:false,records:[],swapped:false,reversed:false,waterPrediction:null,comparison:null};
 let previousMaterial='';
-function reset(){Object.assign(s,{angle:15,inside:'glass',outside:'air',below:false,above:false,marked:false,low:false,high:false,ratio:'',angleText:'',tested:false,records:[]})}
+function reset(){Object.assign(s,{angle:15,inside:'glass',outside:'air',below:false,above:false,marked:false,low:false,high:false,ratio:'',angleText:'',tested:false,records:[],swapped:false,reversed:false,waterPrediction:null,comparison:null})}
 function critical(){const a=materials[s.inside].n,b=materials[s.outside].n;return a>b?Math.asin(b/a)*180/Math.PI:null}
 function optics(angle=s.angle){const a=materials[s.inside].n,b=materials[s.outside].n,i=angle*Math.PI/180,q=a/b*Math.sin(i);if(q>1+1e-9)return{r:null,R:1};const r=Math.asin(Math.min(1,q)),ci=Math.cos(i),cr=Math.cos(r);const rs=(a*ci-b*cr)/(a*ci+b*cr),rp=(a*cr-b*ci)/(a*cr+b*ci);return{r:r*180/Math.PI,R:(rs*rs+rp*rp)/2}}
-function enter(){s.marked=false;s.below=false;s.above=false;s.tested=false;if(step===0){s.angle=15;s.inside='glass';s.outside='air'}if(step===1){s.angle=25;s.inside='glass';s.outside='air';s.below=true}if(step===2){s.inside='glass';s.outside='air';s.angle=Math.asin(1/1.5)*180/Math.PI;s.ratio='';s.angleText='';s.swapped=false}if(step===3){s.inside='air';s.outside='glass';s.angle=35;s.low=false;s.high=false}if(step===4){s.inside='glass';s.outside='air';s.angle=30;s.records=[]}controls()}
-function setAngle(v){let c=critical();v=Math.round(v*10)/10;if(c!==null&&Math.abs(v-c)<.45&&step!==2)v=c;s.angle=v;if(step===2&&s.swapped){s.angleText=fmt(v);s.tested=false;if($('angleInput'))$('angleInput').value=s.angleText}if(step===1&&c!==null){if(v<c-1.5)s.below=true;if(v>c+1.5)s.above=true;s.marked=false}if(step===3){if(v<=6)s.low=true;if(v>=79)s.high=true}render()}
+function enter(){s.marked=false;s.below=false;s.above=false;s.tested=false;if(step===0){s.angle=15;s.inside='glass';s.outside='air'}if(step===1){s.angle=25;s.inside='glass';s.outside='air';s.below=true}if(step===2){s.inside='glass';s.outside='air';s.angle=Math.asin(1/1.5)*180/Math.PI;s.ratio='';s.angleText='';s.swapped=false}if(step===3){s.inside='water';s.outside='air';s.angle=30;s.angleText='';s.reversed=false;s.waterPrediction=null;}if(step===4){s.inside='glass';s.outside='air';s.angle=30;s.records=[];s.comparison=null;}controls()}
+function setAngle(v){let c=critical();v=Math.round(v*10)/10;if(c!==null&&Math.abs(v-c)<.45&&step!==2&&step!==3)v=c;s.angle=v;if(step===2&&s.swapped||step===3&&!s.reversed){s.angleText=fmt(v);s.tested=false;if($('angleInput'))$('angleInput').value=s.angleText}if(step===1&&c!==null){if(v<c-1.5)s.below=true;if(v>c+1.5)s.above=true;s.marked=false}render()}
 function materialTone(id){return{air:'slate',glass:'blue',water:'teal',diamond:'violet',insideCustom:'blue',outsideCustom:'teal'}[id]}
 function setupPhysicsWork(){
  $('working').hidden=true;
@@ -3579,8 +3737,21 @@ function setupPhysicsWork(){
   $('ratioInput').value=s.ratio;$('angleInput').value=s.angleText;explain($('ratioInput'),'Your index ratio becomes the input to inverse sine.','index-ratio');explanations.set('index-ratio','The index ratio from the first line becomes the input to inverse sine.');
   $('ratioInput').oninput=e=>{s.ratio=e.target.value;s.tested=false;render()};
   $('angleInput').oninput=e=>{s.angleText=e.target.value;s.tested=false;if(e.target.value!=='')s.angle=clamp(Number(e.target.value),5,80);render()};
-  workAction('Test the beam',()=>{if(s.ratio===''||s.angleText===''){feedback('Enter both values before testing.',false,true);return}s.tested=true;render()});
+  workAction('Test the beam',()=>{if(!validNumber(s.ratio)||!validNumber(s.angleText)){feedback('Enter both values before testing.',false,true);return}s.tested=true;render()});
  }
+ if(step===3&&!s.reversed){
+  workSetup('Predict before testing',workRow('your critical-angle prediction','<input id="angleInput" type="number" min="5" max="80" step="0.1" inputmode="decimal" aria-label="Predicted critical angle in degrees">°'),'The glass result remains as a reference. Request a hint for the method.',true);
+  $('angleInput').value=s.angleText;
+  $('angleInput').oninput=e=>{s.angleText=e.target.value;s.tested=false;if(validNumber(s.angleText))s.angle=clamp(Number(s.angleText),5,80);render();};
+  workAction('Test the beam',()=>{
+   if(!validNumber(s.angleText)){feedback('Place a numerical angle prediction first.',false,true);return;}
+   s.tested=true;if(waterPredictionCorrect())s.angle=critical();controls();render();
+  });
+  if(waterPredictionCorrect())workAction('Reverse this boundary',()=>{
+   s.waterPrediction=s.angle;s.reversed=true;s.inside='air';s.outside='water';controls();render();
+  });
+ }
+ if(step===3&&s.reversed)workSetup('Compare the direction of travel',workRow('water → air',`Critical angle: ${fmt(s.waterPrediction)}°`)+workRow('air → water','No critical angle'),'The same angle now produces an escaping ray. Rotate it to explore the reversed boundary.');
  if(step===4)workSetup('Calculate the critical angle',workRow('index ratio',workOutput('ratioWork'))+workRow('inverse sine',workOutput('criticalWork')),'A critical angle requires a higher refractive index on the incident side.');
 }
 function controls(){
@@ -3596,12 +3767,26 @@ function controls(){
    for(const[id,m]of Object.entries(materials).filter(([id])=>!id.endsWith('Custom')||id===key+'Custom')){const opt=document.createElement('option');opt.value=id;opt.textContent=id.endsWith('Custom')?'Custom':`${m.name} · n ${fmt(m.n,2)}`;select.appendChild(opt)}
    select.value=s[key];select.onchange=e=>{s[key]=e.target.value;s.marked=false;controls();render()};l.appendChild(select);if(s[key].endsWith('Custom')){const input=document.createElement('input');input.type='number';input.className='material-index';input.id=key+'Index';input.min='1';input.max='3.5';input.step='.01';input.value=materials[s[key]].n;input.setAttribute('aria-label',label+' refractive index');explain(input,'Set a hypothetical refractive index from 1 to 3.5. Larger indices mean slower light in the material.');input.oninput=()=>{const value=Number(input.value);if(input.value!==''&&value>=1&&value<=3.5){materials[s[key]].n=value;s.marked=false;render()}};l.appendChild(input)}$('context').appendChild(l);
   }
-  button('Record reading',()=>{s.records.push([`${materials[s.inside].name} (${fmt(materials[s.inside].n,2)}) → ${materials[s.outside].name} (${fmt(materials[s.outside].n,2)})`,`${fmt(s.angle)}°`,critical()===null?'None':`${fmt(critical())}°`,optics().r===null?'None':`${fmt((1-optics().R)*100)}%`]);s.records=s.records.slice(-6);render()});
+  button('Record reading',()=>{
+   const from=materials[s.inside],to=materials[s.outside];
+   rememberReading({from:from.name,to:to.name,nIn:from.n,nOut:to.n,angle:s.angle,critical:critical(),transmitted:1-optics().R});render();
+  });
   button('Find threshold',()=>{const c=critical();if(c===null){feedback('This pair has no critical angle in this direction.',false,true);return}s.angle=c;s.marked=true;render()});
-  button('Clear readings',()=>{s.records=[];render()});
+  button('Clear readings',clearReadings);
  }
- setupPhysicsWork();workingExplanation('For light leaving a higher-index medium, sin c = refracted index ÷ incident index. First divide the two labelled indices; then use inverse sine in degrees. No critical angle exists in the opposite direction.');
+ setupPhysicsWork();
+ workingExplanation(step===3?'Predict the water-to-air threshold using the two indices. The full method is available in optional hints.':'For a higher-to-lower index boundary, divide the refracted index by the incident index, then use inverse sine in degrees.');
+ setHelp(step===2||step===3&&!s.reversed?[
+  ()=>({text:step===2&&validNumber(s.ratio)&&Number(s.ratio)>1?'Your ratio is greater than one. Compare the incident and refracted media before applying inverse sine.':'Compare the two indices and the earlier glass boundary. Which pair has the larger contrast?',keys:['n-inside','n-outside']}),
+  {text:'For a higher-to-lower boundary, sin c = refracted index ÷ incident index. Apply inverse sine in degree mode.'},
+  {text:'Another boundary: n = 2 into n = 1 gives sin c = 1 ÷ 2 = 0.5, so c = 30°. Reversing it produces no critical angle.'}
+ ]:[]);
+
 }
+function waterPredictionCorrect(){return s.tested&&validNumber(s.angleText)&&Math.abs(Number(s.angleText)-critical())<=.3;}
+function snapshotExtras(){return structuredClone(materials)}
+function restoreExtras(saved){for(const key of Object.keys(materials))Object.assign(materials[key],saved[key]);previousMaterial='';}
+function restoreView(){controls()}
 start();
 
 function sceneHeight(){return 390}
@@ -3615,7 +3800,7 @@ function ray(x1,y1,x2,y2,colour,width,opacity=1){
 function render(){
  const materialKey=s.inside+'/'+s.outside,materialChanged=materialKey!==previousMaterial;previousMaterial=materialKey;
  clear();head(lesson[step].title,lesson[step].intro);
- const {cx,cy,r}=opticsLayout(),radius=r+24,c=critical(),o=optics(),predict=step===2&&s.swapped&&!s.tested,a=materials[s.inside],b=materials[s.outside];
+ const {cx,cy,r}=opticsLayout(),radius=r+24,c=critical(),o=optics(),predict=(step===2&&s.swapped||step===3&&!s.reversed)&&!s.tested,a=materials[s.inside],b=materials[s.outside];
  const rad=s.angle*Math.PI/180,sx=cx-radius*Math.sin(rad),sy=cy+radius*Math.cos(rad),edgeRight=mobile?W-10:W*.85,edgeLeft=mobile?10:W*.15;
  // The original semicircular block keeps entry normal to the curved face.
  el('rect',{x:edgeLeft,y:25,width:edgeRight-edgeLeft,height:cy-25,fill:s.outside==='air'?'var(--lab-surface-muted)':`var(--lab-concept-${materialTone(s.outside)}-soft)`,'data-material':s.outside});
@@ -3655,7 +3840,7 @@ function render(){
  el('rect',{x:-10,y:9,width:20,height:6,fill:'var(--lab-concept-amber)'},undefined,barrel);
  el('rect',{x:-8,y:-8,width:16,height:5,rx:2,fill:'var(--lab-concept-amber-fill)',stroke:'var(--lab-concept-amber)','stroke-width':1},undefined,barrel);
  for(let j=0;j<2;j++)line(-6,20+j*4,6,20+j*4,{stroke:'#7c8a91','stroke-width':.8},barrel);
- if(step===2&&s.swapped){const ref=Math.asin(1/1.5);line(cx,cy,cx-r*Math.sin(ref),cy+r*Math.cos(ref),{stroke:'var(--lab-concept-blue)','stroke-width':1.2,'stroke-dasharray':'4 4'});text(edgeLeft,H-23,'Glass: c = 41.8°','small')}
+ if(step===2&&s.swapped||step===3&&!s.reversed){const ref=Math.asin(1/1.5);line(cx,cy,cx-r*Math.sin(ref),cy+r*Math.cos(ref),{stroke:'var(--lab-concept-blue)','stroke-width':1.2,'stroke-dasharray':'4 4'});text(edgeLeft,H-23,'Glass: c = 41.8°','small')}
  if(s.marked&&c!==null){
   const cr=c*Math.PI/180;line(cx,cy,cx-r*Math.sin(cr),cy+r*Math.cos(cr),{stroke:'var(--lab-concept-violet)','stroke-width':1.5,'stroke-dasharray':'3 4'});
   sourceLabel('critical-angle',edgeRight,H-23,`c = ${fmt(c)}°`,'At the critical angle, the refracted ray runs along the surface at 90° to the normal. A larger incidence angle gives total internal reflection.','accent','end');
@@ -3670,8 +3855,17 @@ function render(){
   workState(s.swapped?(s.tested?(ok?'good':'bad'):'needed'):'reference');
   feedback(ok?`sin c = 1 ÷ 2.42 ≈ 0.413. c ≈ ${fmt(c)}°: a smaller threshold.`:s.tested?'Compare your angle with the ray. Use inverse sine on the index ratio.':'Use sin c = n outside ÷ n inside. Both values belong to the same boundary.',ok,s.tested&&!ok);
  }
- if(step===3)feedback(s.low&&s.high?'Light still escapes. Total internal reflection needs a higher-to-lower index boundary.':`Sweep the full range. ${s.low?'5° explored. ':''}${s.high?'80° explored.':''}`,s.low&&s.high);
- if(step===4){feedback(c===null?'No critical angle: the incident medium has an equal or lower refractive index.':`sin c = ${fmt(b.n,2)} ÷ ${fmt(a.n,2)}. c = ${fmt(c)}°. TIR requires i > c.`,false);table(['From → to','Incidence','Critical angle','Escaping light'],s.records)}
+ if(step===3){
+  if(s.reversed){head('Compare the same boundary in reverse.','The incident and outgoing media have swapped. At your earlier angle the ray now escapes. Rotate the source to compare other angles.');feedback('Reversing the media removes the critical angle. The higher-to-lower condition matters.',true);}
+  else{const ok=waterPredictionCorrect();$('angleInput').className=s.tested?(ok?'good':'bad'):'';workState(s.tested?(ok?'good':'bad'):'needed');feedback(ok?'Your new-boundary prediction agrees. Reverse this boundary to compare the condition.':s.tested?'Compare your predicted angle with the actual outgoing ray. Revise or request a hint.':'Place your predicted angle before revealing the outgoing ray.',false,s.tested&&!ok);}
+ }
+ if(step===4){
+  feedback(c===null?'No critical angle: the incident medium has an equal or lower refractive index.':`Critical angle ${fmt(c)}°. Total internal reflection requires a larger incidence angle.`,false);
+  table(['From → to','Incidence','Critical angle','Escaping light'],s.records.map(r=>[`${r.from} (${fmt(r.nIn,2)}) → ${r.to} (${fmt(r.nOut,2)})`,`${fmt(r.angle)}°`,r.critical===null?'None':`${fmt(r.critical)}°`,`${fmt(r.transmitted*100)}%`]),true);
+  const old=s.records[s.comparison];
+  if(old){const mark=(old.critical??old.angle)*Math.PI/180;line(cx,cy,cx-r*Math.sin(mark),cy+r*Math.cos(mark),{class:'comparison-ghost'});comparisonNote(`Dashed reference: reading ${s.comparison+1}, ${old.from} (${fmt(old.nIn,2)}) → ${old.to} (${fmt(old.nOut,2)}), ${old.critical===null?'no threshold':`threshold ${fmt(old.critical)}°`}. `+comparisonDescription({from:`${old.from} ${fmt(old.nIn,2)}`,into:`${old.to} ${fmt(old.nOut,2)}`,incidence:fmt(old.angle)+'°'},{from:`${a.name} ${fmt(a.n,2)}`,into:`${b.name} ${fmt(b.n,2)}`,incidence:fmt(s.angle)+'°'}));}
+  else comparisonNote('Record a boundary, then select its reading to keep a frozen threshold reference.');
+ }
  if(step===2&&!s.swapped)feedback('Glass to air: c = 41.8°. Replace the glass to compare a higher refractive index.');
  if(step===1||step===2&&!s.swapped||step===4){const show=step!==1||s.marked;workFormula('ratioWork',show?`${term('n-outside',fmt(b.n,2))} ÷ ${term('n-inside',fmt(a.n,2))} ≈ ${result('index-ratio',fmt(b.n/a.n,3),'Divide the index on the refracted side by the incident index. This ratio is sin c when the incident index is higher.')}`:'n outside ÷ n inside');workFormula('criticalWork',!show?'c = sin⁻¹(index ratio)':c===null?'No critical angle':`sin⁻¹(${term('index-ratio',fmt(b.n/a.n,3))}) ≈ ${result('calculated-angle',fmt(c)+'°','Inverse sine turns the index ratio into an angle. Use degree mode on your calculator.')}`)}
  if(step===2&&s.swapped){workFormula('ratioSubstitution',`sin c = ${term('n-outside','1')} ÷ ${term('n-inside','2.42')} =`);workFormula('angleSubstitution',`c = sin⁻¹(${term('index-ratio',s.ratio||'ratio')}) =`)}endDraw();
