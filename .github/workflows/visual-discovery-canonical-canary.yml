@@ -50,8 +50,16 @@ jobs:
           old3="""await click('#traceWorking');await page.waitForTimeout(50);assert.ok(await read('connectionLayer.children.length>0'));await shot('working-trace');"""
           new3="""assert.equal(await page.locator('#traceWorking').isVisible(),false);assert.ok(await page.locator('[data-value-ref]').count()>0);await shot('working-values');"""
           if old3 not in t:
-              raise SystemExit('Verifier trace assertion not found')
-          v.write_text(t.replace(old3,new3))
+              raise SystemExit('Verifier first trace assertion not found')
+          t=t.replace(old3,new3)
+          old4="""await slide(2);await ends();await click('#traceWorking');await page.waitForTimeout(80);assert.ok(await read('connectionLayer.children.length>0'));await key('[data-control=rail-slide]','ArrowDown');await page.waitForTimeout(100);assert.equal(await read('connectionLayer.children.length'),0);"""
+          new4="""await slide(2);await ends();assert.equal(await page.locator('#traceWorking').isVisible(),false);await key('[data-control=rail-slide]','ArrowDown');await page.waitForTimeout(100);assert.equal(await read('connectionLayer.children.length'),0);"""
+          if old4 not in t:
+              raise SystemExit('Verifier second trace assertion not found')
+          t=t.replace(old4,new4)
+          t=t.replace('source-value tracing; ','labelled source values; ')
+          t=t.replace('explicit trace starts and manipulation cancels it.','hidden experimental trace control and clean manipulation state.')
+          v.write_text(t)
           PY
       - name: Remove duplicate pilot implementation sources
         run: |
