@@ -7,6 +7,14 @@ export type ChangelogEntry = {
 
 export const changelogEntries: readonly ChangelogEntry[] = [
   {
+    date: '2026-09-10',
+    displayDate: '10 September 2026',
+    publicChanges: [],
+    internalChanges: [
+      'Expanded the isolated visual-discovery review to six pilots, including straight-line rails and an area-first histogram/cumulative-frequency investigation. Preserved direct manipulation, less-supported predictions, explicit checks, stateful navigation and frozen comparisons. Standardised goals, feedback, hints and action placement; clarified local repeat versus whole-lab restart with ordered controls, scope descriptions and confirmation. Added sourced workflow guidance, model-boundary tests and browser regression coverage. These are unpublished review artifacts; production labs, public shared components and curriculum mappings remain unchanged.',
+    ],
+  },
+  {
     date: '2026-09-08',
     displayDate: '8 September 2026',
     publicChanges: [],

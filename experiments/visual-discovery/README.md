@@ -1,82 +1,62 @@
-# Four visual lab prototypes
+# Six visual lab prototypes
 
-Open [the review index](review/index.html), or an individual offline file:
+Open [the review index](review/index.html), or an individual standalone file. No network, account or package installation is needed to use a lab.
 
-- [Maths — Similarity and scale](review/maths.html): six guided experiences and an experiment.
-- [Physics — Measure critical angles](review/physics.html): four guided experiences and an experiment.
-- [Chemistry — Investigate pressure and volume](review/chemistry.html): four guided experiences and an experiment.
-- [Biology — Trace selection across generations](review/biology.html): five guided experiences and an experiment.
+| Lab | Guided investigation | Independent experiment |
+| --- | --- | --- |
+| [Maths — scale](review/maths.html) | Length → tiled area → cube layers → reverse area → non-unit reference → similarity repair | Change scale and height, separate layers and compare outlines |
+| [Physics](review/physics.html) | Refraction → threshold → diamond calculation → water prediction and boundary reversal | Vary media or hypothetical indices and compare frozen readings |
+| [Gas](review/chemistry.html) | Compress and expand before formulas → invariant → unfamiliar pressure prediction → target volume | Change volume, temperature or gas amount and compare saved references |
+| [Biology](review/biology.html) | Variation → inheritance → directional case → frequency → construct a two-source environment | Reshape food, vary population size, repeat samples and compare populations |
+| [Maths — rails](review/straight-lines.html) | Tilt → slide → equation → falling rail → horizontal → vertical | Change coefficients, operate the carriage and compare saved lines |
+| [Maths — histograms](review/histograms.html) | Area → unequal widths → whole report → cumulative totals → quartiles and range | Change grouped frequencies and compare saved reports |
 
-Each lab opens with a contextual mission and one model. Shared working cards introduce calculations before learners supply the same quantities themselves. Press **Trace values** to connect source labels to the exact formula operands through an ordered pulse and value transfer. Tracing never starts automatically, including after a source click, a changed value or a new checkpoint. Hover, focus or tap a labelled quantity for a compact explanation, or focus the working card for the method. Escape dismisses the explanation. Reduced motion replaces the requested trace with static paired outlines.
+There are **30 guided experiences and six open experiments**. These are review prototypes, not replacements for published labs. Start with [the histogram pilot notes](HISTOGRAMS-PILOT.md) and the [sourced authoring workflow](WORKFLOW-AND-DESIGN.md) for the newest addition. The [straight-line pilot notes](STRAIGHT-LINES-PILOT.md) retain the preceding replication rationale.
 
-The mission uses aligned blue headings and quieter supporting text, without an icon. Verified results have a crisp white checkmark on a green disc and an outcome heading. Between checkpoints, only changed text, working, controls and SVG elements fade out and in; identical model elements stay visible. Working and model areas resize smoothly where their content changes. Material changes, separating cube layers, piston tests and inherited offspring retain their own brief transitions. Pressure predictions remain separate from the actual gauge; selected parents produce offspring before population replacement.
+## Interaction and support
 
-The final modes add these experiments without a separate control panel:
+Operate the main visual model. Arrow keys, Home and End adjust focused handles. The histogram additionally supports tapping plot columns or a ruler position without dragging. Early experiences isolate useful variables; later experiences require less-supported decisions. Predictions are checked on Test or Check, not while typing. Editing a case or prediction invalidates its previous check.
 
-| Lab | Independent experiments |
-| --- | --- |
-| Maths | Scale factors from 0.5 to 5, independent height, moving cube layers, length/square/solid views and saved comparisons |
-| Physics | Either medium, hypothetical indices from 1 to 3.5, incidence up to 89.9°, threshold finding and readings that retain both indices |
-| Chemistry | Piston volume, an on-bath thermostat from 150–600 K, a gas valve for 0.5–2 times the starting amount, and readings with all conditions |
-| Biology | One or two food peaks with independent widths, steady/alternating/even food, populations of 36/72/144 and inherited generations |
+**Hint** offers evidence, then a relationship, then a labelled example with different values. It never opens automatically. **Trace values** connects semantic source quantities to formula operands only when requested. Reduced motion uses static outlines instead of travelling values.
 
-Each file includes its SVG model, styles, runtime, verbatim MIT licence and pedagogical data. It opens independently with no network or package installation. Use Start over to return to the first experience; Back repeats an earlier experience. Progress and observations are held only for the current page session.
+The goal stays above the model. Feedback, the primary action and Hint share one dock below working and before saved records. Test and Continue retain the same button. There is no competing success card in working. See [interface conventions](UI-POLISH.md).
 
-Read [the research and source comparison](RESEARCH.md) for the rationale, preserved outcomes and limitations. This is a review experiment in `codex/visual-discovery-labs`, based on revision `a42aaaa78d437926ba59b766a6415ddd89ba46ed`. Production routes, source labs, curriculum mappings and the work owned by **Lab Internals (Orchestrator)** are untouched.
+## Restart without losing the wrong work
 
-## Rebuild or preview
+The shared **Restart options** disclosure has two ordered rows with scope descriptions:
 
-From this worktree’s repository root, with Node 24:
+- **Repeat this step** resets this case and retains other visited progress. In the open experiment it becomes **Reset experiment**, clearing that experiment's settings/readings while keeping guided progress.
+- **Restart lab…** opens an inline confirmation. Only the second, explicit Restart lab action clears this lab's answers, readings and visited steps. Keep working, Escape, outside click and tab-away cancel without changing the model.
 
-```powershell
-node --experimental-strip-types experiments/visual-discovery/build.mjs
-node experiments/visual-discovery/serve.mjs
+Back and Forward restore saved step state rather than re-running it. Reset actions are disabled during model transitions; navigation waits for the transition to finish. Session progress is not stored after the page closes. Restart does not affect other labs or the published site.
+
+Saved experiment readings are immutable copies. Selecting a row preserves a dashed reference while current controls change. Conditions are labelled; biology explicitly normalises cross-population overlays. Histogram comparisons share one count scale and are not normalised. New sample in biology changes the seed, not the chosen food pressure.
+
+## Build and verify
+
+From the repository root, use Node 24:
+
+```sh
+node experiments/visual-discovery/build.mjs
+node --test experiments/visual-discovery/tests/*.test.mjs
+node experiments/visual-discovery/verify.mjs
+node experiments/visual-discovery/verify-straight-lines.mjs
+node experiments/visual-discovery/verify-histograms.mjs
+node experiments/visual-discovery/verify-restart.mjs
 ```
 
-The optional server prints its loopback review URL. Files still work offline without it. It serves only this experiment directory and does not modify files.
+Edit `src/` and `build.mjs`, then rebuild. Do not hand-edit generated `review/*.html` or `contracts/*.lab.json`. The builder validates each contract and embeds it in the standalone HTML. It reads the production contract, licence, local living guide and shared kit snapshots without modifying them.
 
-The build reads the existing four `lab-contracts` sidecars, `LICENSE`, `docs/examplicity-living-style-guide-v3.html`, and the shipped `public/developer/lab-kit/0.3.0/src/lab-design.css` and `lab-design.js` snapshots. It does not edit those inputs. Edit `src/`, then rebuild; do not hand-edit the review HTML or generated contracts.
+Model tests use Node's built-in modules. Browser scripts need a separate Playwright/Chromium installation; they add no runtime dependency or package-manifest change. `PLAYWRIGHT_MODULE` can point to an isolated Playwright entry file. The older browser scripts also accept `CHROMIUM_EXECUTABLE`.
 
-## Structured data
+The browser loads the exact generated HTML, blocks external requests and operates actual controls. Evaluation reads state and geometry rather than injecting answers. Scripts cover full journeys, wrong/revised predictions, empty work, snapshots, reset scopes, hints, comparisons, reduced motion, emulated touch and 1200×800 / 900×800 / 390×844 layouts.
 
-Each HTML contains:
+Reports and screenshots are written to `outputs/visual-discovery/`, `outputs/straight-lines-pilot/`, `outputs/histograms-pilot/` and `outputs/restart-review/`. [Verification notes](VERIFICATION.md) distinguish historical runs from the current delivery. Automated browser checks do not establish learning effectiveness or replace a visual, screen-reader or learner review.
 
-- `script[data-examplicity-lab-contract]`: the valid v1 contract and actual implementation map. Original guided outcomes remain intact. Chemistry explicitly extends its former fixed-temperature/fixed-amount scope in the final experiment; its relationship, conditional invariants, adaptations and non-goals document that change.
-- `script[data-examplicity-pedagogy]`: research, original source revision/hash, original invariants and non-goals, the ordered lesson criteria, extensions, quantity-link conventions, motion, accessibility and model limits.
+## Sources and scope
 
-The implementation revision is a SHA-256 of the embedded token layer, shared design CSS/runtime and prototype CSS/runtime/model. The generated sidecar and embedded contract must be identical.
+The original comparison used production revision `a42aaaa78d437926ba59b766a6415ddd89ba46ed`; the initial refinements built on review revision `67ff19efc1042802bc266f7839363c9bdafaa92a`. Each added pilot pins its own source revision in its configuration. All six generated files change when their common restart menu changes; the earlier byte-identical claims apply only to the earlier rail-addition delivery.
 
-## Focused verification
+Original production sources, curriculum mappings, public routes and public shared components remain untouched. These unpublished review changes have one reconciled internal changelog note.
 
-```powershell
-node --experimental-strip-types experiments/visual-discovery/verify.mjs <path-to-agent-browser-executable>
-```
-
-Append `maths`, `physics`, `chemistry` or `biology` to repeat only that lab’s browser journey; packaging checks still cover all four files. Focused results use a separate report file.
-
-The script uses the isolated `visual-discovery` browser session. It exercises all guided steps and experiment controls through mouse/keyboard interaction; browser evaluation only reads model state for assertions. It checks contract parity, JavaScript syntax, offline packaging, scientific invariants, revisions, and opening/final layouts at 1200×800, 900×800 and 390×844. It also checks source/formula explanations, button-only tracing and its reduced-motion alternative, selective checkpoint fades with unchanged model labels staying visible, removal of temporary transition layers, revised-answer states, expanded experiments, parent-to-offspring replacement, and dot packing when all 72 guided birds share one trait group. No full-site build is needed for these standalone files.
-
-The completed run passed all four journeys. In the seeded Biology run, directional selection reached generation 3 with mean 12.80 mm; stabilising selection reached generation 3 with SD 0.72 mm; disruptive selection reached generation 4 with SD 3.08 mm, an empty middle band and both tails represented. These are simulated results, not empirical biology data.
-
-Machine results and inspected screenshots are under the ignored `outputs/visual-discovery/` directory. The test covers representative interactions and layouts, not every possible experiment history.
-
-## File inventory
-
-All lab deliverables are confined to this directory. The repository's required internal review note is recorded in `app/changelog/entries.ts`; it does not appear in the public changelog.
-
-| File | Responsibility |
-| --- | --- |
-| `README.md`, `RESEARCH.md` | Review instructions, research, continuity, limitations and file inventory |
-| `build.mjs` | Offline packaging, contract validation and source provenance |
-| `serve.mjs` | Optional local review server |
-| `verify.mjs` | Focused browser acceptance checks |
-| `src/shared.css`, `src/shared.js` | Shared progressive layout and DOM/lesson helpers |
-| `src/connections.js` | Explicit source-to-formula links, minimal explanations, value-transfer cues, stage transitions and outcome presentation |
-| `src/maths.js` | Similarity model, SVG and seven-step journey |
-| `src/physics.js`, `src/physics-svg.js` | Optical model, controls, SVG apparatus and five-step journey |
-| `src/chemistry.js`, `src/chemistry-svg.js` | Gas model, animation, SVG instruments/graph and five-step journey |
-| `src/biology.js`, `src/biology-svg.js` | Selection/inheritance model, SVG birds/distributions and six-step journey |
-| `contracts/maths.lab.json`, `contracts/physics.lab.json`, `contracts/chemistry.lab.json`, `contracts/biology.lab.json` | Generated v1 implementation maps |
-| `review/index.html`, `review/maths.html`, `review/physics.html`, `review/chemistry.html`, `review/biology.html` | Review entry point and complete standalone deliverables |
-
-Local verification also writes screenshots and `verification.json` under `outputs/visual-discovery/`. No shared resource, original source, published asset, project setting or other worktree is edited.
+See [workflow and design sources](WORKFLOW-AND-DESIGN.md), [research notes](RESEARCH.md), and the [learner-review protocol](LEARNER-REVIEW.md). The human learner review has not been conducted as part of implementation.

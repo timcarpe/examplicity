@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "relationship": "Manipulating a straight line makes its coordinates, gradient, intercept and equation change together, while testing across the graph distinguishes a genuine relationship from a match at one point.",
   "learnerLoop": {
-    "action": "Manipulate the line, express its properties through working, and test whether it satisfies the challenge.",
-    "modelChange": "The line's position or direction changes and its geometric and algebraic descriptions change with it.",
-    "evidence": "The graph, coordinates, calculations, feedback and across-the-line test show how well the representations and constraints agree.",
-    "nextDecision": "Decide which property to adjust, revise the reasoning, or justify that the line satisfies the whole constraint."
+    "action": "Tilt or slide the rail, write a connected equation, then move the test carriage across the required interval.",
+    "modelChange": "A nonvertical rail follows y = mx + c; tilt changes only m and slide changes only c. A vertical rail follows x = k. All plotted coordinates, comparison lines and gap readings use these same coefficients.",
+    "evidence": "The equal-unit graph, signed rise/run triangle, mounting points, predicted-equation overlay and carriage gap expose whether the geometry and equation describe the same line across the interval.",
+    "nextDecision": "Decide whether to change direction, intercept or the constant coordinate; revise a prediction, then compare the whole straight-line relationship rather than one intersection."
   },
   "invariants": [
     "The geometric and algebraic representations describe the same line, so changes in one have coherent consequences in the others.",
@@ -21,97 +21,170 @@
   ],
   "developerGuide": "https://www.examplicity.org/developer/lab-contract",
   "implementation": {
-    "reviewedRevision": "7a15bda",
+    "reviewedRevision": "canonical-package-migration-2026-09-10",
     "surfaces": {
-      "task": {
+      "actions": {
         "selectors": [
-          "#missionTitle",
-          "#referenceStrip"
+          "#learningDock",
+          "#next",
+          "#back",
+          "#forwardVisited",
+          "#secondaryAction"
+        ],
+        "kind": "control",
+        "description": "Canonical package action surface. One persistent primary action; Back and previously visited Forward are secondary.",
+        "visibility": "Same relative position below the apparatus and working; before saved readings."
+      },
+      "help": {
+        "selectors": [
+          "#evidenceHelp",
+          "#hintText"
+        ],
+        "kind": "support",
+        "description": "Learner-requested evidence cue, relationship hint and contrasting worked example; no automatic answer-directed pulse.",
+        "visibility": "Only when requested in the relevant experience."
+      },
+      "reset": {
+        "selectors": [
+          "#resetMenu",
+          "#repeat",
+          "#restart",
+          "#resetConfirmation",
+          "#cancelRestart",
+          "#confirmRestart"
+        ],
+        "kind": "control",
+        "description": "Native disclosure with ordered actions and scope descriptions; full restart uses an inline confirmation. Cancel, Escape, outside click and tab-away preserve the current model.",
+        "visibility": "Disclosure always available; reset actions disabled during model transitions. Confirmation is never opened automatically."
+      },
+      "prompt": {
+        "selectors": [
+          "#title",
+          "#intro"
         ],
         "kind": "given",
-        "description": "Current problem statement and supplied quantities.",
-        "visibility": "Shown at the start of each problem or stage."
+        "description": "A short goal and action sentence above the apparatus, with a guided-step label and quiet restart disclosure.",
+        "visibility": "Current step only."
       },
       "model": {
         "selectors": [
           "#stage"
         ],
         "kind": "model",
-        "description": "Operated construction and its live measurements; see quantities for what is given and revealed.",
-        "visibility": "Present for the current problem; child controls and readouts follow the states described below."
+        "description": "A nonvertical rail follows y = mx + c; tilt changes only m and slide changes only c. A vertical rail follows x = k. All plotted coordinates, comparison lines and gap readings use these same coefficients.",
+        "visibility": "Always visible in the canonical production package; later controls are progressively disclosed."
+      },
+      "comparison": {
+        "selectors": [
+          "#records",
+          "#comparisonNote"
+        ],
+        "kind": "evidence",
+        "description": "Frozen readings and explicitly labelled comparison conditions; graphical overlays use the selected saved reading.",
+        "visibility": "Recorded experiment comparisons only."
+      },
+      "navigation": {
+        "selectors": [
+          "#back",
+          "#next",
+          "#repeat",
+          "#restart"
+        ],
+        "kind": "control",
+        "description": "Back and Forward restore snapshots; Repeat resets the current experience; Confirmed restart clears the session.",
+        "visibility": "Back and Forward depend on visited progress."
       },
       "working": {
         "selectors": [
-          "#calcContent"
+          "#working"
         ],
         "kind": "working",
-        "description": "Ordered calculations, learner entries and consequential evidence for the current task.",
-        "visibility": "Present for the current problem; child controls and readouts follow the states described below."
+        "description": "Worked examples precede learner calculations. Explicit quantity keys connect source labels to formula operands, with matching highlights and a button-triggered trace. Hover, focus and tap explain each source and calculation.",
+        "visibility": "Changes with the current step."
+      },
+      "evidence": {
+        "selectors": [
+          "#feedback",
+          "#records"
+        ],
+        "kind": "evidence",
+        "description": "The equal-unit graph, signed rise/run triangle, mounting points, predicted-equation overlay and carriage gap expose whether the geometry and equation describe the same line across the interval.",
+        "visibility": "In-place feedback; readings only in relevant steps."
       },
       "completion": {
         "selectors": [
-          "#nextCard"
+          "#next",
+          "#outcome",
+          "#outcomeTitle"
         ],
         "kind": "completion",
-        "description": "Achievement, next task or learning transition.",
-        "visibility": "Shown only when the local completion conditions below are satisfied; representation controls are separately identified."
-      },
-      "feedback": {
-        "selectors": [
-          "#diagnosis"
-        ],
-        "kind": "feedback",
-        "description": "Explains a changing gap, missed mount, incomplete travel or incomplete working.",
-        "visibility": "Present for the current problem; child controls and readouts follow the states described below."
+        "description": "The persistent dock button runs the current test/check and changes to Continue only after the original model-derived criterion. Feedback and help share this dock; presentation does not set completion.",
+        "visibility": "Guided steps; absent in the open experiment."
       }
     },
     "quantities": {
-      "reference-and-mount": {
-        "description": "Given reference line and, where present, required mounting point P.",
-        "domain": "Cartesian coordinates and line equation; coordinate units.",
-        "source": "Given by the generated setup.",
-        "output": "Reference equation and coordinate markers remain visible."
-      },
-      "candidate-line": {
-        "description": "One candidate line controlled by gradient/intercept, or constant x for a vertical line.",
-        "domain": "Signed/fractional gradient and intercept; x=k for vertical lines.",
-        "source": "Learner uses slide/tilt/vertical handles; candidate equation is hidden in Some/All until working conditions allow it.",
-        "output": "Alignment and changing/constant gap are live geometric evidence.",
+      "gradient": {
+        "description": "Signed gradient m, changed independently of the intercept.",
+        "domain": "−1.5 to 1.5 in steps of 0.25; prediction inputs accept decimals and fractions.",
+        "source": "On-rail Tilt handle and measured coordinate changes.",
+        "output": "Rail direction, signed rise over a run of 2, equation and carriage coordinates.",
         "inputSlots": [
-          "#stage [data-drag=\"slide\"]",
-          "#stage [data-drag=\"tilt\"]",
-          "#stage [data-drag=\"vertical\"]"
+          "[data-control=rail-tilt]",
+          "#gradientInput"
         ]
       },
-      "working-chain": {
-        "description": "Rise/run and m/c are intermediate quantities for ONE line equation. The vertical branch uses dx/k instead.",
-        "domain": "Numeric coordinate differences plus algebraic equation.",
-        "source": "Required keys depend on line type and Working level.",
-        "output": "Each field is checked against the current intended rail geometry.",
+      "intercept": {
+        "description": "Value of y when x is zero.",
+        "domain": "−2 to 2 in steps of 0.5.",
+        "source": "On-rail Slide handle; coordinate where the rail crosses the y-axis.",
+        "output": "Rail position without a change of gradient.",
         "inputSlots": [
-          "#calcContent input"
+          "[data-control=rail-slide]",
+          "#interceptInput"
         ]
       },
-      "full-travel-test": {
-        "description": "The carriage samples alignment over the whole required track.",
-        "domain": "Position along the bounded test interval.",
-        "source": "Learner moves the test carriage after geometry matches.",
-        "output": "Visited interval and maximum gap establish whether the alignment holds throughout.",
+      "vertical": {
+        "description": "Constant x-coordinate k, distinct from the changing y-coordinate.",
+        "domain": "−3 to 3 in steps of 0.5.",
+        "source": "Horizontal slide of the vertical rail; learner chooses x or y for the equation.",
+        "output": "Actual x = k geometry; an incorrect y = k prediction is drawn horizontally after Test.",
         "inputSlots": [
-          "#stage [data-drag=\"gantry\"]"
+          "[data-control=rail-vertical]",
+          "#axisInput",
+          "#constantInput"
+        ]
+      },
+      "travel": {
+        "description": "Independent carriage position along the actual rail, with gap evidence and visited interval.",
+        "domain": "−2 to 2 in steps of 0.25; x varies on nonvertical rails and y varies on vertical rails.",
+        "source": "The learner moves the on-model carriage control.",
+        "output": "Exact coordinates and vertical or horizontal separation; different-orientation comparisons are not given a misleading scalar gap.",
+        "inputSlots": [
+          "[data-control=rail-probe]"
         ]
       }
     },
     "modes": {
-      "none": "Reference and candidate equations/calculations are shown while the learner positions and tests the rail.",
-      "some": "For nonvertical rails, enter gradient and equation; for vertical rails, enter the equation.",
-      "all": "Nonvertical: rise, run, gradient, intercept and equation. Vertical: horizontal change, constant k and equation."
+      "guided": "Small ordered visual investigations, with model actions and in-place revision.",
+      "experiment": "Ungated experiment: tilt, slide, switch to vertical, read carriage coordinates, save up to six immutable readings and select a dashed comparison. Back/Forward restore state; Repeat resets only the current step."
     },
     "dependencies": [
-      "Correct line placement alone does not complete a rail; the full-travel test remains required.",
-      "Required fields must agree with the same setup; changing line geometry invalidates the travel evidence.",
-      "Vertical-line working follows x=k rather than an infinite-gradient numeric answer."
+      "Tilt the amber rail to the reference gradient 0.5 with intercept fixed at −1; inspect carriage positions −2 and 2 without changing the geometry. The vertical gap remains 2, demonstrating parallel direction rather than coincidence.",
+      "Slide the parallel rail through P(0, 2) without changing gradient 0.5; inspect both ends. A worked rise/run and intercept card uses quantities on the same graph.",
+      "Commit m = 0.5 and c = 1 for the fixed rail, then inspect both ends after the Test action. No correctness feedback is supplied while typing.",
+      "Independently adjust both coefficients to pass A(−2, 3) and B(2, 1); commit the matching equation y = −0.5x + 2 and inspect both ends. The initial line passes B alone and is deliberately insufficient.",
+      "Build the horizontal line through A(−2, −2) and B(2, −2), commit gradient zero and intercept −2, and inspect both ends. y = −2 is distinct from x = −2.",
+      "Move the vertical rail through P(2, 1); explicitly choose x and constant 2, test, and inspect the lower and upper ends. No finite or infinite numerical gradient answer is requested.",
+      "Ungated experiment: tilt, slide, switch to vertical, read carriage coordinates, save up to six immutable readings and select a dashed comparison. Back/Forward restore state; Repeat resets only the current step."
     ],
-    "completion": "complete() combines geometryOk(), the full travel verification and workingReady(); the popup advances to another rail."
+    "completion": "New experiences require their model-derived criterion. Back and Forward revisit saved state without forcing a rerun; Repeat experience resets only that experience. Confirmed restart clears all session snapshots. Worked observations are not mastery claims.",
+    "limitations": [
+      "Cartesian axes have equal scales. Rails are ideal straight lines, not a mechanical force simulation.",
+      "The absolute affine gap on the closed test interval is largest at an endpoint. Acceptance checks coefficients and interval endpoints analytically; a single matching point never completes a guided task.",
+      "Both ends must be inspected for the current geometry and committed prediction. Editing either invalidates previous travel evidence; mere resizing, hints or focus changes do not.",
+      "Prediction inputs build one equation through structured coefficients rather than a general algebra parser. Finite decimals and fractions are supported; expressions and zero denominators are rejected without evaluation.",
+      "Guided progression covers positive and negative fractional gradients, intercepts, parallel direction, horizontal and vertical lines. It does not introduce perpendicular-line theorems or nonlinear families.",
+      "Six immutable experiment readings retain orientation, coefficients and carriage coordinates. References are comparisons, not replayed completion evidence. Session progress is not persisted after closing the page."
+    ]
   }
 }

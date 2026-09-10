@@ -15,7 +15,7 @@ function sourceLabel(key,x,y,label,description,cls='small',anchor='start'){
  explanations.set(key,description);explain(g,description,key);return g;
 }
 function workFormula(id,html){const node=$(id);if(node&&node.innerHTML!==html)node.innerHTML=html}
-function workingExplanation(description){const area=$('working');area.dataset.help=description;area.tabIndex=0;area.setAttribute('aria-label',description);}
+function workingExplanation(description){const area=$('working');area.dataset.method=description;area.removeAttribute('data-help');area.removeAttribute('tabindex');area.setAttribute('aria-labelledby','workingTitle');area.setAttribute('aria-describedby','workNote');}
 function linkedSources(key){return [...document.querySelectorAll(`[data-source="${key}"]`)].filter(node=>node.getClientRects().length&&(!('value' in node)||node.value!==''))}
 function linkedTerms(key){return [...document.querySelectorAll(`[data-value-ref="${key}"]`)].filter(node=>node.getClientRects().length)}
 function linkPairs(){return [...new Set([...$('working').querySelectorAll('[data-value-ref]')].map(node=>node.dataset.valueRef))].flatMap(key=>{const source=linkedSources(key)[0],targets=linkedTerms(key);return source&&targets.length?[{key,source,targets}]:[]})}
@@ -113,7 +113,11 @@ async function changeCheckpoint(update){
  }
 }
 function scheduleOutcome(){if(outcomeQueued)return;outcomeQueued=true;queueMicrotask(()=>{
- outcomeQueued=false;const outcome=$('outcome'),state=ready?'good':$('feedback').classList.contains('retry')?'retry':'idle',key=step+':'+state;
- outcome.dataset.state=state;$('outcomeTitle').hidden=state==='idle';$('outcomeTitle').textContent=state==='good'?lesson[step].success||'You have completed this investigation.':state==='retry'?'Let’s check that again.':'';
- if(key!==shownOutcome){shownOutcome=key;if(state!=='idle')arrive([outcome])}
+ outcomeQueued=false;
+ const busy=!!s.busy||s.phase==='offspring';
+ const state=busy?'busy':ready?'good':$('feedback').classList.contains('retry')?'retry':'idle';
+ const title=outcomeHeading||(state==='good'?lesson[step].success||'Result':state==='retry'?'Try again':state==='busy'?'In progress':step===lesson.length-1?'Compare your results':'Try it');
+ $('outcome').dataset.state=state;$('learningDock').dataset.state=state;
+ if($('outcomeTitle').textContent!==title)$('outcomeTitle').textContent=title;
+ syncActionDock();announceOutcome(state);
  });}

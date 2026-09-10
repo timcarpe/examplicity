@@ -59,11 +59,12 @@ function render(){
   for(const p of populationPositions(s.population))explain(dot(p.x,p.y,mobile?2.4:3,{'data-bird-id':p.id,fill:s.parents?(selected.has(p.id)?'var(--lab-concept-violet)':'var(--lab-line)'):traitColour(s.population[p.id])}),`One adult with a ${fmt(s.population[p.id],1)} mm beak. Its inherited beak depth stays unchanged when you move the food.`);
  }
  if(!intro){
-  const bins=Array(18).fill(0),original=Array(18).fill(0),selected=Array(18).fill(0),bin=v=>Math.min(17,Math.floor((v-4)*1.5));
-  s.population.forEach(v=>bins[bin(v)]++);s.initial.forEach(v=>original[bin(v)]++);s.parents?.forEach(p=>selected[bin(p.trait)]++);
+  const comparison=step===5?s.records[s.comparison]:null,reference=comparison?comparison.population:s.initial,bins=Array(18).fill(0),original=Array(18).fill(0),selected=Array(18).fill(0),bin=v=>Math.min(17,Math.floor((v-4)*1.5));
+  s.population.forEach(v=>bins[bin(v)]++);reference.forEach(v=>original[bin(v)]++);s.parents?.forEach(p=>selected[bin(p.trait)]++);
+  if(comparison&&comparison.size!==N)for(let i=0;i<original.length;i++)original[i]*=N/comparison.size;
   const base=296,max=Math.max(12,...bins,...original),unit=126/max,bw=(right-left)/18;
   text(left,155,'Number of adults','small');
-  if(step===4)sourceLabel('starting-middle',right,155,`Start: ${s.initial.filter(v=>v>=8.5&&v<=11.5).length} middle`,'This count is from the starting population, shown by the dashed bars. Compare it with the current middle group count above.','small','end');else explain(text(right,155,s.parents?'Violet: selected parents':'Dashed: starting population','small','end'),'Dashed bars preserve the starting distribution, so you can compare it with the current filled bars.');
+  if(step===4)sourceLabel('starting-middle',right,155,`Start: ${s.initial.filter(v=>v>=8.5&&v<=11.5).length} middle`,'This count is from the starting population, shown by the dashed bars. Compare it with the current middle group count above.','small','end');else explain(text(right,155,s.parents?'Violet: selected parents':comparison?'Dashed: saved population':'Dashed: starting population','small','end'),comparison&&comparison.size!==N?'Saved bars are rescaled to the current total so their proportions, not raw counts, are comparable.':'Dashed bars preserve the reference distribution for comparison with the current filled bars.');
   for(const count of [0,Math.ceil(max/2),max]){
    const yy=base-count*unit;line(left,yy,right,yy,{stroke:'var(--lab-line-subtle)','stroke-width':1});
    text(left-8,yy+4,String(count),'small','end');
@@ -90,24 +91,35 @@ function render(){
   line(0,-2,0,2,{stroke:'var(--lab-concept-amber-fill)','stroke-width':.6},seed);
  }
  text(left,foodBase+22,'Food advantage by beak depth','small');
- if(step===0||(step===5&&s.pressure==='steady'))s.peaks.forEach((p,i)=>{
+ if(step===0||step===4||(step===5&&s.pressure==='steady'))s.peaks.forEach((p,i)=>{
   const hx=x(p.c),hy=foodBase-foodHeight-10;
   line(hx,hy+13,hx,foodBase,{stroke:'var(--lab-concept-amber)','stroke-width':1,'stroke-dasharray':'3 4',opacity:.5});
-  handle('food-'+i,hx,hy,{label:`Food source ${i+1}: favoured beak depth`,help:'Move the peak toward the beak depth that has the greatest food advantage. Existing adults stay unchanged until reproduction.',min:4.5,max:15.5,value:p.c,valueText:`${fmt(p.c)} millimetres`,increment:.5,set:v=>{p.c=Math.round(v*10)/10;s.changed=true;s.parents=null;s.pending=null;render()},fromPoint:pt=>4+(pt.x-left)/(right-left)*12});
+  handle('food-'+i,hx,hy,{label:`Food source ${i+1}: favoured beak depth`,help:'Move the peak toward the beak depth that has the greatest food advantage. Existing adults stay unchanged until reproduction.',min:4.5,max:15.5,value:p.c,valueText:`${fmt(p.c)} millimetres`,increment:.5,set:v=>{p.c=Math.round(v*10)/10;foodEdited();render()},fromPoint:pt=>4+(pt.x-left)/(right-left)*12});
  });
- if(step===5&&s.pressure!=='even')s.peaks.forEach((p,i)=>{
+ if(step===4||step===5&&s.pressure!=='even')s.peaks.forEach((p,i)=>{
   const side=p.c>10?-1:1,hx=x(p.c+side*p.w),hy=foodBase-19;
   line(x(p.c),hy,hx,hy,{stroke:'var(--lab-concept-amber)','stroke-width':1.5});
-  handle('food-width-'+i,hx,hy,{label:`Food source ${i+1}: range of favoured beaks`,help:'Widen the food range to favour more beak depths, or narrow it to make the advantage more specific.',min:.55,max:3,value:p.w,valueText:`${fmt(p.w)} millimetres of spread`,increment:.1,set:v=>{p.w=Math.round(v*100)/100;s.parents=null;s.pending=null;render()},fromPoint:pt=>side*(4+(pt.x-left)/(right-left)*12-p.c)});
+  handle('food-width-'+i,hx,hy,{label:`Food source ${i+1}: range of favoured beaks`,help:'Widen the food range to favour more beak depths, or narrow it to make the advantage more specific.',min:.55,max:3,value:p.w,valueText:`${fmt(p.w)} millimetres of spread`,increment:.1,set:v=>{p.w=Math.round(v*100)/100;foodEdited();render()},fromPoint:pt=>side*(4+(pt.x-left)/(right-left)*12-p.c)});
  });
  if(!intro){
   sourceLabel('mean',left,H-8,`Mean ${fmt(m.mean)} mm`,'Add every adult’s beak depth, then divide by the adult count. The dashed blue line marks this mean.','small');sourceLabel('spread',W*.5,H-8,`Spread ${fmt(m.sd)} mm`,'Population standard deviation describes how far beak depths tend to lie from the mean. A smaller value means a narrower distribution.','small','middle');sourceLabel('middle-frequency',right,H-8,`Middle ${Math.round(m.middle*100)}%`,'Count adults with beaks from 8.5 to 11.5 mm, divide by the total adult count and multiply by 100. This model label rounds to a whole percent.','small','end');
  }
  if(step===0)feedback(s.peaks[0].c>=12.5?'The adults keep their beaks. Existing deeper beaks now have more food advantage.':'Amber shading shows food advantage. Each dot is an adult whose beak stays unchanged.',s.peaks[0].c>=12.5);
  if(step===1)feedback(s.generation>0?'These are offspring. They resemble the successful parents, with inherited variation.':s.parents?'Violet dots are selected parents. Their offspring have not replaced them yet.':'Selection changes who reproduces. It does not change an adult’s inherited trait.',s.generation>0);
- if(step===2){const ok=s.generation>=3&&m.mean>s.baseline.mean+1.2;feedback(ok?'Directional selection: deeper beaks become more common across generations.':`${s.generation} generations. Keep the pressure unchanged and follow the mean.`,ok)}
- if(step===3){const ok=s.generation>=3&&m.sd<s.baseline.sd*.78;feedback(ok?'Stabilising selection: the spread narrows as middle-sized beaks are favoured.':`${s.generation} generations. Compare the spread with the dashed starting distribution.`,ok)}
- if(step===4){const ok=s.generation>=4&&m.sd>s.baseline.sd*1.2&&m.middle<s.baseline.middle*.72&&m.left>=.15&&m.right>=.15;feedback(ok?'Disruptive selection: both tails remain while the middle becomes less common.':`${s.generation} generations. Look for two groups and a smaller middle.`,ok)}
- if(step===5){feedback(s.pressure==='even'?'All beaks have equal food advantage. Run generations to see how random sampling can still change frequencies.':s.pressure==='alternating'?`The next generation faces food that favours ${s.peaks[0].c<10?'shallower':'deeper'} beaks. The food will then switch to the other side.`:'Move a peak to favour different beaks; drag its lower grip to widen the range. Run a generation to see the population respond.',false);table(['Generation','Mean / mm','Spread / mm','Middle band'],s.history.slice(-6).map(r=>[r.g,fmt(r.mean,2),fmt(r.sd,2),Math.round(r.middle*100)+'%']))}
+ if(step===2){const ok=s.generation>=3;feedback(ok?`Mean beak depth: ${fmt(s.baseline.mean)} → ${fmt(m.mean)} mm over ${s.generation} generations.`:`${s.generation} generations. Keep the pressure unchanged and follow the mean.`,ok)}
+ if(step===3){const ok=s.generation>=3;feedback(ok?'Stabilising selection: the spread narrows as middle-sized beaks are favoured.':`${s.generation} generations. Compare the spread with the dashed starting distribution.`,ok)}
+ if(step===4){
+  const ok=designedPattern(),left=s.population.filter(v=>v<8.5).length,middle=s.population.filter(v=>v>=8.5&&v<=11.5).length,right=s.population.filter(v=>v>11.5).length;
+  feedback(ok?`Counts: ${left} shallow, ${middle} middle, ${right} deep. Compare both tails with the starting bars.`:s.generationsSinceEdit<3?`${s.generationsSinceEdit} of 3 generations under this food arrangement. Keep the environment steady to compare.`:`Counts: ${left} shallow, ${middle} middle, ${right} deep. Compare the starting bars and adjust the food.`,ok);
+ }
+
+ if(step===5){
+  feedback(s.pressure==='even'?'All beaks have equal food advantage. Random sampling can still change their frequencies.':s.pressure==='alternating'?`Food next favours ${s.peaks[0].c<10?'shallower':'deeper'} beaks, then switches sides.`:'Change food, then run a generation. A new sample repeats the same conditions with different initial birds.',false);
+  if(s.records.length)table(['Sample','Generation','Adults','Mean / mm','Middle'],s.records.map(r=>{const m=stats(r.population);return[r.sample,r.generation,r.size,fmt(m.mean,2),fmt(m.middle*100)+'%'];}),true);
+  else table(['Generation','Mean / mm','Spread / mm','Middle'],s.history.slice(-6).map(r=>[r.g,fmt(r.mean,2),fmt(r.sd,2),fmt(r.middle*100)+'%']));
+  const old=s.records[s.comparison],foodName=peaks=>peaks.map(p=>`${fmt(p.c)} ± ${fmt(p.w)} mm`).join(' / ');
+  comparisonNote(old?`Dashed reference: sample ${old.sample}, generation ${old.generation}. ${old.size!==N?'Saved proportions are rescaled to the current adult total; the outline is not a raw saved count. ':''}`+comparisonDescription({sample:old.sample,population:old.size,food:foodName(old.peaks),pressure:old.pressure},{sample:s.sample,population:N,food:foodName(s.peaks),pressure:s.pressure}):'Record a population to retain its distribution. New sample changes the initial birds without changing the food settings.');
+ }
+
  updateBiologyWork();endDraw();
 }

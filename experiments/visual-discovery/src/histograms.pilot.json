@@ -1,0 +1,37 @@
+{
+  "id":"histograms",
+  "subject":"Maths",
+  "title":"Build a grouped-data report",
+  "slug":"mathematics/histogram-area-cumulative-distribution",
+  "sourceRevision":"8df282307b194b8f18e8a3543eb1f9edc2e928c7",
+  "parts":["src/histograms.js","src/histograms-model.js","src/histograms-svg.js"],
+  "css":"src/histograms.css",
+  "smallprint":"Bar area represents pupils; height is pupils per minute. Cumulative lines join group boundaries using constant density inside each interval, so quartile read-offs are estimates. One full grid cell represents 5 pupils, not an individual journey.",
+  "summary":"Build unequal-width bars, connect their areas to cumulative totals, and estimate the middle half.",
+  "action":"Set bar heights, construct cumulative totals, operate a linked read-off ruler and compare recorded distributions.",
+  "change":"Frequency equals interval width times density. Cumulative growth integrates the same bar areas; quartile ranks use the same total. The learner's cumulative sketch remains a separately identified prediction until checked.",
+  "evidence":"Equal-height unequal-width bars expose the area misconception. A checked cumulative sketch is overlaid with the report line; the ruler links area to rank, and an incorrect range draws a bracket that misses Q3.",
+  "decision":"Revise an area rather than hunt for a green height, include all preceding groups, locate a quartile rank or compare the effect of changing a group.",
+  "quantities":{
+    "frequency-density":{"description":"Frequency divided by positive class width; actual bar area is the frequency.","domain":"Density 0–3 pupils/min; frequency moves in whole pupils. Widths are fixed positive intervals.","source":"Bar-top handles or a tap in the bar's plot column.","output":"The same frequency drives filled area, cumulative totals and quartile ranks.","inputSlots":["[data-control^=hist-bar-]","[data-set-bar]"]},
+    "cumulative-frequency":{"description":"Running total through each upper class boundary.","domain":"The guided report contains 60 pupils; the editable sketch is non-decreasing with fixed endpoints 0 and 60.","source":"Three independently editable crosses; tapping a cross column and keyboard adjustment use the same setters.","output":"Dashed learner sketch and, only after checking, the solid report line.","inputSlots":["[data-control^=hist-total-]","[data-set-total]"]},
+    "quartiles":{"description":"The 25%, 50% and 75% ranks of the same grouped distribution, read on both plots.","domain":"Journey time 0–60 min; ruler increments 0.5 min. Accepted read-offs are within 0.55 pupils of the target rank.","source":"The learner moves or taps the ruler and explicitly records each estimate.","output":"Actual learner read-offs persist in working; they are not silently replaced with exact model answers.","inputSlots":["[data-control=hist-ruler]","[data-set-ruler]","[data-quantile]"]},
+    "interquartile-range":{"description":"Difference between the learner's recorded Q3 and Q1 estimates.","domain":"Finite numeric or fractional minutes; tolerance 0.11 min around the difference of recorded estimates.","source":"A structured number entry after all three read-offs.","output":"A tested bracket starts at Q1 and ends at Q1 plus the entered range.","inputSlots":["#iqrInput"]}
+  },
+  "limits":[
+    "A deliberately fixed, synthetic report; these are not empirical pupil measurements. No random case generator is implemented.",
+    "The original contract's bar-area and non-decreasing cumulative invariants are retained. The cumulative representation uses straight joins instead of the original smooth interpolation: constant within-class density makes partial bar area and cumulative growth agree everywhere.",
+    "The graphical cells encode five pupils of area. They do not identify individual observations or assert uniform individual journey times.",
+    "Quantiles inside grouped intervals are estimates. Empty distributions have undefined quartiles. At a plateau, the model uses the first time that reaches the rank.",
+    "Guided bars and cumulative sketches are checked only on the explicit action. Manipulation remains responsive; editing clears stale checks.",
+    "Experiment records are immutable copies, capped at six. Current and saved plots share the same axis scale without normalising counts. Repeat preserves other visited steps; restart requires explicit confirmation and clears only this lab's session."
+  ],
+  "gates":[
+    "Change the second equal-width bar from frequency 10 to 20, then check both areas. The reference stays at 10.",
+    "Keep a 10-minute interval at frequency 20; reduce a 20-minute interval from frequency 40 to 20 and explicitly check. Equal heights initially imply unequal areas.",
+    "Construct frequencies 10, 20, 20 and 10 across widths 10, 10, 20 and 20 in any order, then check all bars. Matching the total alone is insufficient.",
+    "Build cumulative totals 0, 10, 30, 50 and 60 with three movable internal points, then check against the report. The sketch remains monotone even during revision.",
+    "Record Q1, median and Q3 using the linked ruler, then enter and check the range between the recorded outer quartiles. Moving a recorded read-off clears that reading and invalidates the range verdict.",
+    "Ungated experiment: alter any bar, inspect the cumulative and median consequences, save up to six frozen reports and select a comparison. Zero frequency across all intervals is valid and has undefined quartiles."
+  ]
+}
