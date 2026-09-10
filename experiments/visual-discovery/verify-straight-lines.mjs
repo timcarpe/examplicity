@@ -6,11 +6,11 @@ import assert from 'node:assert/strict';
 import {fileURLToPath,pathToFileURL} from 'node:url';
 import {createHash} from 'node:crypto';
 import {extractEmbeddedLabContract,parseLabContractV1} from '../../tools/lab-contract/index.ts';
-const here=path.dirname(fileURLToPath(import.meta.url)),out=path.resolve(here,'../../outputs/straight-lines-pilot');
+const here=path.dirname(fileURLToPath(import.meta.url)),out=path.resolve(here,'../../outputs/straight-line-coordinates-equations');
 await fs.mkdir(out,{recursive:true});
 const {chromium}=await import(process.env.PLAYWRIGHT_MODULE?pathToFileURL(path.resolve(process.env.PLAYWRIGHT_MODULE)).href:'playwright');
 const browser=await chromium.launch({headless:true,...(process.env.CHROMIUM_EXECUTABLE?{executablePath:process.env.CHROMIUM_EXECUTABLE}:{}),args:['--no-sandbox']});
-const html=await fs.readFile(path.join(here,'review/straight-lines.html'),'utf8');
+const html=await fs.readFile(path.resolve(here,'../../public/labs/mathematics/straight-line-coordinates-equations.html'),'utf8');
 const report={passed:false,checkedAt:new Date().toISOString(),artifactSha256:createHash('sha256').update(html).digest('hex'),transport:'Exact standalone HTML; all external requests blocked',checks:[],screenshots:[]};
 let page,context,errors=[],requests=[];
 const read=code=>page.evaluate(code);
@@ -43,22 +43,20 @@ async function open(motion='reduce',touch=false){
  await page.setContent(html);await page.waitForFunction('typeof ready!=="undefined"');await settle();
 }
 try{
- const contract=parseLabContractV1(await fs.readFile(path.join(here,'contracts/straight-lines.lab.json'),'utf8'));assert.deepEqual(extractEmbeddedLabContract(html),contract);
- const original=JSON.parse(await fs.readFile(path.resolve(here,'../../lab-contracts/mathematics/straight-line-coordinates-equations.lab.json'),'utf8'));
- assert.deepEqual(contract.invariants,original.invariants);assert.deepEqual(contract.nonGoals,original.nonGoals);assert.equal(contract.relationship,original.relationship);
- for(const match of html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g))if(!match[0].includes('type="application/json"'))new vm.Script(match[1]);
- assert.ok(!/<(?:script|link|img)[^>]+(?:src|href)=["']https?:/i.test(html));
+ const contract=parseLabContractV1(await fs.readFile(path.resolve(here,'../../lab-contracts/mathematics/straight-line-coordinates-equations.lab.json'),'utf8'));assert.deepEqual(extractEmbeddedLabContract(html),contract);
+ for(const match of html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g))if(!/type=["']application\/(?:ld\+)?json["']/i.test(match[0]))new vm.Script(match[1]);
+ assert.ok(!/<script[^>]+src=["']https?:|<link[^>]+rel=["'][^"']*stylesheet[^"']*["'][^>]+href=["']https?:|<img[^>]+src=["']https?:/i.test(html));
  await open();await layout('opening');await ready(false);
  // A real pointer drag changes the model without a detached numeric control.
  const box=await page.locator('[data-control=rail-tilt]').boundingBox();
  await page.mouse.move(box.x+box.width/2,box.y+box.height/2);await page.mouse.down();await page.mouse.move(box.x+box.width/2,box.y+box.height/2+35,{steps:6});await page.mouse.up();await settle();
  assert.equal(await read('s.m'),.5);await ready(false);await ends();await ready(true);await next();
  await slide(2);await ends();await ready(true);
- await click('#traceWorking');await page.waitForTimeout(50);assert.ok(await read('connectionLayer.children.length>0'));await shot('working-trace');
+ assert.equal(await page.locator('#traceWorking').isVisible(),false);assert.ok(await page.locator('[data-value-ref]').count()>0);await shot('working-values');
  await next();assert.equal(await read('connectionLayer.children.length'),0);await layout('equation');
  await fill('1/2','1');await ready(false);assert.equal(await page.locator('#gradientInput').getAttribute('class'),'');await ends();await ready(false);
  await click('#next');await ready(false);await ends();await ready(true);await next();
- checked('Tilt and slide are independent; whole-interval checks; source-value tracing; no pre-test correctness or reusing pre-test travel.');
+ checked('Tilt and slide are independent; whole-interval checks; labelled source values; no pre-test correctness or reusing pre-test travel.');
  // Initial transfer rail already passes B but not A; a matching equation is insufficient.
  await fill('.5','0');await click('#next');await ends();await ready(false);assert.match((await state()).feedback,/mounting point/);
  await tilt(-.5);await slide(2);await fill('2','2');await click('#next');await ready(false);assert.match((await state()).feedback,/different directions/);
@@ -97,8 +95,8 @@ try{
  await page.getByRole('button',{name:'Clear readings',exact:true}).click();await settle();assert.equal(await read('s.comparison'),null);assert.equal(await page.locator('[data-rail=saved]').count(),0);
  checked('Open experiment, immutable coefficient/coordinate records, selectable references across orientations, six-record retention and restored experiment state.');
  await open('no-preference');await tilt(.5);await ends();await ready(true);await click('#next');assert.equal((await state()).step,1);assert.equal(await read('document.querySelectorAll(".checkpoint-part,.checkpoint-model").length'),0);
- await slide(2);await ends();await click('#traceWorking');await page.waitForTimeout(80);assert.ok(await read('connectionLayer.children.length>0'));await key('[data-control=rail-slide]','ArrowDown');await page.waitForTimeout(100);assert.equal(await read('connectionLayer.children.length'),0);
- checked('Normal and reduced motion; checkpoint cleanup; explicit trace starts and manipulation cancels it.');
+ await slide(2);await ends();assert.equal(await page.locator('#traceWorking').isVisible(),false);await key('[data-control=rail-slide]','ArrowDown');await page.waitForTimeout(100);assert.equal(await read('connectionLayer.children.length'),0);
+ checked('Normal and reduced motion; checkpoint cleanup; hidden experimental trace control and clean manipulation state.');
  await open('reduce',true);
  const client=await context.newCDPSession(page);
  async function touchDrag(selector,dx,dy){
