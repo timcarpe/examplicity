@@ -2,7 +2,11 @@ import fs from 'node:fs';
 import vm from 'node:vm';
 import test from 'node:test';
 import assert from 'node:assert/strict';
-const source=fs.readFileSync(new URL('../src/straight-lines-model.js',import.meta.url),'utf8');
+const html=fs.readFileSync(new URL('../../../labs-src/mathematics/straight-line-coordinates-equations/lab.html',import.meta.url),'utf8');
+const start=html.indexOf('// Pure straight-line model. No DOM, sampling-based equality or expression evaluation.');
+const end=html.indexOf('function railLayout()',start);
+assert.ok(start>=0&&end>start,'canonical straight-line source must retain an extractable pure model block');
+const source=html.slice(start,end);
 const model=vm.runInNewContext(source+';({railNumber,railValue,railPoint,railGap,railExtent,railSame,railParallel,railOnPoint,railEquation})');
 const {railNumber,railValue,railPoint,railExtent,railSame,railParallel,railOnPoint,railEquation}=model;
 test('Finite decimals and fractions; no expression execution or zero denominators',()=>{
