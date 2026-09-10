@@ -7,6 +7,15 @@ export type ChangelogEntry = {
 
 export const changelogEntries: readonly ChangelogEntry[] = [
   {
+    date: '2026-09-10',
+    displayDate: '10 September 2026',
+    publicChanges: [
+      'Restored full challenge instructions and accessible Run and Check controls in Python Programming Practice, with scrolling that keeps the workspace reachable above the site footer.',
+      'Organized the Pseudocode and Python Translator controls into settings and execution rows, stabilized button sizing, and clarified its icons across desktop and mobile layouts.',
+    ],
+    internalChanges: [],
+  },
+  {
     date: '2026-09-09',
     displayDate: '9 September 2026',
     publicChanges: [
