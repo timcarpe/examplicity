@@ -11,7 +11,7 @@ export const changelogEntries: readonly ChangelogEntry[] = [
     displayDate: '10 September 2026',
     publicChanges: [],
     internalChanges: [
-      'Refined the four isolated visual lab prototypes with observation-first gas tasks, less-supported scale and optical predictions, a learner-built selection environment, optional evidence-first hints, preserved checkpoint states and frozen experiment comparisons. Polished the goal, single feedback/action dock, hint disclosure and restart controls with shorter language and stable Test-to-Continue placement. Added a fifth, straight-line rail pilot with independent tilt/slide, committed equations, whole-interval checks, and horizontal/vertical comparisons using the same polished shell. Added reproducible population samples, model-invariant tests, offline browser journeys, interface regression checks and a practical learner-review protocol; published labs and shared components are unchanged.',
+      'Expanded the isolated visual-discovery review to six pilots, including straight-line rails and an area-first histogram/cumulative-frequency investigation. Preserved direct manipulation, less-supported predictions, explicit checks, stateful navigation and frozen comparisons. Standardised goals, feedback, hints and action placement; clarified local repeat versus whole-lab restart with ordered controls, scope descriptions and confirmation. Added sourced workflow guidance, model-boundary tests and browser regression coverage. These are unpublished review artifacts; production labs, public shared components and curriculum mappings remain unchanged.',
     ],
   },
   {

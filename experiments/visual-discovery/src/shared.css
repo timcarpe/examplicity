@@ -64,11 +64,6 @@
 .lesson-head .mission-copy{grid-column:1/-1;grid-row:2}
 .lesson-head.lab-context h1{font:600 18px/1.4 var(--lab-font-sans);margin:0 0 6px;max-width:60ch}
 .lesson-head.lab-context .intro{font:400 14px/1.5 var(--lab-font-sans);margin:0;max-width:85ch}
-.reset-menu{position:relative;grid-column:2;grid-row:1;font-size:12px;z-index:5}
-.reset-menu>summary{cursor:pointer;min-height:32px;padding:6px 8px;color:var(--lab-ink-secondary);border-radius:6px}
-.reset-menu>summary:focus-visible{outline:2px solid var(--lab-accent);outline-offset:2px}
-.reset-options{position:absolute;top:calc(100% + 6px);right:0;width:174px;display:grid;gap:6px;padding:8px;background:var(--lab-surface);border:1px solid var(--lab-line);border-radius:8px;box-shadow:0 4px 14px rgba(29,29,31,.1)}
-.reset-options .lab-action{width:100%;margin:0;text-align:left;min-height:40px}
 .learning-work,.learning-work[data-work-state]{background:var(--lab-surface);border:1px solid var(--lab-line);box-shadow:none;animation:none}
 .learning-work .work-heading h2{font-size:14px;font-weight:600;color:var(--lab-ink)}
 .learning-work .work-note{color:var(--lab-ink-secondary)}
@@ -106,8 +101,6 @@
  .lesson-head .lab-checkpoints{width:100%;gap:5px}
  .step-label{font-size:11px}
  .lesson-head.lab-context h1{font-size:17px;line-height:1.4}
- .reset-menu{font-size:11px}
- .reset-menu>summary{padding:6px 2px}
  .learning-dock.foot{padding:12px;margin-top:12px}
  .learning-dock .outcome,.learning-dock .outcome[data-state]{min-height:114px;gap:8px}
  .learning-dock .outcome-title{font-size:14px}
@@ -128,3 +121,22 @@
 
 /* One- and two-line action labels occupy the same button height. */
 .primary-slot>.lab-action{min-height:48px}
+
+/* Scoped restart disclosure: DOM and visual order agree at every breakpoint. */
+.lesson-head .reset-menu{position:relative;grid-area:1 / 2;font:400 12px/1.4 var(--lab-font-sans);z-index:10}
+.lesson-head .reset-menu>summary{list-style:none;display:flex;align-items:center;gap:8px;min-height:44px;padding:8px;color:var(--lab-ink-secondary);border-radius:var(--lab-control-radius);cursor:pointer}
+.lesson-head .reset-menu>summary::-webkit-details-marker{display:none}
+.lesson-head .reset-menu>summary:hover{background:var(--lab-accent-soft)}
+.reset-chevron{width:7px;height:7px;border:solid currentColor;border-width:0 1.5px 1.5px 0;transform:rotate(45deg);margin-top:-4px}
+.reset-menu[open] .reset-chevron{transform:rotate(225deg);margin-top:4px}
+.lesson-head .reset-options{position:absolute;inset:calc(100% + 4px) 0 auto auto;width:272px;max-width:calc(100vw - 40px);display:block;padding:6px;background:var(--lab-surface);border:1px solid var(--lab-line);border-radius:var(--lab-panel-radius);box-shadow:0 4px 14px rgba(29,29,31,.1)}
+.reset-choices{display:flex;flex-direction:column;gap:2px}
+.lesson-head .reset-menu :is(#repeat,#restart){grid-area:auto;align-self:auto;justify-self:stretch;min-height:56px;height:auto;width:100%;margin:0;padding:10px 12px;text-align:left;white-space:normal;display:block}
+.lesson-head .reset-menu .reset-choices .lab-action{background:transparent;border-color:transparent;box-shadow:none}
+.lesson-head .reset-menu .reset-choices .lab-action:hover:not(:disabled){background:var(--lab-accent-soft)}
+.reset-choices small{display:block;margin-top:3px;font:400 11px/1.45 var(--lab-font-sans);color:var(--lab-ink-secondary)}
+.reset-confirmation{padding:10px}
+.reset-confirmation h2{font:600 14px/1.4 var(--lab-font-sans);margin:0 0 8px;color:var(--lab-ink)}
+.reset-confirmation p{font:400 14px/1.5 var(--lab-font-sans);margin:0 0 14px;color:var(--lab-ink-secondary)}
+.reset-confirm-actions{display:flex;gap:8px}
+.lesson-head .reset-confirm-actions .lab-action{grid-area:auto;width:auto;flex:1;min-height:44px;margin:0;padding:8px;white-space:normal;text-align:center}

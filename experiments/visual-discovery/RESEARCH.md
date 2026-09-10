@@ -58,3 +58,7 @@ Automated model tests exercise invariants across multiple inputs and seeds. Brow
 ## Goal, feedback and help polish
 
 The follow-up interface pass keeps the teaching sequence and scientific models intact. [UI-POLISH.md](UI-POLISH.md) records the primary-source comparison and the adopted placement, language and disclosure conventions. The working card no longer opens a broad method tooltip or repeats a full success state. Status announcements are consolidated; the goal, current action and optional hints have consistent roles.
+
+## Sixth pilot and reproducible workflow
+
+[Workflow and design decisions](WORKFLOW-AND-DESIGN.md) connects the actual implementation choices to the original histogram contract, NIST, the PhET authors, Brilliant, Khan Academy and W3C. It distinguishes source facts from model simplifications and unperformed checks. [Histogram pilot notes](HISTOGRAMS-PILOT.md) specify the new operations and bounded estimates.

@@ -1,0 +1,188 @@
+{
+  "schemaVersion": 1,
+  "relationship": "One grouped distribution is represented by histogram bar areas and cumulative-frequency growth, so changing an interval affects both displays and quartile read-offs.",
+  "learnerLoop": {
+    "action": "Set bar heights, construct cumulative totals, operate a linked read-off ruler and compare recorded distributions.",
+    "modelChange": "Frequency equals interval width times density. Cumulative growth integrates the same bar areas; quartile ranks use the same total. The learner's cumulative sketch remains a separately identified prediction until checked.",
+    "evidence": "Equal-height unequal-width bars expose the area misconception. A checked cumulative sketch is overlaid with the report line; the ruler links area to rank, and an incorrect range draws a bracket that misses Q3.",
+    "nextDecision": "Revise an area rather than hunt for a green height, include all preceding groups, locate a quartile rank or compare the effect of changing a group."
+  },
+  "invariants": [
+    "Histogram area represents frequency even when class widths differ.",
+    "Cumulative frequency never decreases and ends at the total frequency."
+  ],
+  "safeAdaptations": [
+    "Vary valid grouped intervals and frequencies while retaining linked displays.",
+    "Change working support without disconnecting quartile evidence from the cumulative curve."
+  ],
+  "nonGoals": [
+    "Using bar height alone as frequency for unequal-width classes."
+  ],
+  "developerGuide": "https://www.examplicity.org/developer/lab-contract",
+  "implementation": {
+    "reviewedRevision": "prototype-source-sha256:96c8520ac39980f8f48f51680db38b720bc04cd63046d9f48a2fd7a7127551a4",
+    "surfaces": {
+      "actions": {
+        "selectors": [
+          "#learningDock",
+          "#next",
+          "#back",
+          "#forwardVisited",
+          "#secondaryAction"
+        ],
+        "kind": "control",
+        "description": "One persistent primary action; Back and optional previously-visited Forward are secondary. Model-specific callbacks and gates are unchanged.",
+        "visibility": "Same relative position below the apparatus and working; before saved readings."
+      },
+      "help": {
+        "selectors": [
+          "#evidenceHelp",
+          "#hintText"
+        ],
+        "kind": "support",
+        "description": "Learner-requested evidence cue, relationship hint and contrasting worked example; no automatic answer-directed pulse.",
+        "visibility": "Only when requested in the relevant experience."
+      },
+      "reset": {
+        "selectors": [
+          "#resetMenu",
+          "#repeat",
+          "#restart",
+          "#resetConfirmation",
+          "#cancelRestart",
+          "#confirmRestart"
+        ],
+        "kind": "control",
+        "description": "Native disclosure with ordered actions and scope descriptions; full restart uses an inline confirmation. Cancel, Escape, outside click and tab-away preserve the current model.",
+        "visibility": "Disclosure always available; reset actions disabled during model transitions. Confirmation is never opened automatically."
+      },
+      "prompt": {
+        "selectors": [
+          "#title",
+          "#intro"
+        ],
+        "kind": "given",
+        "description": "A short goal and action sentence above the apparatus, with a guided-step label and quiet restart disclosure.",
+        "visibility": "Current step only."
+      },
+      "model": {
+        "selectors": [
+          "#stage"
+        ],
+        "kind": "model",
+        "description": "Frequency equals interval width times density. Cumulative growth integrates the same bar areas; quartile ranks use the same total. The learner's cumulative sketch remains a separately identified prediction until checked.",
+        "visibility": "Always visible; later controls are progressively disclosed."
+      },
+      "comparison": {
+        "selectors": [
+          "#records",
+          "#comparisonNote"
+        ],
+        "kind": "evidence",
+        "description": "Frozen readings and explicitly labelled comparison conditions; graphical overlays use the selected saved reading.",
+        "visibility": "Recorded experiment comparisons only."
+      },
+      "navigation": {
+        "selectors": [
+          "#back",
+          "#next",
+          "#repeat",
+          "#restart"
+        ],
+        "kind": "control",
+        "description": "Back and Forward restore snapshots; Repeat resets the current experience; Confirmed restart clears the session.",
+        "visibility": "Back and Forward depend on visited progress."
+      },
+      "working": {
+        "selectors": [
+          "#working"
+        ],
+        "kind": "working",
+        "description": "Worked examples precede learner calculations. Explicit quantity keys connect source labels to formula operands, with matching highlights and a button-triggered trace. Hover, focus and tap explain each source and calculation.",
+        "visibility": "Changes with the current step."
+      },
+      "evidence": {
+        "selectors": [
+          "#feedback",
+          "#records"
+        ],
+        "kind": "evidence",
+        "description": "Equal-height unequal-width bars expose the area misconception. A checked cumulative sketch is overlaid with the report line; the ruler links area to rank, and an incorrect range draws a bracket that misses Q3.",
+        "visibility": "In-place feedback; readings only in relevant steps."
+      },
+      "completion": {
+        "selectors": [
+          "#next",
+          "#outcome",
+          "#outcomeTitle"
+        ],
+        "kind": "completion",
+        "description": "The persistent dock button runs the current test/check and changes to Continue only after the original model-derived criterion. Feedback and help share this dock; presentation does not set completion.",
+        "visibility": "Guided steps; absent in the open experiment."
+      }
+    },
+    "quantities": {
+      "frequency-density": {
+        "description": "Frequency divided by positive class width; actual bar area is the frequency.",
+        "domain": "Density 0–3 pupils/min; frequency moves in whole pupils. Widths are fixed positive intervals.",
+        "source": "Bar-top handles or a tap in the bar's plot column.",
+        "output": "The same frequency drives filled area, cumulative totals and quartile ranks.",
+        "inputSlots": [
+          "[data-control^=hist-bar-]",
+          "[data-set-bar]"
+        ]
+      },
+      "cumulative-frequency": {
+        "description": "Running total through each upper class boundary.",
+        "domain": "The guided report contains 60 pupils; the editable sketch is non-decreasing with fixed endpoints 0 and 60.",
+        "source": "Three independently editable crosses; tapping a cross column and keyboard adjustment use the same setters.",
+        "output": "Dashed learner sketch and, only after checking, the solid report line.",
+        "inputSlots": [
+          "[data-control^=hist-total-]",
+          "[data-set-total]"
+        ]
+      },
+      "quartiles": {
+        "description": "The 25%, 50% and 75% ranks of the same grouped distribution, read on both plots.",
+        "domain": "Journey time 0–60 min; ruler increments 0.5 min. Accepted read-offs are within 0.55 pupils of the target rank.",
+        "source": "The learner moves or taps the ruler and explicitly records each estimate.",
+        "output": "Actual learner read-offs persist in working; they are not silently replaced with exact model answers.",
+        "inputSlots": [
+          "[data-control=hist-ruler]",
+          "[data-set-ruler]",
+          "[data-quantile]"
+        ]
+      },
+      "interquartile-range": {
+        "description": "Difference between the learner's recorded Q3 and Q1 estimates.",
+        "domain": "Finite numeric or fractional minutes; tolerance 0.11 min around the difference of recorded estimates.",
+        "source": "A structured number entry after all three read-offs.",
+        "output": "A tested bracket starts at Q1 and ends at Q1 plus the entered range.",
+        "inputSlots": [
+          "#iqrInput"
+        ]
+      }
+    },
+    "modes": {
+      "guided": "Small ordered visual investigations, with model actions and in-place revision.",
+      "experiment": "Ungated experiment: alter any bar, inspect the cumulative and median consequences, save up to six frozen reports and select a comparison. Zero frequency across all intervals is valid and has undefined quartiles."
+    },
+    "dependencies": [
+      "Change the second equal-width bar from frequency 10 to 20, then check both areas. The reference stays at 10.",
+      "Keep a 10-minute interval at frequency 20; reduce a 20-minute interval from frequency 40 to 20 and explicitly check. Equal heights initially imply unequal areas.",
+      "Construct frequencies 10, 20, 20 and 10 across widths 10, 10, 20 and 20 in any order, then check all bars. Matching the total alone is insufficient.",
+      "Build cumulative totals 0, 10, 30, 50 and 60 with three movable internal points, then check against the report. The sketch remains monotone even during revision.",
+      "Record Q1, median and Q3 using the linked ruler, then enter and check the range between the recorded outer quartiles. Moving a recorded read-off clears that reading and invalidates the range verdict.",
+      "Ungated experiment: alter any bar, inspect the cumulative and median consequences, save up to six frozen reports and select a comparison. Zero frequency across all intervals is valid and has undefined quartiles."
+    ],
+    "completion": "New experiences require their model-derived criterion. Back and Forward revisit saved state without forcing a rerun; Repeat experience resets only that experience. Confirmed restart clears all session snapshots. Worked observations are not mastery claims.",
+    "limitations": [
+      "A deliberately fixed, synthetic report; these are not empirical pupil measurements. No random case generator is implemented.",
+      "The original contract's bar-area and non-decreasing cumulative invariants are retained. The cumulative representation uses straight joins instead of the original smooth interpolation: constant within-class density makes partial bar area and cumulative growth agree everywhere.",
+      "The graphical cells encode five pupils of area. They do not identify individual observations or assert uniform individual journey times.",
+      "Quantiles inside grouped intervals are estimates. Empty distributions have undefined quartiles. At a plateau, the model uses the first time that reaches the rank.",
+      "Guided bars and cumulative sketches are checked only on the explicit action. Manipulation remains responsive; editing clears stale checks.",
+      "Experiment records are immutable copies, capped at six. Current and saved plots share the same axis scale without normalising counts. Repeat preserves other visited steps; restart requires explicit confirmation and clears only this lab's session."
+    ]
+  }
+}

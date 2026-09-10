@@ -48,7 +48,7 @@ SOFTWARE.
   ],
   "developerGuide": "https://www.examplicity.org/developer/lab-contract",
   "implementation": {
-    "reviewedRevision": "prototype-source-sha256:8b789288683a7a68f4179b4a603dbd243aca73d33ba9d655e1394d6dd2c3f5a0",
+    "reviewedRevision": "prototype-source-sha256:a73ec908b7ca4cd7789a43c9accb7a65165e692dbeed3611a84995e11836e0a5",
     "surfaces": {
       "actions": {
         "selectors": [
@@ -75,11 +75,14 @@ SOFTWARE.
         "selectors": [
           "#resetMenu",
           "#repeat",
-          "#restart"
+          "#restart",
+          "#resetConfirmation",
+          "#cancelRestart",
+          "#confirmRestart"
         ],
         "kind": "control",
-        "description": "A consistent top-right disclosure separates repeating the step from restarting the lab.",
-        "visibility": "Restart options always available; Repeat disabled during model transitions."
+        "description": "Native disclosure with ordered actions and scope descriptions; full restart uses an inline confirmation. Cancel, Escape, outside click and tab-away preserve the current model.",
+        "visibility": "Disclosure always available; reset actions disabled during model transitions. Confirmation is never opened automatically."
       },
       "prompt": {
         "selectors": [
@@ -115,7 +118,7 @@ SOFTWARE.
           "#restart"
         ],
         "kind": "control",
-        "description": "Back and Forward restore snapshots; Repeat resets the current experience; Start over clears the session.",
+        "description": "Back and Forward restore snapshots; Repeat resets the current experience; Confirmed restart clears the session.",
         "visibility": "Back and Forward depend on visited progress."
       },
       "working": {
@@ -180,7 +183,7 @@ SOFTWARE.
       "Restore the height to match the two other edge ratios.",
       "Ungated experiment: change view, separate layers, alter height, record immutable readings and select a comparison outline; returning restores the entire experiment."
     ],
-    "completion": "New experiences require their model-derived criterion. Back and Forward revisit saved state without forcing a rerun; Repeat experience resets only that experience. Start over clears all session snapshots. Worked observations are not mastery claims.",
+    "completion": "New experiences require their model-derived criterion. Back and Forward revisit saved state without forcing a rerun; Repeat experience resets only that experience. Confirmed restart clears all session snapshots. Worked observations are not mastery claims.",
     "limitations": [
       "Introductory reference edge 1; the reverse-volume transfer uses reference edge 2 and volume 8. Face area means one corresponding face, not total surface area.",
       "Continuous positive factors include partial units; all three powers apply only when h = k."
@@ -3153,11 +3156,6 @@ html:has(body.lab-science),body.lab-science{height:auto;overflow:visible}
 .lesson-head .mission-copy{grid-column:1/-1;grid-row:2}
 .lesson-head.lab-context h1{font:600 18px/1.4 var(--lab-font-sans);margin:0 0 6px;max-width:60ch}
 .lesson-head.lab-context .intro{font:400 14px/1.5 var(--lab-font-sans);margin:0;max-width:85ch}
-.reset-menu{position:relative;grid-column:2;grid-row:1;font-size:12px;z-index:5}
-.reset-menu>summary{cursor:pointer;min-height:32px;padding:6px 8px;color:var(--lab-ink-secondary);border-radius:6px}
-.reset-menu>summary:focus-visible{outline:2px solid var(--lab-accent);outline-offset:2px}
-.reset-options{position:absolute;top:calc(100% + 6px);right:0;width:174px;display:grid;gap:6px;padding:8px;background:var(--lab-surface);border:1px solid var(--lab-line);border-radius:8px;box-shadow:0 4px 14px rgba(29,29,31,.1)}
-.reset-options .lab-action{width:100%;margin:0;text-align:left;min-height:40px}
 .learning-work,.learning-work[data-work-state]{background:var(--lab-surface);border:1px solid var(--lab-line);box-shadow:none;animation:none}
 .learning-work .work-heading h2{font-size:14px;font-weight:600;color:var(--lab-ink)}
 .learning-work .work-note{color:var(--lab-ink-secondary)}
@@ -3195,8 +3193,6 @@ html:has(body.lab-science),body.lab-science{height:auto;overflow:visible}
  .lesson-head .lab-checkpoints{width:100%;gap:5px}
  .step-label{font-size:11px}
  .lesson-head.lab-context h1{font-size:17px;line-height:1.4}
- .reset-menu{font-size:11px}
- .reset-menu>summary{padding:6px 2px}
  .learning-dock.foot{padding:12px;margin-top:12px}
  .learning-dock .outcome,.learning-dock .outcome[data-state]{min-height:114px;gap:8px}
  .learning-dock .outcome-title{font-size:14px}
@@ -3217,7 +3213,26 @@ html:has(body.lab-science),body.lab-science{height:auto;overflow:visible}
 
 /* One- and two-line action labels occupy the same button height. */
 .primary-slot>.lab-action{min-height:48px}
-</style></head><body><main class="lab"><header class="lesson-head lab-context" aria-labelledby="title"><div class="lesson-meta"><p id="stepLabel" class="step-label"></p><div id="checkpoints" class="lab-checkpoints" aria-label="Learning progress"></div></div><details id="resetMenu" class="reset-menu"><summary>Restart options</summary><div class="reset-options"><button type="button" class="lab-action" id="repeat">Repeat this step</button><button type="button" class="lab-action" id="restart" data-lab-action="reset">Restart lab</button></div></details><div class="mission-copy"><h1 id="title" tabindex="-1"></h1><p class="intro" id="intro"></p></div></header><div id="context" class="context"></div><div class="stage-wrap" id="stageWrap"><svg xmlns="http://www.w3.org/2000/svg" class="stage" id="stage" role="group" data-lab-role="model"></svg></div><section id="working" class="lab-work-card learning-work" hidden data-lab-role="working" aria-label="Working"></section><div class="controls" id="controls" data-lab-role="control"></div><footer class="foot learning-dock" id="learningDock" aria-label="Feedback and next action" data-state="idle"><div class="outcome" id="outcome" data-state="idle"><svg class="outcome-symbol" viewBox="0 0 24 24" aria-hidden="true"><circle class="outcome-disc" cx="12" cy="12" r="10.5"/><path class="success-mark" d="m7 12 3.25 3.25L17 8.5"/><path class="retry-mark" d="M12 7v6m0 4h.01"/></svg><div><p class="outcome-title" id="outcomeTitle"></p><p class="feedback" id="feedback"></p></div></div><div class="dock-actions"><div class="dock-navigation"><button class="lab-action" id="back" aria-label="Previous step">Back</button><button class="lab-action" id="forwardVisited" hidden>Forward</button><button type="button" class="lab-action hint-toggle" id="hintToggle" aria-expanded="false" aria-controls="evidenceHelp">Hint</button></div><div class="dock-advance"><button type="button" class="lab-action" id="secondaryAction" hidden></button><div class="primary-slot"><button type="button" class="lab-action" data-priority="primary" id="next" aria-describedby="feedback">Continue</button></div></div></div><section id="evidenceHelp" class="evidence-help" aria-labelledby="hintTitle" hidden><h2 id="hintTitle"></h2><p id="hintText"></p><div class="hint-navigation"><button type="button" id="previousHint" class="lab-action">Previous hint</button><button type="button" id="anotherHint" class="lab-action">Next hint</button></div></section></footer><table class="records" id="records" hidden aria-label="Experiment readings" data-lab-role="evidence"></table><p id="comparisonNote" class="comparison-note" hidden></p><p id="statusAnnouncement" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></p><p class="smallprint">Face area refers to one corresponding face. Reference dimensions are labelled in each experience.</p><noscript>This interactive lab needs JavaScript enabled in your browser.</noscript></main><script data-lab-design>/* Shared model dragging: retain the point grabbed while the model rerenders. */
+
+/* Scoped restart disclosure: DOM and visual order agree at every breakpoint. */
+.lesson-head .reset-menu{position:relative;grid-area:1 / 2;font:400 12px/1.4 var(--lab-font-sans);z-index:10}
+.lesson-head .reset-menu>summary{list-style:none;display:flex;align-items:center;gap:8px;min-height:44px;padding:8px;color:var(--lab-ink-secondary);border-radius:var(--lab-control-radius);cursor:pointer}
+.lesson-head .reset-menu>summary::-webkit-details-marker{display:none}
+.lesson-head .reset-menu>summary:hover{background:var(--lab-accent-soft)}
+.reset-chevron{width:7px;height:7px;border:solid currentColor;border-width:0 1.5px 1.5px 0;transform:rotate(45deg);margin-top:-4px}
+.reset-menu[open] .reset-chevron{transform:rotate(225deg);margin-top:4px}
+.lesson-head .reset-options{position:absolute;inset:calc(100% + 4px) 0 auto auto;width:272px;max-width:calc(100vw - 40px);display:block;padding:6px;background:var(--lab-surface);border:1px solid var(--lab-line);border-radius:var(--lab-panel-radius);box-shadow:0 4px 14px rgba(29,29,31,.1)}
+.reset-choices{display:flex;flex-direction:column;gap:2px}
+.lesson-head .reset-menu :is(#repeat,#restart){grid-area:auto;align-self:auto;justify-self:stretch;min-height:56px;height:auto;width:100%;margin:0;padding:10px 12px;text-align:left;white-space:normal;display:block}
+.lesson-head .reset-menu .reset-choices .lab-action{background:transparent;border-color:transparent;box-shadow:none}
+.lesson-head .reset-menu .reset-choices .lab-action:hover:not(:disabled){background:var(--lab-accent-soft)}
+.reset-choices small{display:block;margin-top:3px;font:400 11px/1.45 var(--lab-font-sans);color:var(--lab-ink-secondary)}
+.reset-confirmation{padding:10px}
+.reset-confirmation h2{font:600 14px/1.4 var(--lab-font-sans);margin:0 0 8px;color:var(--lab-ink)}
+.reset-confirmation p{font:400 14px/1.5 var(--lab-font-sans);margin:0 0 14px;color:var(--lab-ink-secondary)}
+.reset-confirm-actions{display:flex;gap:8px}
+.lesson-head .reset-confirm-actions .lab-action{grid-area:auto;width:auto;flex:1;min-height:44px;margin:0;padding:8px;white-space:normal;text-align:center}
+</style></head><body><main class="lab"><header class="lesson-head lab-context" aria-labelledby="title"><div class="lesson-meta"><p id="stepLabel" class="step-label"></p><div id="checkpoints" class="lab-checkpoints" aria-label="Learning progress"></div></div><details id="resetMenu" class="reset-menu"><summary aria-controls="resetOptions">Restart options<span class="reset-chevron" aria-hidden="true"></span></summary><div class="reset-options" id="resetOptions"><div id="resetChoices" class="reset-choices"><button type="button" class="lab-action" id="repeat" aria-label="Repeat this step"><span id="repeatLabel">Repeat this step</span><small id="repeatDescription">Reset this step only; keep other progress.</small></button><button type="button" class="lab-action" id="restart" aria-label="Restart lab"><span>Restart lab…</span><small>Clear this lab’s progress and readings.</small></button></div><section class="reset-confirmation" id="resetConfirmation" aria-labelledby="resetTitle" hidden><h2 id="resetTitle">Restart this lab?</h2><p>This clears your answers, readings and visited steps in this lab. It cannot be undone.</p><div class="reset-confirm-actions"><button type="button" class="lab-action" id="cancelRestart">Keep working</button><button type="button" class="lab-action" id="confirmRestart" data-lab-action="reset">Restart lab</button></div></section></div></details><div class="mission-copy"><h1 id="title" tabindex="-1"></h1><p class="intro" id="intro"></p></div></header><div id="context" class="context"></div><div class="stage-wrap" id="stageWrap"><svg xmlns="http://www.w3.org/2000/svg" class="stage" id="stage" role="group" data-lab-role="model"></svg></div><section id="working" class="lab-work-card learning-work" hidden data-lab-role="working" aria-label="Working"></section><div class="controls" id="controls" data-lab-role="control"></div><footer class="foot learning-dock" id="learningDock" aria-label="Feedback and next action" data-state="idle"><div class="outcome" id="outcome" data-state="idle"><svg class="outcome-symbol" viewBox="0 0 24 24" aria-hidden="true"><circle class="outcome-disc" cx="12" cy="12" r="10.5"/><path class="success-mark" d="m7 12 3.25 3.25L17 8.5"/><path class="retry-mark" d="M12 7v6m0 4h.01"/></svg><div><p class="outcome-title" id="outcomeTitle"></p><p class="feedback" id="feedback"></p></div></div><div class="dock-actions"><div class="dock-navigation"><button class="lab-action" id="back" aria-label="Previous step">Back</button><button class="lab-action" id="forwardVisited" hidden>Forward</button><button type="button" class="lab-action hint-toggle" id="hintToggle" aria-expanded="false" aria-controls="evidenceHelp">Hint</button></div><div class="dock-advance"><button type="button" class="lab-action" id="secondaryAction" hidden></button><div class="primary-slot"><button type="button" class="lab-action" data-priority="primary" id="next" aria-describedby="feedback">Continue</button></div></div></div><section id="evidenceHelp" class="evidence-help" aria-labelledby="hintTitle" hidden><h2 id="hintTitle"></h2><p id="hintText"></p><div class="hint-navigation"><button type="button" id="previousHint" class="lab-action">Previous hint</button><button type="button" id="anotherHint" class="lab-action">Next hint</button></div></section></footer><table class="records" id="records" hidden aria-label="Experiment readings" data-lab-role="evidence"></table><p id="comparisonNote" class="comparison-note" hidden></p><p id="statusAnnouncement" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></p><p class="smallprint">Face area refers to one corresponding face. Reference dimensions are labelled in each experience.</p><noscript>This interactive lab needs JavaScript enabled in your browser.</noscript></main><script data-lab-design>/* Shared model dragging: retain the point grabbed while the model rerenders. */
 window.LabDesign = {
   checkpoints(host, labels, current, completed = index => index < current, detail = '') {
     host.classList.add('lab-checkpoints'); host.removeAttribute('aria-hidden');
@@ -3624,8 +3639,33 @@ $('next').onclick=e=>{
 };
 $('forwardVisited').onclick=e=>{if(e.detail<=1&&step<maxStep)go(step+1)};
 $('back').onclick=()=>go(step-1);
-$('restart').onclick=()=>{$('resetMenu').open=false;go(0,true)};
-$('repeat').onclick=()=>{$('resetMenu').open=false;go(step,false,true)};
+// Restart is a native disclosure, not an application menu or a learner-work modal.
+function resetChoicesView(){
+ $('resetChoices').hidden=false;$('resetConfirmation').hidden=true;
+}
+function closeReset(restoreFocus=false){
+ $('resetMenu').open=false;resetChoicesView();
+ if(restoreFocus)$('resetMenu').querySelector('summary').focus({preventScroll:true});
+}
+$('resetMenu').addEventListener('toggle',()=>{if(!$('resetMenu').open)resetChoicesView();});
+// Wait for the actual next focus target: focusout can temporarily leave body active.
+document.addEventListener('focusin',e=>{
+ if($('resetMenu').open&&!$('resetMenu').contains(e.target))closeReset(false);
+});
+$('restart').onclick=e=>{
+ if(e.detail>1||checkpointBusy||s.busy||s.phase==='offspring')return;
+ $('resetChoices').hidden=true;$('resetConfirmation').hidden=false;
+ $('cancelRestart').focus({preventScroll:true});
+};
+$('cancelRestart').onclick=()=>{resetChoicesView();$('restart').focus({preventScroll:true});};
+$('confirmRestart').onclick=e=>{
+ if(e.detail>1||checkpointBusy||s.busy||s.phase==='offspring')return;
+ closeReset(false);go(0,true);
+};
+$('repeat').onclick=e=>{
+ if(e.detail>1||checkpointBusy||s.busy||s.phase==='offspring')return;
+ closeReset(false);go(step,false,true);
+};
 
 // One disclosure location. Opening/closing help never shifts the action row above it.
 function setHelp(steps){
@@ -3655,10 +3695,10 @@ $('previousHint').onclick=()=>{s.helpLevel=Math.max(0,(s.helpLevel||0)-1);syncHi
 $('anotherHint').onclick=()=>{s.helpLevel=Math.min(hintSteps.length-1,(s.helpLevel||0)+1);syncHint();};
 document.addEventListener('keydown',e=>{
  if(e.key!=='Escape')return;
- if($('resetMenu').open){$('resetMenu').open=false;$('resetMenu').querySelector('summary').focus();}
+ if($('resetMenu').open){closeReset(true);}
  else if(s.helpOpen&&(e.target.closest('#evidenceHelp')||e.target===$('hintToggle'))){s.helpOpen=false;syncHint();$('hintToggle').focus();}
 });
-document.addEventListener('pointerdown',e=>{if(!e.target.closest('#resetMenu'))$('resetMenu').open=false;});
+document.addEventListener('pointerdown',e=>{if(!e.target.closest('#resetMenu'))closeReset(false);});
 
 // A single, persistent button for Test / Check / Continue. Model calculations and
 // completion predicates remain in the subject files; the dock invokes their real callbacks.
@@ -3681,6 +3721,10 @@ function syncActionDock(){
  $('forwardVisited').disabled=busy;
  $('back').disabled=busy||step===0;
  $('repeat').disabled=busy;
+ $('restart').disabled=busy;$('confirmRestart').disabled=busy;
+ $('repeatLabel').textContent=experiment?'Reset experiment':'Repeat this step';
+ $('repeat').setAttribute('aria-label',experiment?'Reset experiment':'Repeat this step');
+ $('repeatDescription').textContent=experiment?'Clear this experiment; keep guided progress.':'Reset this step only; keep other progress.';
  $('learningDock').setAttribute('aria-busy',String(busy));
  // The same button changes from Test to Continue: focus and pointer position are retained.
 }

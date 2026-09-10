@@ -30,3 +30,13 @@ The new `verify-straight-lines.mjs` passed all six guided steps and the independ
 The checked HTML digest and exact check descriptions are in `evidence/straight-lines-verification.json`. Rebuild with the existing build command. Run `node --test experiments/visual-discovery/tests/straight-lines.test.mjs` and `node --experimental-strip-types experiments/visual-discovery/verify-straight-lines.mjs` with a separately installed Playwright/Chromium environment. The tests do not require changes to the site's package manifests.
 
 Scope: exact generated offline HTML, not a full-site deployment or human usability study. Touch is automated Chromium input, not physical-device testing.
+
+## Sixth pilot and shared restart verification
+
+The latest six-pilot delivery is recorded in [histograms-and-restart-verification.json](evidence/histograms-and-restart-verification.json), including the exact generated HTML/contract hashes and the [GitHub Actions run](https://github.com/timcarpe/examplicity/actions/runs/34473976271). All four browser suites passed: the original four pilots, straight-line pilot, new histogram journey and shared restart checks. The suite covers 30 guided experiences, six experiments and 12 model tests.
+
+The new tests cover unequal-width areas, a wrong report with the correct total, separate cumulative predictions, recorded quartile estimates, invalidated range feedback, frozen reports, zero totals, keyboard/pointer/emulated touch and three viewport sizes. Restart checks cover all six pilots, visual/DOM order, target geometry, cancellation, Escape, outside click, tab-away, repeat scope and confirmed session reset.
+
+The run artifact contains screenshots and full reports. This pass did not have a working local executor or image viewer: no local or manual screenshot check is claimed. Automated browser and geometry checks were performed remotely; screenshots remain for reviewer visual inspection. No live deployment, physical phone, screen-reader or learner trial was performed.
+
+Earlier sections describe earlier revisions. Their artifact hashes and claims of unchanged generated files are historical; the shared restart change necessarily rebuilds all six current files.

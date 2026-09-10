@@ -45,3 +45,9 @@ The browser runner continues to exercise all 19 guided experiences and four expe
 - Retained input/button focus; hint previous/next/Escape; unchanged apparatus dimensions and action position when help opens; restart disclosure; double-click protection.
 
 Recorded screenshots include opening, transfer and experiment states for every lab, plus retry, success and expanded-hint states at all three widths. These are functional and visual checks, not learner testing or evidence of improved learning outcomes. Human learner and screen-reader usability reviews remain unperformed.
+
+## Restart follow-up across six pilots
+
+The histogram addition keeps this goal/action design and refines its restart disclosure. Scoped grid placement fixes the reversed visual order inherited from header button rules. Each action now names its reset scope. Repeating affects only the current step; in the experiment it is labelled Reset experiment. Restart lab first requests inline confirmation with Keep working focused, rather than immediately discarding the session. Escape, outside click and tab-away dismiss without changing work. Reset actions wait for model transitions.
+
+See [the sourced workflow guide](WORKFLOW-AND-DESIGN.md#6-make-reset-scope-visible-and-predictable), `verify-restart.mjs`, and the latest section of [verification notes](VERIFICATION.md). The earlier verification above describes the original four-pilot polish, not the scope of this later six-pilot regression.

@@ -78,8 +78,33 @@ $('next').onclick=e=>{
 };
 $('forwardVisited').onclick=e=>{if(e.detail<=1&&step<maxStep)go(step+1)};
 $('back').onclick=()=>go(step-1);
-$('restart').onclick=()=>{$('resetMenu').open=false;go(0,true)};
-$('repeat').onclick=()=>{$('resetMenu').open=false;go(step,false,true)};
+// Restart is a native disclosure, not an application menu or a learner-work modal.
+function resetChoicesView(){
+ $('resetChoices').hidden=false;$('resetConfirmation').hidden=true;
+}
+function closeReset(restoreFocus=false){
+ $('resetMenu').open=false;resetChoicesView();
+ if(restoreFocus)$('resetMenu').querySelector('summary').focus({preventScroll:true});
+}
+$('resetMenu').addEventListener('toggle',()=>{if(!$('resetMenu').open)resetChoicesView();});
+// Wait for the actual next focus target: focusout can temporarily leave body active.
+document.addEventListener('focusin',e=>{
+ if($('resetMenu').open&&!$('resetMenu').contains(e.target))closeReset(false);
+});
+$('restart').onclick=e=>{
+ if(e.detail>1||checkpointBusy||s.busy||s.phase==='offspring')return;
+ $('resetChoices').hidden=true;$('resetConfirmation').hidden=false;
+ $('cancelRestart').focus({preventScroll:true});
+};
+$('cancelRestart').onclick=()=>{resetChoicesView();$('restart').focus({preventScroll:true});};
+$('confirmRestart').onclick=e=>{
+ if(e.detail>1||checkpointBusy||s.busy||s.phase==='offspring')return;
+ closeReset(false);go(0,true);
+};
+$('repeat').onclick=e=>{
+ if(e.detail>1||checkpointBusy||s.busy||s.phase==='offspring')return;
+ closeReset(false);go(step,false,true);
+};
 
 // One disclosure location. Opening/closing help never shifts the action row above it.
 function setHelp(steps){
@@ -109,10 +134,10 @@ $('previousHint').onclick=()=>{s.helpLevel=Math.max(0,(s.helpLevel||0)-1);syncHi
 $('anotherHint').onclick=()=>{s.helpLevel=Math.min(hintSteps.length-1,(s.helpLevel||0)+1);syncHint();};
 document.addEventListener('keydown',e=>{
  if(e.key!=='Escape')return;
- if($('resetMenu').open){$('resetMenu').open=false;$('resetMenu').querySelector('summary').focus();}
+ if($('resetMenu').open){closeReset(true);}
  else if(s.helpOpen&&(e.target.closest('#evidenceHelp')||e.target===$('hintToggle'))){s.helpOpen=false;syncHint();$('hintToggle').focus();}
 });
-document.addEventListener('pointerdown',e=>{if(!e.target.closest('#resetMenu'))$('resetMenu').open=false;});
+document.addEventListener('pointerdown',e=>{if(!e.target.closest('#resetMenu'))closeReset(false);});
 
 // A single, persistent button for Test / Check / Continue. Model calculations and
 // completion predicates remain in the subject files; the dock invokes their real callbacks.
@@ -135,6 +160,10 @@ function syncActionDock(){
  $('forwardVisited').disabled=busy;
  $('back').disabled=busy||step===0;
  $('repeat').disabled=busy;
+ $('restart').disabled=busy;$('confirmRestart').disabled=busy;
+ $('repeatLabel').textContent=experiment?'Reset experiment':'Repeat this step';
+ $('repeat').setAttribute('aria-label',experiment?'Reset experiment':'Repeat this step');
+ $('repeatDescription').textContent=experiment?'Clear this experiment; keep guided progress.':'Reset this step only; keep other progress.';
  $('learningDock').setAttribute('aria-busy',String(busy));
  // The same button changes from Test to Continue: focus and pointer position are retained.
 }

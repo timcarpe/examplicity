@@ -22,7 +22,7 @@ const read=code=>page.evaluate(code);
 const value=()=>read('({step,ready,feedback:$("feedback").textContent})');
 const expectReady=async expected=>assert.equal((await value()).ready,expected,JSON.stringify(await value()));
 async function settled(){await page.waitForFunction('!checkpointBusy && !s.busy && s.phase !== "offspring"');}
-async function click(selector){if(['#repeat','#restart'].includes(selector)&&!await page.locator('#resetMenu').evaluate(node=>node.open))await page.locator('#resetMenu summary').click();await page.locator(selector).click();await settled();}
+async function click(selector){if(['#repeat','#restart'].includes(selector)&&!await page.locator('#resetMenu').evaluate(node=>node.open))await page.locator('#resetMenu summary').click();await page.locator(selector).click();if(selector==='#restart')await page.locator('#confirmRestart').click();await settled();}
 async function named(name){await page.getByRole('button',{name,exact:true}).click();await settled();}
 async function keys(selector,key,count=1){for(let i=0;i<count;i++)await page.locator(selector).press(key);}
 async function next(){const before=(await value()).step;assert.equal(await page.locator('#next').isDisabled(),false,JSON.stringify(await value()));await click('#next');assert.equal((await value()).step,before+1);assert.equal(await read('document.querySelectorAll(".checkpoint-part,.checkpoint-model").length'),0);assert.equal(await read('connectionLayer.children.length'),0);}
