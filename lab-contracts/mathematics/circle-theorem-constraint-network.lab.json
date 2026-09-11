@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "relationship": "Moving the circle construction changes its measured angles while the applicable circle-theorem relationship remains a constraint linking them.",
+  "relationship": "Changing a circle construction changes its measured angles and lengths; the applicable theorem links them only while its geometric conditions remain true.",
   "learnerLoop": {
-    "action": "Move the construction and complete the linked angles and reasons.",
-    "modelChange": "The dynamic points and dependent angle measures update.",
-    "evidence": "The diagram, angle labels, answer checks and theorem reasons show whether the relationship holds.",
-    "nextDecision": "Choose the theorem and value needed for the next linked angle."
+    "action": "Repair a diameter or tangent, open a chord, move a point within a segment, or match and rotate a chord; retain separated observations and predict a linked angle or length.",
+    "modelChange": "The same local coordinates determine all chords, radii, tangent contacts, angle sectors, perpendicular feet and numerical readings. A broken condition changes the visible geometry and invalidates its test.",
+    "evidence": "Live sectors, exact right-angle marks, midpoint ticks, retained dashed constructions and explicit prediction overlays connect the operated model to persistent calculations and structured reasons.",
+    "nextDecision": "Decide which condition justifies the relationship; revise a prediction or construction, test it again, and compare immutable readings in the open experiment."
   },
   "invariants": [
     "Dependent angles remain governed by the selected circle theorem as the construction moves.",
@@ -20,91 +20,191 @@
   ],
   "developerGuide": "https://www.examplicity.org/developer/lab-contract",
   "implementation": {
-    "reviewedRevision": "7a15bda",
+    "reviewedRevision": "source-git-blob:178a95d7b24b5e021c894016c85c75a2fff4e514",
     "surfaces": {
-      "task": {
+      "goal": {
         "selectors": [
-          "#goalTitle"
+          "#title",
+          "#intro",
+          "#stepLabel"
         ],
         "kind": "given",
-        "description": "Current problem statement and supplied quantities.",
-        "visibility": "Shown at the start of each problem or stage."
+        "description": "One short mission and operation cue above the model and working. The label names the current relationship without a numeric progress counter.",
+        "visibility": "Current experience."
       },
       "model": {
         "selectors": [
-          "#geometry"
+          "#stage",
+          "#modelCaption"
         ],
         "kind": "model",
-        "description": "Operated construction and its live measurements; see quantities for what is given and revealed.",
-        "visibility": "Present for the current problem; child controls and readouts follow the states described below."
+        "description": "Circle geometry with shared SVG handles. Sectors and right-angle markers follow the represented points; captions state whether the theorem condition holds.",
+        "visibility": "Always present; only handles relevant to the current decision are available."
       },
       "working": {
         "selectors": [
-          "#calcContent",
-          "#evidenceGrid"
+          "#working",
+          "#formula",
+          "#answer-x",
+          "#answer-first",
+          "#answer-reason"
         ],
         "kind": "working",
-        "description": "Ordered calculations, learner entries and consequential evidence for the current task.",
-        "visibility": "Present for the current problem; child controls and readouts follow the states described below."
+        "description": "Reference calculations appear after the first observation. Later tasks replace supplied values with numeric entries and, at All, a structured circle-property choice. Wrong numerical predictions draw dashed rays or lengths on the model.",
+        "visibility": "Observations after the first retained reading. Predictions from entry, except paired-tangent working after its comparison. Experiment live working with optional prediction."
       },
-      "completion": {
+      "ownership": {
         "selectors": [
-          "#nextCard"
+          "#ownership",
+          "[data-level]"
         ],
-        "kind": "completion",
-        "description": "Achievement, next task or learning transition.",
-        "visibility": "Shown only when the local completion conditions below are satisfied; representation controls are separately identified."
+        "kind": "support",
+        "description": "None supplies calculations, Some owns the key answer, All also owns applicable intermediate quantities and the circle reason. Changes preserve construction, observations and entries but clear the current test verdict.",
+        "visibility": "Prediction steps and experiment; observation-only experiences show worked evidence."
+      },
+      "actions": {
+        "selectors": [
+          "#learningDock",
+          "#next",
+          "#back",
+          "#forwardVisited"
+        ],
+        "kind": "control",
+        "description": "The existing discovery dock keeps one primary Keep/Test/Continue action. Visited experiences restore their snapshots. The shared double-click guard prevents an accidental second advance.",
+        "visibility": "Beside the model on wide layouts and below it on narrow layouts."
+      },
+      "help": {
+        "selectors": [
+          "#hintToggle",
+          "#evidenceHelp",
+          "#traceWorking"
+        ],
+        "kind": "support",
+        "description": "Evidence-first hints and contrasting worked examples are opt-in. Shared quantity keys connect source labels and operands on hover, focus or tap; value tracing runs only on explicit Trace values.",
+        "visibility": "Hints on request in guided work; tracing when visible source/operand pairs exist."
       },
       "checkpoints": {
         "selectors": [
-          "#objectiveDots"
+          "#checkpoints"
         ],
         "kind": "evidence",
-        "description": "Existing objective markers expose current task and work phase on hover/focus.",
-        "visibility": "Present for the current problem; child controls and readouts follow the states described below."
+        "description": "Small markers name real experiences. Current revision clears that experience’s checked marker; visited navigation is not new completion. Future details contain names, not answers.",
+        "visibility": "Throughout the lab."
+      },
+      "experiment": {
+        "selectors": [
+          "#construction",
+          "#optionalPrediction",
+          "#records",
+          "#comparisonNote"
+        ],
+        "kind": "evidence",
+        "description": "Four continuous construction families, optional prediction, and up to six deep-copied readings. Selected same-family readings draw fixed dashed comparisons. Cross-family records remain textual without invalid overlays.",
+        "visibility": "Final ungated experiment."
+      },
+      "reset": {
+        "selectors": [
+          "#resetMenu",
+          "#repeat",
+          "#resetConfirmation",
+          "#confirmRestart"
+        ],
+        "kind": "control",
+        "description": "Repeat resets the current experience. Restart uses the existing inline confirmation and clears all snapshots and readings. Cancellation and Escape preserve them.",
+        "visibility": "Available throughout; shared transitions temporarily disable actions."
+      },
+      "completion": {
+        "selectors": [
+          "#outcome",
+          "#outcomeTitle",
+          "#feedback",
+          "#next"
+        ],
+        "kind": "completion",
+        "description": "Completion uses current geometric conditions, separated evidence or manipulation, and checked owned entries. Empty work stays pending; checked mistakes have an x, correct fields a check.",
+        "visibility": "After the meaningful model operation and required working. Experiment predictions can be checked without ending exploration."
       }
     },
     "quantities": {
-      "given-geometry": {
-        "description": "Problem-specific angle/length givens, labelled points, chord/tangent relationships and the requested x/length.",
-        "domain": "Angles in degrees; lengths in cm when used.",
-        "source": "Supplied in the goal and construction.",
-        "output": "Live angle/length evidence updates during geometric repair."
-      },
-      "structure-and-invariant": {
-        "description": "A repaired diameter/tangent/equal-chord condition and its invariance under the designated movement.",
-        "domain": "Constrained point/line angles and chord/tangent lengths.",
-        "source": "Learner moves the relevant handles; a later target tests invariance.",
-        "output": "geometryPhase() gates the theorem and calculation steps.",
+      "diameter-angles": {
+        "description": "Angles CAB, ACB and ABC in a triangle on the circle. ACB is 90 degrees only when AB passes through O. The transfer sets CAB = 35 degrees and asks for ABC = 55 degrees.",
+        "domain": "Degrees. Repair/exploration B: -60 to 45 degrees; C: 65 to 145 degrees. The transfer fixes B and bounds C to 40–145 degrees. Points cannot coincide.",
+        "source": "CircleModel point coordinates and vector-angle geometry; shared pointer/keyboard setters.",
+        "output": "Live sectors and triangle-sum working; a checked wrong prediction draws an independent dashed ray.",
         "inputSlots": [
-          "#geometry [data-drag]"
+          "[data-control=\"diameter-b\"]",
+          "[data-control=\"circle-c\"]",
+          "#answer-x"
         ]
       },
-      "calculation-and-reasons": {
-        "description": "Requested numeric value, variant-specific intermediate lengths/angles and textual circle reasons. Step numbers are workflow labels; reason fields are explanations, not numeric quantities.",
-        "domain": "Degrees, cm, numeric expressions and short reason text.",
-        "source": "fieldDefinitions()/requiredKeys() select inputs according to objective and Working level.",
-        "output": "Dependent fields unlock after prior correct values; checked results drive the same working cards.",
+      "chord-angle-network": {
+        "description": "Non-reflex centre angle AOB, opposite-arc circumference angle ACB, same-segment angle ADB and tangent–chord angle at A.",
+        "domain": "Opening 70–150 degrees. C and D stay on the appropriate major arc, separated in the two-vertex task. Candidate tangent offset 55–120 degrees.",
+        "source": "A at 210 degrees; B is A plus opening. Circle positions and the candidate line determine actual angles and the second intersection.",
+        "output": "Centre/circumference ratio 2, same-segment equality, and alternate-segment equality only after exact tangency.",
         "inputSlots": [
-          "#calcContent input[data-work-key]",
-          "#calcContent textarea[data-work-key]"
+          "[data-control=\"chord-b\"]",
+          "[data-control=\"segment-d\"]",
+          "[data-control=\"tangent-turn\"]",
+          "#answer-x",
+          "#answer-reason"
+        ]
+      },
+      "paired-tangents": {
+        "description": "Radius OA, hypotenuse OP, tangent lengths PA/PB, and complementary angles APO/AOP.",
+        "domain": "Guided radius 8 cm, OP 10 cm, PA = PB = 6 cm. Contacts have distinct upper/lower intervals. P rotates -30 to 30 degrees after exact tangencies. Experiment OP/r: 1.1–1.9.",
+        "source": "Contacts solve acos(r/OP); length is sqrt(OP squared minus radius squared). Before locking, independent candidate contacts have actual measured corner angles.",
+        "output": "Right-angle squares, equal-length ticks, retained pair, linked Pythagorean working, and experimental radius–tangent angle prediction.",
+        "inputSlots": [
+          "[data-control=\"contact-a\"]",
+          "[data-control=\"contact-b\"]",
+          "[data-control=\"external-p\"]",
+          "#answer-first",
+          "#answer-x"
+        ]
+      },
+      "chord-distance": {
+        "description": "Full chords AB/CD, half-chords AM/CN, and perpendicular centre distances OM/ON.",
+        "domain": "Worked case r = 5 cm, AB = 6 cm, OM = 4 cm; moving half-chord 1–4.5 cm. Transfer r = 13 cm, AB = CD = 10 cm, AM = 5 cm, OM = ON = 12 cm. Midpoint orientation 215–325 degrees.",
+        "source": "Symmetric endpoints and midpoints use one radius and half-chord; distance is sqrt(radius squared minus half-chord squared).",
+        "output": "Perpendicular marks, bisected-chord ticks, equal-distance comparison and dashed predicted distance.",
+        "inputSlots": [
+          "[data-control=\"chord-d\"]",
+          "[data-control=\"chord-n\"]",
+          "#answer-first",
+          "#answer-x",
+          "#answer-reason"
         ]
       }
     },
     "modes": {
-      "none": "Construction and invariant stress-test remain required; theorem and calculation are revealed when the geometry justifies them.",
-      "some": "Key numeric result is required after the visual test; shown theorem/setup remain support.",
-      "all": "Relevant intermediate numeric results and circle reasons are required; field dependencies vary by objective.",
-      "objectives": "Right-angle structures, a chord angle network, paired tangents, then equal chords/centre distance; generated variants and later mixed practice retain the same local rules."
+      "none": "Supplied calculations never replace construction or comparison. Prediction steps still require explicit Test.",
+      "some": "The key numeric angle or length is required, supported by theorem/setup. Paired tangents require transferred PB.",
+      "all": "The key answer, applicable intermediate PA or AM, and structured circle reason are required. No keyword or free-text grading.",
+      "guided": "Eight connected experiences. Diameter, centre-angle and equal-chord observations introduce relationships before prediction tasks.",
+      "experiment": "Ungated diameter, chord-angle, tangent and chord-distance manipulation with immutable comparisons and optional predictions. No random generator or external runtime requests."
     },
     "dependencies": [
-      "Repair the structure before the stress-test/invariant phase.",
-      "Geometry readiness precedes required working; some numeric fields depend on an earlier correct result.",
-      "Each objective has three generated problems before progression; mixed practice follows the last objective."
+      "Repair AB as a diameter; keep two C positions separated by at least 30 degrees. The first introduces triangle-angle working.",
+      "Place C so CAB = 35 degrees. Test ABC and, at All, the semicircle reason.",
+      "Keep two chord openings separated by at least 30 degrees; compare centre and circumference angles.",
+      "Predict at D and move D at least 30 degrees from its start within the same segment before Test.",
+      "Repair the tangent so OA is perpendicular to AT, then test its alternate-segment angle.",
+      "Repair two distinct tangent contacts. Keep P positions at least 25 degrees apart with OP fixed, then calculate the tangent lengths.",
+      "Match CD to AB and keep two orientations at least 30 degrees apart; compare perpendicular distances.",
+      "In the radius 13 cm, chord 10 cm transfer, turn CD at least 30 degrees and predict its hidden perpendicular distance.",
+      "Experiment predictions require fresh manipulation and the applicable condition. A broken diameter becomes a counterexample, not an accepted semicircle calculation."
     ],
-    "completion": "problemComplete() requires geometryReady() and all required fields/reasons validated. Objective checkpoints and the completion card describe the resulting progression.",
+    "completion": "CircleModel.complete requires current geometry and meaningful manipulation/evidence. Comparisons use separated positions rather than accumulated wiggles. Predictions require explicit Test and every owned field. Geometry, input and support edits clear verdicts; restored snapshots are prior evidence, not new mastery.",
     "limitations": [
-      "Circle reason checking uses the existing phrase/keyword rules; this map does not claim assessment-quality natural-language marking."
+      "Ideal Euclidean constructions, not a proof engine. Structured reasons check recognition of conditions, not complete written proofs.",
+      "Angular snaps within 2.6 degrees produce exact diameter, tangent or stated triangle conditions; chord half-length snaps within 0.11 cm. Right-angle squares appear only at exact geometric conditions.",
+      "Readings are shown to one decimal place. Numeric checks allow an absolute tolerance of 0.11 degree or cm; calculations retain full precision.",
+      "The centre model deliberately bounds non-reflex angles and the opposite arc. It does not claim reflex-angle or cyclic-quadrilateral coverage.",
+      "Accepted paired tangencies are constrained during the P-orbit comparison. The final tangent experiment maintains exact contacts while P moves radially.",
+      "Oversized predicted lengths are truncated at the display boundary and labelled as extending beyond view. Invalid angle ranges are labelled instead of drawing plausible sectors.",
+      "Records are session-only, limited to six. Repeat restores a fixed authored configuration; no seeded variation is implemented.",
+      "The final experiment replaces the former random mixed-practice sequence with consequential continuous changes and optional calculation. Guided completion is not a claim of exam mastery."
     ]
   }
 }

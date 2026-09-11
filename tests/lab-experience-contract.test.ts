@@ -130,12 +130,11 @@ test('primary visual histories do not gain incidental overflow', async () => {
   assert.doesNotMatch(processStates, /--cpu:#1b2730|--cpu2:#2c3a45/);
 });
 
-test('circle theorem uses neutral toolkit surfaces without decorative blue rails', async () => {
+test('circle theorem reuses discovery surfaces and removes its legacy dashboard', async () => {
   const source = await readAuthoredLab('mathematics', 'circle-theorem-constraint-network');
-
-  assert.match(source, /\.method-node\.current\{[^}]*box-shadow:none/);
-  assert.match(source, /\.calc-step\.current\{[^}]*box-shadow:none/);
-  assert.match(source, /\.ownership-note\{[^}]*border:1px solid var\(--lab-kit-line\)/);
-  assert.match(source, /class="stage-shell lab-kit-panel"/);
-  assert.doesNotMatch(source, /\.method-node\.current\{[^}]*inset|\.calc-step\.current\{[^}]*inset/);
+  assert.match(source, /LabDesign\.discovery\.mount/);
+  assert.match(source, /class="lab lab-discovery circle-lab"/);
+  assert.match(source, /class="lab-work-card learning-work"/);
+  assert.match(source, /data-kind="working"/);
+  assert.doesNotMatch(source, /objective-guide|method-spine|ownership-pill|stepDegrees/);
 });

@@ -7,6 +7,16 @@ export type ChangelogEntry = {
 
 export const changelogEntries: readonly ChangelogEntry[] = [
   {
+    date: '2026-09-11',
+    displayDate: '11 September 2026',
+    publicChanges: [
+      'Reworked Circle Theorems around constructions learners can repair and test, linked angle and length predictions, progressively owned working, and an open experiment with retained comparisons.',
+    ],
+    internalChanges: [
+      'Added geometric boundary and progression tests for the circle investigation and replaced its obsolete legacy-interface assertions.',
+    ],
+  },
+  {
     date: '2026-09-10',
     displayDate: '10 September 2026',
     publicChanges: [

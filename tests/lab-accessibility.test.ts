@@ -54,13 +54,14 @@ test('W1 TCP\/IP drag tools retain their native button activation path', async (
   assert.deepEqual(added, ['tcp', 'tcp']);
 });
 
-test('circle construction handles expose keyboard adjustment for every rendered drag target', async () => {
+test('circle construction delegates pointer and keyboard motion to the same shared SVG handle', async () => {
   const source = await readMathSource('circle-theorem-constraint-network');
-
-  assert.match(source, /function prepareKeyboardHandles\(\)/);
-  assert.match(source, /node\.setAttribute\('aria-keyshortcuts','ArrowLeft ArrowRight ArrowUp ArrowDown'\)/);
-  assert.match(source, /function adjustDragWithKeyboard\(key,direction,stepDegrees\)/);
-  assert.match(source, /svg\.addEventListener\('keydown'/);
+  const shared = await readFile(new URL('../public/developer/lab-kit/0.3.0/src/lab-design.js', import.meta.url), 'utf8');
+  assert.match(source, /return handle\(id,p\.x,p\.y/);
+  assert.match(source, /set:v=>move\(key,transform\(Math\.round\(v\*10\)\/10\)\)/);
+  assert.match(shared, /role: 'slider'/);
+  assert.match(shared, /config\.set\(clamp\(value, config\.min, config\.max\)\)/);
+  assert.match(source, /\.lab-discovery\.circle-lab \.stage\{touch-action:none\}/);
 });
 
 test('network construction nodes support keyboard placement and tool activation', async () => {
