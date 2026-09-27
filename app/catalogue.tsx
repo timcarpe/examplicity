@@ -328,6 +328,13 @@ export default function Catalogue({ initialExam, initialLabSlug, initialSubjectI
         </Link>
         <div className="header-actions">
           <span className="header-note">{homepageHero ? 'Interactive learning labs' : view.headerLabel}</span>
+          <a
+            className="header-resource-link"
+            href="https://builder.examplicity.org/"
+            title="Create question papers from your own Cambridge past papers, with topic and keyword selection and matching mark schemes."
+          >
+            Exam Builder
+          </a>
         </div>
       </header>
 

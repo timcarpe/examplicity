@@ -7,6 +7,16 @@ export type ChangelogEntry = {
 
 export const changelogEntries: readonly ChangelogEntry[] = [
   {
+    date: '2026-09-27',
+    displayDate: '27 September 2026',
+    publicChanges: [
+      'Added an Exam Builder link to the homepage and subject catalogue headers for creating question papers from your own Cambridge past papers.',
+    ],
+    internalChanges: [
+      'Added the published Exam Builder and About pages to the sitemap after confirming Search Console domain ownership and reviewing the builder landing page.',
+    ],
+  },
+  {
     date: '2026-09-10',
     displayDate: '10 September 2026',
     publicChanges: [

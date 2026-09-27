@@ -8,5 +8,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
   ));
   const labPages = labs.map((lab) => ({ url: `${siteUrl}${labPageHref(lab)}` }));
 
-  return [{ url: `${siteUrl}/` }, { url: `${siteUrl}/changelog` }, ...syllabusViews, ...labPages];
+  return [
+    { url: `${siteUrl}/` },
+    { url: `${siteUrl}/changelog` },
+    ...syllabusViews,
+    ...labPages,
+    { url: 'https://builder.examplicity.org/' },
+    { url: 'https://builder.examplicity.org/about.html' },
+  ];
 }
