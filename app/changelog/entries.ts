@@ -10,7 +10,7 @@ export const changelogEntries: readonly ChangelogEntry[] = [
     date: '2026-09-27',
     displayDate: '27 September 2026',
     publicChanges: [
-      'Added a “Try our Exam Builder” link to the homepage and subject catalogue headers, with an animated monochrome mark and styling that matches the footer links.',
+      'Added a “Try our Exam Builder” link to the About page from the homepage and subject catalogue headers, with an animated monochrome mark and styling that matches the footer links.',
     ],
     internalChanges: [
       'Added the published Exam Builder and About pages to the sitemap after confirming Search Console domain ownership and reviewing the builder landing page.',

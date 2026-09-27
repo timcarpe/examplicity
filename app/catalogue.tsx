@@ -330,7 +330,7 @@ export default function Catalogue({ initialExam, initialLabSlug, initialSubjectI
           <span className="header-note">{homepageHero ? 'Interactive learning labs' : view.headerLabel}</span>
           <a
             className="header-resource-link"
-            href="https://builder.examplicity.org/"
+            href="https://builder.examplicity.org/about.html"
             title="Create question papers from your own Cambridge past papers, with topic and keyword selection and matching mark schemes."
           >
             <svg className="header-builder-mark" viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="7.08" aria-hidden="true" focusable="false">
