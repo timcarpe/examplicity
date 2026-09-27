@@ -55,9 +55,21 @@ button { border: 0; }
 }
 .header-actions { align-items: center; display: flex; gap: 22px; }
 .header-note { color: var(--muted); font-size: 12px; }
-.header-resource-link { color: var(--tone-one); font-size: 12px; font-weight: 600; padding: 12px 0; text-decoration: none; white-space: nowrap; }
-.header-resource-link:hover { text-decoration: underline; text-underline-offset: 3px; }
-.header-resource-link:focus-visible { outline: 2px solid var(--tone-one); outline-offset: 4px; }
+.header-resource-link { align-items: center; color: var(--muted); display: inline-flex; font-size: 12px; font-weight: 400; gap: 7px; line-height: 20px; text-decoration: none; white-space: nowrap; }
+.header-resource-link:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+/* Compact header mark and reveal motion from Exam Builder; all strokes inherit the link colour. */
+.header-builder-mark { width: 20px; height: 20px; flex: none; overflow: visible; }
+.header-builder-mark__bracket, .header-builder-mark__tick-wrap { transform-box: view-box; transition: transform .32s cubic-bezier(.3,1.5,.5,1); }
+.header-builder-mark__bracket--open { --mark-direction: -1; }
+.header-builder-mark__bracket--close { --mark-direction: 1; }
+.header-builder-mark path { stroke-dasharray: 1 1.1; stroke-dashoffset: 0; }
+.header-builder-mark__bracket path { animation: header-builder-draw .62s cubic-bezier(.2,.75,.25,1) both; }
+.header-builder-mark__tick { animation: header-builder-draw .5s .48s cubic-bezier(.2,.75,.25,1) both; }
+.header-builder-mark__bracket { animation: header-builder-land .6s .9s cubic-bezier(.3,1.5,.5,1) backwards; }
+.header-resource-link:is(:hover, :focus-visible) .header-builder-mark__bracket { transform: translateX(calc(var(--mark-direction) * 3.52px)); }
+.header-resource-link:is(:hover, :focus-visible) .header-builder-mark__tick-wrap { transform: translateY(-1.76px); }
+@keyframes header-builder-draw { from { stroke-dashoffset: 1.05; } to { stroke-dashoffset: 0; } }
+@keyframes header-builder-land { 0% { transform: none; } 30% { transform: translateX(calc(var(--mark-direction) * 2.64px)); } 100% { transform: none; } }
 
 .hero {
   align-items: end;
@@ -296,6 +308,7 @@ h1 {
 .lab-card > a:focus-visible .arrow svg { transform: none; }
 @media (prefers-reduced-motion: reduce) {
   .arrow, .arrow svg { transition: none; }
+  .header-builder-mark path, .header-builder-mark__bracket, .header-builder-mark__tick-wrap { animation: none; transition: none; }
 }
 .description {
   color: var(--muted);
@@ -317,8 +330,8 @@ footer {
 }
 footer .footer-left > a:first-child { color: var(--ink); font-weight: 650; letter-spacing: -.03em; }
 footer a { text-decoration: none; }
-footer :is(a, .bug-report-trigger) { border-radius: 8px; padding: 8px 10px; transition: background .2s ease, color .2s ease; }
-footer :is(a, .bug-report-trigger):hover, footer :is(a, .bug-report-trigger):focus-visible { background: var(--lab-accent-soft); color: var(--lab-accent-ink); }
+footer :is(a, .bug-report-trigger), .header-resource-link { border-radius: 8px; padding: 8px 10px; transition: background .2s ease, color .2s ease; }
+footer :is(a, .bug-report-trigger):hover, footer :is(a, .bug-report-trigger):focus-visible, .header-resource-link:is(:hover, :focus-visible) { background: var(--lab-accent-soft); color: var(--lab-accent-ink); }
 footer .footer-left > :is(a:not(:first-child), button) { font-weight: 400; }
 .footer-left { align-items: center; display: flex; flex-wrap: wrap; gap: 7px; }
 .bug-report-trigger {

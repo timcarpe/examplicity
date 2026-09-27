@@ -333,7 +333,19 @@ export default function Catalogue({ initialExam, initialLabSlug, initialSubjectI
             href="https://builder.examplicity.org/"
             title="Create question papers from your own Cambridge past papers, with topic and keyword selection and matching mark schemes."
           >
-            Exam Builder
+            <svg className="header-builder-mark" viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="7.08" aria-hidden="true" focusable="false">
+              <clipPath id="builder-link-tick-clip"><rect x="-20" y="11.23" width="120" height="90" /></clipPath>
+              <g className="header-builder-mark__bracket header-builder-mark__bracket--open">
+                <path pathLength="1" d="M11.38 14.77H4.54V49.23H11.38" />
+              </g>
+              <g className="header-builder-mark__bracket header-builder-mark__bracket--close">
+                <path pathLength="1" d="M52.62 14.77H59.46V49.23H52.62" />
+              </g>
+              <g className="header-builder-mark__tick-wrap" clipPath="url(#builder-link-tick-clip)">
+                <path className="header-builder-mark__tick" pathLength="1" d="M15.78 36.37L26.16 46.76L44.6 8.94" strokeMiterlimit="10" />
+              </g>
+            </svg>
+            Try our Exam Builder
           </a>
         </div>
       </header>
